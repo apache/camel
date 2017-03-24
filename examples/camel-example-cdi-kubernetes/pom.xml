@@ -28,8 +28,13 @@
 
   <artifactId>camel-example-cdi-kubernetes</artifactId>
   <name>Camel :: Example :: CDI :: Kubernetes</name>
-  <description>Kubernetes CDI example</description>
+  <description>An example running Camel CDI on Kubernetes</description>
   <packaging>jar</packaging>
+
+  <properties>
+    <category>Cloud</category>
+    <title>CDI Kubernetes</title>
+  </properties>
 
   <dependencies>
 

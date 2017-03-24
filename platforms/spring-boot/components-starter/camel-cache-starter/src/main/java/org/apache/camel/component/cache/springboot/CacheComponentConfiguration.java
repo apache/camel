@@ -47,6 +47,12 @@ public class CacheComponentConfiguration {
      * system. By default the file is loaded from classpath:ehcache.xml
      */
     private String configurationFile = "classpath:ehcache.xml";
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public CacheManagerFactory getCacheManagerFactory() {
         return cacheManagerFactory;
@@ -73,6 +79,15 @@ public class CacheComponentConfiguration {
         this.configurationFile = configurationFile;
     }
 
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
     public static class CacheConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.cache.CacheConfiguration.class;
         /**
@@ -83,7 +98,7 @@ public class CacheComponentConfiguration {
          * The number of elements that may be stored in the defined cache in
          * memory.
          */
-        private Integer maxElementsInMemory;
+        private Integer maxElementsInMemory = 1000;
         /**
          * Which eviction strategy to use when maximum number of elements in
          * memory is reached. The strategy defines which elements to be removed.
@@ -98,7 +113,7 @@ public class CacheComponentConfiguration {
         /**
          * Specifies whether cache may overflow to disk
          */
-        private Boolean overflowToDisk;
+        private Boolean overflowToDisk = true;
         /**
          * This parameter is ignored. CacheManager sets it using setter
          * injection.
@@ -109,20 +124,20 @@ public class CacheComponentConfiguration {
          * Sets whether elements are eternal. If eternal, timeouts are ignored
          * and the element never expires.
          */
-        private Boolean eternal;
+        private Boolean eternal = false;
         /**
          * The maximum time between creation time and when an element expires.
          * Is used only if the element is not eternal
          */
-        private Long timeToLiveSeconds;
+        private Long timeToLiveSeconds = 300L;
         /**
          * The maximum amount of time between accesses before an element expires
          */
-        private Long timeToIdleSeconds;
+        private Long timeToIdleSeconds = 300L;
         /**
          * Whether the disk store persists between restarts of the application.
          */
-        private Boolean diskPersistent;
+        private Boolean diskPersistent = false;
         /**
          * The number of seconds between runs of the disk expiry thread.
          */
@@ -142,7 +157,7 @@ public class CacheComponentConfiguration {
          * cache. If this option is enabled then overflow to disk cannot be
          * enabled as well.
          */
-        private Boolean objectCache;
+        private Boolean objectCache = false;
 
         public String getCacheName() {
             return cacheName;

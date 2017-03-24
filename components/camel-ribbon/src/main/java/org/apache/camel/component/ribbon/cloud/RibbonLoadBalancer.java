@@ -31,7 +31,6 @@ import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.PollingServerListUpdater;
 import com.netflix.loadbalancer.RoundRobinRule;
 import com.netflix.loadbalancer.ServerList;
-import com.netflix.loadbalancer.ServerListFilter;
 import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -162,32 +161,40 @@ public class RibbonLoadBalancer
             config,
             configuration.getRuleOrDefault(RoundRobinRule::new),
             configuration.getPingOrDefault(DummyPing::new),
-            new RibbonServerList(serviceName, serviceDiscovery),
-            new RibbonServerFilter(serviceFilter),
+            new RibbonServerList(serviceName, serviceDiscovery, serviceFilter),
+            null,
             new PollingServerListUpdater(config));
     }
 
     static final class RibbonServerList implements ServerList<RibbonServiceDefinition>  {
         private final String serviceName;
         private final ServiceDiscovery serviceDiscovery;
+        private final ServiceFilter serviceFilter;
 
-        RibbonServerList(String serviceName, ServiceDiscovery serviceDiscovery) {
+        RibbonServerList(String serviceName, ServiceDiscovery serviceDiscovery, ServiceFilter serviceFilter) {
             this.serviceName = serviceName;
             this.serviceDiscovery = serviceDiscovery;
+            this.serviceFilter = serviceFilter;
         }
 
         @Override
         public List<RibbonServiceDefinition> getInitialListOfServers() {
-            return asRibbonServerList(
-                serviceDiscovery.getInitialListOfServices(serviceName)
-            );
+            List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
+            if (serviceFilter != null) {
+                services = serviceFilter.apply(services);
+            }
+
+            return asRibbonServerList(services);
         }
 
         @Override
         public List<RibbonServiceDefinition> getUpdatedListOfServers() {
-            return asRibbonServerList(
-                serviceDiscovery.getUpdatedListOfServices(serviceName)
-            );
+            List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
+            if (serviceFilter != null) {
+                services = serviceFilter.apply(services);
+            }
+
+            return asRibbonServerList(services);
         }
 
         private List<RibbonServiceDefinition> asRibbonServerList(List<ServiceDefinition> services) {
@@ -214,18 +221,6 @@ public class RibbonLoadBalancer
             }
 
             return ribbonServers;
-        }
-    }
-
-    static final class RibbonServerFilter implements ServerListFilter<RibbonServiceDefinition> {
-        private final ServiceFilter serviceFilter;
-
-        RibbonServerFilter(ServiceFilter serviceFilter) {
-            this.serviceFilter = serviceFilter;
-        }
-
-        public List<RibbonServiceDefinition> getFilteredListOfServers(List<RibbonServiceDefinition> servers) {
-            return serviceFilter.apply(servers);
         }
     }
 }

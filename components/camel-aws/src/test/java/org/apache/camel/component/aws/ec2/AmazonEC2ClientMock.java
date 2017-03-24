@@ -78,7 +78,7 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
             ins.setImageId(runInstancesRequest.getImageId());
             ins.setInstanceType(runInstancesRequest.getInstanceType());
             ins.setInstanceId("instance-1");
-            if (ObjectHelper.isNotEmpty(runInstancesRequest.getSecurityGroups()) && ObjectHelper.isNotEmpty(runInstancesRequest.getSecurityGroups())) {
+            if (runInstancesRequest.getSecurityGroups() != null) {
                 if (runInstancesRequest.getSecurityGroups().contains("secgroup-1") && runInstancesRequest.getSecurityGroups().contains("secgroup-2")) {
                     GroupIdentifier id1 = new GroupIdentifier();
                     id1.setGroupId("id-1");

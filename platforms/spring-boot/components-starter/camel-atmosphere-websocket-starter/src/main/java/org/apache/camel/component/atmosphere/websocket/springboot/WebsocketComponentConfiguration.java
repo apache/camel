@@ -62,7 +62,7 @@ public class WebsocketComponentConfiguration {
     private HttpConfiguration httpConfiguration;
     /**
      * Whether to allow java serialization when a request uses
-     * context-type=application/x-java-serialized-object This is by default
+     * context-type=application/x-java-serialized-object. This is by default
      * turned off. If you enable this then be aware that Java will deserialize
      * the incoming data from the request to Java and that can be a potential
      * security risk.
@@ -74,6 +74,12 @@ public class WebsocketComponentConfiguration {
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public String getServletName() {
         return servletName;
@@ -130,5 +136,14 @@ public class WebsocketComponentConfiguration {
     public void setHeaderFilterStrategy(
             HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

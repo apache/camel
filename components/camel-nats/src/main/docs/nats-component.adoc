@@ -1,6 +1,6 @@
 ## Nats Component
 
-*Available since Camel 2.17.0*
+*Available as of Camel version 2.17*
 
 http://nats.io/[NATS] is a fast and reliable messaging platform.
 
@@ -38,37 +38,48 @@ The Nats component has no options.
 
 
 // endpoint options: START
-The Nats component supports 23 endpoint options which are listed below:
+The Nats endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    nats:servers
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| servers | common |  | String | *Required* URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
-| flushConnection | common | false | boolean | Define if we want to flush connection or not
-| flushTimeout | common | 1000 | int | Set the flush timeout
-| maxReconnectAttempts | common | 3 | int | Max reconnection attempts
-| noRandomizeServers | common | false | boolean | Whether or not randomizing the order of servers for the connection attempts
-| pedantic | common | false | boolean | Whether or not running in pedantic mode (this affects performace)
-| pingInterval | common | 4000 | int | Ping interval to be aware if connection is still alive (in milliseconds)
-| reconnect | common | true | boolean | Whether or not using reconnection feature
-| reconnectTimeWait | common | 2000 | int | Waiting time before attempts reconnection (in milliseconds)
-| topic | common |  | String | *Required* The name of topic we want to use
-| verbose | common | false | boolean | Whether or not running in verbose mode
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| maxMessages | consumer |  | String | Stop receiving messages from a topic we are subscribing to after maxMessages
-| poolSize | consumer | 10 | int | Consumer pool size
-| queueName | consumer |  | String | The Queue name if we are using nats for a queue configuration
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| replySubject | producer |  | String | the subject to which subscribers should send response
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| secure | security | false | boolean | Set secure option indicating TLS is required
-| ssl | security | false | boolean | Whether or not using SSL
-| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
-| tlsDebug | security | false | boolean | TLS Debug it will add additional console output
+| Name | Description | Default | Type
+| **servers** | *Required* URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (22 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **flushConnection** (common) | Define if we want to flush connection or not | false | boolean
+| **flushTimeout** (common) | Set the flush timeout | 1000 | int
+| **maxReconnectAttempts** (common) | Max reconnection attempts | 3 | int
+| **noRandomizeServers** (common) | Whether or not randomizing the order of servers for the connection attempts | false | boolean
+| **pedantic** (common) | Whether or not running in pedantic mode (this affects performace) | false | boolean
+| **pingInterval** (common) | Ping interval to be aware if connection is still alive (in milliseconds) | 4000 | int
+| **reconnect** (common) | Whether or not using reconnection feature | true | boolean
+| **reconnectTimeWait** (common) | Waiting time before attempts reconnection (in milliseconds) | 2000 | int
+| **topic** (common) | *Required* The name of topic we want to use |  | String
+| **verbose** (common) | Whether or not running in verbose mode | false | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **maxMessages** (consumer) | Stop receiving messages from a topic we are subscribing to after maxMessages |  | String
+| **poolSize** (consumer) | Consumer pool size | 10 | int
+| **queueName** (consumer) | The Queue name if we are using nats for a queue configuration |  | String
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **replySubject** (producer) | the subject to which subscribers should send response |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **secure** (security) | Set secure option indicating TLS is required | false | boolean
+| **ssl** (security) | Whether or not using SSL | false | boolean
+| **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **tlsDebug** (security) | TLS Debug it will add additional console output | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

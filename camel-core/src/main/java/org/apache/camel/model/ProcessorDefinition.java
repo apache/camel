@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -65,6 +66,7 @@ import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
@@ -73,6 +75,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ExpressionAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -615,7 +618,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type to(String uri) {
+    public Type to(@AsEndpointUri String uri) {
         addOutput(new ToDefinition(uri));
         return (Type) this;
     }
@@ -627,7 +630,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type toD(String uri) {
+    public Type toD(@AsEndpointUri String uri) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setUri(uri);
         addOutput(answer);
@@ -641,7 +644,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type toD(String uri, boolean ignoreInvalidEndpoint) {
+    public Type toD(@AsEndpointUri String uri, boolean ignoreInvalidEndpoint) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setUri(uri);
         answer.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
@@ -657,7 +660,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type toF(String uri, Object... args) {
+    public Type toF(@AsEndpointUri String uri, Object... args) {
         addOutput(new ToDefinition(String.format(uri, args)));
         return (Type) this;
     }
@@ -695,7 +698,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type serviceCall(String name, String uri) {
+    public Type serviceCall(String name, @AsEndpointUri String uri) {
         ServiceCallDefinition answer = new ServiceCallDefinition();
         answer.setName(name);
         answer.setUri(uri);
@@ -725,7 +728,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type to(ExchangePattern pattern, String uri) {
+    public Type to(ExchangePattern pattern, @AsEndpointUri String uri) {
         addOutput(new ToDefinition(uri, pattern));
         return (Type) this;
     }   
@@ -752,7 +755,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type to(String... uris) {
+    public Type to(@AsEndpointUri String... uris) {
         for (String uri : uris) {
             addOutput(new ToDefinition(uri));
         }
@@ -797,7 +800,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type to(ExchangePattern pattern, String... uris) {
+    public Type to(ExchangePattern pattern, @AsEndpointUri String... uris) {
         for (String uri : uris) {
             addOutput(new ToDefinition(uri, pattern));
         }
@@ -840,7 +843,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
      * set the {@link ExchangePattern} into the {@link Exchange}.
      * <p/>
-     * The pattern set on the {@link Exchange} will
+     * The pattern set on the {@link Exchange} will be changed from this point going foward.
      *
      * @param exchangePattern  instance of {@link ExchangePattern}
      * @return the builder
@@ -854,6 +857,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
      * set the exchange's ExchangePattern {@link ExchangePattern} to be InOnly
+     * <p/>
+     * The pattern set on the {@link Exchange} will be changed from this point going foward.
      *
      * @return the builder
      * @deprecated use {@link #setExchangePattern(org.apache.camel.ExchangePattern)} instead
@@ -873,7 +878,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
      */
-    public Type inOnly(String uri) {
+    public Type inOnly(@AsEndpointUri String uri) {
         return to(ExchangePattern.InOnly, uri);
     }
 
@@ -901,7 +906,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uris  list of endpoints to send to
      * @return the builder
      */
-    public Type inOnly(String... uris) {
+    public Type inOnly(@AsEndpointUri String... uris) {
         return to(ExchangePattern.InOnly, uris);
     }
 
@@ -915,7 +920,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param endpoints  list of endpoints to send to
      * @return the builder
      */
-    public Type inOnly(Endpoint... endpoints) {
+    public Type inOnly(@AsEndpointUri Endpoint... endpoints) {
         return to(ExchangePattern.InOnly, endpoints);
     }
 
@@ -955,7 +960,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
      */
-    public Type inOut(String uri) {
+    public Type inOut(@AsEndpointUri String uri) {
         return to(ExchangePattern.InOut, uri);
     }
 
@@ -983,7 +988,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uris  list of endpoints to send to
      * @return the builder
      */
-    public Type inOut(String... uris) {
+    public Type inOut(@AsEndpointUri String... uris) {
         return to(ExchangePattern.InOut, uris);
     }
 
@@ -1168,7 +1173,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uris  list of endpoints
      * @return the builder
      */
-    public Type pipeline(String... uris) {
+    public Type pipeline(@AsEndpointUri String... uris) {
         PipelineDefinition answer = new PipelineDefinition();
         addOutput(answer);
         answer.to(uris);
@@ -1405,6 +1410,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // okay end this and get back to the try
         def = end();
         return (HystrixDefinition) def;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public ExpressionClause<IdempotentConsumerDefinition> idempotentConsumer() {
+        IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition();
+        addOutput(answer);
+
+        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**
@@ -1723,7 +1741,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param recipients expression to decide the destinations
      * @return the builder
      */
-    public RecipientListDefinition<Type> recipientList(Expression recipients) {
+    public RecipientListDefinition<Type> recipientList(@AsEndpointUri Expression recipients) {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>(recipients);
         addOutput(answer);
         return answer;
@@ -1737,7 +1755,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param delimiter  a custom delimiter to use
      * @return the builder
      */
-    public RecipientListDefinition<Type> recipientList(Expression recipients, String delimiter) {
+    public RecipientListDefinition<Type> recipientList(@AsEndpointUri Expression recipients, String delimiter) {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>(recipients);
         answer.setDelimiter(delimiter);
         addOutput(answer);
@@ -1751,6 +1769,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param delimiter  a custom delimiter to use
      * @return the builder
      */
+    @AsEndpointUri
     public ExpressionClause<RecipientListDefinition<Type>> recipientList(String delimiter) {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>();
         answer.setDelimiter(delimiter);
@@ -1764,6 +1783,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the expression clause to configure the expression to decide the destinations
      */
+    @AsEndpointUri
     public ExpressionClause<RecipientListDefinition<Type>> recipientList() {
         RecipientListDefinition<Type> answer = new RecipientListDefinition<Type>();
         addOutput(answer);
@@ -1872,7 +1892,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                      the list of URIs in the routing slip.
      * @return the builder
      */
-    public RoutingSlipDefinition<Type> routingSlip(Expression expression, String uriDelimiter) {
+    public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri Expression expression, String uriDelimiter) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(expression, uriDelimiter);
         addOutput(answer);
         return answer;
@@ -1890,7 +1910,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression  to decide the destinations
      * @return the builder
      */
-    public RoutingSlipDefinition<Type> routingSlip(Expression expression) {
+    public RoutingSlipDefinition<Type> routingSlip(@AsEndpointUri Expression expression) {
         RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(expression);
         addOutput(answer);
         return answer;
@@ -1925,7 +1945,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *                    until it evaluates <tt>null</tt> to indicate no more destinations.
      * @return the builder
      */
-    public DynamicRouterDefinition<Type> dynamicRouter(Expression expression) {
+    public DynamicRouterDefinition<Type> dynamicRouter(@AsEndpointUri Expression expression) {
         DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<Type>(expression);
         addOutput(answer);
         return answer;
@@ -1942,6 +1962,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the expression clause to configure the expression to decide the destinations,
      * which will be invoked repeatedly until it evaluates <tt>null</tt> to indicate no more destinations.
      */
+    @AsEndpointUri
     public ExpressionClause<DynamicRouterDefinition<Type>> dynamicRouter() {
         DynamicRouterDefinition<Type> answer = new DynamicRouterDefinition<Type>();
         addOutput(answer);
@@ -2096,7 +2117,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ExpressionClause<AggregateDefinition> aggregate(AggregationStrategy aggregationStrategy) {
         AggregateDefinition answer = new AggregateDefinition();
-        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<AggregateDefinition>(answer);
+        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<>(answer);
         answer.setExpression(clause);
         answer.setAggregationStrategy(aggregationStrategy);
         addOutput(answer);
@@ -2173,6 +2194,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public ExpressionClause<ThrottleDefinition> throttle() {
+        ThrottleDefinition answer = new ThrottleDefinition();
+        addOutput(answer);
+
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
      * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
      * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
      * or that we don't exceed an agreed SLA with some external service.
@@ -2243,6 +2277,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         LoopDefinition loop = new LoopDefinition(predicate);
         addOutput(loop);
         return loop;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public ExpressionClause<LoopDefinition> loopDoWhile() {
+        LoopDefinition loop = new LoopDefinition();
+        loop.setDoWhile(true);
+
+        addOutput(loop);
+
+        return ExpressionClause.createAndSetExpression(loop);
     }
 
     /**
@@ -2378,7 +2427,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri  the dynamic endpoint to wiretap to (resolved using simple language by default)
      * @return the builder
      */
-    public WireTapDefinition<Type> wireTap(String uri) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         addOutput(answer);
@@ -2398,7 +2447,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition<Type> wireTap(String uri, ExecutorService executorService) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri, ExecutorService executorService) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         answer.setExecutorService(executorService);
@@ -2419,7 +2468,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition<Type> wireTap(String uri, String executorServiceRef) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri, String executorServiceRef) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         answer.setExecutorServiceRef(executorServiceRef);
@@ -2441,7 +2490,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition<Type> wireTap(String uri, Expression body) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri, Expression body) {
         return wireTap(uri, true, body);
     }
 
@@ -2456,7 +2505,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition<Type> wireTap(String uri, boolean copy) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri, boolean copy) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         answer.setCopy(copy);
@@ -2476,7 +2525,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition<Type> wireTap(String uri, boolean copy, Expression body) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri, boolean copy, Expression body) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         answer.setCopy(copy);
@@ -2499,7 +2548,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition<Type> wireTap(String uri, Processor processor) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri, Processor processor) {
         return wireTap(uri, true, processor);
     }
 
@@ -2515,7 +2564,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition<Type> wireTap(String uri, boolean copy, Processor processor) {
+    public WireTapDefinition<Type> wireTap(@AsEndpointUri String uri, boolean copy, Processor processor) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
         answer.setCopy(copy);
@@ -3094,6 +3143,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Adds a processor which sets the header on the IN message
+     *
+     * @param name  the header name
+     * @param supplier the supplier used to set the header
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type setHeader(String name, final Supplier<Object> supplier) {
+        SetHeaderDefinition answer = new SetHeaderDefinition(name, new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return supplier.get();
+            }
+        });
+
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
      * Adds a processor which sets the header on the OUT message
      *
      * @param name  the header name
@@ -3326,7 +3395,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    public Type enrich(String resourceUri) {
+    public Type enrich(@AsEndpointUri String resourceUri) {
         return enrich(resourceUri, null);
     }
 
@@ -3339,7 +3408,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy) {
+    public Type enrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy) {
         return enrich(resourceUri, aggregationStrategy, false);
     }
 
@@ -3349,7 +3418,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(String resourceUri) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause);
         return clause;
@@ -3361,7 +3430,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(String resourceUri, boolean aggregateOnException) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, false);
         return clause;
@@ -3373,7 +3442,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(String resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, shareUnitOfWork);
         return clause;
@@ -3390,7 +3459,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.Enricher
      */
-    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+    public Type enrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
         return enrich(resourceUri, aggregationStrategy, aggregateOnException, false);
     }
 
@@ -3407,7 +3476,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see org.apache.camel.processor.Enricher
      */
     @SuppressWarnings("unchecked")
-    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException, boolean shareUnitOfWork) {
+    public Type enrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException, boolean shareUnitOfWork) {
         EnrichDefinition answer = new EnrichDefinition();
         answer.setExpression(new ConstantExpression(resourceUri));
         answer.setAggregationStrategy(aggregationStrategy);
@@ -3493,6 +3562,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to set the expression to use for computing the endpoint to use
      * @see org.apache.camel.processor.PollEnricher
      */
+    @AsEndpointUri
     public ExpressionClause<EnrichDefinition> enrich() {
         EnrichDefinition answer = new EnrichDefinition();
         addOutput(answer);
@@ -3514,7 +3584,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(String resourceUri) {
+    public Type pollEnrich(@AsEndpointUri String resourceUri) {
         return pollEnrich(resourceUri, null);
     }
 
@@ -3534,7 +3604,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(String resourceUri, AggregationStrategy aggregationStrategy) {
+    public Type pollEnrich(@AsEndpointUri String resourceUri, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, -1, aggregationStrategy);
     }
 
@@ -3556,7 +3626,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
+    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, timeout, aggregationStrategy, false);
     }
 
@@ -3578,7 +3648,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(String resourceUri, long timeout, String aggregationStrategyRef) {
+    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef) {
         return pollEnrich(resourceUri, timeout, aggregationStrategyRef, false);
     }
 
@@ -3589,7 +3659,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(String resourceUri) {
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri String resourceUri) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         pollEnrich(resourceUri, -1, clause, false);
         return clause;
@@ -3601,7 +3671,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(String resourceUri, long timeout) {
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri String resourceUri, long timeout) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         pollEnrich(resourceUri, timeout, clause, false);
         return clause;
@@ -3613,7 +3683,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(String resourceUri, long timeout, boolean aggregateOnException) {
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(@AsEndpointUri String resourceUri, long timeout, boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         pollEnrich(resourceUri, timeout, clause, aggregateOnException);
         return clause;
@@ -3640,7 +3710,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see org.apache.camel.processor.PollEnricher
      */
     @SuppressWarnings("unchecked")
-    public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(new ConstantExpression(resourceUri));
         pollEnrich.setTimeout(timeout);
@@ -3671,7 +3741,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see org.apache.camel.processor.PollEnricher
      */
     @SuppressWarnings("unchecked")
-    public Type pollEnrich(String resourceUri, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(new ConstantExpression(resourceUri));
         pollEnrich.setTimeout(timeout);
@@ -3698,7 +3768,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    public Type pollEnrich(String resourceUri, long timeout) {
+    public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout) {
         return pollEnrich(resourceUri, timeout, (String) null);
     }
 
@@ -3786,7 +3856,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see org.apache.camel.processor.PollEnricher
      */
     @SuppressWarnings("unchecked")
-    public Type pollEnrich(Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+    public Type pollEnrich(@AsEndpointUri Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(new ExpressionDefinition(expression));
         pollEnrich.setTimeout(timeout);
@@ -3811,6 +3881,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return a expression builder clause to set the expression to use for computing the endpoint to poll from
      * @see org.apache.camel.processor.PollEnricher
      */
+    @AsEndpointUri
     public ExpressionClause<PollEnrichDefinition> pollEnrich() {
         PollEnrichDefinition answer = new PollEnrichDefinition();
         addOutput(answer);
@@ -4021,5 +4092,4 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public String getLabel() {
         return "";
     }
-    
 }

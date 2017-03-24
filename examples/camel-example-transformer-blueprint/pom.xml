@@ -28,7 +28,12 @@
   <artifactId>camel-example-transformer-blueprint</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Example :: Transformer :: Blueprint</name>
-  <description>An example demonstrating declarative transformation along data type declaration using Blueprint DSL</description>
+  <description>An example demonstrating declarative transformation along data type declaration using OSGi Blueprint XML</description>
+
+  <properties>
+    <category>Input/Output Type Contract</category>
+    <title>Transformer OSGi Blueprint</title>
+  </properties>
 
   <dependencies>
     <!-- START SNIPPET: e1 -->

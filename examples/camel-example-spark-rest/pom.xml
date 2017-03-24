@@ -30,6 +30,11 @@
   <name>Camel :: Example :: Spark REST</name>
   <description>An example using Spark REST</description>
 
+  <properties>
+    <category>Rest</category>
+    <title>Spark REST</title>
+  </properties>
+
   <dependencies>
 
     <!-- camel -->

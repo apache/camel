@@ -1,5 +1,7 @@
 ## PGP DataFormat
 
+*Available as of Camel version 2.9*
+
 The PGP link:data-format.html[Data Format] integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
 encryption and decryption of messages using Camel's familiar marshall
@@ -15,7 +17,6 @@ The PGP dataformat supports 15 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -35,7 +36,6 @@ The PGP dataformat supports 15 options which are listed below.
 | signatureVerificationOption |  | String | Controls the behavior for verifying the signature during unmarshaling. There are 4 values possible: optional: The PGP message may or may not contain signatures; if it does contain signatures then a signature verification is executed. required: The PGP message must contain at least one signature; if this is not the case an exception (PGPException) is thrown. A signature verification is executed. ignore: Contained signatures in the PGP message are ignored; no signature verification is executed. no_signature_allowed: The PGP message must not contain a signature; otherwise an exception (PGPException) is thrown.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 ### PGPDataFormat Message Headers

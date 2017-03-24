@@ -1,5 +1,7 @@
 ## Metrics Component
 ifdef::env-github[]
+*Available as of Camel version 2.14.0*
+
 :caution-caption: :boom:
 :important-caption: :exclamation:
 :note-caption: :information_source:
@@ -8,8 +10,6 @@ ifdef::env-github[]
 endif::[]
 
 ### Metrics Component
-
-*Available as of Camel 2.14*
 
 The **metrics:** component allows to collect various metrics directly
 from Camel routes. Supported metric types
@@ -44,38 +44,48 @@ metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ### Options
 
 // component options: START
-The Metrics component supports 1 options which are listed below.
+The Metrics component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| metricRegistry | advanced |  | MetricRegistry | To use a custom configured MetricRegistry.
+| Name | Description | Default | Type
+| **metricRegistry** (advanced) | To use a custom configured MetricRegistry. |  | MetricRegistry
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The Metrics component supports 9 endpoint options which are listed below:
+The Metrics endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    metrics:metricsType:metricsName
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| metricsType | producer |  | MetricsType | *Required* Type of metrics
-| metricsName | producer |  | String | *Required* Name of metrics
-| action | producer |  | MetricsTimerAction | Action when using timer type
-| decrement | producer |  | Long | Decrement value when using counter type
-| increment | producer |  | Long | Increment value when using counter type
-| mark | producer |  | Long | Mark when using meter type
-| subject | producer |  | Object | Subject value when using gauge type
-| value | producer |  | Long | Value value when using histogram type
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **metricsType** | *Required* Type of metrics |  | MetricsType
+| **metricsName** | *Required* Name of metrics |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (7 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **action** (producer) | Action when using timer type |  | MetricsTimerAction
+| **decrement** (producer) | Decrement value when using counter type |  | Long
+| **increment** (producer) | Increment value when using counter type |  | Long
+| **mark** (producer) | Mark when using meter type |  | Long
+| **subject** (producer) | Subject value when using gauge type |  | Object
+| **value** (producer) | Value value when using histogram type |  | Long
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

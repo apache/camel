@@ -1161,20 +1161,23 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
 
         boolean pubSubDomain = false;
         boolean tempDestination = false;
-        if (remaining.startsWith(JmsConfiguration.QUEUE_PREFIX)) {
-            pubSubDomain = false;
-            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.QUEUE_PREFIX.length()), '/');
-        } else if (remaining.startsWith(JmsConfiguration.TOPIC_PREFIX)) {
-            pubSubDomain = true;
-            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TOPIC_PREFIX.length()), '/');
-        } else if (remaining.startsWith(JmsConfiguration.TEMP_QUEUE_PREFIX)) {
-            pubSubDomain = false;
-            tempDestination = true;
-            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_QUEUE_PREFIX.length()), '/');
-        } else if (remaining.startsWith(JmsConfiguration.TEMP_TOPIC_PREFIX)) {
-            pubSubDomain = true;
-            tempDestination = true;
-            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_TOPIC_PREFIX.length()), '/');
+
+        if (ObjectHelper.isNotEmpty(remaining)) {
+            if (remaining.startsWith(JmsConfiguration.QUEUE_PREFIX)) {
+                pubSubDomain = false;
+                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.QUEUE_PREFIX.length()), '/');
+            } else if (remaining.startsWith(JmsConfiguration.TOPIC_PREFIX)) {
+                pubSubDomain = true;
+                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TOPIC_PREFIX.length()), '/');
+            } else if (remaining.startsWith(JmsConfiguration.TEMP_QUEUE_PREFIX)) {
+                pubSubDomain = false;
+                tempDestination = true;
+                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_QUEUE_PREFIX.length()), '/');
+            } else if (remaining.startsWith(JmsConfiguration.TEMP_TOPIC_PREFIX)) {
+                pubSubDomain = true;
+                tempDestination = true;
+                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_TOPIC_PREFIX.length()), '/');
+            }
         }
 
         final String subject = convertPathToActualDestination(remaining, parameters);

@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -27,6 +30,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.DataFormat;
@@ -36,14 +40,19 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * Rest producer for calling remote REST services.
  */
 public class RestProducer extends DefaultAsyncProducer {
 
+    private static final String ACCEPT = "Accept";
     private final CamelContext camelContext;
     private final RestConfiguration configuration;
     private boolean prepareUriTemplate = true;
@@ -137,6 +146,7 @@ public class RestProducer extends DefaultAsyncProducer {
         // uri template may be optional and the user have entered the uri template in the path instead
         String resolvedUriTemplate = getEndpoint().getUriTemplate() != null ? getEndpoint().getUriTemplate() : getEndpoint().getPath();
 
+        Message inMessage = exchange.getIn();
         if (prepareUriTemplate) {
             if (resolvedUriTemplate.contains("{")) {
                 // resolve template and replace {key} with the values form the exchange
@@ -146,7 +156,7 @@ public class RestProducer extends DefaultAsyncProducer {
                 for (String a : arr) {
                     if (a.startsWith("{") && a.endsWith("}")) {
                         String key = a.substring(1, a.length() - 1);
-                        String value = exchange.getIn().getHeader(key, String.class);
+                        String value = inMessage.getHeader(key, String.class);
                         if (value != null) {
                             hasPath = true;
                             csb.append(value);
@@ -162,34 +172,11 @@ public class RestProducer extends DefaultAsyncProducer {
         }
 
         // resolve uri parameters
-        String query = getEndpoint().getQueryParameters();
-        if (query != null) {
-            Map<String, Object> params = URISupport.parseQuery(query);
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                Object v = entry.getValue();
-                if (v != null) {
-                    String a = v.toString();
-                    // decode the key as { may be decoded to %NN
-                    a = URLDecoder.decode(a, "UTF-8");
-                    if (a.startsWith("{") && a.endsWith("}")) {
-                        String key = a.substring(1, a.length() - 1);
-                        String value = exchange.getIn().getHeader(key, String.class);
-                        if (value != null) {
-                            params.put(key, value);
-                        } else {
-                            params.put(entry.getKey(), entry.getValue());
-                        }
-                    } else {
-                        params.put(entry.getKey(), entry.getValue());
-                    }
-                }
-            }
-            query = URISupport.createQueryString(params);
-        }
+        String query = createQueryParameters(getEndpoint().getQueryParameters(), inMessage);
 
         if (query != null) {
             // the query parameters for the rest call to be used
-            exchange.getIn().setHeader(Exchange.REST_HTTP_QUERY, query);
+            inMessage.setHeader(Exchange.REST_HTTP_QUERY, query);
         }
 
         if (hasPath) {
@@ -198,14 +185,25 @@ public class RestProducer extends DefaultAsyncProducer {
             basePath = FileUtil.stripLeadingSeparator(basePath);
             resolvedUriTemplate = FileUtil.stripLeadingSeparator(resolvedUriTemplate);
             // if so us a header for the dynamic uri template so we reuse same endpoint but the header overrides the actual url to use
-            String overrideUri;
-            if (basePath != null) {
-                overrideUri = String.format("%s/%s/%s", host, basePath, resolvedUriTemplate);
-            } else {
-                overrideUri = String.format("%s/%s", host, resolvedUriTemplate);
+            String overrideUri = host;
+            if (!ObjectHelper.isEmpty(basePath)) {
+                overrideUri += "/" + basePath;
+            }
+            if (!ObjectHelper.isEmpty(resolvedUriTemplate)) {
+                overrideUri += "/" + resolvedUriTemplate;
             }
             // the http uri for the rest call to be used
-            exchange.getIn().setHeader(Exchange.REST_HTTP_URI, overrideUri);
+            inMessage.setHeader(Exchange.REST_HTTP_URI, overrideUri);
+        }
+
+        final String produces = getEndpoint().getProduces();
+        if (isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE)) && isNotEmpty(produces)) {
+            inMessage.setHeader(Exchange.CONTENT_TYPE, produces);
+        }
+
+        final String consumes = getEndpoint().getConsumes();
+        if (isEmpty(inMessage.getHeader(ACCEPT)) && isNotEmpty(consumes)) {
+            inMessage.setHeader(ACCEPT, consumes);
         }
     }
 
@@ -372,4 +370,37 @@ public class RestProducer extends DefaultAsyncProducer {
         return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.") || key.startsWith("xml.out.");
     }
 
+    static String createQueryParameters(String query, Message inMessage) throws URISyntaxException, UnsupportedEncodingException {
+        if (query != null) {
+            final Map<String, Object> givenParams = URISupport.parseQuery(query);
+            final Map<String, Object> params = new LinkedHashMap<>(givenParams.size());
+            for (Map.Entry<String, Object> entry : givenParams.entrySet()) {
+                Object v = entry.getValue();
+                if (v != null) {
+                    String a = v.toString();
+                    // decode the key as { may be decoded to %NN
+                    a = URLDecoder.decode(a, "UTF-8");
+                    if (a.startsWith("{") && a.endsWith("}")) {
+                        String key = a.substring(1, a.length() - 1);
+                        boolean optional = false;
+                        if (key.endsWith("?")) {
+                            key = key.substring(0, key.length() - 1);
+                            optional = true;
+                        }
+                        String value = inMessage.getHeader(key, String.class);
+                        if (value != null) {
+                            params.put(key, value);
+                        } else if (!optional) {
+                            // value is null and parameter is not optional
+                            params.put(entry.getKey(), entry.getValue());
+                        }
+                    } else {
+                        params.put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+            query = URISupport.createQueryString(params);
+        }
+        return query;
+    }
 }

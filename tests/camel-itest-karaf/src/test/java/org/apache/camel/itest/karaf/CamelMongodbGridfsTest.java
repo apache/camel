@@ -23,12 +23,11 @@ import org.ops4j.pax.exam.junit.PaxExam;
 @RunWith(PaxExam.class)
 public class CamelMongodbGridfsTest extends BaseKarafTest {
 
-    public static final String COMPONENT = "gridfs"; //extractName(CamelMongodbGridfsTest.class);
+    public static final String COMPONENT = extractName(CamelMongodbGridfsTest.class);
 
     @Test
     public void test() throws Exception {
-        testComponent("mongodb-gridfs", "gridfs");
+        testComponent(COMPONENT);
     }
-
 
 }

@@ -108,14 +108,14 @@ public class XMLTokenizeLanguageTest extends ContextTestSupport {
 
     public void testSendMoreParentsMessageToTokenize() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        if (isJavaVersion("1.8"))  {
-            result.expectedBodiesReceived(
-                "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
-                "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>");
-        } else {
+        if (getJavaMajorVersion() <= 7)  {
             result.expectedBodiesReceived(
                 "<c:child some_attr='a' anotherAttr='a' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>",
                 "<c:child some_attr='b' anotherAttr='b' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/>");
+        } else {
+            result.expectedBodiesReceived(
+                "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
+                "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>");
         }
 
         template.sendBody("direct:start",

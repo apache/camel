@@ -296,6 +296,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the endpoint parameters for the given component name")
+    @Deprecated
     String componentParameterJsonSchema(String componentName) throws Exception;
 
     /**
@@ -375,14 +376,17 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the list of available endpoint paths for the given component name, endpoint properties and completion text")
+    @Deprecated
     List<String> completeEndpointPath(String componentName, Map<String, Object> endpointParameters, String completionText) throws Exception;
 
     /**
      * Returns the HTML documentation for the given camel component
      *
      * @param componentName  the component name
+     * @deprecated use camel-catalog instead
      */
     @ManagedOperation(description = "Returns the HTML documentation for the given camel component")
+    @Deprecated
     String getComponentDocumentation(String componentName) throws IOException;
 
     @ManagedOperation(description = "Returns the JSON representation of all the static and dynamic endpoints defined in all the routes")

@@ -1,6 +1,6 @@
 ## REST Component
 
-*Available as of Camel 2.14*
+*Available as of Camel version 2.14*
 
 The rest component allows to define REST endpoints (consumer) using the
 link:rest-dsl.html[Rest DSL] and plugin to other Camel components as the
@@ -18,47 +18,57 @@ From Camel 2.18 onwards the rest component can also be used as a client (produce
 ### URI Options
 
 // component options: START
-The REST component supports 3 options which are listed below.
+The REST component supports 4 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| componentName | common |  | String | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory (consumer) or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry. If either one is found then that is being used.
-| apiDoc | producer |  | String | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format.
-| host | producer |  | String | Host and port of HTTP service to use (override host in swagger schema)
+| Name | Description | Default | Type
+| **componentName** (common) | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory (consumer) or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry. If either one is found then that is being used. |  | String
+| **apiDoc** (producer) | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
+| **host** (producer) | Host and port of HTTP service to use (override host in swagger schema) |  | String
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
-The REST component supports 17 endpoint options which are listed below:
+The REST endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    rest:method:path:uriTemplate
+
+with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| method | common |  | String | *Required* HTTP method to use.
-| path | common |  | String | *Required* The base path
-| uriTemplate | common |  | String | The uri template
-| componentName | common |  | String | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found then that is being used.
-| consumes | common |  | String | Media type such as: 'text/xml' or 'application/json' this REST service accepts. By default we accept all kinds of types.
-| inType | common |  | String | To declare the incoming POJO binding type as a FQN class name
-| outType | common |  | String | To declare the outgoing POJO binding type as a FQN class name
-| produces | common |  | String | Media type such as: 'text/xml' or 'application/json' this REST service returns.
-| routeId | common |  | String | Name of the route this REST services creates
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| description | consumer |  | String | Human description to document this REST service
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
-| apiDoc | producer |  | String | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format.
-| host | producer |  | String | Host and port of HTTP service to use (override host in swagger schema)
-| queryParameters | producer |  | String | Query parameters for the HTTP service to call
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **method** | *Required* HTTP method to use. |  | String
+| **path** | *Required* The base path |  | String
+| **uriTemplate** | The uri template |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (14 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **componentName** (common) | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found then that is being used. |  | String
+| **consumes** (common) | Media type such as: 'text/xml' or 'application/json' this REST service accepts. By default we accept all kinds of types. |  | String
+| **inType** (common) | To declare the incoming POJO binding type as a FQN class name |  | String
+| **outType** (common) | To declare the outgoing POJO binding type as a FQN class name |  | String
+| **produces** (common) | Media type such as: 'text/xml' or 'application/json' this REST service returns. |  | String
+| **routeId** (common) | Name of the route this REST services creates |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
+| **description** (consumer) | Human description to document this REST service |  | String
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
+| **apiDoc** (producer) | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
+| **host** (producer) | Host and port of HTTP service to use (override host in swagger schema) |  | String
+| **queryParameters** (producer) | Query parameters for the HTTP service to call |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 ### Supported rest components

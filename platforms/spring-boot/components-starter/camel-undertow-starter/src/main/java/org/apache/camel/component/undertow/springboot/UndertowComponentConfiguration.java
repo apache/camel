@@ -41,6 +41,16 @@ public class UndertowComponentConfiguration {
      */
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
+    /**
+     * To configure common options such as thread pools
+     */
+    private UndertowHostOptionsNestedConfiguration hostOptions;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public UndertowHttpBinding getUndertowHttpBinding() {
         return undertowHttpBinding;
@@ -57,5 +67,75 @@ public class UndertowComponentConfiguration {
     public void setSslContextParameters(
             SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public UndertowHostOptionsNestedConfiguration getHostOptions() {
+        return hostOptions;
+    }
+
+    public void setHostOptions(
+            UndertowHostOptionsNestedConfiguration hostOptions) {
+        this.hostOptions = hostOptions;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class UndertowHostOptionsNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.undertow.UndertowHostOptions.class;
+        /**
+         * The number of worker threads to use in a Undertow host.
+         */
+        private Integer workerThreads;
+        /**
+         * The number of io threads to use in a Undertow host.
+         */
+        private Integer ioThreads;
+        /**
+         * The buffer size of the Undertow host.
+         */
+        private Integer bufferSize;
+        /**
+         * Set if the Undertow host should use direct buffers.
+         */
+        private Boolean directBuffers;
+
+        public Integer getWorkerThreads() {
+            return workerThreads;
+        }
+
+        public void setWorkerThreads(Integer workerThreads) {
+            this.workerThreads = workerThreads;
+        }
+
+        public Integer getIoThreads() {
+            return ioThreads;
+        }
+
+        public void setIoThreads(Integer ioThreads) {
+            this.ioThreads = ioThreads;
+        }
+
+        public Integer getBufferSize() {
+            return bufferSize;
+        }
+
+        public void setBufferSize(Integer bufferSize) {
+            this.bufferSize = bufferSize;
+        }
+
+        public Boolean getDirectBuffers() {
+            return directBuffers;
+        }
+
+        public void setDirectBuffers(Boolean directBuffers) {
+            this.directBuffers = directBuffers;
+        }
     }
 }

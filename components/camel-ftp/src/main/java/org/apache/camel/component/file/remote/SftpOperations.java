@@ -435,7 +435,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             channel.rm(name);
             return true;
         } catch (SftpException e) {
-            LOG.warn("Cannot delete file: " + name, e);
+            LOG.debug("Cannot delete file: " + name, e);
             throw new GenericFileOperationFailedException("Cannot delete file: " + name, e);
         }
     }
@@ -447,7 +447,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             channel.rename(from, to);
             return true;
         } catch (SftpException e) {
-            LOG.warn("Cannot rename file from: " + from + " to: " + to, e);
+            LOG.debug("Cannot rename file from: " + from + " to: " + to, e);
             throw new GenericFileOperationFailedException("Cannot rename file from: " + from + " to: " + to, e);
         }
     }

@@ -617,4 +617,19 @@ public final class URISupport {
         return rc;
     }
 
+    public static String pathAndQueryOf(final URI uri) {
+        final String path = uri.getPath();
+
+        String pathAndQuery = path;
+        if (ObjectHelper.isEmpty(path)) {
+            pathAndQuery = "/";
+        }
+
+        final String query = uri.getQuery();
+        if (ObjectHelper.isNotEmpty(query)) {
+            pathAndQuery += "?" + query;
+        }
+
+        return pathAndQuery;
+    }
 }

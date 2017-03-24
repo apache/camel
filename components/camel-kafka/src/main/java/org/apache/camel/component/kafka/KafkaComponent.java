@@ -23,8 +23,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 public class KafkaComponent extends UriEndpointComponent {
+
+    private KafkaConfiguration configuration;
 
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
@@ -39,19 +42,56 @@ public class KafkaComponent extends UriEndpointComponent {
 
     @Override
     protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
-        KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
-        String brokers = remaining.split("\\?")[0];
-        if (brokers != null) {
-            endpoint.getConfiguration().setBrokers(brokers);
+        if (ObjectHelper.isEmpty(remaining)) {
+            throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
         }
 
-        // configure component options before endpoint properties which can override from params
-        endpoint.getConfiguration().setWorkerPool(workerPool);
+        KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
+
+        if (configuration != null) {
+            KafkaConfiguration copy = configuration.copy();
+            endpoint.setConfiguration(copy);
+        }
+
+        endpoint.getConfiguration().setTopic(remaining);
+        endpoint.getConfiguration().setWorkerPool(getWorkerPool());
+
+        // brokers can be configured on either component or endpoint level
+        // and the consumer and produce is aware of this and act accordingly
 
         setProperties(endpoint.getConfiguration(), params);
         setProperties(endpoint, params);
         return endpoint;
     }
+
+    public KafkaConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Allows to pre-configure the Kafka component with common options that the endpoints will reuse.
+     */
+    public void setConfiguration(KafkaConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getBrokers() {
+        return configuration != null ? configuration.getBrokers() : null;
+    }
+
+    /**
+     * URL of the Kafka brokers to use.
+     * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
+     * <p/>
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
+     */
+    public void setBrokers(String brokers) {
+        if (configuration == null) {
+            configuration = new KafkaConfiguration();
+        }
+        configuration.setBrokers(brokers);
+    }
+
 
     public ExecutorService getWorkerPool() {
         return workerPool;

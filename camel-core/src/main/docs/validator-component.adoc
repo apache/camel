@@ -1,5 +1,7 @@
 ## Validator Component
 
+*Available as of Camel version 1.1*
+
 The Validation component performs XML validation of the message body
 using the JAXP Validation API and based on any of the supported XML
 schema languages, which defaults to http://www.w3.org/XML/Schema[XML
@@ -50,41 +52,51 @@ provided directly in the camel-core.
 ### Options
 
 // component options: START
-The Validator component supports 1 options which are listed below.
+The Validator component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
+| Name | Description | Default | Type
+| **resourceResolverFactory** (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResource ResolverFactory
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The Validator component supports 12 endpoint options which are listed below:
+The Validator endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    validator:resourceUri
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* URL to a local resource on the classpathor a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
-| failOnNullBody | producer | true | boolean | Whether to fail if no body exists.
-| failOnNullHeader | producer | true | boolean | Whether to fail if no header exists when validating against a header.
-| headerName | producer |  | String | To validate against a header instead of the message body.
-| errorHandler | advanced |  | ValidatorErrorHandler | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.
-| resourceResolver | advanced |  | LSResourceResolver | To use a custom LSResourceResolver. See also link setResourceResolverFactory(ValidatorResourceResolverFactory)
-| resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method link setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used
-| schemaFactory | advanced |  | SchemaFactory | To use a custom javax.xml.validation.SchemaFactory
-| schemaLanguage | advanced | http://www.w3.org/2001/XMLSchema | String | Configures the W3C XML Schema Namespace URI.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| useDom | advanced | false | boolean | Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.
-| useSharedSchema | advanced | true | boolean | Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.
+| Name | Description | Default | Type
+| **resourceUri** | *Required* URL to a local resource on the classpathor a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the XSD to validate against. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (11 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **failOnNullBody** (producer) | Whether to fail if no body exists. | true | boolean
+| **failOnNullHeader** (producer) | Whether to fail if no header exists when validating against a header. | true | boolean
+| **headerName** (producer) | To validate against a header instead of the message body. |  | String
+| **errorHandler** (advanced) | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | ValidatorErrorHandler
+| **resourceResolver** (advanced) | To use a custom LSResourceResolver. See also link setResourceResolverFactory(ValidatorResourceResolverFactory) |  | LSResourceResolver
+| **resourceResolverFactory** (advanced) | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method link setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used |  | ValidatorResource ResolverFactory
+| **schemaFactory** (advanced) | To use a custom javax.xml.validation.SchemaFactory |  | SchemaFactory
+| **schemaLanguage** (advanced) | Configures the W3C XML Schema Namespace URI. | http://www.w3.org/2001/XMLSchema | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **useDom** (advanced) | Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator. | false | boolean
+| **useSharedSchema** (advanced) | Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue. | true | boolean
+|=======================================================================
 // endpoint options: END
 
 

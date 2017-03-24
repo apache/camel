@@ -78,13 +78,6 @@
 
       <!-- Added to match the version of related libraries provided by spring-boot -->
       <dependency>
-        <groupId>com.hazelcast</groupId>
-        <artifactId>hazelcast-client</artifactId>
-        <version>${hazelcast-version}</version>
-      </dependency>
-
-      <!-- Added to match the version of related libraries provided by spring-boot -->
-      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-ext</artifactId>
         <version>${slf4j-version}</version>

@@ -47,10 +47,11 @@ import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.util.JsonSchemaHelper;
 
 /**
- * Abstract {@link org.apache.camel.commands.LocalCamelController} that implementators should extend when implemeting
+ * Abstract {@link org.apache.camel.commands.LocalCamelController} that implementators should extend when implementing
  * a controller that runs locally in the same JVM as Camel.
  */
 public abstract class AbstractLocalCamelController extends AbstractCamelController implements LocalCamelController {
@@ -639,6 +640,27 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                     row.put("to", transformer.getTo().toString());
                     row.put("state", transformer.getStatus().toString());
                     row.put("description", transformer.toString());
+                    answer.add(row);
+                }
+            }
+        }
+        return answer;
+    }
+
+    @Override
+    public List<Map<String, String>> getValidators(String camelContextName) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        if (camelContextName != null) {
+            CamelContext context = this.getLocalCamelContext(camelContextName);
+            if (context != null) {
+                List<Validator> validators = new ArrayList<Validator>(context.getValidatorRegistry().values());
+                for (Validator validator : validators) {
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("camelContextName", context.getName());
+                    row.put("type", validator.getType().toString());
+                    row.put("state", validator.getStatus().toString());
+                    row.put("description", validator.toString());
                     answer.add(row);
                 }
             }

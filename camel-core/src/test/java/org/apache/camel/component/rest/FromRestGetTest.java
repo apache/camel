@@ -113,8 +113,8 @@ public class FromRestGetTest extends ContextTestSupport {
                         .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
                         .defaultValue("1").name("header_count").required(true)
-                        .endParam().
-                        param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
+                        .endParam()
+                        .param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
                         .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class)

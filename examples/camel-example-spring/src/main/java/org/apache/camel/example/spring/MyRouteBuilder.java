@@ -39,7 +39,7 @@ public class MyRouteBuilder extends RouteBuilder {
                 to("jms:test.MyQueue");
 
         from("jms:test.MyQueue").
-                to("file://target/test?noop=true");
+                to("file://target/test");
 
         // set up a listener on the file component
         from("file://target/test?noop=true").

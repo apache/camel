@@ -30,7 +30,7 @@ public class AsteriskProducerTest extends CamelTestSupport {
     private String hostname = "192.168.0.254";
     private String username = "username";
     private String password = "password";
-    private String action = AsteriskActionEnum.EXTENSION_STATE.name();
+    private String action = AsteriskAction.EXTENSION_STATE.name();
 
     @Test
     public void testSnmpProducer() throws Exception {

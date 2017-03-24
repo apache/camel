@@ -90,13 +90,18 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals(new Integer(123), exchange.getIn().getHeader("bar", Integer.class));
         assertEquals("123", exchange.getIn().getHeader("bar", String.class));
         assertEquals(123, exchange.getIn().getHeader("bar", 234));
+        assertEquals(123, exchange.getIn().getHeader("bar", () -> 456));
+        assertEquals(456, exchange.getIn().getHeader("baz", () -> 456));
 
         assertEquals(123, exchange.getIn().getHeader("bar", 234));
         assertEquals(new Integer(123), exchange.getIn().getHeader("bar", 234, Integer.class));
         assertEquals("123", exchange.getIn().getHeader("bar", "234", String.class));
+        assertEquals("123", exchange.getIn().getHeader("bar", () -> "456", String.class));
+        assertEquals("456", exchange.getIn().getHeader("baz", () -> "456", String.class));
 
         assertEquals(234, exchange.getIn().getHeader("cheese", 234));
         assertEquals("234", exchange.getIn().getHeader("cheese", 234, String.class));
+        assertEquals("456", exchange.getIn().getHeader("cheese", () -> 456, String.class));
     }
 
     public void testProperty() throws Exception {

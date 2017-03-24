@@ -32,6 +32,12 @@ public class ScpComponentConfiguration {
      * on the verbose logging again.
      */
     private Boolean verboseLogging = false;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Boolean getVerboseLogging() {
         return verboseLogging;
@@ -39,5 +45,14 @@ public class ScpComponentConfiguration {
 
     public void setVerboseLogging(Boolean verboseLogging) {
         this.verboseLogging = verboseLogging;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

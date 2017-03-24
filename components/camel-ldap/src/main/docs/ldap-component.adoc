@@ -1,5 +1,7 @@
 ## LDAP Component
 
+*Available as of Camel version 1.5*
+
 The *ldap* component allows you to perform searches in LDAP servers
 using filters as the message payload. +
  This component uses standard JNDI (`javax.naming` package) to access
@@ -45,20 +47,31 @@ The LDAP component has no options.
 
 
 // endpoint options: START
-The LDAP component supports 6 endpoint options which are listed below:
+The LDAP endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    ldap:dirContextName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| dirContextName | producer |  | String | *Required* Name of javax.naming.directory.DirContext bean to lookup in the registry.
-| base | producer | ou=system | String | The base DN for searches.
-| pageSize | producer |  | Integer | When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query). To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown)
-| returnedAttributes | producer |  | String | Comma-separated list of attributes that should be set in each entry of the result
-| scope | producer | subtree | String | Specifies how deeply to search the tree of entries starting at the base DN.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **dirContextName** | *Required* Name of javax.naming.directory.DirContext bean to lookup in the registry. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **base** (producer) | The base DN for searches. | ou=system | String
+| **pageSize** (producer) | When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query). To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown) |  | Integer
+| **returnedAttributes** (producer) | Comma-separated list of attributes that should be set in each entry of the result |  | String
+| **scope** (producer) | Specifies how deeply to search the tree of entries starting at the base DN. | subtree | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

@@ -1,6 +1,6 @@
 ## AHC Component
 
-*Available as of Camel 2.8*
+*Available as of Camel version 2.8*
 
 The *ahc:* component provides HTTP based link:endpoint.html[endpoints]
 for consuming external HTTP resources (as a client to call external
@@ -44,28 +44,39 @@ You can append query options to the URI in the following format,
 
 
 // endpoint options: START
-The AHC component supports 14 endpoint options which are listed below:
+The AHC endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    ahc:httpUri
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| httpUri | producer |  | URI | *Required* The URI to use such as http://hostname:port/path
-| bridgeEndpoint | producer | false | boolean | If the option is true then the Exchange.HTTP_URI header is ignored and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back.
-| bufferSize | producer | 4096 | int | The initial in-memory buffer size used when transferring data between Camel and AHC Client.
-| connectionClose | producer | false | boolean | Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default
-| cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
-| headerFilterStrategy | producer |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-| throwExceptionOnFailure | producer | true | boolean | Option to disable throwing the AhcOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
-| transferException | producer | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or Servlet Camel components). On the producer side the exception will be deserialized and thrown as is instead of the AhcOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| binding | advanced |  | AhcBinding | To use a custom AhcBinding which allows to control how to bind between AHC and Camel.
-| clientConfig | advanced |  | AsyncHttpClientConfig | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
-| clientConfigOptions | advanced |  | Map | To configure the AsyncHttpClientConfig using the key/values from the Map.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| clientConfigRealmOptions | security |  | Map | To configure the AsyncHttpClientConfig Realm using the key/values from the Map.
-| sslContextParameters | security |  | SSLContextParameters | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. See Using the JSSE Configuration Utility. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.
+| Name | Description | Default | Type
+| **httpUri** | *Required* The URI to use such as http://hostname:port/path |  | URI
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (13 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeEndpoint** (producer) | If the option is true then the Exchange.HTTP_URI header is ignored and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back. | false | boolean
+| **bufferSize** (producer) | The initial in-memory buffer size used when transferring data between Camel and AHC Client. | 4096 | int
+| **connectionClose** (producer) | Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default | false | boolean
+| **cookieHandler** (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
+| **headerFilterStrategy** (producer) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| **throwExceptionOnFailure** (producer) | Option to disable throwing the AhcOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
+| **transferException** (producer) | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or Servlet Camel components). On the producer side the exception will be deserialized and thrown as is instead of the AhcOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| **binding** (advanced) | To use a custom AhcBinding which allows to control how to bind between AHC and Camel. |  | AhcBinding
+| **clientConfig** (advanced) | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance. |  | AsyncHttpClientConfig
+| **clientConfigOptions** (advanced) | To configure the AsyncHttpClientConfig using the key/values from the Map. |  | Map
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **clientConfigRealmOptions** (security) | To configure the AsyncHttpClientConfig Realm using the key/values from the Map. |  | Map
+| **sslContextParameters** (security) | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. See Using the JSSE Configuration Utility. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. |  | SSLContextParameters
+|=======================================================================
 // endpoint options: END
 
 
@@ -86,22 +97,21 @@ The AHC component supports 14 endpoint options which are listed below:
 
 
 // component options: START
-The AHC component supports 6 options which are listed below.
+The AHC component supports 7 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| client | advanced |  | AsyncHttpClient | To use a custom AsyncHttpClient
-| binding | advanced |  | AhcBinding | To use a custom AhcBinding which allows to control how to bind between AHC and Camel.
-| clientConfig | advanced |  | AsyncHttpClientConfig | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
-| sslContextParameters | security |  | SSLContextParameters | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.
-| allowJavaSerializedObject | advanced | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| Name | Description | Default | Type
+| **client** (advanced) | To use a custom AsyncHttpClient |  | AsyncHttpClient
+| **binding** (advanced) | To use a custom AhcBinding which allows to control how to bind between AHC and Camel. |  | AhcBinding
+| **clientConfig** (advanced) | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance. |  | AsyncHttpClientConfig
+| **sslContextParameters** (security) | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. |  | SSLContextParameters
+| **allowJavaSerialized Object** (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| **headerFilterStrategy** (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 

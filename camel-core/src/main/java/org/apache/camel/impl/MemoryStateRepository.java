@@ -29,7 +29,8 @@ import org.apache.camel.support.ServiceSupport;
  */
 @ManagedResource(description = "Memory based state repository")
 public class MemoryStateRepository extends ServiceSupport implements StateRepository<String, String> {
-    private ConcurrentMap<String, String> cache = new ConcurrentHashMap<>();
+
+    private final ConcurrentMap<String, String> cache = new ConcurrentHashMap<>();
 
     @Override
     @ManagedOperation(description = "Adds the value of the given key to the store")
@@ -45,12 +46,11 @@ public class MemoryStateRepository extends ServiceSupport implements StateReposi
 
     @Override
     protected void doStart() throws Exception {
-        cache = new ConcurrentHashMap<>();
+        // noop
     }
 
     @Override
     protected void doStop() throws Exception {
         cache.clear();
-        cache = null;
     }
 }

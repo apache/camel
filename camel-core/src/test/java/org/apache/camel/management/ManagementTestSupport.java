@@ -16,7 +16,11 @@
  */
 package org.apache.camel.management;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
 import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 
 import org.apache.camel.ContextTestSupport;
 
@@ -36,4 +40,15 @@ public abstract class ManagementTestSupport extends ContextTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    @SuppressWarnings("unchecked")
+    protected <T> T invoke(MBeanServer server, ObjectName name, String operationName)
+        throws InstanceNotFoundException, MBeanException, ReflectionException {
+        return (T)server.invoke(name, operationName, null, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T invoke(MBeanServer server, ObjectName name, String operationName, Object params[], String signature[])
+            throws InstanceNotFoundException, MBeanException, ReflectionException {
+        return (T)server.invoke(name, operationName, params, signature);
+    }
 }

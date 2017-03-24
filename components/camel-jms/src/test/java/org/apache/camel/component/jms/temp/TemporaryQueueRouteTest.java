@@ -31,7 +31,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * @version 
  */
 public class TemporaryQueueRouteTest extends CamelTestSupport {
-    protected String endpointUri = "activemq:temp:queue:cheese";
+    protected String endpointUri = "activemq:temp-queue:cheese";
 
     @Test
     public void testSendMessage() throws Exception {

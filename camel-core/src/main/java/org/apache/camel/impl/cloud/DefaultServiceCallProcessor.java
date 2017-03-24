@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
 import org.apache.camel.AsyncCallback;
@@ -81,6 +80,39 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
     }
 
     // *************************************
+    // Properties
+    // *************************************
+
+
+    public ExchangePattern getExchangePattern() {
+        return exchangePattern;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public LoadBalancer getLoadBalancer() {
+        return loadBalancer;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+    // *************************************
     // Lifecycle
     // *************************************
 
@@ -112,6 +144,7 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
     // *************************************
     // Processor
     // *************************************
+
 
     @Override
     public void process(Exchange exchange) throws Exception {

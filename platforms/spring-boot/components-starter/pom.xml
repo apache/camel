@@ -83,6 +83,7 @@
     <module>camel-atom-starter</module>
     <module>camel-avro-starter</module>
     <module>camel-aws-starter</module>
+    <module>camel-azure-starter</module>
     <module>camel-bam-starter</module>
     <module>camel-barcode-starter</module>
     <module>camel-base64-starter</module>
@@ -122,6 +123,7 @@
     <module>camel-eclipse-starter</module>
     <module>camel-ehcache-starter</module>
     <module>camel-elasticsearch-starter</module>
+    <module>camel-elasticsearch5-starter</module>
     <module>camel-elsql-starter</module>
     <module>camel-etcd-starter</module>
     <module>camel-exec-starter</module>
@@ -221,8 +223,10 @@
     <module>camel-netty4-starter</module>
     <module>camel-ognl-starter</module>
     <module>camel-olingo2-starter</module>
+    <module>camel-olingo4-starter</module>
     <module>camel-openshift-starter</module>
     <module>camel-openstack-starter</module>
+    <module>camel-opentracing-starter</module>
     <module>camel-optaplanner-starter</module>
     <module>camel-paho-starter</module>
     <module>camel-pdf-starter</module>
@@ -232,6 +236,8 @@
     <module>camel-quartz2-starter</module>
     <module>camel-quickfix-starter</module>
     <module>camel-rabbitmq-starter</module>
+    <module>camel-reactive-streams-starter</module>
+    <module>camel-rest-swagger-starter</module>
     <module>camel-restlet-starter</module>
     <module>camel-ribbon-starter</module>
     <module>camel-rmi-starter</module>
@@ -242,7 +248,6 @@
     <module>camel-salesforce-starter</module>
     <module>camel-sap-netweaver-starter</module>
     <module>camel-saxon-starter</module>
-    <module>camel-scala-starter</module>
     <module>camel-schematron-starter</module>
     <module>camel-scr-starter</module>
     <module>camel-script-starter</module>
@@ -252,6 +257,7 @@
     <module>camel-shiro-starter</module>
     <module>camel-sip-starter</module>
     <module>camel-sjms-starter</module>
+    <module>camel-sjms2-starter</module>
     <module>camel-slack-starter</module>
     <module>camel-smpp-starter</module>
     <module>camel-snakeyaml-starter</module>
@@ -262,6 +268,7 @@
     <module>camel-splunk-starter</module>
     <module>camel-spring-batch-starter</module>
     <module>camel-spring-boot-starter</module>
+    <module>camel-spring-cloud-netflix-starter</module>
     <module>camel-spring-cloud-starter</module>
     <module>camel-spring-dm-starter</module>
     <module>camel-spring-integration-starter</module>
@@ -282,6 +289,7 @@
     <module>camel-tagsoup-starter</module>
     <module>camel-tarfile-starter</module>
     <module>camel-telegram-starter</module>
+    <module>camel-tika-starter</module>
     <module>camel-twitter-starter</module>
     <module>camel-undertow-starter</module>
     <module>camel-univocity-parsers-starter</module>
@@ -297,8 +305,28 @@
     <module>camel-xmpp-starter</module>
     <module>camel-xstream-starter</module>
     <module>camel-yammer-starter</module>
+    <module>camel-zendesk-starter</module>
     <module>camel-zipfile-starter</module>
     <module>camel-zipkin-starter</module>
+    <module>camel-zookeeper-master-starter</module>
     <module>camel-zookeeper-starter</module>
   </modules>
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-modules java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

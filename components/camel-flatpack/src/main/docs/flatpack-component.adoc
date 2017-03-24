@@ -1,5 +1,7 @@
 ## Flatpack Component
 
+*Available as of Camel version 1.4*
+
 The Flatpack component supports fixed width and delimited file parsing
 via the http://flatpack.sourceforge.net[FlatPack library]. +
  *Notice:* This component only supports consuming from flatpack files to
@@ -43,41 +45,52 @@ The Flatpack component has no options.
 // component options: END
 
 // endpoint options: START
-The Flatpack component supports 27 endpoint options which are listed below:
+The Flatpack endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    flatpack:type:resourceUri
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| type | common | delim | FlatpackType | Whether to use fixed or delimiter
-| resourceUri | common |  | String | *Required* URL for loading the flatpack mapping file from classpath or file system
-| allowShortLines | common | false | boolean | Allows for lines to be shorter than expected and ignores the extra characters
-| delimiter | common | , | char | The default character delimiter for delimited files.
-| ignoreExtraColumns | common | false | boolean | Allows for lines to be longer than expected and ignores the extra characters
-| ignoreFirstRecord | common | true | boolean | Whether the first line is ignored for delimited files (for the column headers).
-| splitRows | common | true | boolean | Sets the Component to send each row as a separate exchange once parsed
-| textQualifier | common |  | char | The text qualifier for delimited files.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| Name | Description | Default | Type
+| **type** | Whether to use fixed or delimiter | delim | FlatpackType
+| **resourceUri** | *Required* URL for loading the flatpack mapping file from classpath or file system |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (25 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **allowShortLines** (common) | Allows for lines to be shorter than expected and ignores the extra characters | false | boolean
+| **delimiter** (common) | The default character delimiter for delimited files. | , | char
+| **ignoreExtraColumns** (common) | Allows for lines to be longer than expected and ignores the extra characters | false | boolean
+| **ignoreFirstRecord** (common) | Whether the first line is ignored for delimited files (for the column headers). | true | boolean
+| **splitRows** (common) | Sets the Component to send each row as a separate exchange once parsed | true | boolean
+| **textQualifier** (common) | The text qualifier for delimited files. |  | char
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|=======================================================================
 // endpoint options: END
 
 ### Examples

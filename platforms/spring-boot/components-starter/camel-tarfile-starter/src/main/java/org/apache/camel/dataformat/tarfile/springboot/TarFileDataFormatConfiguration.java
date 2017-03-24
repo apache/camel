@@ -33,6 +33,11 @@ public class TarFileDataFormatConfiguration {
      */
     private Boolean usingIterator = false;
     /**
+     * If the tar file has more then one entry setting this option to true
+     * allows to get the iterator even if the directory is empty
+     */
+    private Boolean allowEmptyDirectory = false;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML or
@@ -46,6 +51,14 @@ public class TarFileDataFormatConfiguration {
 
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
+    }
+
+    public Boolean getAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
+
+    public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
     public Boolean getContentTypeHeader() {

@@ -1,6 +1,6 @@
 ## Barcode DataFormat
 
-*Available as of Camel 2.14*
+*Available as of Camel version 2.14*
 
 The barcode data format is based on the
 https://github.com/zxing/zxing[zxing library]. The goal of this
@@ -33,7 +33,6 @@ The Barcode dataformat supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -43,7 +42,6 @@ The Barcode dataformat supports 5 options which are listed below.
 | barcodeFormat |  | String | Barcode format such as QR-Code
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 ### Using the Java DSL

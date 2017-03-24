@@ -9,7 +9,11 @@
   },
   "DailyApiRequests" : {
     "Max" : 15000,
-    "Remaining" : 14998
+    "Remaining" : 14998,
+    "Camel Salesman" : {
+      "Max" : 1,
+      "Remaining" : 2
+    }
   },
   "DailyAsyncApexExecutions" : {
     "Max" : 250000,
@@ -17,7 +21,11 @@
   },
   "DailyBulkApiRequests" : {
     "Max" : 5000,
-    "Remaining" : 5000
+    "Remaining" : 5000,
+    "Camel Salesman" : {
+      "Max": 3,
+      "Remaining" : 4
+    }
   },
   "DailyDurableGenericStreamingApiEvents" : {
     "Max" : 10000,

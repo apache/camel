@@ -1,6 +1,6 @@
 ## AWS CloudWatch Component
 
-*Available as of Camel 2.11
+*Available as of Camel version 2.11*
 
 The CW component allows messages to be sent to an
 http://aws.amazon.com/cloudwatch/[Amazon CloudWatch] metrics. The
@@ -35,26 +35,37 @@ The AWS CloudWatch component has no options.
 
 
 // endpoint options: START
-The AWS CloudWatch component supports 12 endpoint options which are listed below:
+The AWS CloudWatch endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    aws-cw:namespace
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| namespace | producer |  | String | *Required* The metric namespace
-| accessKey | producer |  | String | Amazon AWS Access Key
-| amazonCwClient | producer |  | AmazonCloudWatch | To use the AmazonCloudWatch as the client
-| amazonCwEndpoint | producer |  | String | The region with which the AWS-CW client wants to work with.
-| name | producer |  | String | The metric name
-| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
-| secretKey | producer |  | String | Amazon AWS Secret Key
-| timestamp | producer |  | Date | The metric timestamp
-| unit | producer |  | String | The metric unit
-| value | producer |  | Double | The metric value
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **namespace** | *Required* The metric namespace |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (11 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **accessKey** (producer) | Amazon AWS Access Key |  | String
+| **amazonCwClient** (producer) | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
+| **amazonCwEndpoint** (producer) | The region with which the AWS-CW client wants to work with. |  | String
+| **name** (producer) | The metric name |  | String
+| **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
+| **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **secretKey** (producer) | Amazon AWS Secret Key |  | String
+| **timestamp** (producer) | The metric timestamp |  | Date
+| **unit** (producer) | The metric unit |  | String
+| **value** (producer) | The metric value |  | Double
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

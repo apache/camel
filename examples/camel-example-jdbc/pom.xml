@@ -32,6 +32,8 @@
   <description>An example for showing Camel using JDBC component</description>
 
   <properties>
+    <category>Database</category>
+    <title>JDBC</title>
     <camel.osgi.export.pkg>org.apache.camel.example.jdbc.*</camel.osgi.export.pkg>
     <!-- dynamic import for the Derby JDBC driver -->
     <camel.osgi.dynamic>*</camel.osgi.dynamic>

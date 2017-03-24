@@ -17,6 +17,7 @@
 package org.apache.camel.component.hystrix.processor;
 
 public interface HystrixConstants {
+    String DEFAULT_HYSTRIX_CONFIGURATION_ID = "hystrix-configuration";
 
     // Hystrix EIP response properties
     String HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION = "CamelHystrixSuccessfulExecution";

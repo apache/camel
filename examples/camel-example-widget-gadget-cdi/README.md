@@ -67,11 +67,6 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 
 The Camel application is configured in the `org.apache.camel.example.widget.WidgetApplication.java` file.
 
-### Documentation
-
-This example is documented at
-	<http://camel.apache.org/widget-gadget.html>
-
 ### Forum, Help, etc 
 
 If you hit an problems please let us know on the Camel Forums

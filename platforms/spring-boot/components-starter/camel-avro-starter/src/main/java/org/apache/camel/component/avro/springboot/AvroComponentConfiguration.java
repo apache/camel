@@ -33,6 +33,12 @@ public class AvroComponentConfiguration {
      * To use a shared AvroConfiguration to configure options once
      */
     private AvroConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public AvroConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -41,6 +47,15 @@ public class AvroComponentConfiguration {
     public void setConfiguration(
             AvroConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class AvroConfigurationNestedConfiguration {
@@ -80,12 +95,12 @@ public class AvroComponentConfiguration {
          * only with protocol parameter because for protocolClassName protocol
          * type will be auto detected
          */
-        private Boolean reflectionProtocol;
+        private Boolean reflectionProtocol = false;
         /**
          * If true, consumer parameter won't be wrapped into array. Will fail if
          * protocol specifies more then 1 parameter for the message
          */
-        private Boolean singleParameter;
+        private Boolean singleParameter = false;
 
         public String getHost() {
             return host;

@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Transforms the message using a XQuery template using Saxon.
  */
-@UriEndpoint(scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri", label = "transformation")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri", label = "transformation")
 public class XQueryEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);
@@ -49,6 +49,8 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     private String resourceUri;
     @UriParam(label = "advanced")
     private Configuration configuration;
+    @UriParam(label = "advanced")
+    private Map<String, Object> configurationProperties = new HashMap<>();
     @UriParam(label = "advanced")
     private StaticQueryContext staticQueryContext;
     @UriParam(label = "advanced")
@@ -94,6 +96,17 @@ public class XQueryEndpoint extends ProcessorEndpoint {
      */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    public Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    /**
+     * To set custom Saxon configuration properties
+     */
+    public void setConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.configurationProperties = configurationProperties;
     }
 
     public StaticQueryContext getStaticQueryContext() {
@@ -215,6 +228,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
 
         this.xquery = XQueryBuilder.xquery(url);
         this.xquery.setConfiguration(getConfiguration());
+        this.xquery.setConfigurationProperties(getConfigurationProperties());
         this.xquery.setStaticQueryContext(getStaticQueryContext());
         this.xquery.setParameters(getParameters());
         this.xquery.setNamespaces(namespacePrefixes);

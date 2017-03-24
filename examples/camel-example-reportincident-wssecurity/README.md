@@ -121,11 +121,6 @@ To run the example on Apache Karaf 4.x
 #### Step 6: Check email
  Check through a POP request that a message has been published in the mailbox of someone (email address : incident@mycompany.com)
 
-### Documentation
-
-This example is documented at
-  <http://camel.apache.org/tutorial-osgi-camel-part1.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

@@ -62,9 +62,8 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         assertTrue(cfg.isStartTlsEnabled());
 
         Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
-        assertNull(javaMailProperties.get("mail." + protocol + ".socketFactory"));
-        assertNull(javaMailProperties.get("mail." + protocol + ".socketFactory.fallback"));
-        assertNull(javaMailProperties.get("mail." + protocol + ".socketFactory.port"));
+        assertNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory"));
+        assertNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }
 
     @Test
@@ -111,9 +110,8 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         assertTrue(cfg.isStartTlsEnabled());
 
         Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory"));
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.fallback"));
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.port"));
+        assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory"));
+        assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }
 
     @Test
@@ -133,8 +131,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         assertTrue(cfg.isStartTlsEnabled());
 
         Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.class"));
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.fallback"));
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".socketFactory.port"));
+        assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.class"));
+        assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }
 }

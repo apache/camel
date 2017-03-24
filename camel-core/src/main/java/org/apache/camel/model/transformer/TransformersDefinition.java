@@ -38,17 +38,17 @@ public class TransformersDefinition {
         @XmlElement(required = false, name = "endpointTransformer", type = EndpointTransformerDefinition.class),
         @XmlElement(required = false, name = "customTransformer", type = CustomTransformerDefinition.class)}
         )
-    private List<TransformerDefinition> transforms;
+    private List<TransformerDefinition> transformers;
 
     /**
      * The configured transformers
      */
-    public void setTransformers(List<TransformerDefinition> transforms) {
-        this.transforms = transforms;
+    public void setTransformers(List<TransformerDefinition> transformers) {
+        this.transformers = transformers;
     }
 
-    public List<TransformerDefinition> getTransforms() {
-        return transforms;
+    public List<TransformerDefinition> getTransformers() {
+        return transformers;
     }
 
 }

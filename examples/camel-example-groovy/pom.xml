@@ -28,8 +28,12 @@
 
   <artifactId>camel-example-groovy</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: Groovy</name>
-  <description>A Camel route using Groovy</description>
+  <name>Camel :: Example :: Groovy (deprecated)</name>
+  <description>A Camel route using Groovy DSL</description>
+
+  <properties>
+    <category>Other Languages</category>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -38,7 +42,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-groovy</artifactId>
+      <artifactId>camel-groovy-dsl</artifactId>
     </dependency>
 
     <!-- used for jetty -->
@@ -136,4 +140,31 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <!--Skip compile on Java 9 https://issues.apache.org/jira/browse/CAMEL-10905 -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-compile</id>
+                <phase>none</phase>
+              </execution>
+              <execution>
+                <id>default-testCompile</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

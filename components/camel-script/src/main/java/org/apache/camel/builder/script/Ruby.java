@@ -34,6 +34,7 @@ import org.apache.camel.language.LanguageAnnotation;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "jruby")
+@Deprecated
 public @interface Ruby {
     String value();
 }

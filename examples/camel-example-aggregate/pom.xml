@@ -31,6 +31,7 @@
   <description>Demonstrates the persistent support for the Camel aggregator</description>
 
   <properties>
+    <category>EIP</category>
     <camel.osgi.export.pkg>org.apache.camel.example.*</camel.osgi.export.pkg>
   </properties>
 

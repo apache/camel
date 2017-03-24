@@ -1,4 +1,6 @@
-## Kestrel Component
+## Kestrel Component (deprecated)
+
+*Available as of Camel version 2.6*
 
 The Kestrel component allows messages to be sent to a
 https://github.com/robey/kestrel[Kestrel] queue, or messages to be
@@ -64,17 +66,16 @@ kestrel://kserver03:22133/massive?concurrentConsumers=25&waitTimeMs=500
 
 
 // component options: START
-The Kestrel component supports 1 options which are listed below.
+The Kestrel component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | KestrelConfiguration | To use a shared configured configuration as base for creating new endpoints.
+| Name | Description | Default | Type
+| **configuration** (advanced) | To use a shared configured configuration as base for creating new endpoints. |  | KestrelConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -84,22 +85,33 @@ The Kestrel component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Kestrel component supports 8 endpoint options which are listed below:
+The Kestrel endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    kestrel:addresses/queue
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| addresses | common | localhost:22133 | String[] | The address(es) on which kestrel is running
-| queue | common |  | String | *Required* The queue we are polling
-| concurrentConsumers | common | 1 | int | How many concurrent listeners to schedule for the thread pool
-| waitTimeMs | common | 100 | int | How long a given wait should block (server side) in milliseconds
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **addresses** | The address(es) on which kestrel is running | localhost:22133 | String[]
+| **queue** | *Required* The queue we are polling |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **concurrentConsumers** (common) | How many concurrent listeners to schedule for the thread pool | 1 | int
+| **waitTimeMs** (common) | How long a given wait should block (server side) in milliseconds | 100 | int
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

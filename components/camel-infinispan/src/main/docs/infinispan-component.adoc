@@ -1,6 +1,6 @@
 ## Infinispan Component
 
-*Available as of Camel 2.13.0*
+*Available as of Camel version 2.13*
 
 This component allows you to interact with
 http://infinispan.org/[Infinispan] distributed data grid / cache.
@@ -45,29 +45,40 @@ The Infinispan component has no options.
 
 
 // endpoint options: START
-The Infinispan component supports 15 endpoint options which are listed below:
+The Infinispan endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    infinispan:host
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* Specifies the host of the cache on Infinispan instance
-| cacheContainer | common |  | BasicCacheContainer | Specifies the cache Container to connect
-| cacheName | common |  | String | Specifies the cache name
-| queryBuilder | common |  | InfinispanQueryBuilder | Specifies the query builder.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| clusteredListener | consumer | false | boolean | If true the listener will be installed for the entire cluster
-| customListener | consumer |  | InfinispanCustomListener | Returns the custom listener in use if provided
-| eventTypes | consumer |  | String | Specifies the set of event types to register by the consumer. Multiple event can be separated by comma. The possible event types are: CACHE_ENTRY_ACTIVATED CACHE_ENTRY_PASSIVATED CACHE_ENTRY_VISITED CACHE_ENTRY_LOADED CACHE_ENTRY_EVICTED CACHE_ENTRY_CREATED CACHE_ENTRY_REMOVED CACHE_ENTRY_MODIFIED TRANSACTION_COMPLETED TRANSACTION_REGISTERED CACHE_ENTRY_INVALIDATED DATA_REHASHED TOPOLOGY_CHANGED PARTITION_STATUS_CHANGED
-| sync | consumer | true | boolean | If true the consumer will receive notifications synchronously
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| command | producer | put | String | The operation to perform.
-| configurationUri | advanced |  | String | An implementation specific URI for the CacheManager
-| flags | advanced |  | String | A comma separated list of Flag to be applied by default on each cache invocation not applicable to remote caches.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **host** | *Required* Specifies the host of the cache on Infinispan instance |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (14 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **cacheContainer** (common) | Specifies the cache Container to connect |  | BasicCacheContainer
+| **cacheName** (common) | Specifies the cache name |  | String
+| **queryBuilder** (common) | Specifies the query builder. |  | InfinispanQueryBuilder
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **clusteredListener** (consumer) | If true the listener will be installed for the entire cluster | false | boolean
+| **customListener** (consumer) | Returns the custom listener in use if provided |  | InfinispanCustom Listener
+| **eventTypes** (consumer) | Specifies the set of event types to register by the consumer. Multiple event can be separated by comma. The possible event types are: CACHE_ENTRY_ACTIVATED CACHE_ENTRY_PASSIVATED CACHE_ENTRY_VISITED CACHE_ENTRY_LOADED CACHE_ENTRY_EVICTED CACHE_ENTRY_CREATED CACHE_ENTRY_REMOVED CACHE_ENTRY_MODIFIED TRANSACTION_COMPLETED TRANSACTION_REGISTERED CACHE_ENTRY_INVALIDATED DATA_REHASHED TOPOLOGY_CHANGED PARTITION_STATUS_CHANGED |  | String
+| **sync** (consumer) | If true the consumer will receive notifications synchronously | true | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **command** (producer) | The operation to perform. | put | String
+| **configurationUri** (advanced) | An implementation specific URI for the CacheManager |  | String
+| **flags** (advanced) | A comma separated list of Flag to be applied by default on each cache invocation not applicable to remote caches. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

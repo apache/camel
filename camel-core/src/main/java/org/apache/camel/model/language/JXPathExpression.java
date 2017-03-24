@@ -31,9 +31,10 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language,java", title = "JXPath")
+@Metadata(firstVersion = "1.3.0", label = "language,java", title = "JXPath")
 @XmlRootElement(name = "jxpath")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class JXPathExpression extends ExpressionDefinition {
 
     @XmlAttribute

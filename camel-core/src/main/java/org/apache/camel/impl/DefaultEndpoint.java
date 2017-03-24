@@ -206,6 +206,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      *
      * @param endpointConfiguration a custom endpoint configuration to be used.
      */
+    @Deprecated
     public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
         this.endpointConfiguration = endpointConfiguration;
     }
@@ -429,6 +430,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * A factory method to lazily create the endpoint configuration if none is specified
      */
+    @Deprecated
     protected EndpointConfiguration createEndpointConfiguration(String uri) {
         // using this factory method to be backwards compatible with the old code
         if (getComponent() != null) {
@@ -491,6 +493,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     protected void configureConsumer(Consumer consumer) throws Exception {
+        // inject CamelContext
+        if (consumer instanceof CamelContextAware) {
+            ((CamelContextAware) consumer).setCamelContext(getCamelContext());
+        }
+
         if (consumerProperties != null) {
             // use a defensive copy of the consumer properties as the methods below will remove the used properties
             // and in case we restart routes, we need access to the original consumer properties again

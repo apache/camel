@@ -31,9 +31,10 @@ import org.apache.camel.spi.UriPath;
 /**
  * To exchange data with external Websocket clients using Atmosphere.
  */
-@UriEndpoint(scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
+@UriEndpoint(firstVersion = "2.14.0", scheme = "atmosphere-websocket", extendsScheme = "servlet", title = "Atmosphere Websocket",
         syntax = "atmosphere-websocket:servicePath", consumerClass = WebsocketConsumer.class, label = "websocket",
-        excludeProperties = "httpUri,contextPath")
+        excludeProperties = "httpUri,contextPath,authMethod,authMethodPriority,authUsername,authPassword,authDomain,authHost"
+                + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain")
 public class WebsocketEndpoint extends ServletEndpoint {
 
     private WebSocketStore store;

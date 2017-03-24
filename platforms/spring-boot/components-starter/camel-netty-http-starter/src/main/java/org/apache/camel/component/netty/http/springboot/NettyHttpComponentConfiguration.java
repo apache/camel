@@ -59,6 +59,12 @@ public class NettyHttpComponentConfiguration {
      * value is 16.
      */
     private Integer maximumPoolSize = 16;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public NettyHttpBinding getNettyHttpBinding() {
         return nettyHttpBinding;
@@ -103,6 +109,15 @@ public class NettyHttpComponentConfiguration {
         this.maximumPoolSize = maximumPoolSize;
     }
 
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
     public static class NettyHttpConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.netty.http.NettyHttpConfiguration.class;
         /**
@@ -122,13 +137,13 @@ public class NettyHttpComponentConfiguration {
          * Allow using gzip/deflate for compression on the Netty HTTP server if
          * the client supports it from the HTTP headers.
          */
-        private Boolean compression;
+        private Boolean compression = false;
         /**
          * Option to disable throwing the HttpOperationFailedException in case
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          */
-        private Boolean throwExceptionOnFailure;
+        private Boolean throwExceptionOnFailure = true;
         /**
          * If enabled and an Exchange failed processing on the consumer side,
          * and if the caused Exception was send back serialized in the response
@@ -141,7 +156,7 @@ public class NettyHttpComponentConfiguration {
          * Java will deserialize the incoming data from the request to Java and
          * that can be a potential security risk.
          */
-        private Boolean transferException;
+        private Boolean transferException = false;
         /**
          * If this option is enabled, then during binding from Netty to Camel
          * Message then the header values will be URL decoded (eg %20 will be a
@@ -151,7 +166,7 @@ public class NettyHttpComponentConfiguration {
          * org.apache.camel.component.netty.http.NettyHttpBinding then you would
          * need to decode the headers accordingly to this option.
          */
-        private Boolean urlDecodeHeaders;
+        private Boolean urlDecodeHeaders = false;
         /**
          * If this option is enabled, then during binding from Netty to Camel
          * Message then the headers will be mapped as well (eg added as header
@@ -161,12 +176,12 @@ public class NettyHttpComponentConfiguration {
          * the method getHttpRequest() that returns the Netty HTTP request
          * org.jboss.netty.handler.codec.http.HttpRequest instance.
          */
-        private Boolean mapHeaders;
+        private Boolean mapHeaders = true;
         /**
          * Whether or not Camel should try to find a target consumer by matching
          * the URI prefix if no exact match is found.
          */
-        private Boolean matchOnUriPrefix;
+        private Boolean matchOnUriPrefix = false;
         /**
          * If the option is true, the producer will ignore the Exchange.HTTP_URI
          * header, and use the endpoint's URI for request. You may also set the
@@ -176,7 +191,7 @@ public class NettyHttpComponentConfiguration {
          * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
          * headers to the consumed exchange).
          */
-        private Boolean bridgeEndpoint;
+        private Boolean bridgeEndpoint = false;
         /**
          * Resource path
          */
@@ -194,24 +209,24 @@ public class NettyHttpComponentConfiguration {
          * and you would need manually to reset the reader index on the Netty
          * raw stream.
          */
-        private Boolean disableStreamCache;
+        private Boolean disableStreamCache = false;
         /**
          * Whether to send back HTTP status code 503 when the consumer has been
          * suspended. If the option is false then the Netty Acceptor is unbound
          * when the consumer is suspended, so clients cannot connect anymore.
          */
-        private Boolean send503whenSuspended;
+        private Boolean send503whenSuspended = true;
         /**
          * Value in bytes the max content length per chunked frame received on
          * the Netty HTTP server.
          */
-        private Integer chunkedMaxContentLength;
+        private Integer chunkedMaxContentLength = 1048576;
         /**
          * The maximum length of all headers. If the sum of the length of each
          * header exceeds this value, a {@link TooLongFrameException} will be
          * raised.
          */
-        private Integer maxHeaderSize;
+        private Integer maxHeaderSize = 8192;
         private Boolean allowDefaultCodec;
         /**
          * The status codes which is considered a success response. The values
@@ -228,7 +243,7 @@ public class NettyHttpComponentConfiguration {
          * absolute URIs in HTTP POSTs, and setting this option to <tt>true</tt>
          * can work around this problem.
          */
-        private Boolean useRelativePath;
+        private Boolean useRelativePath = false;
 
         public String getProtocol() {
             return protocol;

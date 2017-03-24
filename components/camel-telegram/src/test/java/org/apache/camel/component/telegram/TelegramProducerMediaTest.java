@@ -22,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
+import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
+import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
@@ -91,7 +93,7 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
 
         Exchange ex = endpoint.createExchange();
         ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Audio");
-        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.AUDIO.name());
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.AUDIO);
         byte[] audio = TelegramTestUtil.createSampleAudio();
         ex.getIn().setBody(audio);
 
@@ -126,6 +128,87 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         assertEquals(video, captor.getValue().getVideo());
         assertEquals("video.mp4", captor.getValue().getFilenameWithExtension());
         assertEquals("Video", captor.getValue().getCaption());
+    }
+
+    @Test
+    public void testRouteWithDocument() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Document");
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.DOCUMENT);
+        byte[] document = TelegramTestUtil.createSampleDocument();
+        ex.getIn().setBody(document);
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingDocumentMessage> captor = ArgumentCaptor.forClass(OutgoingDocumentMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals(document, captor.getValue().getDocument());
+        assertEquals("file", captor.getValue().getFilenameWithExtension());
+        assertEquals("Document", captor.getValue().getCaption());
+    }
+
+    @Test
+    public void testRouteWithText() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
+        ex.getIn().setBody("Hello");
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals("Hello", captor.getValue().getText());
+        assertNull(captor.getValue().getParseMode());
+    }
+
+    @Test
+    public void testRouteWithTextHtml() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, TelegramParseMode.HTML.name());
+        ex.getIn().setBody("Hello");
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals("Hello", captor.getValue().getText());
+        assertEquals("HTML", captor.getValue().getParseMode());
+    }
+
+    @Test
+    public void testRouteWithTextMarkdown() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.TEXT.name());
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_PARSE_MODE, TelegramParseMode.MARKDOWN);
+        ex.getIn().setBody("Hello");
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals("Hello", captor.getValue().getText());
+        assertEquals("Markdown", captor.getValue().getParseMode());
     }
 
     @Override

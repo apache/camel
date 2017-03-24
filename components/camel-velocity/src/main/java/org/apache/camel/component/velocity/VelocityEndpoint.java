@@ -43,7 +43,7 @@ import org.apache.velocity.runtime.log.CommonsLogLogChute;
 /**
  * Transforms the message using a Velocity template.
  */
-@UriEndpoint(scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
 public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;

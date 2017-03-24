@@ -28,10 +28,13 @@
 
   <artifactId>camel-example-spring-dm</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: Spring DM</name>
+  <name>Camel :: Example :: Spring DM (deprecated)</name>
   <description>A simple OSGi Spring DM example which creates a bundle that can be dropped into any OSGi container</description>
 
   <properties>
+    <category>OSGi</category>
+    <title>Spring DM</title>
+
     <camel.osgi.export.pkg>org.apache.camel.example.osgi.*</camel.osgi.export.pkg>
   </properties>
 

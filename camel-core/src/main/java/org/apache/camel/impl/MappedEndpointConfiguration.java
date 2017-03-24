@@ -32,6 +32,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  * Fallback implementation of {@link EndpointConfiguration} used by {@link Component}s
  * that did not yet define a configuration type.
  */
+@Deprecated
 public final class MappedEndpointConfiguration extends DefaultEndpointConfiguration {
     // TODO: need 2 sets to differentiate between user keys and fixed keys
     private Map<String, Object> params = new LinkedHashMap<String, Object>();

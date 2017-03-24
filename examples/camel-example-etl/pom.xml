@@ -32,6 +32,9 @@
   <description>An example showing how to use Camel as an Extract Transform and Load (ETL) tool</description>
 
   <properties>
+    <category>EIP</category>
+    <title>ETL</title>
+
     <camel.osgi.export.pkg>org.apache.camel.example.etl.*</camel.osgi.export.pkg>
     <!-- to avoid us import bunch other package -->
     <camel.osgi.dynamic>*</camel.osgi.dynamic>

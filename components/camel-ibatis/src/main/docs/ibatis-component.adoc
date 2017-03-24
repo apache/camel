@@ -1,4 +1,6 @@
-## iBatis Component
+## iBatis Component (deprecated)
+
+*Available as of Camel version 1.2*
 
 The *ibatis:* component allows you to query, poll, insert, update and
 delete data in a relational database using
@@ -54,19 +56,18 @@ the root of the classpath and expected named as `SqlMapConfig.xml`. +
 
 
 // component options: START
-The iBatis component supports 3 options which are listed below.
+The iBatis component supports 4 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| sqlMapClient | advanced |  | SqlMapClient | To use the given com.ibatis.sqlmap.client.SqlMapClient
-| sqlMapConfig | common | classpath:SqlMapConfig.xml | String | Location of iBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
-| useTransactions | common | true | boolean | Whether to use transactions. This option is by default true.
+| Name | Description | Default | Type
+| **sqlMapClient** (advanced) | To use the given com.ibatis.sqlmap.client.SqlMapClient |  | SqlMapClient
+| **sqlMapConfig** (common) | Location of iBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath | classpath:SqlMapConfig.xml | String
+| **useTransactions** (common) | Whether to use transactions. This option is by default true. | true | boolean
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -77,42 +78,53 @@ The iBatis component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The iBatis component supports 28 endpoint options which are listed below:
+The iBatis endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    ibatis:statement
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| statement | common |  | String | *Required* The statement name in the iBatis XML mapping file which maps to the query insert update or delete operation you wish to evaluate.
-| isolation | common | TRANSACTION_REPEATABLE_READ | String | Transaction isolation level
-| useTransactions | common | true | boolean | Whether to use transactions. This option is by default true.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| maxMessagesPerPoll | consumer | 0 | int | This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges. This integer defines the maximum messages to deliver in single exchange. By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files. Set a value of 0 or negative to disable it.
-| onConsume | consumer |  | String | Statement to run after data has been processed in the route
-| routeEmptyResultSet | consumer | false | boolean | Whether allow empty resultset to be routed to the next hop
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| strategy | consumer |  | IBatisProcessingStrategy | Allows to plugin a custom IBatisProcessingStrategy to use by the consumer.
-| useIterator | consumer | true | boolean | Process resultset individually or as a list
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| statementType | producer |  | StatementType | Mandatory to specify for the producer to control which kind of operation to invoke.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| Name | Description | Default | Type
+| **statement** | *Required* The statement name in the iBatis XML mapping file which maps to the query insert update or delete operation you wish to evaluate. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (27 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **isolation** (common) | Transaction isolation level | TRANSACTION_REPEATABLE_READ | String
+| **useTransactions** (common) | Whether to use transactions. This option is by default true. | true | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **maxMessagesPerPoll** (consumer) | This option is intended to split results returned by the database pool into the batches and deliver them in multiple exchanges. This integer defines the maximum messages to deliver in single exchange. By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files. Set a value of 0 or negative to disable it. | 0 | int
+| **onConsume** (consumer) | Statement to run after data has been processed in the route |  | String
+| **routeEmptyResultSet** (consumer) | Whether allow empty resultset to be routed to the next hop | false | boolean
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **strategy** (consumer) | Allows to plugin a custom IBatisProcessingStrategy to use by the consumer. |  | IBatisProcessing Strategy
+| **useIterator** (consumer) | Process resultset individually or as a list | true | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **statementType** (producer) | Mandatory to specify for the producer to control which kind of operation to invoke. |  | StatementType
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|=======================================================================
 // endpoint options: END
 
 

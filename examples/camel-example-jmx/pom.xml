@@ -32,6 +32,9 @@
   <description>An example showing how to work with Camel and JMX</description>
 
   <properties>
+    <category>Management and Monitoring</category>
+    <title>JMX</title>
+
     <camel.osgi.export.pkg>org.apache.camel.example.jmx.*</camel.osgi.export.pkg>
   </properties>
 

@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,9 +35,12 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.ConverterNotFoundException;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+@DirtiesContext
 @RunWith(SpringRunner.class)
+@EnableAutoConfiguration
 @SpringBootTest(classes = SpringTypeConverterTest.SpringTypeConversionConfiguration.class)
 public class SpringTypeConverterTest {
     @Autowired
@@ -106,13 +108,6 @@ public class SpringTypeConverterTest {
     }
 
     @Configuration
-    @EnableAutoConfiguration(
-        exclude = {
-            CamelAutoConfiguration.class, 
-            TypeConversionConfiguration.class, 
-            WebMvcAutoConfiguration.class
-        }
-    )
     public static class SpringTypeConversionConfiguration {
         @Bean
         ConversionService camelSpringConversionService(ApplicationContext applicationContext) {

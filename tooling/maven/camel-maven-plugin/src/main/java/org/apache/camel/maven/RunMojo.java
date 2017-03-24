@@ -84,15 +84,33 @@ public class RunMojo extends AbstractExecMojo {
     protected MavenProject project;
 
     /**
-     * The duration to run the application for which by default is in
-     * milliseconds. A value <= 0 will run forever.
-     * Adding a s indicates seconds - eg "5s" means 5 seconds.
+     * Sets the time duration (seconds) that the application will run for before terminating.
+     * A value <= 0 will run forever.
      *
      * @parameter property="camel.duration"
      *            default-value="-1"
      *
      */
     protected String duration;
+
+    /**
+     * Sets the idle time duration (seconds) duration that the application can be idle before terminating.
+     * A value <= 0 will run forever.
+     *
+     * @parameter property="camel.durationIdle"
+     *            default-value="-1"
+     *
+     */
+    protected String durationIdle;
+
+    /**
+     * Sets the duration of maximum number of messages that the application will process before terminating.
+     *
+     * @parameter property="camel.duration.maxMessages"
+     *            default-value="-1"
+     *
+     */
+    protected String durationMaxMessages;
 
     /**
      * Whether to log the classpath when starting
@@ -288,7 +306,7 @@ public class RunMojo extends AbstractExecMojo {
     private ExecutableDependency executableDependency;
 
     /**
-     * Wether to interrupt/join and possibly stop the daemon threads upon
+     * Whether to interrupt/join and possibly stop the daemon threads upon
      * quitting. <br/> If this is <code>false</code>, maven does nothing
      * about the daemon threads. When maven has no more work to do, the VM will
      * normally terminate any remaining daemon threads.
@@ -424,9 +442,19 @@ public class RunMojo extends AbstractExecMojo {
             args.add(basedPackages);
             usingSpringJavaConfigureMain = true;
         }
- 
-        args.add("-d");
-        args.add(duration);
+
+        if (!duration.equals("-1")) {
+            args.add("-d");
+            args.add(duration);
+        }
+        if (!durationIdle.equals("-1")) {
+            args.add("-di");
+            args.add(durationIdle);
+        }
+        if (!durationMaxMessages.equals("-1")) {
+            args.add("-dm");
+            args.add(durationMaxMessages);
+        }
         if (arguments != null) {
             args.addAll(Arrays.asList(arguments));
         }
@@ -997,7 +1025,7 @@ public class RunMojo extends AbstractExecMojo {
      * @return an artifact which refers to the actual executable tool (not a POM)
      * @throws MojoExecutionException
      */
-    private Artifact findExecutableArtifact() throws MojoExecutionException {
+    protected Artifact findExecutableArtifact() throws MojoExecutionException {
         // ILimitedArtifactIdentifier execToolAssembly =
         // this.getExecutableToolAssembly();
 

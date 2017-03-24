@@ -36,9 +36,9 @@ public class LiveReloadRouter extends RouteBuilder {
 
         restConfiguration().port(port);
 
-        rest().get("/")
-                .produces("text/plain")
-                .route()
+        rest()
+            .get("/").produces("text/plain")
+            .route()
                 .transform().constant("Change me");
 
     }

@@ -39,12 +39,12 @@ public class CustomTransformerDefinition extends TransformerDefinition {
     @XmlAttribute
     private String ref;
     @XmlAttribute
-    private String type;
+    private String className;
 
     @Override
     protected Transformer doCreateTransformer(CamelContext context) throws Exception {
-        if (ref == null && type == null) {
-            throw new IllegalArgumentException("'ref' or 'type' must be specified for customTransformer");
+        if (ref == null && className == null) {
+            throw new IllegalArgumentException("'ref' or 'className' must be specified for customTransformer");
         }
         Transformer transformer;
         if (ref != null) {
@@ -56,9 +56,9 @@ public class CustomTransformerDefinition extends TransformerDefinition {
                 throw new IllegalArgumentException(String.format("Transformer '%s' is already in use. Please check if duplicate transformer exists.", ref));
             }
         } else {
-            Class<Transformer> transformerClass = context.getClassResolver().resolveMandatoryClass(type, Transformer.class);
+            Class<Transformer> transformerClass = context.getClassResolver().resolveMandatoryClass(className, Transformer.class);
             if (transformerClass == null) {
-                throw new IllegalArgumentException("Cannot find transformer class: " + type);
+                throw new IllegalArgumentException("Cannot find transformer class: " + className);
             }
             transformer = context.getInjector().newInstance(transformerClass);
 
@@ -74,7 +74,7 @@ public class CustomTransformerDefinition extends TransformerDefinition {
     }
 
     /**
-     * Set a bean reference of the Transformer
+     * Set a bean reference of the {@link Transformer}
      *
      * @param ref the bean reference of the Transformer
      */
@@ -82,17 +82,17 @@ public class CustomTransformerDefinition extends TransformerDefinition {
         this.ref = ref;
     }
 
-    public String getType() {
-        return type;
+    public String getClassName() {
+        return className;
     }
 
     /**
-     * Set a class name of the Transformer
+     * Set a class name of the {@link Transformer}
      *
-     * @param type the class name of the Transformer
+     * @param className the class name of the Transformer
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
 }

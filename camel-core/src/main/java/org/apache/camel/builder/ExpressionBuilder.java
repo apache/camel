@@ -35,7 +35,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -73,11 +72,10 @@ import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 
-
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
  *
- * @version 
+ * @version
  */
 public final class ExpressionBuilder {
 
@@ -88,7 +86,7 @@ public final class ExpressionBuilder {
      */
     private ExpressionBuilder() {
     }
-    
+
     /**
      * Returns an expression for the inbound message attachments
      *
@@ -359,8 +357,8 @@ public final class ExpressionBuilder {
                 return "exchangePattern";
             }
         };
-    }   
-    
+    }
+
     /**
      * Returns an expression for an exception set on the exchange
      *
@@ -410,7 +408,7 @@ public final class ExpressionBuilder {
             }
         };
     }
-    
+
     /**
      * Returns the expression for the exchanges exception invoking methods defined
      * in a simple OGNL notation
@@ -424,7 +422,7 @@ public final class ExpressionBuilder {
                 if (exception == null) {
                     exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                 }
-                
+
                 if (exception == null) {
                     return null;
                 }
@@ -606,7 +604,7 @@ public final class ExpressionBuilder {
             }
         };
     }
-    
+
     /**
      * Returns an expression for the property value of exchange with the given name
      *
@@ -653,7 +651,7 @@ public final class ExpressionBuilder {
     public static Expression propertiesExpression() {
         return exchangeExceptionExpression();
     }
-    
+
     /**
      * Returns an expression for the exchange properties of exchange
      *
@@ -689,7 +687,7 @@ public final class ExpressionBuilder {
             }
         };
     }
-    
+
     /**
      * Returns an expression for the property value of the camel context with the given name
      *
@@ -962,7 +960,7 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "bodyExpression (" + bodyType +  ")";
+                return "bodyExpression (" + bodyType + ")";
             }
         };
     }
@@ -981,7 +979,7 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "bodyExpression (" + bodyType +  ")";
+                return "bodyExpression (" + bodyType + ")";
             }
         };
     }
@@ -1613,7 +1611,7 @@ public final class ExpressionBuilder {
         ObjectHelper.notEmpty(path, "path");
         return new XMLTokenExpressionIterator(path, mode);
     }
-    
+
     public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
         ObjectHelper.notEmpty(path, "path");
         return new XMLTokenExpressionIterator(path, mode, group);
@@ -1994,7 +1992,7 @@ public final class ExpressionBuilder {
             }
         };
     }
-   
+
     public static Expression beanExpression(final String expression) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -2013,13 +2011,13 @@ public final class ExpressionBuilder {
             }
         };
     }
-    
+
     public static Expression beanExpression(final Class<?> beanType, final String methodName) {
         return BeanLanguage.bean(beanType, methodName);
     }
 
     public static Expression beanExpression(final Object bean, final String methodName) {
-        return BeanLanguage.bean(bean, methodName);        
+        return BeanLanguage.bean(bean, methodName);
     }
 
     public static Expression beanExpression(final String beanRef, final String methodName) {
@@ -2281,7 +2279,7 @@ public final class ExpressionBuilder {
                         // getComponent will create a new component if none already exists
                         Component component = exchange.getContext().getComponent("properties");
                         PropertiesComponent pc = exchange.getContext().getTypeConverter()
-                                .mandatoryConvertTo(PropertiesComponent.class, component);
+                            .mandatoryConvertTo(PropertiesComponent.class, component);
                         // enclose key with {{ }} to force parsing
                         String[] paths = text2.split(",");
                         return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken(), paths);
@@ -2290,10 +2288,10 @@ public final class ExpressionBuilder {
                         Component component = exchange.getContext().hasComponent("properties");
                         if (component == null) {
                             throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                                    + " in CamelContext to support property placeholders in expressions");
+                                + " in CamelContext to support property placeholders in expressions");
                         }
                         PropertiesComponent pc = exchange.getContext().getTypeConverter()
-                                .mandatoryConvertTo(PropertiesComponent.class, component);
+                            .mandatoryConvertTo(PropertiesComponent.class, component);
                         // enclose key with {{ }} to force parsing
                         return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
                     }
@@ -2452,7 +2450,7 @@ public final class ExpressionBuilder {
         private final String toStringValue;
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
 
-        KeyedOgnlExpressionAdapter(String ognl, String toStringValue, 
+        KeyedOgnlExpressionAdapter(String ognl, String toStringValue,
                                    KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
             this.ognl = ognl;
             this.toStringValue = toStringValue;
@@ -2466,19 +2464,29 @@ public final class ExpressionBuilder {
                 return property;
             }
 
+
             // Split ognl except when this is not a Map, Array
             // and we would like to keep the dots within the key name
             List<String> methods = OgnlHelper.splitOgnl(ognl);
 
+            String key = methods.get(0);
+            String keySuffix = "";
+            // if ognl starts with a key inside brackets (eg: [foo.bar])
+            // remove starting and ending brackets from key
+            if (key.startsWith("[") && key.endsWith("]")) {
+                key = StringHelper.removeLeadingAndEndingQuotes(key.substring(1, key.length() - 1));
+                keySuffix = StringHelper.after(methods.get(0), key);
+            }
             // remove any OGNL operators so we got the pure key name
-            String key = OgnlHelper.removeOperators(methods.get(0));
+            key = OgnlHelper.removeOperators(key);
+
 
             property = keyedEntityRetrievalStrategy.getKeyedEntity(exchange, key);
             if (property == null) {
                 return null;
             }
             // the remainder is the rest of the ognl without the key
-            String remainder = ObjectHelper.after(ognl, key);
+            String remainder = ObjectHelper.after(ognl, key + keySuffix);
             return new MethodCallExpression(property, remainder).evaluate(exchange);
         }
 
@@ -2493,6 +2501,6 @@ public final class ExpressionBuilder {
         public interface KeyedEntityRetrievalStrategy {
             Object getKeyedEntity(Exchange exchange, String key);
         }
-    };
+    }
 
 }

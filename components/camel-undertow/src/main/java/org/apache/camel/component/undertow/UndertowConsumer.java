@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.EagerFormParsingHandler;
@@ -77,8 +78,10 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
     }
 
     public HttpHandler getHttpHandler() {
-        // wrap with EagerFormParsingHandler to enable undertow form parsers
-        return new EagerFormParsingHandler().setNext(this);
+        // allow for HTTP 1.1 continue
+        return Handlers.httpContinueRead(
+                // wrap with EagerFormParsingHandler to enable undertow form parsers
+                new EagerFormParsingHandler().setNext(this));
     }
 
     @Override

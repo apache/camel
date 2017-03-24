@@ -1,5 +1,7 @@
 ## RSS DataFormat
 
+*Available as of Camel version 2.1*
+
 The RSS component ships with an RSS dataformat that can be used to
 convert between String (as XML) and ROME RSS model objects.
 
@@ -25,11 +27,9 @@ The RSS dataformat supports 1 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END

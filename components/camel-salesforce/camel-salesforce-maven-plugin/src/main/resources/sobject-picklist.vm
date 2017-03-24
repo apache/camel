@@ -37,7 +37,7 @@ public enum $enumName {
 #foreach ( $entry in $values)
 #set ( $value = $entry.Value )
     // $value
-    $utility.getEnumConstant($value)("$value")#if ( $foreach.hasNext ),#else;#end
+    $utility.getEnumConstant($value)("$esc.escapeJava($value)")#if ( $foreach.hasNext ),#else;#end
 
 #end
 #end

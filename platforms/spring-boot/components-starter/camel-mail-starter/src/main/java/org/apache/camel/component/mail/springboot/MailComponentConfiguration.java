@@ -42,6 +42,12 @@ public class MailComponentConfiguration {
      */
     @NestedConfigurationProperty
     private ContentTypeResolver contentTypeResolver;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public MailConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -58,6 +64,15 @@ public class MailComponentConfiguration {
 
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class MailConfigurationNestedConfiguration {
@@ -116,7 +131,7 @@ public class MailComponentConfiguration {
         /**
          * The from email address
          */
-        private String from = "MailConstants.MAIL_DEFAULT_FROM";
+        private String from = "camel@localhost";
         /**
          * Deletes the messages after they have been processed. This is done by
          * setting the DELETED flag on the mail message. If false, the SEEN flag
@@ -124,7 +139,7 @@ public class MailComponentConfiguration {
          * option by setting a header with the key delete to determine if the
          * mail should be deleted or not.
          */
-        private Boolean delete;
+        private Boolean delete = false;
         /**
          * Specifies whether Camel should map the received mail message to Camel
          * body/headers. If set to true, the body of the mail message is mapped
@@ -133,35 +148,35 @@ public class MailComponentConfiguration {
          * contains a raw javax.mail.Message. You can retrieve this raw message
          * by calling exchange.getIn().getBody(javax.mail.Message.class).
          */
-        private Boolean mapMailMessage;
+        private Boolean mapMailMessage = true;
         /**
          * The folder to poll.
          */
-        private String folderName = "MailConstants.MAIL_DEFAULT_FOLDER";
+        private String folderName = "INBOX";
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
          * sending mails. If the charset is unsupported then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          */
-        private Boolean ignoreUriScheme;
+        private Boolean ignoreUriScheme = false;
         /**
          * Whether to limit by unseen mails only.
          */
-        private Boolean unseen;
+        private Boolean unseen = true;
         /**
-         * Sets the <tt>To</tt> email address. Separate multiple email addresses
-         * with comma.
+         * Sets the To email address. Separate multiple email addresses with
+         * comma.
          */
         private String to;
         /**
-         * Sets the <tt>CC</tt> email address. Separate multiple email addresses
-         * with comma.
+         * Sets the CC email address. Separate multiple email addresses with
+         * comma.
          */
         private String cc;
         /**
-         * Sets the <tt>BCC</tt> email address. Separate multiple email
-         * addresses with comma.
+         * Sets the BCC email address. Separate multiple email addresses with
+         * comma.
          */
         private String bcc;
         /**
@@ -177,21 +192,21 @@ public class MailComponentConfiguration {
          * special corner case, where Camel will not consume any messages at
          * all.
          */
-        private Integer fetchSize;
+        private Integer fetchSize = -1;
         /**
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          */
-        private Boolean debugMode;
+        private Boolean debugMode = false;
         /**
          * The connection timeout in milliseconds.
          */
-        private Long connectionTimeout;
+        private Integer connectionTimeout = 30000;
         /**
          * To use a dummy security setting for trusting all certificates. Should
          * only be used for development mode, and not production.
          */
-        private Boolean dummyTrustManager;
+        private Boolean dummyTrustManager = false;
         /**
          * The mail message content type. Use text/html for HTML mails.
          */
@@ -203,29 +218,29 @@ public class MailComponentConfiguration {
          * email clients, set the alternative mail body with this key as a
          * header.
          */
-        private String alternativeBodyHeader = "MailConstants.MAIL_ALTERNATIVE_BODY";
+        private String alternativeBodyHeader = "CamelMailAlternativeBody";
         /**
          * Whether to use disposition inline or attachment.
          */
-        private Boolean useInlineAttachments;
+        private Boolean useInlineAttachments = false;
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
          * sending mails. If the charset is unsupported then charset=XXX (where
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          */
-        private Boolean ignoreUnsupportedCharset;
+        private Boolean ignoreUnsupportedCharset = false;
         /**
          * Whether the consumer should disconnect after polling. If enabled this
          * forces Camel to connect on each poll.
          */
-        private Boolean disconnect;
+        private Boolean disconnect = false;
         /**
          * Whether the consumer should close the folder after polling. Setting
          * this option to false and having disconnect=false as well, then the
          * consumer keep the folder open between polls.
          */
-        private Boolean closeFolder;
+        private Boolean closeFolder = true;
         /**
          * To configure security using SSLContextParameters.
          */
@@ -245,7 +260,7 @@ public class MailComponentConfiguration {
          * which allows us to rollback the mail message if there is an error
          * processing in Camel.
          */
-        private Boolean peek;
+        private Boolean peek = true;
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to skip the message and move on to retrieve the next
@@ -254,7 +269,7 @@ public class MailComponentConfiguration {
          * The default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          */
-        private Boolean skipFailedMessage;
+        private Boolean skipFailedMessage = false;
         /**
          * If the mail consumer cannot retrieve a given mail message, then this
          * option allows to handle the caused exception by the consumer's error
@@ -264,7 +279,7 @@ public class MailComponentConfiguration {
          * The default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          */
-        private Boolean handleFailedMessage;
+        private Boolean handleFailedMessage = false;
         /**
          * To use a custom AttachmentsContentTransferEncodingResolver to resolve
          * what content-type-encoding to use for attachments.
@@ -448,11 +463,11 @@ public class MailComponentConfiguration {
             this.debugMode = debugMode;
         }
 
-        public Long getConnectionTimeout() {
+        public Integer getConnectionTimeout() {
             return connectionTimeout;
         }
 
-        public void setConnectionTimeout(Long connectionTimeout) {
+        public void setConnectionTimeout(Integer connectionTimeout) {
             this.connectionTimeout = connectionTimeout;
         }
 

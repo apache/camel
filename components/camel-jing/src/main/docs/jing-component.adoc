@@ -1,5 +1,7 @@
 ## Jing Component
 
+*Available as of Camel version 1.1*
+
 The Jing component uses the
 http://www.thaiopensource.com/relaxng/jing.html[Jing Library] to perform
 XML validation of the message body using either
@@ -45,17 +47,28 @@ The Jing component has no options.
 
 
 // endpoint options: START
-The Jing component supports 3 endpoint options which are listed below:
+The Jing endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    jing:resourceUri
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the schema to validate against.
-| compactSyntax | producer | false | boolean | Whether to validate using RelaxNG compact syntax or not. By default this is false for using RelaxNG XML Syntax (rng) And true is for using RelaxNG Compact Syntax (rnc)
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **resourceUri** | *Required* URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the schema to validate against. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **compactSyntax** (producer) | Whether to validate using RelaxNG compact syntax or not. By default this is false for using RelaxNG XML Syntax (rng) And true is for using RelaxNG Compact Syntax (rnc) | false | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

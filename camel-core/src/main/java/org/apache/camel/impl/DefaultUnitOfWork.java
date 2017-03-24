@@ -90,6 +90,10 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             } else {
                 this.originalInMessage = exchange.getIn().copy();
             }
+            // must preserve exchange on the original in message
+            if (this.originalInMessage instanceof MessageSupport) {
+                ((MessageSupport) this.originalInMessage).setExchange(exchange);
+            }
         }
 
         // mark the creation time when this Exchange was created

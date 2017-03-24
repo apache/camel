@@ -16,4 +16,5 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.kubernetes.springboot.KubernetesComponentAutoConfiguration
+org.apache.camel.component.kubernetes.springboot.KubernetesComponentAutoConfiguration,\
+org.apache.camel.component.kubernetes.springboot.cloud.KubernetesCloudAutoConfiguration

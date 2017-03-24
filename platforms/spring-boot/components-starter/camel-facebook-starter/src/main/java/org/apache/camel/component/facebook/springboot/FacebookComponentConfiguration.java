@@ -31,6 +31,12 @@ public class FacebookComponentConfiguration {
      * To use the shared configuration
      */
     private FacebookConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public FacebookConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -39,6 +45,15 @@ public class FacebookComponentConfiguration {
     public void setConfiguration(
             FacebookConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class FacebookConfigurationNestedConfiguration {
@@ -74,23 +89,23 @@ public class FacebookComponentConfiguration {
         /**
          * Enables deubg output. Effective only with the embedded logger
          */
-        private Boolean debugEnabled;
+        private Boolean debugEnabled = false;
         /**
          * Use Facebook GZIP encoding
          */
-        private Boolean gzipEnabled;
+        private Boolean gzipEnabled = true;
         /**
          * Http connection timeout in milliseconds
          */
-        private Integer httpConnectionTimeout;
+        private Integer httpConnectionTimeout = 20000;
         /**
          * HTTP maximum connections per route
          */
-        private Integer httpDefaultMaxPerRoute;
+        private Integer httpDefaultMaxPerRoute = 2;
         /**
          * HTTP maximum total connections
          */
-        private Integer httpMaxTotalConnections;
+        private Integer httpMaxTotalConnections = 20;
         /**
          * HTTP proxy server host name
          */
@@ -110,27 +125,27 @@ public class FacebookComponentConfiguration {
         /**
          * Http read timeout in milliseconds
          */
-        private Integer httpReadTimeout;
+        private Integer httpReadTimeout = 120000;
         /**
          * Number of HTTP retries
          */
-        private Integer httpRetryCount;
+        private Integer httpRetryCount = 0;
         /**
          * HTTP retry interval in seconds
          */
-        private Integer httpRetryIntervalSeconds;
+        private Integer httpRetryIntervalSeconds = 5;
         /**
          * HTTP streaming read timeout in milliseconds
          */
-        private Integer httpStreamingReadTimeout;
+        private Integer httpStreamingReadTimeout = 40000;
         /**
          * If set to true, raw JSON forms will be stored in DataObjectFactory
          */
-        private Boolean jsonStoreEnabled;
+        private Boolean jsonStoreEnabled = false;
         /**
          * If set to true, Facebook4J mbean will be registerd
          */
-        private Boolean mbeanEnabled;
+        private Boolean mbeanEnabled = false;
         /**
          * Default OAuth permissions. Comma separated permission names. See
          * https://developers.facebook.com/docs/reference/login/#permissions for
@@ -140,7 +155,7 @@ public class FacebookComponentConfiguration {
         /**
          * Prettify JSON debug output if set to true
          */
-        private Boolean prettyDebugEnabled;
+        private Boolean prettyDebugEnabled = false;
         /**
          * API base URL
          */
@@ -148,7 +163,7 @@ public class FacebookComponentConfiguration {
         /**
          * Use SSL
          */
-        private Boolean useSSL;
+        private Boolean useSSL = true;
         /**
          * Video API base URL
          */

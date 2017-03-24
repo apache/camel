@@ -1,6 +1,6 @@
 ## Salesforce Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 This component supports producer and consumer endpoints to communicate
 with Salesforce using Java DTOs.  +
@@ -19,6 +19,10 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
+
+NOTE: Developers wishing to contribute to the component are instructed
+to look at the README.md file on instructions on how to get started and
+setup your environment for running integration tests.
 
 ### URI format
 
@@ -423,32 +427,40 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 16 options which are listed below.
+The Salesforce component supports 26 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| loginConfig | security |  | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration
-| config | advanced |  | SalesforceEndpointConfig | To use the shared SalesforceLoginConfig as configuration
-| httpClientProperties | advanced |  | Map | Used for configuring HTTP client properties as key/value pairs
-| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
-| httpProxyHost | proxy |  | String | To configure HTTP proxy host
-| httpProxyPort | proxy |  | Integer | To configure HTTP proxy port
-| httpProxyUsername | security |  | String | To configure HTTP proxy username
-| httpProxyPassword | security |  | String | To configure HTTP proxy password
-| isHttpProxySocks4 | proxy | false | boolean | Enable for Socks4 proxy false by default
-| isHttpProxySecure | security | false | boolean | Enable for TLS connections true by default
-| httpProxyIncludedAddresses | proxy |  | Set | HTTP proxy included addresses
-| httpProxyExcludedAddresses | proxy |  | Set | HTTP proxy excluded addresses
-| httpProxyAuthUri | security |  | String | HTTP proxy authentication URI
-| httpProxyRealm | security |  | String | HTTP proxy authentication realm
-| httpProxyUseDigestAuth | security | false | boolean | Use HTTP proxy Digest authentication false by default
-| packages | common |  | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
+| Name | Description | Default | Type
+| **authenticationType** (security) | Explicit authentication type to be used one of USERNAME_PASSWORD REFRESH_TOKEN or JWT. |  | AuthenticationType
+| **loginConfig** (security) | To use the shared SalesforceLoginConfig as login configuration |  | SalesforceLoginConfig
+| **loginUrl** (security) | Salesforce login URL defaults to https://login.salesforce.com | https://login.salesforce.com | String
+| **clientId** (security) | Salesforce connected application Consumer Key |  | String
+| **clientSecret** (security) | Salesforce connected application Consumer Secret |  | String
+| **keystore** (security) | KeyStoreParameters to use in OAuth 2.0 JWT Bearer Token Flow. |  | KeyStoreParameters
+| **refreshToken** (security) | Salesforce connected application Consumer token |  | String
+| **userName** (security) | Salesforce account user name |  | String
+| **password** (security) | Salesforce account password |  | String
+| **lazyLogin** (security) | Flag to enable/disable lazy OAuth default is false. When enabled OAuth token retrieval or generation is not done until the first API call | false | boolean
+| **config** (advanced) | To use the shared SalesforceEndpointConfig as endpoint configuration |  | SalesforceEndpoint Config
+| **httpClientProperties** (advanced) | Used for configuring HTTP client properties as key/value pairs |  | Map
+| **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **httpProxyHost** (proxy) | To configure HTTP proxy host |  | String
+| **httpProxyPort** (proxy) | To configure HTTP proxy port |  | Integer
+| **httpProxyUsername** (security) | To configure HTTP proxy username |  | String
+| **httpProxyPassword** (security) | To configure HTTP proxy password |  | String
+| **isHttpProxySocks4** (proxy) | Enable for Socks4 proxy false by default | false | boolean
+| **isHttpProxySecure** (security) | Enable for TLS connections true by default | false | boolean
+| **httpProxyIncluded Addresses** (proxy) | HTTP proxy included addresses |  | Set
+| **httpProxyExcluded Addresses** (proxy) | HTTP proxy excluded addresses |  | Set
+| **httpProxyAuthUri** (security) | HTTP proxy authentication URI |  | String
+| **httpProxyRealm** (security) | HTTP proxy authentication realm |  | String
+| **httpProxyUseDigest Auth** (security) | Use HTTP proxy Digest authentication false by default | false | boolean
+| **packages** (common) | Package names to scan for DTO classes (multiple packages can be separated by comma). |  | String[]
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -461,56 +473,68 @@ The Salesforce component supports 16 options which are listed below.
 
 
 // endpoint options: START
-The Salesforce component supports 42 endpoint options which are listed below:
+The Salesforce endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    salesforce:operationName:topicName
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| operationName | producer |  | OperationName | The operation to use
-| topicName | consumer |  | String | The name of the topic to use
-| apexMethod | common |  | String | APEX method name
-| apexQueryParams | common |  | Map | Query params for APEX method
-| apexUrl | common |  | String | APEX method URL
-| apiVersion | common |  | String | Salesforce API version defaults to SalesforceEndpointConfig.DEFAULT_VERSION
-| backoffIncrement | common |  | long | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
-| batchId | common |  | String | Bulk API Batch ID
-| contentType | common |  | ContentType | Bulk API content type one of XML CSV ZIP_XML ZIP_CSV
-| defaultReplayId | common |  | Integer | Default replayId setting if no value is found in link initialReplayIdMap
-| format | common |  | PayloadFormat | Payload format to use for Salesforce API calls either JSON or XML defaults to JSON
-| httpClient | common |  | SalesforceHttpClient | Custom Jetty Http Client to use to connect to Salesforce.
-| includeDetails | common |  | Boolean | Include details in Salesforce1 Analytics report defaults to false.
-| initialReplayIdMap | common |  | Map | Replay IDs to start from per channel name.
-| instanceId | common |  | String | Salesforce1 Analytics report execution instance ID
-| jobId | common |  | String | Bulk API Job ID
-| limit | common |  | Integer | Limit on number of returned records. Applicable to some of the API check the Salesforce documentation.
-| maxBackoff | common |  | long | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
-| notifyForFields | common |  | NotifyForFieldsEnum | Notify for fields options are ALL REFERENCED SELECT WHERE
-| notifyForOperationCreate | common |  | Boolean | Notify for create operation defaults to false (API version = 29.0)
-| notifyForOperationDelete | common |  | Boolean | Notify for delete operation defaults to false (API version = 29.0)
-| notifyForOperations | common |  | NotifyForOperationsEnum | Notify for operations options are ALL CREATE EXTENDED UPDATE (API version 29.0)
-| notifyForOperationUndelete | common |  | Boolean | Notify for un-delete operation defaults to false (API version = 29.0)
-| notifyForOperationUpdate | common |  | Boolean | Notify for update operation defaults to false (API version = 29.0)
-| objectMapper | common |  | ObjectMapper | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects.
-| reportId | common |  | String | Salesforce1 Analytics report Id
-| reportMetadata | common |  | ReportMetadata | Salesforce1 Analytics report metadata for filtering
-| resultId | common |  | String | Bulk API Result ID
-| sObjectBlobFieldName | common |  | String | SObject blob field name
-| sObjectClass | common |  | String | Fully qualified SObject class name usually generated using camel-salesforce-maven-plugin
-| sObjectFields | common |  | String | SObject fields to retrieve
-| sObjectId | common |  | String | SObject ID if required by API
-| sObjectIdName | common |  | String | SObject external ID field name
-| sObjectIdValue | common |  | String | SObject external ID field value
-| sObjectName | common |  | String | SObject name if required or supported by API
-| sObjectQuery | common |  | String | Salesforce SOQL query string
-| sObjectSearch | common |  | String | Salesforce SOSL search string
-| updateTopic | common | false | boolean | Whether to update an existing Push Topic when using the Streaming API defaults to false
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **operationName** | The operation to use |  | OperationName
+| **topicName** | The name of the topic to use |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (41 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **apexMethod** (common) | APEX method name |  | String
+| **apexQueryParams** (common) | Query params for APEX method |  | Map
+| **apexUrl** (common) | APEX method URL |  | String
+| **apiVersion** (common) | Salesforce API version defaults to SalesforceEndpointConfig.DEFAULT_VERSION |  | String
+| **backoffIncrement** (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
+| **batchId** (common) | Bulk API Batch ID |  | String
+| **contentType** (common) | Bulk API content type one of XML CSV ZIP_XML ZIP_CSV |  | ContentType
+| **defaultReplayId** (common) | Default replayId setting if no value is found in link initialReplayIdMap |  | Long
+| **format** (common) | Payload format to use for Salesforce API calls either JSON or XML defaults to JSON |  | PayloadFormat
+| **httpClient** (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
+| **includeDetails** (common) | Include details in Salesforce1 Analytics report defaults to false. |  | Boolean
+| **initialReplayIdMap** (common) | Replay IDs to start from per channel name. |  | Map
+| **instanceId** (common) | Salesforce1 Analytics report execution instance ID |  | String
+| **jobId** (common) | Bulk API Job ID |  | String
+| **limit** (common) | Limit on number of returned records. Applicable to some of the API check the Salesforce documentation. |  | Integer
+| **maxBackoff** (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
+| **notifyForFields** (common) | Notify for fields options are ALL REFERENCED SELECT WHERE |  | NotifyForFieldsEnum
+| **notifyForOperationCreate** (common) | Notify for create operation defaults to false (API version = 29.0) |  | Boolean
+| **notifyForOperationDelete** (common) | Notify for delete operation defaults to false (API version = 29.0) |  | Boolean
+| **notifyForOperations** (common) | Notify for operations options are ALL CREATE EXTENDED UPDATE (API version 29.0) |  | NotifyForOperations Enum
+| **notifyForOperationUndelete** (common) | Notify for un-delete operation defaults to false (API version = 29.0) |  | Boolean
+| **notifyForOperationUpdate** (common) | Notify for update operation defaults to false (API version = 29.0) |  | Boolean
+| **objectMapper** (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
+| **reportId** (common) | Salesforce1 Analytics report Id |  | String
+| **reportMetadata** (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
+| **resultId** (common) | Bulk API Result ID |  | String
+| **sObjectBlobFieldName** (common) | SObject blob field name |  | String
+| **sObjectClass** (common) | Fully qualified SObject class name usually generated using camel-salesforce-maven-plugin |  | String
+| **sObjectFields** (common) | SObject fields to retrieve |  | String
+| **sObjectId** (common) | SObject ID if required by API |  | String
+| **sObjectIdName** (common) | SObject external ID field name |  | String
+| **sObjectIdValue** (common) | SObject external ID field value |  | String
+| **sObjectName** (common) | SObject name if required or supported by API |  | String
+| **sObjectQuery** (common) | Salesforce SOQL query string |  | String
+| **sObjectSearch** (common) | Salesforce SOSL search string |  | String
+| **updateTopic** (common) | Whether to update an existing Push Topic when using the Streaming API defaults to false | false | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **replayId** (consumer) | The replayId value to use when subscribing |  | Long
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

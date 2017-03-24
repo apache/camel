@@ -1,6 +1,6 @@
 ## FOP Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 The FOP component allows you to render a message into different output
 formats using http://xmlgraphics.apache.org/fop/index.html[Apache FOP].
@@ -68,18 +68,29 @@ The FOP component has no options.
 
 
 // endpoint options: START
-The FOP component supports 4 endpoint options which are listed below:
+The FOP endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    fop:outputType
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| outputType | producer |  | FopOutputType | *Required* The primary output format is PDF but other output formats are also supported.
-| fopFactory | producer |  | FopFactory | Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory.
-| userConfigURL | producer |  | String | The location of a configuration file which can be loaded from classpath or file system.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **outputType** | *Required* The primary output format is PDF but other output formats are also supported. |  | FopOutputType
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **fopFactory** (producer) | Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory. |  | FopFactory
+| **userConfigURL** (producer) | The location of a configuration file which can be loaded from classpath or file system. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

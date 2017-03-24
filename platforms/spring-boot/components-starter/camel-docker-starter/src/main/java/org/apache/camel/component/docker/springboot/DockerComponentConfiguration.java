@@ -32,6 +32,12 @@ public class DockerComponentConfiguration {
      * To use the shared docker configuration
      */
     private DockerConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public DockerConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -40,6 +46,15 @@ public class DockerComponentConfiguration {
     public void setConfiguration(
             DockerConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class DockerConfigurationNestedConfiguration {
@@ -51,7 +66,7 @@ public class DockerComponentConfiguration {
         /**
          * Docker port
          */
-        private Integer port;
+        private Integer port = 2375;
         /**
          * User name to authenticate with
          */
@@ -75,7 +90,7 @@ public class DockerComponentConfiguration {
         /**
          * Use HTTPS communication
          */
-        private Boolean secure;
+        private Boolean secure = false;
         /**
          * Location containing the SSL certificate chain
          */
@@ -83,19 +98,19 @@ public class DockerComponentConfiguration {
         /**
          * Maximum total connections
          */
-        private Integer maxTotalConnections;
+        private Integer maxTotalConnections = 100;
         /**
          * Maximum route connections
          */
-        private Integer maxPerRouteConnections;
+        private Integer maxPerRouteConnections = 100;
         /**
          * Whether to use logging filter
          */
-        private Boolean loggingFilter;
+        private Boolean loggingFilter = false;
         /**
          * Whether to follow redirect filter
          */
-        private Boolean followRedirectFilter;
+        private Boolean followRedirectFilter = false;
         /**
          * Additional configuration parameters as key/value pairs
          */
@@ -107,11 +122,16 @@ public class DockerComponentConfiguration {
         /**
          * Check TLS
          */
-        private Boolean tlsVerify;
+        private Boolean tlsVerify = false;
         /**
          * Socket connection mode
          */
-        private Boolean socket;
+        private Boolean socket = true;
+        /**
+         * The fully qualified class name of the DockerCmdExecFactory
+         * implementation to use
+         */
+        private String cmdExecFactory = "com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory";
 
         public String getHost() {
             return host;
@@ -247,6 +267,14 @@ public class DockerComponentConfiguration {
 
         public void setSocket(Boolean socket) {
             this.socket = socket;
+        }
+
+        public String getCmdExecFactory() {
+            return cmdExecFactory;
+        }
+
+        public void setCmdExecFactory(String cmdExecFactory) {
+            this.cmdExecFactory = cmdExecFactory;
         }
     }
 }

@@ -31,7 +31,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
+import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -144,10 +144,10 @@ public class JmsTestSupport extends CamelTestSupport {
     }
 
     public MessageConsumer createQueueConsumer(String destination) throws Exception {
-        return JmsObjectFactory.createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, false), null, false, null);
+        return new Jms11ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, false), null, false, null, true, false);
     }
 
     public MessageConsumer createTopicConsumer(String destination, String messageSelector) throws Exception {
-        return JmsObjectFactory.createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null);
+        return new Jms11ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, true, false);
     }
 }

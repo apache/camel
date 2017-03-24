@@ -1,5 +1,7 @@
 ## Spring Batch Component
 
+*Available as of Camel version 2.10*
+
 The *spring-batch:* component and support classes provide integration
 bridge between Camel and http://www.springsource.org/spring-batch[Spring
 Batch] infrastructure.
@@ -38,18 +40,17 @@ statement.
 
 
 // component options: START
-The Spring Batch component supports 2 options which are listed below.
+The Spring Batch component supports 3 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| jobLauncher | producer |  | JobLauncher | Explicitly specifies a JobLauncher to be used.
-| jobRegistry | producer |  | JobRegistry | Explicitly specifies a JobRegistry to be used.
+| Name | Description | Default | Type
+| **jobLauncher** (producer) | Explicitly specifies a JobLauncher to be used. |  | JobLauncher
+| **jobRegistry** (producer) | Explicitly specifies a JobRegistry to be used. |  | JobRegistry
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -60,19 +61,30 @@ The Spring Batch component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Spring Batch component supports 5 endpoint options which are listed below:
+The Spring Batch endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    spring-batch:jobName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| jobName | producer |  | String | *Required* The name of the Spring Batch job located in the registry.
-| jobFromHeader | producer | false | boolean | Explicitly defines if the jobName should be taken from the headers instead of the URI.
-| jobLauncher | producer |  | JobLauncher | Explicitly specifies a JobLauncher to be used.
-| jobRegistry | producer |  | JobRegistry | Explicitly specifies a JobRegistry to be used.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **jobName** | *Required* The name of the Spring Batch job located in the registry. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **jobFromHeader** (producer) | Explicitly defines if the jobName should be taken from the headers instead of the URI. | false | boolean
+| **jobLauncher** (producer) | Explicitly specifies a JobLauncher to be used. |  | JobLauncher
+| **jobRegistry** (producer) | Explicitly specifies a JobRegistry to be used. |  | JobRegistry
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

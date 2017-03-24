@@ -91,7 +91,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         if (password.startsWith("sysenv:")) {
             password = System.getenv(ObjectHelper.after(password, "sysenv:"));
         }
-        if (password.startsWith("sys:")) {
+        if (ObjectHelper.isNotEmpty(password) && password.startsWith("sys:")) {
             password = System.getProperty(ObjectHelper.after(password, "sys:"));
         }
         this.password = password;

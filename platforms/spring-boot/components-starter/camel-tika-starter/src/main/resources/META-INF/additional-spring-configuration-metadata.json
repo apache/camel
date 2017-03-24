@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.tika.enabled",
+      "description": "Enable tika component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

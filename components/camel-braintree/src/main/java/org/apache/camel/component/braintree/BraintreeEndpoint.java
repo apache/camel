@@ -37,7 +37,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * The braintree component is used for integrating with the Braintree Payment System.
  */
-@UriEndpoint(scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName", consumerClass = BraintreeConsumer.class, label = "api,cloud,payment")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName", consumerClass = BraintreeConsumer.class, label = "api,cloud,payment")
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
 
     @UriParam

@@ -24,13 +24,13 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -54,7 +54,6 @@ import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.ObjectValue;
 import net.sf.saxon.value.Whitespace;
-
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -83,6 +82,7 @@ import org.slf4j.LoggerFactory;
 public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XQueryBuilder.class);
     private Configuration configuration;
+    private Map<String, Object> configurationProperties = new HashMap<String, Object>();
     private XQueryExpression expression;
     private StaticQueryContext staticQueryContext;
     private Map<String, Object> parameters = new HashMap<String, Object>();
@@ -385,6 +385,16 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         initialized.set(false);
     }
 
+    public Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    public void setConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.configurationProperties = Collections.unmodifiableMap(new HashMap<>(configurationProperties));
+        // change configuration, we must re initialize
+        initialized.set(false);
+    }
+
     public StaticQueryContext getStaticQueryContext() {
         return staticQueryContext;
     }
@@ -668,6 +678,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                 LOG.debug("Using existing Configuration {}", configuration);
             }
 
+            if (configurationProperties != null && !configurationProperties.isEmpty()) {
+                for (Map.Entry<String, Object> entry : configurationProperties.entrySet()) {
+                    configuration.setConfigurationProperty(entry.getKey(), entry.getValue());
+                }
+            }
             staticQueryContext = getConfiguration().newStaticQueryContext();
             if (moduleURIResolver != null) {
                 staticQueryContext.setModuleURIResolver(moduleURIResolver);

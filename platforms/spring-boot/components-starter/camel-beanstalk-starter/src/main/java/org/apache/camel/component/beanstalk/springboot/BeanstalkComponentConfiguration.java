@@ -36,6 +36,12 @@ public class BeanstalkComponentConfiguration {
      */
     @NestedConfigurationProperty
     private ConnectionSettingsFactory connectionSettingsFactory;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public ConnectionSettingsFactory getConnectionSettingsFactory() {
         return connectionSettingsFactory;
@@ -44,5 +50,14 @@ public class BeanstalkComponentConfiguration {
     public void setConnectionSettingsFactory(
             ConnectionSettingsFactory connectionSettingsFactory) {
         this.connectionSettingsFactory = connectionSettingsFactory;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

@@ -31,10 +31,15 @@ import org.apache.camel.util.ServiceHelper;
 public class DefaultConnectorEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private final Endpoint endpoint;
+    private final DataType inputDataType;
+    private final DataType outputDataType;
 
-    public DefaultConnectorEndpoint(String endpointUri, Component component, Endpoint endpoint) {
+    public DefaultConnectorEndpoint(String endpointUri, ConnectorComponent component, Endpoint endpoint,
+                                    DataType inputDataType, DataType outputDataType) {
         super(endpointUri, component);
         this.endpoint = endpoint;
+        this.inputDataType = inputDataType;
+        this.outputDataType = outputDataType;
     }
 
     @Override
@@ -60,6 +65,16 @@ public class DefaultConnectorEndpoint extends DefaultEndpoint implements Delegat
     @ManagedAttribute(description = "Delegate Endpoint URI", mask = true)
     public String getDelegateEndpointUri() {
         return endpoint.getEndpointUri();
+    }
+
+    @ManagedAttribute(description = "Input data type")
+    public DataType getInputDataType() {
+        return inputDataType;
+    }
+
+    @ManagedAttribute(description = "Output data type")
+    public DataType getOutputDataType() {
+        return outputDataType;
     }
 
     @Override

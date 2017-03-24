@@ -42,6 +42,12 @@ public class GuavaEventBusComponentConfiguration {
      * cannot be used together with eventClass option.
      */
     private Class listenerInterface;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public EventBus getEventBus() {
         return eventBus;
@@ -57,5 +63,14 @@ public class GuavaEventBusComponentConfiguration {
 
     public void setListenerInterface(Class listenerInterface) {
         this.listenerInterface = listenerInterface;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

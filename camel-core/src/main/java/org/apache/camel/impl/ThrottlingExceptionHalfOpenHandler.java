@@ -20,7 +20,6 @@ package org.apache.camel.impl;
  * Used by the {@link ThrottlingExceptionRoutePolicy} to allow custom code
  * to handle the half open circuit state and how to determine if a route
  * should be closed
- *
  */
 public interface ThrottlingExceptionHalfOpenHandler {
 

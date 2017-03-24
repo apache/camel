@@ -1,6 +1,6 @@
 ## Google Mail Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 ### Component Description
 
@@ -57,18 +57,17 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The Google Mail component supports 2 options which are listed below.
+The Google Mail component supports 3 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | common |  | GoogleMailConfiguration | To use the shared configuration
-| clientFactory | advanced |  | GoogleMailClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory
+| Name | Description | Default | Type
+| **configuration** (common) | To use the shared configuration |  | GoogleMailConfiguration
+| **clientFactory** (advanced) | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory |  | GoogleMailClient Factory
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -78,27 +77,38 @@ The Google Mail component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Google Mail component supports 13 endpoint options which are listed below:
+The Google Mail endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    google-mail:apiName/methodName
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| apiName | common |  | GoogleMailApiName | *Required* What kind of operation to perform
-| methodName | common |  | String | *Required* What sub operation to use for the selected operation
-| accessToken | common |  | String | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
-| applicationName | common |  | String | Google mail application name. Example would be camel-google-mail/1.0
-| clientId | common |  | String | Client ID of the mail application
-| clientSecret | common |  | String | Client secret of the mail application
-| inBody | common |  | String | Sets the name of a parameter to be passed in the exchange In Body
-| refreshToken | common |  | String | OAuth 2 refresh token. Using this the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
-| scopes | common |  | List | Specifies the level of permissions you want a mail application to have to a user account. See https://developers.google.com/gmail/api/auth/scopes for more info.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **apiName** | *Required* What kind of operation to perform |  | GoogleMailApiName
+| **methodName** | *Required* What sub operation to use for the selected operation |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (11 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **accessToken** (common) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| **applicationName** (common) | Google mail application name. Example would be camel-google-mail/1.0 |  | String
+| **clientId** (common) | Client ID of the mail application |  | String
+| **clientSecret** (common) | Client secret of the mail application |  | String
+| **inBody** (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| **refreshToken** (common) | OAuth 2 refresh token. Using this the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| **scopes** (common) | Specifies the level of permissions you want a mail application to have to a user account. See https://developers.google.com/gmail/api/auth/scopes for more info. |  | List
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

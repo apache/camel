@@ -1,6 +1,6 @@
 ## MVEL Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 The *mvel:* component allows you to process a message using an
 http://mvel.codehaus.org/[MVEL] template. This can be ideal when using
@@ -44,18 +44,29 @@ The MVEL component has no options.
 
 
 // endpoint options: START
-The MVEL component supports 4 endpoint options which are listed below:
+The MVEL endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    mvel:resourceUri
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* Path to the resource or a reference to lookup a bean in the Registry to use as the resource
-| contentCache | producer | false | boolean | Sets whether to use resource content cache or not
-| encoding | producer |  | String | Character encoding of the resource content.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **resourceUri** | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **contentCache** (producer) | Sets whether to use resource content cache or not | false | boolean
+| **encoding** (producer) | Character encoding of the resource content. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

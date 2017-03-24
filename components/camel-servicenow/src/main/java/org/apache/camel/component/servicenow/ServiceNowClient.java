@@ -24,7 +24,6 @@ import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
 import org.apache.camel.Message;
 import org.apache.camel.component.servicenow.auth.AuthenticationRequestFilter;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -44,8 +43,7 @@ public final class ServiceNowClient {
             configuration.getApiUrl(),
             Arrays.asList(
                 new AuthenticationRequestFilter(configuration),
-                new JacksonJsonProvider(configuration.getMapper()),
-                new ServiceNowExceptionMapper(configuration.getMapper())
+                new JacksonJsonProvider(configuration.getMapper())
             ),
             true
         );
@@ -131,10 +129,17 @@ public final class ServiceNowClient {
         case 405:
         case 406:
         case 415:
-            throw response.readEntity(ServiceNowException.class);
+            ServiceNowExceptionModel model = response.readEntity(ServiceNowExceptionModel.class);
+            throw new ServiceNowException(
+                code,
+                model.getStatus(),
+                model.getError().get("message"),
+                model.getError().get("detail")
+            );
         default:
-            throw new CamelException(
-                String.format("Status (%d): %s", code, response.readEntity(Map.class))
+            throw new ServiceNowException(
+                code,
+                response.readEntity(Map.class)
             );
         }
 

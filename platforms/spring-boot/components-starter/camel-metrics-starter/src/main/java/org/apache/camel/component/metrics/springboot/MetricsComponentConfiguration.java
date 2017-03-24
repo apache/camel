@@ -34,6 +34,12 @@ public class MetricsComponentConfiguration {
      */
     @NestedConfigurationProperty
     private MetricRegistry metricRegistry;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public MetricRegistry getMetricRegistry() {
         return metricRegistry;
@@ -41,5 +47,14 @@ public class MetricsComponentConfiguration {
 
     public void setMetricRegistry(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

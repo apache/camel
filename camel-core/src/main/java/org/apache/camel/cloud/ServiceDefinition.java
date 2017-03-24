@@ -25,6 +25,7 @@ import java.util.Map;
  * @see ServiceDiscovery
  */
 public interface ServiceDefinition {
+
     /**
      * Gets the service name.
      */

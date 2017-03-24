@@ -1,5 +1,7 @@
 ## IRC Component
 
+*Available as of Camel version 1.1*
+
 The *irc* component implements an
 http://en.wikipedia.org/wiki/Internet_Relay_Chat[IRC] (Internet Relay
 Chat) transport.
@@ -42,40 +44,51 @@ The IRC component has no options.
 
 
 // endpoint options: START
-The IRC component supports 26 endpoint options which are listed below:
+The IRC endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    irc:hostname:port
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| hostname | common |  | String | *Required* Hostname for the IRC chat server
-| port | common | 6667,6668,6669 | int | Port number for the IRC chat server
-| autoRejoin | common | true | boolean | Whether to auto re-join when being kicked
-| namesOnJoin | common | false | boolean | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'.
-| nickname | common |  | String | The nickname used in chat.
-| persistent | common | true | boolean | Use persistent messages.
-| realname | common |  | String | The IRC user's actual name.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| colors | advanced | true | boolean | Whether or not the server supports color codes.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| onJoin | filter | true | boolean | Handle user join events.
-| onKick | filter | true | boolean | Handle kick events.
-| onMode | filter | true | boolean | Handle mode change events.
-| onNick | filter | true | boolean | Handle nickname change events.
-| onPart | filter | true | boolean | Handle user part events.
-| onPrivmsg | filter | true | boolean | Handle private message events.
-| onQuit | filter | true | boolean | Handle user quit events.
-| onReply | filter | false | boolean | Whether or not to handle general responses to commands or informational messages.
-| onTopic | filter | true | boolean | Handle topic change events.
-| nickPassword | security |  | String | Your IRC server nickname password.
-| password | security |  | String | The IRC server password.
-| sslContextParameters | security |  | SSLContextParameters | Used for configuring security using SSL. Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this setting overrides the trustManager option.
-| trustManager | security |  | SSLTrustManager | The trust manager used to verify the SSL server's certificate.
-| username | security |  | String | The IRC server user name.
+| Name | Description | Default | Type
+| **hostname** | *Required* Hostname for the IRC chat server |  | String
+| **port** | Port number for the IRC chat server. If no port is configured then a default port of either 6667 6668 or 6669 is used. |  | int
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (24 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **autoRejoin** (common) | Whether to auto re-join when being kicked | true | boolean
+| **namesOnJoin** (common) | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'. | false | boolean
+| **nickname** (common) | The nickname used in chat. |  | String
+| **persistent** (common) | Use persistent messages. | true | boolean
+| **realname** (common) | The IRC user's actual name. |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **colors** (advanced) | Whether or not the server supports color codes. | true | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **onJoin** (filter) | Handle user join events. | true | boolean
+| **onKick** (filter) | Handle kick events. | true | boolean
+| **onMode** (filter) | Handle mode change events. | true | boolean
+| **onNick** (filter) | Handle nickname change events. | true | boolean
+| **onPart** (filter) | Handle user part events. | true | boolean
+| **onPrivmsg** (filter) | Handle private message events. | true | boolean
+| **onQuit** (filter) | Handle user quit events. | true | boolean
+| **onReply** (filter) | Whether or not to handle general responses to commands or informational messages. | false | boolean
+| **onTopic** (filter) | Handle topic change events. | true | boolean
+| **nickPassword** (security) | Your IRC server nickname password. |  | String
+| **password** (security) | The IRC server password. |  | String
+| **sslContextParameters** (security) | Used for configuring security using SSL. Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this setting overrides the trustManager option. |  | SSLContextParameters
+| **trustManager** (security) | The trust manager used to verify the SSL server's certificate. |  | SSLTrustManager
+| **username** (security) | The IRC server user name. |  | String
+|=======================================================================
 // endpoint options: END
 
 

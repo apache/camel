@@ -29,7 +29,9 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -37,6 +39,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -77,6 +80,8 @@ import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.Validator;
+import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.util.LoadPropertiesException;
 
 /**
@@ -601,6 +606,37 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
 
     /**
+     * Gets the Hystrix configuration by the given name. If no name is given
+     * the default configuration is returned, see <tt>setHystrixConfiguration</tt>
+     *
+     * @param id id of the configuration, or <tt>null</tt> to return the default configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been registered
+     */
+    HystrixConfigurationDefinition getHystrixConfiguration(String id);
+
+    /**
+     * Sets the default Hystrix configuration
+     *
+     * @param configuration the configuration
+     */
+    void setHystrixConfiguration(HystrixConfigurationDefinition configuration);
+
+    /**
+     * Sets the Hystrix configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations);
+
+    /**
+     * Adds the Hystrix configuration
+     *
+     * @param id name of the configuration
+     * @param configuration the configuration
+     */
+    void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration);
+
+    /**
      * Returns the order in which the route inputs was started.
      * <p/>
      * The order may not be according to the startupOrder defined on the route.
@@ -1085,7 +1121,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a>
      * <p/>
-     * <b>Important:</b> Make sure to call {@link org.apache.camel.ProducerTemplate#stop()} when you are done using the template,
+     * <b>Important:</b> Make sure to call {@link org.apache.camel.FluentProducerTemplate#stop()} when you are done using the template,
      * to clean up any resources.
      * <p/>
      * Will use cache size defined in Camel property with key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.
@@ -1206,6 +1242,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     DataFormat resolveDataFormat(String name);
 
     /**
+     * Creates the given data format given its name.
+     *
+     * @param name the data format name or a reference to a data format factory in the {@link Registry}
+     * @return the resolved data format, or <tt>null</tt> if not found
+     */
+    DataFormat createDataFormat(String name);
+
+    /**
      * Resolve a data format definition given its name
      *
      * @param name the data format definition name or a reference to it in the {@link Registry}
@@ -1254,7 +1298,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param from from data type
      * @param to to data type
-     * @return the resolved data format, or <tt>null</tt> if not found
+     * @return the resolved transformer, or <tt>null</tt> if not found
      */
     Transformer resolveTransformer(DataType from, DataType to);
 
@@ -1263,6 +1307,34 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the TransformerRegistry
      */
     TransformerRegistry getTransformerRegistry();
+
+    /**
+     * Sets the validators that can be referenced in the routes.
+     *
+     * @param validators the validators
+     */
+    void setValidators(List<ValidatorDefinition> validators);
+
+    /**
+     * Gets the validators that can be referenced in the routes.
+     *
+     * @return the validators available
+     */
+    List<ValidatorDefinition> getValidators();
+
+    /**
+     * Resolve a validator given from/to data type.
+     *
+     * @param type the data type
+     * @return the resolved validator, or <tt>null</tt> if not found
+     */
+    Validator resolveValidator(DataType type);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.ValidatorRegistry}
+     * @return the ValidatorRegistry
+     */
+    ValidatorRegistry getValidatorRegistry();
 
     /**
      * @deprecated use {@link #setGlobalOptions(Map) setGlobalOptions(Map<String,String>) instead}.
@@ -1722,7 +1794,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Returns the HTML documentation for the given Camel component
      *
      * @return the HTML or <tt>null</tt> if the component is <b>not</b> built with HTML document included.
+     * @deprecated use camel-catalog instead
      */
+    @Deprecated
     String getComponentDocumentation(String componentName) throws IOException;
 
     /**
@@ -1885,5 +1959,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link ReloadStrategy} to be used
      */
     void setReloadStrategy(ReloadStrategy reloadStrategy);
+
+    /**
+     * Gets the associated {@link RuntimeCamelCatalog} for this CamelContext.
+     */
+    RuntimeCamelCatalog getRuntimeCamelCatalog();
 
 }

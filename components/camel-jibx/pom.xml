@@ -83,7 +83,7 @@
                 <property>
                     <name>!maven.test.skip</name>
                 </property>
-                <jdk>!1.8</jdk>
+                <jdk>[,1.8)</jdk>
             </activation>
             <build>
                 <pluginManagement>
@@ -140,7 +140,7 @@
         <profile>
             <id>jdk8-test</id>
             <activation>
-                <jdk>1.8</jdk>
+                <jdk>[1.8,]</jdk>
             </activation>
             <build>
                 <plugins>

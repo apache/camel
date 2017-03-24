@@ -51,6 +51,12 @@ public class FlinkComponentConfiguration {
      */
     @NestedConfigurationProperty
     private DataStreamCallback dataStreamCallback;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public DataSet getDataSet() {
         return dataSet;
@@ -82,5 +88,14 @@ public class FlinkComponentConfiguration {
 
     public void setDataStreamCallback(DataStreamCallback dataStreamCallback) {
         this.dataStreamCallback = dataStreamCallback;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

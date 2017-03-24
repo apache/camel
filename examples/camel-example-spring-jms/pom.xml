@@ -28,9 +28,12 @@
   <artifactId>camel-example-spring-jms</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Example :: Spring :: JMS</name>
-  <description>An example using Spring XML to talk to the JMS server from different kind of client techniques
-  </description>
+  <description>An example using Spring XML to talk to the JMS server from different kind of client techniques</description>
+
   <properties>
+    <category>Messaging</category>
+    <title>Spring JMS</title>
+
     <camel.osgi.export.pkg>org.apache.camel.example.server.*</camel.osgi.export.pkg>
     <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
     </camel.osgi.import.additional>

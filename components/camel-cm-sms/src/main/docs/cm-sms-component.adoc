@@ -1,6 +1,6 @@
 ## CM SMS Gateway Component
 
-*Available as of Camel 2.18*
+*Available as of Camel version 2.18*
 
 *Camel-Cm-Sms* is an http://camel.apache.org/[Apache Camel] component 
 for the [CM SMS Gateway](https://www.cmtelecom.com). 
@@ -37,20 +37,31 @@ The CM SMS Gateway component has no options.
 
 
 // endpoint options: START
-The CM SMS Gateway component supports 6 endpoint options which are listed below:
+The CM SMS Gateway endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    cm-sms:host
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* SMS Provider HOST with scheme
-| defaultFrom | producer |  | String | This is the sender name. The maximum length is 11 characters.
-| defaultMaxNumberOfParts | producer | 8 | int | If it is a multipart message forces the max number. Message can be truncated. Technically the gateway will first check if a message is larger than 160 characters if so the message will be cut into multiple 153 characters parts limited by these parameters.
-| productToken | producer |  | String | *Required* The unique token to use
-| testConnectionOnStartup | producer | false | boolean | Whether to test the connection to the SMS Gateway on startup
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **host** | *Required* SMS Provider HOST with scheme |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **defaultFrom** (producer) | This is the sender name. The maximum length is 11 characters. |  | String
+| **defaultMaxNumberOfParts** (producer) | If it is a multipart message forces the max number. Message can be truncated. Technically the gateway will first check if a message is larger than 160 characters if so the message will be cut into multiple 153 characters parts limited by these parameters. | 8 | int
+| **productToken** (producer) | *Required* The unique token to use |  | String
+| **testConnectionOnStartup** (producer) | Whether to test the connection to the SMS Gateway on startup | false | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

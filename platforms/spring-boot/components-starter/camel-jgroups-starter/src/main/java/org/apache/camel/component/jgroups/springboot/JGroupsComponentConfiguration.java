@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jgroups.springboot;
 
-import org.jgroups.Channel;
+import org.jgroups.JChannel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -33,7 +33,7 @@ public class JGroupsComponentConfiguration {
      * Channel to use
      */
     @NestedConfigurationProperty
-    private Channel channel;
+    private JChannel channel;
     /**
      * Specifies configuration properties of the JChannel used by the endpoint.
      */
@@ -44,12 +44,18 @@ public class JGroupsComponentConfiguration {
      * only regular messages are consumed by the endpoint.
      */
     private Boolean enableViewMessages = false;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
-    public Channel getChannel() {
+    public JChannel getChannel() {
         return channel;
     }
 
-    public void setChannel(Channel channel) {
+    public void setChannel(JChannel channel) {
         this.channel = channel;
     }
 
@@ -67,5 +73,14 @@ public class JGroupsComponentConfiguration {
 
     public void setEnableViewMessages(Boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

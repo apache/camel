@@ -39,7 +39,7 @@ import org.apache.camel.spi.UriPath;
  * It is similar to the Routebox component in idea, though the Context component tries to be really simple for end users;
  * just a simple convention over configuration approach to refer to local endpoints inside the CamelContext Component.
  */
-@UriEndpoint(scheme = "context", title = "Camel Context", syntax = "context:contextId:localEndpointUrl", label = "endpoint")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "context", title = "Camel Context", syntax = "context:contextId:localEndpointUrl", label = "endpoint")
 public class ContextEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     @UriPath @Metadata(required = "true")

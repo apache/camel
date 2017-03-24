@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -106,6 +107,26 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         }
     }
 
+    /**
+     * check emptyStream and if CVSRecord is allow to process emptyStreams
+     * avoid IllegalArgumentException and return empty list when unmarshalling
+     */
+    private boolean checkEmptyStream(BindyCsvFactory factory, InputStream inputStream) throws IOException {
+        boolean allowEmptyStream = factory.isAllowEmptyStream();
+        boolean isStreamEmpty = false;
+        boolean canReturnEmptyListOfModels = false;
+        
+        if (inputStream == null || inputStream.available() == 0) {
+            isStreamEmpty = true;
+        }
+        
+        if (isStreamEmpty && allowEmptyStream) {
+            canReturnEmptyListOfModels = true;
+        }
+        
+        return canReturnEmptyListOfModels;
+    }
+
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
@@ -115,19 +136,25 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
         // Pojos of the model
         Map<String, Object> model;
-
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-
-        // Scanner is used to read big file
-        Scanner scanner = new Scanner(in);
-
-        // Retrieve the separator defined to split the record
-        String separator = factory.getSeparator();
-        String quote = factory .getQuote();
-        ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
-
-        int count = 0;
+        InputStreamReader in = null;
+        Scanner scanner = null;
         try {
+            if (checkEmptyStream(factory, inputStream)) {
+                return models;
+            }
+    
+            in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
+    
+            // Scanner is used to read big file
+            scanner = new Scanner(in);
+    
+            // Retrieve the separator defined to split the record
+            String separator = factory.getSeparator();
+            String quote = factory .getQuote();
+            ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
+    
+            int count = 0;
+            
             // If the first line of the CSV file contains columns name, then we
             // skip this line
             if (factory.getSkipFirstLine()) {
@@ -136,50 +163,50 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     scanner.nextLine();
                 }
             }
-
+    
             while (scanner.hasNextLine()) {
-
+    
                 // Read the line
                 String line = scanner.nextLine().trim();
-
+    
                 if (ObjectHelper.isEmpty(line)) {
                     // skip if line is empty
                     continue;
                 }
-
+    
                 // Increment counter
                 count++;
-
+    
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
-
+    
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
                 String[] tokens = line.split(separator, factory.getAutospanLine() ? factory.getMaxpos() : -1);
                 List<String> result = Arrays.asList(tokens);
                 // must unquote tokens before use
                 result = unquoteTokens(result, separator, quote);
-
+    
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Size of the record splitted : {}", result.size());
                     }
-
+    
                     // Bind data from CSV record with model classes
                     factory.bind(result, model, count);
-
+    
                     // Link objects together
                     factory.link(model);
-
+    
                     // Add objects graph to the list
                     models.add(model);
-
+    
                     LOG.debug("Graph of objects created: {}", model);
                 }
             }
-
+    
             // BigIntegerFormatFactory if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
@@ -189,8 +216,12 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             }
 
         } finally {
-            scanner.close();
-            IOHelper.close(in, "in", LOG);
+            if (scanner != null) {
+                scanner.close();
+            }
+            if (in != null) {
+                IOHelper.close(in, "in", LOG);
+            }
         }
 
     }

@@ -65,6 +65,12 @@
       "name": "camel.component.aws-ddb.enabled",
       "description": "Enable aws-ddb component",
       "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-kinesis-firehose.enabled",
+      "description": "Enable aws-kinesis-firehose component",
+      "type": "java.lang.Boolean"
     }
   ]
 }

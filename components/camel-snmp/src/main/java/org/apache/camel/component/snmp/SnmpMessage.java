@@ -56,7 +56,7 @@ public class SnmpMessage extends DefaultMessage {
 
     @Override
     public SnmpMessage newInstance() {
-        return new SnmpMessage();
+        return new SnmpMessage(this.pdu);
     }
 
     @Override

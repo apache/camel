@@ -37,7 +37,6 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -211,7 +210,7 @@ public class CometdComponent extends UriEndpointComponent {
 
         context.addServlet(holder, "/cometd/*");
         context.addServlet("org.eclipse.jetty.servlet.DefaultServlet", "/");
-        context.setSessionHandler(new SessionHandler(new HashSessionManager()));
+        context.setSessionHandler(new SessionHandler());
 
         holder.setInitParameter("timeout", Integer.toString(endpoint.getTimeout()));
         holder.setInitParameter("interval", Integer.toString(endpoint.getInterval()));

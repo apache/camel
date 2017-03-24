@@ -87,11 +87,45 @@ public class SjmsComponentConfiguration {
     @NestedConfigurationProperty
     private MessageCreatedStrategy messageCreatedStrategy;
     /**
+     * When using the default
+     * org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should
+     * each javax.jms.Connection be tested (calling start) before returned from
+     * the pool.
+     */
+    private Boolean connectionTestOnBorrow = true;
+    /**
+     * The username to use when creating javax.jms.Connection when using the
+     * default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+     */
+    private String connectionUsername;
+    /**
+     * The password to use when creating javax.jms.Connection when using the
+     * default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+     */
+    private String connectionPassword;
+    /**
+     * The client ID to use when creating javax.jms.Connection when using the
+     * default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+     */
+    private String connectionClientId;
+    /**
+     * The max wait time in millis to block and wait on free connection when the
+     * pool is exhausted when using the default
+     * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+     */
+    private Long connectionMaxWait = 5000L;
+    /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public ConnectionFactory getConnectionFactory() {
         return connectionFactory;
@@ -162,6 +196,46 @@ public class SjmsComponentConfiguration {
         this.messageCreatedStrategy = messageCreatedStrategy;
     }
 
+    public Boolean getConnectionTestOnBorrow() {
+        return connectionTestOnBorrow;
+    }
+
+    public void setConnectionTestOnBorrow(Boolean connectionTestOnBorrow) {
+        this.connectionTestOnBorrow = connectionTestOnBorrow;
+    }
+
+    public String getConnectionUsername() {
+        return connectionUsername;
+    }
+
+    public void setConnectionUsername(String connectionUsername) {
+        this.connectionUsername = connectionUsername;
+    }
+
+    public String getConnectionPassword() {
+        return connectionPassword;
+    }
+
+    public void setConnectionPassword(String connectionPassword) {
+        this.connectionPassword = connectionPassword;
+    }
+
+    public String getConnectionClientId() {
+        return connectionClientId;
+    }
+
+    public void setConnectionClientId(String connectionClientId) {
+        this.connectionClientId = connectionClientId;
+    }
+
+    public Long getConnectionMaxWait() {
+        return connectionMaxWait;
+    }
+
+    public void setConnectionMaxWait(Long connectionMaxWait) {
+        this.connectionMaxWait = connectionMaxWait;
+    }
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -169,6 +243,15 @@ public class SjmsComponentConfiguration {
     public void setHeaderFilterStrategy(
             HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class TimedTaskManagerNestedConfiguration {

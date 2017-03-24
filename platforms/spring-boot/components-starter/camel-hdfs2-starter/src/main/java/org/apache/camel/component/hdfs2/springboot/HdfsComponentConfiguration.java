@@ -31,6 +31,12 @@ public class HdfsComponentConfiguration {
      * To use the given configuration for security with JAAS.
      */
     private Configuration jAASConfiguration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Configuration getJAASConfiguration() {
         return jAASConfiguration;
@@ -38,5 +44,14 @@ public class HdfsComponentConfiguration {
 
     public void setJAASConfiguration(Configuration jAASConfiguration) {
         this.jAASConfiguration = jAASConfiguration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

@@ -166,6 +166,8 @@ public interface Exchange {
 
     String MAXIMUM_CACHE_POOL_SIZE     = "CamelMaximumCachePoolSize";
     String MAXIMUM_ENDPOINT_CACHE_SIZE = "CamelMaximumEndpointCacheSize";
+    String MAXIMUM_TRANSFORMER_CACHE_SIZE = "CamelMaximumTransformerCacheSize";
+    String MAXIMUM_VALIDATOR_CACHE_SIZE = "CamelMaximumValidatorCacheSize";
     String MESSAGE_HISTORY             = "CamelMessageHistory";
     String MULTICAST_INDEX             = "CamelMulticastIndex";
     String MULTICAST_COMPLETE          = "CamelMulticastComplete";
@@ -230,9 +232,6 @@ public interface Exchange {
     String XSLT_ERROR       = "CamelXsltError";
     String XSLT_FATAL_ERROR = "CamelXsltFatalError";
     String XSLT_WARNING     = "CamelXsltWarning";
-
-    String INPUT_TYPE  = "CamelInputType";
-    String OUTPUT_TYPE = "CamelOutputType";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

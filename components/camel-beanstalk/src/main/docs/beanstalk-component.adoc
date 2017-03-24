@@ -1,6 +1,6 @@
 ## Beanstalk Component
 
-*Available in Camel 2.15*
+*Available as of Camel version 2.15*
 
 camel-beanstalk project provides a Camel component for job retrieval and
 post-processing of Beanstalk jobs.
@@ -57,58 +57,68 @@ into Beanstalk.
 
 
 // component options: START
-The Beanstalk component supports 1 options which are listed below.
+The Beanstalk component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| connectionSettingsFactory | common |  | ConnectionSettingsFactory | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings)
+| Name | Description | Default | Type
+| **connectionSettings Factory** (common) | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings) |  | ConnectionSettings Factory
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Beanstalk component supports 27 endpoint options which are listed below:
+The Beanstalk endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    beanstalk:connectionSettings
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| connectionSettings | common |  | String | Connection settings host:port/tube
-| command | common |  | BeanstalkCommand | put means to put the job into Beanstalk. Job body is specified in the Camel message body. Job ID will be returned in beanstalk.jobId message header. delete release touch or bury expect Job ID in the message header beanstalk.jobId. Result of the operation is returned in beanstalk.result message header kick expects the number of jobs to kick in the message body and returns the number of jobs actually kicked out in the message header beanstalk.result.
-| jobDelay | common | 0 | int | Job delay in seconds.
-| jobPriority | common | 1000 | long | Job priority. (0 is the highest see Beanstalk protocol)
-| jobTimeToRun | common | 60 | int | Job time to run in seconds. (when 0 the beanstalkd daemon raises it to 1 automatically see Beanstalk protocol)
-| awaitJob | consumer | true | boolean | Whether to wait for job to complete before ack the job from beanstalk
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| onFailure | consumer |  | BeanstalkCommand | Command to use when processing failed.
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| useBlockIO | consumer | true | boolean | Whether to use blockIO.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| Name | Description | Default | Type
+| **connectionSettings** | Connection settings host:port/tube |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (26 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **command** (common) | put means to put the job into Beanstalk. Job body is specified in the Camel message body. Job ID will be returned in beanstalk.jobId message header. delete release touch or bury expect Job ID in the message header beanstalk.jobId. Result of the operation is returned in beanstalk.result message header kick expects the number of jobs to kick in the message body and returns the number of jobs actually kicked out in the message header beanstalk.result. |  | BeanstalkCommand
+| **jobDelay** (common) | Job delay in seconds. | 0 | int
+| **jobPriority** (common) | Job priority. (0 is the highest see Beanstalk protocol) | 1000 | long
+| **jobTimeToRun** (common) | Job time to run in seconds. (when 0 the beanstalkd daemon raises it to 1 automatically see Beanstalk protocol) | 60 | int
+| **awaitJob** (consumer) | Whether to wait for job to complete before ack the job from beanstalk | true | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **onFailure** (consumer) | Command to use when processing failed. |  | BeanstalkCommand
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **useBlockIO** (consumer) | Whether to use blockIO. | true | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|=======================================================================
 // endpoint options: END
 
 

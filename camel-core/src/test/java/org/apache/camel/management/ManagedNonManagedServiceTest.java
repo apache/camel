@@ -48,7 +48,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
-        assertEquals(10, set.size());
+        assertEquals(12, set.size());
     }
 
     public void testNonManagedService() throws Exception {
@@ -69,7 +69,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
-        assertEquals(9, set.size());
+        assertEquals(11, set.size());
     }
 
     @Override

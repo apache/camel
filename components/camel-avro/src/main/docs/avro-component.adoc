@@ -1,6 +1,6 @@
 ## Avro Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 This component provides a dataformat for avro, which allows
 serialization and deserialization of messages using Apache Avro's binary
@@ -171,17 +171,16 @@ wrapping.
 
 
 // component options: START
-The Avro component supports 1 options which are listed below.
+The Avro component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | AvroConfiguration | To use a shared AvroConfiguration to configure options once
+| Name | Description | Default | Type
+| **configuration** (advanced) | To use a shared AvroConfiguration to configure options once |  | AvroConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -190,28 +189,39 @@ The Avro component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Avro component supports 14 endpoint options which are listed below:
+The Avro endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    avro:transport:host:port/messageName
+
+with the following path and query parameters:
+
+#### Path Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| transport | common |  | AvroTransport | *Required* Transport to use
-| port | common |  | int | *Required* Port number to use
-| host | common |  | String | *Required* Hostname to use
-| messageName | common |  | String | The name of the message to send.
-| protocol | common |  | Protocol | Avro protocol to use
-| protocolClassName | common |  | String | Avro protocol to use defined by the FQN class name
-| protocolLocation | common |  | String | Avro protocol location
-| reflectionProtocol | common | false | boolean | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected
-| singleParameter | common | false | boolean | If true consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message
-| uriAuthority | common |  | String | Authority to use (username and password)
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **transport** | *Required* Transport to use |  | AvroTransport
+| **port** | *Required* Port number to use |  | int
+| **host** | *Required* Hostname to use |  | String
+| **messageName** | The name of the message to send. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (10 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **protocol** (common) | Avro protocol to use |  | Protocol
+| **protocolClassName** (common) | Avro protocol to use defined by the FQN class name |  | String
+| **protocolLocation** (common) | Avro protocol location |  | String
+| **reflectionProtocol** (common) | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected | false | boolean
+| **singleParameter** (common) | If true consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | boolean
+| **uriAuthority** (common) | Authority to use (username and password) |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

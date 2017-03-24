@@ -34,6 +34,12 @@ public class SmppComponentConfiguration {
      * To use the shared SmppConfiguration as configuration.
      */
     private SmppConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public SmppConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -42,6 +48,15 @@ public class SmppComponentConfiguration {
     public void setConfiguration(
             SmppConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class SmppConfigurationNestedConfiguration {
@@ -53,7 +68,7 @@ public class SmppComponentConfiguration {
         /**
          * Port number for the SMSC server to use.
          */
-        private Integer port;
+        private Integer port = 2775;
         /**
          * The system id (username) for connecting to SMSC server.
          */
@@ -91,14 +106,14 @@ public class SmppComponentConfiguration {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          */
-        private Integer enquireLinkTimer;
+        private Integer enquireLinkTimer = 5000;
         /**
          * Defines the maximum period of inactivity allowed after a transaction,
          * after which an SMPP entity may assume that the session is no longer
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          */
-        private Integer transactionTimer;
+        private Integer transactionTimer = 10000;
         /**
          * This parameter is used to categorize the type of ESME (External Short
          * Message Entity) that is binding to the SMSC (max. 13 characters).
@@ -267,19 +282,19 @@ public class SmppComponentConfiguration {
         /**
          * Whether using SSL with the smpps protocol
          */
-        private Boolean usingSSL;
+        private Boolean usingSSL = false;
         /**
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          */
-        private Long initialReconnectDelay;
+        private Long initialReconnectDelay = 5000L;
         /**
          * Defines the interval in milliseconds between the reconnect attempts,
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          */
-        private Long reconnectDelay;
-        private Integer maxReconnect;
+        private Long reconnectDelay = 5000L;
+        private Integer maxReconnect = 2147483647;
         /**
          * Sessions can be lazily created to avoid exceptions, if the SMSC is
          * not available when the Camel producer is started. Camel will check
@@ -287,7 +302,7 @@ public class SmppComponentConfiguration {
          * the first exchange. If they are present, Camel will use these data to
          * connect to the SMSC.
          */
-        private Boolean lazySessionCreation;
+        private Boolean lazySessionCreation = false;
         /**
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the hostname or ip address of your HTTP proxy.
@@ -297,7 +312,7 @@ public class SmppComponentConfiguration {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          */
-        private Integer httpProxyPort;
+        private Integer httpProxyPort = 3128;
         /**
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the username required for your HTTP proxy.

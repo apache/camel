@@ -30,6 +30,12 @@
   <name>Camel :: Example :: CDI :: Testing</name>
   <description>An example illustrating Camel CDI testing features</description>
 
+  <properties>
+    <category>Testing</category>
+    <title>CDI Test</title>
+  </properties>
+
+
   <dependencies>
 
     <!-- CDI API -->

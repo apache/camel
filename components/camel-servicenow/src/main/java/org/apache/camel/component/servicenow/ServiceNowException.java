@@ -16,30 +16,35 @@
  */
 package org.apache.camel.component.servicenow;
 
+import java.util.Collections;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.CamelException;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceNowException extends CamelException {
+    private final Integer code;
     private final String status;
     private final String detail;
+    private final Map<Object, Object> attributes;
 
-    public ServiceNowException(
-        @JsonProperty("status") String status,
-        @JsonProperty("error") Map<String, String> error) {
-        super(error.get("message"));
+    public ServiceNowException(Integer code, String status, String message, String detail) {
+        super(message);
+        this.code = code;
         this.status = status;
-        this.detail = error.get("detail");
+        this.detail = detail;
+        this.attributes = Collections.emptyMap();
     }
 
-    public ServiceNowException(Throwable cause) {
-        super(cause);
-
+    public ServiceNowException(Integer code, Map<Object, Object> attributes) {
+        super(String.format("Status (%d)"));
+        this.code = code;
         this.status = null;
         this.detail = null;
+        this.attributes = Collections.unmodifiableMap(attributes);
+    }
+
+    public Integer getCode() {
+        return code;
     }
 
     public String getStatus() {
@@ -50,10 +55,15 @@ public class ServiceNowException extends CamelException {
         return detail;
     }
 
+    public Map<Object, Object> getAttributes() {
+        return attributes;
+    }
+
     @Override
     public String toString() {
         return getMessage() != null
             ? "" + this.status + ": " + getMessage()
             : super.toString();
     }
+
 }

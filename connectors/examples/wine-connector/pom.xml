@@ -62,11 +62,15 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- support camel documentation -->
+    <!-- camel and spring boot compiler plugins -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>apt</artifactId>
-      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <version>${spring-boot-version}</version>
     </dependency>
 
     <!-- logging -->
@@ -141,12 +145,31 @@
         </executions>
       </plugin>
 
-      <!-- generate connector -->
+      <!-- turn off jar plugin as we use connector plugin to jar instead -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <phase/>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- connector plugin will build the jar -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-connector-maven-plugin</artifactId>
         <version>${project.version}</version>
         <executions>
+          <execution>
+            <id>boot</id>
+            <goals>
+              <goal>prepare-spring-boot-auto-configuration</goal>
+            </goals>
+          </execution>
           <execution>
             <id>connector</id>
             <goals>
@@ -154,20 +177,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-
-      <!-- to generate the MANIFEST-FILE of the bundle -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>${maven-bundle-plugin-version}</version>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>com.foo.wine</Bundle-SymbolicName>
-            <Export-Service>org.apache.camel.spi.ComponentResolver;component=wine</Export-Service>
-          </instructions>
-        </configuration>
       </plugin>
 
     </plugins>

@@ -48,6 +48,12 @@ public class XmlSignatureComponentConfiguration {
      * configuring endpoints.
      */
     private XmlVerifierConfigurationNestedConfiguration verifierConfiguration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public XmlSignerConfigurationNestedConfiguration getSignerConfiguration() {
         return signerConfiguration;
@@ -65,6 +71,15 @@ public class XmlSignatureComponentConfiguration {
     public void setVerifierConfiguration(
             XmlVerifierConfigurationNestedConfiguration verifierConfiguration) {
         this.verifierConfiguration = verifierConfiguration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class XmlSignerConfigurationNestedConfiguration {
@@ -117,7 +132,7 @@ public class XmlSignatureComponentConfiguration {
          * Only relevant when a KeyInfo is returned by {@link KeyAccessor} . and
          * {@link KeyInfo#getId()} is not <code>null</code>.
          */
-        private Boolean addKeyInfoReference;
+        private Boolean addKeyInfoReference = true;
         /**
          * Namespace prefix for the XML signature namespace
          * "http://www.w3.org/2000/09/xmldsig#". Default value is "ds". If
@@ -191,7 +206,7 @@ public class XmlSignatureComponentConfiguration {
          * contains XML. The value can be overwritten by the header
          * {@link XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT} .
          */
-        private Boolean plainText;
+        private Boolean plainText = false;
         /**
          * Encoding of the plain text. Only relevant if the message body is
          * plain text (see parameter {@link #plainText} . Default value is
@@ -286,19 +301,19 @@ public class XmlSignatureComponentConfiguration {
          *            if set to {@link Boolean#FALSE} then DOCTYPE declaration
          *            is allowed, otherwise not
          */
-        private Boolean disallowDoctypeDecl;
+        private Boolean disallowDoctypeDecl = true;
         /**
          * Indicator whether the XML declaration in the outgoing message body
          * should be omitted. Default value is <code>false</code>. Can be
          * overwritten by the header
          * {@link XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION} .
          */
-        private Boolean omitXmlDeclaration;
+        private Boolean omitXmlDeclaration = false;
         /**
          * Determines if the XML signature specific headers be cleared after
          * signing and verification. Defaults to true.
          */
-        private Boolean clearHeaders;
+        private Boolean clearHeaders = true;
         /**
          * Classpath to the XML Schema. Must be specified in the detached XML
          * Signature case for determining the ID attributes, might be set in the
@@ -629,7 +644,7 @@ public class XmlSignatureComponentConfiguration {
          * {@link #setOutputNodeSearch(Object)} . The supported default search
          * types you can find in {@link DefaultXmlSignature2Message} .
          */
-        private String outputNodeSearchType = "DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT";
+        private String outputNodeSearchType = "Default";
         /**
          * Indicator whether the XML signature elements (elements with local
          * name "Signature" and namesapce
@@ -643,11 +658,11 @@ public class XmlSignatureComponentConfiguration {
          * {@link DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT}
          * .F
          */
-        private Boolean removeSignatureElements;
+        private Boolean removeSignatureElements = false;
         /**
          * Enables secure validation. If true then secure validation is enabled.
          */
-        private Boolean secureValidation;
+        private Boolean secureValidation = true;
         /**
          * Name of handler to
          * 
@@ -696,19 +711,19 @@ public class XmlSignatureComponentConfiguration {
          *            if set to {@link Boolean#FALSE} then DOCTYPE declaration
          *            is allowed, otherwise not
          */
-        private Boolean disallowDoctypeDecl;
+        private Boolean disallowDoctypeDecl = true;
         /**
          * Indicator whether the XML declaration in the outgoing message body
          * should be omitted. Default value is <code>false</code>. Can be
          * overwritten by the header
          * {@link XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION} .
          */
-        private Boolean omitXmlDeclaration;
+        private Boolean omitXmlDeclaration = false;
         /**
          * Determines if the XML signature specific headers be cleared after
          * signing and verification. Defaults to true.
          */
-        private Boolean clearHeaders;
+        private Boolean clearHeaders = true;
         /**
          * Classpath to the XML Schema. Must be specified in the detached XML
          * Signature case for determining the ID attributes, might be set in the

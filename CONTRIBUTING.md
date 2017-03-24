@@ -138,7 +138,6 @@ We prefer patches has unit tests as well and that these unit tests have proper a
 ## Using the issue tracker
 
 Before you can raise an issue in the [issue tracker](https://issues.apache.org/jira/browse/CAMEL) you need to register with it. This is quick & painless.
-If you want to have a go at fixing an issue you need to be in the list of camel-developers on the issue tracker. To join the group, please mail the `dev@camel.apache.org` mail list with the email address you used to register with the issue tracker and we'll add you to the group.
 
 
 ## Becoming a committer

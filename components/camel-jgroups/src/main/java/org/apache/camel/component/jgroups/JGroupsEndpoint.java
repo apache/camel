@@ -28,7 +28,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.jgroups.Channel;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The jgroups component provides exchange of messages between Camel and JGroups clusters.
  */
-@UriEndpoint(scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", consumerClass = JGroupsConsumer.class, label = "clustering,messaging")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", consumerClass = JGroupsConsumer.class, label = "clustering,messaging")
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";
@@ -50,8 +49,8 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     private AtomicInteger connectCount = new AtomicInteger(0);
 
-    private Channel channel;
-    private Channel resolvedChannel;
+    private JChannel channel;
+    private JChannel resolvedChannel;
 
     @UriPath @Metadata(required = "true")
     private String clusterName;
@@ -60,7 +59,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer")
     private boolean enableViewMessages;
 
-    public JGroupsEndpoint(String endpointUri, Component component, Channel channel, String clusterName, String channelProperties, boolean enableViewMessages) {
+    public JGroupsEndpoint(String endpointUri, Component component, JChannel channel, String clusterName, String channelProperties, boolean enableViewMessages) {
         super(endpointUri, component);
         this.channel = channel;
         this.clusterName = clusterName;
@@ -118,7 +117,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    private Channel resolveChannel() throws Exception {
+    private JChannel resolveChannel() throws Exception {
         if (channel != null) {
             return channel;
         }
@@ -148,14 +147,14 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         }
     }
 
-    public Channel getChannel() {
+    public JChannel getChannel() {
         return channel;
     }
 
     /**
      * The channel to use
      */
-    public void setChannel(Channel channel) {
+    public void setChannel(JChannel channel) {
         this.channel = channel;
     }
 
@@ -181,7 +180,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         this.channelProperties = channelProperties;
     }
 
-    Channel getResolvedChannel() {
+    JChannel getResolvedChannel() {
         return resolvedChannel;
     }
 

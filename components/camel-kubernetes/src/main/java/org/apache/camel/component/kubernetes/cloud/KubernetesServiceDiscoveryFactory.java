@@ -27,7 +27,11 @@ public class KubernetesServiceDiscoveryFactory implements ServiceDiscoveryFactor
     private String lookup;
 
     public KubernetesServiceDiscoveryFactory() {
-        this.configuration = new KubernetesConfiguration();
+        this(new KubernetesConfiguration());
+    }
+
+    public KubernetesServiceDiscoveryFactory(KubernetesConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     // *************************************************************************

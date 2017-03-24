@@ -1,6 +1,6 @@
 ## Schematron Component
 
-*Available as of Camel 2.14*
+*Available as of Camel version 2.15*
 
 http://www.schematron.com/index.html[Schematron] is an XML-based
 language for validating XML instance documents. It is used to make
@@ -36,19 +36,30 @@ The Schematron component has no options.
 
 
 // endpoint options: START
-The Schematron component supports 5 endpoint options which are listed below:
+The Schematron endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    schematron:path
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| path | producer |  | String | *Required* The path to the schematron rules file. Can either be in class path or location in the file system.
-| abort | producer | false | boolean | Flag to abort the route and throw a schematron validation exception.
-| rules | producer |  | Templates | To use the given schematron rules instead of loading from the path
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| uriResolver | advanced |  | URIResolver | Set the URIResolver to be used for resolving schematron includes in the rules file.
+| Name | Description | Default | Type
+| **path** | *Required* The path to the schematron rules file. Can either be in class path or location in the file system. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **abort** (producer) | Flag to abort the route and throw a schematron validation exception. | false | boolean
+| **rules** (producer) | To use the given schematron rules instead of loading from the path |  | Templates
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **uriResolver** (advanced) | Set the URIResolver to be used for resolving schematron includes in the rules file. |  | URIResolver
+|=======================================================================
 // endpoint options: END
 
 

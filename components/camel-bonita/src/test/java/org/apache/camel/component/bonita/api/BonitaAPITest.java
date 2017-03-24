@@ -35,7 +35,7 @@ public class BonitaAPITest {
 
     @Test(
             expected = IllegalArgumentException.class)
-    public void testStartCaseEmptyProcessDefinitionId() {
+    public void testStartCaseEmptyProcessDefinitionId() throws Exception {
         BonitaAPI bonitaApi = BonitaAPIBuilder
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
         bonitaApi.startCase(null, new HashMap<String, Serializable>());
@@ -43,7 +43,7 @@ public class BonitaAPITest {
 
     @Test(
             expected = IllegalArgumentException.class)
-    public void testStartCaseNUllContractInput() {
+    public void testStartCaseNUllContractInput() throws Exception {
         BonitaAPI bonitaApi = BonitaAPIBuilder
                 .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
         ProcessDefinitionResponse processDefinition = new ProcessDefinitionResponse();

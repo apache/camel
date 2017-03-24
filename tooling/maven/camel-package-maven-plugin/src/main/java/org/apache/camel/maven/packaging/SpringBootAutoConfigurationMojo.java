@@ -39,11 +39,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
@@ -88,6 +90,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyDefaultValue;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyJavaType;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyType;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
@@ -98,7 +103,6 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * @requiresDependencyResolution compile+runtime
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
-
 
     /**
      * Useful to move configuration towards starters.
@@ -132,7 +136,16 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         PRIMITIVEMAP.put("float", "java.lang.Float");
     }
 
+    private static final List<String> JAVA_LANG_TYPES = Arrays.asList("Boolean", "Byte", "Character", "Class", "Double", "Float", "Integer", "Long", "Object", "Short", "String");
+
     private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape", "camel-connector"};
+
+    /**
+     * The output directory for generated component schema file
+     *
+     * @parameter default-value="${project.build.directory}/classes"
+     */
+    protected File classesDir;
 
     /**
      * The maven project.
@@ -205,7 +218,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 ComponentModel model = compModels.get(0); // They should be equivalent
                 List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
 
-                boolean hasOptions = !model.getComponentOptions().isEmpty();
+                // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
+                boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
 
                 // use springboot as sub package name so the code is not in normal
                 // package so the Spring Boot JARs can be optional at runtime
@@ -304,7 +318,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 List<LanguageModel> dfModels = grModels.get(languageClass);
                 LanguageModel model = dfModels.get(0); // They should be equivalent
                 List<String> aliases = dfModels.stream().map(LanguageModel::getName).sorted().collect(Collectors.toList());
-
 
                 boolean hasOptions = !model.getLanguageOptions().isEmpty();
 
@@ -462,21 +475,67 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().getJavaDoc().setFullText(description);
                 }
 
-                String defaultValue = null;
-                if (sourceProp.hasAnnotation(UriParam.class)) {
-                    defaultValue = sourceProp.getAnnotation(UriParam.class).getStringValue("defaultValue");
-                } else if (sourceProp.hasAnnotation(UriPath.class)) {
-                    defaultValue = sourceProp.getAnnotation(UriPath.class).getStringValue("defaultValue");
-                }
-                if (!Strings.isBlank(defaultValue)) {
-                    if ("java.lang.String".equals(optionType)) {
-                        prop.getField().setStringInitializer(defaultValue);
-                    } else if ("integer".equals(optionType) || "boolean".equals(optionType)) {
-                        prop.getField().setLiteralInitializer(defaultValue);
-                    } else if (anEnum) {
-                        String enumShortName = optionClass.getSimpleName();
-                        prop.getField().setLiteralInitializer(enumShortName + "." + defaultValue);
-                        javaClass.addImport(model.getJavaType());
+                // try to see if the source is actually reusing a shared Camel configuration that that has @UriParam options
+                // if so we can fetch the default value from the json file as it holds the correct value vs the annotation
+                // as the annotation can refer to a constant field which we wont have accessible at this point
+                if (sourceProp.hasAnnotation(UriParam.class) || sourceProp.hasAnnotation(UriPath.class)) {
+                    String defaultValue = null;
+                    String javaType = null;
+                    String type = null;
+
+                    String fileName = model.getJavaType();
+                    fileName = fileName.substring(0, fileName.lastIndexOf("."));
+                    fileName = fileName.replace('.', '/');
+                    File jsonFile = new File(classesDir, fileName + "/" + model.getScheme() + ".json");
+                    if (jsonFile.isFile() && jsonFile.exists()) {
+                        try {
+                            String json = FileUtils.readFileToString(jsonFile);
+                            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+
+                            // grab name from annotation
+                            String optionName;
+                            if (sourceProp.hasAnnotation(UriParam.class)) {
+                                optionName = sourceProp.getAnnotation(UriParam.class).getStringValue("name");
+                            } else {
+                                optionName = sourceProp.getAnnotation(UriPath.class).getStringValue("name");
+                            }
+                            if (optionName == null) {
+                                optionName = sourceProp.hasField() ? sourceProp.getField().getName() : null;
+                            }
+
+                            if (optionName != null) {
+                                javaType = getPropertyJavaType(rows, optionName);
+                                type = getPropertyType(rows, optionName);
+                                defaultValue = getPropertyDefaultValue(rows, optionName);
+                            }
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
+
+                    if (!Strings.isBlank(defaultValue)) {
+
+                        // roaster can create the wrong type for some options so use the correct type we found in the json schema
+                        String wrapperType = getSimpleJavaType(javaType);
+                        if (wrapperType.startsWith("java.lang.")) {
+                            // skip java.lang. as prefix for wrapper type
+                            wrapperType = wrapperType.substring(10);
+                            prop.setType(wrapperType);
+                        }
+
+                        if ("long".equals(javaType) || "java.lang.Long".equals(javaType)) {
+                            // the value should be a Long number
+                            String value = defaultValue + "L";
+                            prop.getField().setLiteralInitializer(value);
+                        } else if ("integer".equals(type) || "boolean".equals(type)) {
+                            prop.getField().setLiteralInitializer(defaultValue);
+                        } else if ("string".equals(type)) {
+                            prop.getField().setStringInitializer(defaultValue);
+                        } else if (anEnum) {
+                            String enumShortName = optionClass.getSimpleName();
+                            prop.getField().setLiteralInitializer(enumShortName + "." + defaultValue);
+                            javaClass.addImport(model.getJavaType());
+                        }
                     }
                 }
             }
@@ -674,6 +733,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if (!Strings.isBlank(option.getDefaultValue())) {
                 if ("java.lang.String".equals(option.getType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
+                } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
+                    // the value should be a Long number
+                    String value = option.getDefaultValue() + "L";
+                    prop.getField().setLiteralInitializer(value);
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
@@ -762,6 +825,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if (!Strings.isBlank(option.getDefaultValue())) {
                 if ("java.lang.String".equals(option.getType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
+                } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
+                    // the value should be a Long number
+                    String value = option.getDefaultValue() + "L";
+                    prop.getField().setLiteralInitializer(value);
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
@@ -885,29 +952,30 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.CamelContextAware");
         javaClass.addImport(model.getJavaType());
         javaClass.addImport("org.apache.camel.CamelContext");
+        javaClass.addImport("org.apache.camel.RuntimeCamelException");
+        javaClass.addImport("org.apache.camel.spi.DataFormat");
+        javaClass.addImport("org.apache.camel.spi.DataFormatFactory");
 
         String body = createDataFormatBody(model.getShortJavaType(), hasOptions);
-        String methodName = "configure" + model.getShortJavaType();
+        String methodName = "configure" + model.getShortJavaType() + "Factory";
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
                 .setName(methodName)
                 .setPublic()
                 .setBody(body)
-                .setReturnType(model.getShortJavaType())
-                .addThrows(Exception.class);
+                .setReturnType("org.apache.camel.spi.DataFormatFactory");
 
-        method.addParameter("CamelContext", "camelContext");
+        method.addParameter("CamelContext", "camelContext").setFinal(true);
 
         if (hasOptions) {
-            method.addParameter(configurationName, "configuration");
+            method.addParameter(configurationName, "configuration").setFinal(true);
         }
 
         // Determine all the aliases
         // adding the '-dataformat' suffix to prevent collision with component names
-        String[] springBeanAliases = dataFormatAliases.stream().map(alias -> alias + "-dataformat").toArray(size -> new String[size]);
+        String[] springBeanAliases = dataFormatAliases.stream().map(alias -> alias + "-dataformat-factory").toArray(size -> new String[size]);
 
         method.addAnnotation(Bean.class).setStringArrayValue("name", springBeanAliases);
-        method.addAnnotation(Scope.class).setStringValue("prototype");
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
@@ -1059,22 +1127,29 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private static String createDataFormatBody(String shortJavaType, boolean hasOptions) {
         StringBuilder sb = new StringBuilder();
-        sb.append(shortJavaType).append(" dataformat = new ").append(shortJavaType).append("();").append("\n");
-        sb.append("if (CamelContextAware.class.isAssignableFrom(").append(shortJavaType).append(".class)) {\n");
-        sb.append("    CamelContextAware contextAware = CamelContextAware.class.cast(dataformat);\n");
-        sb.append("    if (contextAware != null) {\n");
-        sb.append("        contextAware.setCamelContext(camelContext);\n");
-        sb.append("    }\n");
-        sb.append("}\n");
+        sb.append("return new DataFormatFactory() {\n");
+        sb.append("    public DataFormat newInstance() {\n");
+        sb.append("        ").append(shortJavaType).append(" dataformat = new ").append(shortJavaType).append("();").append("\n");
+        sb.append("        if (CamelContextAware.class.isAssignableFrom(").append(shortJavaType).append(".class)) {\n");
+        sb.append("            CamelContextAware contextAware = CamelContextAware.class.cast(dataformat);\n");
+        sb.append("            if (contextAware != null) {\n");
+        sb.append("                contextAware.setCamelContext(camelContext);\n");
+        sb.append("            }\n");
+        sb.append("        }\n");
         if (hasOptions) {
             sb.append("\n");
-            sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-            sb.append("\n");
-            sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
+            sb.append("        try {\n");
+            sb.append("            Map<String, Object> parameters = new HashMap<>();\n");
+            sb.append("            IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
+            sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
+            sb.append("        } catch (Exception e) {\n");
+            sb.append("            throw new RuntimeCamelException(e);\n");
+            sb.append("        }\n");
         }
         sb.append("\n");
-        sb.append("return dataformat;");
+        sb.append("        return dataformat;\n");
+        sb.append("    }\n");
+        sb.append("};\n");
         return sb.toString();
     }
 
@@ -1205,12 +1280,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private static ComponentModel generateComponentModel(String componentName, String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
 
-        ComponentModel component = new ComponentModel();
+        ComponentModel component = new ComponentModel(true);
         component.setScheme(getSafeValue("scheme", rows));
         component.setSyntax(getSafeValue("syntax", rows));
         component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
         component.setTitle(getSafeValue("title", rows));
         component.setDescription(getSafeValue("description", rows));
+        component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         component.setLabel(getSafeValue("label", rows));
         component.setDeprecated(getSafeValue("deprecated", rows));
         component.setConsumerOnly(getSafeValue("consumerOnly", rows));
@@ -1224,6 +1300,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         for (Map<String, String> row : rows) {
             ComponentOptionModel option = new ComponentOptionModel();
             option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
             option.setKind(getSafeValue("kind", row));
             option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));
@@ -1238,6 +1315,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         for (Map<String, String> row : rows) {
             EndpointOptionModel option = new EndpointOptionModel();
             option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
             option.setKind(getSafeValue("kind", row));
             option.setGroup(getSafeValue("group", row));
             option.setRequired(getSafeValue("required", row));
@@ -1264,6 +1342,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         dataFormat.setName(getSafeValue("name", rows));
         dataFormat.setModelName(getSafeValue("modelName", rows));
         dataFormat.setDescription(getSafeValue("description", rows));
+        dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         dataFormat.setLabel(getSafeValue("label", rows));
         dataFormat.setDeprecated(getSafeValue("deprecated", rows));
         dataFormat.setJavaType(getSafeValue("javaType", rows));
@@ -1275,6 +1354,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         for (Map<String, String> row : rows) {
             DataFormatOptionModel option = new DataFormatOptionModel();
             option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
             option.setKind(getSafeValue("kind", row));
             option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));
@@ -1291,22 +1371,24 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private static LanguageModel generateLanguageModel(String languageName, String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
 
-        LanguageModel dataFormat = new LanguageModel();
-        dataFormat.setTitle(getSafeValue("title", rows));
-        dataFormat.setName(getSafeValue("name", rows));
-        dataFormat.setModelName(getSafeValue("modelName", rows));
-        dataFormat.setDescription(getSafeValue("description", rows));
-        dataFormat.setLabel(getSafeValue("label", rows));
-        dataFormat.setDeprecated(getSafeValue("deprecated", rows));
-        dataFormat.setJavaType(getSafeValue("javaType", rows));
-        dataFormat.setGroupId(getSafeValue("groupId", rows));
-        dataFormat.setArtifactId(getSafeValue("artifactId", rows));
-        dataFormat.setVersion(getSafeValue("version", rows));
+        LanguageModel language = new LanguageModel();
+        language.setTitle(getSafeValue("title", rows));
+        language.setName(getSafeValue("name", rows));
+        language.setModelName(getSafeValue("modelName", rows));
+        language.setDescription(getSafeValue("description", rows));
+        language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
+        language.setLabel(getSafeValue("label", rows));
+        language.setDeprecated(getSafeValue("deprecated", rows));
+        language.setJavaType(getSafeValue("javaType", rows));
+        language.setGroupId(getSafeValue("groupId", rows));
+        language.setArtifactId(getSafeValue("artifactId", rows));
+        language.setVersion(getSafeValue("version", rows));
 
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
             LanguageOptionModel option = new LanguageOptionModel();
             option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
             option.setKind(getSafeValue("kind", row));
             option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));
@@ -1314,10 +1396,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setEnumValues(getSafeValue("enum", row));
-            dataFormat.addLanguageOption(option);
+            language.addLanguageOption(option);
         }
 
-        return dataFormat;
+        return language;
     }
 
     private List<String> findComponentNames() {

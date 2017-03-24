@@ -86,6 +86,12 @@ public class SshComponentConfiguration {
      * depends on keyType setting.
      */
     private String certResource;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public SshConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -179,6 +185,15 @@ public class SshComponentConfiguration {
         this.certResource = certResource;
     }
 
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
     public static class SshConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.ssh.SshConfiguration.class;
         /**
@@ -202,7 +217,7 @@ public class SshComponentConfiguration {
          *            int representing port number on remote host. Defaults to
          *            22.
          */
-        private Integer port;
+        private Integer port = 22;
         /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
@@ -242,7 +257,7 @@ public class SshComponentConfiguration {
          *            authentication.
          * @see KeyPairProvider
          */
-        private String keyType = "KeyPairProvider.SSH_RSA";
+        private String keyType = "ssh-rsa";
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
@@ -250,7 +265,7 @@ public class SshComponentConfiguration {
          * @param timeout
          *            long milliseconds to wait.
          */
-        private Long timeout;
+        private Long timeout = 30000L;
         /**
          * @deprecated As of version 2.11, replaced by
          *             {@link #setCertResource(String)}

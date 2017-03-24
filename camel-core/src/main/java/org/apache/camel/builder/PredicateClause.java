@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.builder;
 
 import java.util.Map;
@@ -24,6 +23,7 @@ import java.util.function.Predicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
+// TODO: Document me
 public class PredicateClause<T> implements org.apache.camel.Predicate {
     private final T parent;
     private Predicate<Exchange> predicate;

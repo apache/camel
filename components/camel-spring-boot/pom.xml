@@ -27,9 +27,13 @@
 
   <name>Camel :: Spring Boot</name>
   <artifactId>camel-spring-boot</artifactId>
-  <description>Camel :: Spring Boot</description>
+  <description>Using Camel with Spring Boot</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.15.0</firstVersion>
+    <label>spring,microservice</label>
+
     <camel.osgi.export.pkg/>
   </properties>
 
@@ -119,4 +123,23 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
+              <argLine>--add-modules java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

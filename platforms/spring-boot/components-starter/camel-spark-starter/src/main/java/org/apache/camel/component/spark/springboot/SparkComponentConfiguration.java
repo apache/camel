@@ -40,6 +40,12 @@ public class SparkComponentConfiguration {
      */
     @NestedConfigurationProperty
     private RddCallback rddCallback;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public JavaRDDLike getRdd() {
         return rdd;
@@ -55,5 +61,14 @@ public class SparkComponentConfiguration {
 
     public void setRddCallback(RddCallback rddCallback) {
         this.rddCallback = rddCallback;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

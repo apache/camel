@@ -1,6 +1,6 @@
 ## OpenStack Swift Component
 
-*Available as of Camel 2.19*
+*Available as of Camel version 2.19*
 
 The openstack-swift component allows messages to be sent to an OpenStack object storage services.
 
@@ -39,24 +39,35 @@ The OpenStack Swift component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack Swift component supports 10 endpoint options which are listed below:
+The OpenStack Swift endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    openstack-swift:host
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* OpenStack host url
-| apiVersion | producer | V3 | String | OpenStack API version
-| config | producer |  | Config | OpenStack configuration
-| domain | producer | default | String | Authentication domain
-| operation | producer |  | String | The operation to do
-| password | producer |  | String | *Required* OpenStack password
-| project | producer |  | String | *Required* The project ID
-| subsystem | producer |  | String | *Required* OpenStack Swift subsystem
-| username | producer |  | String | *Required* OpenStack username
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **host** | *Required* OpenStack host url |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (9 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **apiVersion** (producer) | OpenStack API version | V3 | String
+| **config** (producer) | OpenStack configuration |  | Config
+| **domain** (producer) | Authentication domain | default | String
+| **operation** (producer) | The operation to do |  | String
+| **password** (producer) | *Required* OpenStack password |  | String
+| **project** (producer) | *Required* The project ID |  | String
+| **subsystem** (producer) | *Required* OpenStack Swift subsystem |  | String
+| **username** (producer) | *Required* OpenStack username |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

@@ -30,7 +30,7 @@ import org.eclipse.californium.core.CoapServer;
 /**
  * The coap component is used for sending and receiving messages from COAP capable devices.
  */
-@UriEndpoint(scheme = "coap", title = "CoAP", syntax = "coap:uri", consumerClass = CoAPConsumer.class, label = "iot")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "coap", title = "CoAP", syntax = "coap:uri", consumerClass = CoAPConsumer.class, label = "iot")
 public class CoAPEndpoint extends DefaultEndpoint {
     @UriPath
     private URI uri;

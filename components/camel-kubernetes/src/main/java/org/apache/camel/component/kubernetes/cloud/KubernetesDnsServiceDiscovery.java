@@ -35,7 +35,7 @@ public class KubernetesDnsServiceDiscovery extends KubernetesServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         return this.cache.computeIfAbsent(name, key -> Collections.singletonList(newService(name)));
     }
 

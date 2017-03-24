@@ -34,7 +34,7 @@ import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.MSPTest;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
-import org.apache.camel.component.salesforce.dto.generated.Tasks__c;
+import org.apache.camel.component.salesforce.dto.generated.Task;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.impl.ParameterConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -77,7 +77,7 @@ public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSu
         configuration.setParameter("updateTopic", false);
 
         // operation name is base uri
-        configuration.setBaseUri("getSObject");
+        configuration.setBaseUri(componentName + ":getSObject");
 
         SalesforceEndpoint endpoint = assertIsInstanceOf(SalesforceEndpoint.class, configuration.createEndpoint());
         final SalesforceEndpointConfig endpointConfig = endpoint.getConfiguration();
@@ -156,7 +156,7 @@ public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSu
 
         // get sObjectName values, from scanned DTO packages
         assertCompletionOptions(configuration.completeEndpointPath("getSObject?sObjectName="),
-            "Account", "Asset", "Contact", "Tasks__c", "Line_Item__c", "Merchandise__c", "Document", "MSPTest");
+            "Account", "Asset", "Contact", "Task", "Line_Item__c", "Merchandise__c", "Document", "MSPTest");
 
         // get sObjectFields values, from scanned DTO
         assertCompletionOptions(
@@ -170,7 +170,7 @@ public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSu
             Account.class.getName(),
             Asset.class.getName(),
             Contact.class.getName(),
-            Tasks__c.class.getName(),
+            Task.class.getName(),
             Line_Item__c.class.getName(),
             Merchandise__c.class.getName(),
             Document.class.getName(),

@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -44,6 +46,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpProxy;
 import org.eclipse.jetty.client.Origin;
@@ -56,19 +59,44 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAULT_LOGIN_URL;
+
 /**
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
-public class SalesforceComponent extends UriEndpointComponent implements EndpointCompleter {
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
+public class SalesforceComponent extends UriEndpointComponent implements EndpointCompleter, VerifiableComponent {
+
+    static final int CONNECTION_TIMEOUT = 60000;
+    static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
+    static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
-    private static final int CONNECTION_TIMEOUT = 60000;
-    private static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
-    private static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
-
     @Metadata(label = "security")
     private SalesforceLoginConfig loginConfig;
+
+    // allow fine grained login as well
+    @Metadata(label = "security", defaultValue = DEFAULT_LOGIN_URL)
+    private String loginUrl;
+    @Metadata(label = "security", secret = true)
+    private String clientId;
+    @Metadata(label = "security", secret = true)
+    private String clientSecret;
+    @Metadata(label = "security", secret = true)
+    private String refreshToken;
+    @Metadata(label = "security", secret = true)
+    private String userName;
+    @Metadata(label = "security", secret = true)
+    private String password;
+    @Metadata(label = "security", secret = true)
+    private KeyStoreParameters keystore;
+    @Metadata(description = "Explicit authentication type to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT.",
+        label = "security", secret = false, enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
+    private AuthenticationType authenticationType;
+    @Metadata(label = "security")
+    private boolean lazyLogin;
+
     @Metadata(label = "advanced")
     private SalesforceEndpointConfig config;
 
@@ -197,8 +225,23 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     @Override
     protected void doStart() throws Exception {
-        // validate properties
-        ObjectHelper.notNull(loginConfig, "loginConfig");
+        if (loginConfig == null) {
+            if (ObjectHelper.isNotEmpty(password)) {
+                loginConfig = new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, lazyLogin);
+            } else if (ObjectHelper.isNotEmpty(refreshToken)) {
+                loginConfig = new SalesforceLoginConfig(loginUrl, clientId, clientSecret, refreshToken, lazyLogin);
+            } else if (ObjectHelper.isNotEmpty(keystore)) {
+                loginConfig = new SalesforceLoginConfig(loginUrl, clientId, userName, keystore, lazyLogin);
+            } else {
+                throw new IllegalArgumentException("Cannot define a login configuration, the component configuration"
+                    + " does not contain `password`, `refreshToken` or `keystore` parameters. Specifying one of those"
+                    + " determines the type of authentication performed.");
+            }
+
+            LOG.debug("Created login configuration: {}", loginConfig);
+        } else {
+            LOG.debug("Using shared login configuration: {}", loginConfig);
+        }
 
         // create a Jetty HttpClient if not already set
         if (null == httpClient) {
@@ -257,8 +300,8 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         }
 
         // support restarts
-        if (null == this.session) {
-            this.session = new SalesforceSession(httpClient, httpClient.getTimeout(), loginConfig);
+        if (this.session == null) {
+            this.session = new SalesforceSession(getCamelContext(), httpClient, httpClient.getTimeout(), loginConfig);
         }
         // set session before calling start()
         httpClient.setSession(this.session);
@@ -319,10 +362,10 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         }
     }
 
-    public SubscriptionHelper getSubscriptionHelper(String topicName) throws Exception {
+    public SubscriptionHelper getSubscriptionHelper() throws Exception {
         if (subscriptionHelper == null) {
             // lazily create subscription helper
-            subscriptionHelper = new SubscriptionHelper(this, topicName);
+            subscriptionHelper = new SubscriptionHelper(this);
 
             // also start the helper to connect to Salesforce
             ServiceHelper.startService(subscriptionHelper);
@@ -394,6 +437,14 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return result;
     }
 
+    public AuthenticationType getAuthenticationType() {
+        return authenticationType;
+    }
+
+    public void setAuthenticationType(AuthenticationType authenticationType) {
+        this.authenticationType = authenticationType;
+    }
+
     public SalesforceLoginConfig getLoginConfig() {
         return loginConfig;
     }
@@ -405,12 +456,97 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         this.loginConfig = loginConfig;
     }
 
+    /**
+     * Salesforce login URL, defaults to https://login.salesforce.com
+     */
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    /**
+     * Salesforce connected application Consumer Key
+     */
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+
+    }
+
+    /**
+     * Salesforce connected application Consumer Secret
+     */
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    /**
+     * {@link KeyStoreParameters} to use in OAuth 2.0 JWT Bearer Token Flow.
+     */
+    public void setKeystore(final KeyStoreParameters keystore) {
+        this.keystore = keystore;
+    }
+
+    public KeyStoreParameters getKeystore() {
+        return keystore;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    /**
+     * Salesforce connected application Consumer token
+     */
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Salesforce account user name
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Salesforce account password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isLazyLogin() {
+        return lazyLogin;
+    }
+
+    /**
+     * Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not done until the first API call
+     */
+    public void setLazyLogin(boolean lazyLogin) {
+        this.lazyLogin = lazyLogin;
+    }
+
     public SalesforceEndpointConfig getConfig() {
         return config;
     }
 
     /**
-     * To use the shared SalesforceLoginConfig as configuration
+     * To use the shared SalesforceEndpointConfig as endpoint configuration
      */
     public void setConfig(SalesforceEndpointConfig config) {
         this.config = config;
@@ -586,5 +722,12 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     public Map<String, Class<?>> getClassMap() {
         return classMap;
+    }
+
+    /**
+     * TODO: document
+     */
+    public ComponentVerifier getVerifier() {
+        return new SalesforceComponentVerifier(this);
     }
 }

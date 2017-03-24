@@ -75,7 +75,9 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         mockEndpoint.expectedBodiesReceived(message);
 
         // When
-        channel.send(new Message(null, null, message));
+        Message msg = new Message(null, message);
+        msg.setSrc(null);
+        channel.send(msg);
 
         // Then
         assertMockEndpointsSatisfied();
@@ -88,7 +90,9 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         mockEndpoint.message(0).header(HEADER_JGROUPS_ORIGINAL_MESSAGE).isInstanceOf(Message.class);
 
         // When
-        channel.send(new Message(null, null, message));
+        Message msg = new Message(null, message);
+        msg.setSrc(null);
+        channel.send(msg);
 
         // Then
         assertMockEndpointsSatisfied();

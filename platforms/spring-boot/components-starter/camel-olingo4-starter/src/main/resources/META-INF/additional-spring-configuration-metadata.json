@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.olingo4.enabled",
+      "description": "Enable olingo4 component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

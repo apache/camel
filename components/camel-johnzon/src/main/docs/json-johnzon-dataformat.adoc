@@ -1,6 +1,6 @@
 ## JSon Johnzon DataFormat
 
-*Available as of Camel 2.18*
+*Available as of Camel version 2.18*
 
 Johnzon is a link:data-format.html[Data Format] which uses the
 http://johnzon.apache.org/[Johnzon Library]
@@ -21,13 +21,12 @@ The JSon Johnzon dataformat supports 17 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
-| library | Johnzon | JsonLibrary | Which json library to use.
+| library | XStream | JsonLibrary | Which json library to use.
 | unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
 | jsonView |  | Class<?> | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
 | include |  | String | If you want to marshal a pojo to JSON and the pojo has some fields with null values. And you want to skip these null values you can set this option to NOT_NULL
@@ -43,7 +42,6 @@ The JSon Johnzon dataformat supports 17 options which are listed below.
 | allowUnmarshallType | false | Boolean | If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 

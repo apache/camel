@@ -27,6 +27,7 @@ import org.apache.camel.ComponentConfiguration;
  * {@link org.apache.camel.Component} implementations should try to implement this API to make your component
  * behave nicer in command line, IDE and web based tools.
  */
+@Deprecated
 public interface EndpointCompleter {
 
     /**

@@ -1,6 +1,6 @@
 ## Spring Redis Component
 
-*Available as of Camel 2.11*
+*Available as of Camel version 2.11*
 
 This component allows sending and receiving messages from
 http://http//redis.io/[Redis]. Redis is advanced key-value store where
@@ -35,26 +35,37 @@ The Spring Redis component has no options.
 
 
 // endpoint options: START
-The Spring Redis component supports 12 endpoint options which are listed below:
+The Spring Redis endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    spring-redis:host:port
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* The host where Redis server is running.
-| port | common |  | Integer | *Required* Redis server port number
-| channels | common |  | String | List of topic names or name patterns to subscribe to. Multiple names can be separated by comma.
-| command | common | SET | Command | Default command which can be overridden by message header. Notice the consumer only supports the following commands: PSUBSCRIBE and SUBSCRIBE
-| connectionFactory | common |  | RedisConnectionFactory | Reference to a pre-configured RedisConnectionFactory instance to use.
-| redisTemplate | common |  | RedisTemplate | Reference to a pre-configured RedisTemplate instance to use.
-| serializer | common |  | RedisSerializer | Reference to a pre-configured RedisSerializer instance to use.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| listenerContainer | consumer (advanced) |  | RedisMessageListenerContainer | Reference to a pre-configured RedisMessageListenerContainer instance to use.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **host** | *Required* The host where Redis server is running. |  | String
+| **port** | *Required* Redis server port number |  | Integer
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (10 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **channels** (common) | List of topic names or name patterns to subscribe to. Multiple names can be separated by comma. |  | String
+| **command** (common) | Default command which can be overridden by message header. Notice the consumer only supports the following commands: PSUBSCRIBE and SUBSCRIBE | SET | Command
+| **connectionFactory** (common) | Reference to a pre-configured RedisConnectionFactory instance to use. |  | RedisConnectionFactory
+| **redisTemplate** (common) | Reference to a pre-configured RedisTemplate instance to use. |  | RedisTemplate
+| **serializer** (common) | Reference to a pre-configured RedisSerializer instance to use. |  | RedisSerializer
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **listenerContainer** (consumer) | Reference to a pre-configured RedisMessageListenerContainer instance to use. |  | RedisMessageListener Container
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.calendar.springboot;
 
-import java.util.List;
 import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -40,6 +39,12 @@ public class GoogleCalendarComponentConfiguration {
      */
     @NestedConfigurationProperty
     private GoogleCalendarClientFactory clientFactory;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public GoogleCalendarConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -56,6 +61,15 @@ public class GoogleCalendarComponentConfiguration {
 
     public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
         this.clientFactory = clientFactory;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class GoogleCalendarConfigurationNestedConfiguration {
@@ -98,11 +112,11 @@ public class GoogleCalendarComponentConfiguration {
         private String applicationName;
         /**
          * Specifies the level of permissions you want a calendar application to
-         * have to a user account. See
-         * https://developers.google.com/google-apps/calendar/auth for more
+         * have to a user account. You can separate multiple scopes by comma.
+         * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          */
-        private List scopes;
+        private String scopes = "https://www.googleapis.com/auth/calendar";
         /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
@@ -178,11 +192,11 @@ public class GoogleCalendarComponentConfiguration {
             this.applicationName = applicationName;
         }
 
-        public List getScopes() {
+        public String getScopes() {
             return scopes;
         }
 
-        public void setScopes(List scopes) {
+        public void setScopes(String scopes) {
             this.scopes = scopes;
         }
 

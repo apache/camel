@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation,yaml", title = "YAML")
+@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation,yaml", title = "YAML")
 @XmlRootElement(name = "yaml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class YAMLDataFormat extends DataFormatDefinition {

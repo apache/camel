@@ -51,7 +51,7 @@ public final class DnsServiceDiscovery extends DefaultServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         final Lookup lookup = cache.computeIfAbsent(name, this::createLookup);
         final Record[] records = lookup.run();
 

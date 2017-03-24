@@ -56,9 +56,6 @@ And you can see the application running by tailing the logs
 
 And you can use <kbd>ctrl</kbd>+<kbd>c</kbd> to stop tailing the log.
 
-### Documentation
-This example is documented at <http://camel.apache.org/sql-example-blueprint.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

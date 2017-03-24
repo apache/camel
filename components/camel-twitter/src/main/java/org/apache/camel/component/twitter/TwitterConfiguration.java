@@ -21,6 +21,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -34,8 +35,8 @@ public class TwitterConfiguration {
     @UriPath(description = "The kind of endpoint", enums = "directmessage,search,streaming/filter,streaming/sample,streaming/user"
             + ",timeline/home,timeline/mentions,timeline/retweetsofme,timeline/user") @Metadata(required = "true")
     private String kind;
-    @UriParam(label = "consumer", defaultValue = "direct", enums = "polling,direct,event")
-    private EndpointType type = EndpointType.DIRECT;
+    @UriParam(label = "consumer", defaultValue = "polling", enums = "polling,direct,event")
+    private EndpointType type = EndpointType.POLLING;
     @UriParam(label = "security", secret = true)
     private String accessToken;
     @UriParam(label = "security", secret = true)
@@ -96,7 +97,7 @@ public class TwitterConfiguration {
      */
     public void checkComplete() {
         if (twitter == null && twitterStream == null
-                && (consumerKey.isEmpty() || consumerSecret.isEmpty() || accessToken.isEmpty() || accessTokenSecret.isEmpty())) {
+                && (ObjectHelper.isEmpty(consumerKey) || ObjectHelper.isEmpty(consumerSecret) || ObjectHelper.isEmpty(accessToken) ||  ObjectHelper.isEmpty(accessTokenSecret))) {
             throw new IllegalArgumentException("twitter or twitterStream or all of consumerKey, consumerSecret, accessToken, and accessTokenSecret must be set!");
         }
     }

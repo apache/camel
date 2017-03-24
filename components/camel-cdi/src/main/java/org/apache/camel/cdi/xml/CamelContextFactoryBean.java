@@ -64,6 +64,7 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 
 @XmlRootElement(name = "camelContext")
@@ -169,10 +170,20 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     })
     private List<AbstractCamelFactoryBean<?>> beansFactory;
 
-    @XmlElements({
-        @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class),
-        @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)})
+    @XmlTransient
     private List<?> beans;
+
+    @XmlElement(name = "defaultServiceCallConfiguration")
+    private ServiceCallConfigurationDefinition defaultServiceCallConfiguration;
+
+    @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class)
+    private List<ServiceCallConfigurationDefinition> serviceCallConfigurations;
+
+    @XmlElement(name = "defaultHystrixConfiguration")
+    private HystrixConfigurationDefinition defaultHystrixConfiguration;
+
+    @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)
+    private List<HystrixConfigurationDefinition> hystrixConfigurations;
 
     @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)
     private List<ErrorHandlerDefinition> errorHandlers;
@@ -203,6 +214,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlElement(name = "transformers")
     private TransformersDefinition transformers;
+
+    @XmlElement(name = "validators")
+    private ValidatorsDefinition validators;
 
     @XmlElement(name = "redeliveryPolicyProfile")
     private List<RedeliveryPolicyFactoryBean> redeliveryPolicies;
@@ -314,6 +328,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         return context;
     }
 
+    @Override
     public List<AbstractCamelFactoryBean<?>> getBeansFactory() {
         return beansFactory;
     }
@@ -329,6 +344,42 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setBeans(List<?> beans) {
         this.beans = beans;
+    }
+
+    @Override
+    public ServiceCallConfigurationDefinition getDefaultServiceCallConfiguration() {
+        return defaultServiceCallConfiguration;
+    }
+
+    public void setDefaultServiceCallConfiguration(ServiceCallConfigurationDefinition defaultServiceCallConfiguration) {
+        this.defaultServiceCallConfiguration = defaultServiceCallConfiguration;
+    }
+
+    @Override
+    public List<ServiceCallConfigurationDefinition> getServiceCallConfigurations() {
+        return serviceCallConfigurations;
+    }
+
+    public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> serviceCallConfigurations) {
+        this.serviceCallConfigurations = serviceCallConfigurations;
+    }
+
+    @Override
+    public HystrixConfigurationDefinition getDefaultHystrixConfiguration() {
+        return defaultHystrixConfiguration;
+    }
+
+    public void setDefaultHystrixConfiguration(HystrixConfigurationDefinition defaultHystrixConfiguration) {
+        this.defaultHystrixConfiguration = defaultHystrixConfiguration;
+    }
+
+    @Override
+    public List<HystrixConfigurationDefinition> getHystrixConfigurations() {
+        return hystrixConfigurations;
+    }
+
+    public void setHystrixConfigurations(List<HystrixConfigurationDefinition> hystrixConfigurations) {
+        this.hystrixConfigurations = hystrixConfigurations;
     }
 
     public List<RouteDefinition> getRoutes() {
@@ -677,6 +728,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setTransformers(TransformersDefinition transformers) {
         this.transformers = transformers;
+    }
+
+    public ValidatorsDefinition getValidators() {
+        return validators;
+    }
+
+    public void setValidators(ValidatorsDefinition validators) {
+        this.validators = validators;
     }
 
     public List<OnExceptionDefinition> getOnExceptions() {

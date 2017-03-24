@@ -1,6 +1,6 @@
 ## Zip File DataFormat
 
-TIP:*Available since Camel 2.11.0*
+*Available as of Camel version 2.11*
 
 The Zip File link:data-format.html[Data Format] is a message compression
 and de-compression format. Messages can be marshalled (compressed) to
@@ -17,18 +17,17 @@ aggregate multiple messages into a single Zip file.
 
 
 // dataformat options: START
-The Zip File dataformat supports 2 options which are listed below.
+The Zip File dataformat supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | usingIterator | false | Boolean | If the zip file has more then one entry the setting this option to true allows to work with the splitter EIP to split the data using an iterator in a streaming mode.
+| allowEmptyDirectory | false | Boolean | If the zip file has more then one entry setting this option to true allows to get the iterator even if the directory is empty
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 

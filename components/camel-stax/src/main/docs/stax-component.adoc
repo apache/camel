@@ -1,6 +1,6 @@
 ## StAX Component
 
-*Available as of Camel 2.9*
+*Available as of Camel version 2.9*
 
 The StAX component allows messages to be process through a SAX
 http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
@@ -54,16 +54,27 @@ The StAX component has no options.
 
 
 // endpoint options: START
-The StAX component supports 2 endpoint options which are listed below:
+The StAX endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    stax:contentHandlerClass
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| contentHandlerClass | producer |  | String | *Required* The FQN class name for the ContentHandler implementation to use.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **contentHandlerClass** | *Required* The FQN class name for the ContentHandler implementation to use. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 

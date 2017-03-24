@@ -66,6 +66,12 @@ public class QuartzComponentConfiguration {
      */
     private Boolean prefixInstanceName = true;
     /**
+     * Whether to interrupt jobs on shutdown which forces the scheduler to
+     * shutdown quicker and attempt to interrupt any running jobs. If this is
+     * enabled then any running jobs can fail due to being interrupted.
+     */
+    private Boolean interruptJobsOnShutdown = false;
+    /**
      * To use the custom SchedulerFactory which is used to create the Scheduler.
      */
     @NestedConfigurationProperty
@@ -76,6 +82,12 @@ public class QuartzComponentConfiguration {
      */
     @NestedConfigurationProperty
     private Scheduler scheduler;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Boolean getAutoStartScheduler() {
         return autoStartScheduler;
@@ -134,6 +146,14 @@ public class QuartzComponentConfiguration {
         this.prefixInstanceName = prefixInstanceName;
     }
 
+    public Boolean getInterruptJobsOnShutdown() {
+        return interruptJobsOnShutdown;
+    }
+
+    public void setInterruptJobsOnShutdown(Boolean interruptJobsOnShutdown) {
+        this.interruptJobsOnShutdown = interruptJobsOnShutdown;
+    }
+
     public SchedulerFactory getSchedulerFactory() {
         return schedulerFactory;
     }
@@ -148,5 +168,14 @@ public class QuartzComponentConfiguration {
 
     public void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

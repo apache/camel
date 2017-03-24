@@ -31,7 +31,7 @@ import org.openstack4j.core.transport.Config;
 /**
  * The openstack-neutron component allows messages to be sent to an OpenStack network services.
  */
-@UriEndpoint(scheme = "openstack-neutron", title = "OpenStack Neutron", syntax = "openstack-neutron:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-neutron", title = "OpenStack Neutron", syntax = "openstack-neutron:host", label = "cloud,paas", producerOnly = true)
 public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "networks,subnets,ports,routers")

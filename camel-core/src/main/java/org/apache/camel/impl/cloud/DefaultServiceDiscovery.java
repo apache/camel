@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
 import java.util.Collections;
@@ -26,19 +25,13 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.support.ServiceSupport;
 
-
 public class DefaultServiceDiscovery
     extends ServiceSupport implements ServiceDiscovery, CamelContextAware {
 
     private CamelContext camelContext;
 
     @Override
-    public List<ServiceDefinition> getInitialListOfServices(String name) {
-        return getUpdatedListOfServices(name);
-    }
-
-    @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         return Collections.emptyList();
     }
 

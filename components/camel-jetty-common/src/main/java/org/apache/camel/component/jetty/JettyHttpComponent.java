@@ -724,7 +724,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             return new HttpClientTransportOverHTTP();
         }
 
-        int selectors = Runtime.getRuntime().availableProcessors() / 2;
+        int selectors = Math.max(1, Runtime.getRuntime().availableProcessors() / 2);
 
         if (selectors >= maxThreads) {
             selectors = maxThreads - 1;
@@ -1185,11 +1185,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-            url = String.format("jetty:%s/%s/%s", host, basePath, uriTemplate);
-        } else {
-            url = String.format("jetty:%s/%s", host, basePath);
+        String url = "jetty:" + host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
+        }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
         }
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
@@ -1229,8 +1230,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
                 if (handler instanceof HandlerWrapper) {
-                    // avoid setting the security handler more than once
-                    if (!handler.equals(server.getHandler())) {
+                    // avoid setting a handler more than once
+                    if (!isHandlerInChain(server.getHandler(), handler)) {
                         ((HandlerWrapper) handler).setHandler(server.getHandler());
                         server.setHandler(handler);
                     }
@@ -1241,6 +1242,20 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     server.setHandler(handlerCollection);
                 }
             }
+        }
+    }
+
+    protected boolean isHandlerInChain(Handler current, Handler handler) {
+  
+        if (handler.equals(current)) {
+            //Found a match in the chain
+            return true;
+        } else if (current instanceof HandlerWrapper) {
+            //Inspect the next handler in the chain
+            return isHandlerInChain(((HandlerWrapper) current).getHandler(), handler);
+        } else {
+            //End of chain
+            return false;
         }
     }
     

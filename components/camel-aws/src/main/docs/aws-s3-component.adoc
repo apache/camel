@@ -1,6 +1,6 @@
 ## AWS S3 Storage Service Component
 
-*Available as of Camel 2.8*
+*Available as of Camel version 2.8*
 
 The S3 component supports storing and retrieving objetcs from/to
 http://aws.amazon.com/s3[Amazon's S3] service.
@@ -49,55 +49,66 @@ The AWS S3 Storage Service component has no options.
 
 
 // endpoint options: START
-The AWS S3 Storage Service component supports 41 endpoint options which are listed below:
+The AWS S3 Storage Service endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    aws-s3:bucketNameOrArn
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| bucketNameOrArn | common |  | String | *Required* Bucket name or ARN
-| accessKey | common |  | String | Amazon AWS Access Key
-| amazonS3Client | common |  | AmazonS3 | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry.
-| amazonS3Endpoint | common |  | String | The region with which the AWS-S3 client wants to work with.
-| pathStyleAccess | common | false | boolean | Whether or not the S3 client should use path style access
-| policy | common |  | String | Camel 2.8.4: The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3setBucketPolicy() method.
-| proxyHost | common |  | String | Camel 2.16: To define a proxy host when instantiating the SQS client
-| proxyPort | common |  | Integer | Camel 2.16: Specify a proxy port to be used inside the client definition.
-| secretKey | common |  | String | Amazon AWS Secret Key
-| autocloseBody | consumer | true | boolean | If this option is true and includeBody is true then the S3Object.close() method will be called on exchange completion
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| deleteAfterRead | consumer | true | boolean | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs the object is not deleted. If this option is false then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers or only the link S3ConstantsKEY header.
-| fileName | consumer |  | String | To get the object from the bucket with the given file name
-| includeBody | consumer | true | boolean | Camel 2.17: If it is true the exchange body will be set to a stream to the contents of the file. If false the headers will be set with the S3 object metadata but the body will be null.
-| maxMessagesPerPoll | consumer | 10 | int | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited.
-| prefix | consumer |  | String | Camel 2.10.1: The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in.
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| deleteAfterWrite | producer | false | boolean | Camel 2.11.0: Delete file object after the S3 file has been uploaded
-| multiPartUpload | producer | false | boolean | Camel 2.15.0: If it is true camel will upload the file with multi part format the part size is decided by the option of partSize
-| operation | producer |  | S3Operations | Camel 2.18: The operation to do in case the user don't want to do only an upload
-| partSize | producer | 26214400 | long | Camel 2.15.0: Setup the partSize which is used in multi part upload the default size is 25M.
-| region | producer |  | String | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest.
-| serverSideEncryption | producer |  | String | Camel 2.16: Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys. For example use AES256.
-| storageClass | producer |  | String | Camel 2.8.4: The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| Name | Description | Default | Type
+| **bucketNameOrArn** | *Required* Bucket name or ARN |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (40 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **accessKey** (common) | Amazon AWS Access Key |  | String
+| **amazonS3Client** (common) | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry. |  | AmazonS3
+| **amazonS3Endpoint** (common) | The region with which the AWS-S3 client wants to work with. |  | String
+| **pathStyleAccess** (common) | Whether or not the S3 client should use path style access | false | boolean
+| **policy** (common) | Camel 2.8.4: The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3setBucketPolicy() method. |  | String
+| **proxyHost** (common) | Camel 2.16: To define a proxy host when instantiating the SQS client |  | String
+| **proxyPort** (common) | Camel 2.16: Specify a proxy port to be used inside the client definition. |  | Integer
+| **secretKey** (common) | Amazon AWS Secret Key |  | String
+| **autocloseBody** (consumer) | If this option is true and includeBody is true then the S3Object.close() method will be called on exchange completion This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false it will be up to the caller to close the S3Object stream. Setting autocloseBody to true will close the S3Object stream automatically. | true | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **deleteAfterRead** (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs the object is not deleted. If this option is false then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers or only the link S3ConstantsKEY header. | true | boolean
+| **fileName** (consumer) | To get the object from the bucket with the given file name |  | String
+| **includeBody** (consumer) | If it is true the exchange body will be set to a stream to the contents of the file. If false the headers will be set with the S3 object metadata but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false it will be up to the caller to close the S3Object stream. Setting autocloseBody to true will close the S3Object stream automatically. | true | boolean
+| **maxMessagesPerPoll** (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited. | 10 | int
+| **prefix** (consumer) | Camel 2.10.1: The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **deleteAfterWrite** (producer) | Camel 2.11.0: Delete file object after the S3 file has been uploaded | false | boolean
+| **multiPartUpload** (producer) | Camel 2.15.0: If it is true camel will upload the file with multi part format the part size is decided by the option of partSize | false | boolean
+| **operation** (producer) | Camel 2.18: The operation to do in case the user don't want to do only an upload |  | S3Operations
+| **partSize** (producer) | Camel 2.15.0: Setup the partSize which is used in multi part upload the default size is 25M. | 26214400 | long
+| **region** (producer) | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest. |  | String
+| **serverSideEncryption** (producer) | Camel 2.16: Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys. For example use AES256. |  | String
+| **storageClass** (producer) | Camel 2.8.4: The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|=======================================================================
 // endpoint options: END
 
 

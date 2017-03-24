@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
  * The zookeeper component allows interaction with a ZooKeeper cluster.
  */
 @ManagedResource(description = "ZooKeeper Endpoint")
-@UriEndpoint(scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path", consumerClass = ZooKeeperConsumer.class, label = "clustering")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path", consumerClass = ZooKeeperConsumer.class, label = "clustering")
 public class ZooKeeperEndpoint extends DefaultEndpoint {
     @UriParam
     private ZooKeeperConfiguration configuration;

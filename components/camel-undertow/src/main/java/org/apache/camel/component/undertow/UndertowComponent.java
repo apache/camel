@@ -57,6 +57,8 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     private UndertowHttpBinding undertowHttpBinding;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "advanced")
+    private UndertowHostOptions hostOptions;
 
     public UndertowComponent() {
         super(UndertowEndpoint.class);
@@ -235,11 +237,12 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-            url = String.format("undertow:%s/%s/%s", host, basePath, uriTemplate);
-        } else {
-            url = String.format("undertow:%s/%s", host, basePath);
+        String url = "undertow:" + host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
+        }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
         }
 
         UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
@@ -286,7 +289,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     }
 
     protected UndertowHost createUndertowHost(UndertowHostKey key) {
-        return new DefaultUndertowHost(key);
+        return new DefaultUndertowHost(key, hostOptions);
     }
 
     public UndertowHttpBinding getUndertowHttpBinding() {
@@ -309,6 +312,18 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+
+    public UndertowHostOptions getHostOptions() {
+        return hostOptions;
+    }
+
+    /**
+     * To configure common options, such as thread pools
+     */
+    public void setHostOptions(UndertowHostOptions hostOptions) {
+        this.hostOptions = hostOptions;
     }
 
 }

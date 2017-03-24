@@ -1,6 +1,6 @@
 ## Apache Spark Component
 
-INFO: Apache Spark component is available starting from Camel *2.17*.
+*Available as of Camel version 2.17*
 
 This documentation page covers the http://spark.apache.org/[Apache
 Spark] component for the Apache Camel. The main purpose of the Spark
@@ -51,39 +51,49 @@ spark:{rdd|dataframe|hive}
 
 
 // component options: START
-The Apache Spark component supports 2 options which are listed below.
+The Apache Spark component supports 3 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| rdd | producer |  | JavaRDDLike | RDD to compute against.
-| rddCallback | producer |  | RddCallback | Function performing action against an RDD.
+| Name | Description | Default | Type
+| **rdd** (producer) | RDD to compute against. |  | JavaRDDLike
+| **rddCallback** (producer) | Function performing action against an RDD. |  | RddCallback
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Apache Spark component supports 7 endpoint options which are listed below:
+The Apache Spark endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    spark:endpointType
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| endpointType | producer |  | EndpointType | *Required* Type of the endpoint (rdd dataframe hive).
-| collect | producer | true | boolean | Indicates if results should be collected or counted.
-| dataFrame | producer |  | DataFrame | DataFrame to compute against.
-| dataFrameCallback | producer |  | DataFrameCallback | Function performing action against an DataFrame.
-| rdd | producer |  | JavaRDDLike | RDD to compute against.
-| rddCallback | producer |  | RddCallback | Function performing action against an RDD.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **endpointType** | *Required* Type of the endpoint (rdd dataframe hive). |  | EndpointType
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **collect** (producer) | Indicates if results should be collected or counted. | true | boolean
+| **dataFrame** (producer) | DataFrame to compute against. |  | DataFrame
+| **dataFrameCallback** (producer) | Function performing action against an DataFrame. |  | DataFrameCallback
+| **rdd** (producer) | RDD to compute against. |  | JavaRDDLike
+| **rddCallback** (producer) | Function performing action against an RDD. |  | RddCallback
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
  

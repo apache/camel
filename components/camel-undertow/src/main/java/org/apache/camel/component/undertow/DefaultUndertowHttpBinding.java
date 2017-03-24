@@ -21,12 +21,15 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.activation.FileDataSource;
 
@@ -38,6 +41,7 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormData.FormValue;
 import io.undertow.server.handlers.form.FormDataParser;
+import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
@@ -54,7 +58,7 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xnio.ChannelListener;
+import org.xnio.channels.BlockingReadableByteChannel;
 import org.xnio.channels.StreamSourceChannel;
 
 /**
@@ -349,11 +353,13 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
         Object body = message.getBody();
 
+        final HeaderMap requestHeaders = clientRequest.getRequestHeaders();
+
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
             // set content-type
-            clientRequest.getRequestHeaders().put(Headers.CONTENT_TYPE, contentType);
+            requestHeaders.put(Headers.CONTENT_TYPE, contentType);
             LOG.trace("Content-Type: {}", contentType);
         }
 
@@ -370,7 +376,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 if (headerValue != null && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);
-                    clientRequest.getRequestHeaders().add(new HttpString(key), headerValue);
+                    requestHeaders.add(new HttpString(key), headerValue);
                 }
             }
         }
@@ -378,37 +384,18 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return body;
     }
 
-    private byte[] readFromChannel(StreamSourceChannel source) throws IOException {
+    byte[] readFromChannel(StreamSourceChannel source) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[1024]);
 
+        ReadableByteChannel blockingSource = new BlockingReadableByteChannel(source);
+
         for (;;) {
-            int res = source.read(buffer);
+            int res = blockingSource.read(buffer);
             if (res == -1) {
                 return out.toByteArray();
             } else if (res == 0) {
-                source.getReadSetter().set(new ChannelListener<StreamSourceChannel>() {
-                    @Override
-                    public void handleEvent(StreamSourceChannel channel) {
-                        for (;;) {
-                            try {
-                                int res = channel.read(buffer);
-                                if (res == -1 || res == 0) {
-                                    out.toByteArray();
-                                    return;
-                                } else {
-                                    buffer.flip();
-                                    out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
-                                    buffer.clear();
-                                }
-                            } catch (IOException e) {
-                                LOG.error("Exception reading from channel {}", e);
-                            }
-                        }
-                    }
-                });
-                source.resumeReads();
-                return out.toByteArray();
+                LOG.error("Channel did not block");
             } else {
                 buffer.flip();
                 out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());

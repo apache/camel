@@ -32,6 +32,9 @@
   <packaging>jar</packaging>
 
   <properties>
+    <category>OSGi</category>
+    <title>CXF OSGi</title>
+
     <camel.osgi.import.pkg>
       org.apache.cxf,
       org.apache.cxf.binding,
@@ -139,6 +142,8 @@
             <id>generate-sources</id>
             <phase>generate-sources</phase>
             <configuration>
+              <fork>${cxf.codegenplugin.forkmode}</fork>
+              <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
               <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
               <wsdlOptions>
                 <wsdlOption>

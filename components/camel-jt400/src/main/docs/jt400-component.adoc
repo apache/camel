@@ -1,5 +1,7 @@
 ## JT400 Component
 
+*Available as of Camel version 1.5*
+
 The *`jt400`* component allows you to exchanges messages with an AS/400
 system using data queues.
 
@@ -36,63 +38,73 @@ You can append query options to the URI in the following format,
 ### JT400 options
 
 // component options: START
-The JT400 component supports 1 options which are listed below.
+The JT400 component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| connectionPool | advanced |  | AS400ConnectionPool | Returns the default connection pool used by this component.
+| Name | Description | Default | Type
+| **connectionPool** (advanced) | Returns the default connection pool used by this component. |  | AS400ConnectionPool
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The JT400 component supports 34 endpoint options which are listed below:
+The JT400 endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    jt400:userID:password/systemName/objectPath.type
+
+with the following path and query parameters:
+
+#### Path Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| userID | common |  | String | *Required* Returns the ID of the AS/400 user.
-| password | common |  | String | *Required* Returns the password of the AS/400 user.
-| systemName | common |  | String | *Required* Returns the name of the AS/400 system.
-| objectPath | common |  | String | *Required* Returns the fully qualified integrated file system path name of the target object of this endpoint.
-| type | common |  | Jt400Type | *Required* Whether to work with data queues or remote program call
-| ccsid | common |  | int | Sets the CCSID to use for the connection with the AS/400 system.
-| format | common | text | Format | Sets the data format for sending messages.
-| guiAvailable | common | false | boolean | Sets whether AS/400 prompting is enabled in the environment running Camel.
-| keyed | common | false | boolean | Whether to use keyed or non-keyed data queues.
-| outputFieldsIdxArray | common |  | Integer[] | Specifies which fields (program parameters) are output parameters.
-| outputFieldsLengthArray | common |  | Integer[] | Specifies the fields (program parameters) length as in the AS/400 program definition.
-| searchKey | common |  | String | Search key for keyed data queues.
-| searchType | common | EQ | SearchType | Search type such as EQ for equal etc.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| readTimeout | consumer | 30000 | int | Timeout in millis the consumer will wait while trying to read a new message of the data queue.
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
-| secured | security | false | boolean | Whether connections to AS/400 are secured with SSL.
+| Name | Description | Default | Type
+| **userID** | *Required* Returns the ID of the AS/400 user. |  | String
+| **password** | *Required* Returns the password of the AS/400 user. |  | String
+| **systemName** | *Required* Returns the name of the AS/400 system. |  | String
+| **objectPath** | *Required* Returns the fully qualified integrated file system path name of the target object of this endpoint. |  | String
+| **type** | *Required* Whether to work with data queues or remote program call |  | Jt400Type
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (29 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **ccsid** (common) | Sets the CCSID to use for the connection with the AS/400 system. |  | int
+| **format** (common) | Sets the data format for sending messages. | text | Format
+| **guiAvailable** (common) | Sets whether AS/400 prompting is enabled in the environment running Camel. | false | boolean
+| **keyed** (common) | Whether to use keyed or non-keyed data queues. | false | boolean
+| **outputFieldsIdxArray** (common) | Specifies which fields (program parameters) are output parameters. |  | Integer[]
+| **outputFieldsLengthArray** (common) | Specifies the fields (program parameters) length as in the AS/400 program definition. |  | Integer[]
+| **searchKey** (common) | Search key for keyed data queues. |  | String
+| **searchType** (common) | Search type such as EQ for equal etc. | EQ | SearchType
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **readTimeout** (consumer) | Timeout in millis the consumer will wait while trying to read a new message of the data queue. | 30000 | int
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| **secured** (security) | Whether connections to AS/400 are secured with SSL. | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
