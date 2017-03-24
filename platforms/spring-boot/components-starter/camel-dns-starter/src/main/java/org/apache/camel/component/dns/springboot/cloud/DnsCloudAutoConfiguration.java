@@ -19,12 +19,18 @@ package org.apache.camel.component.dns.springboot.cloud;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
+import org.apache.camel.component.dns.DnsConfiguration;
 import org.apache.camel.component.dns.cloud.DnsServiceDiscoveryFactory;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -40,17 +46,51 @@ import org.springframework.context.annotation.Lazy;
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties(DnsCloudConfiguration.class)
 public class DnsCloudAutoConfiguration {
+    @Autowired
+    private CamelContext camelContext;
+    @Autowired
+    private DnsCloudConfiguration configuration;
+    @Autowired
+    private ConfigurableBeanFactory beanFactory;
+
     @Lazy
     @Bean(name = "dns-service-discovery")
     @ConditionalOnClass(CamelContext.class)
-    public ServiceDiscovery configureServiceDiscoveryFactory(CamelContext camelContext, DnsCloudConfiguration configuration) throws Exception {
+    public ServiceDiscovery configureServiceDiscoveryFactory() throws Exception {
         DnsServiceDiscoveryFactory factory = new DnsServiceDiscoveryFactory();
 
-        Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, parameters, null, false);
-        IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), factory, parameters);
+        IntrospectionSupport.setProperties(
+            camelContext,
+            camelContext.getTypeConverter(),
+            factory,
+            IntrospectionSupport.getNonNullProperties(configuration));
 
         return factory.newInstance(camelContext);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (beanFactory != null) {
+            DnsCloudConfiguration.ServiceDiscoveryConfiguration discovery = configuration.getServiceDiscovery();
+            Map<String, Object> parameters = new HashMap<>();
+
+            for (Map.Entry<String, DnsConfiguration> entry : discovery.getConfigurations().entrySet()) {
+                // clean up params
+                parameters.clear();
+
+                // The instance factory
+                DnsServiceDiscoveryFactory factory = new DnsServiceDiscoveryFactory();
+
+                try {
+                    IntrospectionSupport.getProperties(entry.getValue(), parameters, null, false);
+                    IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), factory, parameters);
+
+                    beanFactory.registerSingleton(entry.getKey(), factory.newInstance(camelContext));
+                } catch (Exception e) {
+                    throw new BeanCreationException(entry.getKey(), e.getMessage(), e);
+                }
+            }
+        }
     }
 
     // *******************************
