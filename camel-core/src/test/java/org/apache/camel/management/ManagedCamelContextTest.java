@@ -91,6 +91,9 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Boolean messageHistory = (Boolean) mbeanServer.getAttribute(on, "MessageHistory");
         assertEquals(Boolean.TRUE, messageHistory);
 
+        Boolean logEipMask = (Boolean) mbeanServer.getAttribute(on, "LogEipMask");
+        assertEquals(Boolean.FALSE, logEipMask);
+
         Integer total = (Integer) mbeanServer.getAttribute(on, "TotalRoutes");
         assertEquals(2, total.intValue());
 
