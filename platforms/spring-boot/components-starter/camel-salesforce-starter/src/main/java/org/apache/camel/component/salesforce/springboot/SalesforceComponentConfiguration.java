@@ -44,108 +44,143 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class SalesforceComponentConfiguration {
 
     /**
-     * Explicit authentication type to be used one of USERNAME_PASSWORD
-     * REFRESH_TOKEN or JWT.
+     * Explicit authentication method to be used one of USERNAME_PASSWORD
+     * REFRESH_TOKEN or JWT. Salesforce component can auto-determine the
+     * authentication method to use from the properties set set this property to
+     * eliminate any ambiguity.
      */
     private AuthenticationType authenticationType;
     /**
-     * To use the shared SalesforceLoginConfig as login configuration
+     * All authentication configuration in one nested bean all properties set
+     * there can be set directly on the component as well
      */
     private SalesforceLoginConfigNestedConfiguration loginConfig;
     /**
-     * Salesforce login URL defaults to https://login.salesforce.com
+     * URL of the Salesforce instance by default set to
+     * https://login.salesforce.com
      */
     private String loginUrl = "https://login.salesforce.com";
     /**
-     * Salesforce connected application Consumer Key
+     * OAuth Consumer Key of the connected app configured in the Salesforce
+     * instance setup. Typically a connected app needs to be configured but one
+     * can be provided by installing a package.
      */
     private String clientId;
     /**
-     * Salesforce connected application Consumer Secret
+     * OAuth Consumer Secret of the connected app configured in the Salesforce
+     * instance setup.
      */
     private String clientSecret;
     /**
-     * KeyStoreParameters to use in OAuth 2.0 JWT Bearer Token Flow.
+     * KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain
+     * only one entry with private key and certificate. Salesforce does not
+     * verify the certificate chain so this can easily be a selfsigned
+     * certificate. Make sure that you upload the certificate to the
+     * corresponding connected app.
      */
     @NestedConfigurationProperty
     private KeyStoreParameters keystore;
     /**
-     * Salesforce connected application Consumer token
+     * Refresh token already obtained in the refresh token OAuth flow. One needs
+     * to setup a web application and configure a callback URL to receive the
+     * refresh token or configure using the builtin callback at
+     * https://login.salesforce.com/services/oauth2/success or
+     * https://test.salesforce.com/services/oauth2/success and then retrive the
+     * refresh_token from the URL at the end of the flow. Note that in
+     * development organizations Salesforce allows hosting the callback web
+     * application at localhost.
      */
     private String refreshToken;
     /**
-     * Salesforce account user name
+     * Username used in OAuth flow to gain access to access token. It's easy to
+     * get started with password OAuth flow but in general one should avoid it
+     * as it is deemed less secure than other flows.
      */
     private String userName;
     /**
-     * Salesforce account password
+     * Password used in OAuth flow to gain access to access token. It's easy to
+     * get started with password OAuth flow but in general one should avoid it
+     * as it is deemed less secure than other flows. Make sure that you append
+     * security token to the end of the password if using one.
      */
     private String password;
     /**
-     * Flag to enable/disable lazy OAuth default is false. When enabled OAuth
-     * token retrieval or generation is not done until the first API call
+     * If set to true prevents the component from authenticating to Salesforce
+     * with the start of the component. You would generaly set this to the
+     * (default) false and authenticate early and be immediately aware of any
+     * authentication issues.
      */
     private Boolean lazyLogin = false;
     /**
-     * To use the shared SalesforceEndpointConfig as endpoint configuration
+     * Global endpoint configuration - use to set values that are common to all
+     * endpoints
      */
     private SalesforceEndpointConfigNestedConfiguration config;
     /**
-     * Used for configuring HTTP client properties as key/value pairs
+     * Used to set any properties that can be configured on the underlying HTTP
+     * client. Have a look at properties of SalesforceHttpClient and the Jetty
+     * HttpClient for all available options.
      */
     private Map<String, Object> httpClientProperties;
     /**
-     * To configure security using SSLContextParameters
+     * SSL parameters to use see SSLContextParameters class for all available
+     * options.
      */
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
-     * To configure HTTP proxy host
+     * Hostname of the HTTP proxy server to use.
      */
     private String httpProxyHost;
     /**
-     * To configure HTTP proxy port
+     * Port number of the HTTP proxy server to use.
      */
     private Integer httpProxyPort;
     /**
-     * To configure HTTP proxy username
+     * Username to use to authenticate against the HTTP proxy server.
      */
     private String httpProxyUsername;
     /**
-     * To configure HTTP proxy password
+     * Password to use to authenticate against the HTTP proxy server.
      */
     private String httpProxyPassword;
     /**
-     * Enable for Socks4 proxy false by default
+     * If set to true the configures the HTTP proxy to use as a SOCKS4 proxy.
      */
     private Boolean isHttpProxySocks4 = false;
     /**
-     * Enable for TLS connections true by default
+     * If set to false disables the use of TLS when accessing the HTTP proxy.
      */
-    private Boolean isHttpProxySecure = false;
+    private Boolean isHttpProxySecure = true;
     /**
-     * HTTP proxy included addresses
+     * A list of addresses for which HTTP proxy server should be used.
      */
     private Set<String> httpProxyIncludedAddresses;
     /**
-     * HTTP proxy excluded addresses
+     * A list of addresses for which HTTP proxy server should not be used.
      */
     private Set<String> httpProxyExcludedAddresses;
     /**
-     * HTTP proxy authentication URI
+     * Used in authentication against the HTTP proxy server needs to match the
+     * URI of the proxy server in order for the httpProxyUsername and
+     * httpProxyPassword to be used for authentication.
      */
     private String httpProxyAuthUri;
     /**
-     * HTTP proxy authentication realm
+     * Realm of the proxy server used in preemptive Basic/Digest authentication
+     * methods against the HTTP proxy server.
      */
     private String httpProxyRealm;
     /**
-     * Use HTTP proxy Digest authentication false by default
+     * If set to true Digest authentication will be used when authenticating to
+     * the HTTP proxyotherwise Basic authorization method will be used
      */
     private Boolean httpProxyUseDigestAuth = false;
     /**
-     * Package names to scan for DTO classes (multiple packages can be separated
-     * by comma).
+     * In what packages are the generated DTO classes. Typically the classes
+     * would be generated using camel-salesforce-maven-plugin. Set it if using
+     * the generated DTOs to gain the benefit of using short SObject names in
+     * parameters/header values.
      */
     private String[] packages;
     /**
