@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@Metadata(label = "configuration")
+@Metadata(label = "eip,configuration")
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {
