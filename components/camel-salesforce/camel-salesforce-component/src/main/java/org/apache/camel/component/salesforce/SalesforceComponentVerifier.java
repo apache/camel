@@ -23,7 +23,6 @@ import java.util.Optional;
 
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.NoSuchOptionException;
-import org.apache.camel.component.salesforce.SalesforceLoginConfig.Type;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
@@ -65,9 +64,9 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
             .errors(ResultErrorHelper.requiresAny(
                 parameters,
-                OptionsGroup.withName(Type.USERNAME_PASSWORD).options("clientId", "clientSecret", "userName", "password"),
-                OptionsGroup.withName(Type.REFRESH_TOKEN).options("clientId", "clientSecret", "refreshToken"),
-                OptionsGroup.withName(Type.JWT).options("clientId", "userName", "keystore")
+                OptionsGroup.withName(AuthenticationType.USERNAME_PASSWORD).options("clientId", "clientSecret", "userName", "password"),
+                OptionsGroup.withName(AuthenticationType.REFRESH_TOKEN).options("clientId", "clientSecret", "refreshToken"),
+                OptionsGroup.withName(AuthenticationType.JWT).options("clientId", "userName", "keystore")
             )
         );
 

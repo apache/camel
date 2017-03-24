@@ -37,34 +37,53 @@
 # component but it makes it easier to obtain the refresh token.
 # From there make note of the parameters and fill in below:
 
+# You can leave the authentication type undefined the component
+# auto-determines the type by the specified properties, or you can force
+# the authentication type to be of certain type if you have specified
+# properties that conform to multiple authenticationt types and the
+# aut-determination does not make sense
+# salesforce.auth.type = USERNAME_PASSWORD
+
 # This is the Consumer Key of the connected application
-# This `clientId` is setup by the migration run at the start of 
+# This `salesforce.client.id` is setup by the migration run at the start of 
 # integration tests (when run from Maven):
-# clientId = 3MVG9HxRZv05HarQ5D2to.ylPaUg7uaFqGqE2wN6_RRaHM9PTa3SWT8UwKJzXAyCujHrfObkUy7oZqiBUyfGl
+# salesforce.client.id = 3MVG9HxRZv05HarQ5D2to.ylPaUg7uaFqGqE2wN6_RRaHM9PTa3SWT8UwKJzXAyCujHrfObkUy7oZqiBUyfGl
 #
-clientId = <Your Consumer Key>
+salesforce.client.id = <Your Consumer Key>
 
 # This is Consumer Secret of the connected application
 # If you use the above clientId (3MV...Gl) get the Consumer Secret from
 # your Salesforce instance after migration run, access your Salesforce
 # instance and get the Consumer Secret from there for 
 # CamelSalesforceIntegrationTests connected application
-clientSecret = <Your Consumer Secret>
+salesforce.client.secret = <Your Consumer Secret>
 
 # This is the username for the Salesforce account, you can use your own
 # developer account, or add another user to your Salesforce instance,
 # but make sure that it has administrative rights
-userName = <Your Salesforce username>
+salesforce.username = <Your Salesforce username>
 
-# You can use refresh token instead of userName and password parameters
-refreshToken = <Your Refresh token>
+# You can use refresh token instead of username and password parameters
+salesforce.refreshToken = <Your Refresh token>
 
 # Password of the user above, if you're using security tokens, generate
 # one and append it to the end of the password
-password = <Your Salesforce password>[Your security token, if used]
+salesforce.password = <Your Salesforce password>[Your security token, if used]
+
+# For JWT OAuth flow don't specify password and refreshToken and specify
+# the following properties:
+
+# path to the keystore
+salesforce.keystore.resource=
+
+# type of the keystore
+salesforce.keystore.type=
+
+# password of the keystore
+salesforce.keystore.password=
+
+# JCE provider of the keystore
+salesforce.keystore.provider=
 
 # This should be https://login.salesforce.com/, change if appropriate
-loginUrl = https://login.salesforce.com/
-
-# Remains, TODO remove this
-report.0 = Test_Report
+salesforce.login.url = https://login.salesforce.com/

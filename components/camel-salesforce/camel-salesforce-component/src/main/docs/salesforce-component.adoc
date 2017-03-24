@@ -427,13 +427,14 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 25 options which are listed below.
+The Salesforce component supports 26 options which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
+| **authenticationType** (security) | Explicit authentication type to be used one of USERNAME_PASSWORD REFRESH_TOKEN or JWT. |  | AuthenticationType
 | **loginConfig** (security) | To use the shared SalesforceLoginConfig as login configuration |  | SalesforceLoginConfig
 | **loginUrl** (security) | Salesforce login URL defaults to https://login.salesforce.com | https://login.salesforce.com | String
 | **clientId** (security) | Salesforce connected application Consumer Key |  | String
