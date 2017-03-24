@@ -39,28 +39,28 @@ public class DigitalOceanImagesProducer extends DigitalOceanProducer {
 
         switch(determineOperation(exchange)) {
 
-            case DigitalOceanOperations.list:
+            case list:
                 getImages(exchange);
                 break;
-            case DigitalOceanOperations.ownList:
+            case ownList:
                 getUserImages(exchange);
                 break;
-            case DigitalOceanOperations.listActions:
+            case listActions:
                 getImageActions(exchange);
                 break;
-            case DigitalOceanOperations.get:
+            case get:
                 getImage(exchange);
                 break;
-            case DigitalOceanOperations.update:
+            case update:
                 updateImage(exchange);
                 break;
-            case DigitalOceanOperations.delete:
+            case delete:
                 deleteImage(exchange);
                 break;
-            case DigitalOceanOperations.transfer:
+            case transfer:
                 transferImage(exchange);
                 break;
-            case DigitalOceanOperations.convert:
+            case convert:
                 convertImageToSnapshot(exchange);
                 break;
             default:

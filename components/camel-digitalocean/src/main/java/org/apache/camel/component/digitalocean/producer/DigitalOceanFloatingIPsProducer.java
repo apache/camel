@@ -36,25 +36,25 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws Exception {
         switch(determineOperation(exchange)) {
 
-            case DigitalOceanOperations.list:
+            case list:
                 getFloatingIPs(exchange);
                 break;
-            case DigitalOceanOperations.create:
+            case create:
                 createFloatingIp(exchange);
                 break;
-            case DigitalOceanOperations.get:
+            case get:
                 getFloatingIP(exchange);
                 break;
-            case DigitalOceanOperations.delete:
+            case delete:
                 deleteFloatingIP(exchange);
                 break;
-            case DigitalOceanOperations.assign:
+            case assign:
                 assignFloatingIPToDroplet(exchange);
                 break;
-            case DigitalOceanOperations.unassign:
+            case unassign:
                 unassignFloatingIP(exchange);
                 break;
-            case DigitalOceanOperations.listActions:
+            case listActions:
                 getFloatingIPActions(exchange);
                 break;
             default:
