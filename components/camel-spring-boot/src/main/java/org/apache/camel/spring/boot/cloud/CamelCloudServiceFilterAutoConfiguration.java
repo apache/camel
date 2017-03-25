@@ -35,6 +35,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -42,6 +43,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 @Configuration
+@ConditionalOnBean(CamelCloudAutoConfiguration.class)
 @EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
 @Conditional(CamelCloudServiceFilterAutoConfiguration.Condition.class)
 public class CamelCloudServiceFilterAutoConfiguration implements BeanFactoryAware {
