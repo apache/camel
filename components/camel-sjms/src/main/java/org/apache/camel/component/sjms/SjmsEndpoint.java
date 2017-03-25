@@ -58,7 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+ * The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 1.x API).
  *
  * This component uses plain JMS API where as the jms component uses Spring JMS.
  */

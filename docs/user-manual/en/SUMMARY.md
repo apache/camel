@@ -303,7 +303,7 @@
 	* [Spring Redis](spring-redis-component.adoc)
 	* [Spring WebService](spring-ws-component.adoc)
 	* [SQL](sql-component.adoc)
-	* [SQL StoredProcedure](sql-stored-component.adoc)
+	* [SQL Stored Procedure](sql-stored-component.adoc)
 	* [SSH](ssh-component.adoc)
 	* [StAX](stax-component.adoc)
 	* [Stomp](stomp-component.adoc)

@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 225 in 179 JAR artifacts (13 deprecated)
+Number of Components: 225 in 179 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -279,7 +279,7 @@ Number of Components: 225 in 179 JAR artifacts (13 deprecated)
 `hipchat:protocol:host:port` | 2.15 | The hipchat component supports producing and consuming messages from/to Hipchat service.
 
 | link:camel-http/src/main/docs/http-component.adoc[HTTP] (camel-http) +
-`http:httpUri` | 1.0 | For calling out to external HTTP servers using Apache HTTP Client 3.x.
+`http:httpUri` | 1.0 | *deprecated* For calling out to external HTTP servers using Apache HTTP Client 3.x.
 
 | link:camel-http4/src/main/docs/http4-component.adoc[HTTP4] (camel-http4) +
 `http4:httpUri` | 2.3 | For calling out to external HTTP servers using Apache HTTP Client 4.x.
@@ -498,7 +498,7 @@ Number of Components: 225 in 179 JAR artifacts (13 deprecated)
 `rabbitmq:hostname:portNumber/exchangeName` | 2.12 | The rabbitmq component allows you produce and consume messages from RabbitMQ instances.
 
 | link:camel-reactive-streams/src/main/docs/reactive-streams-component.adoc[Reactive Streams] (camel-reactive-streams) +
-`reactive-streams:stream` | 2.19 | The Camel reactive-streams endpoint.
+`reactive-streams:stream` | 2.19 | Reactive Camel using reactive streams
 
 | link:../camel-core/src/main/docs/ref-component.adoc[Ref] (camel-core) +
 `ref:name` | 1.2 | The ref component is used for lookup of existing endpoints bound in the Registry.
@@ -552,13 +552,13 @@ Number of Components: 225 in 179 JAR artifacts (13 deprecated)
 `sftp:host:port/directoryName` | 1.1 | The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
 
 | link:camel-sjms/src/main/docs/sjms-component.adoc[Simple JMS] (camel-sjms) +
-`sjms:destinationType:destinationName` | 2.11 | The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+`sjms:destinationType:destinationName` | 2.11 | The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 1.x API).
 
 | link:camel-sjms/src/main/docs/sjms-batch-component.adoc[Simple JMS Batch] (camel-sjms) +
 `sjms-batch:destinationName` | 2.16 | The sjms-batch component is a specialized for highly performant transactional batch consumption from a JMS queue.
 
 | link:camel-sjms2/src/main/docs/sjms2-component.adoc[Simple JMS2] (camel-sjms2) +
-`sjms2:destinationType:destinationName` | 2.19 | The sjms2 component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+`sjms2:destinationType:destinationName` | 2.19 | The sjms2 component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 2.x API).
 
 | link:camel-sip/src/main/docs/sip-component.adoc[SIP] (camel-sip) +
 `sip:uri` | 2.5 | To send and receive messages using the SIP protocol (used in telco and mobile).
@@ -602,7 +602,7 @@ Number of Components: 225 in 179 JAR artifacts (13 deprecated)
 | link:camel-sql/src/main/docs/sql-component.adoc[SQL] (camel-sql) +
 `sql:query` | 1.4 | The sql component allows you to work with databases using JDBC SQL queries.
 
-| link:camel-sql/src/main/docs/sql-stored-component.adoc[SQL StoredProcedure] (camel-sql) +
+| link:camel-sql/src/main/docs/sql-stored-component.adoc[SQL Stored Procedure] (camel-sql) +
 `sql-stored:template` | 2.17 | The sql component allows you to work with databases using JDBC Stored Procedure queries.
 
 | link:camel-ssh/src/main/docs/ssh-component.adoc[SSH] (camel-ssh) +
