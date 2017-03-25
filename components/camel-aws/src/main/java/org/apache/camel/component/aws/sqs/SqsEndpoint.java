@@ -47,6 +47,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,7 +126,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         // If both region and Account ID is provided the queue URL can be built manually.
         // This allows accessing queues where you don't have permission to list queues or query queues
         if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
-            queueUrl = "https://sqs." + configuration.getRegion() + ".amazonaws.com/"
+            String host = configuration.getAmazonAWSHost();
+            host = FileUtil.stripTrailingSeparator(host);
+            queueUrl = "https://sqs." + configuration.getRegion() + "." + host + "/"
                 +  configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
         } else if (configuration.getQueueOwnerAWSAccountId() != null) {
             GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
@@ -148,6 +151,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         if (queueUrl == null) {
             createQueue(client);
         } else {
+            LOG.debug("Using Amazon SQS queue url: {}", queueUrl);
             updateQueueAttributes(client);
         }
     }
