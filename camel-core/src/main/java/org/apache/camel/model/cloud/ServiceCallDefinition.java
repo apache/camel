@@ -749,17 +749,33 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
         // The component is used to configure the default scheme to use (eg camel component name).
         // The component configured on EIP takes precedence vs configured on configuration.
-        String scheme = this.component;
-        if (scheme == null) {
+        String endpointScheme = this.component;
+        if (endpointScheme == null) {
             ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext);
             if (conf != null) {
-                scheme = conf.getComponent();
+                endpointScheme = conf.getComponent();
             }
         }
-        if (scheme == null) {
+        if (endpointScheme == null) {
             ServiceCallConfigurationDefinition conf = retrieveDefaultConfig(camelContext);
             if (conf != null) {
-                scheme = conf.getComponent();
+                endpointScheme = conf.getComponent();
+            }
+        }
+
+        // The uri is used to tweak the uri.
+        // The uri configured on EIP takes precedence vs configured on configuration.
+        String endpointUri = this.uri;
+        if (endpointUri == null) {
+            ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext);
+            if (conf != null) {
+                endpointUri = conf.getUri();
+            }
+        }
+        if (endpointUri == null) {
+            ServiceCallConfigurationDefinition conf = retrieveDefaultConfig(camelContext);
+            if (conf != null) {
+                endpointUri = conf.getUri();
             }
         }
 
@@ -769,8 +785,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return new DefaultServiceCallProcessor(
             camelContext,
             camelContext.resolvePropertyPlaceholders(name),
-            ObjectHelper.applyIfNotEmpty(scheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallConstants.DEFAULT_COMPONENT),
-            ObjectHelper.applyIfNotEmpty(uri, camelContext::resolvePropertyPlaceholders, () -> null),
+            ObjectHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallConstants.DEFAULT_COMPONENT),
+            ObjectHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null),
             pattern,
             loadBalancer,
             expression);

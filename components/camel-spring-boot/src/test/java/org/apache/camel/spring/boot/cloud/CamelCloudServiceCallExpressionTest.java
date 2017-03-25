@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     properties = {
         "service.name=custom-svc-list",
         "camel.cloud.load-balancer.enabled=false",
-        "camel.cloud.service-call.component=netty4-http",
+        "camel.cloud.service-call.component=jetty",
         "camel.cloud.service-call.expression=${header.CamelServiceCallScheme}:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello",
         "camel.cloud.service-discovery.services[custom-svc-list]=localhost:9090,localhost:9091,localhost:9092",
         "camel.cloud.service-filter.blacklist[custom-svc-list]=localhost:9091",
@@ -73,13 +73,13 @@ public class CamelCloudServiceCallExpressionTest {
                     from("direct:start")
                         .serviceCall("{{service.name}}");
 
-                    from("netty4-http:http://localhost:9090/hello")
+                    from("jetty:http://localhost:9090/hello")
                         .transform()
                         .constant("9090");
-                    from("netty4-http:http://localhost:9091/hello")
+                    from("jetty:http://localhost:9091/hello")
                         .transform()
                         .constant("9091");
-                    from("netty4-http:http://localhost:9092/hello")
+                    from("jetty:http://localhost:9092/hello")
                         .transform()
                         .constant("9092");
                 }
