@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     properties = {
         "service.name=custom-svc-list",
         "camel.cloud.load-balancer.enabled=false",
-        "camel.cloud.service-call.uri=netty4-http:http://${service.name}",
+        "camel.cloud.service-call.uri=jetty:http://${service.name}/hello",
         "camel.cloud.service-call.service-discovery=sd",
         "camel.cloud.service-call.service-filter=sf",
         // this should not be taken into account
@@ -78,15 +78,15 @@ public class CamelCloudServiceCallGlobalConfigurationTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .serviceCall("{{service.name}}/hello");
+                        .serviceCall("{{service.name}}");
 
-                    from("netty4-http:http://localhost:9090/hello")
+                    from("jetty:http://localhost:9090/hello")
                         .transform()
                         .constant("9090");
-                    from("netty4-http:http://localhost:9091/hello")
+                    from("jetty:http://localhost:9091/hello")
                         .transform()
                         .constant("9091");
-                    from("netty4-http:http://localhost:9092/hello")
+                    from("jetty:http://localhost:9092/hello")
                         .transform()
                         .constant("9092");
                 }
