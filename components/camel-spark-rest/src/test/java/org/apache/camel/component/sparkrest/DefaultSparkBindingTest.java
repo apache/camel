@@ -16,26 +16,19 @@
  */
 package org.apache.camel.component.sparkrest;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyMap;
-import static org.apache.camel.Exchange.CONTENT_TYPE;
-import static org.apache.camel.Exchange.HTTP_METHOD;
-import static org.apache.camel.Exchange.HTTP_QUERY;
-import static org.apache.camel.Exchange.HTTP_URI;
-import static org.apache.camel.Exchange.HTTP_URL;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
+
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import org.apache.camel.Exchange;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -43,11 +36,17 @@ import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
-
 import spark.Request;
+
+import static org.apache.camel.Exchange.CONTENT_TYPE;
+import static org.apache.camel.Exchange.HTTP_METHOD;
+import static org.apache.camel.Exchange.HTTP_QUERY;
+import static org.apache.camel.Exchange.HTTP_URI;
+import static org.apache.camel.Exchange.HTTP_URL;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 @RunWith(Theories.class)
 public class DefaultSparkBindingTest {
@@ -94,7 +93,7 @@ public class DefaultSparkBindingTest {
 
     @Theory
     @Test
-    public void shouldOnlyAddStandardExchangeHeader_givenHeaderNotPresentInInput(
+    public void shouldOnlyAddStandardExchangeHeaderGivenHeaderNotPresentInInput(
             @FromDataPoints("exchangeHeaderScenarios") ExchangeHeaderScenario scenario) throws Exception {
         //given
         Map<String, Object> headers = scenario.headers;
@@ -112,7 +111,7 @@ public class DefaultSparkBindingTest {
         String expectedHeaderName;
         String expectedHeaderValue;
         
-        public ExchangeHeaderScenario(Map<String, Object> headers, String expectedHeaderName, String expectedHeaderValue) {
+        ExchangeHeaderScenario(Map<String, Object> headers, String expectedHeaderName, String expectedHeaderValue) {
             super();
             this.expectedHeaderName = expectedHeaderName;
             this.expectedHeaderValue = expectedHeaderValue;
