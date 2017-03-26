@@ -310,6 +310,7 @@
     <jnats-version>1.0</jnats-version>
     <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
     <javacrumbs-version>0.22</javacrumbs-version>
+    <javapoet-version>1.8.0</javapoet-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
     <javax.el-api-version>2.2.5</javax.el-api-version>
     <javax.el-version>2.2.5</javax.el-version>
