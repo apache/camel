@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.aws.kinesis.integration;
 
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.kinesis.AmazonKinesis;
+import com.amazonaws.services.kinesis.AmazonKinesisClientBuilder;
+import com.amazonaws.services.kinesis.model.Record;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -29,44 +34,39 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.kinesis.AmazonKinesis;
-import com.amazonaws.services.kinesis.AmazonKinesisClientBuilder;
-import com.amazonaws.services.kinesis.model.Record;
-
 @Ignore("Must be manually tested.")
 public class KinesisComponentIntegrationTest extends CamelTestSupport {
-    
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @Test
     public void send() throws Exception {
         result.expectedMessageCount(2);
-        
+
         template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(KinesisConstants.PARTITION_KEY, "partition-1");
                 exchange.getIn().setBody("Kinesis Event 1.");
             }
         });
-        
+
         template.send("direct:start", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(KinesisConstants.PARTITION_KEY, "partition-1");
                 exchange.getIn().setBody("Kinesis Event 2.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0), "Kinesis Event 1.", "partition-1");
         assertResultExchange(result.getExchanges().get(1), "Kinesis Event 2.", "partition-1");
     }
-    
+
     private void assertResultExchange(Exchange resultExchange, String data, String partition) {
         assertIsInstanceOf(Record.class, resultExchange.getIn().getBody());
         Record record = resultExchange.getIn().getBody(Record.class);
@@ -75,28 +75,26 @@ public class KinesisComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(KinesisConstants.APPROX_ARRIVAL_TIME));
         assertNotNull(resultExchange.getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER));
     }
-    
-    @Override
-	protected JndiRegistry createRegistry() throws Exception {
-		 JndiRegistry registry = super.createRegistry();
-		 
-		 AmazonKinesis client = AmazonKinesisClientBuilder.standard().withRegion(Regions.EU_CENTRAL_1).build();
-		 registry.bind("amazonKinesisClient", client);
-		 
-		 return registry;
-	}
 
-	protected RouteBuilder createRouteBuilder() throws Exception {
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        AmazonKinesis client = AmazonKinesisClientBuilder.standard().withRegion(Regions.EU_CENTRAL_1).build();
+        registry.bind("amazonKinesisClient", client);
+
+        return registry;
+    }
+
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 String kinesisEndpointUri = "aws-kinesis://etl?amazonKinesisClient=#amazonKinesisClient";
-                
-                from("direct:start")
-                    .to(kinesisEndpointUri);
-                
-                from(kinesisEndpointUri)
-                    .to("mock:result");
+
+                from("direct:start").to(kinesisEndpointUri);
+
+                from(kinesisEndpointUri).to("mock:result");
             }
         };
     }
