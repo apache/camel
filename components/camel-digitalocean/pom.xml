@@ -32,9 +32,6 @@
   <description>Camel DigitalOcean support</description>
 
   <properties>
-    <!-- use by camel-catalog -->
-    <firstVersion>2.19.0</firstVersion>
-
     <camel.osgi.export.pkg>org.apache.camel.component.digitalocean.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=digitalocean</camel.osgi.export.service>
   </properties>
