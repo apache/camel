@@ -36,7 +36,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
 @Ignore("Must be manually tested. Provide your own oAuthToken")
 public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSupport {
 
@@ -339,6 +338,5 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         System.out.println(regions);
         assertNotEquals(regions.size(), 1);
     }
-
 
 }

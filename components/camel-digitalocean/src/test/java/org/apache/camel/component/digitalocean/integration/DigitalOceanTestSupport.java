@@ -23,7 +23,6 @@ import java.util.Properties;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
 
-
 public class DigitalOceanTestSupport extends CamelTestSupport {
 
     protected final Properties properties;

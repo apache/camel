@@ -4,12 +4,11 @@
 
 The **DigitalOcean** component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating [digitalocean-api-java](https://www.digitalocean.com/community/projects/api-client-in-java). All of the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.
 
-
-## Prerequisites
+### Prerequisites
 
 You must have a valid DigitalOcean account and a valid OAuth token. You can generate an OAuth token by visiting the [Apps & API](https://cloud.digitalocean.com/settings/applications) section of the DigitalOcean control panel for your account.
 
-## URI format
+### URI format
 
 The **DigitalOcean Component** uses the following URI format:
 
@@ -26,24 +25,6 @@ digitalocean://droplets?operation=list&oAuthToken=XXXXXX&page=1&perPage=10
 
 The DigitalOcean component only supports producer endpoints so you cannot use this component at the beginning of a route to listen to messages in a channel.
 
-## URI Endpoints
-
-There is one endpoint for each DigitalOcean resources (defined in `DigitalOceanResources` enumeration):
-
-| Endpoint | Description |
-| ------ | ----------- |
-| `account` | Your account on DigitalOcean. |
-| `actions` | Actions are records of events that have occurred on the resources in your account.  |
-| `blockStorages` | Block Storage volumes provide expanded storage capacity for your Droplets and can be moved between Droplets within a specific region. |
-| `droplets` | A Droplet is a DigitalOcean virtual machine. |
-| `images` | An image may refer to a snapshot that has been taken of a Droplet instance. It may also mean an image representing an automatic backup of a Droplet. |
-| `snapshots` | Snapshots are saved instances of a Droplet or a volume. |
-| `keys` | DigitalOcean allows you to add SSH public keys to the interface so that you can embed your public key into a Droplet at the time of creation. |
-| `regions` | A region in DigitalOcean represents a datacenter where Droplets can be deployed and images can be transferred. |
-| `sizes` | The sizes objects represent different packages of hardware resources that can be used for Droplets.  |
-| `floatingIPs` | Floating IP objects represent a publicly-accessible static IP addresses that can be mapped to one of your Droplets. |
-| `tags` | A Tag is a label that can be applied to a resource (currently only Droplets) in order to better organize or facilitate the lookups and actions on it. |
-
 
 ### Options
 
@@ -55,7 +36,7 @@ The DigitalOcean component has no options.
 // endpoint options: START
 The DigitalOcean endpoint is configured using URI syntax:
 
-    digitalocean:label
+    digitalocean:operation
 
 with the following path and query parameters:
 
@@ -72,10 +53,10 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **digitalOceanClient** (producer) | To use a existing configured DigitalOceanClient as client |  | DigitalOceanClient
 | **page** (producer) | Use for pagination. Force the page number. | 1 | Integer
 | **perPage** (producer) | Use for pagination. Set the number of item per request. The maximum number of results per page is 200. | 25 | Integer
 | **resource** (producer) | *Required* The DigitalOcean resource type on which perform the operation. |  | DigitalOceanResources
+| **digitalOceanClient** (advanced) | To use a existing configured DigitalOceanClient as client |  | DigitalOceanClient
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | **httpProxyHost** (proxy) | Set a proxy host if needed |  | String
 | **httpProxyPassword** (proxy) | Set a proxy password if needed |  | String
@@ -93,25 +74,24 @@ All **operation** values are defined in `DigitalOceanOperations` enumeration.
 All **header** names used by the component are defined in `DigitalOceanHeaders` enumeration.
 
 
-## Message body result
+### Message body result
+
 All message bodies returned are using objects provided by the **digitalocean-api-java** library.
 
 
-## API Rate Limits
-
+### API Rate Limits
 
 DigitalOcean REST API encapsulated by camel-digitalocean component is subjected to API Rate Limiting. You can find the per method limits in the [API Rate Limits documentation](https://developers.digitalocean.com/documentation/v2/#rate-limit).
 
 
-## Account endpoint
+### Account endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
 | `get` | get account info |  | `com.myjeeva.digitalocean.pojo.Account`  |
 
 
-
-## BlockStorages endpoint
+### BlockStorages endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
@@ -129,7 +109,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `resize` | resize a Block Storage volume | `CamelDigitalOceanVolumeSizeGigabytes`  _Integer_<br>`CamelDigitalOceanRegion` _String_| `com.myjeeva.digitalocean.pojo.Action`  |
 | `listActions` | retrieve all actions that have been executed on a volume | `CamelDigitalOceanId`  _Integer_| `List<com.myjeeva.digitalocean.pojo.Action>`  |
 
-## Droplets endpoint
+### Droplets endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
@@ -163,7 +143,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `listNeighbors` |  retrieve a list of droplets that are running on the same physical server | `CamelDigitalOceanId` _Integer_ | `List<com.myjeeva.digitalocean.pojo.Droplet>`  |
 | `listAllNeighbors` |  retrieve a list of any droplets that are running on the same physical hardware | | `List<com.myjeeva.digitalocean.pojo.Droplet>`  |
 
-## Images endpoint
+### Images endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
@@ -177,7 +157,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `transfer` | transfer an image to another region| `CamelDigitalOceanId` _Integer_ <br>`CamelDigitalOceanRegion` _String_| `com.myjeeva.digitalocean.pojo.Action`  |
 | `convert` | convert an image, for example, a backup to a snapshot| `CamelDigitalOceanId` _Integer_ | `com.myjeeva.digitalocean.pojo.Action`  |
 
-## Snapshots endpoint
+### Snapshots endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
@@ -186,7 +166,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `delete` | delete an snapshot| `CamelDigitalOceanId` _Integer_ | `com.myjeeva.digitalocean.pojo.Delete`  |
 
 
-## Keys endpoint
+### Keys endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
@@ -198,20 +178,20 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `delete` | delete a key by id| `CamelDigitalOceanId` _Integer_ | `com.myjeeva.digitalocean.pojo.Delete`  |
 | `delete` | delete a key by fingerprint| `CamelDigitalOceanKeyFingerprint` _String_ | `com.myjeeva.digitalocean.pojo.Delete`  |
 
-## Regions endpoint
+### Regions endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
 | `list` |  list all of the regions that are available | | `List<com.myjeeva.digitalocean.pojo.Region>`  |
 
 
-## Sizes endpoint
+### Sizes endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
 | `list` |  list all of the sizes that are available | | `List<com.myjeeva.digitalocean.pojo.Size>`  |
 
-## Floating IPs endpoint
+### Floating IPs endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
@@ -224,7 +204,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `unassign` | unassign a Floating IP | `CamelDigitalOceanFloatingIPAddress` _String_ | `com.myjeeva.digitalocean.pojo.Action`  |
 | `listActions` |  retrieve all actions that have been executed on a Floating IP | `CamelDigitalOceanFloatingIPAddress` _String_ | `List<com.myjeeva.digitalocean.pojo.Action>`  |
 
-## Tags endpoint
+### Tags endpoint
 
 | operation | Description | Headers | Result |
 | ------ | ---- | ------- | ----------- |
@@ -235,7 +215,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `update` |  update a tag | `CamelDigitalOceanName` _String_ <br>`CamelDigitalOceanNewName` _String_| `com.myjeeva.digitalocean.pojo.Tag`  |
 
 
-## Examples
+### Examples
 
 Get your account info
 

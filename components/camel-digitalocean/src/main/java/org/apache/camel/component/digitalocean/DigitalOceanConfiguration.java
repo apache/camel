@@ -28,18 +28,17 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DigitalOceanConfiguration {
 
-
-    @UriParam(enums = "account,actions,blockStorages,droplets,mages,snapshots,keys,regions,sizes,floatingIPs,tags")
-    @Metadata(required = "true")
-    private DigitalOceanResources resource;
-
     @UriPath(enums = "create,update,delete,list,ownList,get,listBackups,listActions,listNeighbors,listSnapshots,listKernels,listAllNeighbors,"
         + "enableBackups,disableBackups,reboot,powerCycle,shutdown,powerOn,powerOff,restore,resetPassword,"
         + "resize,rebuild,rename,changeKernel,enableIpv6,enablePrivateNetworking,takeSnapshot,transfer,convert,"
         + "attach,detach,assign,unassign,tag,untag")
     private DigitalOceanOperations operation;
 
-    @UriParam
+    @UriParam(enums = "account,actions,blockStorages,droplets,mages,snapshots,keys,regions,sizes,floatingIPs,tags")
+    @Metadata(required = "true")
+    private DigitalOceanResources resource;
+
+    @UriParam(label = "advanced")
     private DigitalOceanClient digitalOceanClient;
 
     @UriParam(label = "security", secret = true)
@@ -51,12 +50,11 @@ public class DigitalOceanConfiguration {
     @UriParam(defaultValue = "25")
     private Integer perPage = 25;
 
-
     @UriParam(label = "proxy")
     private String httpProxyHost;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", secret = true)
     private String httpProxyUser;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", secret = true)
     private String httpProxyPassword;
     @UriParam(label = "proxy")
     private Integer httpProxyPort;
