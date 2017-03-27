@@ -167,8 +167,13 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
         if (id == null) {
             id = "trigger-" + getCamelContext().getUuidGenerator().generateUuid();
         }
-        TriggerKey triggerKey = new TriggerKey(triggerId, triggerGroup);
-        Trigger existingTrigger = quartzScheduler.getTrigger(triggerKey);
+
+        Trigger existingTrigger = null;
+        TriggerKey triggerKey = null;
+        if (triggerId != null && triggerGroup != null) {
+            triggerKey = new TriggerKey(triggerId, triggerGroup);
+            existingTrigger = quartzScheduler.getTrigger(triggerKey);
+        }
 
         // Is an trigger already exist for this triggerId ?
         if (existingTrigger == null) {
@@ -206,7 +211,6 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
             quartzScheduler.rescheduleJob(triggerKey, existingTrigger);
         }
-
     }
 
     @Override
@@ -225,7 +229,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
         JobDataMap jobDataMap = trigger.getJobDataMap();
         String routeIdFromTrigger = jobDataMap.getString("routeId");
         if (routeIdFromTrigger != null && !routeIdFromTrigger.equals(routeId)) {
-            throw new IllegalArgumentException("Trigger key " + trigger.getKey() + " is already used by route" + routeIdFromTrigger + ". Can't re-use it for route " + routeId);
+            throw new IllegalArgumentException("Trigger key " + trigger.getKey() + " is already used by route: " + routeIdFromTrigger + ". Cannot re-use it for another route: " + routeId);
         }
     }
 
