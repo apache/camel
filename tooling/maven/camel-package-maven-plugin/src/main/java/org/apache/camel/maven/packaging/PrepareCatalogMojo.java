@@ -354,6 +354,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-linkedin-component/target/classes");
                         } else if ("camel-olingo2".equals(dir.getName())) {
                             target = new File(dir, "camel-olingo2-component/target/classes");
+                        } else if ("camel-olingo4".equals(dir.getName())) {
+                            target = new File(dir, "camel-olingo4-component/target/classes");
                         } else if ("camel-box".equals(dir.getName())) {
                             target = new File(dir, "camel-box-component/target/classes");
                         }
@@ -800,6 +802,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         || "camel-jetty-common".equals(dir.getName())
                         || "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
+                        || "camel-olingo4".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName())) {
                         continue;
                     }
@@ -971,6 +974,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-linkedin-component/src/main/docs");
                         } else if ("camel-olingo2".equals(dir.getName())) {
                             target = new File(dir, "camel-olingo2-component/src/main/docs");
+                        } else if ("camel-olingo4".equals(dir.getName())) {
+                            target = new File(dir, "camel-olingo4-component/src/main/docs");
                         } else if ("camel-box".equals(dir.getName())) {
                             target = new File(dir, "camel-box-component/src/main/docs");
                         }
