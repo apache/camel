@@ -72,13 +72,13 @@ public class DigitalOceanConfiguration {
         this.resource = resource;
     }
 
-    /**
-     * The operation to perform to the given resource.
-     */
     public DigitalOceanOperations getOperation() {
         return operation;
     }
 
+    /**
+     * The operation to perform to the given resource.
+     */
     public void setOperation(DigitalOceanOperations operation) {
         this.operation = operation;
     }
@@ -94,80 +94,79 @@ public class DigitalOceanConfiguration {
         this.oAuthToken = oAuthToken;
     }
 
-    /**
-     * Use for pagination. Set the number of item per request. The maximum number of results per page is 200.
-     */
     public Integer getPerPage() {
         return perPage;
     }
 
+    /**
+     * Use for pagination. Set the number of item per request. The maximum number of results per page is 200.
+     */
     public void setPerPage(Integer perPage) {
         this.perPage = perPage;
     }
 
-    /**
-     * Use for paginsation. Force the page number.
-     */
     public Integer getPage() {
         return page;
     }
 
+    /**
+     * Use for pagination. Force the page number.
+     */
     public void setPage(Integer page) {
         this.page = page;
+    }
+
+    public String getHttpProxyHost() {
+        return httpProxyHost;
     }
 
     /**
      * Set a proxy host if needed
      */
-    public String getHttpProxyHost() {
-        return httpProxyHost;
-    }
-
     public void setHttpProxyHost(String httpProxyHost) {
         this.httpProxyHost = httpProxyHost;
     }
 
-    /**
-     * Set a proxy user if needed
-     */
     public String getHttpProxyUser() {
         return httpProxyUser;
     }
 
+    /**
+     * Set a proxy host if needed
+     */
     public void setHttpProxyUser(String httpProxyUser) {
         this.httpProxyUser = httpProxyUser;
+    }
+
+    public String getHttpProxyPassword() {
+        return httpProxyPassword;
     }
 
     /**
      * Set a proxy password if needed
      */
-    public String getHttpProxyPassword() {
-        return httpProxyPassword;
-    }
-
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
+    }
+
+    public Integer getHttpProxyPort() {
+        return httpProxyPort;
     }
 
     /**
      * Set a proxy port if needed
      */
-    public Integer getHttpProxyPort() {
-        return httpProxyPort;
-    }
-
     public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
 
-
-    /**
-     * To use a existing configured DigitalOceanClient as client
-     */
     public DigitalOceanClient getDigitalOceanClient() {
         return digitalOceanClient;
     }
 
+    /**
+     * To use a existing configured DigitalOceanClient as client
+     */
     public void setDigitalOceanClient(DigitalOceanClient digitalOceanClient) {
         this.digitalOceanClient = digitalOceanClient;
     }

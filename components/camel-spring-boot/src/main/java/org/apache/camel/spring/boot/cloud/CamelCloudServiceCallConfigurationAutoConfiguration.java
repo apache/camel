@@ -51,7 +51,7 @@ public class CamelCloudServiceCallConfigurationAutoConfiguration {
         ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getServiceFilter(), definition::setServiceFilterRef);
         ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getServiceChooser(), definition::setServiceChooserRef);
         ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getLoadBalancer(), definition::setLoadBalancerRef);
-        ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getExpression(), definition::setSi);
+        ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getExpression(), definition::setSimpleExpression);
 
         return definition;
     }

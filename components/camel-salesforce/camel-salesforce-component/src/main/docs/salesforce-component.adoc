@@ -24,6 +24,37 @@ NOTE: Developers wishing to contribute to the component are instructed
 to look at the README.md file on instructions on how to get started and
 setup your environment for running integration tests.
 
+## Authenticating to Salesforce
+
+The component supports three OAuth authentication flows:
+
+* https://help.salesforce.com/articleView?id=remoteaccess_oauth_username_password_flow.htm[OAuth 2.0 Username-Password Flow]
+* https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm[OAuth 2.0 Refresh Token Flow]
+* https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm[OAuth 2.0 JWT Bearer Token Flow]
+
+For each of the flow different set of properties needs to be set:
+
+.Properties to set for each authentication flow
+|===
+| Property     | Where to find it on Salesforce     | Flow
+
+| clientId     | Connected App, Consumer Key        | All flows
+| clientSecret | Connected App, Consumer Secret     | Username-Password, Refresh Token
+| userName     | Salesforce user username           | Username-Password, JWT Bearer Token
+| password     | Salesforce user password           | Username-Password
+| refreshToken | From OAuth flow callback           | Refresh Token
+| keystore     | Connected App, Digital Certificate | JWT Bearer Token
+|===
+
+The component auto determines what flow you're trying to configure, to
+be remove ambiguity set the `authenticationType` property.
+
+NOTE: Using Username-Password Flow in production is not encouraged.
+
+NOTE: The certificate used in JWT Bearer Token Flow can be a selfsigned 
+certificate. The KeyStore holding the certificate and the private key
+must contain only single certificate-private key entry.
+
 ### URI format
 
 The URI scheme for a salesforce component is as follows
@@ -427,37 +458,38 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 25 options which are listed below.
+The Salesforce component supports 26 options which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **loginConfig** (security) | To use the shared SalesforceLoginConfig as login configuration |  | SalesforceLoginConfig
-| **loginUrl** (security) | Salesforce login URL defaults to https://login.salesforce.com | https://login.salesforce.com | String
-| **clientId** (security) | Salesforce connected application Consumer Key |  | String
-| **clientSecret** (security) | Salesforce connected application Consumer Secret |  | String
-| **keystore** (security) | KeyStoreParameters to use in OAuth 2.0 JWT Bearer Token Flow. |  | KeyStoreParameters
-| **refreshToken** (security) | Salesforce connected application Consumer token |  | String
-| **userName** (security) | Salesforce account user name |  | String
-| **password** (security) | Salesforce account password |  | String
-| **lazyLogin** (security) | Flag to enable/disable lazy OAuth default is false. When enabled OAuth token retrieval or generation is not done until the first API call | false | boolean
-| **config** (advanced) | To use the shared SalesforceEndpointConfig as endpoint configuration |  | SalesforceEndpoint Config
-| **httpClientProperties** (advanced) | Used for configuring HTTP client properties as key/value pairs |  | Map
-| **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| **httpProxyHost** (proxy) | To configure HTTP proxy host |  | String
-| **httpProxyPort** (proxy) | To configure HTTP proxy port |  | Integer
-| **httpProxyUsername** (security) | To configure HTTP proxy username |  | String
-| **httpProxyPassword** (security) | To configure HTTP proxy password |  | String
-| **isHttpProxySocks4** (proxy) | Enable for Socks4 proxy false by default | false | boolean
-| **isHttpProxySecure** (security) | Enable for TLS connections true by default | false | boolean
-| **httpProxyIncluded Addresses** (proxy) | HTTP proxy included addresses |  | Set
-| **httpProxyExcluded Addresses** (proxy) | HTTP proxy excluded addresses |  | Set
-| **httpProxyAuthUri** (security) | HTTP proxy authentication URI |  | String
-| **httpProxyRealm** (security) | HTTP proxy authentication realm |  | String
-| **httpProxyUseDigest Auth** (security) | Use HTTP proxy Digest authentication false by default | false | boolean
-| **packages** (common) | Package names to scan for DTO classes (multiple packages can be separated by comma). |  | String[]
+| **authenticationType** (security) | Explicit authentication method to be used one of USERNAME_PASSWORD REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set set this property to eliminate any ambiguity. |  | AuthenticationType
+| **loginConfig** (security) | All authentication configuration in one nested bean all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
+| **loginUrl** (security) | *Required* URL of the Salesforce instance by default set to https://login.salesforce.com | https://login.salesforce.com | String
+| **clientId** (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
+| **clientSecret** (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
+| **keystore** (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
+| **refreshToken** (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token or configure using the builtin callback at https://login.salesforce.com/services/oauth2/success or https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
+| **userName** (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow but in general one should avoid it as it is deemed less secure than other flows. |  | String
+| **password** (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
+| **lazyLogin** (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generaly set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
+| **config** (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpoint Config
+| **httpClientProperties** (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
+| **sslContextParameters** (security) | SSL parameters to use see SSLContextParameters class for all available options. |  | SSLContextParameters
+| **httpProxyHost** (proxy) | Hostname of the HTTP proxy server to use. |  | String
+| **httpProxyPort** (proxy) | Port number of the HTTP proxy server to use. |  | Integer
+| **httpProxyUsername** (security) | Username to use to authenticate against the HTTP proxy server. |  | String
+| **httpProxyPassword** (security) | Password to use to authenticate against the HTTP proxy server. |  | String
+| **isHttpProxySocks4** (proxy) | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | boolean
+| **isHttpProxySecure** (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
+| **httpProxyIncluded Addresses** (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
+| **httpProxyExcluded Addresses** (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
+| **httpProxyAuthUri** (security) | Used in authentication against the HTTP proxy server needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
+| **httpProxyRealm** (security) | Realm of the proxy server used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
+| **httpProxyUseDigest Auth** (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxyotherwise Basic authorization method will be used | false | boolean
+| **packages** (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END

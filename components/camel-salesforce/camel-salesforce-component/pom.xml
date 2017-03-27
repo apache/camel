@@ -196,6 +196,68 @@
       <build>
         <plugins>
           <plugin>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>salesforce-integration-test-prerequisites</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireFilesExist>
+                      <files>
+                        <file>${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar</file>
+                      </files>
+                      <message><![CDATA[Salesforce Migration Tool required
+
+You need to download the Salesforce Migration Tool (ZIP file) and 
+extract the `ant-salesforce.jar` out of it to:
+
+${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar
+
+It's needed by the integration tests to setup the Salesforce instance
+with custom sObjects/fields that are required by the tests.
+
+Have a look at:
+
+${salesforce.component.root}/it/resources/salesforce
+
+To see what will be done.
+
+For information and download of the Salesforce Migration Tool consult:
+
+https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
+                    </requireFilesExist>
+                  </rules>
+                  <fail>true</fail>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.0.2</version>
+            <executions>
+              <execution>
+                <id>copy-test-salesforce-login-properties</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/test-classes/</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${salesforce.component.root}</directory>
+                      <include>test-salesforce-login.properties</include>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>
@@ -206,21 +268,43 @@
                 </goals>
                 <phase>pre-integration-test</phase>
                 <configuration>
-                  <target>
+                  <target xmlns:if="ant:if" xmlns:unless="ant:unless">
                     <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
                       <classpath>
                         <pathelement location="${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar" />
                       </classpath>
                     </taskdef>
 
-                    <property file="${salesforce.component.root}/test-salesforce-login.properties" />
+                    <property prefix="prop" file="${project.build.directory}/test-classes/test-salesforce-login.properties" />
+                    <property environment="env" />
 
-                    <sf:deploy xmlns:sf="antlib:com.salesforce" username="${userName}" password="${password}"
+                    <property name="username" value="${prop.salesforce.username}" if:set="prop.salesforce.username" />
+                    <property name="username" value="${env.SALESFORCE_USERNAME}" if:set="env.SALESFORCE_USERNAME" />
+
+                    <property name="password" value="${prop.salesforce.password}" if:set="prop.salesforce.password" />
+                    <property name="password" value="${env.SALESFORCE_PASSWORD}" if:set="env.SALESFORCE_PASSWORD" />
+
+                    <fail unless:set="username" message="To run the migrations you need to specify either `salesforce.username`
+in: ${project.build.directory}/generated-resources/test-salesforce-login.properties
+or set SALESFORCE_USERNAME environment variable" />
+
+                    <fail unless:set="password" message="To run the migrations you need to specify either `salesforce.password`
+in: ${project.build.directory}/generated-resources/test-salesforce-login.properties
+or set SALESFORCE_PASSWORD environment variable" />
+
+                    <sf:deploy xmlns:sf="antlib:com.salesforce" username="${username}" password="${password}"
                       deployRoot="${salesforce.component.root}/it/resources/salesforce" rollbackOnError="true" />
                   </target>
                 </configuration>
               </execution>
             </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>1.10.1</version>
+              </dependency>
+            </dependencies>
           </plugin>
           <plugin>
             <artifactId>maven-failsafe-plugin</artifactId>

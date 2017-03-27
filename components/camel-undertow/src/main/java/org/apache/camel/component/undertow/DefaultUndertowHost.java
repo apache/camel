@@ -17,8 +17,10 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
+
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
+
 import org.apache.camel.component.undertow.handlers.CamelRootHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
 import org.slf4j.Logger;
@@ -31,12 +33,18 @@ public class DefaultUndertowHost implements UndertowHost {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUndertowHost.class);
 
     private UndertowHostKey key;
+    private UndertowHostOptions options;
     private CamelRootHandler rootHandler;
     private Undertow undertow;
     private String hostString;
 
     public DefaultUndertowHost(UndertowHostKey key) {
+        this(key, null);
+    }
+
+    public DefaultUndertowHost(UndertowHostKey key, UndertowHostOptions options) {
         this.key = key;
+        this.options = options;
         rootHandler = new CamelRootHandler(new NotFoundHandler());
     }
 
@@ -53,6 +61,21 @@ public class DefaultUndertowHost implements UndertowHost {
                 builder.addHttpsListener(key.getPort(), key.getHost(), key.getSslContext());
             } else {
                 builder.addHttpListener(key.getPort(), key.getHost());
+            }
+
+            if (options != null) {
+                if (options.getIoThreads() != null) {
+                    builder.setIoThreads(options.getIoThreads());
+                }
+                if (options.getWorkerThreads() != null) {
+                    builder.setWorkerThreads(options.getWorkerThreads());
+                }
+                if (options.getBufferSize() != null) {
+                    builder.setBufferSize(options.getBufferSize());
+                }
+                if (options.getDirectBuffers() != null) {
+                    builder.setDirectBuffers(options.getDirectBuffers());
+                }
             }
 
             undertow = builder.setHandler(rootHandler).build();

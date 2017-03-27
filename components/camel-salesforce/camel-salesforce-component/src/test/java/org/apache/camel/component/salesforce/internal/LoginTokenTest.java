@@ -30,8 +30,6 @@ import static org.junit.Assert.assertNull;
 
 public class LoginTokenTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SessionIntegrationTest.class);
-
     @Test
     public void testLoginTokenWithUnknownFields() throws Exception {
 

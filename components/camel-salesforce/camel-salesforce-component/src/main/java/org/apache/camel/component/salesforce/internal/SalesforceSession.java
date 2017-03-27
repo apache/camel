@@ -38,9 +38,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
+import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
-import org.apache.camel.component.salesforce.SalesforceLoginConfig.Type;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
@@ -154,7 +154,7 @@ public class SalesforceSession implements Service {
         fields.put("client_id", config.getClientId());
         fields.put("format", "json");
 
-        final Type type = config.getType();
+        final AuthenticationType type = config.getType();
         switch (type) {
         case USERNAME_PASSWORD:
             fields.put("client_secret", config.getClientSecret());
@@ -263,10 +263,11 @@ public class SalesforceSession implements Service {
             case HttpStatus.BAD_REQUEST_400:
                 // parse the response to get error
                 final LoginError error = objectMapper.readValue(responseContent, LoginError.class);
+                final String errorCode = error.getError();
                 final String msg = String.format("Login error code:[%s] description:[%s]", error.getError(),
                     error.getErrorDescription());
                 final List<RestError> errors = new ArrayList<RestError>();
-                errors.add(new RestError(msg, error.getErrorDescription()));
+                errors.add(new RestError(errorCode, msg));
                 throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
 
             default:

@@ -18,16 +18,20 @@ package org.apache.camel.component.consul.springboot.cloud;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
+import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.cloud.ConsulServiceDiscoveryFactory;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -35,22 +39,55 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 @Configuration
-@ConditionalOnBean(CamelAutoConfiguration.class)
+@ConditionalOnBean({ CamelAutoConfiguration.class, CamelContext.class })
 @Conditional(ConsulCloudAutoConfiguration.Condition.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties(ConsulCloudConfiguration.class)
 public class ConsulCloudAutoConfiguration {
+    @Autowired
+    private CamelContext camelContext;
+    @Autowired
+    private ConsulCloudConfiguration configuration;
+    @Autowired
+    private ConfigurableBeanFactory beanFactory;
+
     @Lazy
     @Bean(name = "consul-service-discovery")
-    @ConditionalOnClass(CamelContext.class)
-    public ServiceDiscovery configureServiceDiscoveryFactory(CamelContext camelContext, ConsulCloudConfiguration configuration) throws Exception {
+    public ServiceDiscovery configureServiceDiscoveryFactory() throws Exception {
         ConsulServiceDiscoveryFactory factory = new ConsulServiceDiscoveryFactory();
 
-        Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, parameters, null, false);
-        IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), factory, parameters);
+        IntrospectionSupport.setProperties(
+            camelContext,
+            camelContext.getTypeConverter(),
+            factory,
+            IntrospectionSupport.getNonNullProperties(configuration));
 
         return factory.newInstance(camelContext);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        if (beanFactory != null) {
+            ConsulCloudConfiguration.ServiceDiscoveryConfiguration discovery = configuration.getServiceDiscovery();
+            Map<String, Object> parameters = new HashMap<>();
+
+            for (Map.Entry<String, ConsulConfiguration> entry : discovery.getConfigurations().entrySet()) {
+                // clean up params
+                parameters.clear();
+
+                // The instance factory
+                ConsulServiceDiscoveryFactory factory = new ConsulServiceDiscoveryFactory();
+
+                try {
+                    IntrospectionSupport.getProperties(entry.getValue(), parameters, null, false);
+                    IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), factory, parameters);
+
+                    beanFactory.registerSingleton(entry.getKey(), factory.newInstance(camelContext));
+                } catch (Exception e) {
+                    throw new BeanCreationException(entry.getKey(), e.getMessage(), e);
+                }
+            }
+        }
     }
 
     // *******************************

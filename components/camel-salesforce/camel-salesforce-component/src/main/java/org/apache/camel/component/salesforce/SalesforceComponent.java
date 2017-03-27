@@ -16,36 +16,27 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.EndpointCompleter;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpProxy;
@@ -65,7 +56,7 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class SalesforceComponent extends UriEndpointComponent implements EndpointCompleter, VerifiableComponent {
+public class SalesforceComponent extends DefaultComponent implements VerifiableComponent {
 
     static final int CONNECTION_TIMEOUT = 60000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
@@ -73,81 +64,139 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
-    @Metadata(label = "security")
+    @Metadata(description = "All authentication configuration in one nested bean, all properties set there can be set"
+        + " directly on the component as well", label = "common,security")
     private SalesforceLoginConfig loginConfig;
 
     // allow fine grained login as well
-    @Metadata(label = "security", defaultValue = DEFAULT_LOGIN_URL)
+    @Metadata(description = "URL of the Salesforce instance, by default set to " + DEFAULT_LOGIN_URL,
+        label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = "true")
     private String loginUrl;
-    @Metadata(label = "security", secret = true)
+
+    @Metadata(description = "OAuth Consumer Key of the connected app configured in the Salesforce instance setup."
+        + " Typically a connected app needs to be configured but one can be provided by installing a package.",
+        label = "common,security", secret = true, required = "true")
     private String clientId;
-    @Metadata(label = "security", secret = true)
+
+    @Metadata(description = "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup.",
+        label = "common,security", secret = true)
     private String clientSecret;
-    @Metadata(label = "security", secret = true)
+
+    @Metadata(description = "Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web"
+        + " application and configure a callback URL to receive the refresh token, or configure using the builtin"
+        + " callback at https://login.salesforce.com/services/oauth2/success or "
+        + " https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the"
+        + " end of the flow. Note that in development organizations Salesforce allows hosting the callback web "
+        + " application at localhost.",
+        label = "common,security", secret = true)
     private String refreshToken;
-    @Metadata(label = "security", secret = true)
+
+    @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with" 
+        + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows.",
+        label = "common,security",
+        secret = true)
     private String userName;
-    @Metadata(label = "security", secret = true)
+
+    @Metadata(description = "Password used in OAuth flow to gain access to access token. It's easy to get started with"
+        + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows."
+        + " Make sure that you append security token to the end of the password if using one.",
+        label = "common,security", secret = true)
     private String password;
-    @Metadata(label = "security", secret = true)
+
+    @Metadata(description = "KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry"
+        + " with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be"
+        + " a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app.",
+        label = "common,security", secret = true)
     private KeyStoreParameters keystore;
-    @Metadata(label = "security")
+
+    @Metadata(description = "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT."
+        + " Salesforce component can auto-determine the authentication method to use from the properties set, set this "
+        + " property to eliminate any ambiguity.",
+        label = "common,security", secret = false, enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
+    private AuthenticationType authenticationType;
+
+    @Metadata(description = "If set to true prevents the component from authenticating to Salesforce with the start of"
+        + " the component. You would generaly set this to the (default) false and authenticate early and be immediately"
+        + " aware of any authentication issues.", defaultValue = "false", label = "common,security")
     private boolean lazyLogin;
 
-    @Metadata(label = "advanced")
+    @Metadata(description = "Global endpoint configuration - use to set values that are common to all endpoints",
+        label = "common,advanced")
     private SalesforceEndpointConfig config;
 
-    // HTTP client parameters, map of property-name to value
-    @Metadata(label = "advanced")
+    @Metadata(description = "Used to set any properties that can be configured on the underlying HTTP client. Have a"
+        + " look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options.",
+        label = "common,advanced")
     private Map<String, Object> httpClientProperties;
 
-    // SSL parameters
-    @Metadata(label = "security")
+    @Metadata(description = "SSL parameters to use, see SSLContextParameters class for all available options.",
+        label = "common,security")
     private SSLContextParameters sslContextParameters;
 
     // Proxy host and port
-    @Metadata(label = "proxy")
+    @Metadata(description = "Hostname of the HTTP proxy server to use.", label = "common,proxy")
     private String httpProxyHost;
-    @Metadata(label = "proxy")
+
+    @Metadata(description = "Port number of the HTTP proxy server to use.", label = "common,proxy")
     private Integer httpProxyPort;
-    @Metadata(label = "proxy")
+
+    @Metadata(description = "If set to true the configures the HTTP proxy to use as a SOCKS4 proxy.",
+        defaultValue = "false", label = "common,proxy")
     private boolean isHttpProxySocks4;
-    @Metadata(label = "proxy,security")
+
+    @Metadata(description = "If set to false disables the use of TLS when accessing the HTTP proxy.",
+        defaultValue = "true", label = "common,proxy,security")
     private boolean isHttpProxySecure = true;
-    @Metadata(label = "proxy")
+
+    @Metadata(description = "A list of addresses for which HTTP proxy server should be used.", label = "common,proxy")
     private Set<String> httpProxyIncludedAddresses;
-    @Metadata(label = "proxy")
+
+    @Metadata(description = "A list of addresses for which HTTP proxy server should not be used.",
+        label = "common,proxy")
     private Set<String> httpProxyExcludedAddresses;
 
     // Proxy basic authentication
-    @Metadata(label = "proxy,security", secret = true)
+    @Metadata(description = "Username to use to authenticate against the HTTP proxy server.",
+        label = "common,proxy,security", secret = true)
     private String httpProxyUsername;
-    @Metadata(label = "proxy,security", secret = true)
+
+    @Metadata(description = "Password to use to authenticate against the HTTP proxy server.",
+        label = "common,proxy,security", secret = true)
     private String httpProxyPassword;
-    @Metadata(label = "proxy,security")
+
+    @Metadata(description = "Used in authentication against the HTTP proxy server, needs to match the URI of the proxy"
+        + " server in order for the httpProxyUsername and httpProxyPassword to be used for authentication.",
+        label = "common,proxy,security")
     private String httpProxyAuthUri;
-    @Metadata(label = "proxy,security")
+
+    @Metadata(description = "Realm of the proxy server, used in preemptive Basic/Digest authentication methods against"
+        + " the HTTP proxy server.", label = "common,proxy,security")
     private String httpProxyRealm;
-    @Metadata(label = "proxy,security")
+
+    @Metadata(description = "If set to true Digest authentication will be used when authenticating to the HTTP proxy,"
+        + "otherwise Basic authorization method will be used", defaultValue = "false", label = "common,proxy,security")
     private boolean httpProxyUseDigestAuth;
 
-    // DTO packages to scan
+    @Metadata(description = "In what packages are the generated DTO classes. Typically the classes would be generated"
+        + " using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short "
+        + " SObject names in parameters/header values.", label = "common")
     private String[] packages;
 
     // component state
     private SalesforceHttpClient httpClient;
+
     private SalesforceSession session;
+
     private Map<String, Class<?>> classMap;
 
     // Lazily created helper for consumer endpoints
     private SubscriptionHelper subscriptionHelper;
 
     public SalesforceComponent() {
-        super(SalesforceEndpoint.class);
     }
 
     public SalesforceComponent(CamelContext context) {
-        super(context, SalesforceEndpoint.class);
+        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -223,17 +272,16 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     @Override
     protected void doStart() throws Exception {
         if (loginConfig == null) {
-            if (ObjectHelper.isNotEmpty(password)) {
-                loginConfig = new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, lazyLogin);
-            } else if (ObjectHelper.isNotEmpty(refreshToken)) {
-                loginConfig = new SalesforceLoginConfig(loginUrl, clientId, clientSecret, refreshToken, lazyLogin);
-            } else if (ObjectHelper.isNotEmpty(keystore)) {
-                loginConfig = new SalesforceLoginConfig(loginUrl, clientId, userName, keystore, lazyLogin);
-            } else {
-                throw new IllegalArgumentException("Cannot define a login configuration, the component configuration"
-                    + " does not contain `password`, `refreshToken` or `keystore` parameters. Specifying one of those"
-                    + " determines the type of authentication performed.");
-            }
+            loginConfig = new SalesforceLoginConfig();
+            loginConfig.setClientId(clientId);
+            loginConfig.setClientSecret(clientSecret);
+            loginConfig.setKeystore(keystore);
+            loginConfig.setLazyLogin(lazyLogin);
+            loginConfig.setLoginUrl(loginUrl);
+            loginConfig.setPassword(password);
+            loginConfig.setRefreshToken(refreshToken);
+            loginConfig.setType(authenticationType);
+            loginConfig.setUserName(userName);
 
             LOG.debug("Created login configuration: {}", loginConfig);
         } else {
@@ -282,8 +330,8 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         }
         if (this.httpProxyUsername != null && httpProxyPassword != null) {
 
-            ObjectHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
-            ObjectHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
+            StringHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
+            StringHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
 
             final Authentication authentication;
             if (httpProxyUseDigestAuth) {
@@ -370,84 +418,22 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return subscriptionHelper;
     }
 
-    @Override
-    public List<String> completeEndpointPath(ComponentConfiguration configuration, String completionText) {
-        final List<String> result = new ArrayList<String>();
-        // return operations names on empty completion text
-        final boolean empty = ObjectHelper.isEmpty(completionText);
-        if (empty || completionText.indexOf('?') == -1) {
-            if (empty) {
-                completionText = "";
-            }
-            final OperationName[] values = OperationName.values();
-            for (OperationName val : values) {
-                final String strValue = val.value();
-                if (strValue.startsWith(completionText)) {
-                    result.add(strValue);
-                }
-            }
-            // also add place holder for user defined push topic name for empty completionText
-            if (empty) {
-                result.add("[PushTopicName]");
-            }
-        } else {
-            // handle package parameters
-            if (completionText.matches("^.*[\\?&]sObjectName=$")) {
-                result.addAll(classMap.keySet());
-            } else if (completionText.matches("^.*[\\?&]sObjectFields=$")) {
-                // find sObjectName from configuration or completionText
-                String sObjectName = (String) configuration.getParameter("sObjectName");
-                if (sObjectName == null) {
-                    final Matcher matcher = SOBJECT_NAME_PATTERN.matcher(completionText);
-                    if (matcher.matches()) {
-                        sObjectName = matcher.group(1);
-                    }
-                }
-                // return all fields of sObject
-                if (sObjectName != null) {
-                    final Class<?> aClass = classMap.get(sObjectName);
-                    ReflectionHelper.doWithFields(aClass, new ReflectionHelper.FieldCallback() {
-                        @Override
-                        public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                            // get non-static fields
-                            if ((field.getModifiers() & Modifier.STATIC) == 0) {
-                                result.add(field.getName());
-                            }
-                        }
-                    });
-                }
-            } else if (completionText.matches("^.*[\\?&]sObjectClass=$")) {
-                for (Class c : classMap.values()) {
-                    result.add(c.getName());
-                }
-                // also add Query records classes
-                Set<Class<?>> classes = getCamelContext().getPackageScanClassResolver().
-                    findImplementations(AbstractQueryRecordsBase.class, packages);
-                for (Class<?> aClass : classes) {
-                    // findImplementations also returns AbstractQueryRecordsBase for some reason!!!
-                    if (AbstractQueryRecordsBase.class != aClass) {
-                        result.add(aClass.getName());
-                    }
-                }
-            }
-        }
-        return result;
+    public AuthenticationType getAuthenticationType() {
+        return authenticationType;
+    }
+
+    public void setAuthenticationType(AuthenticationType authenticationType) {
+        this.authenticationType = authenticationType;
     }
 
     public SalesforceLoginConfig getLoginConfig() {
         return loginConfig;
     }
 
-    /**
-     * To use the shared SalesforceLoginConfig as login configuration
-     */
     public void setLoginConfig(SalesforceLoginConfig loginConfig) {
         this.loginConfig = loginConfig;
     }
 
-    /**
-     * Salesforce login URL, defaults to https://login.salesforce.com
-     */
     public void setLoginUrl(String loginUrl) {
         this.loginUrl = loginUrl;
     }
@@ -456,9 +442,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return clientId;
     }
 
-    /**
-     * Salesforce connected application Consumer Key
-     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
@@ -468,16 +451,10 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     }
 
-    /**
-     * Salesforce connected application Consumer Secret
-     */
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
 
-    /**
-     * {@link KeyStoreParameters} to use in OAuth 2.0 JWT Bearer Token Flow.
-     */
     public void setKeystore(final KeyStoreParameters keystore) {
         this.keystore = keystore;
     }
@@ -490,9 +467,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return refreshToken;
     }
 
-    /**
-     * Salesforce connected application Consumer token
-     */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
@@ -501,9 +475,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return userName;
     }
 
-    /**
-     * Salesforce account user name
-     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -512,9 +483,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return password;
     }
 
-    /**
-     * Salesforce account password
-     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -523,9 +491,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return lazyLogin;
     }
 
-    /**
-     * Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not done until the first API call
-     */
     public void setLazyLogin(boolean lazyLogin) {
         this.lazyLogin = lazyLogin;
     }
@@ -534,9 +499,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return config;
     }
 
-    /**
-     * To use the shared SalesforceEndpointConfig as endpoint configuration
-     */
     public void setConfig(SalesforceEndpointConfig config) {
         this.config = config;
     }
@@ -545,9 +507,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpClientProperties;
     }
 
-    /**
-     * Used for configuring HTTP client properties as key/value pairs
-     */
     public void setHttpClientProperties(Map<String, Object> httpClientProperties) {
         this.httpClientProperties = httpClientProperties;
     }
@@ -556,9 +515,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return sslContextParameters;
     }
 
-    /**
-     * To configure security using SSLContextParameters
-     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -567,9 +523,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyHost;
     }
 
-    /**
-     * To configure HTTP proxy host
-     */
     public void setHttpProxyHost(String httpProxyHost) {
         this.httpProxyHost = httpProxyHost;
     }
@@ -578,9 +531,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyPort;
     }
 
-    /**
-     * To configure HTTP proxy port
-     */
     public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
@@ -589,9 +539,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyUsername;
     }
 
-    /**
-     * To configure HTTP proxy username
-     */
     public void setHttpProxyUsername(String httpProxyUsername) {
         this.httpProxyUsername = httpProxyUsername;
     }
@@ -600,9 +547,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyPassword;
     }
 
-    /**
-     * To configure HTTP proxy password
-     */
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
     }
@@ -611,9 +555,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return isHttpProxySocks4;
     }
 
-    /**
-     * Enable for Socks4 proxy, false by default
-     */
     public void setIsHttpProxySocks4(boolean isHttpProxySocks4) {
         this.isHttpProxySocks4 = isHttpProxySocks4;
     }
@@ -622,9 +563,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return isHttpProxySecure;
     }
 
-    /**
-     * Enable for TLS connections, true by default
-     */
     public void setIsHttpProxySecure(boolean isHttpProxySecure) {
         this.isHttpProxySecure = isHttpProxySecure;
     }
@@ -633,9 +571,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyIncludedAddresses;
     }
 
-    /**
-     * HTTP proxy included addresses
-     */
     public void setHttpProxyIncludedAddresses(Set<String> httpProxyIncludedAddresses) {
         this.httpProxyIncludedAddresses = httpProxyIncludedAddresses;
     }
@@ -644,9 +579,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyExcludedAddresses;
     }
 
-    /**
-     * HTTP proxy excluded addresses
-     */
     public void setHttpProxyExcludedAddresses(Set<String> httpProxyExcludedAddresses) {
         this.httpProxyExcludedAddresses = httpProxyExcludedAddresses;
     }
@@ -655,9 +587,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyAuthUri;
     }
 
-    /**
-     * HTTP proxy authentication URI
-     */
     public void setHttpProxyAuthUri(String httpProxyAuthUri) {
         this.httpProxyAuthUri = httpProxyAuthUri;
     }
@@ -666,9 +595,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyRealm;
     }
 
-    /**
-     * HTTP proxy authentication realm
-     */
     public void setHttpProxyRealm(String httpProxyRealm) {
         this.httpProxyRealm = httpProxyRealm;
     }
@@ -677,9 +603,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return httpProxyUseDigestAuth;
     }
 
-    /**
-     * Use HTTP proxy Digest authentication, false by default
-     */
     public void setHttpProxyUseDigestAuth(boolean httpProxyUseDigestAuth) {
         this.httpProxyUseDigestAuth = httpProxyUseDigestAuth;
     }
@@ -688,16 +611,10 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return packages;
     }
 
-    /**
-     * Package names to scan for DTO classes (multiple packages can be separated by comma).
-     */
     public void setPackages(String[] packages) {
         this.packages = packages;
     }
 
-    /**
-     * Package names to scan for DTO classes (multiple packages can be separated by comma).
-     */
     public void setPackages(String packages) {
         // split using comma
         if (packages != null) {
@@ -713,9 +630,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return classMap;
     }
 
-    /**
-     * TODO: document
-     */
     public ComponentVerifier getVerifier() {
         return new SalesforceComponentVerifier(this);
     }

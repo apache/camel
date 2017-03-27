@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.dns.springboot.cloud;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.component.dns.DnsConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -41,5 +44,10 @@ public class DnsCloudConfiguration {
     // *************************************************************************
 
     public class ServiceDiscoveryConfiguration extends DnsConfiguration {
+        private final Map<String, DnsConfiguration> configurations = new HashMap<>();
+
+        public Map<String, DnsConfiguration> getConfigurations() {
+            return configurations;
+        }
     }
 }

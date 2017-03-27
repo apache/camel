@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.etcd.springboot.cloud;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.component.etcd.EtcdConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -41,6 +44,8 @@ public class EtcdCloudConfiguration {
     // *************************************************************************
 
     public class ServiceDiscoveryConfiguration extends EtcdConfiguration {
+        private final Map<String, EtcdConfiguration> configurations = new HashMap<>();
+
         private String type;
 
         public String getType() {
@@ -49,6 +54,10 @@ public class EtcdCloudConfiguration {
 
         public void setType(String type) {
             this.type = type;
+        }
+
+        public Map<String, EtcdConfiguration> getConfigurations() {
+            return configurations;
         }
     }
 }
