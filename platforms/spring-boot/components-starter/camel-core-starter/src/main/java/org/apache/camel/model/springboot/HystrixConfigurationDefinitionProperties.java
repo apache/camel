@@ -14,22 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hystrix.springboot;
+package org.apache.camel.model.springboot;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.camel.model.HystrixConfigurationCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-/**
- * Hystrix component.
- */
 @ConfigurationProperties(prefix = "camel.hystrix")
-public class HystrixConfiguration extends HystrixConfigurationCommon {
-    private Map<String, HystrixConfigurationCommon> configurations = new HashMap<>();
+public class HystrixConfigurationDefinitionProperties
+        extends
+            HystrixConfigurationDefinitionCommon {
 
-    public Map<String, HystrixConfigurationCommon> getConfigurations() {
+    /**
+     * Enable camel-hystrix
+     */
+    private boolean enabled = true;
+    /**
+     * Define additional configuration definitions
+     */
+    private Map<String, HystrixConfigurationDefinitionCommon> configurations = new HashMap<>();
+
+    public Map<String, HystrixConfigurationDefinitionCommon> getConfigurations() {
         return configurations;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
