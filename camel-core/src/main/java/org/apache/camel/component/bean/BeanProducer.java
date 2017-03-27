@@ -70,4 +70,34 @@ public class BeanProducer extends DefaultAsyncProducer {
 
         super.doStop();
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (processor.getBeanHolder() instanceof ConstantBeanHolder) {
+            try {
+                // Start the bean if it implements Service interface and if cached
+                // so meant to be reused
+                ServiceHelper.startService(processor.getBean());
+                beanStarted = true;
+            } catch (NoSuchBeanException e) {
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (beanStarted) {
+            try {
+                // Stop the bean if it implements Service interface and if cached
+                // so meant to be reused
+                ServiceHelper.stopService(processor.getBean());
+                beanStarted = false;
+            } catch (NoSuchBeanException e) {
+            }
+        }
+
+        super.doStop();
+    }
 }
