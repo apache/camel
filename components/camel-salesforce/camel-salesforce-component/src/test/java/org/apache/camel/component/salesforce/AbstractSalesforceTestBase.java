@@ -32,7 +32,13 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
         return doCreateRouteBuilder();
     }
 
-    protected abstract RouteBuilder doCreateRouteBuilder() throws Exception;
+    protected RouteBuilder doCreateRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+            }
+        };
+    }
 
     protected void createComponent() throws Exception {
         // create the component
