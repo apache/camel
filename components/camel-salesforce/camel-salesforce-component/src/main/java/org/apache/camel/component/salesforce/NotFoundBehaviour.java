@@ -14,22 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.api;
+package org.apache.camel.component.salesforce;
 
-import java.util.List;
-
-public class SalesforceMultipleChoicesException extends SalesforceException {
-
-    private static final long serialVersionUID = 1L;
-    private final List<String> choices;
-
-    public SalesforceMultipleChoicesException(String message, int statusCode, List<String> choices) {
-        super(message, statusCode);
-        this.choices = choices;
-    }
-
-    public List<String> getChoices() {
-        return choices;
-    }
-
+public enum NotFoundBehaviour {
+    EXCEPTION, NULL
 }
