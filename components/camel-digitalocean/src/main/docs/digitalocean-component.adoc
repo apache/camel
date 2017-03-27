@@ -1,4 +1,6 @@
-# Camel DigitalOcean Component
+## DigitalOcean Component
+
+*Available as of Camel version *
 
 The **DigitalOcean** component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating [digitalocean-api-java](https://www.digitalocean.com/community/projects/api-client-in-java). All of the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.
 
@@ -43,17 +45,45 @@ There is one endpoint for each DigitalOcean resources (defined in `DigitalOceanR
 | `tags` | A Tag is a label that can be applied to a resource (currently only Droplets) in order to better organize or facilitate the lookups and actions on it. |
 
 
-## URI Options
+### Options
 
-You have to provide the `digitalOceanClient` in the Registry or your `oAuthToken` to access the DigitalOcean service.
 
-| Option | Type | Example | Description |
-| ------ | ---- | ------- | ----------- |
-| `operation` | String | `operation=list` | The operation to perform to the resource. It can also be set with the  `CamelDigitalOceanOperation` Message header. |
-| `oAuthToken` | String |  | Your DigitalOcean oAuth token. |
-| `digitalOceanClient` | `com.myjeeva.digitalocean.DigitalOcean` | Reference to a `com.myjeeva.digitalocean.DigitalOcean` in the Registry. |
-| `page` | Integer | `page=3` | Can be used for `list` operations, for pagination. Force the page number.|
-| `perPage` | Integer | `perPage=50` | Can be used for `list` operations, for pagiantion. Set the number of item per request. |
+// component options: START
+The DigitalOcean component has no options.
+// component options: END
+
+// endpoint options: START
+The DigitalOcean endpoint is configured using URI syntax:
+
+    digitalocean:label
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **operation** | The operation to perform to the given resource. |  | DigitalOceanOperations
+|=======================================================================
+
+#### Query Parameters (10 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **digitalOceanClient** (producer) | To use a existing configured DigitalOceanClient as client |  | DigitalOceanClient
+| **page** (producer) | Use for pagination. Force the page number. | 1 | Integer
+| **perPage** (producer) | Use for pagination. Set the number of item per request. The maximum number of results per page is 200. | 25 | Integer
+| **resource** (producer) | *Required* The DigitalOcean resource type on which perform the operation. |  | DigitalOceanResources
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **httpProxyHost** (proxy) | Set a proxy host if needed |  | String
+| **httpProxyPassword** (proxy) | Set a proxy password if needed |  | String
+| **httpProxyPort** (proxy) | Set a proxy port if needed |  | Integer
+| **httpProxyUser** (proxy) | Set a proxy host if needed |  | String
+| **oAuthToken** (security) | DigitalOcean OAuth Token |  | String
+|=======================================================================
+// endpoint options: END
 
 
 You have to provide an **operation** value for each endpoint, with the `operation` URI option or the `CamelDigitalOceanOperation` message header.
@@ -251,4 +281,3 @@ from("direct:shutdown")
     .setHeader(DigitalOceanConstants.ID, 34772987)
     .to("digitalocean:droplet?operation=shutdown&oAuthToken=XXXXXX")
 ```
-
