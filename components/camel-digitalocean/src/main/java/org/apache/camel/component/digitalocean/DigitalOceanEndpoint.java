@@ -44,9 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents the DigitalOcean endpoint.
+ * The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
  */
-@UriEndpoint(scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:operation", producerOnly = true, label = "cloud,management")
 public class DigitalOceanEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanEndpoint.class);
@@ -128,8 +128,6 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
         } else {
             digitalOceanClient = new DigitalOceanClient(configuration.getOAuthToken());
         }
-
-
     }
 
     public DigitalOceanConfiguration getConfiguration() {

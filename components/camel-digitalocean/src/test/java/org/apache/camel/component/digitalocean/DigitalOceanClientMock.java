@@ -23,7 +23,6 @@ import com.myjeeva.digitalocean.pojo.Account;
 
 public class DigitalOceanClientMock extends DigitalOceanClient {
 
-
     public DigitalOceanClientMock() {
         super("token");
     }
@@ -35,4 +34,5 @@ public class DigitalOceanClientMock extends DigitalOceanClient {
 
         return account;
     }
+
 }

@@ -168,6 +168,7 @@
 	* [Crypto (JCE)](crypto-component.adoc)
 	* [CXF](cxf-component.adoc)
 	* [CXF-RS](cxfrs-component.adoc)
+	* [DigitalOcean](digitalocean-component.adoc)
 	* [Disruptor](disruptor-component.adoc)
 	* [DNS](dns-component.adoc)
 	* [Docker](docker-component.adoc)
