@@ -27,6 +27,7 @@ import java.io.LineNumberReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.logging.Log;
@@ -121,6 +122,13 @@ public final class PackageHelper {
             }
         }
         return answer;
+    }
+
+    public static Set<File> findJsonFiles(File dir, FileFilter filter) {
+        Set<File> files = new TreeSet<>();
+        findJsonFiles(dir, files, filter);
+
+        return files;
     }
 
     public static void findJsonFiles(File dir, Set<File> found, FileFilter filter) {
