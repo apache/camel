@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.schematron.processor;
 
-import java.io.File;
 import java.io.InputStream;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -43,7 +42,7 @@ public class ClassPathURIResolver implements URIResolver {
     @Override
     public Source resolve(String href, String base) throws TransformerException {
         InputStream stream = ClassPathURIResolver.class.getClassLoader()
-                .getResourceAsStream(rulesDir.concat(File.separator).concat(href));
+                .getResourceAsStream(rulesDir.concat("/").concat(href));
         if (stream != null) {
             return new StreamSource(stream);
         } else {
