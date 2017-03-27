@@ -67,6 +67,7 @@
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-cxf-transport</include>
+        <include>org.apache.camel:camel-digitalocean</include>
         <include>org.apache.camel:camel-disruptor</include>
         <include>org.apache.camel:camel-dns</include>
         <include>org.apache.camel:camel-docker</include>
@@ -349,6 +350,7 @@
         <include>org.apache.camel:camel-csv-starter</include>
         <include>org.apache.camel:camel-cxf-starter</include>
         <include>org.apache.camel:camel-cxf-transport-starter</include>
+        <include>org.apache.camel:camel-digitalocean-starter</include>
         <include>org.apache.camel:camel-disruptor-starter</include>
         <include>org.apache.camel:camel-dns-starter</include>
         <include>org.apache.camel:camel-docker-starter</include>
