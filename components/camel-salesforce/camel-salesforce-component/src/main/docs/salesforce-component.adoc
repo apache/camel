@@ -519,7 +519,7 @@ with the following path and query parameters:
 | **topicName** | The name of the topic to use |  | String
 |=======================================================================
 
-#### Query Parameters (41 parameters):
+#### Query Parameters (42 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -540,6 +540,7 @@ with the following path and query parameters:
 | **jobId** (common) | Bulk API Job ID |  | String
 | **limit** (common) | Limit on number of returned records. Applicable to some of the API check the Salesforce documentation. |  | Integer
 | **maxBackoff** (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
+| **notFoundBehaviour** (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL link NotFoundBehaviourNULL or should a exception be signaled on the exchange link NotFoundBehaviourEXCEPTION - the default. |  | NotFoundBehaviour
 | **notifyForFields** (common) | Notify for fields options are ALL REFERENCED SELECT WHERE |  | NotifyForFieldsEnum
 | **notifyForOperationCreate** (common) | Notify for create operation defaults to false (API version = 29.0) |  | Boolean
 | **notifyForOperationDelete** (common) | Notify for delete operation defaults to false (API version = 29.0) |  | Boolean

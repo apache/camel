@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.AuthenticationType;
+import org.apache.camel.component.salesforce.NotFoundBehaviour;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
@@ -622,6 +623,13 @@ public class SalesforceComponentConfiguration {
          * @param skipEntryCriteria
          */
         private Boolean approvalSkipEntryCriteria;
+        /**
+         * Sets the behaviour of 404 not found status received from Salesforce
+         * API. Should the body be set to NULL {@link NotFoundBehaviour#NULL} or
+         * should a exception be signaled on the exchange
+         * {@link NotFoundBehaviour#EXCEPTION} - the default.
+         */
+        private NotFoundBehaviour notFoundBehaviour;
 
         public PayloadFormat getFormat() {
             return format;
@@ -977,6 +985,14 @@ public class SalesforceComponentConfiguration {
         public void setApprovalSkipEntryCriteria(
                 Boolean approvalSkipEntryCriteria) {
             this.approvalSkipEntryCriteria = approvalSkipEntryCriteria;
+        }
+
+        public NotFoundBehaviour getNotFoundBehaviour() {
+            return notFoundBehaviour;
+        }
+
+        public void setNotFoundBehaviour(NotFoundBehaviour notFoundBehaviour) {
+            this.notFoundBehaviour = notFoundBehaviour;
         }
     }
 

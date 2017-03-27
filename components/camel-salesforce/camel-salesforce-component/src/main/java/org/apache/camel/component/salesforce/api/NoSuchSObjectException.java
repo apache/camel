@@ -18,18 +18,12 @@ package org.apache.camel.component.salesforce.api;
 
 import java.util.List;
 
-public class SalesforceMultipleChoicesException extends SalesforceException {
+import org.apache.camel.component.salesforce.api.dto.RestError;
 
-    private static final long serialVersionUID = 1L;
-    private final List<String> choices;
+public final class NoSuchSObjectException extends SalesforceException {
 
-    public SalesforceMultipleChoicesException(String message, int statusCode, List<String> choices) {
-        super(message, statusCode);
-        this.choices = choices;
-    }
-
-    public List<String> getChoices() {
-        return choices;
+    public NoSuchSObjectException(final List<RestError> restErrors) {
+        super(restErrors, 404);
     }
 
 }

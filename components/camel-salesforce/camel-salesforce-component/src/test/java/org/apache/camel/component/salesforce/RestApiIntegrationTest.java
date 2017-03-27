@@ -30,6 +30,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
@@ -442,12 +443,11 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                 template().requestBody("direct:getSObjectWithId", merchandise, Merchandise__c.class);
                 fail("Expected SalesforceException with statusCode 300");
             } catch (final CamelExecutionException e) {
-                assertTrue(e.getCause() instanceof SalesforceException);
-                assertTrue(e.getCause().getCause() instanceof SalesforceMultipleChoicesException);
-                final SalesforceMultipleChoicesException cause = (SalesforceMultipleChoicesException) e.getCause()
-                    .getCause();
-                assertEquals(300, cause.getStatusCode());
-                final List<String> choices = cause.getChoices();
+                final Throwable cause = e.getCause();
+                assertTrue(cause instanceof SalesforceMultipleChoicesException);
+                final SalesforceMultipleChoicesException multipleChoices = (SalesforceMultipleChoicesException) cause;
+                assertEquals(300, multipleChoices.getStatusCode());
+                final List<String> choices = multipleChoices.getChoices();
                 assertNotNull(choices);
                 assertFalse(choices.isEmpty());
             }
@@ -476,12 +476,12 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
             result = template().requestBody("direct:createSObject", merchandise, CreateSObjectResult.class);
             fail("Expected SalesforceException with statusCode 400");
         } catch (final CamelExecutionException e) {
-            assertTrue(e.getCause() instanceof SalesforceException);
-            assertTrue(e.getCause().getCause() instanceof SalesforceException);
-            final SalesforceException cause = (SalesforceException) e.getCause().getCause();
-            assertEquals(400, cause.getStatusCode());
-            assertEquals(1, cause.getErrors().size());
-            assertEquals("[Total_Inventory__c]", cause.getErrors().get(0).getFields().toString());
+            final Throwable cause = e.getCause();
+            assertTrue(cause instanceof SalesforceException);
+            final SalesforceException badRequest = (SalesforceException) cause;
+            assertEquals(400, badRequest.getStatusCode());
+            assertEquals(1, badRequest.getErrors().size());
+            assertEquals("[Total_Inventory__c]", badRequest.getErrors().get(0).getFields().toString());
         } finally {
             // delete the clone if created
             if (result != null) {
@@ -497,11 +497,11 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
             template().requestBody("direct:getSObject", "ILLEGAL_ID", Merchandise__c.class);
             fail("Expected SalesforceException");
         } catch (final CamelExecutionException e) {
-            assertTrue(e.getCause() instanceof SalesforceException);
-            assertTrue(e.getCause().getCause() instanceof SalesforceException);
-            final SalesforceException cause = (SalesforceException) e.getCause().getCause();
-            assertEquals(404, cause.getStatusCode());
-            assertEquals(1, cause.getErrors().size());
+            final Throwable cause = e.getCause();
+            assertTrue(cause instanceof NoSuchSObjectException);
+            final NoSuchSObjectException noSuchObject = (NoSuchSObjectException) cause;
+            assertEquals(404, noSuchObject.getStatusCode());
+            assertEquals(1, noSuchObject.getErrors().size());
         }
     }
 

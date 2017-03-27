@@ -34,8 +34,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.salesforce.NotFoundBehaviour;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
@@ -67,10 +69,14 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     private RestClient restClient;
     private Map<String, Class<?>> classMap;
 
+    private final NotFoundBehaviour notFoundBehaviour;
+
     public AbstractRestProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        final PayloadFormat payloadFormat = endpoint.getConfiguration().getFormat();
+        final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
+        final PayloadFormat payloadFormat = configuration.getFormat();
+        notFoundBehaviour = configuration.getNotFoundBehaviour();
 
         this.restClient = new DefaultRestClient(httpClient, (String) endpointConfigMap.get(API_VERSION),
                 payloadFormat, session);
@@ -84,6 +90,8 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         super(endpoint);
         this.restClient = restClient;
         this.classMap = classMap;
+        final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
+        notFoundBehaviour = configuration.getNotFoundBehaviour();
     }
 
     @Override
@@ -831,4 +839,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     // process response entity and set out message in exchange
     protected abstract void processResponse(Exchange exchange, InputStream responseEntity, SalesforceException ex, AsyncCallback callback);
 
+    final boolean shouldReport(SalesforceException ex) {
+        return !(ex instanceof NoSuchSObjectException && notFoundBehaviour == NotFoundBehaviour.NULL);
+    }
 }
