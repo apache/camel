@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 226 in 180 JAR artifacts (14 deprecated)
+Number of Components: 227 in 181 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -443,6 +443,9 @@ Number of Components: 226 in 180 JAR artifacts (14 deprecated)
 | link:camel-olingo2/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
 `olingo2:apiName/methodName` | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
 
+| link:camel-olingo4/src/main/docs/olingo4-component.adoc[Olingo4] (camel-olingo4) +
+`olingo4:apiName/methodName` | 2.19 | Communicates with OData 4.0 services using Apache Olingo OData API.
+
 | link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
 `openshift:clientId` | 2.14 | *deprecated* To manage your Openshift 2.x applications.
 
@@ -858,7 +861,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (14 deprecated)
+Number of Miscellaneous Components: 36 in 36 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -887,8 +890,6 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (14 deprecated)
 | link:camel-kura/src/main/docs/kura.adoc[Kura] (camel-kura) | 2.15 | Using Camel with Eclipse Kura (OSGi)
 
 | link:camel-leveldb/src/main/docs/leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
-
-| link:camel-olingo4-parent/src/main/docs/olingo4-parent.adoc[Olingo4 Parent] (camel-olingo4-parent) |  | Camel Olingo4 parent
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
