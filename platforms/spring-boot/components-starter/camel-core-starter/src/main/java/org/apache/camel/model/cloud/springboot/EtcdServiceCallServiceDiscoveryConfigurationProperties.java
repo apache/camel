@@ -14,18 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.etcd.springboot.cloud;
+package org.apache.camel.model.cloud.springboot;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.camel.component.etcd.EtcdConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.cloud.etcd")
-public class EtcdCloudConfiguration {
+@ConfigurationProperties(prefix = "camel.cloud.etcd.service-discovery")
+public class EtcdServiceCallServiceDiscoveryConfigurationProperties
+        extends
+            EtcdServiceCallServiceDiscoveryConfigurationCommon {
+
+    /**
+     * Enable the component
+     */
     private boolean enabled = true;
-    private ServiceDiscoveryConfiguration serviceDiscovery = new ServiceDiscoveryConfiguration();
+    /**
+     * Define additional configuration definitions
+     */
+    private Map<String, EtcdServiceCallServiceDiscoveryConfigurationCommon> configurations = new HashMap<>();
+
+    public Map<String, EtcdServiceCallServiceDiscoveryConfigurationCommon> getConfigurations() {
+        return configurations;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -33,31 +44,5 @@ public class EtcdCloudConfiguration {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public ServiceDiscoveryConfiguration getServiceDiscovery() {
-        return serviceDiscovery;
-    }
-
-    // *************************************************************************
-    //
-    // *************************************************************************
-
-    public class ServiceDiscoveryConfiguration extends EtcdConfiguration {
-        private final Map<String, EtcdConfiguration> configurations = new HashMap<>();
-
-        private String type;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public Map<String, EtcdConfiguration> getConfigurations() {
-            return configurations;
-        }
     }
 }
