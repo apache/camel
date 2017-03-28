@@ -93,6 +93,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     private boolean asyncStartListener;
     @UriParam(label = "advanced", defaultValue = "5000")
     private int recoveryInterval = 5000;
+    @UriParam(label = "advanced", defaultValue = "-1")
+    private int keepAliveDelay = -1;
 
     public SjmsBatchEndpoint() {
     }
@@ -395,6 +397,20 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     public int getRecoveryInterval() {
         return recoveryInterval;
+    }
+
+    /**
+     * The delay in millis between attempts to re-establish a valid session.
+     * If this is a positive value the SjmsBatchConsumer will attempt to create a new session if it sees an IllegalStateException
+     * during message consumption. This delay value allows you to pause between attempts to prevent spamming the logs.
+     * If this is a negative value (default is -1) then the SjmsBatchConsumer will behave as it always has before - that is
+     * it will bail out and the route will shut down if it sees an IllegalStateException.
+     */
+    public void setKeepAliveDelay(int keepAliveDelay) {
+        this.keepAliveDelay = keepAliveDelay;
+    }
+    public int getKeepAliveDelay() {
+        return keepAliveDelay;
     }
 
     /**
