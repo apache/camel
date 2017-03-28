@@ -298,7 +298,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         public AtomicBoolean getCompletionTimeoutTrigger() {
             return completionTimeoutTrigger;
         }
-        public void setKeepAliveDelay(int i){
+        public void setKeepAliveDelay(int i) {
             keepAliveDelay = i;
         }
 
@@ -325,11 +325,15 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     } catch (javax.jms.IllegalStateException ex) {
                         // from consumeBatchesOnLoop
                         // if keepAliveDelay was not specified (defaults to -1) just rethrow to break the loop. This preserves original default behavior
-                        if(keepAliveDelay < 0) throw ex;
+                        if (keepAliveDelay < 0) {
+                            throw ex;
+                        }
                         // this will log the exception and the parent loop will create a new session
                         getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
                         //sleep to avoid log spamming
-                        if(keepAliveDelay > 0) Thread.sleep(keepAliveDelay);
+                        if (keepAliveDelay > 0) {
+                            Thread.sleep(keepAliveDelay);
+                        }
                     } finally {
                         closeJmsSession(session);
                     }
