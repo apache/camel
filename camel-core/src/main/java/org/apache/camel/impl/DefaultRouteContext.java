@@ -63,7 +63,7 @@ public class DefaultRouteContext implements RouteContext {
     private boolean routeAdded;
     private Boolean trace;
     private Boolean messageHistory;
-    private Boolean logEipMask;
+    private Boolean logMask;
     private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
     private Boolean handleFault;
@@ -311,16 +311,16 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
-    public void setLogEipMask(Boolean logEipMask) {
-        this.logEipMask = logEipMask;
+    public void setLogMask(Boolean logMask) {
+        this.logMask = logMask;
     }
 
-    public Boolean isLogEipMask() {
-        if (logEipMask != null) {
-            return logEipMask;
+    public Boolean isLogMask() {
+        if (logMask != null) {
+            return logMask;
         } else {
             // fallback to the option from camel context
-            return getCamelContext().isLogEipMask();
+            return getCamelContext().isLogMask();
         }
     }
 

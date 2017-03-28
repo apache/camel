@@ -150,19 +150,20 @@ In some scenarios it is required that the bundle associated with logger should b
 ### Masking sensitive information like password
 *Available as of Camel 2.19*
 
-You can enable security masking for log DSL by setting `logEipMask` flag to `true`.
+You can enable security masking for logging by setting `logMask` flag to `true`.
+Note that this option also affects link:log.html[Log] component.
 
 To enable mask in Java DSL at CamelContext level:
 [source,java]
 --------------------------------------------------------
 CamelContext context = ...
-context.setLogEipMask(true);
+context.setLogMask(true);
 --------------------------------------------------------
 
 And in XML:
 [source,java]
 --------------------------------------------------------
-<camelContext logEipMask="true">
+<camelContext logMask="true">
 ...
 --------------------------------------------------------
 
@@ -170,15 +171,19 @@ And in XML:
 You can also turn it on|off at route level. To enable mask in Java DSL at route level:
 [source,java]
 --------------------------------------------------------
-from("direct:start").logEipMask().log("Processing ${id}").to("bean:foo");
+from("direct:start").logMask().log("Processing ${id}").to("bean:foo");
 --------------------------------------------------------
 
 And in XML:
 [source,java]
 --------------------------------------------------------
-<route logEipMask="true">
+<route logMask="true">
 ...
 --------------------------------------------------------
+
+`org.apache.camel.processor.DefaultMaskingFormatter` is used for the masking by default.
+If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
+Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
 
 
 ### Using This Pattern
