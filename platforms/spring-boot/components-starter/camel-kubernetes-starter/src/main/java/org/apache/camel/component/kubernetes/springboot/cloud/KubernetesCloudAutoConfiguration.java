@@ -18,13 +18,13 @@ package org.apache.camel.component.kubernetes.springboot.cloud;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.cloud.KubernetesServiceDiscoveryFactory;
+import org.apache.camel.model.cloud.springboot.KubernetesServiceCallServiceDiscoveryConfigurationCommon;
+import org.apache.camel.model.cloud.springboot.KubernetesServiceCallServiceDiscoveryConfigurationProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
@@ -44,12 +44,12 @@ import org.springframework.context.annotation.Lazy;
 @ConditionalOnBean(CamelAutoConfiguration.class)
 @Conditional(KubernetesCloudAutoConfiguration.Condition.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
-@EnableConfigurationProperties(KubernetesCloudConfiguration.class)
+@EnableConfigurationProperties(KubernetesServiceCallServiceDiscoveryConfigurationProperties.class)
 public class KubernetesCloudAutoConfiguration {
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private KubernetesCloudConfiguration configuration;
+    private KubernetesServiceCallServiceDiscoveryConfigurationProperties configuration;
     @Autowired
     private ConfigurableBeanFactory beanFactory;
 
@@ -71,10 +71,9 @@ public class KubernetesCloudAutoConfiguration {
     @PostConstruct
     public void postConstruct() {
         if (beanFactory != null) {
-            KubernetesCloudConfiguration.ServiceDiscoveryConfiguration discovery = configuration.getServiceDiscovery();
             Map<String, Object> parameters = new HashMap<>();
 
-            for (Map.Entry<String, KubernetesConfiguration> entry : discovery.getConfigurations().entrySet()) {
+            for (Map.Entry<String, KubernetesServiceCallServiceDiscoveryConfigurationCommon> entry : configuration.getConfigurations().entrySet()) {
                 // clean up params
                 parameters.clear();
 
@@ -100,8 +99,8 @@ public class KubernetesCloudAutoConfiguration {
     public static class Condition extends GroupCondition {
         public Condition() {
             super(
-                "camel.cloud",
-                "camel.cloud.kubernetes"
+                "camel.cloud.kubernetes",
+                "camel.cloud.kubernetes.service-discovery"
             );
         }
     }
