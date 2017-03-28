@@ -22,17 +22,19 @@ import java.util.Set;
 
 import com.orbitz.consul.Consul;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
-public class ConsulConfiguration {
+public class ConsulConfiguration implements CamelContextAware, Cloneable {
     @UriParam
     private String url;
-    @UriParam
-    private String dc;
+    @UriParam(label = "advanced")
+    private String datacenter;
     @UriParam(javaType = "java.lang.String")
     private Set<String> tags;
 
@@ -68,7 +70,7 @@ public class ConsulConfiguration {
     @UriParam(label = "consumer,watch", defaultValue = "false")
     private boolean recursive;
 
-    private final CamelContext context;
+    private CamelContext context;
 
     public ConsulConfiguration() {
         this.context = null;
@@ -78,8 +80,14 @@ public class ConsulConfiguration {
         this.context = context;
     }
 
-    public CamelContext getContext() {
-        return this.context;
+    @Override
+    public void setCamelContext(CamelContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return context;
     }
 
     public String getUrl() {
@@ -93,15 +101,33 @@ public class ConsulConfiguration {
         this.url = url;
     }
 
+    /**
+     * @deprecated replaced by {@link #getDatacenter()} ()}
+     */
+    @Deprecated
     public String getDc() {
-        return dc;
+        return datacenter;
+    }
+
+    /**
+     * The data center
+     *
+     * @deprecated replaced by {@link #setDatacenter(String)} ()}
+     */
+    @Deprecated
+    public void setDc(String dc) {
+        this.datacenter = dc;
+    }
+
+    public String getDatacenter() {
+        return datacenter;
     }
 
     /**
      * The data center
      */
-    public void setDc(String dc) {
-        this.dc = dc;
+    public void setDatacenter(String datacenter) {
+        this.datacenter = datacenter;
     }
 
     public Set<String> getTags() {
@@ -310,5 +336,13 @@ public class ConsulConfiguration {
         }
 
         return builder.build();
+    }
+
+    public ConsulConfiguration copy() {
+        try {
+            return (ConsulConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

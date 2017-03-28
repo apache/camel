@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.consul.springboot;
 
+import java.util.Set;
+import org.apache.camel.CamelContext;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The camel consul component allows you to work with Consul a distributed
@@ -28,11 +33,99 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ConsulComponentConfiguration {
 
     /**
+     * The Consul agent URL
+     */
+    private String url;
+    /**
+     * The data center
+     */
+    private String datacenter;
+    /**
+     * SSL configuration using an
+     * org.apache.camel.util.jsse.SSLContextParameters instance.
+     */
+    @NestedConfigurationProperty
+    private SSLContextParameters sslContextParameters;
+    /**
+     * Sets the ACL token to be used with Consul
+     */
+    private String aclToken;
+    /**
+     * Sets the username to be used for basic authentication
+     */
+    private String userName;
+    /**
+     * Sets the password to be used for basic authentication
+     */
+    private String password;
+    /**
+     * Sets the common configuration shared among endpoints
+     */
+    private ConsulConfigurationNestedConfiguration configuration;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getDatacenter() {
+        return datacenter;
+    }
+
+    public void setDatacenter(String datacenter) {
+        this.datacenter = datacenter;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(
+            SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public String getAclToken() {
+        return aclToken;
+    }
+
+    public void setAclToken(String aclToken) {
+        this.aclToken = aclToken;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public ConsulConfigurationNestedConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(
+            ConsulConfigurationNestedConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
@@ -41,5 +134,245 @@ public class ConsulComponentConfiguration {
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class ConsulConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.consul.ConsulConfiguration.class;
+        private CamelContext camelContext;
+        /**
+         * The Consul agent URL
+         */
+        private String url;
+        /**
+         * The data center
+         * 
+         * @deprecated replaced by {@link #setDatacenter(String)} ()}
+         */
+        @Deprecated
+        private String dc;
+        /**
+         * The data center
+         */
+        private String datacenter;
+        /**
+         * Set tags. You can separate multiple tags by comma.
+         */
+        private Set tags;
+        /**
+         * SSL configuration using an
+         * org.apache.camel.util.jsse.SSLContextParameters instance.
+         */
+        @NestedConfigurationProperty
+        private SSLContextParameters sslContextParameters;
+        /**
+         * Sets the ACL token to be used with Consul
+         */
+        private String aclToken;
+        /**
+         * The default action. Can be overridden by CamelConsulAction
+         */
+        private String action;
+        /**
+         * Sets the username to be used for basic authentication
+         */
+        private String userName;
+        /**
+         * Sets the password to be used for basic authentication
+         */
+        private String password;
+        /**
+         * Connect timeout for OkHttpClient
+         */
+        private Long connectTimeoutMillis;
+        /**
+         * Read timeout for OkHttpClient
+         */
+        private Long readTimeoutMillis;
+        /**
+         * Write timeout for OkHttpClient
+         */
+        private Long writeTimeoutMillis;
+        /**
+         * Configure if the AgentClient should attempt a ping before returning
+         * the Consul instance
+         */
+        private Boolean pingInstance = true;
+        /**
+         * Default to transform values retrieved from Consul i.e. on KV endpoint
+         * to string.
+         */
+        private Boolean valueAsString = false;
+        /**
+         * The default key. Can be overridden by CamelConsulKey
+         */
+        private String key;
+        /**
+         * The second to wait for a watch event, default 10 seconds
+         */
+        private Integer blockSeconds = 10;
+        /**
+         * The first index for watch for, default 0
+         */
+        private Long firstIndex = 0L;
+        /**
+         * Recursively watch, default false
+         */
+        private Boolean recursive = false;
+
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        @Deprecated
+        @DeprecatedConfigurationProperty
+        public String getDc() {
+            return dc;
+        }
+
+        @Deprecated
+        public void setDc(String dc) {
+            this.dc = dc;
+        }
+
+        public String getDatacenter() {
+            return datacenter;
+        }
+
+        public void setDatacenter(String datacenter) {
+            this.datacenter = datacenter;
+        }
+
+        public Set getTags() {
+            return tags;
+        }
+
+        public void setTags(Set tags) {
+            this.tags = tags;
+        }
+
+        public SSLContextParameters getSslContextParameters() {
+            return sslContextParameters;
+        }
+
+        public void setSslContextParameters(
+                SSLContextParameters sslContextParameters) {
+            this.sslContextParameters = sslContextParameters;
+        }
+
+        public String getAclToken() {
+            return aclToken;
+        }
+
+        public void setAclToken(String aclToken) {
+            this.aclToken = aclToken;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public Long getConnectTimeoutMillis() {
+            return connectTimeoutMillis;
+        }
+
+        public void setConnectTimeoutMillis(Long connectTimeoutMillis) {
+            this.connectTimeoutMillis = connectTimeoutMillis;
+        }
+
+        public Long getReadTimeoutMillis() {
+            return readTimeoutMillis;
+        }
+
+        public void setReadTimeoutMillis(Long readTimeoutMillis) {
+            this.readTimeoutMillis = readTimeoutMillis;
+        }
+
+        public Long getWriteTimeoutMillis() {
+            return writeTimeoutMillis;
+        }
+
+        public void setWriteTimeoutMillis(Long writeTimeoutMillis) {
+            this.writeTimeoutMillis = writeTimeoutMillis;
+        }
+
+        public Boolean getPingInstance() {
+            return pingInstance;
+        }
+
+        public void setPingInstance(Boolean pingInstance) {
+            this.pingInstance = pingInstance;
+        }
+
+        public Boolean getValueAsString() {
+            return valueAsString;
+        }
+
+        public void setValueAsString(Boolean valueAsString) {
+            this.valueAsString = valueAsString;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public Integer getBlockSeconds() {
+            return blockSeconds;
+        }
+
+        public void setBlockSeconds(Integer blockSeconds) {
+            this.blockSeconds = blockSeconds;
+        }
+
+        public Long getFirstIndex() {
+            return firstIndex;
+        }
+
+        public void setFirstIndex(Long firstIndex) {
+            this.firstIndex = firstIndex;
+        }
+
+        public Boolean getRecursive() {
+            return recursive;
+        }
+
+        public void setRecursive(Boolean recursive) {
+            this.recursive = recursive;
+        }
     }
 }

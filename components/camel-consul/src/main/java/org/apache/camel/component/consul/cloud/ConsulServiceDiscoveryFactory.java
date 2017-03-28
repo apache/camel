@@ -45,12 +45,29 @@ public class ConsulServiceDiscoveryFactory implements ServiceDiscoveryFactory {
         configuration.setUrl(url);
     }
 
+    /**
+     * @deprecated, @deprecated replaced by {@link #getDatacenter()} ()}
+     * @return
+     */
+    @Deprecated
     public String getDc() {
-        return configuration.getDc();
+        return configuration.getDatacenter();
     }
 
+    /**
+     * @deprecated, @deprecated replaced by {@link #setDatacenter(String)}} ()}
+     */
+    @Deprecated
     public void setDc(String dc) {
         configuration.setDc(dc);
+    }
+
+    public void setDatacenter(String dc) {
+        configuration.setDatacenter(dc);
+    }
+
+    public String getDatacenter() {
+        return configuration.getDatacenter();
     }
 
     public SSLContextParameters getSslContextParameters() {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.consul;
 
+import java.util.Optional;
+
 import com.orbitz.consul.Consul;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -41,8 +43,8 @@ public class ConsulEndpoint extends DefaultEndpoint {
     @Metadata(required = "true")
     private final String apiEndpoint;
 
-    private final ProducerFactory producerFactory;
-    private final ConsumerFactory consumerFactory;
+    private final Optional<ProducerFactory> producerFactory;
+    private final Optional<ConsumerFactory> consumerFactory;
 
     private Consul consul;
 
@@ -51,8 +53,8 @@ public class ConsulEndpoint extends DefaultEndpoint {
             String uri,
             ConsulComponent component,
             ConsulConfiguration configuration,
-            ProducerFactory producerFactory,
-            ConsumerFactory consumerFactory) {
+            Optional<ProducerFactory> producerFactory,
+            Optional<ConsumerFactory> consumerFactory) {
 
         super(uri, component);
 
@@ -69,20 +71,20 @@ public class ConsulEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        if (producerFactory == null) {
-            throw new IllegalArgumentException("No producer for " + apiEndpoint);
-        }
+        ProducerFactory factory = producerFactory.orElseThrow(
+            () -> new IllegalArgumentException("No producer for " + apiEndpoint)
+        );
 
-        return producerFactory.create(this, configuration);
+        return factory.create(this, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        if (consumerFactory == null) {
-            throw new IllegalArgumentException("No consumer for " + apiEndpoint);
-        }
+        ConsumerFactory factory = consumerFactory.orElseThrow(
+            () -> new IllegalArgumentException("No consumer for " + apiEndpoint)
+        );
 
-        return consumerFactory.create(this, configuration, processor);
+        return factory.create(this, configuration, processor);
     }
 
     // *************************************************************************

@@ -26,7 +26,7 @@ public class HystrixConfigurationDefinitionProperties
             HystrixConfigurationDefinitionCommon {
 
     /**
-     * Enable camel-hystrix
+     * Enable the component
      */
     private boolean enabled = true;
     /**

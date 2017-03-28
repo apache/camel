@@ -36,17 +36,15 @@ import org.apache.camel.impl.cloud.DefaultServiceHealth;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 
-;
-
 public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     private final Supplier<Consul> client;
     private final CatalogOptions catalogOptions;
 
     public ConsulServiceDiscovery(ConsulConfiguration configuration) throws Exception {
-        this.client = Suppliers.memorize(configuration::createConsulClient, e -> { throw new RuntimeCamelException(e); });
+        this.client = Suppliers.memorize(configuration::createConsulClient, this::rethrowAsRuntimeCamelException);
 
         ImmutableCatalogOptions.Builder builder = ImmutableCatalogOptions.builder();
-        ObjectHelper.ifNotEmpty(configuration.getDc(), builder::datacenter);
+        ObjectHelper.ifNotEmpty(configuration.getDatacenter(), builder::datacenter);
         ObjectHelper.ifNotEmpty(configuration.getTags(), tags -> tags.forEach(builder::tag));
 
         catalogOptions = builder.build();
@@ -69,6 +67,10 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     // *************************
     // Helpers
     // *************************
+
+    private void rethrowAsRuntimeCamelException(Exception e) {
+        throw new RuntimeCamelException(e);
+    }
 
     private boolean isHealthy(ServiceHealth serviceHealth) {
         return serviceHealth.getChecks().stream().allMatch(
