@@ -32,10 +32,6 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTempQueue;
 import org.apache.activemq.command.SessionId;
 
-
-/**
- * Created by bryan.love on 3/22/17.
- */
 public class MockSession extends ActiveMQSession {
     private boolean isBadSession;
 

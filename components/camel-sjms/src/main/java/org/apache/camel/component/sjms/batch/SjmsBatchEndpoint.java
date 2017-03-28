@@ -400,6 +400,14 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
+     * Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds.
+     * The default is 5000 ms, that is, 5 seconds.
+     */
+    public void setRecoveryInterval(int recoveryInterval) {
+        this.recoveryInterval = recoveryInterval;
+    }
+
+    /**
      * The delay in millis between attempts to re-establish a valid session.
      * If this is a positive value the SjmsBatchConsumer will attempt to create a new session if it sees an IllegalStateException
      * during message consumption. This delay value allows you to pause between attempts to prevent spamming the logs.
@@ -409,15 +417,9 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     public void setKeepAliveDelay(int keepAliveDelay) {
         this.keepAliveDelay = keepAliveDelay;
     }
+
     public int getKeepAliveDelay() {
         return keepAliveDelay;
     }
 
-    /**
-     * Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds.
-     * The default is 5000 ms, that is, 5 seconds.
-     */
-    public void setRecoveryInterval(int recoveryInterval) {
-        this.recoveryInterval = recoveryInterval;
-    }
 }
