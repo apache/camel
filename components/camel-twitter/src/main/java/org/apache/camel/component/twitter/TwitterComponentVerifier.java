@@ -18,6 +18,7 @@ package org.apache.camel.component.twitter;
 
 import java.util.Map;
 
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.impl.verifier.DefaultComponentVerifier;
 import org.apache.camel.impl.verifier.ResultBuilder;
 import org.apache.camel.impl.verifier.ResultErrorBuilder;
@@ -68,12 +69,14 @@ final class TwitterComponentVerifier extends DefaultComponentVerifier {
         } catch (TwitterException e) {
             // verifyCredentials throws TwitterException when Twitter service or
             // network is unavailable or if supplied credential is wrong
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withHttpCodeAndText(e.getStatusCode(), e.getErrorMessage())
+            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(ComponentVerifier.CODE_AUTHENTICATION, e.getErrorMessage())
                 .attribute("twitter.error.code", e.getErrorCode())
                 .attribute("twitter.status.code", e.getStatusCode())
                 .attribute("twitter.exception.code", e.getExceptionCode())
                 .attribute("twitter.exception.message", e.getMessage())
-                .attribute("twitter.exception.instance", e);
+                .attribute("twitter.exception.caused-by-network-issue", e.isCausedByNetworkIssue())
+                .attribute(ComponentVerifier.EXCEPTION_CLASS, e.getClass().getName())
+                .attribute(ComponentVerifier.EXCEPTION_INSTANCE, e);
 
             // For a complete list of error codes see:
             //   https://dev.twitter.com/overview/api/response-codes

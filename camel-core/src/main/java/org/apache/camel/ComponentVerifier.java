@@ -27,6 +27,7 @@ import org.apache.camel.util.ObjectHelper;
  * Defines the interface used to validate component/endpoint parameters.
  */
 public interface ComponentVerifier {
+    String CODE_AUTHENTICATION = "authentication";
     String CODE_EXCEPTION = "exception";
     String CODE_INTERNAL = "internal";
     String CODE_MISSING_OPTION = "missing-option";
