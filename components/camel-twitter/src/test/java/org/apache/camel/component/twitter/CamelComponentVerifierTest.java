@@ -54,7 +54,7 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals("401", result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifier.CODE_AUTHENTICATION, result.getErrors().get(0).getCode());
         Assert.assertEquals(401, result.getErrors().get(0).getAttributes().get("twitter.status.code"));
         Assert.assertEquals(32, result.getErrors().get(0).getAttributes().get("twitter.error.code"));
     }
@@ -71,7 +71,7 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals("401", result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifier.CODE_AUTHENTICATION, result.getErrors().get(0).getCode());
         Assert.assertEquals(401, result.getErrors().get(0).getAttributes().get("twitter.status.code"));
         Assert.assertEquals(89, result.getErrors().get(0).getAttributes().get("twitter.error.code"));
         Assert.assertEquals(1, result.getErrors().get(0).getParameters().size());
