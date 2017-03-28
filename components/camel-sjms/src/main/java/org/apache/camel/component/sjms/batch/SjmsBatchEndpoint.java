@@ -407,7 +407,7 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
      * it will bail out and the route will shut down if it sees an IllegalStateException.
      */
     public void setKeepAliveDelay(int keepAliveDelay) {
-         this.keepAliveDelay = keepAliveDelay;
+        this.keepAliveDelay = keepAliveDelay;
     }
     public int getKeepAliveDelay() {
         return keepAliveDelay;
