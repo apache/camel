@@ -168,11 +168,11 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
             id = "trigger-" + getCamelContext().getUuidGenerator().generateUuid();
         }
 
-        Trigger existingTrigger = null;
+        CronTrigger existingTrigger = null;
         TriggerKey triggerKey = null;
         if (triggerId != null && triggerGroup != null) {
             triggerKey = new TriggerKey(triggerId, triggerGroup);
-            existingTrigger = quartzScheduler.getTrigger(triggerKey);
+            existingTrigger = (CronTrigger)quartzScheduler.getTrigger(triggerKey);
         }
 
         // Is an trigger already exist for this triggerId ?
@@ -208,8 +208,11 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
             QuartzHelper.updateJobDataMap(getCamelContext(), job, null);
             LOG.debug("Updated jobData map to {}", jobData);
+            
+            // Ensure the cron schedule is updated
+            CronTrigger newTrigger = existingTrigger.getTriggerBuilder().withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone())).build();
 
-            quartzScheduler.rescheduleJob(triggerKey, existingTrigger);
+            quartzScheduler.rescheduleJob(triggerKey, newTrigger);
         }
     }
 
