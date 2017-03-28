@@ -22,8 +22,10 @@ import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.cloud.ConsulServiceDiscoveryFactory;
+import org.apache.camel.component.consul.springboot.ConsulComponentConfiguration;
+import org.apache.camel.model.cloud.springboot.ConsulServiceCallServiceDiscoveryConfigurationCommon;
+import org.apache.camel.model.cloud.springboot.ConsulServiceCallServiceDiscoveryConfigurationProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
@@ -40,14 +42,14 @@ import org.springframework.context.annotation.Lazy;
 
 @Configuration
 @ConditionalOnBean({ CamelAutoConfiguration.class, CamelContext.class })
-@Conditional(ConsulCloudAutoConfiguration.Condition.class)
+@Conditional(ConsulServiceDiscoveryAutoConfiguration.Condition.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
-@EnableConfigurationProperties(ConsulCloudConfiguration.class)
-public class ConsulCloudAutoConfiguration {
+@EnableConfigurationProperties(ConsulServiceCallServiceDiscoveryConfigurationProperties.class)
+public class ConsulServiceDiscoveryAutoConfiguration {
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private ConsulCloudConfiguration configuration;
+    private ConsulServiceCallServiceDiscoveryConfigurationProperties configuration;
     @Autowired
     private ConfigurableBeanFactory beanFactory;
 
@@ -68,10 +70,9 @@ public class ConsulCloudAutoConfiguration {
     @PostConstruct
     public void postConstruct() {
         if (beanFactory != null) {
-            ConsulCloudConfiguration.ServiceDiscoveryConfiguration discovery = configuration.getServiceDiscovery();
             Map<String, Object> parameters = new HashMap<>();
 
-            for (Map.Entry<String, ConsulConfiguration> entry : discovery.getConfigurations().entrySet()) {
+            for (Map.Entry<String, ConsulServiceCallServiceDiscoveryConfigurationCommon> entry : configuration.getConfigurations().entrySet()) {
                 // clean up params
                 parameters.clear();
 
@@ -97,8 +98,8 @@ public class ConsulCloudAutoConfiguration {
     public static class Condition extends GroupCondition {
         public Condition() {
             super(
-                "camel.cloud",
-                "camel.cloud.consul"
+                "camel.cloud.consul",
+                "camel.cloud.consul.service-discovery"
             );
         }
     }

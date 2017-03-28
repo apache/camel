@@ -35,7 +35,22 @@ You can append query options to the URI in the following format:
 
 
 // component options: START
-The Consul component has no options.
+The Consul component supports 8 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **url** (common) | The Consul agent URL |  | String
+| **datacenter** (common) | The data center |  | String
+| **sslContextParameters** (common) | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. |  | SSLContextParameters
+| **aclToken** (common) | Sets the ACL token to be used with Consul |  | String
+| **userName** (common) | Sets the username to be used for basic authentication |  | String
+| **password** (common) | Sets the password to be used for basic authentication |  | String
+| **configuration** (advanced) | Sets the common configuration shared among endpoints |  | ConsulConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
 // component options: END
 
 
@@ -64,7 +79,6 @@ with the following path and query parameters:
 |=======================================================================
 | Name | Description | Default | Type
 | **connectTimeoutMillis** (common) | Connect timeout for OkHttpClient |  | Long
-| **dc** (common) | The data center |  | String
 | **key** (common) | The default key. Can be overridden by CamelConsulKey |  | String
 | **pingInstance** (common) | Configure if the AgentClient should attempt a ping before returning the Consul instance | true | boolean
 | **readTimeoutMillis** (common) | Read timeout for OkHttpClient |  | Long
@@ -76,6 +90,7 @@ with the following path and query parameters:
 | **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | **action** (producer) | The default action. Can be overridden by CamelConsulAction |  | String
 | **valueAsString** (producer) | Default to transform values retrieved from Consul i.e. on KV endpoint to string. | false | boolean
+| **datacenter** (advanced) | The data center |  | String
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | **blockSeconds** (watch) | The second to wait for a watch event default 10 seconds | 10 | Integer
 | **firstIndex** (watch) | The first index for watch for default 0 | 0 | long

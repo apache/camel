@@ -14,18 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul.springboot.cloud;
+package org.apache.camel.model.cloud.springboot;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.camel.component.consul.ConsulConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.cloud.consul")
-public class ConsulCloudConfiguration {
+@ConfigurationProperties(prefix = "camel.cloud.consul.service-discovery")
+public class ConsulServiceCallServiceDiscoveryConfigurationProperties
+        extends
+            ConsulServiceCallServiceDiscoveryConfigurationCommon {
+
+    /**
+     * Enable the component
+     */
     private boolean enabled = true;
-    private ServiceDiscoveryConfiguration serviceDiscovery = new ServiceDiscoveryConfiguration();
+    /**
+     * Define additional configuration definitions
+     */
+    private Map<String, ConsulServiceCallServiceDiscoveryConfigurationCommon> configurations = new HashMap<>();
+
+    public Map<String, ConsulServiceCallServiceDiscoveryConfigurationCommon> getConfigurations() {
+        return configurations;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -33,21 +44,5 @@ public class ConsulCloudConfiguration {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public ServiceDiscoveryConfiguration getServiceDiscovery() {
-        return serviceDiscovery;
-    }
-
-    // *************************************************************************
-    //
-    // *************************************************************************
-
-    public class ServiceDiscoveryConfiguration extends ConsulConfiguration {
-        private final Map<String, ConsulConfiguration> configurations = new HashMap<>();
-
-        public Map<String, ConsulConfiguration> getConfigurations() {
-            return configurations;
-        }
     }
 }

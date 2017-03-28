@@ -196,8 +196,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private void executeModels() throws MojoExecutionException, MojoFailureException {
         final Set<File> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json"));
 
+        String json;
+
         // Hystrix
-        final String json = loadModelJson(files, "hystrixConfiguration");
+        json = loadModelJson(files, "hystrixConfiguration");
         if (json != null) {
             OtherModel model = generateOtherModel(json);
 
@@ -205,11 +207,23 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
             // Generate properties, auto-configuration happens in camel-hystrix-starter
-            createHystrixConfigurationSource(pkg, model);
+            createHystrixConfigurationSource(pkg, model, "camel.hystrix");
+        }
+
+        // Consul
+        json = loadModelJson(files, "consulServiceDiscovery");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-consul-starter
+            createHystrixConfigurationSource(pkg, model, "camel.cloud.consul.service-discovery");
         }
     }
 
-    private void createHystrixConfigurationSource(String packageName, OtherModel model) throws MojoFailureException {
+    private void createHystrixConfigurationSource(String packageName, OtherModel model, String propertiesPrefix) throws MojoFailureException {
         final int pos = model.getJavaType().lastIndexOf(".");
         final String commonName = model.getJavaType().substring(pos + 1) + "Common";
         final String configName = model.getJavaType().substring(pos + 1) + "Properties";
@@ -229,8 +243,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String type = option.getJavaType();
             String name = option.getName();
 
-            if ("id".equalsIgnoreCase(name) || "parent".equalsIgnoreCase(name)) {
-                // Skip it as it should not be set via spring boot
+            if ("id".equalsIgnoreCase(name) || "parent".equalsIgnoreCase(name) || "camelContext".equalsIgnoreCase(name)) {
+                // Skip them as they should not be set via spring boot
                 continue;
             }
 
@@ -261,7 +275,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         configClass.setPackage(packageName);
         configClass.setName(configName);
         configClass.extendSuperType(commonClass);
-        configClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", "camel.hystrix");
+        configClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", propertiesPrefix);
         configClass.addImport(Map.class);
         configClass.addImport(HashMap.class);
         configClass.removeImport(commonClass);
@@ -271,7 +285,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             .setType(boolean.class)
             .setPrivate()
             .setLiteralInitializer("true")
-            .getJavaDoc().setFullText("Enable camel-hystrix");
+            .getJavaDoc().setFullText("Enable the component");
         configClass.addField("Map<String, " + commonName + "> configurations = new HashMap<>()")
             .setPrivate()
             .getJavaDoc().setFullText("Define additional configuration definitions");
