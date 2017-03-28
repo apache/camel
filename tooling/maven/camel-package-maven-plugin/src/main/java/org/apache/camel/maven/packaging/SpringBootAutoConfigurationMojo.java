@@ -221,6 +221,18 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             // Generate properties, auto-configuration happens in camel-consul-starter
             createHystrixConfigurationSource(pkg, model, "camel.cloud.consul.service-discovery");
         }
+
+        // Etcd
+        json = loadModelJson(files, "etcdServiceDiscovery");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-etcd-starter
+            createHystrixConfigurationSource(pkg, model, "camel.cloud.etcd.service-discovery");
+        }
     }
 
     private void createHystrixConfigurationSource(String packageName, OtherModel model, String propertiesPrefix) throws MojoFailureException {
