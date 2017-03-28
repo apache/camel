@@ -15,14 +15,17 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
-                           http://xmlns.jcp.org/xml/ns/javaee/beans_1_0.xsd"
-       version="1.0" bean-discovery-mode="all">
+<beans version="1.0" bean-discovery-mode="all">
 
     <scan>
         <exclude name="org.apache.camel.cdi.Main"/>
+        <exclude name="org.apache.camel.cdi.xml.*"/>
+        <exclude name="org.apache.camel.cdi.XmlCdiBeanFactory"/>
+        <exclude name="org.apache.camel.cdi.XmlCdiJaxbContexts"/>
+        <exclude name="org.apache.camel.cdi.XmlErrorHandlerFactoryBean"/>
+        <exclude name="org.apache.camel.cdi.XmlFactoryBeanInjectionTarget"/>
+        <exclude name="org.apache.camel.cdi.XmlProxyFactoryBean"/>
+        <exclude name="org.apache.camel.cdi.XmlServiceExporterBean"/>
     </scan>
 
 </beans>

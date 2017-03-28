@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -32,9 +32,22 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>catalog</module>
-    <module>catalog-lucene</module>
     <module>commands</module>
     <module>karaf</module>
+    <module>spring-boot</module>
+    <!-- dummy/myfoo used for testing catalog -->
+    <module>dummy-component</module>
+    <module>myfoo-connector</module>
+    <!-- run camel-catalog last -->
+    <module>camel-catalog</module>
+    <module>camel-catalog-connector</module>
+    <module>camel-catalog-provider-karaf</module>
+    <module>camel-catalog-provider-springboot</module>
+    <module>camel-catalog-lucene</module>
+    <module>camel-catalog-maven</module>
+    <module>camel-catalog-nexus</module>
+    <module>camel-catalog-rest</module>
+    <module>camel-catalog-rest-app</module>
   </modules>
+
 </project>

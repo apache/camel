@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,23 +18,17 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelJCacheTest extends AbstractFeatureTest {
+public class CamelJCacheTest extends BaseKarafTest {
 
-    public static final String COMPONENT = extractName(CamelJCacheTest.class);
+    public static final String COMPONENT = "jcache";
 
     @Test
     public void test() throws Exception {
         testComponent(COMPONENT);
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
 
 }

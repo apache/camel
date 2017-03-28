@@ -43,47 +43,55 @@ import org.slf4j.LoggerFactory;
 public class IrcConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(IrcConfiguration.class);
 
+    private boolean usingSSL;
     private List<IrcChannel> channels = new ArrayList<IrcChannel>();
+
     @UriPath @Metadata(required = "true")
     private String hostname;
-    @UriPath(defaultValue = "6667,6668,6669")
+    @UriPath
     private int port;
     private int[] ports = {6667, 6668, 6669};
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private String nickname;
     @UriParam
     private String realname;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
+    @UriParam(label = "security")
     private SSLTrustManager trustManager = new SSLDefaultTrustManager();
-    private boolean usingSSL;
     @UriParam(defaultValue = "true")
+    @Deprecated
     private boolean persistent = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean colors = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "filter")
     private boolean onNick = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "filter")
     private boolean onQuit = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "filter")
     private boolean onJoin = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "filter")
     private boolean onKick = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "filter")
     private boolean onMode = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "filter")
     private boolean onPart = true;
-    @UriParam
+    @UriParam(label = "filter")
     private boolean onReply;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "filter")
     private boolean onTopic = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "filter")
     private boolean onPrivmsg = true;
     @UriParam(defaultValue = "true")
     private boolean autoRejoin = true;
+    @UriParam
+    private boolean namesOnJoin;
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", secret = true)
+    private String nickPassword;
 
     public IrcConfiguration() {
     }
@@ -287,7 +295,7 @@ public class IrcConfiguration implements Cloneable {
     }
 
     /**
-     * Port number for the IRC chat server
+     * Port number for the IRC chat server. If no port is configured then a default port of either 6667, 6668 or 6669 is used.
      */
     public void setPort(int port) {
         this.port = port;
@@ -440,9 +448,34 @@ public class IrcConfiguration implements Cloneable {
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
+    
+    /**
+     * Your IRC server nickname password.
+     */
+    public String getNickPassword() {
+        return nickPassword;
+    }
+
+    public void setNickPassword(String nickPassword) {
+        this.nickPassword = nickPassword;
+    }
+    
+    public boolean isNamesOnJoin() {
+        return namesOnJoin;
+    }
+
+    /**
+     * Sends <code>NAMES</code> command to channel after joining it.<br>
+     * {@link #onReply} has to be <code>true</code> in order to process the
+     * result which will have the header value <code>irc.num = '353'</code>.
+     */
+    public void setNamesOnJoin(boolean namesOnJoin) {
+        this.namesOnJoin = namesOnJoin;
+    }
 
     public String toString() {
-        return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username + "]";
+        return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username
+                + "]";
     }
     
     private static IrcChannel createChannel(String channelInfo) {

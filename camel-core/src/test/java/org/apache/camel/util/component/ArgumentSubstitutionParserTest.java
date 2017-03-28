@@ -48,19 +48,20 @@ public class ArgumentSubstitutionParserTest {
         signatures.add("public final String greetAll(java.util.List<String> names);");
         signatures.add("public final java.util.Map<String, String> greetAll(java.util.Map<String> nameMap);");
         signatures.add("public final String[] greetTimes(String name, int times);");
+        signatures.add("public final String greetInnerChild(org.apache.camel.util.component.TestProxy.InnerChild child);");
         parser.setSignatures(signatures);
 
         final List<ApiMethodParser.ApiMethodModel> methodModels = parser.parse();
-        assertEquals(8, methodModels.size());
+        assertEquals(9, methodModels.size());
 
-        final ApiMethodParser.ApiMethodModel sayHi1 = methodModels.get(7);
+        final ApiMethodParser.ApiMethodModel sayHi1 = methodModels.get(8);
         assertEquals(PERSON, sayHi1.getArguments().get(0).getName());
         assertEquals("SAYHI_1", sayHi1.getUniqueName());
 
-        final ApiMethodParser.ApiMethodModel greetMe = methodModels.get(3);
+        final ApiMethodParser.ApiMethodModel greetMe = methodModels.get(4);
         assertEquals(PERSON, greetMe.getArguments().get(0).getName());
 
-        final ApiMethodParser.ApiMethodModel greetUs = methodModels.get(5);
+        final ApiMethodParser.ApiMethodModel greetUs = methodModels.get(6);
         assertEquals("astronaut1", greetUs.getArguments().get(0).getName());
         assertEquals("astronaut2", greetUs.getArguments().get(1).getName());
 
@@ -72,6 +73,9 @@ public class ArgumentSubstitutionParserTest {
 
         final ApiMethodParser.ApiMethodModel greetAll2 = methodModels.get(2);
         assertEquals("stringArray", greetAll2.getArguments().get(0).getName());
+
+        final ApiMethodParser.ApiMethodModel greetInnerChild = methodModels.get(3);
+        assertEquals("child", greetInnerChild.getArguments().get(0).getName());
     }
 
 }

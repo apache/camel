@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
@@ -36,16 +38,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
+import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.StreamCache;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -114,15 +120,15 @@ public class MethodInfo {
         this.hasCustomAnnotation = hasCustomAnnotation;
         this.hasHandlerAnnotation = hasHandlerAnnotation;
         this.parametersExpression = createParametersExpression();
-        
+
         Map<Class<?>, Annotation> collectedMethodAnnotation = collectMethodAnnotations(type, method);
 
         Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
         }
-        
-        org.apache.camel.RoutingSlip routingSlipAnnotation = 
+
+        org.apache.camel.RoutingSlip routingSlipAnnotation =
             (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null && matchContext(routingSlipAnnotation.context())) {
             routingSlip = new RoutingSlip(camelContext);
@@ -136,7 +142,7 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.DynamicRouter dynamicRouterAnnotation = 
+        org.apache.camel.DynamicRouter dynamicRouterAnnotation =
             (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null
                 && matchContext(dynamicRouterAnnotation.context())) {
@@ -151,12 +157,13 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.RecipientList recipientListAnnotation = 
+        org.apache.camel.RecipientList recipientListAnnotation =
             (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null
                 && matchContext(recipientListAnnotation.context())) {
             recipientList = new RecipientList(camelContext, recipientListAnnotation.delimiter());
             recipientList.setStopOnException(recipientListAnnotation.stopOnException());
+            recipientList.setStopOnAggregateException(recipientListAnnotation.stopOnAggregateException());
             recipientList.setIgnoreInvalidEndpoints(recipientListAnnotation.ignoreInvalidEndpoints());
             recipientList.setParallelProcessing(recipientListAnnotation.parallelProcessing());
             recipientList.setParallelAggregate(recipientListAnnotation.parallelAggregate());
@@ -199,7 +206,7 @@ public class MethodInfo {
         collectMethodAnnotations(c, method, annotations);
         return annotations;
     }
-    
+
     private void collectMethodAnnotations(Class<?> c, Method method, Map<Class<?>, Annotation> annotations) {
         for (Class<?> i : c.getInterfaces()) {
             collectMethodAnnotations(i, method, annotations);
@@ -248,6 +255,11 @@ public class MethodInfo {
             }
 
             public boolean proceed(AsyncCallback callback) {
+                Object body = exchange.getIn().getBody();
+                if (body != null && body instanceof StreamCache) {
+                    // ensure the stream cache is reset before calling the method
+                    ((StreamCache) body).reset();
+                }
                 try {
                     return doProceed(callback);
                 } catch (InvocationTargetException e) {
@@ -278,6 +290,18 @@ public class MethodInfo {
                 }
                 Object result = invoke(method, pojo, arguments, exchange);
 
+                // the method may be a closure or chained method returning a callable which should be called
+                if (result instanceof Callable) {
+                    LOG.trace("Method returned Callback which will be called: {}", result);
+                    Object callableResult = ((Callable) result).call();
+                    if (callableResult != null) {
+                        result = callableResult;
+                    } else {
+                        // if callable returned null we should not change the body
+                        result = Void.TYPE;
+                    }
+                }
+
                 if (recipientList != null) {
                     // ensure its started
                     if (!recipientList.isStarted()) {
@@ -292,19 +316,25 @@ public class MethodInfo {
                     return routingSlip.doRoutingSlip(exchange, result, callback);
                 }
 
+                //If it's Java 8 async result
+                if (CompletionStage.class.isAssignableFrom(getMethod().getReturnType())) {
+                    CompletionStage<?> completionStage = (CompletionStage<?>) result;
+
+                    completionStage
+                            .whenComplete((resultObject, e) -> {
+                                if (e != null) {
+                                    exchange.setException(e);
+                                } else if (resultObject != null) {
+                                    fillResult(exchange, resultObject);
+                                }
+                                callback.done(false);
+                            });
+                    return false;
+                }
+
                 // if the method returns something then set the value returned on the Exchange
                 if (!getMethod().getReturnType().equals(Void.TYPE) && result != Void.TYPE) {
-                    if (exchange.getPattern().isOutCapable()) {
-                        // force out creating if not already created (as its lazy)
-                        LOG.debug("Setting bean invocation result on the OUT message: {}", result);
-                        exchange.getOut().setBody(result);
-                        // propagate headers
-                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-                    } else {
-                        // if not out then set it on the in
-                        LOG.debug("Setting bean invocation result on the IN message: {}", result);
-                        exchange.getIn().setBody(result);
-                    }
+                    fillResult(exchange, result);
                 }
 
                 // we did not use any of the eips, but just invoked the bean
@@ -321,6 +351,40 @@ public class MethodInfo {
                 return method;
             }
         };
+    }
+
+    private void fillResult(Exchange exchange, Object result) {
+        LOG.trace("Setting bean invocation result : {}", result);
+
+        // the bean component forces OUT if the MEP is OUT capable
+        boolean out = ExchangeHelper.isOutCapable(exchange) || exchange.hasOut();
+        Message old;
+        if (out) {
+            old = exchange.getOut();
+            // propagate headers
+            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+            // propagate attachments
+            if (exchange.getIn().hasAttachments()) {
+                exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
+            }
+        } else {
+            old = exchange.getIn();
+        }
+
+        // create a new message container so we do not drag specialized message objects along
+        // but that is only needed if the old message is a specialized message
+        boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
+
+        if (copyNeeded) {
+            Message msg = new DefaultMessage();
+            msg.copyFromWithNewBody(old, result);
+
+            // replace message on exchange
+            ExchangeHelper.replaceMessage(exchange, msg, false);
+        } else {
+            // no copy needed so set replace value directly
+            old.setBody(result);
+        }
     }
 
     public Class<?> getType() {
@@ -390,16 +454,16 @@ public class MethodInfo {
     public boolean isStaticMethod() {
         return Modifier.isStatic(method.getModifiers());
     }
-    
+
     /**
      * Returns true if this method is covariant with the specified method
      * (this method may above or below the specified method in the class hierarchy)
      */
     public boolean isCovariantWith(MethodInfo method) {
-        return 
+        return
             method.getMethod().getName().equals(this.getMethod().getName())
             && (method.getMethod().getReturnType().isAssignableFrom(this.getMethod().getReturnType())
-            || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType())) 
+            || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType()))
             && Arrays.deepEquals(method.getMethod().getParameterTypes(), this.getMethod().getParameterTypes());
     }
 
@@ -428,205 +492,7 @@ public class MethodInfo {
     }
 
     protected Expression createParametersExpression() {
-        final Expression[] expressions = createParameterExpressions();
-        return new Expression() {
-            @SuppressWarnings("unchecked")
-            public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Object[] answer = new Object[expressions.length];
-                Object body = exchange.getIn().getBody();
-                boolean multiParameterArray = false;
-                if (exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) != null) {
-                    multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, Boolean.class);
-                    if (multiParameterArray) {
-                        // Just change the message body to an Object array
-                        if (!(body instanceof Object[])) {
-                            body = exchange.getIn().getBody(Object[].class);
-                        }
-                    }
-                }
-
-                // if there was an explicit method name to invoke, then we should support using
-                // any provided parameter values in the method name
-                String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, "", String.class);
-                // the parameter values is between the parenthesis
-                String methodParameters = ObjectHelper.betweenOuterPair(methodName, '(', ')');
-                // use an iterator to walk the parameter values
-                Iterator<?> it = null;
-                if (methodParameters != null) {
-                    // split the parameters safely separated by comma, but beware that we can have
-                    // quoted parameters which contains comma as well, so do a safe quote split
-                    String[] parameters = StringQuoteHelper.splitSafeQuote(methodParameters, ',', true);
-                    it = ObjectHelper.createIterator(parameters, ",", true);
-                }
-
-                // remove headers as they should not be propagated
-                // we need to do this before the expressions gets evaluated as it may contain
-                // a @Bean expression which would by mistake read these headers. So the headers
-                // must be removed at this point of time
-                exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
-                exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
-
-                for (int i = 0; i < expressions.length; i++) {
-                    // grab the parameter value for the given index
-                    Object parameterValue = it != null && it.hasNext() ? it.next() : null;
-                    // and the expected parameter type
-                    Class<?> parameterType = parameters.get(i).getType();
-                    // the value for the parameter to use
-                    Object value = null;
-
-                    if (multiParameterArray) {
-                        // get the value from the array
-                        value = ((Object[])body)[i];
-                    } else {
-                        // prefer to use parameter value if given, as they override any bean parameter binding
-                        // we should skip * as its a type placeholder to indicate any type
-                        if (parameterValue != null && !parameterValue.equals("*")) {
-                            // evaluate the parameter value binding
-                            value = evaluateParameterValue(exchange, i, parameterValue, parameterType);
-                        }
-                        // use bean parameter binding, if still no value
-                        Expression expression = expressions[i];
-                        if (value == null && expression != null) {
-                            value = evaluateParameterBinding(exchange, expression, i, parameterType);
-                        }
-                    }
-                    // remember the value to use
-                    if (value != Void.TYPE) {
-                        answer[i] = value;
-                    }
-                }
-                return (T) answer;
-            }
-
-            /**
-             * Evaluate using parameter values where the values can be provided in the method name syntax.
-             * <p/>
-             * This methods returns accordingly:
-             * <ul>
-             *     <li><tt>null</tt> - if not a parameter value</li>
-             *     <li><tt>Void.TYPE</tt> - if an explicit null, forcing Camel to pass in <tt>null</tt> for that given parameter</li>
-             *     <li>a non <tt>null</tt> value - if the parameter was a parameter value, and to be used</li>
-             * </ul>
-             *
-             * @since 2.9
-             */
-            private Object evaluateParameterValue(Exchange exchange, int index, Object parameterValue, Class<?> parameterType) {
-                Object answer = null;
-
-                // convert the parameter value to a String
-                String exp = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, parameterValue);
-                if (exp != null) {
-                    // check if its a valid parameter value
-                    boolean valid = BeanHelper.isValidParameterValue(exp);
-
-                    if (!valid) {
-                        // it may be a parameter type instead, and if so, then we should return null,
-                        // as this method is only for evaluating parameter values
-                        Boolean isClass = BeanHelper.isAssignableToExpectedType(exchange.getContext().getClassResolver(), exp, parameterType);
-                        // the method will return a non null value if exp is a class
-                        if (isClass != null) {
-                            return null;
-                        }
-                    }
-
-                    // use simple language to evaluate the expression, as it may use the simple language to refer to message body, headers etc.
-                    Expression expression = null;
-                    try {
-                        expression = exchange.getContext().resolveLanguage("simple").createExpression(exp);
-                        parameterValue = expression.evaluate(exchange, Object.class);
-                        // use "null" to indicate the expression returned a null value which is a valid response we need to honor
-                        if (parameterValue == null) {
-                            parameterValue = "null";
-                        }
-                    } catch (Exception e) {
-                        throw new ExpressionEvaluationException(expression, "Cannot create/evaluate simple expression: " + exp
-                                + " to be bound to parameter at index: " + index + " on method: " + getMethod(), exchange, e);
-                    }
-
-                    // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
-                    // see method javadoc for details
-                    if ("null".equals(parameterValue)) {
-                        return Void.TYPE;
-                    }
-
-                    // the parameter value may match the expected type, then we use it as-is
-                    if (parameterType.isAssignableFrom(parameterValue.getClass())) {
-                        valid = true;
-                    } else {
-                        // the parameter value was not already valid, but since the simple language have evaluated the expression
-                        // which may change the parameterValue, so we have to check it again to see if its now valid
-                        exp = exchange.getContext().getTypeConverter().tryConvertTo(String.class, parameterValue);
-                        // String values from the simple language is always valid
-                        if (!valid) {
-                            // re validate if the parameter was not valid the first time (String values should be accepted)
-                            valid = parameterValue instanceof String || BeanHelper.isValidParameterValue(exp);
-                        }
-                    }
-
-                    if (valid) {
-                        // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
-                        if (parameterValue instanceof String) {
-                            parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
-                        }
-                        if (parameterValue != null) {
-                            try {
-                                // its a valid parameter value, so convert it to the expected type of the parameter
-                                answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
-                                }
-                            } catch (Exception e) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(parameterValue), parameterType, index});
-                                }
-                                throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
-                            }
-                        }
-                    }
-                }
-
-                return answer;
-            }
-
-            /**
-             * Evaluate using classic parameter binding using the pre compute expression
-             */
-            private Object evaluateParameterBinding(Exchange exchange, Expression expression, int index, Class<?> parameterType) {
-                Object answer = null;
-
-                // use object first to avoid type conversion so we know if there is a value or not
-                Object result = expression.evaluate(exchange, Object.class);
-                if (result != null) {
-                    try {
-                        if (parameterType.isInstance(result)) {
-                            // optimize if the value is already the same type
-                            answer = result;
-                        } else {
-                            // we got a value now try to convert it to the expected type
-                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
-                        }
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
-                        }
-                    } catch (NoTypeConversionAvailableException e) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(result), parameterType, index});
-                        }
-                        throw new ParameterBindingException(e, method, index, parameterType, result);
-                    }
-                } else {
-                    LOG.trace("Parameter #{} evaluated as null", index);
-                }
-
-                return answer;
-            }
-
-            @Override
-            public String toString() {
-                return "ParametersExpression: " + Arrays.asList(expressions);
-            }
-
-        };
+        return new ParameterExpression(createParameterExpressions());
     }
 
     /**
@@ -753,4 +619,229 @@ public class MethodInfo {
         return false;
     }
 
+    /**
+     * Expression to evaluate the bean parameter parameters and provide the correct values when the method is invoked.
+     */
+    private final class ParameterExpression implements Expression {
+        private final Expression[] expressions;
+
+        ParameterExpression(Expression[] expressions) {
+            this.expressions = expressions;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T> T evaluate(Exchange exchange, Class<T> type) {
+            Object body = exchange.getIn().getBody();
+            boolean multiParameterArray = false;
+            if (exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) != null) {
+                multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, Boolean.class);
+                if (multiParameterArray) {
+                    // Just change the message body to an Object array
+                    if (!(body instanceof Object[])) {
+                        body = exchange.getIn().getBody(Object[].class);
+                    }
+                }
+            }
+
+            // if there was an explicit method name to invoke, then we should support using
+            // any provided parameter values in the method name
+            String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, "", String.class);
+            // the parameter values is between the parenthesis
+            String methodParameters = ObjectHelper.betweenOuterPair(methodName, '(', ')');
+            // use an iterator to walk the parameter values
+            Iterator<?> it = null;
+            if (methodParameters != null) {
+                // split the parameters safely separated by comma, but beware that we can have
+                // quoted parameters which contains comma as well, so do a safe quote split
+                String[] parameters = StringQuoteHelper.splitSafeQuote(methodParameters, ',', true);
+                it = ObjectHelper.createIterator(parameters, ",", true);
+            }
+
+            // remove headers as they should not be propagated
+            // we need to do this before the expressions gets evaluated as it may contain
+            // a @Bean expression which would by mistake read these headers. So the headers
+            // must be removed at this point of time
+            exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
+            exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
+
+            Object[] answer = evaluateParameterExpressions(exchange, body, multiParameterArray, it);
+            return (T) answer;
+        }
+
+        /**
+         * Evaluates all the parameter expressions
+         */
+        private Object[] evaluateParameterExpressions(Exchange exchange, Object body, boolean multiParameterArray, Iterator<?> it) {
+            Object[] answer = new Object[expressions.length];
+            for (int i = 0; i < expressions.length; i++) {
+
+                if (body != null && body instanceof StreamCache) {
+                    // need to reset stream cache for each expression as you may access the message body in multiple parameters
+                    ((StreamCache) body).reset();
+                }
+
+                // grab the parameter value for the given index
+                Object parameterValue = it != null && it.hasNext() ? it.next() : null;
+                // and the expected parameter type
+                Class<?> parameterType = parameters.get(i).getType();
+                // the value for the parameter to use
+                Object value = null;
+
+                if (multiParameterArray && body instanceof Object[]) {
+                    // get the value from the array
+                    Object[] array = (Object[]) body;
+                    if (array.length >= i) {
+                        value = array[i];
+                    }
+                } else {
+                    // prefer to use parameter value if given, as they override any bean parameter binding
+                    // we should skip * as its a type placeholder to indicate any type
+                    if (parameterValue != null && !parameterValue.equals("*")) {
+                        // evaluate the parameter value binding
+                        value = evaluateParameterValue(exchange, i, parameterValue, parameterType);
+                    }
+                    // use bean parameter binding, if still no value
+                    Expression expression = expressions[i];
+                    if (value == null && expression != null) {
+                        value = evaluateParameterBinding(exchange, expression, i, parameterType);
+                    }
+                }
+                // remember the value to use
+                if (value != Void.TYPE) {
+                    answer[i] = value;
+                }
+            }
+
+            return answer;
+        }
+
+        /**
+         * Evaluate using parameter values where the values can be provided in the method name syntax.
+         * <p/>
+         * This methods returns accordingly:
+         * <ul>
+         *     <li><tt>null</tt> - if not a parameter value</li>
+         *     <li><tt>Void.TYPE</tt> - if an explicit null, forcing Camel to pass in <tt>null</tt> for that given parameter</li>
+         *     <li>a non <tt>null</tt> value - if the parameter was a parameter value, and to be used</li>
+         * </ul>
+         *
+         * @since 2.9
+         */
+        private Object evaluateParameterValue(Exchange exchange, int index, Object parameterValue, Class<?> parameterType) {
+            Object answer = null;
+
+            // convert the parameter value to a String
+            String exp = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, parameterValue);
+            if (exp != null) {
+                // check if its a valid parameter value
+                boolean valid = BeanHelper.isValidParameterValue(exp);
+
+                if (!valid) {
+                    // it may be a parameter type instead, and if so, then we should return null,
+                    // as this method is only for evaluating parameter values
+                    Boolean isClass = BeanHelper.isAssignableToExpectedType(exchange.getContext().getClassResolver(), exp, parameterType);
+                    // the method will return a non null value if exp is a class
+                    if (isClass != null) {
+                        return null;
+                    }
+                }
+
+                // use simple language to evaluate the expression, as it may use the simple language to refer to message body, headers etc.
+                Expression expression = null;
+                try {
+                    expression = exchange.getContext().resolveLanguage("simple").createExpression(exp);
+                    parameterValue = expression.evaluate(exchange, Object.class);
+                    // use "null" to indicate the expression returned a null value which is a valid response we need to honor
+                    if (parameterValue == null) {
+                        parameterValue = "null";
+                    }
+                } catch (Exception e) {
+                    throw new ExpressionEvaluationException(expression, "Cannot create/evaluate simple expression: " + exp
+                            + " to be bound to parameter at index: " + index + " on method: " + getMethod(), exchange, e);
+                }
+
+                // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
+                // see method javadoc for details
+                if ("null".equals(parameterValue)) {
+                    return Void.TYPE;
+                }
+
+                // the parameter value may match the expected type, then we use it as-is
+                if (parameterType.isAssignableFrom(parameterValue.getClass())) {
+                    valid = true;
+                } else {
+                    // the parameter value was not already valid, but since the simple language have evaluated the expression
+                    // which may change the parameterValue, so we have to check it again to see if its now valid
+                    exp = exchange.getContext().getTypeConverter().tryConvertTo(String.class, parameterValue);
+                    // String values from the simple language is always valid
+                    if (!valid) {
+                        // re validate if the parameter was not valid the first time (String values should be accepted)
+                        valid = parameterValue instanceof String || BeanHelper.isValidParameterValue(exp);
+                    }
+                }
+
+                if (valid) {
+                    // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
+                    if (parameterValue instanceof String) {
+                        parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
+                    }
+                    if (parameterValue != null) {
+                        try {
+                            // its a valid parameter value, so convert it to the expected type of the parameter
+                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
+                            }
+                        } catch (Exception e) {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(parameterValue), parameterType, index});
+                            }
+                            throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
+                        }
+                    }
+                }
+            }
+
+            return answer;
+        }
+
+        /**
+         * Evaluate using classic parameter binding using the pre compute expression
+         */
+        private Object evaluateParameterBinding(Exchange exchange, Expression expression, int index, Class<?> parameterType) {
+            Object answer = null;
+
+            // use object first to avoid type conversion so we know if there is a value or not
+            Object result = expression.evaluate(exchange, Object.class);
+            if (result != null) {
+                try {
+                    if (parameterType.isInstance(result)) {
+                        // optimize if the value is already the same type
+                        answer = result;
+                    } else {
+                        // we got a value now try to convert it to the expected type
+                        answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
+                    }
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
+                    }
+                } catch (NoTypeConversionAvailableException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(result), parameterType, index});
+                    }
+                    throw new ParameterBindingException(e, method, index, parameterType, result);
+                }
+            } else {
+                LOG.trace("Parameter #{} evaluated as null", index);
+            }
+
+            return answer;
+        }
+
+        @Override
+        public String toString() {
+            return "ParametersExpression: " + Arrays.asList(expressions);
+        }
+
+    }
 }

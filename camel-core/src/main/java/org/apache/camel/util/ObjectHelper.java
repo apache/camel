@@ -41,9 +41,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -56,6 +61,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,13 +199,13 @@ public final class ObjectHelper {
     /**
      * A helper method for comparing objects for equality while handling nulls
      */
-    public static boolean equal(Object a, Object b, boolean ignoreCase) {
+    public static boolean equal(final Object a, final Object b, final boolean ignoreCase) {
         if (a == b) {
             return true;
         }
 
-        if (a instanceof byte[] && b instanceof byte[]) {
-            return equalByteArray((byte[])a, (byte[])b);
+        if (a == null || b == null) {
+            return false;
         }
 
         if (ignoreCase) {
@@ -208,7 +214,13 @@ public final class ObjectHelper {
             }
         }
 
-        return a != null && b != null && a.equals(b);
+        if (a.getClass().isArray() && b.getClass().isArray()) {
+            // uses array based equals
+            return Objects.deepEquals(a, b);
+        } else {
+            // use regular equals
+            return a.equals(b);
+        }
     }
 
     /**
@@ -216,22 +228,7 @@ public final class ObjectHelper {
      * nulls
      */
     public static boolean equalByteArray(byte[] a, byte[] b) {
-        if (a == b) {
-            return true;
-        }
-
-        // loop and compare each byte
-        if (a != null && b != null && a.length == b.length) {
-            for (int i = 0; i < a.length; i++) {
-                if (a[i] != b[i]) {
-                    return false;
-                }
-            }
-            // all bytes are equal
-            return true;
-        }
-
-        return false;
+        return Arrays.equals(a, b);
     }
 
     /**
@@ -341,36 +338,32 @@ public final class ObjectHelper {
     /**
      * Asserts whether the string is <b>not</b> empty.
      *
-     * @param value  the string to test
-     * @param name   the key that resolved the value
+     * @param value the string to test
+     * @param name the key that resolved the value
      * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
+     * @deprecated use {@link StringHelper#notEmpty(String, String)} instead
      */
+    @Deprecated
     public static String notEmpty(String value, String name) {
-        if (isEmpty(value)) {
-            throw new IllegalArgumentException(name + " must be specified and not empty");
-        }
-
-        return value;
+        return StringHelper.notEmpty(value, name);
     }
 
     /**
      * Asserts whether the string is <b>not</b> empty.
      *
-     * @param value  the string to test
-     * @param on     additional description to indicate where this problem occurred (appended as toString())
-     * @param name   the key that resolved the value
+     * @param value the string to test
+     * @param on additional description to indicate where this problem occurred
+     *            (appended as toString())
+     * @param name the key that resolved the value
      * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
+     * @deprecated use {@link StringHelper#notEmpty(String, String, Object)}
+     *             instead
      */
+    @Deprecated
     public static String notEmpty(String value, String name, Object on) {
-        if (on == null) {
-            notNull(value, name);
-        } else if (isEmpty(value)) {
-            throw new IllegalArgumentException(name + " must be specified and not empty on: " + on);
-        }
-
-        return value;
+        return StringHelper.notEmpty(value, name, on);
     }
 
     /**
@@ -384,35 +377,75 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string or an empty collection/map.
      *
      * @param value  the value, if its a String it will be tested for text length as well
      * @return true if <b>not</b> empty
      */
+    @SuppressWarnings("unchecked")
     public static boolean isNotEmpty(Object value) {
         if (value == null) {
             return false;
         } else if (value instanceof String) {
             String text = (String) value;
             return text.trim().length() > 0;
+        } else if (value instanceof Collection) {
+            return !((Collection<?>)value).isEmpty();
+        } else if (value instanceof Map) {
+            return !((Map<?, ?>)value).isEmpty();
         } else {
             return true;
         }
     }
 
-    public static String[] splitOnCharacter(String value, String needle, int count) {
-        String rc[] = new String[count];
-        rc[0] = value;
-        for (int i = 1; i < count; i++) {
-            String v = rc[i - 1];
-            int p = v.indexOf(needle);
-            if (p < 0) {
-                return rc;
-            }
-            rc[i - 1] = v.substring(0, p);
-            rc[i] = v.substring(p + 1);
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param consumer  the consumer, the operation to be executed against value if not empty
+     */
+    public static <T> void ifNotEmpty(T value, Consumer<T> consumer) {
+        if (isNotEmpty(value)) {
+            consumer.accept(value);
         }
-        return rc;
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map  and transform it using the given function.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param function  the function to be executed against value if not empty
+     */
+    public static <I, R, T extends Throwable> Optional<R> applyIfNotEmpty(I value, ThrowingFunction<I, R, T> function) throws T {
+        if (isNotEmpty(value)) {
+            return Optional.ofNullable(function.apply(value));
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map and transform it using the given function.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param consumer  the function to be executed against value if not empty
+     * @param orElse  the supplier to use to retrieve a result if the given value is empty
+     */
+    public static <I, R, T extends Throwable> R applyIfNotEmpty(I value, ThrowingFunction<I, R, T> consumer, Supplier<R> orElse) throws T {
+        if (isNotEmpty(value)) {
+            return consumer.apply(value);
+        }
+
+        return orElse.get();
+    }
+
+    /**
+     * @deprecated use
+     *             {@link StringHelper#splitOnCharacter(String, String, int)} instead
+     */
+    @Deprecated
+    public static String[] splitOnCharacter(String value, String needle, int count) {
+        return StringHelper.splitOnCharacter(value, needle, count);
     }
 
     /**
@@ -422,31 +455,19 @@ public final class ObjectHelper {
      * @param text the string
      * @param ch the initial characters to remove
      * @return either the original string or the new substring
+     * @deprecated use {@link StringHelper#removeStartingCharacters(String, char)} instead
      */
+    @Deprecated
     public static String removeStartingCharacters(String text, char ch) {
-        int idx = 0;
-        while (text.charAt(idx) == ch) {
-            idx++;
-        }
-        if (idx > 0) {
-            return text.substring(idx);
-        }
-        return text;
+        return StringHelper.removeStartingCharacters(text, ch);
     }
 
+    /**
+     * @deprecated use {@link StringHelper#capitalize(String)} instead
+     */
+    @Deprecated
     public static String capitalize(String text) {
-        if (text == null) {
-            return null;
-        }
-        int length = text.length();
-        if (length == 0) {
-            return text;
-        }
-        String answer = text.substring(0, 1).toUpperCase(Locale.ENGLISH);
-        if (length > 1) {
-            answer += text.substring(1, length);
-        }
-        return answer;
+        return StringHelper.capitalize(text);
     }
 
     /**
@@ -455,12 +476,29 @@ public final class ObjectHelper {
      * @param text  the text
      * @param after the token
      * @return the text after the token, or <tt>null</tt> if text does not contain the token
+     * @deprecated use {@link StringHelper#after(String, String)} instead
      */
+    @Deprecated
     public static String after(String text, String after) {
-        if (!text.contains(after)) {
-            return null;
-        }
-        return text.substring(text.indexOf(after) + after.length());
+        return StringHelper.after(text, after);
+    }
+
+    /**
+     * Returns an object after the given token
+     *
+     * @param text the text
+     * @param after the token
+     * @param mapper a mapping function to convert the string after the token to
+     *            type T
+     * @return an Optional describing the result of applying a mapping function
+     *         to the text after the token.
+     * @deprecated use {@link StringHelper#after(String, String, Function)
+     *             StringHelper.after(String, String, Function&lt;String,T&gt;)}
+     *             instead
+     */
+    @Deprecated
+    public static <T> Optional<T> after(String text, String after, Function<String, T> mapper) {
+        return StringHelper.after(text, after, mapper);
     }
 
     /**
@@ -469,12 +507,29 @@ public final class ObjectHelper {
      * @param text  the text
      * @param before the token
      * @return the text before the token, or <tt>null</tt> if text does not contain the token
+     * @deprecated use {@link StringHelper#before(String, String)} instead
      */
+    @Deprecated
     public static String before(String text, String before) {
-        if (!text.contains(before)) {
-            return null;
-        }
-        return text.substring(0, text.indexOf(before));
+        return StringHelper.before(text, before);
+    }
+
+    /**
+     * Returns an object before the given token
+     *
+     * @param text the text
+     * @param before the token
+     * @param mapper a mapping function to convert the string before the token
+     *            to type T
+     * @return an Optional describing the result of applying a mapping function
+     *         to the text before the token.
+     * @deprecated use {@link StringHelper#before(String, String, Function)
+     *             StringHelper.before(String, String, Function&lt;String,T&gt;)}
+     *             instead
+     */
+    @Deprecated
+    public static <T> Optional<T> before(String text, String before, Function<String, T> mapper) {
+        return StringHelper.before(text, before, mapper);
     }
 
     /**
@@ -484,13 +539,28 @@ public final class ObjectHelper {
      * @param after the before token
      * @param before the after token
      * @return the text between the tokens, or <tt>null</tt> if text does not contain the tokens
+     * @deprecated use {@link StringHelper#between(String, String, String)} instead
      */
+    @Deprecated
     public static String between(String text, String after, String before) {
-        text = after(text, after);
-        if (text == null) {
-            return null;
-        }
-        return before(text, before);
+        return StringHelper.between(text, after, before);
+    }
+
+    /**
+     * Returns an object between the given token
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @param mapper a mapping function to convert the string between the token to type T
+     * @return an Optional describing the result of applying a mapping function to the text between the token.
+     * @deprecated use {@link StringHelper#between(String, String, String, Function)
+     *             StringHelper.between(String, String, String, Function&lt;String,T&gt;)}
+     *             instead
+     */
+    @Deprecated
+    public static <T> Optional<T> between(String text, String after, String before, Function<String, T> mapper) {
+        return StringHelper.between(text, after, before, mapper);
     }
 
     /**
@@ -507,53 +577,28 @@ public final class ObjectHelper {
      * @param after the before token
      * @param before the after token
      * @return the text between the outer most tokens, or <tt>null</tt> if text does not contain the tokens
+     * @deprecated use {@link StringHelper#betweenOuterPair(String, char, char)} instead
      */
+    @Deprecated
     public static String betweenOuterPair(String text, char before, char after) {
-        if (text == null) {
-            return null;
-        }
+        return StringHelper.betweenOuterPair(text, before, after);
+    }
 
-        int pos = -1;
-        int pos2 = -1;
-        int count = 0;
-        int count2 = 0;
-
-        boolean singleQuoted = false;
-        boolean doubleQuoted = false;
-        for (int i = 0; i < text.length(); i++) {
-            char ch = text.charAt(i);
-            if (!doubleQuoted && ch == '\'') {
-                singleQuoted = !singleQuoted;
-            } else if (!singleQuoted && ch == '\"') {
-                doubleQuoted = !doubleQuoted;
-            }
-            if (singleQuoted || doubleQuoted) {
-                continue;
-            }
-
-            if (ch == before) {
-                count++;
-            } else if (ch == after) {
-                count2++;
-            }
-
-            if (ch == before && pos == -1) {
-                pos = i;
-            } else if (ch == after) {
-                pos2 = i;
-            }
-        }
-
-        if (pos == -1 || pos2 == -1) {
-            return null;
-        }
-
-        // must be even paris
-        if (count != count2) {
-            return null;
-        }
-
-        return text.substring(pos + 1, pos2);
+    /**
+     * Returns an object between the most outer pair of tokens
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @param mapper a mapping function to convert the string between the most outer pair of tokens to type T
+     * @return an Optional describing the result of applying a mapping function to the text between the most outer pair of tokens.
+     * @deprecated use {@link StringHelper#betweenOuterPair(String, char, char, Function)
+     *             StringHelper.betweenOuterPair(String, char, char, Function&lt;String,T&gt;)}
+     *             instead
+     */
+    @Deprecated
+    public static <T> Optional<T> betweenOuterPair(String text, char before, char after, Function<String, T> mapper) {
+        return StringHelper.betweenOuterPair(text, before, after, mapper);
     }
 
     /**
@@ -666,8 +711,30 @@ public final class ObjectHelper {
      * @param allowEmptyValues  whether to allow empty values
      * @return the iterator
      */
-    public static Iterator<Object> createIterator(Object value, String delimiter, final boolean allowEmptyValues) {
-        return createIterable(value, delimiter, allowEmptyValues).iterator();
+    public static Iterator<Object> createIterator(Object value, String delimiter, boolean allowEmptyValues) {
+        return createIterable(value, delimiter, allowEmptyValues, false).iterator();
+    }
+
+    /**
+     * Creates an iterator over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     *
+     * </p> In case of primitive type arrays the returned {@code Iterator} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
+     * @param pattern           whether the delimiter is a pattern
+     * @return the iterator
+     */
+    public static Iterator<Object> createIterator(Object value, String delimiter,
+                                                  boolean allowEmptyValues, boolean pattern) {
+        return createIterable(value, delimiter, allowEmptyValues, pattern).iterator();
     }
 
     /**
@@ -687,8 +754,32 @@ public final class ObjectHelper {
      * @return the iterable
      * @see java.lang.Iterable
      */
+    public static Iterable<Object> createIterable(Object value, String delimiter,
+                                                  final boolean allowEmptyValues) {
+        return createIterable(value, delimiter, allowEmptyValues, false);
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     *
+     * </p> In case of primitive type arrays the returned {@code Iterable} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
+     * @param pattern           whether the delimiter is a pattern
+     * @return the iterable
+     * @see java.lang.Iterable
+     */
     @SuppressWarnings("unchecked")
-    public static Iterable<Object> createIterable(Object value, String delimiter, final boolean allowEmptyValues) {
+    public static Iterable<Object> createIterable(Object value, String delimiter,
+                                                  final boolean allowEmptyValues, final boolean pattern) {
 
         // if its a message than we want to iterate its body
         if (value instanceof Message) {
@@ -769,8 +860,8 @@ public final class ObjectHelper {
 
             // this code is optimized to only use a Scanner if needed, eg there is a delimiter
 
-            if (delimiter != null && s.contains(delimiter)) {
-                // use a scanner if it contains the delimiter
+            if (delimiter != null && (pattern || s.contains(delimiter))) {
+                // use a scanner if it contains the delimiter or is a pattern
                 final Scanner scanner = new Scanner((String)value);
 
                 if (DEFAULT_DELIMITER.equals(delimiter)) {
@@ -894,7 +985,7 @@ public final class ObjectHelper {
      */
     public static Properties getCamelPropertiesWithPrefix(String prefix, CamelContext camelContext) {
         Properties answer = new Properties();
-        Map<String, String> camelProperties = camelContext.getProperties();
+        Map<String, String> camelProperties = camelContext.getGlobalOptions();
         if (camelProperties != null) {
             for (Map.Entry<String, String> entry : camelProperties.entrySet()) {
                 String key = entry.getKey();
@@ -1272,6 +1363,15 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target, boolean exact) {
+
+        if (source.equals(target)) {
+            return true;
+        } else if (source.getDeclaringClass() == target.getDeclaringClass()) {
+            return false;
+        } else if (!source.getDeclaringClass().isAssignableFrom(target.getDeclaringClass())) {
+            return false;
+        }
+
         if (!source.getName().equals(target.getName())) {
             return false;
         }
@@ -1282,7 +1382,12 @@ public final class ObjectHelper {
             }
         } else {
             if (!source.getReturnType().isAssignableFrom(target.getReturnType())) {
-                return false;
+                boolean b1 = source.isBridge();
+                boolean b2 = target.isBridge();
+                // must not be bridge methods
+                if (!b1 && !b2) {
+                    return false;
+                }
             }
         }
 
@@ -1299,7 +1404,12 @@ public final class ObjectHelper {
                 }
             } else {
                 if (!(source.getParameterTypes()[i].isAssignableFrom(target.getParameterTypes()[i]))) {
-                    return false;
+                    boolean b1 = source.isBridge();
+                    boolean b2 = target.isBridge();
+                    // must not be bridge methods
+                    if (!b1 && !b2) {
+                        return false;
+                    }
                 }
             }
         }
@@ -1572,24 +1682,11 @@ public final class ObjectHelper {
 
     /**
      * Returns true if the given name is a valid java identifier
+     * @deprecated use {@link StringHelper#isJavaIdentifier(String)} instead
      */
+    @Deprecated
     public static boolean isJavaIdentifier(String name) {
-        if (name == null) {
-            return false;
-        }
-        int size = name.length();
-        if (size < 1) {
-            return false;
-        }
-        if (Character.isJavaIdentifierStart(name.charAt(0))) {
-            for (int i = 1; i < size; i++) {
-                if (!Character.isJavaIdentifierPart(name.charAt(i))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
+        return StringHelper.isJavaIdentifier(name);
     }
 
     /**
@@ -1660,22 +1757,19 @@ public final class ObjectHelper {
     }
 
     /**
-     * Cleans the string to a pure Java identifier so we can use it for loading class names.
+     * Cleans the string to a pure Java identifier so we can use it for loading
+     * class names.
      * <p/>
-     * Especially from Spring DSL people can have \n \t or other characters that otherwise
-     * would result in ClassNotFoundException
+     * Especially from Spring DSL people can have \n \t or other characters that
+     * otherwise would result in ClassNotFoundException
      *
      * @param name the class name
      * @return normalized classname that can be load by a class loader.
+     * @deprecated use {@link StringHelper#normalizeClassName(String)} instead
      */
+    @Deprecated
     public static String normalizeClassName(String name) {
-        StringBuilder sb = new StringBuilder(name.length());
-        for (char ch : name.toCharArray()) {
-            if (ch == '.' || ch == '[' || ch == ']' || ch == '-' || Character.isJavaIdentifierPart(ch)) {
-                sb.append(ch);
-            }
-        }
-        return sb.toString();
+        return StringHelper.normalizeClassName(name);
     }
 
     /**
@@ -1757,9 +1851,15 @@ public final class ObjectHelper {
      */
     public static Scanner getScanner(Exchange exchange, Object value) {
         if (value instanceof WrappedFile) {
-            // generic file is just a wrapper for the real file so call again with the real file
             WrappedFile<?> gf = (WrappedFile<?>) value;
-            return getScanner(exchange, gf.getFile());
+            Object body = gf.getBody();
+            if (body != null) {
+                // we have loaded the file content into the body so use that
+                value = body;
+            } else {
+                // generic file is just a wrapper for the real file so call again with the real file
+                return getScanner(exchange, gf.getFile());
+            }
         }
 
         String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);

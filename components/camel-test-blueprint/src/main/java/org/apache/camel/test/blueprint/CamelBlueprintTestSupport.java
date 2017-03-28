@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -57,7 +56,7 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
- * Base class for OSGi Blueprint unit tests with Camel.
+ * Base class for OSGi Blueprint unit tests with Camel
  */
 public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     /** Name of a system property that sets camel context creation timeout. */
@@ -85,7 +84,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      * <p>Karaf and Fuse OSGi containers use synchronous startup.</p>
      * <p>Asynchronous startup is more in the <em>spirit</em> of OSGi and usually means that if everything works fine
      * asynchronously, it'll work synchronously as well. This isn't always true otherwise.</p>
-     * @return
+     * @return <code>true</code> when blueprint containers are to be started asynchronously, otherwise <code>false</code>.
      */
     protected boolean useAsynchronousBlueprintStartup() {
         return true;
@@ -97,24 +96,36 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         // load configuration file
         String[] file = loadConfigAdminConfigurationFile();
+        String[][] configAdminPidFiles = new String[0][0];
         if (file != null) {
-            if (file.length != 2) {
-                throw new IllegalArgumentException("The returned String[] from loadConfigAdminConfigurationFile must be of length 2, was " + file.length);
+            if (file.length % 2 != 0) {  // This needs to return pairs of filename and pid
+                throw new IllegalArgumentException("The length of the String[] returned from loadConfigAdminConfigurationFile must divisible by 2, was " + file.length);
             }
-            if (!new File(file[0]).exists()) {
-                throw new IllegalArgumentException("The provided file \"" + file[0] + "\" from loadConfigAdminConfigurationFile doesn't exist");
+            configAdminPidFiles = new String[file.length / 2][2];
+
+            int pair = 0;
+            for (int i = 0; i < file.length; i += 2) {
+                String fileName = file[i];
+                String pid = file[i + 1];
+                if (!new File(fileName).exists()) {
+                    throw new IllegalArgumentException("The provided file \"" + fileName + "\" from loadConfigAdminConfigurationFile doesn't exist");
+                }
+                configAdminPidFiles[pair][0] = fileName;
+                configAdminPidFiles[pair][1] = pid;
+                pair++;
             }
         }
+
         // fetch initial configadmin configuration if provided programmatically
         Properties initialConfiguration = new Properties();
         String pid = setConfigAdminInitialConfiguration(initialConfiguration);
         if (pid != null) {
-            file = new String[] {prepareInitialConfigFile(initialConfiguration), pid};
+            configAdminPidFiles = new String[][] {{prepareInitialConfigFile(initialConfiguration), pid}};
         }
 
         final String symbolicName = getClass().getSimpleName();
         final BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
-            includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives(), file);
+            includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives(), configAdminPidFiles);
 
         boolean expectReload = expectBlueprintContainerReloadOnConfigAdminUpdate();
 
@@ -236,7 +247,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         // for BlueprintEvent.CREATED
 
         // start context when we are ready
-        log.debug("Staring CamelContext: {}", context.getName());
+        log.debug("Starting CamelContext: {}", context.getName());
         context.start();
     }
 

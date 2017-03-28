@@ -17,11 +17,16 @@
 package org.apache.camel.builder;
 
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.support.ExpressionAdapter;
 
 /**
  * Represents an expression clause within the DSL which when the expression is
@@ -67,6 +72,35 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * A functional expression of the exchange
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public T exchange(final Function<Exchange, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange);
+            }
+        });
+    }
+
+    /**
+     * An expression of an inbound message
+     */
+    public T message() {
+        return inMessage();
+    }
+
+    /**
+     * A functional expression of an inbound message
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public T message(final Function<Message, Object> function) {
+        return inMessage(function);
+    }
+
+    /**
      * An expression of an inbound message
      */
     public T inMessage() {
@@ -74,10 +108,36 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
-     * An expression of an inbound message
+     * A functional expression of an inbound message
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public T inMessage(final Function<Message, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getIn());
+            }
+        });
+    }
+
+    /**
+     * An expression of an outbound message
      */
     public T outMessage() {
         return delegate.outMessage();
+    }
+
+    /**
+     * A functional expression of an outbound message
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public T outMessage(final Function<Message, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getOut());
+            }
+        });
     }
 
     /**
@@ -88,10 +148,66 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * A functional expression of an inbound message body
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public T body(final Function<Object, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getIn().getBody());
+            }
+        });
+    }
+
+    /**
+     * A functional expression of an inbound message body and headers
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public T body(final BiFunction<Object, Map<String, Object>, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody(),
+                    exchange.getIn().getHeaders());
+            }
+        });
+    }
+
+    /**
      * An expression of an inbound message body converted to the expected type
      */
     public T body(Class<?> expectedType) {
         return delegate.body(expectedType);
+    }
+
+    /**
+     * A functional expression of an inbound message body converted to the expected type
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public <B> T body(Class<B> expectedType, final Function<B, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getIn().getBody(expectedType));
+            }
+        });
+    }
+
+    /**
+     * A functional expression of an inbound message body converted to the expected type and headers
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public <B> T body(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody(expectedType),
+                    exchange.getIn().getHeaders());
+            }
+        });
     }
 
     /**
@@ -102,10 +218,66 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * A functional expression of an outbound message body
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public T outBody(final Function<Object, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getOut().getBody());
+            }
+        });
+    }
+
+    /**
+     * A functional expression of an outbound message body and headers
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public T outBody(final BiFunction<Object, Map<String, Object>, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getOut().getBody(),
+                    exchange.getOut().getHeaders());
+            }
+        });
+    }
+
+    /**
      * An expression of an outbound message body converted to the expected type
      */
     public T outBody(Class<?> expectedType) {
         return delegate.outBody(expectedType);
+    }
+
+    /**
+     * A functional expression of an outbound message body converted to the expected type
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public <B> T outBody(Class<B> expectedType, final Function<B, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getOut().getBody(expectedType));
+            }
+        });
+    }
+
+    /**
+     * A functional expression of an outbound message body converted to the expected type and headers
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public <B> T outBody(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
+        return delegate.expression(new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getOut().getBody(expectedType),
+                    exchange.getOut().getHeaders());
+            }
+        });
     }
 
     /**
@@ -162,9 +334,19 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * An expression of the exchange properties
+     *
+     * @deprecated use {@link #exchangeProperties()} instead
      */
+    @Deprecated
     public T properties() {
-        return delegate.properties();
+        return exchangeProperties();
+    }
+
+    /**
+     * An expression of the exchange properties
+     */
+    public T exchangeProperties() {
+        return delegate.exchangeProperties();
     }
 
     // Languages
@@ -653,43 +835,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     public T xtokenize(String path, char mode, Namespaces namespaces, int group) {
         return delegate.xtokenize(path, mode, namespaces, group);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text) {
-        return delegate.vtdxml(text);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text the expression to be evaluated
-     * @param namespaces the namespace prefix and URIs to use
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text, Namespaces namespaces) {
-        return delegate.vtdxml(text, namespaces);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
-     * expression using the VTD-XML library</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text the expression to be evaluated
-     * @param namespaces the namespace prefix and URIs to use
-     * @return the builder to continue processing the DSL
-     */
-    public T vtdxml(String text, Map<String, String> namespaces) {
-        return delegate.vtdxml(text, namespaces);
     }
 
     /**

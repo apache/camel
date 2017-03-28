@@ -60,7 +60,7 @@ public class PerformanceTestComponent extends DefaultComponent {
     private static final class PerformanceTestEndpoint extends DefaultEndpoint {
         private PerformanceTestConsumer consumer;
 
-        public PerformanceTestEndpoint(String uri, Component component) {
+        protected PerformanceTestEndpoint(String uri, Component component) {
             super(uri, component);
         }
         
@@ -91,13 +91,13 @@ public class PerformanceTestComponent extends DefaultComponent {
     }
     
     private static final class PerformanceTestConsumer extends DefaultConsumer {
-        public PerformanceTestConsumer(Endpoint endpoint, Processor processor) {
+        protected PerformanceTestConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);
         }
     }
 
     private static final class PerformanceTestProducer extends DefaultProducer implements AsyncProcessor {
-        public PerformanceTestProducer(Endpoint endpoint) {
+        protected PerformanceTestProducer(Endpoint endpoint) {
             super(endpoint);
         }
 

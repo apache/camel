@@ -18,11 +18,8 @@ package org.apache.camel.component.kafka;
 
 import java.net.URISyntaxException;
 
-import kafka.message.Message;
-import kafka.message.MessageAndMetadata;
-
-import kafka.serializer.DefaultDecoder;
 import org.apache.camel.Exchange;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -32,15 +29,10 @@ public class KafkaEndpointTest {
 
     @Test
     public void testCreatingKafkaExchangeSetsHeaders() throws URISyntaxException {
-        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:localhost", new KafkaComponent());
-        endpoint.setBrokers("localhost");
+        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent());
 
-        Message message = new Message("mymessage".getBytes(), "somekey".getBytes());
-        DefaultDecoder decoder = new DefaultDecoder(null);
-        MessageAndMetadata<byte[], byte[]> mm =
-                new MessageAndMetadata<byte[], byte[]>("topic", 4, message, 56, decoder, decoder);
-
-        Exchange exchange = endpoint.createKafkaExchange(mm);
+        ConsumerRecord<String, String> record = new ConsumerRecord<String, String>("topic", 4, 56, "somekey", "");
+        Exchange exchange = endpoint.createKafkaExchange(record);
         assertEquals("somekey", exchange.getIn().getHeader(KafkaConstants.KEY));
         assertEquals("topic", exchange.getIn().getHeader(KafkaConstants.TOPIC));
         assertEquals(4, exchange.getIn().getHeader(KafkaConstants.PARTITION));
@@ -49,8 +41,8 @@ public class KafkaEndpointTest {
 
     @Test
     public void assertSingleton() throws URISyntaxException {
-        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:localhost", new KafkaComponent());
-        endpoint.setBrokers("localhost");
+        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent());
+        endpoint.getConfiguration().setBrokers("localhost");
         assertTrue(endpoint.isSingleton());
     }
 

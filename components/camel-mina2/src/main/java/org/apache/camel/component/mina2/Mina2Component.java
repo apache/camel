@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.core.filterchain.IoFilter;
 
@@ -33,6 +34,7 @@ import org.apache.mina.core.filterchain.IoFilter;
  */
 public class Mina2Component extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private Mina2Configuration configuration;
 
     public Mina2Component() {

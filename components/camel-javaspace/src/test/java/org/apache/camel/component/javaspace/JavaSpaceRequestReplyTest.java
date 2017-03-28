@@ -105,7 +105,7 @@ class PojoCallable implements Callable<Reply> {
     final ITestPojo proxy;
     final Request request;
 
-    public PojoCallable(Request request, ITestPojo proxy) {
+    PojoCallable(Request request, ITestPojo proxy) {
         this.request = request;
         this.proxy = proxy;
     }

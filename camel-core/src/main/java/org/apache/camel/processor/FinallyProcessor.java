@@ -91,7 +91,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
         private final Exception exception;
         private final boolean fault;
 
-        public FinallyAsyncCallback(Exchange exchange, AsyncCallback callback, Exception exception, boolean fault) {
+        FinallyAsyncCallback(Exchange exchange, AsyncCallback callback, Exception exception, boolean fault) {
             this.exchange = exchange;
             this.callback = callback;
             this.exception = exception;

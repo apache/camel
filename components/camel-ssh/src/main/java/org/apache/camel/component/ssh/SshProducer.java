@@ -34,20 +34,20 @@ public class SshProducer extends DefaultProducer {
     
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
         client = SshClient.setUpDefaultClient();
         client.start();
+        
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
+        
         if (client != null) {
             client.stop();
             client = null;
         }
-
-        super.doStop();
     }
 
     @Override

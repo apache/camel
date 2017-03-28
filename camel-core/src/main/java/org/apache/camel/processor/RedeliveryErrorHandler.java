@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -35,12 +36,12 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.EventHelper;
@@ -48,6 +49,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -64,6 +66,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final AtomicInteger redeliverySleepCounter = new AtomicInteger();
     protected ScheduledExecutorService executorService;
     protected final CamelContext camelContext;
+    protected final AsyncProcessorAwaitManager awaitManager;
     protected final Processor deadLetter;
     protected final String deadLetterUri;
     protected final boolean deadLetterHandleNewException;
@@ -119,11 +122,58 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     /**
+     * Task for sleeping during redelivery attempts.
+     * <p/>
+     * This task is for the synchronous blocking. If using async delayed then a scheduled thread pool
+     * is used for sleeping and trigger redeliveries.
+     */
+    private final class RedeliverSleepTask {
+
+        private final RedeliveryPolicy policy;
+        private final long delay;
+
+        RedeliverSleepTask(RedeliveryPolicy policy, long delay) {
+            this.policy = policy;
+            this.delay = delay;
+        }
+
+        public boolean sleep() throws InterruptedException {
+            // for small delays then just sleep
+            if (delay < 1000) {
+                policy.sleep(delay);
+                return true;
+            }
+
+            StopWatch watch = new StopWatch();
+
+            log.debug("Sleeping for: {} millis until attempting redelivery", delay);
+            while (watch.taken() < delay) {
+                // sleep using 1 sec interval
+
+                long delta = delay - watch.taken();
+                long max = Math.min(1000, delta);
+                if (max > 0) {
+                    log.trace("Sleeping for: {} millis until waking up for re-check", max);
+                    Thread.sleep(max);
+                }
+
+                // are we preparing for shutdown then only do redelivery if allowed
+                if (preparingShutdown && !policy.isAllowRedeliveryWhileStopping()) {
+                    log.debug("Rejected redelivery while stopping");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    /**
      * Tasks which performs asynchronous redelivery attempts, and being triggered by a
      * {@link java.util.concurrent.ScheduledExecutorService} to avoid having any threads blocking if a task
      * has to be delayed before a redelivery attempt is performed.
      */
-    private class AsyncRedeliveryTask implements Callable<Boolean> {
+    private final class AsyncRedeliveryTask implements Callable<Boolean> {
 
         private final Exchange exchange;
         private final AsyncCallback callback;
@@ -213,6 +263,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
 
         this.camelContext = camelContext;
+        this.awaitManager = camelContext.getAsyncProcessorAwaitManager();
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
         this.output = output;
@@ -244,7 +295,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             formatter.setShowHeaders(true);
             formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
             try {
-                Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
                 if (maxChars != null) {
                     formatter.setMaxChars(maxChars);
                 }
@@ -341,7 +392,20 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // no output then just return
             return;
         }
-        AsyncProcessorHelper.process(this, exchange);
+
+        // inline org.apache.camel.util.AsyncProcessorHelper.process(org.apache.camel.AsyncProcessor, org.apache.camel.Exchange)
+        // to optimize and reduce stacktrace lengths
+        final CountDownLatch latch = new CountDownLatch(1);
+        boolean sync = process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                if (!doneSync) {
+                    awaitManager.countDown(exchange, latch);
+                }
+            }
+        });
+        if (!sync) {
+            awaitManager.await(exchange, latch);
+        }
     }
 
     /**
@@ -439,8 +503,17 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         try {
                             // we are doing synchronous redelivery and use thread sleep, so we keep track using a counter how many are sleeping
                             redeliverySleepCounter.incrementAndGet();
-                            data.currentRedeliveryPolicy.sleep(data.redeliveryDelay);
+                            RedeliverSleepTask task = new RedeliverSleepTask(data.currentRedeliveryPolicy, data.redeliveryDelay);
+                            boolean complete = task.sleep();
                             redeliverySleepCounter.decrementAndGet();
+                            if (!complete) {
+                                // the task was rejected
+                                exchange.setException(new RejectedExecutionException("Redelivery not allowed while stopping"));
+                                // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
+                                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                                // jump to start of loop which then detects that we are failed and exhausted
+                                continue;
+                            }
                         } catch (InterruptedException e) {
                             redeliverySleepCounter.decrementAndGet();
                             // we was interrupted so break out
@@ -733,7 +806,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         msg = msg + ". Handled and continue routing.";
 
         // log that we failed but want to continue
-        logFailedDelivery(false, false, false, isDeadLetterChannel, true, exchange, msg, data, null);
+        logFailedDelivery(false, false, false, true, isDeadLetterChannel, exchange, msg, data, null);
     }
 
     protected void prepareExchangeForRedelivery(Exchange exchange, RedeliveryData data) {
@@ -912,8 +985,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             decrementRedeliveryCounter(exchange);
         }
 
-        // is the a failure processor to process the Exchange
-        if (processor != null) {
+        // we should allow using the failure processor if we should not continue
+        // or in case of continue then the failure processor is NOT a dead letter channel
+        // because you can continue and still let the failure processor do some routing
+        // before continue in the main route.
+        boolean allowFailureProcessor = !shouldContinue || !isDeadLetterChannel;
+
+        if (allowFailureProcessor && processor != null) {
 
             // prepare original IN body if it should be moved instead of current body
             if (data.useOriginalInMessage) {
@@ -1168,7 +1246,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // should we include message history
             if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
                 // only use the exchange formatter if we should log exhausted message body (and if using a custom formatter then always use it)
-                ExchangeFormatter formatter = customExchangeFormatter ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() ? exchangeFormatter : null);
+                ExchangeFormatter formatter = customExchangeFormatter
+                    ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() || camelContext.isLogExhaustedMessageBody() ? exchangeFormatter : null);
                 String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, false);
                 if (routeStackTrace != null) {
                     msg = msg + "\n" + routeStackTrace;
@@ -1187,7 +1266,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // should we include message history
             if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
                 // only use the exchange formatter if we should log exhausted message body (and if using a custom formatter then always use it)
-                ExchangeFormatter formatter = customExchangeFormatter ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() ? exchangeFormatter : null);
+                ExchangeFormatter formatter = customExchangeFormatter
+                    ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() || camelContext.isLogExhaustedMessageBody() ? exchangeFormatter : null);
                 String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, e != null && logStackTrace);
                 if (routeStackTrace != null) {
                     msg = msg + "\n" + routeStackTrace;

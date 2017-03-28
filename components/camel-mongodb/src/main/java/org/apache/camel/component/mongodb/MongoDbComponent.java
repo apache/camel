@@ -21,10 +21,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.mongodb.Mongo;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,25 +35,15 @@ public class MongoDbComponent extends UriEndpointComponent {
             new HashSet<MongoDbOperation>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, 
                     MongoDbOperation.update, MongoDbOperation.remove));
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbComponent.class);
-    private volatile Mongo db;
 
     public MongoDbComponent() {
         super(MongoDbEndpoint.class);
     }
 
-    /**
-     * Should access a singleton of type Mongo
-     */
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // TODO: this only supports one mongodb
-        if (db == null) {
-            db = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, Mongo.class);
-            LOG.debug("Resolved the connection with the name {} as {}", remaining, db);
-        }
 
         MongoDbEndpoint endpoint = new MongoDbEndpoint(uri, this);
         endpoint.setConnectionBean(remaining);
-        endpoint.setMongoConnection(db);
         setProperties(endpoint, parameters);
         
         return endpoint;
@@ -63,12 +51,6 @@ public class MongoDbComponent extends UriEndpointComponent {
 
     @Override
     protected void doShutdown() throws Exception {
-        if (db != null) {
-            // properly close the underlying physical connection to MongoDB
-            LOG.debug("Closing the connection {} on {}", db, this);
-            db.close();
-        }
-
         super.doShutdown();
     }
 

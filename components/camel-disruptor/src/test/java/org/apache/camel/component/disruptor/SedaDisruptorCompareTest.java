@@ -161,7 +161,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
             parameters
                 .add(new Object[] {"SEDA LONG {P=1, C=1, CCT=1, SIZE=" + SIZE_PARAMETER_VALUE + "}",
                     "seda:speedtest?concurrentConsumers=1&waitForTaskToComplete=IfReplyExpected&timeout=30000&multipleConsumers=false&limitConcurrentConsumers=true&blockWhenFull=true&size="
-                        + SIZE_PARAMETER_VALUE ,
+                        + SIZE_PARAMETER_VALUE,
                     singleProducer(), singleConsumer(),
                     singleConcurrentConsumerThread(), SEDA_SIZE_HISTOGRAM_BOUNDS});
         }
@@ -352,7 +352,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
 
         private Queue<Long> latencyQueue = new ConcurrentLinkedQueue<Long>();
 
-        public ExchangeAwaiter(final int count) {
+        ExchangeAwaiter(final int count) {
             this.count = count;
         }
 
@@ -410,7 +410,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         private final int totalMessageCount;
         private int producedMessageCount;
 
-        public ProducerThread(final int totalMessageCount) {
+        ProducerThread(final int totalMessageCount) {
             super("TestDataProducerThread");
             this.totalMessageCount = totalMessageCount;
         }

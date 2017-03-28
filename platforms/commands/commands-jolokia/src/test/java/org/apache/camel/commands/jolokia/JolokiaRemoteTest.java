@@ -218,7 +218,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        List<Map<String, Object>> data = controller.browseInflightExchanges("camel-1", 500, false);
+        List<Map<String, Object>> data = controller.browseInflightExchanges("camel-1", "route1", 500, false);
         System.out.println(data);
     }
 

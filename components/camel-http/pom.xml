@@ -21,18 +21,15 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-http</artifactId>
-  <packaging>bundle</packaging>
-  <name>Camel :: HTTP</name>
+  <packaging>jar</packaging>
+  <name>Camel :: HTTP (deprecated)</name>
   <description>Camel HTTP support</description>
 
   <properties>
-    <camel.osgi.import.before.defaults>
-      javax.servlet.*;version="${servlet-version-range}"
-    </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.http.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>
       org.apache.camel.spi.ComponentResolver;component=http,
@@ -49,10 +46,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http-common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_3.0_spec</artifactId>
     </dependency>
 
     <dependency>
@@ -81,16 +74,26 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+    </dependency>       
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty9-version}</version>
+      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

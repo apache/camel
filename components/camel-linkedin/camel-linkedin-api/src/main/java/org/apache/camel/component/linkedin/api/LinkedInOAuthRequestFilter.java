@@ -93,7 +93,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
         this.oAuthToken = null;
 
         // create HtmlUnit client
-        webClient = new WebClient(BrowserVersion.FIREFOX_24);
+        webClient = new WebClient(BrowserVersion.FIREFOX_38);
         final WebClientOptions options = webClient.getOptions();
         options.setRedirectEnabled(true);
         options.setJavaScriptEnabled(false);
@@ -202,7 +202,10 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                     throw e;
                 }
                 final String location = e.getResponse().getResponseHeaderValue("Location");
-                redirectQuery = location.substring(location.indexOf('?') + 1);
+                redirectQuery = new URL(location).getQuery();
+            }
+            if (redirectQuery == null) {
+                throw new IllegalArgumentException("Redirect response query is null, check username, password and permissions");
             }
             final Map<String, String> params = new HashMap<String, String>();
             final Matcher matcher = QUERY_PARAM_PATTERN.matcher(redirectQuery);
@@ -224,7 +227,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
     }
 
     public void close() {
-        webClient.closeAllWindows();
+        webClient.close();
     }
 
     private OAuthToken getAccessToken(String refreshToken) throws IOException {

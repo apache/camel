@@ -30,6 +30,7 @@ import org.apache.camel.util.component.AbstractApiComponent;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 
 /**
@@ -99,6 +100,14 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
         super.setConfiguration(configuration);
     }
 
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public Olingo2Configuration getConfiguration() {
+        return super.getConfiguration();
+    }
+
     public Olingo2AppWrapper createApiProxy(Olingo2Configuration endpointConfiguration) {
         final Olingo2AppWrapper result;
         if (endpointConfiguration.equals(this.configuration)) {
@@ -116,9 +125,9 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
 
     private Olingo2AppWrapper createOlingo2App(Olingo2Configuration configuration) {
 
-        HttpAsyncClientBuilder clientBuilder = configuration.getHttpAsyncClientBuilder();
+        Object clientBuilder = configuration.getHttpAsyncClientBuilder();
         if (clientBuilder == null) {
-            clientBuilder = HttpAsyncClientBuilder.create();
+            HttpAsyncClientBuilder asyncClientBuilder = HttpAsyncClientBuilder.create();
 
             // apply simple configuration properties
             final RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
@@ -131,7 +140,7 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
             }
 
             // set default request config
-            clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
+            asyncClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
 
             SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
             if (sslContextParameters == null) {
@@ -139,7 +148,7 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
                 sslContextParameters = new SSLContextParameters();
             }
             try {
-                clientBuilder.setSSLContext(sslContextParameters.createSSLContext());
+                asyncClientBuilder.setSSLContext(sslContextParameters.createSSLContext(getCamelContext()));
             } catch (GeneralSecurityException e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             } catch (IOException e) {
@@ -147,7 +156,13 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
             }
         }
 
-        apiProxy = new Olingo2AppWrapper(new Olingo2AppImpl(configuration.getServiceUri(), clientBuilder));
+        Olingo2AppImpl olingo2App;
+        if (clientBuilder == null || clientBuilder instanceof HttpAsyncClientBuilder) {
+            olingo2App = new Olingo2AppImpl(configuration.getServiceUri(), (HttpAsyncClientBuilder) clientBuilder);
+        } else {
+            olingo2App = new Olingo2AppImpl(configuration.getServiceUri(), (HttpClientBuilder) clientBuilder);
+        }
+        apiProxy = new Olingo2AppWrapper(olingo2App);
         apiProxy.getOlingo2App().setContentType(configuration.getContentType());
         apiProxy.getOlingo2App().setHttpHeaders(configuration.getHttpHeaders());
 

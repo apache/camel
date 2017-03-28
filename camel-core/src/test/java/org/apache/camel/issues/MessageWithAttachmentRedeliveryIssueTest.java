@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultAttachment;
 
 /**
  *
@@ -39,7 +40,7 @@ public class MessageWithAttachmentRedeliveryIssueTest extends ContextTestSupport
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
                 exchange.getIn().addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
-                exchange.getIn().addAttachment("message2.xml", new DataHandler(new FileDataSource(new File("src/test/data/message2.xml"))));
+                exchange.getIn().addAttachmentObject("message2.xml", new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
             }
         });
 

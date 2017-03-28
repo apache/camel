@@ -1,0 +1,208 @@
+## Ehcache Component
+
+*Available as of Camel version 2.18*
+
+The *ehcache* component enables you to perform caching operations using
+Ehcache 3 as the Cache Implementation.
+
+This component supports producer and event based consumer endpoints.
+
+The Cache consumer is an event based consumer and can be used to listen
+and respond to specific cache activities. 
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ehcache</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-----------------------------
+ehcache://cacheName[?options]
+-----------------------------
+
+You can append query options to the URI in the following
+format, `?option=value&option=#beanRef&...`
+
+### Options
+
+
+// component options: START
+The Ehcache component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Ehcache endpoint is configured using URI syntax:
+
+    ehcache:cacheName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **cacheName** | *Required* the cache name |  | String
+|=======================================================================
+
+#### Query Parameters (15 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **cacheManager** (common) | The cache manager |  | CacheManager
+| **configUri** (common) | URI pointing to the Ehcache XML configuration file's location |  | String
+| **createCacheIfNotExist** (common) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **eventFiring** (consumer) | Set the the delivery mode (synchronous asynchronous) | ASYNCHRONOUS | EventFiring
+| **eventOrdering** (consumer) | Set the the delivery mode (ordered unordered) | ORDERED | EventOrdering
+| **eventTypes** (consumer) | Set the type of events to listen for | EVICTED,EXPIRED,REMOVED,CREATED,UPDATED | Set
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **action** (producer) | To configure the default cache action. If an action is set in the message header then the operation from the header takes precedence. |  | String
+| **key** (producer) | To configure the default action key. If a key is set in the message header then the key from the header takes precedence. |  | Object
+| **configuration** (advanced) | The default cache configuration to be used to create caches. |  | CacheConfiguration<?,?>
+| **keyType** (advanced) | The cache key type default Object.class | java.lang.Object | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **valueType** (advanced) | The cache value type default Object.class | java.lang.Object | String
+|=======================================================================
+// endpoint options: END
+
+
+#### Message Headers Camel 
+
+ 
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|CamelEhcacheAction |`String` |The operation to be perfomed on the cache, valid options are:
+
+* CLEAR
+* PUT
+* PUT_ALL
+* PUT_IF_ABSENT
+* GET
+* GET_ALL
+* REMOVE
+* REMOVE_ALL
+* REPLACE
+
+|CamelEhcacheActionHasResult |Boolean |Set to true if the action has a result
+
+|CamelEhcacheActionSucceeded |`Boolean` |Set to true if the actionsuccedded
+
+|CamelEhcacheKey |Object |The cache key used for an action
+
+|CamelEhcacheKeys |Set<Object> |A list of keys, used in
+
+* PUT_ALL
+* GET_ALL
+* REMOVE_ALL
+
+|CamelEhcacheValue |Object |The value to put in the cache or the result of an operation
+
+|CamelEhcacheOldValue |Object |The old value associated to a key for actions like PUT_IF_ABSENT or the
+Object used for comparison for actions like REPLACE
+
+|CamelEhcacheEventType |EventType |The type of event received
+|=======================================================================
+
+### Ehcache based idempotent repository example:
+
+[source,java]
+------------------------------------------------------------------------------------------------
+CacheManager manager = CacheManagerBuilder.newCacheManager(new XmlConfiguration("ehcache.xml"));
+EhcacheIdempotentRepository repo = new EhcacheIdempotentRepository(manager, "idempotent-cache");
+ 
+from("direct:in")
+    .idempotentConsumer(header("messageId"), idempotentRepo)
+    .to("mock:out");
+------------------------------------------------------------------------------------------------
+
+ 
+
+### Ehcache based aggregation repository example:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------
+public class EhcacheAggregationRepositoryRoutesTest extends CamelTestSupport {
+    private static final String ENDPOINT_MOCK = "mock:result";
+    private static final String ENDPOINT_DIRECT = "direct:one";
+    private static final int[] VALUES = generateRandomArrayOfInt(10, 0, 30);
+    private static final int SUM = IntStream.of(VALUES).reduce(0, (a, b) -> a + b);
+    private static final String CORRELATOR = "CORRELATOR";
+
+    @EndpointInject(uri = ENDPOINT_MOCK)
+    private MockEndpoint mock;
+
+    @Produce(uri = ENDPOINT_DIRECT)
+    private ProducerTemplate producer;
+
+    @Test
+    public void checkAggregationFromOneRoute() throws Exception {
+        mock.expectedMessageCount(VALUES.length);
+        mock.expectedBodiesReceived(SUM);
+
+        IntStream.of(VALUES).forEach(
+            i -> producer.sendBodyAndHeader(i, CORRELATOR, CORRELATOR)
+        );
+
+        mock.assertIsSatisfied();
+    }
+
+    private Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        if (oldExchange == null) {
+            return newExchange;
+        } else {
+            Integer n = newExchange.getIn().getBody(Integer.class);
+            Integer o = oldExchange.getIn().getBody(Integer.class);
+            Integer v = (o == null ? 0 : o) + (n == null ? 0 : n);
+
+            oldExchange.getIn().setBody(v, Integer.class);
+
+            return oldExchange;
+        }
+    }
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(ENDPOINT_DIRECT)
+                    .routeId("AggregatingRouteOne")
+                    .aggregate(header(CORRELATOR))
+                    .aggregationRepository(createAggregateRepository())
+                    .aggregationStrategy(EhcacheAggregationRepositoryRoutesTest.this::aggregate)
+                    .completionSize(VALUES.length)
+                        .to("log:org.apache.camel.component.ehcache.processor.aggregate.level=INFO&showAll=true&mulltiline=true")
+                        .to(ENDPOINT_MOCK);
+            }
+        };
+    }
+
+    protected EhcacheAggregationRepository createAggregateRepository() throws Exception {
+        CacheManager cacheManager = CacheManagerBuilder.newCacheManager(new XmlConfiguration("ehcache.xml"));
+        cacheManager.init();
+
+        EhcacheAggregationRepository repository = new EhcacheAggregationRepository();
+        repository.setCacheManager(cacheManager);
+        repository.setCacheName("aggregate");
+
+        return repository;
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------

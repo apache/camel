@@ -35,6 +35,11 @@
       <to uri="mock:bar"/>
     </route>
 
+    <route>
+      <from uri="stub:GET    /v1/phonebook/companies/{companyCode}?oauth=OPTIONAL"/>
+      <to uri="mock:stub"/>
+    </route>
+
   </camelContext>
 
 </blueprint>

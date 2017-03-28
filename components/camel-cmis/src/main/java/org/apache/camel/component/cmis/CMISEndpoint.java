@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cmis;
 
+import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,29 +26,35 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
  */
-@UriEndpoint(scheme = "cmis", title = "CMIS", syntax = "cmis:url", consumerClass = CMISConsumer.class, label = "cms,database")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "cmis", title = "CMIS", syntax = "cmis:cmsUrl", consumerClass = CMISConsumer.class, label = "cms,database")
 public class CMISEndpoint extends DefaultEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(CMISEndpoint.class);
 
-    private final CMISSessionFacadeFactory sessionFacadeFactory;
-
-    @UriPath(description = "the cmis url")
+    @UriPath(description = "URL to the cmis repository")
     @Metadata(required = "true")
-    private final String url;
+    private final String cmsUrl;
 
     @UriParam(label = "producer")
     private boolean queryMode;
 
-    public CMISEndpoint(String uri, CMISComponent cmisComponent, CMISSessionFacadeFactory sessionFacadeFactory) {
-        super(uri, cmisComponent);
+    @UriParam
+    private CMISSessionFacade sessionFacade; // to include in component documentation
 
-        this.url = uri;
+    @UriParam(label = "advanced")
+    private CMISSessionFacadeFactory sessionFacadeFactory;
+
+    private Map<String, Object> properties; // properties for each session facade instance being created
+
+    public CMISEndpoint(String uri, CMISComponent component, String cmsUrl) {
+        this(uri, component, cmsUrl, new DefaultCMISSessionFacadeFactory());
+    }
+
+    public CMISEndpoint(String uri, CMISComponent component, String cmsUrl, CMISSessionFacadeFactory sessionFacadeFactory) {
+        super(uri, component);
+        this.cmsUrl = cmsUrl;
         this.sessionFacadeFactory = sessionFacadeFactory;
     }
 
@@ -78,5 +86,39 @@ public class CMISEndpoint extends DefaultEndpoint {
      */
     public void setQueryMode(boolean queryMode) {
         this.queryMode = queryMode;
+    }
+
+    public String getCmsUrl() {
+        return cmsUrl;
+    }
+
+    public CMISSessionFacade getSessionFacade() {
+        return sessionFacade;
+    }
+
+    /**
+     * Session configuration
+     */
+    public void setSessionFacade(CMISSessionFacade sessionFacade) {
+        this.sessionFacade = sessionFacade;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
+
+    public CMISSessionFacadeFactory getSessionFacadeFactory() {
+        return sessionFacadeFactory;
+    }
+
+    /**
+     * To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances
+     */
+    public void setSessionFacadeFactory(CMISSessionFacadeFactory sessionFacadeFactory) {
+        this.sessionFacadeFactory = sessionFacadeFactory;
     }
 }

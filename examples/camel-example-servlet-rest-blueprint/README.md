@@ -14,18 +14,18 @@ You will need to compile this example first:
 ### run
 To install Apache Camel in Karaf you type in the shell (we use version ${project.version}):
 
-	features:chooseurl camel ${project.version}
-	features:install camel
+	feature:repo-add camel ${project.version}
+	feature:install camel
 
 First you need to install the following features in Karaf/ServiceMix with:
 
-	features:install camel-servlet
-	features:install camel-jackson
-	features:install war
+	feature:install camel-servlet
+	feature:install camel-jackson
+	feature:install war
 
 Then you can install the Camel example:
 
-	osgi:install -s mvn:org.apache.camel/camel-example-servlet-rest-blueprint/${project.version}
+	install -s mvn:org.apache.camel/camel-example-servlet-rest-blueprint/${project.version}
 
 And you can see the application running by tailing the logs
 

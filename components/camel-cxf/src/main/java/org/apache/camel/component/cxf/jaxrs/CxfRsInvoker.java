@@ -26,6 +26,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;
@@ -90,13 +91,13 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 // The continuation could be called before the suspend is called
                 continuation.suspend(endpoint.getContinuationTimeout());
                 cxfExchange.put(SUSPENED, Boolean.TRUE);
+                continuation.setObject(camelExchange);
                 cxfRsConsumer.getAsyncProcessor().process(camelExchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         // make sure the continuation resume will not be called before the suspend method in other thread
                         synchronized (continuation) {
                             LOG.trace("Resuming continuation of exchangeId: {}", camelExchange.getExchangeId());
                             // resume processing after both, sync and async callbacks
-                            continuation.setObject(camelExchange);
                             continuation.resume();
                         }
                     }
@@ -110,6 +111,17 @@ public class CxfRsInvoker extends JAXRSInvoker {
                     return returnResponse(cxfExchange, camelExchange);
                 } finally {
                     cxfRsConsumer.doneUoW(camelExchange);
+                }
+            } else {
+                if (!continuation.isPending()) {
+                    cxfExchange.put(SUSPENED, Boolean.FALSE);
+                    org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
+                    camelExchange.setException(new ExchangeTimedOutException(camelExchange, endpoint.getContinuationTimeout()));
+                    try {
+                        return returnResponse(cxfExchange, camelExchange);
+                    } finally {
+                        cxfRsConsumer.doneUoW(camelExchange);
+                    }
                 }
             }
         }

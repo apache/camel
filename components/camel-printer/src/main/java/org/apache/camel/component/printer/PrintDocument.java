@@ -31,7 +31,7 @@ class PrintDocument implements Doc {
     private Reader reader;
     private byte[] buffer;
 
-    public PrintDocument(InputStream stream, DocFlavor docFlavor) {
+    PrintDocument(InputStream stream, DocFlavor docFlavor) {
         this.stream = stream;
         this.docFlavor = docFlavor;
     }

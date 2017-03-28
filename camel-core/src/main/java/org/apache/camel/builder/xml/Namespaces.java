@@ -24,7 +24,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import org.apache.camel.model.language.VtdXmlExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.NamespaceAware;
@@ -93,15 +92,6 @@ public class Namespaces {
             }
         }
         return this;
-    }
-
-    /**
-     * Creates the XPath expression using the VTD-XML library using the current namespace context
-     */
-    public VtdXmlExpression vtdxml(String expression) {
-        VtdXmlExpression answer = new VtdXmlExpression(expression);
-        configure(answer);
-        return answer;
     }
 
     /**

@@ -24,11 +24,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * GZip data format
+ * GZip compression data format
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "GZip")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "GZip")
 @XmlRootElement(name = "gzip")
 public class GzipDataFormat extends DataFormatDefinition {
 

@@ -82,11 +82,17 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);
 
+        long uptimeMillis = (Long) mbeanServer.getAttribute(on, "UptimeMillis");
+        assertTrue(uptimeMillis > 0);
+
         String status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
 
         Boolean messageHistory = (Boolean) mbeanServer.getAttribute(on, "MessageHistory");
         assertEquals(Boolean.TRUE, messageHistory);
+
+        Boolean logMask = (Boolean) mbeanServer.getAttribute(on, "LogMask");
+        assertEquals(Boolean.FALSE, logMask);
 
         Integer total = (Integer) mbeanServer.getAttribute(on, "TotalRoutes");
         assertEquals(2, total.intValue());
@@ -276,7 +282,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
         assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"integer\","
-                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\""));
+                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
 
         // and we should also have the javadoc documentation
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
@@ -309,7 +315,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
         assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"integer\","
-                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"value\": \"5\""));
+                + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
         // and we should also have the javadoc documentation
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
     }
@@ -369,8 +375,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue(json.contains("\"description\": \"Aggregates many messages into a single message\""));
         assertTrue(json.contains("\"label\": \"eip,routing\""));
-        assertTrue(json.contains("\"correlationExpression\": { \"kind\": \"expression\", \"required\": \"true\", \"type\": \"object\""));
-        assertTrue(json.contains("\"discardOnCompletionTimeout\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"correlationExpression\": { \"kind\": \"expression\", \"displayName\": \"Correlation Expression\", \"required\": true, \"type\": \"object\""));
+        assertTrue(json.contains("\"discardOnCompletionTimeout\": { \"kind\": \"attribute\", \"displayName\": \"Discard On Completion Timeout\", \"required\": false, \"type\": \"boolean\""));
     }
 
     public void testManagedCamelContextExplainComponentModel() throws Exception {
@@ -387,9 +393,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNotNull(json);
 
         assertTrue(json.contains("\"label\": \"core,endpoint\""));
-        assertTrue(json.contains("\"defaultQueueFactory\": { \"kind\": \"property\", \"type\": \"object\", \"javaType\":"
-            + " \"org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>\","));
-        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"value\": \"0\""));
+        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"group\": \"advanced\", \"label\": \"advanced\""));
     }
 
     @Override
@@ -397,9 +401,9 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:result");
+                from("direct:start").delay(10).to("mock:result");
 
-                from("direct:foo").transform(constant("Bye World")).id("myTransform");
+                from("direct:foo").delay(10).transform(constant("Bye World")).id("myTransform");
             }
         };
     }

@@ -38,7 +38,7 @@ public class DropboxConsumerSearchQueryTest extends DropboxTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUNDED_FILES.name());
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUND_FILES.name());
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);

@@ -28,7 +28,7 @@ import org.apache.camel.CamelContext;
  * 
  * <pre>
  * {@code <camel:recipientList>} 
- * {@code      <camel:simple>}xslt:${header.XSLT_FILE}?uriResolverFactory=#uriResolverFactory{@code</camel:simple>}
+ * {@code      <camel:simple>xslt:${header.XSLT_FILE}?uriResolverFactory=#uriResolverFactory</camel:simple>}
  * {@code </camel:recipientList>}
  * </pre>
  * 

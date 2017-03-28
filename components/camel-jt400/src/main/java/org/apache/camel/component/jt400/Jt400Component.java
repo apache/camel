@@ -21,6 +21,7 @@ import java.util.Map;
 import com.ibm.as400.access.AS400ConnectionPool;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ public class Jt400Component extends UriEndpointComponent {
      * provides a pool, it would be wasteful for Camel to initialize and keep an
      * idle pool.
      */
+    @Metadata(label = "advanced")
     private AS400ConnectionPool connectionPool;
 
     public Jt400Component() {

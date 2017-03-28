@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -583,7 +582,7 @@ public final class URISupport {
         } else {
             // reorder parameters a..z
             List<String> keys = new ArrayList<String>(parameters.keySet());
-            Collections.sort(keys);
+            keys.sort(null);
 
             Map<String, Object> sorted = new LinkedHashMap<String, Object>(parameters.size());
             for (String key : keys) {
@@ -599,5 +598,38 @@ public final class URISupport {
     private static String buildUri(String scheme, String path, String query) {
         // must include :// to do a correct URI all components can work with
         return scheme + "://" + path + (query != null ? "?" + query : "");
+    }
+
+    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
+        Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
+
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
+            if (name.startsWith(optionPrefix)) {
+                Object value = properties.get(name);
+                name = name.substring(optionPrefix.length());
+                rc.put(name, value);
+                it.remove();
+            }
+        }
+
+        return rc;
+    }
+
+    public static String pathAndQueryOf(final URI uri) {
+        final String path = uri.getPath();
+
+        String pathAndQuery = path;
+        if (ObjectHelper.isEmpty(path)) {
+            pathAndQuery = "/";
+        }
+
+        final String query = uri.getQuery();
+        if (ObjectHelper.isNotEmpty(query)) {
+            pathAndQuery += "?" + query;
+        }
+
+        return pathAndQuery;
     }
 }

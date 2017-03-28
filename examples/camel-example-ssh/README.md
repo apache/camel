@@ -23,9 +23,9 @@ To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell
 
-	features:chooseurl camel <camel version>
-	features:addurl mvn:org.apache.camel/camel-example-ssh/<camel version>/xml/features
-	features:install camel-example-ssh
+	feature:repo-add camel <camel version>
+	feature:repo-add mvn:org.apache.camel/camel-example-ssh/<camel version>/xml/features
+	feature:install camel-example-ssh
 
 ### Forum, Help, etc
 

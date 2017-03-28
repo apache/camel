@@ -17,8 +17,6 @@
 package org.apache.camel.component.gora;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.ExecutorService;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -34,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of Camel-Gora {@link Consumer}.
- *
  */
 public class GoraConsumer extends ScheduledPollConsumer {
 
@@ -57,11 +54,6 @@ public class GoraConsumer extends ScheduledPollConsumer {
      * Camel Gora Query
      */
     private Query query;
-
-    /**
-     * executor service
-     */
-    private ExecutorService executor;
 
     /**
      * Poll run

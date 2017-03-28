@@ -19,13 +19,17 @@ package org.apache.camel.component.properties;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
@@ -91,19 +95,27 @@ public class PropertiesComponent extends UriEndpointComponent {
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private boolean isDefaultCreated;
-    private String[] locations;
+    private List<PropertiesLocation> locations = Collections.emptyList();
+
     private boolean ignoreMissingLocation;
     private String encoding;
+    @Metadata(defaultValue = "true")
     private boolean cache = true;
     private String propertyPrefix;
     private String propertyPrefixResolved;
     private String propertySuffix;
     private String propertySuffixResolved;
+    @Metadata(defaultValue = "true")
     private boolean fallbackToUnaugmentedProperty = true;
+    @Metadata(defaultValue = "true")
+    private boolean defaultFallbackEnabled = true;
+    @Metadata(defaultValue = DEFAULT_PREFIX_TOKEN)
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
+    @Metadata(defaultValue = DEFAULT_SUFFIX_TOKEN)
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
     private Properties initialProperties;
     private Properties overrideProperties;
+    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE)
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
 
     public PropertiesComponent() {
@@ -133,17 +145,18 @@ public class PropertiesComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String[] paths = locations;
+        List<PropertiesLocation> paths = locations;
+
+        Boolean ignoreMissingLocationLoc = getAndRemoveParameter(parameters, "ignoreMissingLocation", Boolean.class);
+        if (ignoreMissingLocationLoc != null) {
+            ignoreMissingLocation = ignoreMissingLocationLoc;
+        }
 
         // override default locations
         String locations = getAndRemoveParameter(parameters, "locations", String.class);
-        Boolean ignoreMissingLocationLoc = getAndRemoveParameter(parameters, "ignoreMissingLocation", Boolean.class);
         if (locations != null) {
             LOG.trace("Overriding default locations with location: {}", locations);
-            paths = locations.split(",");
-        }
-        if (ignoreMissingLocationLoc != null) {
-            ignoreMissingLocation = ignoreMissingLocationLoc;
+            paths = Arrays.stream(locations.split(",")).map(PropertiesLocation::new).collect(Collectors.toList());
         }
 
         String endpointUri = parseUri(remaining, paths);
@@ -160,7 +173,15 @@ public class PropertiesComponent extends UriEndpointComponent {
         return parseUri(uri, locations);
     }
 
-    public String parseUri(String uri, String... paths) throws Exception {
+    public String parseUri(String uri, String... uris) throws Exception {
+        return parseUri(
+            uri,
+            uris != null
+                ? Arrays.stream(uris).map(PropertiesLocation::new).collect(Collectors.toList())
+                : Collections.emptyList());
+    }
+
+    public String parseUri(String uri, List<PropertiesLocation> paths) throws Exception {
         Properties prop = new Properties();
 
         // use initial properties
@@ -172,7 +193,7 @@ public class PropertiesComponent extends UriEndpointComponent {
         if (paths != null) {
             // location may contain JVM system property or OS environment variables
             // so we need to parse those
-            String[] locations = parseLocations(paths);
+            List<PropertiesLocation> locations = parseLocations(paths);
 
             // check cache first
             CacheKey key = new CacheKey(locations);
@@ -206,8 +227,15 @@ public class PropertiesComponent extends UriEndpointComponent {
         LOG.trace("Parsing uri {} with properties: {}", uri, prop);
         
         if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
-            return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(uri, prop, prefixToken, suffixToken,
-                                                                                            propertyPrefixResolved, propertySuffixResolved, fallbackToUnaugmentedProperty);
+            return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(
+                uri,
+                prop,
+                prefixToken,
+                suffixToken,
+                propertyPrefixResolved,
+                propertySuffixResolved,
+                fallbackToUnaugmentedProperty,
+                defaultFallbackEnabled);
         } else {
             return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
         }
@@ -220,25 +248,46 @@ public class PropertiesComponent extends UriEndpointComponent {
         return isDefaultCreated;
     }
 
-    public String[] getLocations() {
+    public List<PropertiesLocation> getLocations() {
         return locations;
     }
 
     /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
+     * A list of locations to load properties.
      * This option will override any default locations and only use the locations from this option.
      */
-    public void setLocations(String[] locations) {
-        // make sure to trim as people may use new lines when configuring using XML
-        // and do this in the setter as Spring/Blueprint resolves placeholders before Camel is being started
-        if (locations != null && locations.length > 0) {
-            for (int i = 0; i < locations.length; i++) {
-                String loc = locations[i];
-                locations[i] = loc.trim();
+    public void setLocations(List<PropertiesLocation> locations) {
+        this.locations = Collections.unmodifiableList(locations);
+    }
+
+    /**
+     * A list of locations to load properties.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    public void setLocations(String[] locationStrings) {
+        List<PropertiesLocation> locations = new ArrayList<>();
+        if (locationStrings != null) {
+            for (String locationString : locationStrings) {
+                locations.add(new PropertiesLocation(locationString));
             }
         }
 
-        this.locations = locations;
+        setLocations(locations);
+    }
+
+    /**
+     * A list of locations to load properties.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    public void setLocations(Collection<String> locationStrings) {
+        List<PropertiesLocation> locations = new ArrayList<>();
+        if (locationStrings != null) {
+            for (String locationString : locationStrings) {
+                locations.add(new PropertiesLocation(locationString));
+            }
+        }
+
+        setLocations(locations);
     }
 
     /**
@@ -246,7 +295,9 @@ public class PropertiesComponent extends UriEndpointComponent {
      * This option will override any default locations and only use the locations from this option.
      */
     public void setLocation(String location) {
-        setLocations(location.split(","));
+        if (location != null) {
+            setLocations(location.split(","));
+        }
     }
 
     public String getEncoding() {
@@ -336,6 +387,17 @@ public class PropertiesComponent extends UriEndpointComponent {
      */
     public void setFallbackToUnaugmentedProperty(boolean fallbackToUnaugmentedProperty) {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
+    }
+
+    public boolean isDefaultFallbackEnabled() {
+        return defaultFallbackEnabled;
+    }
+
+    /**
+     * If false, the component does not attempt to find a default for the key by looking after the colon separator.
+     */
+    public void setDefaultFallbackEnabled(boolean defaultFallbackEnabled) {
+        this.defaultFallbackEnabled = defaultFallbackEnabled;
     }
 
     public boolean isIgnoreMissingLocation() {
@@ -445,6 +507,12 @@ public class PropertiesComponent extends UriEndpointComponent {
     }
 
     @Override
+    public boolean isResolvePropertyPlaceholders() {
+        // its chicken and egg, we cannot resolve placeholders on ourselves
+        return false;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
@@ -466,20 +534,24 @@ public class PropertiesComponent extends UriEndpointComponent {
         super.doStop();
     }
 
-    private String[] parseLocations(String[] locations) {
-        List<String> answer = new ArrayList<String>();
+    private List<PropertiesLocation> parseLocations(List<PropertiesLocation> locations) {
+        List<PropertiesLocation> answer = new ArrayList<>();
 
-        for (String location : locations) {
+        for (PropertiesLocation location : locations) {
             LOG.trace("Parsing location: {} ", location);
 
             try {
-                location = FilePathResolver.resolvePath(location);
-                LOG.debug("Parsed location: {} ", location);
-                if (ObjectHelper.isNotEmpty(location)) {
-                    answer.add(location);
+                String path = FilePathResolver.resolvePath(location.getPath());
+                LOG.debug("Parsed location: {} ", path);
+                if (ObjectHelper.isNotEmpty(path)) {
+                    answer.add(new PropertiesLocation(
+                        location.getResolver(),
+                        path,
+                        location.isOptional())
+                    );
                 }
             } catch (IllegalArgumentException e) {
-                if (!ignoreMissingLocation) {
+                if (!ignoreMissingLocation && !location.isOptional()) {
                     throw e;
                 } else {
                     LOG.debug("Ignored missing location: {}", location);
@@ -488,7 +560,7 @@ public class PropertiesComponent extends UriEndpointComponent {
         }
 
         // must return a not-null answer
-        return answer.toArray(new String[answer.size()]);
+        return answer;
     }
 
     /**
@@ -496,10 +568,10 @@ public class PropertiesComponent extends UriEndpointComponent {
      */
     private static final class CacheKey implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final String[] locations;
+        private final List<PropertiesLocation> locations;
 
-        private CacheKey(String[] locations) {
-            this.locations = locations;
+        private CacheKey(List<PropertiesLocation> locations) {
+            this.locations = new ArrayList<>(locations);
         }
 
         @Override
@@ -513,21 +585,17 @@ public class PropertiesComponent extends UriEndpointComponent {
 
             CacheKey that = (CacheKey) o;
 
-            if (!Arrays.equals(locations, that.locations)) {
-                return false;
-            }
-
-            return true;
+            return locations.equals(that.locations);
         }
 
         @Override
         public int hashCode() {
-            return locations != null ? Arrays.hashCode(locations) : 0;
+            return locations != null ? locations.hashCode() : 0;
         }
 
         @Override
         public String toString() {
-            return "LocationKey[" + Arrays.asList(locations).toString() + "]";
+            return "LocationKey[" + locations.toString() + "]";
         }
     }
 

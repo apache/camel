@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.websocket;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 
 /**
  * Default websocket factory.
@@ -27,7 +25,7 @@ import org.eclipse.jetty.websocket.WebSocket;
 public class DefaultWebsocketFactory implements WebSocketFactory {
 
     @Override
-    public WebSocket newInstance(HttpServletRequest request, String protocol, NodeSynchronization sync, WebsocketConsumer consumer) {
+    public DefaultWebsocket newInstance(ServletUpgradeRequest request, String protocol, NodeSynchronization sync, WebsocketConsumer consumer) {
         return new DefaultWebsocket(sync, consumer);
     }
 }

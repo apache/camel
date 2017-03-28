@@ -254,8 +254,10 @@ public final class HttpHelper {
      * @return the URL to invoke
      */
     public static String createURL(Exchange exchange, HttpCommonEndpoint endpoint) {
-        String uri = null;
-        if (!(endpoint.isBridgeEndpoint())) {
+        // rest producer may provide an override url to be used which we should discard if using (hence the remove)
+        String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
+
+        if (uri == null && !(endpoint.isBridgeEndpoint())) {
             uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
         }
         if (uri == null) {
@@ -311,9 +313,13 @@ public final class HttpHelper {
      */
     public static URI createURI(Exchange exchange, String url, HttpCommonEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
+        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        String queryString = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
         // is a query string provided in the endpoint URI or in a header
         // (header overrules endpoint, raw query header overrules query header)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        if (queryString == null) {
+            queryString = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        }
         if (queryString == null) {
             queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         }
@@ -506,18 +512,23 @@ public final class HttpHelper {
             queryString = endpoint.getHttpUri().getRawQuery();
         }
 
-        // compute what method to use either GET or POST
         HttpMethods answer;
-        HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
-        if (m != null) {
-            // always use what end-user provides in a header
-            answer = m;
-        } else if (queryString != null) {
-            // if a query string is provided then use GET
-            answer = HttpMethods.GET;
+        if (endpoint.getHttpMethod() != null) {
+            // endpoint configured take precedence
+            answer = endpoint.getHttpMethod();
         } else {
-            // fallback to POST if we have payload, otherwise GET
-            answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            // compute what method to use either GET or POST (header take precedence)
+            HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
+            if (m != null) {
+                // always use what end-user provides in a header
+                answer = m;
+            } else if (queryString != null) {
+                // if a query string is provided then use GET
+                answer = HttpMethods.GET;
+            } else {
+                // fallback to POST if we have payload, otherwise GET
+                answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            }
         }
 
         return answer;

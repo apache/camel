@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language,hl7", title = "HL7 Terser")
+@Metadata(firstVersion = "2.11.0", label = "language,hl7", title = "HL7 Terser")
 @XmlRootElement(name = "terser")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TerserExpression extends ExpressionDefinition {

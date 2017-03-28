@@ -73,7 +73,7 @@ public class S3IncludeBodyTest extends CamelTestSupport {
         
         private AtomicInteger requestCount = new AtomicInteger(0);
         
-        public DummyAmazonS3Client() {
+        DummyAmazonS3Client() {
             super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
         }
 

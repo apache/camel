@@ -121,7 +121,7 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
     
     private static class TestShiroSecurityTokenInjector extends ShiroSecurityTokenInjector {
 
-        public TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
+        TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
             super(shiroSecurityToken, bytes);
         }
         

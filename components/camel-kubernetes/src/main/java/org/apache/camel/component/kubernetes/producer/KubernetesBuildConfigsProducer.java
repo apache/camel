@@ -18,18 +18,20 @@ package org.apache.camel.component.kubernetes.producer;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.BuildConfigList;
 import io.fabric8.openshift.api.model.DoneableBuildConfig;
 import io.fabric8.openshift.client.OpenShiftClient;
-import io.fabric8.openshift.client.dsl.ClientBuildConfigResource;
+import io.fabric8.openshift.client.dsl.BuildConfigResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +90,8 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
                 Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Void>> buildConfigs; 
+            NonNamespaceOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, 
+                BuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Build>> buildConfigs; 
             buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -96,13 +99,15 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
             }
             buildConfigsList = buildConfigs.list();
         } else {
-            ClientMixedOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Void>> buildConfigs; 
+            MixedOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, 
+                BuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Build>> buildConfigs; 
             buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 buildConfigs.withLabel(entry.getKey(), entry.getValue());
             }
             buildConfigsList = buildConfigs.list();
         }
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(buildConfigsList.getItems());
     }
 
@@ -121,6 +126,8 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
         }
         buildConfig = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
                 .inNamespace(namespaceName).withName(buildConfigName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(buildConfig);
     }
 }

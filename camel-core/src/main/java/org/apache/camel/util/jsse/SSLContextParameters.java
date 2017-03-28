@@ -30,6 +30,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509KeyManager;
 
+import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,21 +235,60 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     }
     
     ////////////////////////////////////////////
-    
+
     /**
      * Creates an {@link SSLContext} based on the related configuration options
      * of this instance. Namely, {@link #keyManagers}, {@link #trustManagers}, and
      * {@link #secureRandom}, but also respecting the chosen provider and secure
      * socket protocol as well.
-     * 
+     *
+     * @return a newly configured instance
+     *
+     * @throws GeneralSecurityException if there is a problem in this instances
+     *             configuration or that of its nested configuration options
+     * @throws IOException if there is an error reading a key/trust store
+     * @deprecated use {@link #configureSSLContext(SSLContext)}
+     */
+    @Deprecated
+    public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
+        return createSSLContext(null);
+    }
+
+    /**
+     * Creates an {@link SSLContext} based on the related configuration options
+     * of this instance. Namely, {@link #keyManagers}, {@link #trustManagers}, and
+     * {@link #secureRandom}, but also respecting the chosen provider and secure
+     * socket protocol as well.
+     *
+     * @param camelContext  The camel context
+     *
      * @return a newly configured instance
      *
      * @throws GeneralSecurityException if there is a problem in this instances
      *             configuration or that of its nested configuration options
      * @throws IOException if there is an error reading a key/trust store
      */
-    public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
-        
+    public SSLContext createSSLContext(CamelContext camelContext) throws GeneralSecurityException, IOException {
+        if (camelContext != null) {
+            // setup CamelContext before creating SSLContext
+            setCamelContext(camelContext);
+            if (keyManagers != null) {
+                keyManagers.setCamelContext(camelContext);
+            }
+            if (trustManagers != null) {
+                trustManagers.setCamelContext(camelContext);
+            }
+            if (secureRandom != null) {
+                secureRandom.setCamelContext(camelContext);
+            }
+            if (clientParameters != null) {
+                clientParameters.setCamelContext(camelContext);
+            }
+            if (serverParameters != null) {
+                serverParameters.setCamelContext(camelContext);
+            }
+        }
+
         LOG.trace("Creating SSLContext from SSLContextParameters [{}].", this);
         
         LOG.info("Available providers: {}.", Security.getProviders());

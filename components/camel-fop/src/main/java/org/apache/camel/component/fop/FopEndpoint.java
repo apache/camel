@@ -17,9 +17,8 @@
 package org.apache.camel.component.fop;
 
 import java.io.InputStream;
+import java.net.URI;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -34,7 +33,7 @@ import org.apache.fop.apps.FopFactory;
 /**
  * The fop component allows you to render a message into different output formats using Apache FOP.
  */
-@UriEndpoint(scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -94,23 +93,19 @@ public class FopEndpoint extends DefaultEndpoint {
         this.fopFactory = fopFactory;
     }
 
-    private static void updateConfigurations(InputStream is, FopFactory fopFactory) throws Exception {
-        DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-        Configuration cfg = cfgBuilder.build(is);
-        fopFactory.setUserConfig(cfg);
-    }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (fopFactory == null) {
-            fopFactory = FopFactory.newInstance();
-        }
-
-        if (userConfigURL != null) {
+        if (fopFactory == null && userConfigURL == null) {
+            fopFactory = FopFactory.newInstance(new URI("./"));
+        } else if (fopFactory != null && userConfigURL != null) {
+            throw new FopConfigException("More than one configuration. "
+                    + "You can configure fop either by config file or by supplying FopFactory but not both.");
+        } else if (fopFactory == null && userConfigURL != null) {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), userConfigURL);
-            updateConfigurations(is, fopFactory);
+            fopFactory = FopFactory.newInstance(new URI(userConfigURL), is);
         }
     }
 }

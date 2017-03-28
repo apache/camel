@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.swagger.SwaggerRestApiProcessorFactory
+class=org.apache.camel.swagger.SwaggerRestProducerFactory

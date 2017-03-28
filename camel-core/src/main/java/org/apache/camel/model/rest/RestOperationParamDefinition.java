@@ -193,13 +193,22 @@ public class RestOperationParamDefinition {
         this.allowableValues = allowableValues;
     }
 
+    /**
+     * Gets the Swagger Parameter paramAccess flag.
+     *
+     * @deprecated is not in use in swagger specification 2.0
+     */
+    @Deprecated
     public String getAccess() {
         return access != null ? access : "";
     }
 
     /**
      * Sets the Swagger Parameter paramAccess flag.
+     *
+     * @deprecated is not in use in swagger specification 2.0
      */
+    @Deprecated
     public void setAccess(String access) {
         this.access = access;
     }
@@ -289,7 +298,10 @@ public class RestOperationParamDefinition {
     /**
      * Parameter access. Use <tt>false</tt> or <tt>internal</tt> to indicate the parameter
      * should be hidden for the public.
+     *
+     * @deprecated is not in use in swagger specification 2.0
      */
+    @Deprecated
     public RestOperationParamDefinition access(String paramAccess) {
         setAccess(paramAccess);
         return this;

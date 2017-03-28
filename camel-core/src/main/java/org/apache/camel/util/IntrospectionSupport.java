@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -34,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -203,6 +205,22 @@ public final class IntrospectionSupport {
         return isSetter(method, false);
     }
 
+    /**
+     * Will inspect the target for properties.
+     * <p/>
+     * Notice a property must have both a getter/setter method to be included.
+     * Notice all <tt>null</tt> values won't be included.
+     *
+     * @param target         the target bean
+     * @return the map with found properties
+     */
+    public static Map<String, Object> getNonNullProperties(Object target) {
+        Map<String, Object> properties = new HashMap<>();
+
+        getProperties(target, properties, null, false);
+
+        return properties;
+    }
 
     /**
      * Will inspect the target for properties.
@@ -430,6 +448,10 @@ public final class IntrospectionSupport {
     }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
+        return extractProperties(properties, optionPrefix, true);
+    }
+
+    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
         ObjectHelper.notNull(properties, "properties");
 
         Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
@@ -441,7 +463,10 @@ public final class IntrospectionSupport {
                 Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
                 rc.put(name, value);
-                it.remove();
+
+                if (remove) {
+                    it.remove();
+                }
             }
         }
 
@@ -453,8 +478,7 @@ public final class IntrospectionSupport {
 
         Map<String, String> rc = new LinkedHashMap<String, String>(properties.size());
 
-        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<String, Object> entry = it.next();
+        for (Entry<String, Object> entry : properties.entrySet()) {
             String name = entry.getKey();
             String value = entry.getValue().toString();
             rc.put(name, value);

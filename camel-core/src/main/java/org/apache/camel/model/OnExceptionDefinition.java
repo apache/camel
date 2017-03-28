@@ -40,6 +40,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -58,22 +59,22 @@ import org.apache.camel.util.ObjectHelper;
 public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefinition> {
     @XmlElement(name = "exception", required = true)
     private List<String> exceptions = new ArrayList<String>();
-    @XmlElement(name = "onWhen")
+    @XmlElement(name = "onWhen") @AsPredicate
     private WhenDefinition onWhen;
-    @XmlElement(name = "retryWhile")
+    @XmlElement(name = "retryWhile") @AsPredicate
     private ExpressionSubElementDefinition retryWhile;
     @XmlElement(name = "redeliveryPolicy")
     private RedeliveryPolicyDefinition redeliveryPolicyType;
     @XmlAttribute(name = "redeliveryPolicyRef")
     private String redeliveryPolicyRef;
-    @XmlElement(name = "handled")
+    @XmlElement(name = "handled") @AsPredicate
     private ExpressionSubElementDefinition handled;
-    @XmlElement(name = "continued")
+    @XmlElement(name = "continued") @AsPredicate
     private ExpressionSubElementDefinition continued;
     @XmlAttribute(name = "onRedeliveryRef")
     private String onRedeliveryRef;
     @XmlAttribute(name = "onExceptionOccurredRef")
-    private String onExceptionbOccurredRef;
+    private String onExceptionOccurredRef;
     @XmlAttribute(name = "useOriginalMessage")
     private Boolean useOriginalMessagePolicy;
     @XmlElementRef
@@ -194,6 +195,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         // must validate configuration before creating processor
         validateConfiguration();
 
+        if (useOriginalMessagePolicy != null && useOriginalMessagePolicy) {
+            // ensure allow original is turned on
+            routeContext.setAllowUseOriginalMessage(true);
+        }
+
         // lets attach this on exception to the route error handler
         Processor child = createOutputsProcessor(routeContext);
         if (child != null) {
@@ -213,6 +219,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         // load exception classes
         if (exceptions != null && !exceptions.isEmpty()) {
             exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
+        }
+
+        if (useOriginalMessagePolicy != null && useOriginalMessagePolicy) {
+            // ensure allow original is turned on
+            routeContext.setAllowUseOriginalMessage(true);
         }
 
         // must validate configuration before creating processor
@@ -253,6 +264,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
             // no outputs so there should be some sort of configuration
             if (handledPolicy == null && continuedPolicy == null && retryWhilePolicy == null
                     && redeliveryPolicyType == null && useOriginalMessagePolicy == null
+                    && redeliveryPolicy == null && onRedeliveryRef == null
                     && onRedelivery == null && onExceptionOccurred == null) {
                 throw new IllegalArgumentException(this + " is not configured.");
             }
@@ -285,7 +297,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param handled predicate that determines true or false
      * @return the builder
      */
-    public OnExceptionDefinition handled(Predicate handled) {
+    public OnExceptionDefinition handled(@AsPredicate Predicate handled) {
         setHandledPolicy(handled);
         return this;
     }
@@ -296,7 +308,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param handled expression that determines true or false
      * @return the builder
      */
-    public OnExceptionDefinition handled(Expression handled) {
+    public OnExceptionDefinition handled(@AsPredicate Expression handled) {
         setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;
     }
@@ -322,7 +334,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param continued predicate that determines true or false
      * @return the builder
      */
-    public OnExceptionDefinition continued(Predicate continued) {
+    public OnExceptionDefinition continued(@AsPredicate Predicate continued) {
         setContinuedPolicy(continued);
         return this;
     }
@@ -335,7 +347,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param continued expression that determines true or false
      * @return the builder
      */
-    public OnExceptionDefinition continued(Expression continued) {
+    public OnExceptionDefinition continued(@AsPredicate Expression continued) {
         setContinuedPolicy(ExpressionToPredicateAdapter.toPredicate(continued));
         return this;
     }
@@ -349,7 +361,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param predicate predicate that determines true or false
      * @return the builder
      */
-    public OnExceptionDefinition onWhen(Predicate predicate) {
+    public OnExceptionDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
     }
@@ -362,7 +374,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param retryWhile predicate that determines when to stop retrying
      * @return the builder
      */
-    public OnExceptionDefinition retryWhile(Predicate retryWhile) {
+    public OnExceptionDefinition retryWhile(@AsPredicate Predicate retryWhile) {
         setRetryWhilePolicy(retryWhile);
         return this;
     }
@@ -826,7 +838,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param ref  reference to the processor
      */
     public OnExceptionDefinition onExceptionOccurredRef(String ref) {
-        setOnExceptionbOccurredRef(ref);
+        setOnExceptionOccurredRef(ref);
         return this;
     }
 
@@ -976,12 +988,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.onExceptionOccurred = onExceptionOccurred;
     }
 
-    public String getOnExceptionbOccurredRef() {
-        return onExceptionbOccurredRef;
+    public String getOnExceptionOccurredRef() {
+        return onExceptionOccurredRef;
     }
 
-    public void setOnExceptionbOccurredRef(String onExceptionbOccurredRef) {
-        this.onExceptionbOccurredRef = onExceptionbOccurredRef;
+    public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
+        this.onExceptionOccurredRef = onExceptionOccurredRef;
     }
 
     public Boolean getUseOriginalMessagePolicy() {
@@ -1048,9 +1060,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     private void setOnExceptionOccurredFromOnExceptionOccurredRef(RouteContext routeContext) {
         // lookup onRedelivery if ref is provided
-        if (ObjectHelper.isNotEmpty(onExceptionbOccurredRef)) {
+        if (ObjectHelper.isNotEmpty(onExceptionOccurredRef)) {
             // if ref is provided then use mandatory lookup to fail if not found
-            Processor onExceptionOccurred = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onExceptionbOccurredRef, Processor.class);
+            Processor onExceptionOccurred = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onExceptionOccurredRef, Processor.class);
             setOnExceptionOccurred(onExceptionOccurred);
         }
     }

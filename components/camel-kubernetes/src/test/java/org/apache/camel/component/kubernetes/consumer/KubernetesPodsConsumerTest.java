@@ -61,7 +61,7 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
                 labels.put("this", "rocks");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
                 PodSpec podSpec = new PodSpec();
-                podSpec.setHost("172.28.128.4");
+                podSpec.setHostname("localhost");
                 Container cont = new Container();
                 cont.setImage("docker.io/jboss/wildfly:latest");
                 cont.setName("pippo");
@@ -84,9 +84,7 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_SPEC, podSpec);
             }
         });
-
-        Pod pod = ex.getOut().getBody(Pod.class);
-
+        
         ex = template.request("direct:deletePod", new Processor() {
 
             @Override
@@ -120,7 +118,7 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
                         authToken);
                 from("direct:deletePod").toF("kubernetes://%s?oauthToken=%s&category=pods&operation=deletePod", host,
                         authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=pods", host, authToken)
+                fromF("kubernetes://%s?oauthToken=%s&category=pods&namespace=default&labelKey=this&labelValue=rocks", host, authToken)
                         .process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };
@@ -130,7 +128,8 @@ public class KubernetesPodsConsumerTest extends KubernetesTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            log.info("Got event with body: " + in.getBody() + " and action "
+            Pod pod = exchange.getIn().getBody(Pod.class);
+            log.info("Got event with pod name: " + pod.getMetadata().getName() + " and action "
                     + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }

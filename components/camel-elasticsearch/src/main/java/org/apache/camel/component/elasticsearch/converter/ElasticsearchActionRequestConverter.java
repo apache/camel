@@ -24,6 +24,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
 import org.elasticsearch.action.WriteConsistencyLevel;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.exists.ExistsRequest;
@@ -44,6 +45,9 @@ public final class ElasticsearchActionRequestConverter {
 
     // Update requests
     private static UpdateRequest createUpdateRequest(Object document, Exchange exchange) {
+        if (document instanceof UpdateRequest) {
+            return (UpdateRequest)document;
+        }
         UpdateRequest updateRequest = new UpdateRequest();
         if (document instanceof byte[]) {
             updateRequest.doc((byte[]) document);
@@ -74,6 +78,9 @@ public final class ElasticsearchActionRequestConverter {
 
     // Index requests
     private static IndexRequest createIndexRequest(Object document, Exchange exchange) {
+        if (document instanceof IndexRequest) {
+            return (IndexRequest)document;
+        }
         IndexRequest indexRequest = new IndexRequest();
         if (document instanceof byte[]) {
             indexRequest.source((byte[]) document);
@@ -158,6 +165,14 @@ public final class ElasticsearchActionRequestConverter {
                 .type(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_INDEX_TYPE,
                         String.class)).id(id);
+    }
+    
+    @Converter
+    public static DeleteIndexRequest toDeleteIndexRequest(String id, Exchange exchange) {
+        return new DeleteIndexRequest()
+                .indices(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_INDEX_NAME,
+                        String.class));
     }
 
     @Converter

@@ -143,6 +143,44 @@ public final class FileProcessStrategyFactory {
                     readLockStrategy.setIdempotentRepository(repo);
                 }
                 strategy = readLockStrategy;
+            } else if ("idempotent-changed".equals(readLock)) {
+                FileIdempotentChangedRepositoryReadLockStrategy readLockStrategy = new FileIdempotentChangedRepositoryReadLockStrategy();
+                Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
+                if (readLockRemoveOnRollback != null) {
+                    readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
+                }
+                Boolean readLockRemoveOnCommit = (Boolean) params.get("readLockRemoveOnCommit");
+                if (readLockRemoveOnCommit != null) {
+                    readLockStrategy.setRemoveOnCommit(readLockRemoveOnCommit);
+                }
+                IdempotentRepository repo = (IdempotentRepository) params.get("readLockIdempotentRepository");
+                if (repo != null) {
+                    readLockStrategy.setIdempotentRepository(repo);
+                }
+                Long minLength = (Long) params.get("readLockMinLength");
+                if (minLength != null) {
+                    readLockStrategy.setMinLength(minLength);
+                }
+                Long minAge = (Long) params.get("readLockMinAge");
+                if (null != minAge) {
+                    readLockStrategy.setMinAge(minAge);
+                }
+                strategy = readLockStrategy;
+            } else if ("idempotent-rename".equals(readLock)) {
+                FileIdempotentRenameRepositoryReadLockStrategy readLockStrategy = new FileIdempotentRenameRepositoryReadLockStrategy();
+                Boolean readLockRemoveOnRollback = (Boolean) params.get("readLockRemoveOnRollback");
+                if (readLockRemoveOnRollback != null) {
+                    readLockStrategy.setRemoveOnRollback(readLockRemoveOnRollback);
+                }
+                Boolean readLockRemoveOnCommit = (Boolean) params.get("readLockRemoveOnCommit");
+                if (readLockRemoveOnCommit != null) {
+                    readLockStrategy.setRemoveOnCommit(readLockRemoveOnCommit);
+                }
+                IdempotentRepository repo = (IdempotentRepository) params.get("readLockIdempotentRepository");
+                if (repo != null) {
+                    readLockStrategy.setIdempotentRepository(repo);
+                }
+                strategy = readLockStrategy;
             }
 
             if (strategy != null) {

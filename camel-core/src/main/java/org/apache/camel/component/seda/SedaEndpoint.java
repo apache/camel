@@ -24,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -51,8 +52,8 @@ import org.slf4j.LoggerFactory;
  * The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
  */
 @ManagedResource(description = "Managed SedaEndpoint")
-@UriEndpoint(scheme = "seda", title = "SEDA", syntax = "seda:name", consumerClass = SedaConsumer.class, label = "core,endpoint")
-public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
+@UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name", consumerClass = SedaConsumer.class, label = "core,endpoint")
+public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
     private final Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
     private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();

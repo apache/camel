@@ -35,6 +35,8 @@ public class Address extends GeoLocation {
 
     private String street;
 
+    private String geocodeAccuracy;
+
     public String getCity() {
         return city;
     }
@@ -89,5 +91,13 @@ public class Address extends GeoLocation {
 
     public void setStreet(String street) {
         this.street = street;
+    }
+
+    public String getGeocodeAccuracy() {
+        return geocodeAccuracy;
+    }
+
+    public void setGeocodeAccuracy(String geocodeAccuracy) {
+        this.geocodeAccuracy = geocodeAccuracy;
     }
 }

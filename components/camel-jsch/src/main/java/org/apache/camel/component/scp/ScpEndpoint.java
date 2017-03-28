@@ -28,8 +28,11 @@ import org.apache.camel.spi.UriParam;
 /**
  * To copy files using the secure copy protocol (SCP).
  */
-@UriEndpoint(scheme = "scp", extendsScheme = "ftp", title = "SCP",
-        syntax = "scp:host:port/directoryName", producerOnly = true, label = "file")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "scp", extendsScheme = "ftp", title = "SCP",
+        syntax = "scp:host:port/directoryName", producerOnly = true, label = "file",
+        excludeProperties = "binary,charset,doneFileName,download,fastExistsCheck,fileExist,moveExisting,passiveMode"
+                + ",separator,tempFileName,tempPrefix,eagerDeleteTargetFile,keepLastModified,sendNoop"
+                + ",maximumReconnectAttempts,reconnectDelay,autoCreate,bufferSize,siteCommand,stepwise,throwExceptionOnConnectFailed")
 public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
 
     @UriParam

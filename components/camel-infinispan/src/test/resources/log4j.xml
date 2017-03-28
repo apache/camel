@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+    <appender name="FILE" class="org.apache.log4j.FileAppender">
+        <param name="File" value="target/camel-infinispan-test.log" />
+        <param name="Append" value="true" />
+        <param name="Threshold" value="INFO" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%-15.15t] %-5p %-30.30c{1} - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="INFO" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%30.30t] %-30.30c{1} %-5p %m%n" />
+        </layout>
+    </appender>
+
+    <!-- ================ -->
+    <!-- Limit categories -->
+    <!-- ================ -->
+    <category name="org.jboss.arquillian">
+        <priority value="INFO" />
+    </category>
+
+    <category name="org.infinispan.arquillian.core.WithRunningServerObserver">
+        <priority value="INFO" />
+    </category>
+
+    <category name="org.infinispan.server.test.util.TestsuiteListener">
+        <priority value="INFO" />
+    </category>
+
+    <category name="org.apache.http">
+        <priority value="INFO" />
+    </category>
+
+    <category name="org.infinispan">
+        <priority value="INFO" />
+    </category>
+
+    <category name="org.jgroups">
+        <priority value="INFO" />
+    </category>
+
+    <category name="org.apache.commons.httpclient.auth">
+        <priority value="INFO"/>
+    </category>
+
+    <category name="org.apache.auth">
+        <priority value="INFO"/>
+    </category>
+    
+    <category name="org.apache.directory">
+        <priority value="WARN"/>
+    </category>
+
+    <!-- ======================= -->
+    <!-- Setup the Root category -->
+    <!-- ======================= -->
+
+    <root>
+        <priority value="INFO" />
+        <appender-ref ref="FILE" />
+    </root>
+
+</log4j:configuration>

@@ -21,10 +21,9 @@
  */
 package $packageName;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-#set ( $enumName = $utility.enumTypeName($field.Name) )
 /**
  * Salesforce Enumeration DTO for picklist $field.Name
  */
@@ -38,7 +37,7 @@ public enum $enumName {
 #foreach ( $entry in $values)
 #set ( $value = $entry.Value )
     // $value
-    $utility.getEnumConstant($value)("$value")#if ( $foreach.hasNext ),#else;#end
+    $utility.getEnumConstant($value)("$esc.escapeJava($value)")#if ( $foreach.hasNext ),#else;#end
 
 #end
 #end

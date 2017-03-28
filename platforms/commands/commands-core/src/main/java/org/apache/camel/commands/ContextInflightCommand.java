@@ -43,17 +43,19 @@ public class ContextInflightCommand extends AbstractContextCommand {
     private static final int MIN_COLUMN_WIDTH = 12;
 
     private int limit;
+    private String route;
     private boolean sortByLongestDuration;
 
-    public ContextInflightCommand(String context, int limit, boolean sortByLongestDuration) {
+    public ContextInflightCommand(String context, String route, int limit, boolean sortByLongestDuration) {
         super(context);
+        this.route = route;
         this.limit = limit;
         this.sortByLongestDuration = sortByLongestDuration;
     }
 
     @Override
     protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
-        List<Map<String, Object>> inflight = camelController.browseInflightExchanges(contextName, limit, sortByLongestDuration);
+        List<Map<String, Object>> inflight = camelController.browseInflightExchanges(contextName, route, limit, sortByLongestDuration);
 
         final Map<String, Integer> columnWidths = computeColumnWidths(inflight);
         final String headerFormat = buildFormatString(columnWidths, true);

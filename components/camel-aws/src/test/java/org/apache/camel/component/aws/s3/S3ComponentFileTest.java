@@ -88,7 +88,7 @@ public class S3ComponentFileTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertResultExchange(result.getExchanges().get(0), false);
+        assertResultExchange(result.getExchanges().get(0), true);
 
         PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
         assertEquals(getCamelBucket(), putObjectRequest.getBucketName());

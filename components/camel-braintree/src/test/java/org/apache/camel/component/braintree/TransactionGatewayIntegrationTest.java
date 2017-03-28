@@ -18,6 +18,7 @@ package org.apache.camel.component.braintree;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,6 @@ import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionCloneRequest;
 import com.braintreegateway.TransactionRequest;
-import com.google.common.collect.Lists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
@@ -49,7 +49,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
 
     public TransactionGatewayIntegrationTest() {
         this.gateway = null;
-        this.transactionIds = Lists.newLinkedList();
+        this.transactionIds = new LinkedList<>();
     }
 
     @Override

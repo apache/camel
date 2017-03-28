@@ -18,8 +18,10 @@ package org.apache.camel.component.restlet.converter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Converter;
+import org.apache.camel.util.StringHelper;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 
@@ -54,4 +56,17 @@ public final class RestletConverter {
         return MediaType.valueOf(name);
     }
 
+    @Converter
+    public static MediaType[] toMediaTypes(final String name) {
+        final String[] strings = name.split(",");
+        final List<MediaType> answer = new ArrayList<>(strings.length);
+        for (int i = 0; i < strings.length; i++) {
+            final MediaType mediaType = toMediaType(strings[i]);
+            if (mediaType != null) {
+                answer.add(mediaType);
+            }
+        }
+
+        return answer.toArray(new MediaType[answer.size()]);
+    }
 }

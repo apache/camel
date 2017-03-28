@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty4;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -25,6 +26,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -33,6 +35,8 @@ import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,6 +142,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         if (bg == null) {
             // create new pool which we should shutdown when stopping as its not shared
             bossGroup = new NettyServerBossPoolBuilder()
+                    .withNativeTransport(configuration.isNativeTransport())
                     .withBossCount(configuration.getBossCount())
                     .withName("NettyServerTCPBoss")
                     .build();
@@ -146,6 +151,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         if (wg == null) {
             // create new pool which we should shutdown when stopping as its not shared
             workerGroup = new NettyWorkerPoolBuilder()
+                    .withNativeTransport(configuration.isNativeTransport())
                     .withWorkerCount(configuration.getWorkerCount())
                     .withName("NettyServerTCPWorker")
                     .build();
@@ -153,7 +159,11 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
         
         serverBootstrap = new ServerBootstrap();
-        serverBootstrap.group(bg, wg).channel(NioServerSocketChannel.class);
+        if (configuration.isNativeTransport()) {
+            serverBootstrap.group(bg, wg).channel(EpollServerSocketChannel.class);
+        } else {
+            serverBootstrap.group(bg, wg).channel(NioServerSocketChannel.class);
+        }
         serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
         serverBootstrap.childOption(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
         serverBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
@@ -163,12 +173,22 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             serverBootstrap.option(ChannelOption.SO_BACKLOG, configuration.getBacklog());
         }
 
-        // TODO set any additional netty options and child options
-        /*if (configuration.getOptions() != null) {
-            for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
-                serverBootstrap.setOption(entry.getKey(), entry.getValue());
+        Map<String, Object> options = configuration.getOptions();
+        if (options != null) {
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                String value = entry.getValue().toString();
+                ChannelOption<Object> option = ChannelOption.valueOf(entry.getKey());
+                //For all netty options that aren't of type String
+                //TODO: find a way to add primitive Netty options without having to add them to the Camel registry.
+                if (EndpointHelper.isReferenceParameter(value)) {
+                    String name = value.substring(1);
+                    Object o = CamelContextHelper.mandatoryLookup(camelContext, name);
+                    serverBootstrap.option(option, o);
+                } else {
+                    serverBootstrap.option(option, value);
+                }
             }
-        }*/
+        }
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
         serverBootstrap.childHandler(pipelineFactory);

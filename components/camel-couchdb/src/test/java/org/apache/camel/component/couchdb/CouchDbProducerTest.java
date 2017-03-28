@@ -96,6 +96,26 @@ public class CouchDbProducerTest {
         when(producer.getBodyAsJsonElement(exchange)).thenThrow(InvalidPayloadException.class);
         producer.process(exchange);
     }
+    
+    @Test
+    public void testDeleteResponse() throws Exception {
+        String id = UUID.randomUUID().toString();
+        String rev = UUID.randomUUID().toString();
+
+        JsonObject doc = new JsonObject();
+        doc.addProperty("_id", id);
+        doc.addProperty("_rev", rev);
+
+        when(msg.getHeader(CouchDbConstants.HEADER_METHOD, String.class)).thenReturn("DELETE");
+        when(msg.getMandatoryBody()).thenReturn(doc);
+        when(client.remove(doc)).thenReturn(response);
+        when(response.getId()).thenReturn(id);
+        when(response.getRev()).thenReturn(rev);
+
+        producer.process(exchange);
+        verify(msg).setHeader(CouchDbConstants.HEADER_DOC_ID, id);
+        verify(msg).setHeader(CouchDbConstants.HEADER_DOC_REV, rev);
+    }
 
     @Test
     public void testStringBodyIsConvertedToJsonTree() throws Exception {

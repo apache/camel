@@ -17,25 +17,25 @@
 package org.apache.camel.util.component;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Base class for a collection of ApiMethods. Meant to be extended by Components to create the api name map.
  */
 public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
 
-    protected final Map<E, ApiMethodHelper<? extends ApiMethod>> apis = new HashMap<E, ApiMethodHelper<? extends ApiMethod>>();
-    protected final HashMap<Class<? extends ApiMethod>, E> apiMethods = new HashMap<Class<? extends ApiMethod>, E>();
+    private Map<E, ApiMethodHelper<? extends ApiMethod>> apiHelpers = Collections.emptyMap();
+    private Map<Class<? extends ApiMethod>, E> apiMethods = Collections.emptyMap();
+    private Set<String> apiNames = Collections.emptySet();
 
     public final Map<E, ApiMethodHelper<? extends ApiMethod>> getApiHelpers() {
-        return Collections.unmodifiableMap(apis);
+        return apiHelpers;
     }
 
     public final Map<Class<? extends ApiMethod>, E> getApiMethods() {
-        return Collections.unmodifiableMap(apiMethods);
+        return apiMethods;
     }
 
     /**
@@ -44,7 +44,7 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
      * @return helper class to work with {@link ApiMethod}
      */
     public final ApiMethodHelper<? extends ApiMethod> getHelper(E apiName) {
-        return apis.get(apiName);
+        return apiHelpers.get(apiName);
     }
 
     /**
@@ -52,11 +52,7 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
      * @return list of API names.
      */
     public final Set<String> getApiNames() {
-        final Set<String> result = new HashSet<String>();
-        for (E api : apis.keySet()) {
-            result.add(api.getName());
-        }
-        return Collections.unmodifiableSet(result);
+        return apiNames;
     }
 
     public final E getApiName(Class<? extends ApiMethod> apiMethod) {
@@ -69,4 +65,19 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
      * @return Endpoint configuration object for the API.
      */
     public abstract T getEndpointConfiguration(E apiName);
+
+    protected final void setApiHelpers(Map<E, ApiMethodHelper<? extends ApiMethod>> apiHelpers) {
+        this.apiHelpers = Collections.unmodifiableMap(apiHelpers);
+
+        this.apiNames = Collections.unmodifiableSet(
+            apiHelpers.keySet()
+                .stream()
+                .map(api -> api.getName())
+                .collect(Collectors.toSet())
+        );
+    }
+
+    protected final void setApiMethods(Map<Class<? extends ApiMethod>, E> apiMethods) {
+        this.apiMethods = Collections.unmodifiableMap(apiMethods);
+    }
 }

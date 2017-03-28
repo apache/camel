@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
+import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
@@ -44,15 +45,15 @@ import org.slf4j.LoggerFactory;
  * {@link DataFormat}) using Bindy to marshal to and from Fixed Length
  */
 public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
-    
+
     public static final String CAMEL_BINDY_FIXED_LENGTH_HEADER = "CamelBindyFixedLengthHeader";
     public static final String CAMEL_BINDY_FIXED_LENGTH_FOOTER = "CamelBindyFixedLengthFooter";
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyFixedLengthDataFormat.class);
-    
+
     private BindyFixedLengthFactory headerFactory;
     private BindyFixedLengthFactory footerFactory;
-    
+
     public BindyFixedLengthDataFormat() {
     }
 
@@ -64,7 +65,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     public String getDataFormatName() {
         return "bindy-fixed";
     }
-    
+
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
@@ -84,19 +85,20 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<String, Object>();
                 row.put(name, model);
+                row.putAll(createLinkedFieldsModel(model));
                 models.add(row);
             }
         } else {
             // cast to the expected type
             models = (List<Map<String, Object>>) body;
         }
-        
+
         // add the header if it is in the exchange header
         Map<String, Object> headerRow = (Map<String, Object>) exchange.getIn().getHeader(CAMEL_BINDY_FIXED_LENGTH_HEADER);
         if (headerRow != null) {
             models.add(0, headerRow);
         }
-        
+
         // add the footer if it is in the exchange header
         Map<String, Object> footerRow = (Map<String, Object>) exchange.getIn().getHeader(CAMEL_BINDY_FIXED_LENGTH_FOOTER);
         if (footerRow != null) {
@@ -107,18 +109,18 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         for (Map<String, Object> model : models) {
             row++;
             String result = null;
-            
+
             if (row == 1 && headerFactory != null) {
                 // marshal the first row as a header if the models match
                 Set<String> modelClassNames = model.keySet();
                 // only use the header factory if the row is the header
                 if (headerFactory.supportsModel(modelClassNames)) {
-                    if (factory.skipHeader())  {
+                    if (factory.skipHeader()) {
                         LOG.info("Skipping marshal of header row; 'skipHeader=true'");
                         continue;
                     } else {
                         result = headerFactory.unbind(model);
-                    }    
+                    }
                 }
             } else if (row == models.size() && footerFactory != null) {
                 // marshal the last row as a footer if the models match
@@ -133,12 +135,12 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                     }
                 }
             }
-            
+
             if (result == null) {
                 // marshal as a normal / default row
                 result = factory.unbind(model);
             }
-            
+
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
 
@@ -176,7 +178,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
-        
+
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
@@ -194,10 +196,10 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
             // Parse the header if it exists
             if (scanner.hasNextLine() && factory.hasHeader()) {
-                
+
                 // Read the line (should not trim as its fixed length)
                 String line = getNextNonEmptyLine(scanner, count);
-                
+
                 if (!factory.skipHeader()) {
                     Map<String, Object> headerObjMap = createModel(headerFactory, line, count.intValue());
                     exchange.getOut().setHeader(CAMEL_BINDY_FIXED_LENGTH_HEADER, headerObjMap);
@@ -213,7 +215,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
             // Parse the main file content
             while (thisLine != null && nextLine != null) {
-                
+
                 model = createModel(factory, thisLine, count.intValue());
 
                 // Add objects graph to the list
@@ -222,7 +224,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 thisLine = nextLine;
                 nextLine = getNextNonEmptyLine(scanner, count);
             }
-            
+
             // this line should be the last non-empty line from the file
             // optionally parse the line as a footer
             if (thisLine != null) {
@@ -237,7 +239,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 }
             }
 
-            // Test if models list is empty or not
+            // BigIntegerFormatFactory if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
                 throw new java.lang.IllegalArgumentException("No records have been defined in the the file");
@@ -258,7 +260,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             count.incrementAndGet();
             line = scanner.nextLine();
         }
-        
+
         if (ObjectHelper.isEmpty(line)) {
             return null;
         } else {
@@ -267,44 +269,68 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     }
 
     protected Map<String, Object> createModel(BindyFixedLengthFactory factory, String line, int count) throws Exception {
+        String myLine = line;
+
         // Check if the record length corresponds to the parameter
         // provided in the @FixedLengthRecord
         if (factory.recordLength() > 0) {
-            if ((line.length() < factory.recordLength()) || (line.length() > factory.recordLength())) {
-                throw new java.lang.IllegalArgumentException("Size of the record: " + line.length() 
+            if (isPaddingNeededAndEnable(factory, myLine)) {
+                //myLine = rightPad(myLine, factory.recordLength());
+            }
+            if (isTrimmingNeededAndEnabled(factory, myLine)) {
+                myLine = myLine.substring(0, factory.recordLength());
+            }
+            if ((myLine.length() < factory.recordLength()
+                    && !factory.isIgnoreMissingChars()) || (myLine.length() > factory.recordLength())) {
+                throw new java.lang.IllegalArgumentException("Size of the record: " + myLine.length()
                         + " is not equal to the value provided in the model: " + factory.recordLength());
             }
         }
 
         // Create POJO where Fixed data will be stored
         Map<String, Object> model = factory.factory();
-        
+
         // Bind data from Fixed record with model classes
-        factory.bind(line, model, count);
+        factory.bind(myLine, model, count);
 
         // Link objects together
         factory.link(model);
-        
+
         LOG.debug("Graph of objects created: {}", model);
         return model;
     }
 
+    private boolean isTrimmingNeededAndEnabled(BindyFixedLengthFactory factory, String myLine) {
+        return factory.isIgnoreTrailingChars() && myLine.length() > factory.recordLength();
+    }
+
+    private String rightPad(String myLine, int length) {
+        return String.format("%1$-" + length + "s", myLine);
+    }
+
+    private boolean isPaddingNeededAndEnable(BindyFixedLengthFactory factory, String myLine) {
+        return myLine.length() < factory.recordLength() && factory.isIgnoreMissingChars();
+    }
+
     @Override
-    protected BindyAbstractFactory createModelFactory() throws Exception {
+    protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
 
         BindyFixedLengthFactory factory = new BindyFixedLengthFactory(getClassType());
-        
+        factory.setFormatFactory(formatFactory);
+
         // Optionally initialize the header factory... using header model classes
         if (factory.hasHeader()) {
             this.headerFactory = new BindyFixedLengthFactory(factory.header());
+            this.headerFactory.setFormatFactory(formatFactory);
         }
-        
+
         // Optionally initialize the footer factory... using footer model classes
         if (factory.hasFooter()) {
             this.footerFactory = new BindyFixedLengthFactory(factory.footer());
+            this.footerFactory.setFormatFactory(formatFactory);
         }
-        
+
         return factory;
     }
-    
+
 }

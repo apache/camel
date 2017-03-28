@@ -1,0 +1,383 @@
+## Spring Support
+
+Apache Camel is designed to work nicely with the
+http://www.springframework.org/[Spring Framework] in a number of ways.
+
+* Camel uses Spring Transactions as the default transaction handling in
+components like link:jms.html[JMS] and link:jpa.html[JPA]
+* Camel works with Spring 2 XML processing with the
+link:xml-configuration.html[Xml Configuration]
+* Camel Spring XML Schema's is defined at link:xml-reference.html[Xml
+Reference]
+* Camel supports a powerful version of link:spring-remoting.html[Spring
+Remoting] which can use powerful routing between the client and server
+side along with using all of the available
+link:components.html[Components] for the transport
+* Camel provides powerful link:bean-integration.html[Bean Integration]
+with any bean defined in a Spring ApplicationContext
+* Camel integrates with various Spring helper classes; such as providing
+link:type-converter.html[Type Converter] support for Spring Resources
+etc
+* Allows Spring to dependency inject link:component.html[Component]
+instances or the link:camelcontext.html[CamelContext] instance itself
+and auto-expose Spring beans as components and endpoints.
+* Allows you to reuse the link:spring-testing.html[Spring Testing]
+framework to simplify your unit and integration testing using
+link:enterprise-integration-patterns.html[Enterprise Integration
+Patterns] and Camel's powerful link:mock.html[Mock] and
+link:test.html[Test] endpoints
+* From *Camel 2.15* onwards Camel supports Spring Boot using
+the `camel-spring-boot` component.
+
+### Using Spring to configure the CamelContext
+
+You can configure a CamelContext inside any spring.xml using the
+http://camel.apache.org/maven/current/camel-spring/apidocs/org/apache/camel/spring/CamelContextFactoryBean.html[CamelContextFactoryBean].
+This will automatically link:lifecycle.html[start] the
+link:camelcontext.html[CamelContext] along with any referenced
+link:routes.html[Routes] along any referenced
+link:component.html[Component] and link:endpoint.html[Endpoint]
+instances.
+
+* Adding Camel schema
+* Configure link:routes.html[Routes] in two ways:
+** Using Java Code
+** Using Spring XML
+
+### Adding Camel Schema
+
+For Camel 1.x you need to use the following namespace:
+
+[source,java]
+----------------------------------------------
+http://activemq.apache.org/camel/schema/spring
+----------------------------------------------
+
+with the following schema location:
+
+[source,java]
+---------------------------------------------------------------
+http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+---------------------------------------------------------------
+
+You need to add Camel to the `schemaLocation` declaration
+
+[source,java]
+--------------------------------------------------------------------------------------------
+http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+--------------------------------------------------------------------------------------------
+
+So the XML file looks like this:
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+------------------------------------------------------------------------------------------------------------------
+
+#### Using camel: namespace
+
+Or you can refer to camel XSD in the XML declaration:
+
+[source,java]
+---------------------------------------------------
+xmlns:camel="http://camel.apache.org/schema/spring"
+---------------------------------------------------
+
+... so the declaration is:
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+------------------------------------------------------------------------------------------------------------------
+
+... and then use the camel: namespace prefix, and you can omit the
+inline namespace declaration:
+
+[source,xml]
+--------------------------------------------------------------------------------------------
+<camel:camelContext id="camel5">
+  <camel:package>org.apache.camel.spring.example</camel:package>
+</camel:camelContext>
+--------------------------------------------------------------------------------------------
+
+#### Advanced configuration using Spring
+
+See more details at
+link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
+configuration of CamelContext using Spring]
+
+$### Using Java Code
+
+You can use Java Code to define your
+link:routebuilder.html[RouteBuilder] implementations. These can be
+defined as beans in spring and then referenced in your camel context
+e.g.
+
+#### Using <package>
+
+Camel also provides a powerful feature that allows for the automatic
+discovery and initialization of routes in given packages. This is
+configured by adding tags to the camel context in your spring context
+definition, specifying the packages to be recursively searched for
+link:routebuilder.html[RouteBuilder] implementations. To use this
+feature in 1.X, requires a <package></package> tag specifying a comma
+separated list of packages that should be searched e.g.
+
+[source,xml]
+----------------------------------------------------------------
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <package>org.apache.camel.spring.config.scan.route</package>
+  </camelContext>
+----------------------------------------------------------------
+
+
+WARNING:Use caution when specifying the package name as `org.apache.camel` or a
+sub package of this. This causes Camel to search in its own packages for
+your routes which could cause problems.
+
+
+INFO:*Will ignore already instantiated classes*. 
+The <package> and <packageScan> will skip any classes which has already
+been created by Spring etc. So if you define a route builder as a spring
+bean tag then that class will be skipped. You can include those beans
+using `<routeBuilder ref="theBeanId"/>` or the `<contextScan>` feature.
+
+#### Using <packageScan>
+
+In Camel 2.0 this has been extended to allow selective inclusion and
+exclusion of discovered route classes using Ant like path matching. In
+spring this is specified by adding a <packageScan/> tag. The tag must
+contain one or more 'package' elements (similar to 1.x), and optionally
+one or more 'includes' or 'excludes' elements specifying patterns to be
+applied to the fully qualified names of the discovered classes. e.g.
+
+[source,xml]
+--------------------------------------------------------------
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <packageScan>
+      <package>org.example.routes</package>
+      <excludes>**.*Excluded*</excludes>
+      <includes>**.*</includes>
+    </packageScan>
+  </camelContext>
+--------------------------------------------------------------
+
+Exclude patterns are applied before the include patterns. If no include
+or exclude patterns are defined then all the Route classes discovered in
+the packages will be returned.
+
+In the above example, camel will scan all the 'org.example.routes'
+package and any subpackages for RouteBuilder classes. Say the scan finds
+two RouteBuilders, one in org.example.routes called 'MyRoute" and
+another 'MyExcludedRoute' in a subpackage 'excluded'. The fully
+qualified names of each of the classes are extracted
+(org.example.routes.MyRoute,
+org.example.routes.excluded.MyExcludedRoute) and the include and exclude
+patterns are applied.
+
+The exclude pattern **.*Excluded* is going to match the fqcn
+'org.example.routes.excluded.MyExcludedRoute' and veto camel from
+initializing it.
+
+Under the covers, this is using Spring's
+http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/util/AntPathMatcher.html[AntPatternMatcher]
+implementation, which matches as follows
+
+[source,java]
+----------------------------------------------------------
+? matches one character
+* matches zero or more characters
+** matches zero or more segments of a fully qualified name
+----------------------------------------------------------
+
+For example:
+
+**.*Excluded* would match org.simple.Excluded,
+org.apache.camel.SomeExcludedRoute or org.example.RouteWhichIsExcluded
+
+**.??cluded* would match org.simple.IncludedRoute, org.simple.Excluded
+but not match org.simple.PrecludedRoute
+
+#### Using contextScan
+
+*Available as of Camel 2.4*
+
+You can allow Camel to scan the container context, e.g. the Spring
+`ApplicationContext` for route builder instances. This allow you to use
+the Spring `<component-scan>` feature and have Camel pickup any
+RouteBuilder instances which was created by Spring in its scan process.
+
+This allows you to just annotate your routes using the Spring
+`@Component` and have those routes included by Camel
+
+[source,java]
+-------------------------------------------------
+@Component
+public class MyRoute extends SpringRouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        from("direct:start").to("mock:result");
+    }
+}
+-------------------------------------------------
+
+You can also use the ANT style for inclusion and exclusion, as mentioned
+above in the `<packageScan>` documentation.
+
+### How do I import routes from other XML files
+
+*Available as of Camel 2.3*
+
+When defining routes in Camel using link:xml-configuration.html[Xml
+Configuration] you may want to define some routes in other XML files.
+For example you may have many routes and it may help to maintain the
+application if some of the routes are in separate XML files. You may
+also want to store common and reusable routes in other XML files, which
+you can simply import when needed.
+
+In *Camel 2.3* it is now possible to define routes outside
+`<camelContext/>` which you do in a new `<routeContext/>` tag.
+
+*Notice:* When you use <routeContext> then they are separated, and
+cannot reuse existing <onException>, <intercept>, <dataFormats> and
+similar cross cutting functionality defined in the <camelContext>. In
+other words the <routeContext> is currently isolated. This may change in
+Camel 3.x.
+
+For example we could have a file named `myCoolRoutes.xml` which contains
+a couple of routes as shown:
+
+*myCoolRoutes.xml*
+
+Then in your XML file which contains the CamelContext you can use Spring
+to import the `myCoolRoute.xml` file. +
+ And then inside `<camelContext/>` you can refer to the
+`<routeContext/>` by its id as shown below:
+
+Also notice that you can mix and match, having routes inside
+CamelContext and also externalized in RouteContext.
+
+You can have as many `<routeContextRef/>` as you like.
+
+*Reusable routes*
+
+The routes defined in `<routeContext/>` can be reused by multiple
+`<camelContext/>`. However its only the definition which is reused. At
+runtime each CamelContext will create its own instance of the route
+based on the definition.
+
+#### Test time exclusion.
+
+At test time it is often desirable to be able to selectively exclude
+matching routes from being initalized that are not applicable or useful
+to the test scenario. For instance you might a spring context file
+routes-context.xml and three Route builders RouteA, RouteB and RouteC in
+the 'org.example.routes' package. The packageScan definition would
+discover all three of these routes and initialize them.
+
+Say RouteC is not applicable to our test scenario and generates a lot of
+noise during test. It would be nice to be able to exclude this route
+from this specific test. The SpringTestSupport class has been modified
+to allow this. It provides two methods (excludedRoute and
+excludedRoutes) that may be overridden to exclude a single class or an
+array of classes.
+
+[source,java]
+----------------------------------------------------------------
+public class RouteAandRouteBOnlyTest extends SpringTestSupport {
+    @Override      
+    protected Class excludeRoute() {
+        return RouteC.class;
+    }
+}
+----------------------------------------------------------------
+
+In order to hook into the camelContext initialization by spring to
+exclude the MyExcludedRouteBuilder.class we need to intercept the spring
+context creation. When overriding createApplicationContext to create the
+spring context, we call the getRouteExcludingApplicationContext() method
+to provide a special parent spring context that takes care of the
+exclusion.
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------------
+@Override
+protected AbstractXmlApplicationContext createApplicationContext() {
+    return new ClassPathXmlApplicationContext(new String[] {"routes-context.xml"}, getRouteExcludingApplicationContext());
+}
+--------------------------------------------------------------------------------------------------------------------------
+
+RouteC will now be excluded from initialization. Similarly, in another
+test that is testing only RouteC, we could exclude RouteB and RouteA by
+overriding
+
+[source,java]
+---------------------------------------------------
+@Override
+protected Class[] excludeRoutes() {
+    return new Class[]{RouteA.class, RouteB.class};
+}
+---------------------------------------------------
+
+### Using Spring XML
+
+You can use Spring 2.0 XML configuration to specify your
+link:xml-configuration.html[Xml Configuration] for
+link:routes.html[Routes] such as in the following
+http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/routingUsingCamelContextFactory.xml[example].
+
+### Configuring Components and Endpoints
+
+You can configure your link:component.html[Component] or
+link:endpoint.html[Endpoint] instances in your link:spring.html[Spring]
+XML as follows in
+http://svn.apache.org/repos/asf/camel/trunk/components/camel-jms/src/test/resources/org/apache/camel/component/jms/jmsRouteUsingSpring.xml[this
+example].
+
+Which allows you to configure a component using some name (activemq in
+the above example), then you can refer to the component using
+*activemq:[queue:|topic:]destinationName*. This works by the
+SpringCamelContext lazily fetching components from the spring context
+for the scheme name you use for link:endpoint.html[Endpoint]
+link:uris.html[URIs].
+
+For more detail see link:how-do-i-configure-endpoints.html[Configuring
+Endpoints and Components].
+
+### CamelContextAware
+
+If you want to be injected with the link:camelcontext.html[CamelContext]
+in your POJO just implement the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContextAware.html[CamelContextAware
+interface]; then when Spring creates your POJO the CamelContext will be
+injected into your POJO. Also see the link:bean-integration.html[Bean
+Integration] for further injections.
+
+### Integration Testing
+
+To avoid a hung route when testing using Spring Transactions see the
+note about Spring Integration Testing
+under link:transactional-client.html[Transactional Client].
+
+### See also
+
+* link:tutorial-jmsremoting.html[Spring JMS Tutorial]
+* link:creating-a-new-spring-based-camel-route.html[Creating a new
+Spring based Camel Route]
+* link:spring-example.html[Spring example]
+* link:xml-reference.html[Xml Reference]
+* link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
+configuration of CamelContext using Spring]
+* link:how-do-i-import-routes-from-other-xml-files.html[How do I import
+routes from other XML files]
+

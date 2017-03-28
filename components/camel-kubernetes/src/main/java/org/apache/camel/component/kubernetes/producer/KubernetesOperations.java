@@ -38,6 +38,7 @@ public interface KubernetesOperations {
     String GET_REPLICATION_CONTROLLER_OPERATION = "getReplicationController";
     String CREATE_REPLICATION_CONTROLLER_OPERATION = "createReplicationController";
     String DELETE_REPLICATION_CONTROLLER_OPERATION = "deleteReplicationController";
+    String SCALE_REPLICATION_CONTROLLER_OPERATION = "scaleReplicationController";
     
     // Pods
     String LIST_PODS_OPERATION = "listPods";
@@ -83,6 +84,13 @@ public interface KubernetesOperations {
     String LIST_NODES = "listNodes";
     String LIST_NODES_BY_LABELS_OPERATION = "listNodesByLabels";
     String GET_NODE_OPERATION = "getNode";
+    
+    // Config Maps
+    String LIST_CONFIGMAPS = "listConfigMaps";
+    String LIST_CONFIGMAPS_BY_LABELS_OPERATION = "listConfigMapsByLabels";
+    String GET_CONFIGMAP_OPERATION = "getConfigMap";
+    String CREATE_CONFIGMAP_OPERATION = "createConfigMap";
+    String DELETE_CONFIGMAP_OPERATION = "deleteConfigMap";
     
     // Builds
     String LIST_BUILD = "listBuilds";

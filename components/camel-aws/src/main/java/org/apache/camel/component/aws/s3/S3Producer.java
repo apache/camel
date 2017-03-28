@@ -25,11 +25,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.amazonaws.services.cloudfront.model.InvalidArgumentException;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
 import com.amazonaws.services.s3.model.AccessControlList;
+import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadResult;
+import com.amazonaws.services.s3.model.CopyObjectRequest;
+import com.amazonaws.services.s3.model.CopyObjectResult;
+import com.amazonaws.services.s3.model.DeleteBucketRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -42,10 +47,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.aws.ec2.EC2Constants;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,10 +76,27 @@ public class S3Producer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
-        if (getConfiguration().isMultiPartUpload()) {
-            processMultiPart(exchange);
+        S3Operations operation = determineOperation(exchange);
+        if (ObjectHelper.isEmpty(operation)) {
+            if (getConfiguration().isMultiPartUpload()) {
+                processMultiPart(exchange);
+            } else {
+                processSingleOp(exchange);
+            }
         } else {
-            processSingleOp(exchange);
+            switch (operation) {
+            case copyObject:
+                copyObject(getEndpoint().getS3Client(), exchange);
+                break;
+            case listBuckets:
+                listBuckets(getEndpoint().getS3Client(), exchange);
+                break;
+            case deleteBucket:
+                deleteBucket(getEndpoint().getS3Client(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
+            }
         }
     }
 
@@ -224,6 +248,76 @@ public class S3Producer extends DefaultProducer {
             IOHelper.close(is);
             FileUtil.deleteFile(filePayload);
         }
+    }
+    
+    private void copyObject(AmazonS3 s3Client, Exchange exchange) {
+        String bucketNameDestination;
+        String destinationKey;
+        String sourceKey;
+        String bucketName;
+        String versionId;
+        
+        bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
+        if (ObjectHelper.isEmpty(bucketName)) {
+            bucketName = getConfiguration().getBucketName();
+        }
+        sourceKey = exchange.getIn().getHeader(S3Constants.KEY, String.class);
+        destinationKey = exchange.getIn().getHeader(S3Constants.DESTINATION_KEY, String.class);
+        bucketNameDestination = exchange.getIn().getHeader(S3Constants.BUCKET_DESTINATION_NAME, String.class);
+        versionId = exchange.getIn().getHeader(S3Constants.VERSION_ID, String.class);
+        
+        if (ObjectHelper.isEmpty(bucketName)) {
+            throw new IllegalArgumentException("Bucket Name must be specified for copyObject Operation");
+        }
+        if (ObjectHelper.isEmpty(bucketNameDestination)) {
+            throw new IllegalArgumentException("Bucket Name Destination must be specified for copyObject Operation");
+        }
+        if (ObjectHelper.isEmpty(sourceKey)) {
+            throw new IllegalArgumentException("Source Key must be specified for copyObject Operation");
+        }
+        if (ObjectHelper.isEmpty(destinationKey)) {
+            throw new IllegalArgumentException("Destination Key must be specified for copyObject Operation");
+        }
+        CopyObjectRequest copyObjectRequest;
+        if (ObjectHelper.isEmpty(versionId)) {
+            copyObjectRequest = new CopyObjectRequest(bucketName, sourceKey, bucketNameDestination, destinationKey);
+        } else {
+            copyObjectRequest = new CopyObjectRequest(bucketName, sourceKey, versionId, bucketNameDestination, destinationKey);
+        }
+        CopyObjectResult copyObjectResult = s3Client.copyObject(copyObjectRequest);
+        
+        Message message = getMessageForResponse(exchange);
+        message.setHeader(S3Constants.E_TAG, copyObjectResult.getETag());
+        if (copyObjectResult.getVersionId() != null) {
+            message.setHeader(S3Constants.VERSION_ID, copyObjectResult.getVersionId());
+        }
+    }
+    
+    private void listBuckets(AmazonS3 s3Client, Exchange exchange) {
+        List<Bucket> bucketsList = s3Client.listBuckets();
+        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(bucketsList);
+    }
+    
+    private void deleteBucket(AmazonS3 s3Client, Exchange exchange) {
+        String bucketName;
+        
+        bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
+        if (ObjectHelper.isEmpty(bucketName)) {
+            bucketName = getConfiguration().getBucketName();
+        }
+
+        DeleteBucketRequest deleteBucketRequest = new DeleteBucketRequest(bucketName);
+        s3Client.deleteBucket(deleteBucketRequest);
+    }
+    
+    private S3Operations determineOperation(Exchange exchange) {
+        S3Operations operation = exchange.getIn().getHeader(EC2Constants.OPERATION, S3Operations.class);
+        if (operation == null) {
+            operation = getConfiguration().getOperation();
+        }
+        return operation;
     }
 
     private ObjectMetadata determineMetadata(final Exchange exchange) {

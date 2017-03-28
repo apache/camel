@@ -25,7 +25,16 @@
             <from uri="direct:start"/>
             <to uri="aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client"/>
         </route>
-        
+        <route>
+            <from uri="direct:copyObject"/>
+            <to uri="aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&amp;operation=copyObject"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listBuckets"/>
+            <to uri="aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&amp;operation=listBuckets"/>
+            <to uri="mock:result"/>
+        </route>       
         <route>
             <from uri="aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&amp;maxMessagesPerPoll=5"/>
             <to uri="mock:result"/>

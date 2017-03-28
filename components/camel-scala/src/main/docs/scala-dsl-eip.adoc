@@ -1,0 +1,224 @@
+[[ScalaDSL-SupportedDSL]]
+Scala Supported DSL
+^^^^^^^^^^^^^^^^^^^
+
+The link:scala-dsl.html[Scala DSL] supports *every* DSL from the
+link:dsl.html[Java DSL].
+
+On this page we have examples for a number of the link:eip.html[EIP]s. +
+ You can check the
+https://svn.apache.org/repos/asf/camel/trunk/components/camel-scala/src/test/scala/[unit
+test source code] for the Scala Component to find more examples.
+
+* 1 link:#ScalaDSL-EIP-Messagingsystems[Messaging systems]
+** 1.1 link:#ScalaDSL-EIP-Pipelinepipeline[Pipeline]
+** 1.2 link:#ScalaDSL-EIP-Filterfilter[Filter]
+* 2 link:#ScalaDSL-EIP-Messagingchannels[Messaging channels]
+** 2.1 link:#ScalaDSL-EIP-Deadletterchannel[Dead letter channel]
+* 3 link:#ScalaDSL-EIP-Messagerouting[Message routing]
+** 3.1 link:#ScalaDSL-EIP-Aggregator[Aggregator]
+** 3.2 link:#ScalaDSL-EIP-Contentbasedrouter[Content based router]
+** 3.3 link:#ScalaDSL-EIP-Delayer[Delayer]
+** 3.4 link:#ScalaDSL-EIP-Loadbalancer[Load balancer]
+** 3.5 link:#ScalaDSL-EIP-Multicast[Multicast]
+** 3.6 link:#ScalaDSL-EIP-Recipientlist[Recipient list]
+** 3.7 link:#ScalaDSL-EIP-Resequencer[Resequencer]
+** 3.8 link:#ScalaDSL-EIP-Splitter[Splitter]
+** 3.9 link:#ScalaDSL-EIP-Throttler[Throttler]
+* 4 link:#ScalaDSL-EIP-Messagetransformation[Message transformation]
+** 4.1 link:#ScalaDSL-EIP-Contentenricher[Content enricher]
+
+[[ScalaDSL-EIP-Messagingsystems]]
+Messaging systems
+^^^^^^^^^^^^^^^^^
+
+[[ScalaDSL-EIP-Pipelinepipeline]]
+Pipeline
+++++++++
+
+There is a simple syntax available for specifying pipeline, by simple
+putting `to` or `→` between the different steps in the pipeline.
+
+For more advanced use cases, you can also use a block-based syntax,
+where every step in the pipeline starts with either `to` or `→`.
+
+[[ScalaDSL-EIP-Filterfilter]]
+Filter
+++++++
+
+For a message filter, use the `when()` method with a parameter of type
+The `Exchange ⇒ Boolean`. In the example below, we use a Scala
+convenience method named `in` to access the 'in' message body; only
+messages where the 'in' message is `<hello/>` will arrive at the
+`mock:a` endpoint.
+
+Once again, if you need to specify a more advanced route, you can use
+the more elaborate syntax.
+
+[[ScalaDSL-EIP-Messagingchannels]]
+Messaging channels
+^^^^^^^^^^^^^^^^^^
+
+[[ScalaDSL-EIP-Deadletterchannel]]
+Dead letter channel
++++++++++++++++++++
+
+The http://www.eaipatterns.com/DeadLetterChannel.html[dead letter
+channel] can be created with the syntax similar to the one used in
+http://camel.apache.org/dead-letter-channel.html[Java DSL].
+
+[source,java]
+------------------------------------------------------------------
+"jms:in" errorHandler(deadLetterChannel("jms:error")) to "jms:out"
+------------------------------------------------------------------
+
+You can also use different error handler available for the
+http://camel.apache.org/error-handler.html[Java DSL]. In particular
+Scala DSL supports
+http://camel.apache.org/defaulterrorhandler.html[DefaultErrorHandler]
+and
+http://camel.apache.org/error-handler.html#ErrorHandler-LoggingErrorHandler[LoggingErrorHandler].
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------
+// DefaultErrorHandler
+"jms:in" errorHandler(defaultErrorHandler) to "jms:out"
+
+// LoggingErrorHandler
+"jms:in" errorHandler(loggingErrorHandler.level(LoggingLevel.INFO).logName("com.example.MyLogger")) to "jms:out"
+----------------------------------------------------------------------------------------------------------------
+
+[[ScalaDSL-EIP-Messagerouting]]
+Message routing
+^^^^^^^^^^^^^^^
+
+[[ScalaDSL-EIP-Aggregator]]
+Aggregator
+++++++++++
+
+The aggregator EIP aggregates messages based on some message correlation
+criteria. In the Scala DSL, the `aggregate` method takes a function
+`Exchange ⇒ Any` to determine the correlation value for the exchange. In
+the sample below, message are being aggregated if the first 7 letters in
+the message body are the same.
+
+[[ScalaDSL-EIP-Contentbasedrouter]]
+Content based router
+++++++++++++++++++++
+
+Similar to the link:scala-dsl-eip.html[Filter], the content based router
+uses `when` methods with `Exchange ⇒ Boolean` function literals and an
+optional `otherwise`. The function literal can contain plain Scala code
+as well as any of the link:scala-dsl-supported-languages.html[supported
+languages]. The example below routes a given message based on the
+language of the message body.
+
+[[ScalaDSL-EIP-Delayer]]
+Delayer
++++++++
+
+Unlike a throttler, which only slows down messages if the rate exceeds a
+treshold, a delayer delays every messages with a fixed amount of time.
+An example: to delay every message going from `seda:a` to `mock:a` with
+1 second, you write...
+
+Our second example will delay the entire block (containing `mock:c`)
+without doing anything to `mock:b`
+
+[[ScalaDSL-EIP-Loadbalancer]]
+Load balancer
++++++++++++++
+
+To distribute the message handling load over multiple endpoints, we add
+a `loadbalance` to our route definition. You can optionally specify a
+load balancer strategy, like `roundrobin`
+
+[[ScalaDSL-EIP-Multicast]]
+Multicast
++++++++++
+
+Multicast allows you to send a message to multiple endpoints at the same
+time. In a simple route, you can specify multiple targets in the `to` or
+`→` method call:
+
+[[ScalaDSL-EIP-Recipientlist]]
+Recipient list
+++++++++++++++
+
+You can handle a static recipient list with a multicast or
+link:scala-dsl-eip.html[pipeline], but this EIP is usually applied when
+you want to dynamically determine the name(s) of the next endpoint(s) to
+route to. Use the `recipients()` method with a function literal
+(`Exchange => Any`) that returns the endpoint name(s). In the example
+below, the target endpoint name can be found in the String message
+starting at position 21.
+
+Because the `recipients()` method just takes a function literal, you can
+basically use any kind of valid Scala code to determine the endpoint
+name. Have a look at the next example which uses pattern matching to
+figure out where to send the message:
+
+Again, we can also use the same thing in a more block-like syntax. For
+this example, we use the Scala DSL's
+link:scala-dsl-supported-languages.html[support for JXPath] to determine
+the target.
+
+[[ScalaDSL-EIP-Resequencer]]
+Resequencer
++++++++++++
+
+Use the `resequence` method to add a resequencer to the RouteBuilder.
+The method takes a function (`Exchange ⇒ Unit`) that determines the
+value to resequence on. In this example, we resequence messages based on
+the 'in' message body.
+
+The same EIP can also be used with a block-like syntax...
+
+... and with configurable batch size. In this last example, messages
+will be send to `mock:e` whenever a batch of 5 messages is available.
+
+[[ScalaDSL-EIP-Splitter]]
+Splitter
+++++++++
+
+To handle large message in smaller chunks, you can write a Scala
+`Exchange ⇒ Any*` method and add it to your route with the `splitter`
+method. As with many other EIPs, we support a short, in-line version as
+well as a more elaborate block based one.
+
+The above examples also show you how
+link:scala-dsl-supported-languages.html[other languages] like XPath can
+be within the Scala DSL.
+
+[[ScalaDSL-EIP-Throttler]]
+Throttler
++++++++++
+
+The throttler allows you to slow down messages before sending them
+along. The `throttle` methods allows you to specify the maximum
+throughput rate of message:
+
+It can also be used in front of block to throttle messages at that
+point. In the example below, message are passed on to `mock:b` in a
+normal rate (i.e. as fast as possible), but a maximum 3 messages/2
+seconds will arrive at the `mock:c` endpoint.
+
+[[ScalaDSL-EIP-Messagetransformation]]
+Message transformation
+^^^^^^^^^^^^^^^^^^^^^^
+
+[[ScalaDSL-EIP-Contentenricher]]
+Content enricher
+++++++++++++++++
+
+Using a processor function (`Exchange → Unit`), you can alter/enrich the
+message content. This example uses a simple function literal to append
+`" says Hello"` to the message content:
+
+However, you can also define a separate method/function to handle the
+transformation and pass that to the `process` method instead. The
+example below uses pattern matching to enrich the message content:
+
+Off course, you can also use any other Camel component (e.g.
+link:velocity.html[Velocity]) to enrich the content and add it to a
+pipeline

@@ -17,6 +17,7 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
@@ -25,7 +26,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.ShutdownSignalException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -42,14 +42,13 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
     private volatile String consumerTag;
     private volatile boolean stopping;
 
+    private final Semaphore lock = new Semaphore(1);
+
     /**
      * Constructs a new instance and records its association to the passed-in
      * channel.
-     *
-     * @param channel
-     *            the channel to which this consumer is attached
      */
-    public RabbitConsumer(RabbitMQConsumer consumer) {
+    RabbitConsumer(RabbitMQConsumer consumer) {
         // super(channel);
         this.consumer = consumer;
         try {
@@ -62,6 +61,29 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
 
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        try {
+            if (!consumer.getEndpoint().isAutoAck()) {
+                lock.acquire();
+            }
+            //Channel might be open because while we were waiting for the lock, stop() has been succesfully called.
+            if (!channel.isOpen()) {
+                return;
+            }
+
+            try {
+                doHandleDelivery(consumerTag, envelope, properties, body);
+            } finally {
+                if (!consumer.getEndpoint().isAutoAck()) {
+                    lock.release();
+                }
+            }
+
+        } catch (InterruptedException e) {
+            log.warn("Thread Interrupted!");
+        }
+    }
+
+    public void doHandleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
         Exchange exchange = consumer.getEndpoint().createRabbitExchange(envelope, properties, body);
         consumer.getEndpoint().getMessageConverter().mergeAmqpProperties(exchange, properties);
 
@@ -159,21 +181,29 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
         if (channel == null) {
             return;
         }
-        if (tag != null) {
+        if (tag != null && isChannelOpen()) {
             channel.basicCancel(tag);
         }
         try {
-            channel.close();
+            lock.acquire();
+            if (isChannelOpen()) {
+                channel.close();
+            }
         } catch (TimeoutException e) {
             log.error("Timeout occured");
             throw e;
+        } catch (InterruptedException e1) {
+            log.error("Thread Interrupted!");
+        } finally {
+            lock.release();
+
         }
     }
 
     /**
      * Stores the most recently passed-in consumerTag - semantically, there
      * should be only one.
-     * 
+     *
      * @see Consumer#handleConsumeOk
      */
     public void handleConsumeOk(String consumerTag) {
@@ -182,7 +212,7 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
 
     /**
      * Retrieve the consumer tag.
-     * 
+     *
      * @return the most recently notified consumer tag.
      */
     public String getConsumerTag() {
@@ -191,31 +221,31 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
 
     /**
      * No-op implementation of {@link Consumer#handleCancelOk}.
-     * 
+     *
      * @param consumerTag
      *            the defined consumer tag (client- or server-generated)
      */
     public void handleCancelOk(String consumerTag) {
         // no work to do
-        log.debug("Recieved cancelOk signal on the rabbitMQ channel");
+        log.debug("Received cancelOk signal on the rabbitMQ channel");
     }
 
     /**
      * No-op implementation of {@link Consumer#handleCancel(String)}
-     * 
+     *
      * @param consumerTag
      *            the defined consumer tag (client- or server-generated)
      */
     public void handleCancel(String consumerTag) throws IOException {
         // no work to do
-        log.debug("Recieved cancel signal on the rabbitMQ channel");
+        log.debug("Received cancel signal on the rabbitMQ channel");
     }
 
     /**
      * No-op implementation of {@link Consumer#handleShutdownSignal}.
      */
     public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig) {
-        log.info("Recieved shutdown signal on the rabbitMQ channel");
+        log.info("Received shutdown signal on the rabbitMQ channel");
 
         // Check if the consumer closed the connection or something else
         if (!sig.isInitiatedByApplication()) {
@@ -246,7 +276,7 @@ class RabbitConsumer implements com.rabbitmq.client.Consumer {
      */
     public void handleRecoverOk(String consumerTag) {
         // no work to do
-        log.debug("Recieved recover ok signal on the rabbitMQ channel");
+        log.debug("Received recover ok signal on the rabbitMQ channel");
     }
 
     /**

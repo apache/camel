@@ -28,11 +28,11 @@ class HL7MLLPNettyEncoder extends MessageToByteEncoder<Object> {
 
     private final HL7MLLPConfig config;
 
-    public HL7MLLPNettyEncoder() {
+    HL7MLLPNettyEncoder() {
         this(new HL7MLLPConfig());
     }
 
-    public HL7MLLPNettyEncoder(HL7MLLPConfig config) {
+    HL7MLLPNettyEncoder(HL7MLLPConfig config) {
         this.config = config;
     }
 

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -89,16 +90,40 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public Collection<InflightExchange> browse() {
-        return browse(-1, false);
+        return browse(null, -1, false);
+    }
+
+    @Override
+    public Collection<InflightExchange> browse(String fromRouteId) {
+        return browse(fromRouteId, -1, false);
     }
 
     @Override
     public Collection<InflightExchange> browse(int limit, boolean sortByLongestDuration) {
+        return browse(null, limit, sortByLongestDuration);
+    }
+
+    @Override
+    public Collection<InflightExchange> browse(String fromRouteId, int limit, boolean sortByLongestDuration) {
         List<InflightExchange> answer = new ArrayList<InflightExchange>();
 
-        List<Exchange> values = new ArrayList<Exchange>(inflight.values());
+        List<Exchange> values;
+        if (fromRouteId == null) {
+            // all values
+            values = new ArrayList<Exchange>(inflight.values());
+        } else {
+            // only if route match
+            values = new ArrayList<Exchange>();
+            for (Exchange exchange : inflight.values()) {
+                String exchangeRouteId = exchange.getFromRouteId();
+                if (fromRouteId.equals(exchangeRouteId)) {
+                    values.add(exchange);
+                }
+            }
+        }
+
         if (sortByLongestDuration) {
-            Collections.sort(values, new Comparator<Exchange>() {
+            values.sort(new Comparator<Exchange>() {
                 @Override
                 public int compare(Exchange e1, Exchange e2) {
                     long d1 = getExchangeDuration(e1);
@@ -108,7 +133,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             });
         } else {
             // else sort by exchange id
-            Collections.sort(values, new Comparator<Exchange>() {
+            values.sort(new Comparator<Exchange>() {
                 @Override
                 public int compare(Exchange e1, Exchange e2) {
                     return e1.getExchangeId().compareTo(e2.getExchangeId());
@@ -170,13 +195,13 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public long getElapsed() {
-            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
             if (list == null || list.isEmpty()) {
                 return 0;
             }
 
             // get latest entry
-            MessageHistory history = list.get(list.size() - 1);
+            MessageHistory history = list.getLast();
             if (history != null) {
                 return history.getElapsed();
             } else {
@@ -187,13 +212,13 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getNodeId() {
-            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
             if (list == null || list.isEmpty()) {
                 return null;
             }
 
             // get latest entry
-            MessageHistory history = list.get(list.size() - 1);
+            MessageHistory history = list.getLast();
             if (history != null) {
                 return history.getNode().getId();
             } else {
@@ -202,15 +227,25 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         @Override
-        @SuppressWarnings("unchecked")
+        public String getFromRouteId() {
+            return exchange.getFromRouteId();
+        }
+
+        @Override
         public String getRouteId() {
-            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+            return getAtRouteId();
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public String getAtRouteId() {
+            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
             if (list == null || list.isEmpty()) {
                 return null;
             }
 
             // get latest entry
-            MessageHistory history = list.get(list.size() - 1);
+            MessageHistory history = list.getLast();
             if (history != null) {
                 return history.getRouteId();
             } else {

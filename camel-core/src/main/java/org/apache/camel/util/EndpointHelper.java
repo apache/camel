@@ -20,7 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,9 +40,17 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
+import org.apache.camel.catalog.DefaultRuntimeCamelCatalog;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.JsonSchemaHelper.getPropertyDefaultValue;
+import static org.apache.camel.util.JsonSchemaHelper.getPropertyPrefix;
+import static org.apache.camel.util.JsonSchemaHelper.isPropertyMultiValue;
+import static org.apache.camel.util.JsonSchemaHelper.isPropertyRequired;
+import static org.apache.camel.util.ObjectHelper.after;
 
 /**
  * Some helper methods for working with {@link Endpoint} instances
@@ -52,7 +60,6 @@ public final class EndpointHelper {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointHelper.class);
     private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong(0);
     private static final Pattern SYNTAX_PATTERN = Pattern.compile("(\\w+)");
-
 
     private EndpointHelper() {
         //Utility Class
@@ -66,7 +73,7 @@ public final class EndpointHelper {
     public static void pollEndpoint(Endpoint endpoint, Processor processor, long timeout) throws Exception {
         PollingConsumer consumer = endpoint.createPollingConsumer();
         try {
-            consumer.start();
+            ServiceHelper.startService(consumer);
 
             while (true) {
                 Exchange exchange = consumer.receive(timeout);
@@ -78,9 +85,9 @@ public final class EndpointHelper {
             }
         } finally {
             try {
-                consumer.stop();
+                ServiceHelper.stopAndShutdownService(consumer);
             } catch (Exception e) {
-                LOG.warn("Failed to stop PollingConsumer: " + e, e);
+                LOG.warn("Failed to stop PollingConsumer: " + consumer + ". This example is ignored.", e);
             }
         }
     }
@@ -133,14 +140,14 @@ public final class EndpointHelper {
         if (uri.contains("://")) {
             // try without :// also
             String scheme = ObjectHelper.before(uri, "://");
-            String path = ObjectHelper.after(uri, "://");
+            String path = after(uri, "://");
             if (matchPattern(scheme + ":" + path, pattern)) {
                 return true;
             }
         } else {
             // try with :// also
             String scheme = ObjectHelper.before(uri, ":");
-            String path = ObjectHelper.after(uri, ":");
+            String path = after(uri, ":");
             if (matchPattern(scheme + "://" + path, pattern)) {
                 return true;
             }
@@ -521,146 +528,13 @@ public final class EndpointHelper {
      * @param uri          the endpoint uri
      * @return a map for each option in the uri with the corresponding information from the json
      * @throws Exception is thrown in case of error
+     * @deprecated use {@link org.apache.camel.catalog.RuntimeCamelCatalog#endpointProperties(String)}
      */
+    @Deprecated
     public static Map<String, Object> endpointProperties(CamelContext camelContext, String uri) throws Exception {
-        // NOTICE: This logic is similar to org.apache.camel.catalog.DefaultCamelCatalog#endpointProperties
-        // as the catalog also offers similar functionality (without having camel-core on classpath)
-
-        // parse the uri
-        URI u = new URI(uri);
-        String scheme = u.getScheme();
-
-        String json = camelContext.getComponentParameterJsonSchema(u.getScheme());
-        if (json == null) {
-            throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
-        }
-
-        // grab the syntax
-        String syntax = null;
-        List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("syntax")) {
-                syntax = row.get("syntax");
-                break;
-            }
-        }
-        if (syntax == null) {
-            throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
-        }
-
-        // parse the syntax and find the same group in the uri
-        Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
-        List<String> word = new ArrayList<String>();
-        while (matcher.find()) {
-            String s = matcher.group(1);
-            if (!scheme.equals(s)) {
-                word.add(s);
-            }
-        }
-
-        String uriPath = stripQuery(uri);
-
-        // if there is only one, then use uriPath as is
-        List<String> word2 = new ArrayList<String>();
-
-        if (word.size() == 1) {
-            String s = uriPath;
-            s = URISupport.stripPrefix(s, scheme);
-            // strip any leading : or / after the scheme
-            while (s.startsWith(":") || s.startsWith("/")) {
-                s = s.substring(1);
-            }
-            word2.add(s);
-        } else {
-            Matcher matcher2 = SYNTAX_PATTERN.matcher(uriPath);
-            while (matcher2.find()) {
-                String s = matcher2.group(1);
-                if (!scheme.equals(s)) {
-                    word2.add(s);
-                }
-            }
-        }
-
-        rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
-
-        boolean defaultValueAdded = false;
-
-        // now parse the uri to know which part isw what
-        Map<String, String> options = new LinkedHashMap<String, String>();
-
-        // word contains the syntax path elements
-        Iterator<String> it = word2.iterator();
-        for (int i = 0; i < word.size(); i++) {
-            String key = word.get(i);
-
-            boolean allOptions = word.size() == word2.size();
-            boolean required = JsonSchemaHelper.isPropertyRequired(rows, key);
-            String defaultValue = JsonSchemaHelper.getPropertyDefaultValue(rows, key);
-
-            // we have all options so no problem
-            if (allOptions) {
-                String value = it.next();
-                options.put(key, value);
-            } else {
-                // we have a little problem as we do not not have all options
-                if (!required) {
-                    String value = defaultValue;
-                    options.put(key, value);
-                    defaultValueAdded = true;
-                } else {
-                    String value = it.next();
-                    options.put(key, value);
-                }
-            }
-        }
-
-        Map<String, Object> answer = new LinkedHashMap<String, Object>();
-
-        // remove all options which are using default values and are not required
-        for (Map.Entry<String, String> entry : options.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-
-            if (defaultValueAdded) {
-                boolean required = JsonSchemaHelper.isPropertyRequired(rows, key);
-                String defaultValue = JsonSchemaHelper.getPropertyDefaultValue(rows, key);
-
-                if (!required && defaultValue != null) {
-                    if (defaultValue.equals(value)) {
-                        continue;
-                    }
-                }
-            }
-
-            // we should keep this in the answer
-            answer.put(key, value);
-        }
-
-        // now parse the uri parameters
-        Map<String, Object> parameters = URISupport.parseParameters(u);
-
-        // and covert the values to String so its JMX friendly
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue() != null ? entry.getValue().toString() : "";
-            answer.put(key, value);
-        }
-
-        return answer;
-    }
-
-    /**
-     * Strips the query parameters from the uri
-     *
-     * @param uri the uri
-     * @return the uri without the query parameter
-     */
-    private static String stripQuery(String uri) {
-        int idx = uri.indexOf('?');
-        if (idx > -1) {
-            uri = uri.substring(0, idx);
-        }
-        return uri;
+        RuntimeCamelCatalog catalog = new DefaultRuntimeCamelCatalog(camelContext, false);
+        Map<String, String> options = catalog.endpointProperties(uri);
+        return new HashMap<>(options);
     }
 
 }

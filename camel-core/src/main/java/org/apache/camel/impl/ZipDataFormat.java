@@ -59,13 +59,22 @@ public class ZipDataFormat extends org.apache.camel.support.ServiceSupport imple
 
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         // ask for a mandatory type conversion to avoid a possible NPE beforehand as we do copy from the InputStream
-        InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
+        final InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
-        DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
+        final Deflater deflater = new Deflater(compressionLevel);
+        final DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, deflater);
         try {
             IOHelper.copy(is, zipOutput);
         } finally {
             IOHelper.close(is, zipOutput);
+            
+            /*
+            * As we create the Deflater our self and do not use the stream default
+            * (see {@link java.util.zip.DeflaterOutputStream#usesDefaultDeflater})
+            * we need to close the Deflater to not risk a OutOfMemoryException
+            * in native code parts (see {@link java.util.zip.Deflater#end})
+            */
+            deflater.end();
         }
     }
 

@@ -20,9 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.Before;
@@ -73,12 +72,12 @@ public class WebsocketComponentTest {
     public void setUp() throws Exception {
         component = new WebsocketComponent();
         component.setCamelContext(new DefaultCamelContext());
-
-        Connector connector = new SelectChannelConnector();
+        System.out.println("Server : " + server.isStarted());
+        server = component.createServer();
+        System.out.println("Server : " + server.isStarted());
+        ServerConnector connector = new ServerConnector(server);
         connector.setHost("localhost");
         connector.setPort(1988);
-
-        server = component.createServer();
         server.addConnector(connector);
 
         WebsocketEndpoint endpoint = (WebsocketEndpoint) component.createEndpoint("websocket://x");
@@ -99,8 +98,8 @@ public class WebsocketComponentTest {
     public void testCreateServerWithoutStaticContent() throws Exception {
         ServletContextHandler handler = component.createContext(server, server.getConnectors()[0], null);
         assertEquals(1, server.getConnectors().length);
-        assertEquals("localhost", server.getConnectors()[0].getHost());
-        assertEquals(1988, server.getConnectors()[0].getPort());
+        assertEquals("localhost", ((ServerConnector) server.getConnectors()[0]).getHost());
+        assertEquals(1988, ((ServerConnector) server.getConnectors()[0]).getPort());
         assertFalse(server.getConnectors()[0].isStarted());
         assertEquals(handler, server.getHandler());
         assertEquals(1, server.getHandlers().length);
@@ -116,8 +115,8 @@ public class WebsocketComponentTest {
         ServletContextHandler handler = component.createContext(server, server.getConnectors()[0], null);
         Server server = component.createStaticResourcesServer(handler, "localhost", 1988, "classpath:public");
         assertEquals(1, server.getConnectors().length);
-        assertEquals("localhost", server.getConnectors()[0].getHost());
-        assertEquals(1988, server.getConnectors()[0].getPort());
+        assertEquals("localhost", ((ServerConnector) server.getConnectors()[0]).getHost());
+        assertEquals(1988, ((ServerConnector) server.getConnectors()[0]).getPort());
         assertFalse(server.getConnectors()[0].isStarted());
         assertEquals(handler, server.getHandler());
         assertEquals(1, server.getHandlers().length);

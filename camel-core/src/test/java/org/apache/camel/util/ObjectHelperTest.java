@@ -37,6 +37,7 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.bean.MyOtherFooBean;
 import org.apache.camel.component.bean.MyStaticClass;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
@@ -62,12 +63,6 @@ public class ObjectHelperTest extends TestCase {
 
         assertNotNull("Cannot load resource without leading \"/\"", url1);
         assertNotNull("Cannot load resource with leading \"/\"", url2);
-    }
-
-    public void testRemoveInitialCharacters() throws Exception {
-        assertEquals(ObjectHelper.removeStartingCharacters("foo", '/'), "foo");
-        assertEquals(ObjectHelper.removeStartingCharacters("/foo", '/'), "foo");
-        assertEquals(ObjectHelper.removeStartingCharacters("//foo", '/'), "foo");
     }
 
     public void testGetPropertyName() throws Exception {
@@ -200,6 +195,14 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("", it.next());
+        assertEquals("c", it.next());
+    }
+
+    public void testCreateIteratorPattern() {
+        String s = "a\nb\rc";
+        Iterator<?> it = ObjectHelper.createIterator(s, "\n|\r", false, true);
+        assertEquals("a", it.next());
+        assertEquals("b", it.next());
         assertEquals("c", it.next());
     }
 
@@ -616,7 +619,7 @@ public class ObjectHelperTest extends TestCase {
 
     public void testGetCamelContextPropertiesWithPrefix() {
         CamelContext context = new DefaultCamelContext();
-        Map<String, String> properties = context.getProperties();
+        Map<String, String> properties = context.getGlobalOptions();
         properties.put("camel.object.helper.test1", "test1");
         properties.put("camel.object.helper.test2", "test2");
         properties.put("camel.object.test", "test");
@@ -667,40 +670,6 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.isPrimitiveArrayType(Void[].class));
         assertFalse(ObjectHelper.isPrimitiveArrayType(CamelContext[].class));
         assertFalse(ObjectHelper.isPrimitiveArrayType(null));
-    }
-
-    public void testBefore() {
-        assertEquals("Hello ", ObjectHelper.before("Hello World", "World"));
-        assertEquals("Hello ", ObjectHelper.before("Hello World Again", "World"));
-        assertEquals(null, ObjectHelper.before("Hello Again", "Foo"));
-    }
-
-    public void testAfter() {
-        assertEquals(" World", ObjectHelper.after("Hello World", "Hello"));
-        assertEquals(" World Again", ObjectHelper.after("Hello World Again", "Hello"));
-        assertEquals(null, ObjectHelper.after("Hello Again", "Foo"));
-    }
-
-    public void testBetween() {
-        assertEquals("foo bar", ObjectHelper.between("Hello 'foo bar' how are you", "'", "'"));
-        assertEquals("foo bar", ObjectHelper.between("Hello ${foo bar} how are you", "${", "}"));
-        assertEquals(null, ObjectHelper.between("Hello ${foo bar} how are you", "'", "'"));
-    }
-
-    public void testBetweenOuterPair() {
-        assertEquals("bar(baz)123", ObjectHelper.betweenOuterPair("foo(bar(baz)123)", '(', ')'));
-        assertEquals(null, ObjectHelper.betweenOuterPair("foo(bar(baz)123))", '(', ')'));
-        assertEquals(null, ObjectHelper.betweenOuterPair("foo(bar(baz123", '(', ')'));
-        assertEquals(null, ObjectHelper.betweenOuterPair("foo)bar)baz123", '(', ')'));
-        assertEquals("bar", ObjectHelper.betweenOuterPair("foo(bar)baz123", '(', ')'));
-        assertEquals("'bar', 'baz()123', 123", ObjectHelper.betweenOuterPair("foo('bar', 'baz()123', 123)", '(', ')'));
-    }
-
-    public void testIsJavaIdentifier() {
-        assertEquals(true, ObjectHelper.isJavaIdentifier("foo"));
-        assertEquals(false, ObjectHelper.isJavaIdentifier("foo.bar"));
-        assertEquals(false, ObjectHelper.isJavaIdentifier(""));
-        assertEquals(false, ObjectHelper.isJavaIdentifier(null));
     }
 
     public void testGetDefaultCharSet() {
@@ -837,13 +806,6 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
-    public void testNormalizeClassName() {
-        assertEquals("Should get the right class name", "my.package-info", ObjectHelper.normalizeClassName("my.package-info"));
-        assertEquals("Should get the right class name", "Integer[]", ObjectHelper.normalizeClassName("Integer[] \r"));
-        assertEquals("Should get the right class name", "Hello_World", ObjectHelper.normalizeClassName("Hello_World"));
-        assertEquals("Should get the right class name", "", ObjectHelper.normalizeClassName("////"));
-    }
-
     public void testLookupConstantFieldValue() {
         assertEquals("CamelFileName", ObjectHelper.lookupConstantFieldValue(Exchange.class, "FILE_NAME"));
         assertEquals(null, ObjectHelper.lookupConstantFieldValue(Exchange.class, "XXX"));
@@ -904,5 +866,28 @@ public class ObjectHelperTest extends TestCase {
         } catch (IllegalArgumentException iae) {
             assertEquals("expected2 must be specified on: holder", iae.getMessage());
         }
+    }
+
+    public void testSameMethodIsOverride() throws Exception {
+        Method m = MyOtherFooBean.class.getMethod("toString", Object.class);
+        assertTrue(ObjectHelper.isOverridingMethod(m, m, false));
+    }
+
+    public void testOverloadIsNotOverride() throws Exception {
+        Method m1 = MyOtherFooBean.class.getMethod("toString", Object.class);
+        Method m2 = MyOtherFooBean.class.getMethod("toString", String.class);
+        assertFalse(ObjectHelper.isOverridingMethod(m2, m1, false));
+    }
+
+    public void testOverrideEquivalentSignatureFromSiblingClassIsNotOverride() throws Exception {
+        Method m1 = Double.class.getMethod("intValue");
+        Method m2 = Float.class.getMethod("intValue");
+        assertFalse(ObjectHelper.isOverridingMethod(m2, m1, false));
+    }
+
+    public void testOverrideEquivalentSignatureFromUpperClassIsOverride() throws Exception {
+        Method m1 = Double.class.getMethod("intValue");
+        Method m2 = Number.class.getMethod("intValue");
+        assertTrue(ObjectHelper.isOverridingMethod(m2, m1, false));
     }
 }

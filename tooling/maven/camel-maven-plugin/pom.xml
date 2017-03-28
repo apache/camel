@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-maven-plugin</artifactId>
@@ -72,17 +72,53 @@
       <artifactId>camel-cdi</artifactId>
     </dependency>
 
-
-    <!-- add some logging to the classpath -->
+    <!-- camel-catalog -->
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-lucene</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-maven</artifactId>
     </dependency>
 
+    <!-- camel route parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-route-parser</artifactId>
+    </dependency>
+
+    <!-- roaster java parser -->
+    <dependency>
+      <groupId>org.jboss.forge.roaster</groupId>
+      <artifactId>roaster-api</artifactId>
+      <version>${roaster-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.roaster</groupId>
+      <artifactId>roaster-jdt</artifactId>
+      <version>${roaster-version}</version>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-
 </project>

@@ -34,9 +34,12 @@ import org.slf4j.LoggerFactory;
 /**
  * The splunk component allows to publish or search for events in Splunk.
  */
-@UriEndpoint(scheme = "splunk", title = "Splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "monitoring")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "log,monitoring")
 public class SplunkEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
+
+    private static final Pattern SPLUNK_SCHEMA_PATTERN = Pattern.compile("splunk:(//)*");
+    private static final Pattern SPLUNK_OPTIONS_PATTER = Pattern.compile("\\?.*");
 
     private Service service;
     @UriParam
@@ -91,11 +94,8 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
     }
 
     private static String[] splitUri(String uri) {
-        Pattern p1 = Pattern.compile("splunk:(//)*");
-        Pattern p2 = Pattern.compile("\\?.*");
-
-        uri = p1.matcher(uri).replaceAll("");
-        uri = p2.matcher(uri).replaceAll("");
+        uri = SPLUNK_SCHEMA_PATTERN.matcher(uri).replaceAll("");
+        uri = SPLUNK_OPTIONS_PATTER.matcher(uri).replaceAll("");
 
         return uri.split("/");
     }

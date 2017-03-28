@@ -16,14 +16,29 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import java.util.Calendar;
+
+import org.apache.camel.maven.packaging.StringHelper;
+
+import static org.apache.camel.maven.packaging.StringHelper.wrapCamelCaseWords;
+
 public class ComponentOptionModel {
 
     private String name;
+    private String displayName;
     private String kind;
+    private String group;
+    private String required;
     private String type;
     private String javaType;
     private String deprecated;
+    private String secret;
     private String description;
+    private String defaultValue;
+    private String enums;
+
+    // special for documentation rendering
+    private boolean newGroup;
 
     public String getName() {
         return name;
@@ -33,12 +48,36 @@ public class ComponentOptionModel {
         this.name = name;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     public String getKind() {
         return kind;
     }
 
     public void setKind(String kind) {
         this.kind = kind;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getRequired() {
+        return required;
+    }
+
+    public void setRequired(String required) {
+        this.required = required;
     }
 
     public String getType() {
@@ -65,6 +104,14 @@ public class ComponentOptionModel {
         this.deprecated = deprecated;
     }
 
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -73,7 +120,36 @@ public class ComponentOptionModel {
         this.description = description;
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public String getEnums() {
+        return enums;
+    }
+
+    public void setEnums(String enums) {
+        this.enums = enums;
+    }
+
+    public boolean isNewGroup() {
+        return newGroup;
+    }
+
+    public void setNewGroup(boolean newGroup) {
+        this.newGroup = newGroup;
+    }
+
     public String getShortJavaType() {
+        // TODO: use watermark in the others
+        return getShortJavaType(40);
+    }
+
+    public String getShortJavaType(int watermark) {
         if (javaType.startsWith("java.util.Map")) {
             return "Map";
         } else if (javaType.startsWith("java.util.Set")) {
@@ -81,12 +157,51 @@ public class ComponentOptionModel {
         } else if (javaType.startsWith("java.util.List")) {
             return "List";
         }
-        int pos = javaType.lastIndexOf(".");
+
+        String text = javaType;
+
+        int pos = text.lastIndexOf(".");
         if (pos != -1) {
-            return javaType.substring(pos + 1);
-        } else {
-            return javaType;
+            text = text.substring(pos + 1);
         }
+
+        // if its some kind of java object then lets wrap it as its long
+        if ("object".equals(type)) {
+            text = wrapCamelCaseWords(text, watermark, " ");
+        }
+        return text;
+    }
+
+    public String getShortGroup() {
+        if (group.endsWith(" (advanced)")) {
+            return group.substring(0, group.length() - 11);
+        }
+        return group;
+    }
+
+    public String getShortDefaultValue(int watermark) {
+        if (defaultValue.isEmpty()) {
+            return "";
+        }
+        String text = defaultValue;
+        if (text.endsWith("<T>")) {
+            text = text.substring(0, text.length() - 3);
+        } else if (text.endsWith("<T>>")) {
+            text = text.substring(0, text.length() - 4);
+        }
+
+        // TODO: dirty hack for AUTO_ACKNOWLEDGE which we should wrap
+        if ("AUTO_ACKNOWLEDGE".equals(text)) {
+            return "AUTO_ ACKNOWLEDGE";
+        }
+
+        return text;
+    }
+
+    public String getShortName(int watermark) {
+        String text = wrapCamelCaseWords(name, watermark, " ");
+        // ensure the option name starts with lower-case
+        return Character.toLowerCase(text.charAt(0)) + text.substring(1);
     }
 
 }

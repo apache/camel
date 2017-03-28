@@ -34,7 +34,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -62,20 +61,40 @@ import org.slf4j.LoggerFactory;
  * @version
  */
 public class FallbackTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterAware, CamelContextAware {
-    public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint"; 
+
+    public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint";
+    public static final String OBJECT_FACTORY = "CamelJaxbObjectFactory";
+
     private static final Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
     private final Map<AnnotatedElement, JAXBContext> contexts = new HashMap<>();
     private final StaxConverter staxConverter = new StaxConverter();
     private TypeConverter parentTypeConverter;
     private boolean prettyPrint = true;
+    private boolean objectFactory;
     private CamelContext camelContext;
 
     public boolean isPrettyPrint() {
         return prettyPrint;
     }
 
+    /**
+     * Whether the JAXB converter should use pretty print or not (default is true)
+     */
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+
+    public boolean isObjectFactory() {
+        return objectFactory;
+    }
+
+    /**
+     * Whether the JAXB converter supports using ObjectFactory classes to create the POJO classes during conversion.
+     * This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
+     */
+    public void setObjectFactory(boolean objectFactory) {
+        this.objectFactory = objectFactory;
     }
 
     public boolean allowNull() {
@@ -92,6 +111,28 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+
+        if (camelContext != null) {
+            // configure pretty print
+            String property = camelContext.getProperty(PRETTY_PRINT);
+            if (property != null) {
+                if (property.equalsIgnoreCase("false")) {
+                    setPrettyPrint(false);
+                } else {
+                    setPrettyPrint(true);
+                }
+            }
+
+            // configure object factory
+            property = camelContext.getProperty(OBJECT_FACTORY);
+            if (property != null) {
+                if (property.equalsIgnoreCase("false")) {
+                    setObjectFactory(false);
+                } else {
+                    setObjectFactory(true);
+                }
+            }
+        }
     }
 
     public <T> T convertTo(Class<T> type, Object value) {
@@ -109,9 +150,16 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             if (isJaxbType(type)) {
                 return unmarshall(type, exchange, value);
             }
-            if (value != null) {
-                if (isJaxbType(value.getClass()) && isNotStreamCacheType(type)) {
-                    return marshall(type, exchange, value);
+            if (value != null && isNotStreamCacheType(type)) {
+                if (hasXmlRootElement(value.getClass())) {
+                    return marshall(type, exchange, value, null);
+                }
+                if (isObjectFactory()) {
+                    CamelContext context = exchange != null ? exchange.getContext() : camelContext;
+                    Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(context, value.getClass());
+                    if (objectFactoryMethod != null) {
+                        return marshall(type, exchange, value, objectFactoryMethod);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -152,7 +200,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        LOG.info("Jaxb FallbackTypeConverter[prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
     }
 
     @Override
@@ -165,7 +213,11 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
     }
 
     protected <T> boolean isJaxbType(Class<T> type) {
-        return hasXmlRootElement(type) || (getJaxbElementFactoryMethod(type) != null);
+        if (isObjectFactory()) {
+            return hasXmlRootElement(type) || JaxbHelper.getJaxbElementFactoryMethod(camelContext, type) != null;
+        } else {
+            return hasXmlRootElement(type);
+        }
     }
 
     private <T> T castJaxbType(Object o, Class<T> type) {
@@ -230,7 +282,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
         return null;
     }
 
-    protected <T> T marshall(Class<T> type, Exchange exchange, Object value)
+    protected <T> T marshall(Class<T> type, Exchange exchange, Object value, Method objectFactoryMethod)
         throws JAXBException, XMLStreamException, FactoryConfigurationError, TypeConversionException {
         LOG.trace("Marshal from value {} to type {}", value, type);
 
@@ -242,31 +294,22 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             // must create a new instance of marshaller as its not thread safe
             Marshaller marshaller = context.createMarshaller();
             Writer buffer = new StringWriter();
-            boolean prettyPrint = isPrettyPrint();
-            // check the camel context property to decide the value of PrettyPrint
-            if (exchange != null) {
-                String property = exchange.getContext().getProperty(PRETTY_PRINT);
-                if (property != null) {
-                    if (property.equalsIgnoreCase("false")) {
-                        prettyPrint = false;
-                    } else {
-                        prettyPrint = true;
-                    }
-                }
-            }
-            if (prettyPrint) {
+
+            if (isPrettyPrint()) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             }
             if (exchange != null && exchange.getProperty(Exchange.CHARSET_NAME, String.class) != null) {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, exchange.getProperty(Exchange.CHARSET_NAME, String.class));
             }
             Object toMarshall = value;
-            if (!hasXmlRootElement(value.getClass())) {
-                Method m = getJaxbElementFactoryMethod(value.getClass());
+            if (objectFactoryMethod != null) {
                 try {
-                    toMarshall = m.invoke(getObjectFactory(value.getClass()).newInstance(), value);
+                    Object instance = objectFactoryMethod.getDeclaringClass().newInstance();
+                    if (instance != null) {
+                        toMarshall = objectFactoryMethod.invoke(instance, value);
+                    }
                 } catch (Exception e) {
-                    LOG.error("Unable to create JAXBElement object for type {} due to {}", value.getClass().getName(), e);
+                    LOG.debug("Unable to create JAXBElement object for type " + value.getClass() + " due to " + e.getMessage(), e);
                 }
             }
             if (needFiltering(exchange)) {
@@ -342,42 +385,6 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
 
     private static <T> boolean isNotStreamCacheType(Class<T> type) {
         return !StreamCache.class.isAssignableFrom(type);
-    }
-
-    private <T> Class getObjectFactory(Class<T> type) throws ClassNotFoundException {
-        Class<?> c = null;
-        if (type.getPackage() != null) {
-            String objectFactoryClassName = type.getPackage().getName() + ".ObjectFactory";
-            c = camelContext.getClassResolver().resolveClass(objectFactoryClassName);
-        }
-        if (c == null) {
-            throw new ClassNotFoundException(String.format("ObjectFactory for type %s was not found", type.getName()));
-        } else {
-            return c;
-        }
-    }
-
-    private <T> Method getJaxbElementFactoryMethod(Class<T> type) {
-        Method factoryMethod = null;
-        try {
-            for (Method m : getObjectFactory(type).getMethods()) {
-                final XmlElementDecl a = m.getAnnotation(XmlElementDecl.class);
-                if (a == null) {
-                    continue;
-                }
-                final Class<?>[] parameters = m.getParameterTypes();
-                if (parameters.length == 1 && parameters[0].isAssignableFrom(type)) {
-                    if (factoryMethod != null) {
-                        throw new IllegalStateException("There are several possible XML schema mappings for class " + type.getName());
-                    } else {
-                        factoryMethod = m;
-                    }
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            LOG.debug(e.getMessage(), e);
-        }
-        return factoryMethod;
     }
 
 }

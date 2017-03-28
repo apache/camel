@@ -33,7 +33,7 @@ public class DavidSiefertTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
         result.expectedBodiesReceived(expectedBody);
-        result.message(0).header("sample.name").equals("myValue");
+        result.message(0).header("sample.name").isEqualTo("myValue");
         template.sendBody("direct:start", "<sample><name>value</name></sample>");
         result.assertIsSatisfied();
     }

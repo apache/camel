@@ -44,7 +44,8 @@ public class MainExample {
         main.addRouteBuilder(new MyRouteBuilder());
         // add event listener
         main.addMainListener(new Events());
-
+        // set the properties from a file
+        main.setPropertyPlaceholderLocations("example.properties");
         // run until you terminate the JVM
         System.out.println("Starting Camel. Use ctrl + c to terminate the JVM.\n");
         main.run();
@@ -53,7 +54,7 @@ public class MainExample {
     private static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {
-            from("timer:foo?delay=2000")
+            from("timer:foo?delay={{millisecs}}")
                 .process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         System.out.println("Invoked timer at " + new Date());

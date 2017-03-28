@@ -27,6 +27,7 @@ public interface KubernetesConstants {
     String KUBERNETES_REPLICATION_CONTROLLERS_LABELS = "CamelKubernetesReplicationControllersLabels";
     String KUBERNETES_REPLICATION_CONTROLLER_NAME = "CamelKubernetesReplicationControllerName";
     String KUBERNETES_REPLICATION_CONTROLLER_SPEC = "CamelKubernetesReplicationControllerSpec";
+    String KUBERNETES_REPLICATION_CONTROLLER_REPLICAS = "CamelKubernetesReplicationControllerReplicas";
     String KUBERNETES_PODS_LABELS = "CamelKubernetesPodsLabels";
     String KUBERNETES_POD_NAME = "CamelKubernetesPodName";
     String KUBERNETES_POD_SPEC = "CamelKubernetesPodSpec";
@@ -46,6 +47,9 @@ public interface KubernetesConstants {
     String KUBERNETES_SERVICE_ACCOUNT = "CamelKubernetesServiceAccount";
     String KUBERNETES_NODES_LABELS = "CamelKubernetesNodesLabels";
     String KUBERNETES_NODE_NAME = "CamelKubernetesNodeName";
+    String KUBERNETES_CONFIGMAPS_LABELS = "CamelKubernetesConfigMapsLabels";
+    String KUBERNETES_CONFIGMAP_NAME = "CamelKubernetesConfigMapName";
+    String KUBERNETES_CONFIGMAP_DATA = "CamelKubernetesConfigData";
     String KUBERNETES_BUILDS_LABELS = "CamelKubernetesBuildsLabels";
     String KUBERNETES_BUILD_NAME = "CamelKubernetesBuildName";
     String KUBERNETES_BUILD_CONFIGS_LABELS = "CamelKubernetesBuildConfigsLabels";

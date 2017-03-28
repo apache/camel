@@ -95,7 +95,6 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
-        @SuppressWarnings("unchecked")
         TabularData data = (TabularData) mbeanServer.invoke(on, "listEips", null, null);
         assertNotNull(data);
         assertTrue(data.size() > 150);

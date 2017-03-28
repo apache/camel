@@ -90,7 +90,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
             if (inputChannel == null) {
                 throw new IllegalArgumentException("InputChannel has not been configured on " + getEndpoint());
             }
-            exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL , inputChannel);
+            exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL, inputChannel);
 
             // subscribe so we can receive the reply from spring integration
             inputChannel.subscribe(new MessageHandler() {

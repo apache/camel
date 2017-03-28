@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -36,21 +37,32 @@ import org.apache.camel.util.URISupport;
 
 public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
-    private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+    private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
 
+    @Metadata(defaultValue = "4567")
     private int port = 4567;
+    @Metadata(defaultValue = "0.0.0.0")
     private String ipAddress;
 
+    @Metadata(label = "advanced")
     private int minThreads;
+    @Metadata(label = "advanced")
     private int maxThreads;
+    @Metadata(label = "advanced")
     private int timeOutMillis;
 
+    @Metadata(label = "security")
     private String keystoreFile;
+    @Metadata(label = "security", secret = true)
     private String keystorePassword;
+    @Metadata(label = "security")
     private String truststoreFile;
+    @Metadata(label = "security", secret = true)
     private String truststorePassword;
 
+    @Metadata(label = "advanced")
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
+    @Metadata(label = "advanced")
     private SparkBinding sparkBinding = new DefaultSparkBinding();
 
     public SparkComponent() {
@@ -284,7 +296,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         RestConfiguration config = configuration;
         if (config == null) {
-            config = getCamelContext().getRestConfiguration("spark-rest", true);
+            config = camelContext.getRestConfiguration("spark-rest", true);
         }
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -299,7 +311,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         if (ObjectHelper.isNotEmpty(path)) {
             // spark-rest uses :name syntax instead of {name} so we need to replace those
-            Matcher matcher = pattern.matcher(path);
+            Matcher matcher = PATTERN.matcher(path);
             path = matcher.replaceAll(":$1");
         }
 
@@ -329,14 +341,20 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         // get the endpoint
         SparkEndpoint endpoint = camelContext.getEndpoint(url, SparkEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+        if (config.isEnableCORS()) {
+            // if CORS is enabled then configure that on the spark consumer
+            if (config.getConsumerProperties() == null) {
+                config.setConsumerProperties(new HashMap<String, Object>());
+            }
+            config.getConsumerProperties().put("enableCors", true);
         }
-
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(camelContext, consumer, config.getConsumerProperties());
+        }
         return consumer;
     }
 }

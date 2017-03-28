@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "language,json", title = "JSonPath")
+@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JSonPath")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonPathExpression extends ExpressionDefinition {
@@ -44,6 +44,10 @@ public class JsonPathExpression extends ExpressionDefinition {
     private Class<?> resultType;
     @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean suppressExceptions;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean allowSimple;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean allowEasyPredicate;
 
     public JsonPathExpression() {
     }
@@ -78,6 +82,28 @@ public class JsonPathExpression extends ExpressionDefinition {
         return suppressExceptions;
     }
 
+    public Boolean getAllowSimple() {
+        return allowSimple;
+    }
+
+    /**
+     * Whether to allow in inlined simple exceptions in the json path expression
+     */
+    public void setAllowSimple(Boolean allowSimple) {
+        this.allowSimple = allowSimple;
+    }
+
+    public Boolean getAllowEasyPredicate() {
+        return allowEasyPredicate;
+    }
+
+    /**
+     * Whether to allow using the easy predicate parser to pre-parse predicates.
+     */
+    public void setAllowEasyPredicate(Boolean allowEasyPredicate) {
+        this.allowEasyPredicate = allowEasyPredicate;
+    }
+
     /**
      * Whether to suppress exceptions such as PathNotFoundException.
      */
@@ -109,6 +135,12 @@ public class JsonPathExpression extends ExpressionDefinition {
         if (suppressExceptions != null) {
             setProperty(expression, "suppressExceptions", suppressExceptions);
         }
+        if (allowSimple != null) {
+            setProperty(expression, "allowSimple", allowSimple);
+        }
+        if (allowEasyPredicate != null) {
+            setProperty(expression, "allowEasyPredicate", allowEasyPredicate);
+        }
         super.configureExpression(camelContext, expression);
     }
 
@@ -119,6 +151,12 @@ public class JsonPathExpression extends ExpressionDefinition {
         }
         if (suppressExceptions != null) {
             setProperty(predicate, "suppressExceptions", suppressExceptions);
+        }
+        if (allowSimple != null) {
+            setProperty(predicate, "allowSimple", allowSimple);
+        }
+        if (allowEasyPredicate != null) {
+            setProperty(predicate, "allowEasyPredicate", allowEasyPredicate);
         }
         super.configurePredicate(camelContext, predicate);
     }

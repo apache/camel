@@ -29,12 +29,8 @@ import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.MerchantAccountGatewayApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MerchantAccountGatewayIntegrationTest.class);
     private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(MerchantAccountGatewayApiMethod.class).getName();
 
     @Ignore
@@ -45,13 +41,13 @@ public class MerchantAccountGatewayIntegrationTest extends AbstractBraintreeTest
             new MerchantAccountRequest()
                 .masterMerchantAccountId(System.getenv("CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID"))
                 .individual()
-                    .firstName("merchant")
-                    .lastName(merchantId)
-                    .address()
-                        .streetAddress("my street")
-                        .done()
-                    .done()
-            , Result.class
+                .firstName("merchant")
+                .lastName(merchantId)
+                .address()
+                .streetAddress("my street")
+                .done()
+                .done(),
+            Result.class
         );
 
         assertNotNull("create result", result);

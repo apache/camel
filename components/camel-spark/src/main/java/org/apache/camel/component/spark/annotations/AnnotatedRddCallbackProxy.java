@@ -37,7 +37,7 @@ class AnnotatedRddCallbackProxy implements RddCallback {
 
     private final CamelContext camelContext;
 
-    public AnnotatedRddCallbackProxy(Object objectWithCallback, CamelContext camelContext) {
+    AnnotatedRddCallbackProxy(Object objectWithCallback, CamelContext camelContext) {
         this.objectWithCallback = objectWithCallback;
         this.camelContext = camelContext;
         this.rddCallbacks = findMethodsWithAnnotation(objectWithCallback.getClass(), org.apache.camel.component.spark.annotations.RddCallback.class);
@@ -46,7 +46,7 @@ class AnnotatedRddCallbackProxy implements RddCallback {
         }
     }
 
-    public AnnotatedRddCallbackProxy(Object objectWithCallback) {
+    AnnotatedRddCallbackProxy(Object objectWithCallback) {
         this(objectWithCallback, null);
     }
 

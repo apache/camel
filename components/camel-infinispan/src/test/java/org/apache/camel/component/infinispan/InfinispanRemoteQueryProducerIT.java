@@ -18,8 +18,8 @@ package org.apache.camel.component.infinispan;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -40,17 +40,33 @@ import org.infinispan.query.remote.client.MarshallerRegistration;
 import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.junit.Test;
 
-import static org.apache.camel.component.infinispan.InfinispanConstants.KEY;
 import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
 import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY;
 import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
 import static org.apache.camel.component.infinispan.InfinispanConstants.RESULT;
-import static org.apache.camel.component.infinispan.InfinispanConstants.VALUE;
-import static org.apache.camel.component.infinispan.UserUtils.USERS;
-import static org.apache.camel.component.infinispan.UserUtils.createKey;
-import static org.apache.camel.component.infinispan.UserUtils.hasUser;
+import static org.apache.camel.component.infinispan.util.UserUtils.USERS;
+import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
+import static org.apache.camel.component.infinispan.util.UserUtils.hasUser;
 
 public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
+
+    private static final InfinispanQueryBuilder NO_RESULT_QUERY_BUILDER = new InfinispanQueryBuilder() {
+        @Override
+        public Query build(QueryFactory<Query> queryFactory) {
+            return queryFactory.from(User.class)
+                .having("name").like("%abc%")
+                .toBuilder().build();
+        }
+    };
+
+    private static final InfinispanQueryBuilder WITH_RESULT_QUERY_BUILDER = new InfinispanQueryBuilder() {
+        @Override
+        public Query build(QueryFactory<Query> queryFactory) {
+            return queryFactory.from(User.class)
+                .having("name").like("%A")
+                .toBuilder().build();
+        }
+    };
 
     private RemoteCacheManager manager;
 
@@ -58,6 +74,9 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         registry.bind("myCustomContainer", manager);
+        registry.bind("noResultQueryBuilder", NO_RESULT_QUERY_BUILDER);
+        registry.bind("withResultQueryBuilder", WITH_RESULT_QUERY_BUILDER);
+
         return registry;
     }
 
@@ -66,17 +85,23 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to(
-                        "infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query");
+                from("direct:start")
+                    .to("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query");
+                from("direct:noQueryResults")
+                    .to("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#noResultQueryBuilder");
+                from("direct:queryWithResults")
+                    .to("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#withResultQueryBuilder");
             }
         };
     }
 
     @Override
     protected void doPreSetup() throws IOException {
-        ConfigurationBuilder builder = new ConfigurationBuilder().addServer()
-                .host("localhost").port(11222)
-                .marshaller(new ProtoStreamMarshaller());
+        ConfigurationBuilder builder = new ConfigurationBuilder()
+            .addServer()
+                .host("localhost")
+                .port(11222)
+            .marshaller(new ProtoStreamMarshaller());
 
         manager = new RemoteCacheManager(builder.build());
 
@@ -99,18 +124,18 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        /* Preload data. */
+        // pre-load data
+        RemoteCache<Object, Object> cache = manager.getCache("remote_query");
+        assertNotNull(cache);
+
+        cache.clear();
+        assertTrue(cache.isEmpty());
+
         for (final User user : USERS) {
-            Exchange request = template.request("direct:start",
-                    new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            Message in = exchange.getIn();
-                            in.setHeader(KEY, createKey(user));
-                            in.setHeader(VALUE, user);
-                        }
-                    });
-            assertNull(request.getException());
+            String key = createKey(user);
+            cache.put(key, user);
+
+            assertTrue(cache.containsKey(key));
         }
     }
 
@@ -124,57 +149,60 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         });
         assertNull(request.getException());
 
-        @SuppressWarnings("unchecked")
-        List<User> queryResult = (List<User>) request.getIn().getHeader(RESULT);
+        List<User> queryResult = request.getIn().getHeader(RESULT, List.class);
         assertNull(queryResult);
     }
 
     @Test
     public void producerQueryWithoutResult() throws Exception {
-        Exchange request = template.request("direct:start", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(OPERATION, QUERY);
-                exchange.getIn().setHeader(QUERY_BUILDER,
-                        new InfinispanQueryBuilder() {
-                            public Query build(QueryFactory<Query> queryFactory) {
-                                return queryFactory.from(User.class)
-                                        .having("name").like("%abc%")
-                                        .toBuilder().build();
-                            }
-                        });
-            }
-        });
+        producerQueryWithoutResult("direct:start", NO_RESULT_QUERY_BUILDER);
+    }
+
+    @Test
+    public void producerQueryWithoutResultAndQueryBuilderFromConfig() throws Exception {
+        producerQueryWithoutResult("direct:noQueryResults", null);
+    }
+
+    private void producerQueryWithoutResult(String endpoint, final InfinispanQueryBuilder builder) throws Exception {
+        Exchange request = template.request(endpoint, createQueryProcessor(builder));
+
         assertNull(request.getException());
 
-        @SuppressWarnings("unchecked")
-        List<User> queryResult = (List<User>) request.getIn().getHeader(RESULT);
+        List<User> queryResult = request.getIn().getHeader(RESULT, List.class);
         assertNotNull(queryResult);
         assertEquals(0, queryResult.size());
     }
 
     @Test
     public void producerQueryWithResult() throws Exception {
-        Exchange request = template.request("direct:start", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setHeader(OPERATION, QUERY);
-                in.setHeader(QUERY_BUILDER, new InfinispanQueryBuilder() {
-                    public Query build(QueryFactory<Query> queryFactory) {
-                        return queryFactory.from(User.class).having("name")
-                                .like("%A").toBuilder().build();
-                    }
-                });
-            }
-        });
+        producerQueryWithResult("direct:start", WITH_RESULT_QUERY_BUILDER);
+    }
+
+    @Test
+    public void producerQueryWithResultAndQueryBuilderFromConfig() throws Exception {
+        producerQueryWithResult("direct:queryWithResults", null);
+    }
+
+    private void producerQueryWithResult(String endpoint, final InfinispanQueryBuilder builder) throws Exception {
+        Exchange request = template.request(endpoint, createQueryProcessor(builder));
         assertNull(request.getException());
 
-        @SuppressWarnings("unchecked")
-        List<User> queryResult = (List<User>) request.getIn().getHeader(RESULT);
+        List<User> queryResult = request.getIn().getHeader(RESULT, List.class);
         assertNotNull(queryResult);
         assertEquals(2, queryResult.size());
         assertTrue(hasUser(queryResult, "nameA", "surnameA"));
         assertTrue(hasUser(queryResult, "nameA", "surnameB"));
+    }
+
+    private Processor createQueryProcessor(final InfinispanQueryBuilder builder) {
+        return new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(OPERATION, QUERY);
+                if (builder != null) {
+                    exchange.getIn().setHeader(QUERY_BUILDER, builder);
+                }
+            }
+        };
     }
 }

@@ -18,12 +18,10 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelJoltTest extends AbstractFeatureTest {
+public class CamelJoltTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelJoltTest.class);
 
@@ -32,9 +30,5 @@ public class CamelJoltTest extends AbstractFeatureTest {
         testComponent(COMPONENT);
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
 
 }

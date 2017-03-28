@@ -34,15 +34,15 @@ public final class SimpleTokenizer {
 
     static {
         // add known tokens
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "${"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "$simple{"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionEnd, "}"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, " "));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\t"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\n"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\r"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.singleQuote, "'"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.doubleQuote, "\""));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "${"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "$simple{"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionEnd, "}"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "true"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "false"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.nullValue, "null"));
@@ -66,6 +66,8 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "in"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "range"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not range"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "starts with"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "ends with"));
 
         // unary operators
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.unaryOperator, "++"));
@@ -83,6 +85,27 @@ public final class SimpleTokenizer {
         // static methods
     }
 
+    /**
+     * Does the expression include a simple function.
+     *
+     * @param expression the expression
+     * @return <tt>true</tt> if one or more simple function is included in the expression
+     */
+    public static boolean hasFunctionStartToken(String expression) {
+        if (expression != null) {
+            for (SimpleTokenType type : KNOWN_TOKENS) {
+                if (type.getType() == TokenType.functionStart) {
+                    if (expression.contains(type.getValue())) {
+                        return true;
+                    }
+                } else {
+                    // function start are always first
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * @see SimpleLanguage#changeFunctionStartToken(String...)
@@ -110,9 +133,17 @@ public final class SimpleTokenizer {
             }
         }
 
-        // add in start of list as its a more common token to be used
+        // add after the start tokens
+        int pos = 0;
+        for (SimpleTokenType type : KNOWN_TOKENS) {
+            if (type.getType() == TokenType.functionStart) {
+                pos++;
+            }
+        }
+
+        // add after function start of list as its a more common token to be used
         for (String token : endToken) {
-            KNOWN_TOKENS.add(0, new SimpleTokenType(TokenType.functionEnd, token));
+            KNOWN_TOKENS.add(pos, new SimpleTokenType(TokenType.functionEnd, token));
         }
     }
 
@@ -190,6 +221,9 @@ public final class SimpleTokenizer {
                     special = true;
                 } else if ('r' == next) {
                     sb.append("\r");
+                    special = true;
+                } else if ('}' == next) {
+                    sb.append("}");
                     special = true;
                 } else {
                     // not special just a regular character

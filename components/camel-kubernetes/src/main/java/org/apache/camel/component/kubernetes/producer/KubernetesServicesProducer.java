@@ -19,14 +19,13 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneableService;
-import io.fabric8.kubernetes.api.model.EditableService;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -113,7 +112,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<Service, ServiceList, DoneableService, ClientResource<Service, DoneableService>> services; 
+            NonNamespaceOperation<Service, ServiceList, DoneableService, Resource<Service, DoneableService>> services; 
             services = getEndpoint().getKubernetesClient().services()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -121,7 +120,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
             }
             servicesList = services.list();
         } else {
-            ClientMixedOperation<Service, ServiceList, DoneableService, ClientResource<Service, DoneableService>> services; 
+            MixedOperation<Service, ServiceList, DoneableService, Resource<Service, DoneableService>> services; 
             services = getEndpoint().getKubernetesClient().services();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 services.withLabel(entry.getKey(), entry.getValue());
@@ -179,7 +178,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         }
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
-        EditableService serviceCreating = new ServiceBuilder()
+        Service serviceCreating = new ServiceBuilder()
                 .withNewMetadata().withName(serviceName).withLabels(labels)
                 .endMetadata().withSpec(serviceSpec).build();
         service = getEndpoint().getKubernetesClient().services()

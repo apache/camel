@@ -31,21 +31,23 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String knownHostsFile;
-    @UriParam(label = "security")
+    @UriParam(label = "security", defaultValue = "true")
+    private boolean useUserKnownHostsFile = true;
+    @UriParam(label = "security", secret = true)
     private String knownHostsUri;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private byte[] knownHosts;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String privateKeyFile;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String privateKeyUri;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private byte[] privateKey;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String privateKeyPassphrase;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private KeyPair keyPair;
     @UriParam(defaultValue = "no", enums = "no,yes", label = "security")
     private String strictHostKeyChecking = "no";
@@ -55,7 +57,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private int serverAliveCountMax = 1;
     @UriParam(label = "producer,advanced")
     private String chmod;
-    // comma separated list of ciphers. 
+    // comma separated list of ciphers.
     // null means default jsch list will be used
     @UriParam(label = "security")
     private String ciphers;
@@ -65,6 +67,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String preferredAuthentications;
     @UriParam(defaultValue = "WARN")
     private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
+    @UriParam(label = "advanced")
+    private Integer bulkRequests;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -92,6 +96,17 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public String getKnownHostsUri() {
         return knownHostsUri;
+    }
+
+    public boolean isUseUserKnownHostsFile() {
+        return useUserKnownHostsFile;
+    }
+
+    /**
+     * If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home)/.ssh/known_hosts
+     */
+    public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
+        this.useUserKnownHostsFile = useUserKnownHostsFile;
     }
 
     /**
@@ -253,7 +268,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     public void setPreferredAuthentications(String pAuthentications) {
         this.preferredAuthentications = pAuthentications;
     }
-    
+
     public String getPreferredAuthentications() {
         return preferredAuthentications;
     }
@@ -268,5 +283,17 @@ public class SftpConfiguration extends RemoteFileConfiguration {
      */
     public void setJschLoggingLevel(LoggingLevel jschLoggingLevel) {
         this.jschLoggingLevel = jschLoggingLevel;
+    }
+
+    /**
+     * Specifies how many requests may be outstanding at any one time. Increasing this value may
+     * slightly improve file transfer speed but will increase memory usage.
+     */
+    public void setBulkRequests(Integer bulkRequests) {
+        this.bulkRequests = bulkRequests;
+    }
+
+    public Integer getBulkRequests() {
+        return bulkRequests;
     }
 }

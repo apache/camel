@@ -26,6 +26,8 @@ import java.security.NoSuchProviderException;
 
 import org.apache.camel.CamelContext;
 
+import static org.apache.camel.TestSupport.getJavaMajorVersion;
+
 public class KeyStoreParametersTest extends AbstractJsseParametersTest {
     
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
@@ -102,6 +104,11 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
     }
     
     public void testExplicitInvalidType() throws Exception {
+        if (getJavaMajorVersion() == 9) {
+            //checkout http://openjdk.java.net/jeps/229
+            return;
+        }
+        
         KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
         ksp.setType("pkcs12");
         

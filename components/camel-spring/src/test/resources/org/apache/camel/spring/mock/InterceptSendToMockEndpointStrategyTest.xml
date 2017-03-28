@@ -21,11 +21,13 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- START SNIPPET: e1 -->
+    <!-- tag::e1[] -->
     <!-- the Camel route is defined in another XML file -->
     <import resource="camel-route.xml"/>
 
     <!-- bean which enables mocking all endpoints -->
     <bean id="mockAllEndpoints" class="org.apache.camel.impl.InterceptSendToMockEndpointStrategy"/>
+    <!-- end::e1[] -->
     <!-- END SNIPPET: e1 -->
 
 </beans>

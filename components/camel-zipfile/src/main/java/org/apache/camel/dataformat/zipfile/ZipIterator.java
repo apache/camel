@@ -40,11 +40,13 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     static final Logger LOGGER = LoggerFactory.getLogger(ZipIterator.class);
     
     private final Message inputMessage;
-    private ZipInputStream zipInputStream;
-    private Message parent;
+    private boolean allowEmptyDirectory;
+    private volatile ZipInputStream zipInputStream;
+    private volatile Message parent;
     
     public ZipIterator(Message inputMessage) {
         this.inputMessage = inputMessage;
+        this.allowEmptyDirectory = false;
         InputStream inputStream = inputMessage.getBody(InputStream.class);
         if (inputStream instanceof ZipInputStream) {
             zipInputStream = (ZipInputStream)inputStream;
@@ -64,12 +66,12 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             if (!availableDataInCurrentEntry) {
                 // advance to the next entry.
                 parent = getNextElement();
-                // check if there are more data.
-                availableDataInCurrentEntry = zipInputStream.available() == 1;
-                // if there are not more data, close the stream.
-                if (!availableDataInCurrentEntry) {
+                if (parent == null) {
                     zipInputStream.close();
-                }                
+                    availableDataInCurrentEntry = false;
+                } else {
+                    availableDataInCurrentEntry = true;
+                }
             }
             return availableDataInCurrentEntry;            
         } catch (IOException exception) {
@@ -91,30 +93,29 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     }
     
     private Message getNextElement() {
-        Message answer = null;
+        if (zipInputStream == null) {
+            return null;
+        }
         
-        if (zipInputStream != null) {
-            try {
-                ZipEntry current = getNextEntry();
+        try {
+            ZipEntry current = getNextEntry();
 
-                if (current != null) {
-                    LOGGER.debug("read zipEntry {}", current.getName());
-                    answer = new DefaultMessage();
-                    answer.getHeaders().putAll(inputMessage.getHeaders());
-                    answer.setHeader("zipFileName", current.getName());
-                    answer.setHeader(Exchange.FILE_NAME, current.getName());
-                    answer.setBody(new ZipInputStreamWrapper(zipInputStream));
-                    return answer;
-                } else {
-                    LOGGER.trace("close zipInputStream");
-                }
-            } catch (IOException exception) {
-                //Just wrap the IOException as CamelRuntimeException
-                throw new RuntimeCamelException(exception);
+            if (current != null) {
+                LOGGER.debug("read zipEntry {}", current.getName());
+                Message answer = new DefaultMessage();
+                answer.getHeaders().putAll(inputMessage.getHeaders());
+                answer.setHeader("zipFileName", current.getName());
+                answer.setHeader(Exchange.FILE_NAME, current.getName());
+                answer.setBody(new ZipInputStreamWrapper(zipInputStream));
+                return answer;
+            } else {
+                LOGGER.trace("close zipInputStream");
+                return null;
             }
-        }        
-        
-        return answer;
+        } catch (IOException exception) {
+            //Just wrap the IOException as CamelRuntimeException
+            throw new RuntimeCamelException(exception);
+        }
     }
 
     public void checkNullAnswer(Message answer) {
@@ -130,6 +131,10 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         while ((entry = zipInputStream.getNextEntry()) != null) {
             if (!entry.isDirectory()) {
                 return entry;
+            } else {
+                if (allowEmptyDirectory) {
+                    return entry;
+                }
             }
         }
 
@@ -143,8 +148,15 @@ public class ZipIterator implements Iterator<Message>, Closeable {
 
     @Override
     public void close() throws IOException {
-        if (zipInputStream != null) {
-            zipInputStream.close();
-        }
+        IOHelper.close(zipInputStream);
+        zipInputStream = null;
+    }
+    
+    public boolean isSupportIteratorForEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
+
+    public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 }

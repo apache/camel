@@ -106,7 +106,7 @@ public class Netty2978IssueTest extends BaseNettyTest {
         private final Endpoint endpoint;
         private final ProducerTemplate producerTemplate;
 
-        public CamelClient(CamelContext camelContext) {
+        CamelClient(CamelContext camelContext) {
             this.endpoint = camelContext.getEndpoint("netty4:tcp://localhost:{{port}}?sync=true");
             this.producerTemplate = camelContext.createProducerTemplate();
         }

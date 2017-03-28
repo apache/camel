@@ -570,11 +570,11 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .delay(400)
+                        .delay(400).asyncDelayed()
                         .transform(body().append(" World")).to("mock:result");
 
                 from("direct:error")
-                        .delay(400)
+                        .delay(400).asyncDelayed()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 throw new IllegalArgumentException("Damn forced by unit test");

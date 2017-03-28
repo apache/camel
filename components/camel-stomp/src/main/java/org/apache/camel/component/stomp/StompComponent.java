@@ -20,10 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 public class StompComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private StompConfiguration configuration = new StompConfiguration();
+    private String brokerUrl;
+    @Metadata(label = "security", secret = true)
+    private String login;
+    @Metadata(label = "security", secret = true)
+    private String passcode;
+    private String host;
 
     public StompComponent() {
         super(StompEndpoint.class);
@@ -58,27 +66,27 @@ public class StompComponent extends UriEndpointComponent {
      * The URI of the Stomp broker to connect to
      */
     public void setBrokerURL(String brokerURL) {
-        getConfiguration().setBrokerURL(brokerURL);
+        configuration.setBrokerURL(brokerURL);
     }
 
     /**
      * The username
      */
     public void setLogin(String login) {
-        getConfiguration().setLogin(login);
+        configuration.setLogin(login);
     }
 
     /**
      * The password
      */
     public void setPasscode(String passcode) {
-        getConfiguration().setPasscode(passcode);
+        configuration.setPasscode(passcode);
     }
     
     /**
      * The virtual host
      */
     public void setHost(String host) {
-        getConfiguration().setHost(host);
+        configuration.setHost(host);
     }
 }

@@ -22,19 +22,26 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-test-cdi</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Test :: CDI</name>
-  <description>Camel Testing Library using JUnit and CDI</description>
+  <description>Camel unit testing with CDI</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.17.0</firstVersion>
+    <label>testing,java</label>
+    <title>Test CDI</title>
+
     <camel.osgi.export.pkg>org.apache.camel.test.cdi.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
+
+    <!-- compile dependencies -->
 
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -50,7 +57,22 @@
       <version>${weld2-version}</version>
     </dependency>
 
-    <!-- test dependencies -->
+    <!-- test dependencies -->      
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 

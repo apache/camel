@@ -19,20 +19,20 @@ package org.apache.camel.component.mllp;
 /**
  * Raised when a MLLP Producer receives a HL7 Application Reject Acknowledgement
  */
-public class MllpApplicationRejectAcknowledgementException extends MllpAcknowledgementException {
-    public MllpApplicationRejectAcknowledgementException(String message) {
-        super(message);
+public class MllpApplicationRejectAcknowledgementException extends MllpNegativeAcknowledgementException {
+
+    static final String EXCEPTION_MESSAGE = "HL7 Application Reject Acknowledgment Received";
+
+    public MllpApplicationRejectAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement) {
+        super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement);
     }
 
-    public MllpApplicationRejectAcknowledgementException(String message, byte[] mllpPayload) {
-        super(message, mllpPayload);
+    public MllpApplicationRejectAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+        super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause);
     }
 
-    public MllpApplicationRejectAcknowledgementException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public MllpApplicationRejectAcknowledgementException(String message, byte[] mllpPayload, Throwable cause) {
-        super(message, mllpPayload, cause);
+    @Override
+    public String getAcknowledgmentType() {
+        return "AR";
     }
 }

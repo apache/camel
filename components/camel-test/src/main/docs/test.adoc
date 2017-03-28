@@ -1,0 +1,109 @@
+[[Test-TestComponent]]
+Test Component
+~~~~~~~~~~~~~~
+
+link:testing.html[Testing] of distributed and asynchronous processing is
+notoriously difficult. The link:mock.html[Mock], link:test.html[Test]
+and link:dataset.html[DataSet] endpoints work great with the
+link:testing.html[Camel Testing Framework] to simplify your unit and
+integration testing using
+link:enterprise-integration-patterns.html[Enterprise Integration
+Patterns] and Camel's large range of link:components.html[Components]
+together with the powerful link:bean-integration.html[Bean Integration].
+
+The *test* component extends the link:mock.html[Mock] component to
+support pulling messages from another endpoint on startup to set the
+expected message bodies on the underlying link:mock.html[Mock] endpoint.
+That is, you use the test endpoint in a route and messages arriving on
+it will be implicitly compared to some expected messages extracted from
+some other location.
+
+So you can use, for example, an expected set of message bodies as files.
+This will then set up a properly configured link:mock.html[Mock]
+endpoint, which is only valid if the received messages match the number
+of expected messages and their message payloads are equal.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component when using *Camel 2.8* or older:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+From Camel 2.9 onwards the link:test.html[Test] component is provided
+directly in the camel-core.
+
+[[Test-URIformat]]
+URI format
+^^^^^^^^^^
+
+[source,java]
+--------------------------------
+test:expectedMessagesEndpointUri
+--------------------------------
+
+Where *expectedMessagesEndpointUri* refers to some other
+link:component.html[Component] URI that the expected message bodies are
+pulled from before starting the test.
+
+[[Test-URIOptions]]
+URI Options
+^^^^^^^^^^^
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Default Value |Description
+
+|`timeout` |`2000` |*Camel 2.12:* The timeout to use when polling for message bodies from
+the URI.
+
+|anyOrder |false |*Camel 2.17:* Whether the expected messages should arrive in the same
+order or can be in any order.
+
+|split |false |*Camel 2.17:* If enabled the the messages loaded from the test endpoint
+will be split using \n\r delimiters (new lines) so each line is an
+expected message. +
+For example to use a file endpoint to load a file where each line is an
+expected message. 
+
+|delimiter |\n,\r |*Camel 2.17:* The split delimiter to use when split is enabled. By
+default the delimiter is new line based. The delimiter can be a regular
+expression.
+|=======================================================================
+
+[[Test-Example]]
+Example
+^^^^^^^
+
+For example, you could write a test case as follows:
+
+[source,java]
+--------------------------------------------------
+from("seda:someEndpoint").
+  to("test:file://data/expectedOutput?noop=true");
+--------------------------------------------------
+
+If your test then invokes the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#assertIsSatisfied(org.apache.camel.CamelContext)[MockEndpoint.assertIsSatisfied(camelContext)
+method], your test case will perform the necessary assertions.
+
+To see how you can set other expectations on the test endpoint, see the
+link:mock.html[Mock] component.
+
+[[Test-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:spring-testing.html[Spring Testing]
+

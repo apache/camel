@@ -32,7 +32,7 @@ import org.jsmpp.bean.DeliverSm;
 /**
  * To send and receive SMS using a SMSC (Short Message Service Center).
  */
-@UriEndpoint(scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
+@UriEndpoint(firstVersion = "2.2.0", scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
         consumerClass = SmppConsumer.class, label = "mobile", lenientProperties = true)
 public class SmppEndpoint extends DefaultEndpoint {
 

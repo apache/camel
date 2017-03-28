@@ -30,14 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a MLLP endpoint.
+ * Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
  * <p/>
- * NOTE: MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI
- * into the log files.  Logging of PHI can be globally disabled by setting the org.apache.camel.mllp.logPHI system
+ * MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI
+ * into the log files. Logging of PHI can be globally disabled by setting the org.apache.camel.mllp.logPHI system
  * property to false.
- * <p/>
  */
-@UriEndpoint(scheme = "mllp", title = "mllp", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "mllp", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "hl7")
 public class MllpEndpoint extends DefaultEndpoint {
     public static final char START_OF_BLOCK = 0x0b;      // VT (vertical tab)        - decimal 11, octal 013
     public static final char END_OF_BLOCK = 0x1c;        // FS (file separator)      - decimal 28, octal 034
@@ -54,23 +53,29 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = "true")
     int port = -1;
 
-    @UriParam(defaultValue = "5")
+    @UriParam(label = "advanced", defaultValue = "5")
     int backlog = 5;
 
-    @UriParam(defaultValue = "30000")
+    @UriParam(label = "timeout", defaultValue = "30000")
     int bindTimeout = 30000;
 
-    @UriParam(defaultValue = "5000")
+    @UriParam(label = "timeout", defaultValue = "5000")
     int bindRetryInterval = 5000;
 
-    @UriParam(defaultValue = "60000")
+    @UriParam(label = "timeout", defaultValue = "60000")
     int acceptTimeout = 60000;
 
-    @UriParam(defaultValue = "30000")
+    @UriParam(label = "timeout", defaultValue = "30000")
     int connectTimeout = 30000;
 
-    @UriParam(defaultValue = "10000")
+    @UriParam(label = "timeout", defaultValue = "10000")
     int receiveTimeout = 10000;
+
+    @UriParam(label = "timeout", defaultValue = "-1")
+    int maxReceiveTimeouts = -1;
+
+    @UriParam(label = "timeout", defaultValue = "500")
+    int readTimeout = 500;
 
     @UriParam(defaultValue = "true")
     boolean keepAlive = true;
@@ -81,16 +86,25 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam
     boolean reuseAddress;
 
-    @UriParam
+    @UriParam(label = "advanced")
     Integer receiveBufferSize;
 
-    @UriParam
+    @UriParam(label = "advanced")
     Integer sendBufferSize;
 
     @UriParam(defaultValue = "true")
     boolean autoAck = true;
 
-    @UriParam
+    @UriParam(defaultValue = "true")
+    boolean hl7Headers = true;
+
+    @UriParam(defaultValue = "true")
+    boolean bufferWrites = true;
+
+    @UriParam(defaultValue = "false")
+    boolean validatePayload;
+
+    @UriParam(label = "codec")
     String charsetName;
 
     public MllpEndpoint(String uri, MllpComponent component) {
@@ -223,7 +237,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Timeout value while waiting for a TCP connection
+     * Timeout (in milliseconds) while waiting for a TCP connection
      * <p/>
      * TCP Server Only
      *
@@ -238,7 +252,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Timeout value for establishing for a TCP connection
+     * Timeout (in milliseconds) for establishing for a TCP connection
      * <p/>
      * TCP Client only
      *
@@ -253,12 +267,38 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The SO_TIMEOUT value used when waiting for the start of an MLLP frame
+     * The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame
      *
      * @param receiveTimeout timeout in milliseconds
      */
     public void setReceiveTimeout(int receiveTimeout) {
         this.receiveTimeout = receiveTimeout;
+    }
+
+    public int getMaxReceiveTimeouts() {
+        return maxReceiveTimeouts;
+    }
+
+    /**
+     * The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset.
+     *
+     * @param maxReceiveTimeouts maximum number of receiveTimeouts
+     */
+    public void setMaxReceiveTimeouts(int maxReceiveTimeouts) {
+        this.maxReceiveTimeouts = maxReceiveTimeouts;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received
+     *
+     * @param readTimeout timeout in milliseconds
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
     }
 
     public boolean isKeepAlive() {
@@ -305,7 +345,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the SO_RCVBUF option to the specified value
+     * Sets the SO_RCVBUF option to the specified value (in bytes)
      *
      * @param receiveBufferSize the SO_RCVBUF option value.  If null, the system default is used
      */
@@ -318,7 +358,7 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the SO_SNDBUF option to the specified value
+     * Sets the SO_SNDBUF option to the specified value (in bytes)
      *
      * @param sendBufferSize the SO_SNDBUF option value.  If null, the system default is used
      */
@@ -341,4 +381,52 @@ public class MllpEndpoint extends DefaultEndpoint {
         this.autoAck = autoAck;
     }
 
+    public boolean isHl7Headers() {
+        return hl7Headers;
+    }
+
+    /**
+     * Enable/Disable the automatic generation of message headers from the HL7 Message
+     *
+     * MLLP Consumers only
+     *
+     * @param hl7Headers enabled if true, otherwise disabled
+     */
+    public void setHl7Headers(boolean hl7Headers) {
+        this.hl7Headers = hl7Headers;
+    }
+
+    public boolean isValidatePayload() {
+        return validatePayload;
+    }
+
+    /**
+     * Enable/Disable the validation of HL7 Payloads
+     *
+     * If enabled, HL7 Payloads received from external systems will be validated (see Hl7Util.generateInvalidPayloadExceptionMessage for details on the validation).
+     * If and invalid payload is detected, a MllpInvalidMessageException (for consumers) or a MllpInvalidAcknowledgementException will be thrown.
+     *
+     * @param validatePayload enabled if true, otherwise disabled
+     */
+    public void setValidatePayload(boolean validatePayload) {
+        this.validatePayload = validatePayload;
+    }
+
+    public boolean isBufferWrites() {
+        return bufferWrites;
+    }
+
+    /**
+     * Enable/Disable the validation of HL7 Payloads
+     *
+     * If enabled, MLLP Payloads are buffered and written to the external system in a single write(byte[]) operation.
+     * If disabled, the MLLP payload will not be buffered, and three write operations will be used.  The first operation
+     * will write the MLLP start-of-block character {0x0b (ASCII VT)}, the second operation will write the HL7 payload, and the
+     * third operation will writh the MLLP end-of-block character and the MLLP end-of-data character {[0x1c, 0x0d] (ASCII [FS, CR])}.
+     *
+     * @param bufferWrites enabled if true, otherwise disabled
+     */
+    public void setBufferWrites(boolean bufferWrites) {
+        this.bufferWrites = bufferWrites;
+    }
 }

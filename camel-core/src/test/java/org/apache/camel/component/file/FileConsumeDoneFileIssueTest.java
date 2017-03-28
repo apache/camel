@@ -60,7 +60,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         assertFalse("Done file should be deleted", new File("target/done/foo.done").exists());
     }
     
-    public void testFileConsumseDynamicDoneFileName() throws Exception {
+    public void testFileConsumeDynamicDoneFileName() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
         template.sendBodyAndHeader("file:target/done2", "A", Exchange.FILE_NAME, "a.txt");

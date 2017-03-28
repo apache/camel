@@ -30,12 +30,12 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.mllp.PassthroughProcessor;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
+import static org.junit.Assume.assumeTrue;
 
-@Ignore("Fails sometimes on CI server with address already in use")
 public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     int mllpPort = AvailablePortFinder.getNextAvailable();
     String mllpHost = "localhost";
@@ -56,23 +56,24 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
         return context;
     }
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
+    }
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         RouteBuilder[] builders = new RouteBuilder[2];
-        final int groupInterval = 1000;
-        final boolean groupActiveOnly = false;
 
         builders[0] = new RouteBuilder() {
             String routeId = "mllp-receiver";
 
             public void configure() {
-                fromF("mllp://%s:%d?autoAck=true", mllpHost, mllpPort)
+                fromF("mllp://%s:%d?autoAck=true&readTimeout=1000", mllpHost, mllpPort)
                         .convertBodyTo(String.class)
                         .to(acknowledged)
                         .process(new PassthroughProcessor("after send to result"))
-                        .log(LoggingLevel.DEBUG, routeId, "Receiving: ${body}")
-                        .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval, groupActiveOnly);
+                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}");
             }
         };
 
@@ -81,10 +82,9 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
             public void configure() {
                 from(source.getDefaultEndpoint()).routeId(routeId)
-                        .log(LoggingLevel.DEBUG, routeId, "Sending: ${body}")
-                        .toF("mllp://%s:%d", mllpHost, mllpPort)
-                        .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT))
-                        .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval, groupActiveOnly);
+                        .log(LoggingLevel.INFO, routeId, "Sending: ${body}")
+                        .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPort)
+                        .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
             }
         };
 
@@ -103,7 +103,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     }
 
     @Test
-    public void testLoopbackMultipleMessages() throws Exception {
+    public void testLoopbackWithMultipleMessages() throws Exception {
         int messageCount = 1000;
         acknowledged.expectedMessageCount(messageCount);
 

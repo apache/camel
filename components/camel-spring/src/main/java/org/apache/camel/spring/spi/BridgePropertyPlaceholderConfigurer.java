@@ -16,10 +16,13 @@
  */
 package org.apache.camel.spring.spi;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.AugmentedPropertyNameAwarePropertiesParser;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.springframework.beans.BeansException;
@@ -129,12 +132,11 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     }
 
     @Override
-    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
+    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
         // return the spring properties, if it
         Properties answer = new Properties();
-        for (String u : uri) {
-            String ref = "ref:" + id;
-            if (ref.equals(u)) {
+        for (PropertiesLocation location : locations) {
+            if ("ref".equals(location.getResolver()) && id.equals(location.getPath())) {
                 answer.putAll(properties);
             } else if (resolver != null) {
                 boolean flag = ignoreMissingLocation;
@@ -142,7 +144,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
                 if (ignoreResourceNotFound != null) {
                     flag = ignoreResourceNotFound;
                 }
-                Properties p = resolver.resolveProperties(context, flag, u);
+                Properties p = resolver.resolveProperties(context, flag, Collections.singletonList(location));
                 if (p != null) {
                     answer.putAll(p);
                 }
@@ -154,13 +156,13 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
     @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken,
-                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty) throws IllegalArgumentException {
+                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
 
         // first let Camel parse the text as it may contain Camel placeholders
         String answer;
         if (parser instanceof AugmentedPropertyNameAwarePropertiesParser) {
             answer = ((AugmentedPropertyNameAwarePropertiesParser) parser).parseUri(text, properties, prefixToken, suffixToken,
-                    propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
+                    propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
         } else {
             answer = parser.parseUri(text, properties, prefixToken, suffixToken);
         }

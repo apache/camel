@@ -22,7 +22,7 @@ public class CurrentWeatherConsumerHtmlTest extends BaseWeatherConsumerTest {
 
     @Override
     protected void checkWeatherContent(String weather) {
-        log.debug("The weather in {} format is {}{}", new Object[] {WeatherMode.HTML, LS, weather});
+        log.debug("The weather in {} format is {}{}", WeatherMode.HTML, LS, weather);
 
         assertStringContains(weather, "<!DOCTYPE html>");
         assertStringContains(weather, "<head>");

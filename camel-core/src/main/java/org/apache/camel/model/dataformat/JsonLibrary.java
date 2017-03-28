@@ -28,6 +28,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum JsonLibrary {
 
-    XStream, Jackson, Gson
+    XStream, Jackson, Johnzon, Gson
 
 }

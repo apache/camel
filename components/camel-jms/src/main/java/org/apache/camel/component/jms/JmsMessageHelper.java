@@ -38,7 +38,7 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 /**
  * Utility class for {@link javax.jms.Message}.
  *
- * @version 
+ * @version
  */
 public final class JmsMessageHelper {
 
@@ -300,7 +300,7 @@ public final class JmsMessageHelper {
 
         return null;
     }
-    
+
     /**
      * Gets the String Properties from the message.
      *
@@ -413,11 +413,17 @@ public final class JmsMessageHelper {
      */
     public static String getJMSCorrelationIDAsBytes(Message message) {
         try {
-            return new String(message.getJMSCorrelationIDAsBytes());
+            byte[] bytes = message.getJMSCorrelationIDAsBytes();
+            boolean isNull = true;
+            for (byte b : bytes) {
+                if (b != 0) {
+                    isNull = false;
+                }
+            }
+            return isNull ? null : new String(bytes);
         } catch (Exception e) {
             // ignore if JMS broker do not support this
         }
-
         return null;
     }
 }

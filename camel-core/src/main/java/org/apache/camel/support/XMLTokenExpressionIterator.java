@@ -72,6 +72,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.nsmap = nsmap;
     }
 
+    @Override
+    public Map<String, String> getNamespaces() {
+        return nsmap;
+    }
+
     public void setMode(char mode) {
         this.mode = mode;
     }

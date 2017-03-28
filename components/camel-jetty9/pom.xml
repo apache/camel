@@ -21,11 +21,11 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-jetty9</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Jetty9</name>
   <description>Camel Jetty9 support</description>
 
@@ -35,7 +35,6 @@
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.jetty9</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jetty</camel.osgi.export.service>
-    <jetty-version>${jetty9-version}</jetty-version>
   </properties>
 
   <dependencies>
@@ -47,13 +46,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http-common</artifactId>
-      <exclusions>
-        <!-- must use the servlet-api that jetty 9 provides which is 3.1 -->
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-servlet_3.0_spec</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -91,17 +83,15 @@
       <artifactId>jetty-jmx</artifactId>
       <version>${jetty9-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>${jetty9-version}</version>
+    </dependency>
 
     <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jetty-common</artifactId>
-        <exclusions>
-            <!-- must use the servlet-api that jetty 9 provides which is 3.1 -->
-            <exclusion>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-servlet_3.0_spec</artifactId>
-            </exclusion>
-        </exclusions>
     </dependency>
     <!-- test dependencies -->
     <dependency>
@@ -125,6 +115,11 @@
       <artifactId>camel-http</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-http4</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- for testing rest-dsl -->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -141,6 +136,13 @@
       <artifactId>camel-jaxb</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- testing with ok http client -->
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>${okclient-version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -148,8 +150,23 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

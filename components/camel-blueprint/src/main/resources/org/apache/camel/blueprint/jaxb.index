@@ -18,6 +18,7 @@ CamelConsumerTemplateFactoryBean
 CamelContextFactoryBean
 CamelEndpointFactoryBean
 CamelErrorHandlerFactoryBean
+CamelFluentProducerTemplateFactoryBean
 CamelProducerTemplateFactoryBean
 CamelThreadPoolFactoryBean
 CamelRedeliveryPolicyFactoryBean

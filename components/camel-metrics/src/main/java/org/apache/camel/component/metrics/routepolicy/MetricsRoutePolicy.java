@@ -26,6 +26,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * A {@link org.apache.camel.spi.RoutePolicy} which gathers statistics and reports them using {@link com.codahale.metrics.MetricRegistry}.
@@ -146,6 +147,13 @@ public class MetricsRoutePolicy extends RoutePolicySupport implements NonManaged
                 registryService.setDurationUnit(getDurationUnit());
                 route.getRouteContext().getCamelContext().addService(registryService);
             }
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+
+        // ensure registry service is started
+        try {
+            ServiceHelper.startService(registryService);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }

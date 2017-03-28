@@ -144,7 +144,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (endpoint instanceof FtpEndpoint) {
             FtpEndpoint<?> ftpEndpoint = (FtpEndpoint<?>) endpoint;
             if (ftpEndpoint.getSoTimeout() > 0) {
-                log.trace("Using SoTimeout=" + ftpEndpoint.getSoTimeout());
+                log.trace("Using SoTimeout={}", ftpEndpoint.getSoTimeout());
                 try {
                     client.setSoTimeout(ftpEndpoint.getSoTimeout());
                 } catch (IOException e) {
@@ -157,10 +157,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             boolean login;
             if (username != null) {
                 if (account != null) {
-                    log.trace("Attempting to login user: {} using password: {} and account: {}", new Object[]{username, configuration.getPassword(), account});
+                    log.trace("Attempting to login user: {} using password: ******** and account: {}", new Object[]{username, account});
                     login = client.login(username, configuration.getPassword(), account);
                 } else {
-                    log.trace("Attempting to login user: {} using password: {}", username, configuration.getPassword());
+                    log.trace("Attempting to login user: {} using password: ********", username);
                     login = client.login(username, configuration.getPassword());
                 }
             } else {
@@ -325,7 +325,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         
         if (is != null) {
             try {
-                is.close();
+                IOHelper.close(is);
                 client.completePendingCommand();
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
@@ -335,7 +335,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        OutputStream os = null;
         boolean result;
         try {
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
@@ -365,9 +364,13 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 exchange.getIn().setHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, is);
                 result = true;
             } else {
-                os = new ByteArrayOutputStream();
-                target.setBody(os);
-                result = client.retrieveFile(remoteName, os);
+                // read the entire file into memory in the byte array
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                result = client.retrieveFile(remoteName, bos);
+                // close the stream after done
+                IOHelper.close(bos);
+
+                target.setBody(bos.toByteArray());
             }
 
             // store client reply information after the operation
@@ -381,8 +384,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
-        } finally {
-            IOHelper.close(os, "retrieve: " + name, log);
         }
 
         return result;
@@ -592,10 +593,21 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 log.debug("Took {} ({} millis) to store file: {} and FTP client returned: {}",
                         new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName, answer});
             }
-
+            
             // store client reply information after the operation
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+
+            // after storing file, we may set chmod on the file
+            String chmod = ((FtpConfiguration) endpoint.getConfiguration()).getChmod();
+            if (ObjectHelper.isNotEmpty(chmod)) {
+                log.debug("Setting chmod: {} on file: {}", chmod, targetName);
+                String command = "chmod " + chmod + " " + targetName;
+                log.trace("Client sendSiteCommand: {}", command);
+                boolean success = client.sendSiteCommand(command);
+                log.trace("Client sendSiteCommand successful: {}", success);
+            }
+            
 
             return answer;
 

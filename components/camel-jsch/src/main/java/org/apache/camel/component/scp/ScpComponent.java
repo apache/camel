@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  Component providing secure messaging using JSch
+ * Component providing secure messaging using JSch
  */
 public class ScpComponent extends RemoteFileComponent<ScpFile> {
 

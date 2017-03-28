@@ -44,6 +44,14 @@ public class NagiosEventNotifier extends EventNotifierSupport {
     private String serviceName = "Camel";
     private String hostName = "localhost";
 
+    public NagiosEventNotifier() {
+
+    }
+
+    public NagiosEventNotifier(NagiosPassiveCheckSender sender) {
+        this.sender = sender;
+    }
+
     public void notify(EventObject eventObject) throws Exception {
         // create message payload to send
         String message = eventObject.toString();
@@ -122,7 +130,9 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         if (nagiosSettings == null) {
             nagiosSettings = configuration.getNagiosSettings();
         }
-        sender = new NagiosPassiveCheckSender(nagiosSettings);
+        if (sender == null) {
+            sender = new NagiosPassiveCheckSender(nagiosSettings);
+        }
 
         log.info("Using " + configuration);
     }

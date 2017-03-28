@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.IOException;
 import java.util.Map;
-import javax.activation.DataHandler;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
@@ -115,12 +116,14 @@ public class MailMessage extends DefaultMessage {
                 }
             } catch (MessagingException e) {
                 throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
+            } catch (IOException e) {
+                throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
             }
         }
     }
 
     @Override
-    protected void populateInitialAttachments(Map<String, DataHandler> map) {
+    protected void populateInitialAttachments(Map<String, Attachment> map) {
         if (mailMessage != null) {
             try {
                 MailBinding binding = ExchangeHelper.getBinding(getExchange(), MailBinding.class);

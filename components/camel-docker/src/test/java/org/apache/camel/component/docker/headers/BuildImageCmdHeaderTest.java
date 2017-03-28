@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.BuildImageCmd;
-
+import com.github.dockerjava.core.command.BuildImageResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -41,6 +41,9 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
     @Mock
     private InputStream inputStream;
 
+    @Mock
+    private BuildImageResultCallback callback;
+    
     @Mock
     private File file;
 
@@ -81,6 +84,8 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         Mockito.when(dockerClient.buildImageCmd(Matchers.any(InputStream.class))).thenReturn(mockObject);
         Mockito.when(dockerClient.buildImageCmd(Matchers.any(File.class))).thenReturn(mockObject);
 
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        Mockito.when(callback.awaitImageId()).thenReturn(Matchers.anyString());
     }
 
     @Override

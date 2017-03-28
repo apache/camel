@@ -23,13 +23,22 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>examples</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-example-cdi-properties</artifactId>
   <name>Camel :: Example :: CDI :: Properties</name>
   <description>DeltaSpike configuration properties CDI example</description>
   <packaging>jar</packaging>
+
+  <properties>
+    <category>Beginner</category>
+    <title>CDI Properties</title>
+
+    <camel.osgi.export.pkg>
+      org.apache.camel.example.cdi.properties*
+    </camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 
@@ -59,16 +68,21 @@
       <version>${deltaspike-version}</version>
       <scope>runtime</scope>
     </dependency>
-
+    
     <!-- logging -->
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>runtime</scope>
     </dependency>
 
@@ -89,7 +103,6 @@
 
   <build>
     <plugins>
-
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>

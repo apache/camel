@@ -52,6 +52,12 @@ public class HttpMessage extends DefaultMessage {
         getEndpoint().getHttpBinding().readRequest(request, this);
     }
 
+    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange) {
+        this.request = request;
+        this.response = response;
+        setExchange(getExchange());
+    }
+
     public HttpServletRequest getRequest() {
         return request;
     }
@@ -68,7 +74,12 @@ public class HttpMessage extends DefaultMessage {
             throw new RuntimeCamelException(e);
         }
     }
-    
+
+    @Override
+    public HttpMessage newInstance() {
+        return new HttpMessage(request, response, getExchange());
+    }
+
     private HttpCommonEndpoint getEndpoint() {
         return (HttpCommonEndpoint) getExchange().getFromEndpoint();
     }

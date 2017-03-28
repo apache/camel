@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -31,14 +31,17 @@
   <description>Camel Integration Tests</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <camel.osgi.export.pkg />
+  </properties>
+
   <modules>
     <module>test-bundles</module>
     <module>camel-itest-standalone</module>
     <module>camel-itest</module>
     <module>camel-itest-cdi</module>
-    <module>camel-itest-spring32</module>
-    <module>camel-itest-spring40</module>
     <module>camel-blueprint-cxf-test</module>
+    <module>camel-blueprint-test</module>
     <module>camel-partial-classpath-test</module>
     <module>camel-typeconverterscan-test</module>
   </modules>
@@ -61,6 +64,14 @@
       <modules>
         <module>camel-itest-karaf</module>
         <module>camel-itest-osgi</module>
+      </modules>
+    </profile>
+
+    <!-- spring-boot tests -->
+    <profile>
+      <id>spring-boot.test</id>
+      <modules>
+        <module>camel-itest-spring-boot</module>
       </modules>
     </profile>
 

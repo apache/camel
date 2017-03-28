@@ -41,8 +41,8 @@ public class SdbComponent extends UriEndpointComponent {
         }
         configuration.setDomainName(remaining);
 
-        if (configuration.getAmazonSDBClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("amazonSDBClient or accessKey and secretKey must be specified");
+        if (configuration.getAmazonSDBClient() == null) {
+            throw new IllegalArgumentException("amazonSDBClient must be specified");
         }
 
         SdbEndpoint endpoint = new SdbEndpoint(uri, this, configuration);

@@ -20,14 +20,18 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Ordered;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Service;
 import org.apache.camel.StartupListener;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * A {@link org.apache.camel.StartupListener} that defers starting {@link Service}s.
+ * A {@link org.apache.camel.StartupListener} that defers starting {@link Service}s, until as late as possible during
+ * the startup process of {@link CamelContext}.
  */
-public class DeferServiceStartupListener implements StartupListener {
+public class DeferServiceStartupListener implements StartupListener, Ordered {
 
     private final Set<Service> services = new CopyOnWriteArraySet<Service>();
 
@@ -37,9 +41,27 @@ public class DeferServiceStartupListener implements StartupListener {
 
     @Override
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
-        for (Service service : services) {
-            ServiceHelper.startService(service);
+        // new services may be added while starting a service
+        // so use a while loop to get the newly added services as well
+        while (!services.isEmpty()) {
+            Service service = services.iterator().next();
+            try {
+                ServiceHelper.startService(service);
+            } catch (Exception e) {
+                if (service instanceof Endpoint) {
+                    Endpoint endpoint = (Endpoint) service;
+                    throw new ResolveEndpointFailedException(endpoint.getEndpointUri(), e);
+                } else {
+                    throw e;
+                }
+            } finally {
+                services.remove(service);
+            }
         }
-        services.clear();
+    }
+
+    public int getOrder() {
+        // we want to be last, so the other startup listeners run first
+        return Ordered.LOWEST;
     }
 }

@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
+import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
+import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Header;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Trailer;
@@ -39,14 +40,15 @@ public class BindyComplexKeyValuePairStandaloneTest {
 
     protected Map<String, Object> model = new HashMap<String, Object>();
     protected Set<Class<?>> models = new HashSet<Class<?>>();
-    BindyKeyValuePairFactory factory;
+    BindyAbstractFactory factory;
     int counter;
 
     @Before
     public void init() throws Exception {
 
         // Set factory
-        factory = new BindyKeyValuePairFactory(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order.class);
+        BindyKeyValuePairDataFormat dataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order.class);
+        factory = dataFormat.getFactory();
 
         // Set model class
         models.add(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order.class);

@@ -38,19 +38,19 @@ public class SplunkConfiguration {
     private String host = Service.DEFAULT_HOST;
     @UriParam(defaultValue = "8089")
     private int port = Service.DEFAULT_PORT;
-    @UriParam(enums = "TLSv1.2,TLSv1.1,TLSv1,SSLv3", defaultValue = "TLSv1.2")
+    @UriParam(enums = "TLSv1.2,TLSv1.1,TLSv1,SSLv3", defaultValue = "TLSv1.2", label = "security")
     private SSLSecurityProtocol sslProtocol = SSLSecurityProtocol.TLSv1_2;
     @UriParam
     private String app;
     @UriParam
     private String owner;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;
-    @UriParam
+    @UriParam(label = "security")
     private boolean useSunHttpsHandler;
 
     @UriParam(label = "producer")

@@ -34,4 +34,6 @@ public interface GitOperation {
     String PULL_OPERATION = "pull";
     String SHOW_BRANCHES = "showBranches";
     String CHERRYPICK_OPERATION = "cherryPick";
+    String REMOTE_ADD_OPERATION = "remoteAdd";
+    String REMOTE_LIST_OPERATION = "remoteList";
 }

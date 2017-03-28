@@ -23,10 +23,14 @@ import static java.util.Arrays.asList;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.WriteResult;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import com.mongodb.util.JSON;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 
@@ -41,14 +45,14 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals("Test collection should not contain any records", 0L, result);
 
         // Insert a record and test that the endpoint now returns 1
-        testCollection.insert((DBObject) JSON.parse("{a:60}"));
+        testCollection.insertOne((BasicDBObject) JSON.parse("{a:60}"));
         result = template.requestBody("direct:count", "irrelevantBody");
         assertTrue("Result is not of type Long", result instanceof Long);
         assertEquals("Test collection should contain 1 record", 1L, result);
-        testCollection.remove(new BasicDBObject());
+        testCollection.deleteOne(new BasicDBObject());
         
         // test dynamicity
-        dynamicCollection.insert((DBObject) JSON.parse("{a:60}"));
+        dynamicCollection.insertOne((BasicDBObject) JSON.parse("{a:60}"));
         result = template.requestBodyAndHeader("direct:count", "irrelevantBody", MongoDbConstants.COLLECTION, dynamicCollectionName);
         assertTrue("Result is not of type Long", result instanceof Long);
         assertEquals("Dynamic collection should contain 1 record", 1L, result);
@@ -59,8 +63,8 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
     public void testInsertString() throws Exception {
         assertEquals(0, testCollection.count());
         Object result = template.requestBody("direct:insert", "{\"_id\":\"testInsertString\", \"scientist\":\"Einstein\"}");
-        assertTrue(result instanceof WriteResult);
-        DBObject b = testCollection.findOne("testInsertString");
+        assertTrue(result instanceof BasicDBObject);
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertString")).first();
         assertNotNull("No record with 'testInsertString' _id", b);
     }
 
@@ -86,18 +90,18 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.count());
         Object[] req = new Object[] {"{\"_id\":\"testSave1\", \"scientist\":\"Einstein\"}", "{\"_id\":\"testSave2\", \"scientist\":\"Copernicus\"}"};
         Object result = template.requestBody("direct:insert", req);
-        assertTrue(result instanceof WriteResult);
+        assertTrue(result instanceof List);
         assertEquals("Number of records persisted must be 2", 2, testCollection.count());
         
         // Testing the save logic
-        DBObject record1 = testCollection.findOne("testSave1");
+        DBObject record1 = testCollection.find(new BasicDBObject("_id", "testSave1")).first();
         assertEquals("Scientist field of 'testSave1' must equal 'Einstein'", "Einstein", record1.get("scientist"));
         record1.put("scientist", "Darwin");
         
         result = template.requestBody("direct:save", record1);
-        assertTrue(result instanceof WriteResult);
+        assertTrue(result instanceof UpdateResult);
         
-        record1 = testCollection.findOne("testSave1");
+        record1 = testCollection.find(new BasicDBObject("_id", "testSave1")).first();
         assertEquals("Scientist field of 'testSave1' must equal 'Darwin' after save operation", "Darwin", record1.get("scientist"));
 
     }
@@ -127,14 +131,22 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals(100L, testCollection.count());
         
         // Testing the update logic
-        DBObject extraField = new BasicDBObject("extraField", true);
+        BasicDBObject extraField = new BasicDBObject("extraField", true);
         assertEquals("Number of records with 'extraField' flag on must equal 50", 50L, testCollection.count(extraField));
         assertEquals("Number of records with 'scientist' field = Darwin on must equal 0", 0, testCollection.count(new BasicDBObject("scientist", "Darwin")));
 
         DBObject updateObj = new BasicDBObject("$set", new BasicDBObject("scientist", "Darwin"));
         
-        Object result = template.requestBodyAndHeader("direct:update", new Object[] {extraField, updateObj}, MongoDbConstants.MULTIUPDATE, true);
-        assertTrue(result instanceof WriteResult);
+        Exchange resultExchange = template.request("direct:update", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(new Object[] {extraField, updateObj});
+                exchange.getIn().setHeader(MongoDbConstants.MULTIUPDATE, true);
+            }
+        });
+        Object result = resultExchange.getOut().getBody();
+        assertTrue(result instanceof UpdateResult);
+        assertEquals("Number of records updated header should equal 50", 50L, resultExchange.getOut().getHeader(MongoDbConstants.RECORDS_AFFECTED));
         
         assertEquals("Number of records with 'scientist' field = Darwin on must equal 50 after update", 50, 
                 testCollection.count(new BasicDBObject("scientist", "Darwin")));
@@ -159,11 +171,18 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertEquals(100L, testCollection.count());
         
         // Testing the update logic
-        DBObject extraField = new BasicDBObject("extraField", true);
+        BasicDBObject extraField = new BasicDBObject("extraField", true);
         assertEquals("Number of records with 'extraField' flag on must equal 50", 50L, testCollection.count(extraField));
         
-        Object result = template.requestBody("direct:remove", extraField);
-        assertTrue(result instanceof WriteResult);
+        Exchange resultExchange = template.request("direct:remove", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(extraField);
+            }
+        });
+        Object result = resultExchange.getOut().getBody();
+        assertTrue(result instanceof DeleteResult);
+        assertEquals("Number of records deleted header should equal 50", 50L, resultExchange.getOut().getHeader(MongoDbConstants.RECORDS_AFFECTED));
         
         assertEquals("Number of records with 'extraField' flag on must be 0 after remove", 0, 
                 testCollection.count(extraField));
@@ -183,7 +202,7 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertTrue("Result is not of type List", result instanceof List);
 
         @SuppressWarnings("unchecked")
-        List<DBObject> resultList = (List<DBObject>)result;
+        List<BasicDBObject> resultList = (List<BasicDBObject>)result;
         assertListSize("Result does not contain 2 elements", resultList, 2);
         // TODO Add more asserts
     }
@@ -192,8 +211,8 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
     public void testDbStats() throws Exception {
         assertEquals(0, testCollection.count());
         Object result = template.requestBody("direct:getDbStats", "irrelevantBody");
-        assertTrue("Result is not of type DBObject", result instanceof DBObject);
-        assertTrue("The result should contain keys", ((DBObject) result).keySet().size() > 0);
+        assertTrue("Result is not of type DBObject", result instanceof Document);
+        assertTrue("The result should contain keys", ((Document) result).keySet().size() > 0);
     }
     
     @Test
@@ -210,8 +229,8 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         }
         
         Object result = template.requestBody("direct:getColStats", "irrelevantBody");
-        assertTrue("Result is not of type DBObject", result instanceof DBObject);
-        assertTrue("The result should contain keys", ((DBObject) result).keySet().size() > 0);
+        assertTrue("Result is not of type DBObject", result instanceof Document);
+        assertTrue("The result should contain keys", ((Document) result).keySet().size() > 0);
     }
 
     @Test
@@ -220,8 +239,8 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         Object result = template
                 .requestBody("direct:command",
                         "{\"hostInfo\":\"1\"}");
-        assertTrue("Result is not of type DBObject", result instanceof DBObject);
-        assertTrue("The result should contain keys", ((DBObject) result).keySet().size() > 0);
+        assertTrue("Result is not of type DBObject", result instanceof Document);
+        assertTrue("The result should contain keys", ((Document) result).keySet().size() > 0);
     }
 
     @Test

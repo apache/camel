@@ -29,6 +29,7 @@ package org.apache.camel.spi;
  *
  * @version 
  */
+@Deprecated
 public interface ServicePool<Key, Service> {
 
     /**

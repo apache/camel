@@ -41,7 +41,12 @@ public class MainSupportTest extends ContextTestSupport {
 
     public void testMainSupport() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        my.run(new String[]{"-d", "1s"});
+        my.run(new String[]{"-d", "1"});
+    }
+
+    public void testMainSupportMaxMessages() throws Exception {
+        MyMainSupport my = new MyMainSupport();
+        my.run(new String[]{"-d", "1", "-dm", "2"});
     }
 
     public void testMainSupportHelp() throws Exception {

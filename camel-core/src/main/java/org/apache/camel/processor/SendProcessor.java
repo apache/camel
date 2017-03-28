@@ -82,7 +82,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
 
     @Override
     public String toString() {
-        return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
+        return "sendTo(" + destination + ")";
     }
 
     public String getId() {

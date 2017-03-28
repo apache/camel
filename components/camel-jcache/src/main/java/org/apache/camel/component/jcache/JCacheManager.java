@@ -31,43 +31,32 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.util.ObjectHelper;
 
 public class JCacheManager<K, V> implements Closeable {
-    private JCacheConfiguration configuration;
+    private final JCacheConfiguration configuration;
+    private final ClassLoader classLoader;
+    private final String cacheName;
+    private final CamelContext camelContext;
     private CachingProvider provider;
     private CacheManager manager;
-    private ClassLoader classLoader;
     private Cache<K, V> cache;
-    private String cacheName;
-    private CamelContext camelContext;
 
-    public JCacheManager(JCacheConfiguration configuration, String cacheName) {
-        this(configuration, cacheName, null, null);
-    }
-
-    public JCacheManager(JCacheConfiguration configuration, String cacheName, CamelContext camelContext) {
-        this(configuration, cacheName, null, camelContext);
-    }
-
-    public JCacheManager(JCacheConfiguration configuration, String cacheName, ClassLoader classLoader) {
-        this(configuration, cacheName, classLoader, null);
-    }
-
-    public JCacheManager(JCacheConfiguration configuration, String cacheName, ClassLoader classLoader, CamelContext camelContext) {
+    public JCacheManager(JCacheConfiguration configuration) {
         this.configuration = configuration;
+        this.camelContext = configuration.getCamelContext();
+        this.classLoader = camelContext != null ? camelContext.getApplicationContextClassLoader() : null;
+        this.cacheName = configuration.getCacheName();
         this.provider = null;
         this.manager = null;
-        this.classLoader = classLoader;
         this.cache = null;
-        this.cacheName = cacheName;
-        this.camelContext = camelContext;
     }
 
     public JCacheManager(Cache<K, V> cache) {
-        this.cache = cache;
         this.configuration = null;
+        this.camelContext = null;
+        this.classLoader = null;
         this.cacheName = cache.getName();
         this.provider = null;
         this.manager = null;
-        this.camelContext = null;
+        this.cache = cache;
     }
 
     public String getCacheName() {
@@ -80,26 +69,8 @@ public class JCacheManager<K, V> implements Closeable {
 
     public synchronized Cache<K, V> getCache() throws Exception {
         if (cache == null) {
-            String uri = configuration.getConfigurationUri();
-            if (uri != null && camelContext != null) {
-                uri = camelContext.resolvePropertyPlaceholders(uri);
-            }
-
-            provider = configuration.getCachingProvider() != null
-                ? Caching.getCachingProvider(configuration.getCachingProvider())
-                : Caching.getCachingProvider();
-
-            manager = provider.getCacheManager(
-                ObjectHelper.isNotEmpty(uri) ? URI.create(uri) : null,
-                classLoader,
-                configuration.getCacheConfigurationProperties());
-
-            cache = manager.getCache(cacheName);
-            if (cache == null) {
-                cache = manager.createCache(
-                    cacheName,
-                    getOrCreateCacheConfiguration());
-            }
+            JCacheProvider provider = JCacheProviders.lookup(configuration.getCachingProvider());
+            cache = doGetCache(provider);
         }
 
         return cache;
@@ -122,8 +93,47 @@ public class JCacheManager<K, V> implements Closeable {
         }
     }
 
+    protected CacheEntryEventFilter getEventFilter() {
+        if (configuration.getEventFilters() != null) {
+            return new JCacheEntryEventFilters.Chained(configuration.getEventFilters());
+        }
 
-    Configuration getOrCreateCacheConfiguration() {
+        return new JCacheEntryEventFilters.Named(configuration.getFilteredEvents());
+    }
+
+    protected Cache<K, V> doGetCache(JCacheProvider jcacheProvider) throws Exception {
+        if (cache == null) {
+            String uri = configuration.getConfigurationUri();
+            if (uri != null && camelContext != null) {
+                uri = camelContext.resolvePropertyPlaceholders(uri);
+            }
+
+            provider = ObjectHelper.isNotEmpty(jcacheProvider.className())
+                ? Caching.getCachingProvider(jcacheProvider.className())
+                : Caching.getCachingProvider();
+
+            manager = provider.getCacheManager(
+                ObjectHelper.isNotEmpty(uri) ? URI.create(uri) : null,
+                null,
+                configuration.getCacheConfigurationProperties());
+
+            cache = manager.getCache(cacheName);
+            if (cache == null) {
+                if (!configuration.isCreateCacheIfNotExists()) {
+                    throw new IllegalStateException(
+                        "Cache " + cacheName + " does not exist and should not be created (createCacheIfNotExists=false)");
+                }
+
+                cache = manager.createCache(
+                    cacheName,
+                    getOrCreateCacheConfiguration());
+            }
+        }
+
+        return cache;
+    }
+
+    private Configuration getOrCreateCacheConfiguration() {
         if (configuration.getCacheConfiguration() != null) {
             return configuration.getCacheConfiguration();
         }
@@ -143,15 +153,8 @@ public class JCacheManager<K, V> implements Closeable {
         mutableConfiguration.setStatisticsEnabled(configuration.isStatisticsEnabled());
         mutableConfiguration.setReadThrough(configuration.isReadThrough());
         mutableConfiguration.setStoreByValue(configuration.isStoreByValue());
+        mutableConfiguration.setWriteThrough(configuration.isWriteThrough());
 
         return mutableConfiguration;
-    }
-
-    CacheEntryEventFilter getEventFilter() {
-        if (configuration.getEventFilters() != null) {
-            return new JCacheEntryEventFilters.Chained(configuration.getEventFilters());
-        }
-
-        return new JCacheEntryEventFilters.Named(configuration.getFilteredEvents());
     }
 }

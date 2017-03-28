@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.etcd.enabled",
+      "description": "Enable etcd component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -48,6 +48,7 @@
       <to uri="mock:testSaxonWithFactoryResult"/>
     </route>
 
+    <!-- See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory
     <route>
       <from uri="direct:testSaxonWithObjectModel"/>
       <setBody>
@@ -56,6 +57,7 @@
       <log message="Test Saxon with object model: ${body}"/>
       <to uri="mock:testSaxonWithObjectModelResult"/>
     </route>
+    -->
 
     <!-- ************************ -->
     <!-- *** XPath Predicates *** -->
@@ -79,6 +81,7 @@
       </filter>
     </route>
 
+    <!-- See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory
     <route>
       <from uri="direct:testSaxonWithObjectModelPredicate"/>
       <filter>
@@ -87,6 +90,7 @@
         <to uri="mock:testSaxonWithObjectModelResultPredicate"/>
       </filter>
     </route>
+    -->
 
   </camelContext>
 

@@ -24,7 +24,7 @@
     <!-- Binary Files -->
     <fileSet>
       <directory>..</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory></outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>
@@ -44,11 +44,14 @@
         <exclude>**/surefire*</exclude>
         <exclude>**/svn-commit*</exclude>
 
+        <exclude>**/.idea/**</exclude>
         <exclude>**/*.iml</exclude>
         <exclude>**/*.ipr</exclude>
         <exclude>**/*.iws</exclude>
 
         <exclude>**/cobertura.ser</exclude>
+
+        <exclude>**/node_modules/**</exclude>
       </excludes>
     </fileSet>
 

@@ -101,8 +101,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
 
         if (copyNeeded) {
             Message msg = new DefaultMessage();
-            msg.copyFrom(old);
-            msg.setBody(value);
+            msg.copyFromWithNewBody(old, value);
 
             // replace message on exchange
             ExchangeHelper.replaceMessage(exchange, msg, false);

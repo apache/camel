@@ -128,7 +128,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
             }
             processPDU(pdu, event);
         } else {
-            LOG.debug("Received invalid trap PDU: " + pdu);
+            LOG.debug("Received invalid trap PDU");
         }
     }
     

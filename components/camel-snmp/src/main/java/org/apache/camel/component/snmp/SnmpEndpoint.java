@@ -37,7 +37,7 @@ import org.snmp4j.security.SecurityLevel;
 /**
  * The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
  */
-@UriEndpoint(scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -67,17 +67,17 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private SnmpActionType type;
     @UriParam(label = "consumer", defaultValue = "60000")
     private long delay = 60000;
-    @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3")
+    @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3", label = "security")
     private int securityLevel = SecurityLevel.AUTH_PRIV;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String securityName;
-    @UriParam(enums = "MD5,SHA1")
+    @UriParam(enums = "MD5,SHA1", label = "security")
     private String authenticationProtocol;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String authenticationPassphrase;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privacyProtocol;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privacyPassphrase;
     @UriParam
     private String snmpContextName;
@@ -111,7 +111,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("SnmpProducer is not implemented");
+        if (this.type == SnmpActionType.TRAP) {
+            return new SnmpTrapProducer(this);
+        } else {
+            return new SnmpProducer(this);
+        }
     }
 
     public boolean isSingleton() {
@@ -386,6 +390,6 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     @Override
     public String toString() {
         // only show address to avoid user and password details to be shown
-        return "SnmpEndpoint[" + address + "]";
+        return "snmp://" + address;
     }
 }

@@ -49,6 +49,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
+import org.apache.camel.processor.aggregate.DelegateAggregationStrategy;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
@@ -78,7 +79,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Implements the Multicast pattern to send a message exchange to a number of
  * endpoints, each endpoint receiving a copy of the message exchange.
  *
- * @version 
+ * @version
  * @see Pipeline
  */
 public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
@@ -151,6 +152,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final boolean parallelProcessing;
     private final boolean streaming;
     private final boolean parallelAggregate;
+    private final boolean stopOnAggregateException;
     private final boolean stopOnException;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
@@ -175,10 +177,17 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 streaming, stopOnException, timeout, onPrepare, shareUnitOfWork, false);
     }
 
+    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                              ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
+                              boolean shareUnitOfWork, boolean parallelAggregate) {
+        this(camelContext, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
+             shareUnitOfWork, false, false);
+    }
+    
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
                               boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
-                              boolean parallelAggregate) {
+                              boolean parallelAggregate, boolean stopOnAggregateException) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.processors = processors;
@@ -193,6 +202,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         this.onPrepare = onPrepare;
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 
     @Override
@@ -293,15 +303,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             while (it.hasNext()) {
                 final ProcessorExchangePair pair = it.next();
+                // in case the iterator returns null then continue to next
+                if (pair == null) {
+                    continue;
+                }
+
                 final Exchange subExchange = pair.getExchange();
                 updateNewExchange(subExchange, total.intValue(), pairs, it);
 
                 completion.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
-                        // only start the aggregation task when the task is being executed to avoid staring
-                        // the aggregation task to early and pile up too many threads
+                        // start the aggregation task at this stage only in order not to pile up too many threads
                         if (aggregationTaskSubmitted.compareAndSet(false, true)) {
-                            // but only submit the task once
+                            // but only submit the aggregation task once
                             aggregateExecutorService.submit(aggregateOnTheFlyTask);
                         }
 
@@ -525,8 +539,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     doAggregate(getAggregationStrategy(subExchange), result, subExchange);
                 }
             } catch (Throwable e) {
-                // wrap in exception to explain where it failed
-                subExchange.setException(new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e));
+                if (isStopOnAggregateException()) {
+                    throw e;
+                } else {
+                    // wrap in exception to explain where it failed
+                    CamelExchangeException cex = new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e);
+                    subExchange.setException(cex);
+                    LOG.debug(cex.getMessage(), cex);
+                }
             } finally {
                 aggregated.incrementAndGet();
             }
@@ -558,6 +578,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         @Override
         public void run() {
             AggregationStrategy strategy = getAggregationStrategy(null);
+            if (strategy instanceof DelegateAggregationStrategy) {
+                strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
+            }
             if (strategy instanceof TimeoutAwareAggregationStrategy) {
                 // notify the strategy we timed out
                 Exchange oldExchange = result.get();
@@ -590,6 +613,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         while (it.hasNext()) {
             ProcessorExchangePair pair = it.next();
+            // in case the iterator returns null then continue to next
+            if (pair == null) {
+                continue;
+            }
             Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total.get(), pairs, it);
 
@@ -630,7 +657,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             } else {
                 doAggregate(getAggregationStrategy(subExchange), result, subExchange);
             }
-            
+
             total.incrementAndGet();
         }
 
@@ -852,6 +879,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
+        if (strategy instanceof DelegateAggregationStrategy) {
+            strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
+        }
         // invoke the on completion callback
         if (strategy instanceof CompletionAwareAggregationStrategy) {
             ((CompletionAwareAggregationStrategy) strategy).onCompletion(subExchange);
@@ -961,7 +991,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // because streams can only be read once
                     StreamCache copiedStreamCache = streamCache.copy(copy);
                     if (copiedStreamCache != null) {
-                        copy.getIn().setBody(copiedStreamCache);  
+                        copy.getIn().setBody(copiedStreamCache);
                     }
                 }
             }
@@ -1275,6 +1305,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     public boolean isParallelAggregate() {
         return parallelAggregate;
+    }
+
+    public boolean isStopOnAggregateException() {
+        return stopOnAggregateException;
     }
 
     public boolean isShareUnitOfWork() {

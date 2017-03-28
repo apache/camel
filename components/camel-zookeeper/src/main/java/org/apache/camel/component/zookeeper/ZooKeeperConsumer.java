@@ -34,7 +34,6 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooKeeper;
 
-
 /**
  * <code>ZooKeeperConsumer</code> uses various {@link ZooKeeperOperation} to
  * interact and consume data from a ZooKeeper cluster.
@@ -64,7 +63,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         }
 
         initializeConsumer();
-        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(configuration.getPath(), "Camel-Zookeeper Ops executor", 1);
+        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "Camel-Zookeeper OperationsExecutor", 1);
 
         OperationsExecutor opsService = new OperationsExecutor();
         executor.submit(opsService);
@@ -128,7 +127,6 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
         public void run() {
             while (isRunAllowed()) {
-
                 try {
                     current = operations.take();
                     if (log.isTraceEnabled()) {
@@ -169,6 +167,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                     initializeConsumer();
                 }
             } catch (Exception e) {
+                // ignore
             }
         }
     }

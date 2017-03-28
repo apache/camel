@@ -1,0 +1,187 @@
+## Infinispan Component
+
+*Available as of Camel version 2.13*
+
+This component allows you to interact with
+http://infinispan.org/[Infinispan] distributed data grid / cache.
+Infinispan is an extremely scalable, highly available key/value data
+store and data grid platform written in Java.
+
+From *Camel 2.17* onwards Infinispan requires Java 8.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-infinispan</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-------------------------------
+infinispan://hostName?[options]
+-------------------------------
+
+### URI Options
+
+The producer allows sending messages to a local infinispan cache
+configured in the registry, or to a remote cache using the HotRod
+protocol. The consumer allows listening for events from local infinispan cache
+accessible from the registry.
+
+
+// component options: START
+The Infinispan component has no options.
+// component options: END
+
+
+
+
+// endpoint options: START
+The Infinispan endpoint is configured using URI syntax:
+
+    infinispan:host
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **host** | *Required* Specifies the host of the cache on Infinispan instance |  | String
+|=======================================================================
+
+#### Query Parameters (14 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **cacheContainer** (common) | Specifies the cache Container to connect |  | BasicCacheContainer
+| **cacheName** (common) | Specifies the cache name |  | String
+| **queryBuilder** (common) | Specifies the query builder. |  | InfinispanQueryBuilder
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **clusteredListener** (consumer) | If true the listener will be installed for the entire cluster | false | boolean
+| **customListener** (consumer) | Returns the custom listener in use if provided |  | InfinispanCustom Listener
+| **eventTypes** (consumer) | Specifies the set of event types to register by the consumer. Multiple event can be separated by comma. The possible event types are: CACHE_ENTRY_ACTIVATED CACHE_ENTRY_PASSIVATED CACHE_ENTRY_VISITED CACHE_ENTRY_LOADED CACHE_ENTRY_EVICTED CACHE_ENTRY_CREATED CACHE_ENTRY_REMOVED CACHE_ENTRY_MODIFIED TRANSACTION_COMPLETED TRANSACTION_REGISTERED CACHE_ENTRY_INVALIDATED DATA_REHASHED TOPOLOGY_CHANGED PARTITION_STATUS_CHANGED |  | String
+| **sync** (consumer) | If true the consumer will receive notifications synchronously | true | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **command** (producer) | The operation to perform. | put | String
+| **configurationUri** (advanced) | An implementation specific URI for the CacheManager |  | String
+| **flags** (advanced) | A comma separated list of Flag to be applied by default on each cache invocation not applicable to remote caches. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
+// endpoint options: END
+
+
+
+### Message Headers
+
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
+|=======================================================================
+|Name |Default Value |Type |Context |Description
+
+|CamelInfinispanCacheName |`null` |String |Shared |The cache participating in the operation or event.
+
+|CamelInfinispanOperation |`PUT` |String |Producer |The operation to perform: CamelInfinispanOperationPut,
+CamelInfinispanOperationGet, CamelInfinispanOperationRemove,
+CamelInfinispanOperationClear. *From Camel 2.16:* CamelInfinispanOperationPutAll,
+CamelInfinispanOperationPutIfAbsent, CamelInfinispanOperationReplace,
+CamelInfinispanOperationSize.
+
+|CamelInfinispanMap |`null` |Map |Producer |A Map to use in case of CamelInfinispanOperationPutAll operation
+
+|CamelInfinispanKey |`null` |Object |Shared |The key to perform the operation to or the key generating the event.
+
+|CamelInfinispanValue |`null` |Object |Producer |The value to use for the operation.
+
+|CamelInfinispanOperationResult |`null` |Object |Producer |The result of the operation.
+
+|CamelInfinispanEventType |`null` |String |Consumer |The type of the received event. Possible values defined here
+org.infinispan.notifications.cachelistener.event.Event.Type
+
+|CamelInfinispanIsPre |`null` |Boolean |Consumer |Infinispan fires two events for each operation: one before and one after
+the operation.
+
+|CamelInfinispanLifespanTime |`null` |long |Producer |The Lifespan time of a value inside the cache. Negative values are
+interpreted as infinity.
+
+|CamelInfinispanTimeUnit |`null` |String |Producer |The Time Unit of an entry Lifespan Time.
+
+|CamelInfinispanMaxIdleTime |`null` |long |Producer |The maximum amount of time an entry is allowed to be idle for before it
+is considered as expired.
+
+|CamelInfinispanMaxIdleTimeUnit |`null` |String |Producer |The Time Unit of an entry Max Idle Time.
+
+|CamelInfinispanQueryBuilder |null |InfinispanQueryBuilder |Producer | *From Camel 2.17:* The QueryBuilde to use for QUERY command, if not
+present the command defaults to InifinispanConfiguration's one
+
+|CamelInfinispanIgnoreReturnValues |null |Boolean |Producer |*From Camel 2.17:* If this header is set, the return value for cache
+operation returning something is ignored by the client application
+|=======================================================================
+
+### Example
+
+Below is an example route that retrieves a value from the cache for a
+specific key:
+
+[source,java]
+------------------------------------------------------------------------------------
+from("direct:start")
+        .setHeader(InfinispanConstants.OPERATION, constant(InfinispanConstants.GET))
+        .setHeader(InfinispanConstants.KEY, constant("123"))
+        .to("infinispan://localhost?cacheContainer=#cacheContainer");
+------------------------------------------------------------------------------------
+
+### Using the Infinispan based idempotent repository
+
+In this section we will use the Infinispan based idempotent repository.
+
+First, we need to create a cacheManager and then configure our
+
+------------------------------------------------------------------------------------------
+org.apache.camel.component.infinispan.processor.idempotent.InfinispanIdempotentRepository:
+------------------------------------------------------------------------------------------
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------
+<bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager" init-method="start" destroy-method="stop"/>
+<bean id="infinispanRepo" class="org.apache.camel.component.infinispan.processor.idempotent.InfinispanIdempotentRepository"
+      factory-method="infinispanIdempotentRepository">
+    <argument ref="cacheManager"/>
+    <argument value="idempotent"/>
+</bean>
+---------------------------------------------------------------------------------------------------------------------------
+
+Then we can create our Infinispan idempotent repository in the spring
+XML file as well:
+
+[source,xml]
+---------------------------------------------------------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">   
+    <route id="JpaMessageIdRepositoryTest">
+        <from uri="direct:start" />
+        <idempotentConsumer messageIdRepositoryRef="infinispanStore">
+            <header>messageId</header>
+            <to uri="mock:result" />
+        </idempotentConsumer>
+    </route>
+</camelContext>
+---------------------------------------------------------------------
+
+For more information, see these resources...
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]

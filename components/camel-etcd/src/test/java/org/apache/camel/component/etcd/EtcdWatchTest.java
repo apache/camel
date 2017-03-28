@@ -17,29 +17,51 @@
 package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
+import mousio.etcd4j.responses.EtcdErrorCode;
+import mousio.etcd4j.responses.EtcdException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Etcd must be started manually")
-public class EtcdWatchTest extends EtcdTest {
+public class EtcdWatchTest extends EtcdTestSupport {
 
     @Test
     public void testWatchWithPath() throws Exception {
-        testWatch("mock:watch-with-path", "/myKey1", true);
+        testWatch("mock:watch-with-path", "/myKey1", 10);
     }
 
     @Test
     public void testWatchWithConfigPath() throws Exception {
-        testWatch("mock:watch-with-config-path", "/myKey2", true);
+        testWatch("mock:watch-with-config-path", "/myKey2", 10);
     }
 
     @Test
     public void testWatchRecursive() throws Exception {
-        testWatch("mock:watch-recursive", "/recursive/myKey1", true);
+        testWatch("mock:watch-recursive", "/recursive/myKey1", 10);
+    }
+
+    @Test
+    public void testWatchRecovery() throws Exception {
+        final String key = "/myKeyRecovery";
+        final EtcdClient client = getClient();
+
+        try {
+            // Delete the key if present
+            client.delete(key).send().get();
+        } catch (EtcdException e) {
+            if (!e.isErrorCode(EtcdErrorCode.KeyNotFound)) {
+                throw e;
+            }
+        }
+
+        // Fill the vent backlog ( > 1000)
+        for (int i = 0; i < 2000; i++) {
+            client.put(key, "v" + i).send().get();
+        }
+
+        context().startRoute("watchRecovery");
+
+        testWatch("mock:watch-recovery", key, 10);
     }
 
     @Test
@@ -49,33 +71,25 @@ public class EtcdWatchTest extends EtcdTest {
         mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.watch.name());
         mock.expectedHeaderReceived(EtcdConstants.ETCD_PATH, "/timeoutKey");
         mock.expectedHeaderReceived(EtcdConstants.ETCD_TIMEOUT, true);
-        mock.expectedMessagesMatches(new Predicate() {
-            @Override
-            public boolean matches(Exchange exchange) {
-                return exchange.getIn().getBody() == null;
-            }
-        });
-
+        mock.allMessages().body().isNull();
         mock.assertIsSatisfied();
     }
 
-    private void testWatch(String mockEndpoint, final String key, boolean updateKey) throws Exception {
+    private void testWatch(String mockEndpoint, final String key, int updates) throws Exception {
+        final String[] values = new String[updates];
+        for (int i = 0; i < updates; i++) {
+            values[i] = key + "=myValue-" + i;
+        }
+
         MockEndpoint mock = getMockEndpoint(mockEndpoint);
         mock.expectedMessageCount(2);
         mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.watch.name());
         mock.expectedHeaderReceived(EtcdConstants.ETCD_PATH, key);
-        mock.expectedMessagesMatches(new Predicate() {
-            @Override
-            public boolean matches(Exchange exchange) {
-                return exchange.getIn().getBody(String.class).startsWith(key + "=myValue-");
-            }
-        });
+        mock.expectedBodiesReceived(values);
 
-        if (updateKey) {
-            EtcdClient client = getClient();
-            client.put(key, "myValue-1").send().get();
-            Thread.sleep(250);
-            client.put(key, "myValue-2").send().get();
+        final EtcdClient client = getClient();
+        for (int i = 0; i < updates; i++) {
+            client.put(key, "myValue-" + i).send().get();
         }
 
         mock.assertIsSatisfied();
@@ -88,8 +102,13 @@ public class EtcdWatchTest extends EtcdTest {
                 from("etcd:watch/myKey1")
                     .process(NODE_TO_VALUE_IN)
                     .to("mock:watch-with-path");
-                from("etcd:watch/recursive?recursive=true")
+                fromF("etcd:watch/myKeyRecovery?timeout=%s&fromIndex=%s", 1000 * 60 * 5, 1)
+                    .id("watchRecovery")
+                    .autoStartup(false)
                     .process(NODE_TO_VALUE_IN)
+                    .to("mock:watch-recovery");
+                from("etcd:watch/recursive?recursive=true")
+                   .process(NODE_TO_VALUE_IN)
                     .to("log:org.apache.camel.component.etcd?level=INFO")
                     .to("mock:watch-recursive");
                 from("etcd:watch/myKey2")

@@ -33,7 +33,8 @@ public class NatsConsumerMaxMessagesTest extends CamelTestSupport {
 
     @Test
     public void testMaxConsumer() throws InterruptedException, IOException {
-        mockResultEndpoint.expectedBodiesReceived("test", "test1", "test2", "test3", "test4");
+        mockResultEndpoint.expectedBodiesReceived("{Subject=test;Reply=null;Payload=<test>}", "{Subject=test;Reply=null;Payload=<test1>}", 
+            "{Subject=test;Reply=null;Payload=<test2>}", "{Subject=test;Reply=null;Payload=<test3>}", "{Subject=test;Reply=null;Payload=<test4>}");
         mockResultEndpoint.setExpectedMessageCount(5);
         template.sendBody("direct:send", "test");
         template.sendBody("direct:send", "test1");

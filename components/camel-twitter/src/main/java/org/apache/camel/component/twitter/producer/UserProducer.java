@@ -63,11 +63,6 @@ public class UserProducer extends TwitterProducer {
     }
 
     private Status updateStatus(String status) throws Exception {
-        if (status.length() > 160) {
-            log.warn("Message is longer than 160 characters. Message will be truncated!");
-            status = status.substring(0, 160);
-        }
-
         Status response = endpoint.getProperties().getTwitter().updateStatus(status);
         log.debug("Updated status: {}", status);
         log.debug("Status id: {}", response.getId());

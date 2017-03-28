@@ -24,8 +24,10 @@ This example requires running in Apache Karaf / ServiceMix
 You can install this example from the shell using this example's `features.xml`
 for easy provisioning.
 
-	features:addUrl mvn:org.apache.camel/camel-example-mybatis/${version}/xml/features
-	features:install camel-example-mybatis
+	feature:repo-add camel ${version}
+	feature:install camel
+	feature:repo-add mvn:org.apache.camel/camel-example-mybatis/${version}/xml/features
+	feature:install camel-example-mybatis
 
 And you can see the application running by tailing the logs
 
@@ -38,12 +40,6 @@ And you can use <kbd>ctrl</kbd>+<kbd>c</kbd> to stop tailing the log.
 This example uses OSGi Blueprint to setup and configure the database,
 as well the CamelContext. You can see this in the following file:
 In the `src/main/resources/OSGI-INF/blueprint/camel-mybatis.xml`
-
-
-### Documentation
-
-This example is documented at
-  <http://camel.apache.org/mybatis-example.html>
 
 ### Forum, Help, etc
 

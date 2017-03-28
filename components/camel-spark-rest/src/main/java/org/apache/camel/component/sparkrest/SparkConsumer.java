@@ -23,6 +23,7 @@ import org.apache.camel.impl.DefaultConsumer;
 public class SparkConsumer extends DefaultConsumer {
 
     private final CamelSparkRoute route;
+    private boolean enableCors;
 
     public SparkConsumer(Endpoint endpoint, Processor processor, CamelSparkRoute route) {
         super(endpoint, processor);
@@ -32,6 +33,14 @@ public class SparkConsumer extends DefaultConsumer {
     @Override
     public SparkEndpoint getEndpoint() {
         return (SparkEndpoint) super.getEndpoint();
+    }
+
+    public boolean isEnableCors() {
+        return enableCors;
+    }
+
+    public void setEnableCors(boolean enableCors) {
+        this.enableCors = enableCors;
     }
 
     @Override
@@ -49,6 +58,11 @@ public class SparkConsumer extends DefaultConsumer {
             log.debug("Spark-rest: {}({})", verb, path);
         }
         CamelSpark.spark(verb, path, accept, route);
+
+        // special if cors is enabled in rest-dsl then we need a spark-route to trigger cors support
+        if (enableCors && !"options".equals(verb)) {
+            CamelSpark.spark("options", path, accept, route);
+        }
 
         if (matchOnUriPrefix) {
             CamelSpark.spark(verb, path + "/*", accept, route);

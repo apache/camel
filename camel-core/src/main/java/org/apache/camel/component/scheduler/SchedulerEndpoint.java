@@ -33,7 +33,8 @@ import org.apache.camel.spi.UriPath;
  * This component is similar to the timer component, but it offers more functionality in terms of scheduling.
  * Also this component uses JDK ScheduledExecutorService. Where as the timer uses a JDK Timer.
  */
-@UriEndpoint(scheme = "scheduler", title = "Scheduler", syntax = "scheduler:name", consumerOnly = true, consumerClass = SchedulerConsumer.class, label = "core,scheduling")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "scheduler", title = "Scheduler", syntax = "scheduler:name",
+    consumerOnly = true, consumerClass = SchedulerConsumer.class, label = "core,scheduling")
 public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = "true")

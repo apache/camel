@@ -20,7 +20,6 @@ import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.UpdateCondition;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

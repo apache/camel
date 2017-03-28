@@ -28,7 +28,7 @@ import org.apache.gora.store.DataStore;
 /**
  * The gora component allows you to work with NoSQL databases using the Apache Gora framework.
  */
-@UriEndpoint(scheme = "gora", title = "Gora", syntax = "gora:name", consumerClass = GoraConsumer.class, label = "database,hadoop,nosql")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "gora", title = "Gora", syntax = "gora:name", consumerClass = GoraConsumer.class, label = "database,hadoop,nosql")
 public class GoraEndpoint extends DefaultEndpoint {
 
     /**

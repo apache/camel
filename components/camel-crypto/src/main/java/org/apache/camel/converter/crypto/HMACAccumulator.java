@@ -123,7 +123,7 @@ public class HMACAccumulator {
         private int read;
         private int available;
 
-        public CircularBuffer(int bufferSize) {
+        CircularBuffer(int bufferSize) {
             buffer = new byte[bufferSize];
             available = bufferSize;
         }

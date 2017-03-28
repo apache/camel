@@ -38,6 +38,13 @@ public @interface UriParam {
     String name() default "";
 
     /**
+     * A human display name of the parameter.
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String displayName() default "";
+
+    /**
      * The default value of the parameter.
      * <p/>
      * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the Java field was assigned.
@@ -76,6 +83,11 @@ public @interface UriParam {
      * The labels is intended for grouping the parameters, such as <tt>consumer</tt>, <tt>producer</tt>, <tt>common</tt>, <tt>security</tt>, etc.
      */
     String label() default "";
+
+    /**
+     * Whether the option is secret/sensitive information such as a password.
+     */
+    boolean secret() default false;
 
     /**
      * To re-associate the preferred Java type of this parameter.

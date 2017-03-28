@@ -357,7 +357,6 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return sigGens;
     }
 
-    @SuppressWarnings("resource")
     public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception { //NOPMD
         if (encryptedStream == null) {
             return null;
@@ -370,7 +369,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
         try {
             in = PGPUtil.getDecoderStream(encryptedStream);
-            encData = getDecryptedData(exchange, in);
+            DecryptedDataAndPPublicKeyEncryptedData encDataAndPbe = getDecryptedData(exchange, in);
+            encData = encDataAndPbe.getDecryptedData();
             PGPObjectFactory pgpFactory = new PGPObjectFactory(encData, new BcKeyFingerprintCalculator());
             Object object = pgpFactory.nextObject();
             if (object instanceof PGPCompressedData) {
@@ -413,6 +413,12 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
                 osb.flush();
             }
             verifySignature(pgpFactory, signature);
+            PGPPublicKeyEncryptedData pbe = encDataAndPbe.getPbe();
+            if (pbe.isIntegrityProtected()) {
+                if (!pbe.verify()) {
+                    throw new PGPException("Message failed integrity check");
+                }
+            }
         } finally {
             IOHelper.close(osb, litData, uncompressedData, encData, in, encryptedStream);
         }
@@ -420,7 +426,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return osb.build();
     }
 
-    private InputStream getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
+    private DecryptedDataAndPPublicKeyEncryptedData getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
         PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream, new BcKeyFingerprintCalculator());
         Object firstObject = pgpFactory.nextObject();
         // the first object might be a PGP marker packet 
@@ -449,7 +455,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         }
 
         InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
-        return encData;
+        return new DecryptedDataAndPPublicKeyEncryptedData(encData, pbe);
     }
 
     private PGPEncryptedDataList getEcryptedDataList(PGPObjectFactory pgpFactory, Object firstObject) throws IOException {
@@ -777,5 +783,26 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     @Override
     protected void doStop() throws Exception { //NOPMD
         // noop
+    }
+    
+    private static class DecryptedDataAndPPublicKeyEncryptedData {
+
+        private final InputStream decryptedData;
+
+        private final PGPPublicKeyEncryptedData pbe;
+
+        DecryptedDataAndPPublicKeyEncryptedData(InputStream decryptedData, PGPPublicKeyEncryptedData pbe) {
+            this.decryptedData = decryptedData;
+            this.pbe = pbe;
+        }
+
+        public InputStream getDecryptedData() {
+            return decryptedData;
+        }
+
+        public PGPPublicKeyEncryptedData getPbe() {
+            return pbe;
+        }
+
     }
 }

@@ -34,21 +34,30 @@ import java.util.regex.Pattern;
 public final class JsonSchemaHelper {
 
     private static final String VALID_CHARS = ".-='/\\!&():;";
-    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]");
+    // 0 = text, 1 = enum, 2 = boolean, 3 = integer or number
+    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]|(true|false)|(-?\\d+\\.?\\d*)");
     private static final String QUOT = "&quot;";
 
     private JsonSchemaHelper() {
     }
 
-    public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description,
-                                Boolean deprecated, String group, String label, boolean enumType, Set<String> enums,
-                                boolean oneOfType, Set<String> oneOffTypes, String optionalPrefix, String prefix, boolean multiValue) {
+    public static String toJson(String name, String displayName, String kind, Boolean required, String type, String defaultValue, String description,
+                                Boolean deprecated, Boolean secret, String group, String label, boolean enumType, Set<String> enums,
+                                boolean oneOfType, Set<String> oneOffTypes, boolean asPredicate, String optionalPrefix, String prefix, boolean multiValue) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
         sb.append(Strings.doubleQuote(name));
         sb.append(": { \"kind\": ");
         sb.append(Strings.doubleQuote(kind));
+
+        // compute a display name if we don't have anything
+        if (Strings.isNullOrEmpty(displayName)) {
+            displayName = Strings.asTitle(name);
+        }
+        // we want display name early so its easier to spot
+        sb.append(", \"displayName\": ");
+        sb.append(Strings.doubleQuote(displayName));
 
         // we want group early so its easier to spot
         if (!Strings.isNullOrEmpty(group)) {
@@ -63,13 +72,15 @@ public final class JsonSchemaHelper {
         }
 
         if (required != null) {
+            // boolean type
             sb.append(", \"required\": ");
-            sb.append(Strings.doubleQuote(required.toString()));
+            sb.append(required.toString());
         }
 
         sb.append(", \"type\": ");
         if ("enum".equals(typeName)) {
-            sb.append(Strings.doubleQuote("string"));
+            String actualType = JsonSchemaHelper.getType(type, false);
+            sb.append(Strings.doubleQuote(actualType));
             sb.append(", \"javaType\": \"" + type + "\"");
             CollectionStringBuffer enumValues = new CollectionStringBuffer();
             for (Object value : enums) {
@@ -108,19 +119,43 @@ public final class JsonSchemaHelper {
             sb.append(Strings.doubleQuote(text));
         }
         if (multiValue) {
-            sb.append(", \"multiValue\": ");
-            sb.append(Strings.doubleQuote("true"));
+            // boolean value
+            sb.append(", \"multiValue\": true");
         }
 
         if (deprecated != null) {
             sb.append(", \"deprecated\": ");
-            sb.append(Strings.doubleQuote(deprecated.toString()));
+            // boolean value
+            sb.append(deprecated.toString());
+        }
+
+        if (secret != null) {
+            sb.append(", \"secret\": ");
+            // boolean value
+            sb.append(secret.toString());
         }
 
         if (!Strings.isNullOrEmpty(defaultValue)) {
             sb.append(", \"defaultValue\": ");
             String text = safeDefaultValue(defaultValue);
-            sb.append(Strings.doubleQuote(text));
+            // the type can either be boolean, integer, number or text based
+            if ("boolean".equals(typeName) || "integer".equals(typeName) || "number".equals(typeName)) {
+                sb.append(text);
+            } else {
+                // text should be quoted
+                sb.append(Strings.doubleQuote(text));
+            }
+        }
+
+        // for expressions we want to know if it must be used as predicate or not
+        boolean predicate = "expression".equals(kind) || asPredicate;
+        if (predicate) {
+            sb.append(", \"asPredicate\": ");
+            if (asPredicate) {
+                sb.append("true");
+            } else {
+                sb.append("false");
+            }
         }
 
         if (!Strings.isNullOrEmpty(description)) {
@@ -236,7 +271,7 @@ public final class JsonSchemaHelper {
                 continue;
             }
 
-            // remove all HTML tags
+            // remove all XML tags
             line = line.replaceAll("<.*?>", "");
 
             // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
@@ -328,19 +363,34 @@ public final class JsonSchemaHelper {
                     key = matcher.group(1);
                 } else {
                     String value = matcher.group(1);
-                    if (value == null) {
-                        value = matcher.group(2);
-                        // its an enum so strip out " and trim spaces after comma
-                        value = value.replaceAll("\"", "");
-                        value = value.replaceAll(", ", ",");
-                    }
                     if (value != null) {
+                        // its text based
                         value = value.trim();
                         // decode
                         value = value.replaceAll(QUOT, "\"");
                         value = decodeJson(value);
                     }
-                    row.put(key, value);
+                    if (value == null) {
+                        // not text then its maybe an enum?
+                        value = matcher.group(2);
+                        if (value != null) {
+                            // its an enum so strip out " and trim spaces after comma
+                            value = value.replaceAll("\"", "");
+                            value = value.replaceAll(", ", ",");
+                            value = value.trim();
+                        }
+                    }
+                    if (value == null) {
+                        // not text then its maybe a boolean?
+                        value = matcher.group(3);
+                    }
+                    if (value == null) {
+                        // not text then its maybe a integer?
+                        value = matcher.group(4);
+                    }
+                    if (value != null) {
+                        row.put(key, value);
+                    }
                     // reset
                     key = null;
                 }

@@ -21,6 +21,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -34,31 +35,31 @@ public class TwitterConfiguration {
     @UriPath(description = "The kind of endpoint", enums = "directmessage,search,streaming/filter,streaming/sample,streaming/user"
             + ",timeline/home,timeline/mentions,timeline/retweetsofme,timeline/user") @Metadata(required = "true")
     private String kind;
-    @UriParam(label = "consumer", defaultValue = "direct", enums = "polling,direct,event")
-    private EndpointType type = EndpointType.DIRECT;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "polling", enums = "polling,direct,event")
+    private EndpointType type = EndpointType.POLLING;
+    @UriParam(label = "security", secret = true)
     private String accessToken;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessTokenSecret;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String consumerKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String consumerSecret;
     @UriParam
     private String user;
-    @UriParam(label = "filter")
+    @UriParam(label = "consumer,filter")
     private String keywords;
-    @UriParam(label = "filter")
+    @UriParam(label = "consumer,filter")
     private String userIds;
-    @UriParam(label = "filter", defaultValue = "true")
+    @UriParam(label = "consumer,filter", defaultValue = "true")
     private boolean filterOld = true;
-    @UriParam(label = "filter", defaultValue = "1")
+    @UriParam(label = "consumer,filter", defaultValue = "1")
     private long sinceId  = 1;
-    @UriParam(label = "filter")
+    @UriParam(label = "consumer,filter")
     private String lang;
-    @UriParam(label = "filter")
+    @UriParam(label = "consumer,filter")
     private Integer count;
-    @UriParam(label = "filter", defaultValue = "1")
+    @UriParam(label = "consumer,filter", defaultValue = "1")
     private Integer numberOfPages = 1;
     @UriParam(label = "proxy")
     private String httpProxyHost;
@@ -96,7 +97,7 @@ public class TwitterConfiguration {
      */
     public void checkComplete() {
         if (twitter == null && twitterStream == null
-                && (consumerKey.isEmpty() || consumerSecret.isEmpty() || accessToken.isEmpty() || accessTokenSecret.isEmpty())) {
+                && (ObjectHelper.isEmpty(consumerKey) || ObjectHelper.isEmpty(consumerSecret) || ObjectHelper.isEmpty(accessToken) ||  ObjectHelper.isEmpty(accessTokenSecret))) {
             throw new IllegalArgumentException("twitter or twitterStream or all of consumerKey, consumerSecret, accessToken, and accessTokenSecret must be set!");
         }
     }

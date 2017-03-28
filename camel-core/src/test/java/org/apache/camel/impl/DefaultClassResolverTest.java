@@ -120,13 +120,13 @@ public class DefaultClassResolverTest extends TestCase {
 
     public void testLoadResourceAsUri() {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        URL url = resolver.loadResourceAsURL("log4j.properties");
+        URL url = resolver.loadResourceAsURL("log4j2.properties");
         assertNotNull(url);
     }
 
     public void testLoadResourceAsStream() {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        InputStream is = resolver.loadResourceAsStream("log4j.properties");
+        InputStream is = resolver.loadResourceAsStream("log4j2.properties");
         assertNotNull(is);
     }
 

@@ -196,7 +196,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
 
         private final int concurrentConsumers;
 
-        public ConsumerEventHandler(final int ordinal, final int concurrentConsumers) {
+        ConsumerEventHandler(final int ordinal, final int concurrentConsumers) {
             this.ordinal = ordinal;
             this.concurrentConsumers = concurrentConsumers;
         }

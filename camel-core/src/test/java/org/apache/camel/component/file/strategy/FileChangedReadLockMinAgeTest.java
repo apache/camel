@@ -79,7 +79,7 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed&readLockMinAge=3000")
+                from("file:target/changed/in?readLock=changed&readLockMinAge=3000&readLockTimeout=1500")
                         .to("file:target/changed/out", "mock:result");
             }
         };

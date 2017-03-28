@@ -28,7 +28,7 @@ public class OnExceptionContinuedNoFailureProcessorTest extends ContextTestSuppo
 
     public void testOnException() throws Exception {
         getMockEndpoint("mock:end").expectedMessageCount(1);
-        getMockEndpoint("mock:error").expectedMessageCount(1);
+        getMockEndpoint("mock:error").expectedMessageCount(0);
 
         template.sendBody("direct:start", "Hello World");
 

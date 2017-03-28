@@ -94,7 +94,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@UriEndpoint(scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, label = "core,testing", lenientProperties = true)
+@UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
     // must be volatile so changes is visible between the thread which performs the assertions
@@ -681,7 +681,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
 
         if (actualValue instanceof Expression) {
-            actualValue = ((Expression)actualValue).evaluate(exchange, expectedValue != null ? expectedValue.getClass() : Object.class);
+            Class clazz = Object.class;
+            if (expectedValue != null) {
+                clazz = expectedValue.getClass();
+            }
+            actualValue = ((Expression)actualValue).evaluate(exchange, clazz);
         } else if (actualValue instanceof Predicate) {
             actualValue = ((Predicate)actualValue).matches(exchange);
         } else if (expectedValue != null) {

@@ -39,10 +39,14 @@ public class SnsComponent extends UriEndpointComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Topic name must be specified.");
         }
-        configuration.setTopicName(remaining);
+        if (remaining.startsWith("arn:")) {
+            configuration.setTopicArn(remaining);
+        } else {
+            configuration.setTopicName(remaining);
+        }
 
-        if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
+        if (configuration.getAmazonSNSClient() == null) {
+            throw new IllegalArgumentException("AmazonSNSClient must be specified");
         }
 
         SnsEndpoint endpoint = new SnsEndpoint(uri, this, configuration);

@@ -76,7 +76,7 @@ public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
 
         private final CloudComputer removingComputer;
 
-        public RemoveComputerChange(CloudComputer removingComputer) {
+        RemoveComputerChange(CloudComputer removingComputer) {
             this.removingComputer = removingComputer;
         }
 

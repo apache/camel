@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jira.enabled",
+      "description": "Enable jira component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

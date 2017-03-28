@@ -76,8 +76,14 @@ public class XmlRpcDataFormat extends ServiceSupport implements DataFormat, Data
         // need to check the object type
         XMLWriter control = getXMLWriter(exchange, stream);
         XmlRpcWriter writer = new XmlRpcWriter(xmlRpcStreamRequestConfig, control, typeFactory);
-        if (graph instanceof XmlRpcRequest) {
-            writer.writeRequest(xmlRpcStreamRequestConfig, (XmlRpcRequest)graph);
+
+        XmlRpcRequest request = null;
+        if (isRequest || graph instanceof XmlRpcRequest) {
+            request = exchange.getContext().getTypeConverter().mandatoryConvertTo(XmlRpcRequest.class, exchange, graph);
+        }
+
+        if (request != null) {
+            writer.writeRequest(xmlRpcStreamRequestConfig, request);
         } else {
             // write the result here directly
             // TODO write the fault message here

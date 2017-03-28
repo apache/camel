@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.sql.enabled",
+      "description": "Enable sql component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.sql-stored.enabled",
+      "description": "Enable sql-stored component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

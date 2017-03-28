@@ -17,6 +17,7 @@
 package org.apache.camel.component.dataformat;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -35,12 +36,11 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
  */
-@UriEndpoint(scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation", producerOnly = true,
+@UriEndpoint(firstVersion = "2.12.0", scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation", producerOnly = true,
         label = "core,transformation", lenientProperties = true)
 public class DataFormatEndpoint extends DefaultEndpoint {
 
-    private MarshalProcessor marshal;
-    private UnmarshalProcessor unmarshal;
+    private AsyncProcessor processor;
     private DataFormat dataFormat;
 
     @UriPath(description = "Name of data format") @Metadata(required = "true")
@@ -88,11 +88,7 @@ public class DataFormatEndpoint extends DefaultEndpoint {
         return new DefaultAsyncProducer(this) {
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
-                if (marshal != null) {
-                    return marshal.process(exchange, callback);
-                } else {
-                    return unmarshal.process(exchange, callback);
-                }
+                return processor.process(exchange, callback);
             }
 
             @Override
@@ -123,20 +119,24 @@ public class DataFormatEndpoint extends DefaultEndpoint {
             dataFormat = getCamelContext().resolveDataFormat(name);
         }
         if (operation.equals("marshal")) {
-            marshal = new MarshalProcessor(dataFormat);
+            MarshalProcessor marshal = new MarshalProcessor(dataFormat);
             marshal.setCamelContext(getCamelContext());
+
+            processor = marshal;
         } else {
-            unmarshal = new UnmarshalProcessor(dataFormat);
+            UnmarshalProcessor unmarshal = new UnmarshalProcessor(dataFormat);
             unmarshal.setCamelContext(getCamelContext());
+
+            processor = unmarshal;
         }
 
-        ServiceHelper.startServices(dataFormat, marshal, unmarshal);
+        ServiceHelper.startServices(dataFormat, processor);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(marshal, unmarshal, dataFormat);
+        ServiceHelper.stopServices(processor, dataFormat);
         super.doStop();
     }
 }

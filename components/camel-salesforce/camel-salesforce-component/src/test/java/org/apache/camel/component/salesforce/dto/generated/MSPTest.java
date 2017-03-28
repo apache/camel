@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonValue;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * Sample POJO for MSP tests.
@@ -41,6 +43,7 @@ public class MSPTest extends AbstractSObjectBase {
 
     @JsonProperty("MspField")
     @JsonSerialize(using = MultiSelectPicklistSerializer.class)
+    @JsonInclude(value = Include.ALWAYS)
     public MSPEnum[] getMspField() {
         return MspField;
     }

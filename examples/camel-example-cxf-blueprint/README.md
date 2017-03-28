@@ -18,7 +18,7 @@ You will need to compile this example first:
 
 ### Run
 
-To run the example on Apache Karaf 2.4.x
+To run the example on Apache Karaf 4.x or newer
 
 #### Step 1: Laraf
 
@@ -30,17 +30,17 @@ Launch the server
 
 Add features required
 
-	features:chooseurl camel ${version}
-	features:install war
-	features:install cxf
-	features:install camel-jaxb
-	features:install camel-blueprint
-	features:install camel-cxf
+	feature:repo-add camel ${version}
+	feature:install war
+	feature:install cxf
+	feature:install camel
+	feature:install camel-jaxb
+	feature:install camel-cxf
 
 #### Step 3: Deploy
 Deploy the example
 
-	osgi:install -s mvn:org.apache.camel/camel-example-cxf-blueprint/${version}
+	install -s mvn:org.apache.camel/camel-example-cxf-blueprint/${version}
 
 #### Step 4: Verify that your service is available using the following url in the browser.
 
@@ -75,9 +75,6 @@ Open the request 1 (under camel-example-cxf-blueprint --> ReportIncidentBinding 
 
 #### Step 6: Check the file system
    Check the folder "target/inbox/" in the Karaf base directory to see that a message has arrived.
-
-### Documentation
-This example is described in more detail at [http://camel.apache.org/cxf-example-osgi-blueprint.html](http://camel.apache.org/cxf-example-osgi-blueprint.html)
 
 ### Forum, Help, etc
 

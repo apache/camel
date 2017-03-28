@@ -94,8 +94,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
                 try {
                     this.sinceTime = URLDecoder.decode(strSince, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeCamelException(String.format("Error decoding %s.since with value %s due to: %s"
-                            , READING_PREFIX, strSince, e.getMessage()), e);
+                    throw new RuntimeCamelException(String.format("Error decoding %s.since with value %s due to: %s", READING_PREFIX, strSince, e.getMessage()), e);
                 }
                 LOG.debug("Using supplied property {}since value {}", READING_PREFIX, this.sinceTime);
             }

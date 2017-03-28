@@ -55,8 +55,8 @@ public class CxfConsumerStartTwiceTest extends Assert {
             fail("Expect to catch an exception here");
         } catch (Exception ex) {
             assertTrue(ex.getMessage().endsWith(
-                "Multiple consumers for the same endpoint is not allowed: Endpoint[cxf://http://localhost:" + PORT
-                + "/" + getClass().getSimpleName() + "/test?serviceClass=org.apache.camel.component.cxf.HelloService]"));
+                "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + PORT
+                + "/" + getClass().getSimpleName() + "/test?serviceClass=org.apache.camel.component.cxf.HelloService"));
         }
                 
         context.stop();

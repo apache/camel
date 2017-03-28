@@ -20,20 +20,19 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Producer or consumer encounter an error transmitting data
  */
 public class MllpWriteException extends MllpException {
-    public MllpWriteException(String message) {
-        super(message);
+    public MllpWriteException(String message, byte[] hl7Message) {
+        super(message, hl7Message);
     }
 
-    public MllpWriteException(String message, byte[] mllpPayload) {
-        super(message, mllpPayload);
+    public MllpWriteException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
+        super(message, hl7Message, hl7Acknowledgement);
     }
 
-    public MllpWriteException(String message, Throwable cause) {
-        super(message, cause);
+    public MllpWriteException(String message, byte[] hl7Message, Throwable cause) {
+        super(message, hl7Message, cause);
     }
 
-    public MllpWriteException(String message, byte[] mllpPayload, Throwable cause) {
-        super(message, mllpPayload, cause);
+    public MllpWriteException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+        super(message, hl7Message, hl7Acknowledgement, cause);
     }
-
 }

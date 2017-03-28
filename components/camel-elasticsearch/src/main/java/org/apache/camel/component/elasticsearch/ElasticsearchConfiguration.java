@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.camel.spi.Metadata;
@@ -33,7 +34,7 @@ public class ElasticsearchConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String clusterName;
-    @UriParam(enums = "INDEX,UPDATE,BULK,BULK_INDEX,GET_BY_ID,MULTIGET,DELETE,EXISTS,SEARCH,MULTISEARCH")
+    @UriParam(enums = "INDEX,UPDATE,BULK,BULK_INDEX,GET_BY_ID,MULTIGET,DELETE,EXISTS,SEARCH,MULTISEARCH,DELETE_INDEX")
     private String operation;
     @UriParam
     private String indexName;
@@ -51,6 +52,8 @@ public class ElasticsearchConfiguration {
     private int port = ElasticsearchConstants.DEFAULT_PORT;
     @UriParam(defaultValue = "true")
     private Boolean clientTransportSniff = true;
+    @UriParam(defaultValue = "${user.home}/.elasticsearch")
+    private String pathHome = System.getProperty("user.home") + File.separator + ".elasticsearch";
 
     /**
      * Name of cluster or use local for local mode
@@ -177,5 +180,16 @@ public class ElasticsearchConfiguration {
 
     public void setTransportAddressesList(List<InetSocketTransportAddress> transportAddressesList) {
         this.transportAddressesList = transportAddressesList;
+    }
+
+    /**
+     * The path.home property of ElasticSearch configuration. You need to provide a valid path, otherwise the default, ${user.home}/.elasticsearch, will be used.
+     */
+    public String getPathHome() {
+        return pathHome;
+    }
+
+    public void setPathHome(String pathHome) {
+        this.pathHome = pathHome;
     }
 }

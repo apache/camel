@@ -17,12 +17,17 @@
 package org.apache.camel.component.websocket;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.StopWatch;
 
 public class WebsocketProducer extends DefaultProducer implements WebsocketProducerConsumer {
 
@@ -51,9 +56,16 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
             if (connectionKey != null) {
                 DefaultWebsocket websocket = store.get(connectionKey);
                 log.debug("Sending to connection key {} -> {}", connectionKey, message);
-                sendMessage(websocket, message);
+                Future<Void> future = sendMessage(websocket, message);
+                if (future != null) {
+                    int timeout = endpoint.getSendTimeout();
+                    future.get(timeout, TimeUnit.MILLISECONDS);
+                    if (!future.isCancelled() && !future.isDone()) {
+                        throw new WebsocketSendException("Failed to send message to the connection within " + timeout + " millis.", exchange);
+                    }
+                }
             } else {
-                throw new IllegalArgumentException("Failed to send message to single connection; connetion key not set.");
+                throw new WebsocketSendException("Failed to send message to single connection; connection key not set.", exchange);
             }
         }
     }
@@ -61,7 +73,6 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
     public WebsocketEndpoint getEndpoint() {
         return endpoint;
     }
-
 
     @Override
     public void doStart() throws Exception {
@@ -85,34 +96,81 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         log.debug("Sending to all {}", message);
         Collection<DefaultWebsocket> websockets = store.getAll();
         Exception exception = null;
+
+        List<Future> futures = new CopyOnWriteArrayList<>();
         for (DefaultWebsocket websocket : websockets) {
             try {
-                sendMessage(websocket, message);
+                Future<Void> future = sendMessage(websocket, message);
+                if (future != null) {
+                    futures.add(future);
+                }
             } catch (Exception e) {
                 if (exception == null) {
-                    exception = new CamelExchangeException("Failed to deliver message to one or more recipients.", exchange, e);
+                    exception = new WebsocketSendException("Failed to deliver message to one or more recipients.", exchange, e);
                 }
             }
         }
+
+        // check if they are all done within the timed out period
+        StopWatch watch = new StopWatch();
+        int timeout = endpoint.getSendTimeout();
+        while (!futures.isEmpty() && watch.taken() < timeout) {
+            // remove all that are done/cancelled
+            for (Future future : futures) {
+                if (future.isDone() || future.isCancelled()) {
+                    futures.remove(future);
+                }
+                // if there are still more then we need to wait a little bit before checking again, to avoid burning cpu cycles in the while loop
+                if (!futures.isEmpty()) {
+                    long interval = Math.min(1000, timeout);
+                    log.debug("Sleeping {} millis waiting for sendToAll to complete sending with timeout {} millis", interval, timeout);
+                    try {
+                        Thread.sleep(interval);
+                    } catch (InterruptedException e) {
+                        handleSleepInterruptedException(e, exchange);
+                    }
+                }
+            }
+
+        }
+        if (!futures.isEmpty()) {
+            exception = new WebsocketSendException("Failed to deliver message within " + endpoint.getSendTimeout() + " millis to one or more recipients.", exchange);
+        }
+
         if (exception != null) {
             throw exception;
         }
     }
 
-    void sendMessage(DefaultWebsocket websocket, Object message) throws IOException {
+    Future<Void> sendMessage(DefaultWebsocket websocket, Object message) throws IOException {
+        Future<Void> future = null;
         // in case there is web socket and socket connection is open - send message
-        if (websocket != null && websocket.getConnection().isOpen()) {
+        if (websocket != null && websocket.getSession().isOpen()) {
             log.trace("Sending to websocket {} -> {}", websocket.getConnectionKey(), message);
             if (message instanceof String) {
-                websocket.getConnection().sendMessage((String) message);
+                future = websocket.getSession().getRemote().sendStringByFuture((String) message);
             } else if (message instanceof byte[]) {
-                websocket.getConnection().sendMessage((byte[]) message, 0, ((byte[]) message).length);
+                ByteBuffer buf = ByteBuffer.wrap((byte[]) message);
+                future = websocket.getSession().getRemote().sendBytesByFuture(buf);
             }
         }
+        return future;
     }
 
     //Store is set/unset upon connect/disconnect of the producer
     public void setStore(WebsocketStore store) {
         this.store = store;
     }
+
+    /**
+     * Called when a sleep is interrupted; allows derived classes to handle this case differently
+     */
+    protected void handleSleepInterruptedException(InterruptedException e, Exchange exchange) throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+        }
+        Thread.currentThread().interrupt();
+        throw e;
+    }
+
 }

@@ -235,7 +235,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
     }
 
     @Override
-    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, int limit, boolean sortByLongestDuration) throws Exception {
+    public List<Map<String, Object>> browseInflightExchanges(String camelContextName, String route, int limit, boolean sortByLongestDuration) throws Exception {
         if (jolokia == null) {
             throw new IllegalStateException("Need to connect to remote jolokia first");
         }
@@ -246,7 +246,7 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
         if (found != null) {
             String pattern = String.format("%s:context=%s,type=services,name=DefaultInflightRepository", found.getDomain(), found.getKeyProperty("context"));
             ObjectName on = ObjectName.getInstance(pattern);
-            J4pExecResponse er = jolokia.execute(new J4pExecRequest(on, "browse(int,boolean)", limit, sortByLongestDuration));
+            J4pExecResponse er = jolokia.execute(new J4pExecRequest(on, "browse(String,int,boolean)", route, limit, sortByLongestDuration));
             if (er != null) {
                 JSONObject data = er.getValue();
                 if (data != null) {
@@ -756,6 +756,111 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
             });
         }
 
+        return answer;
+    }
+
+    @Override
+    public List<Map<String, String>> getTransformers(String camelContextName) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultTransformerRegistry", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName on = ObjectName.getInstance(pattern);
+
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "listTransformers()"));
+            if (response != null) {
+                JSONObject data = response.getValue();
+                if (data != null) {
+                    for (Object obj : data.values()) {
+                        JSONObject data2 = (JSONObject) obj;
+                        JSONObject service = (JSONObject) data2.values().iterator().next();
+
+                        Map<String, String> row = new LinkedHashMap<String, String>();
+                        row.put("scheme", asString(service.get("scheme")));
+                        row.put("from", asString(service.get("from")));
+                        row.put("to", asString(service.get("to")));
+                        row.put("static", asString(service.get("static")));
+                        row.put("dynamic", asString(service.get("dynamic")));
+                        row.put("description", asString(service.get("description")));
+                        answer.add(row);
+                    }
+                }
+            }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> service1, Map<String, String> service2) {
+                    String scheme1 = service1.get("scheme");
+                    String scheme2 = service2.get("scheme");
+                    if (scheme1 != null && scheme2 != null) {
+                        return scheme1.compareTo(scheme2);
+                    } else if (scheme1 != null) {
+                        return -1;
+                    } else if (scheme2 != null) {
+                        return 1;
+                    } else {
+                        String from1 = service1.get("from");
+                        String from2 = service2.get("from");
+                        if (from1.equals(from2)) {
+                            String to1 = service1.get("to");
+                            String to2 = service2.get("to");
+                            return to1.compareTo(to2);
+                        }
+                        return from1.compareTo(from2);
+                    }
+                }
+            });
+        }
+        return answer;
+    }
+
+    @Override
+    public List<Map<String, String>> getValidators(String camelContextName) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultValidatorRegistry", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName on = ObjectName.getInstance(pattern);
+
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "listValidators()"));
+            if (response != null) {
+                JSONObject data = response.getValue();
+                if (data != null) {
+                    for (Object obj : data.values()) {
+                        JSONObject data2 = (JSONObject) obj;
+                        JSONObject service = (JSONObject) data2.values().iterator().next();
+
+                        Map<String, String> row = new LinkedHashMap<String, String>();
+                        row.put("type", asString(service.get("type")));
+                        row.put("static", asString(service.get("static")));
+                        row.put("dynamic", asString(service.get("dynamic")));
+                        row.put("description", asString(service.get("description")));
+                        answer.add(row);
+                    }
+                }
+            }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> service1, Map<String, String> service2) {
+                    String type1 = service1.get("type");
+                    String type2 = service2.get("type");
+                    return type1.compareTo(type2);
+                }
+            });
+        }
         return answer;
     }
 

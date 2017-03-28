@@ -50,7 +50,6 @@ public class SchematronProducer extends DefaultProducer {
      * @throws Exception
      */
     public void process(Exchange exchange) throws Exception {
-
         String payload = exchange.getIn().getBody(String.class);
         logger.debug("Applying schematron validation on payload: {}", payload);
         String report = SchematronProcessorFactory.newScehamtronEngine(endpoint.getRules()).validate(payload);
@@ -87,7 +86,6 @@ public class SchematronProducer extends DefaultProducer {
      * @return
      */
     private String getValidationStatus(final String report) {
-
         String status = report.contains(Constants.FAILED_ASSERT) ? Constants.FAILED : Constants.SUCCESS;
         if (this.endpoint.isAbort() && Constants.FAILED.equals(status)) {
             throw new SchematronValidationException("Schematron validation failure \n" + report);

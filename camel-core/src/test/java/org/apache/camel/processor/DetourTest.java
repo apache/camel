@@ -31,11 +31,11 @@ public class DetourTest extends ContextTestSupport {
         
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).body().equals(BODY);
+        resultEndpoint.message(0).body().isEqualTo(BODY);
 
         MockEndpoint detourEndpoint = getMockEndpoint("mock:detour");
         detourEndpoint.expectedMessageCount(1);
-        detourEndpoint.message(0).body().equals(BODY);
+        detourEndpoint.message(0).body().isEqualTo(BODY);
         
         template.sendBody("direct:start", BODY);
                 
@@ -47,7 +47,7 @@ public class DetourTest extends ContextTestSupport {
         
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).body().equals(BODY);
+        resultEndpoint.message(0).body().isEqualTo(BODY);
 
         MockEndpoint detourEndpoint = getMockEndpoint("mock:detour");
         detourEndpoint.expectedMessageCount(0);

@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-salesforce-parent</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.camel.maven</groupId>
@@ -31,6 +31,10 @@
   <packaging>maven-plugin</packaging>
   <name>Camel :: Salesforce :: Maven plugin</name>
   <description>Camel Salesforce Maven plugin</description>
+
+  <properties>
+    <salesforce.component.root>..</salesforce.component.root>
+  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -102,11 +106,22 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-salesforce</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.cometd.java</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
       <version>${velocity-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3-version}</version>
     </dependency>
 
     <!-- logging -->
@@ -114,9 +129,22 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
+      
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
     </dependency>
 
     <!-- testing -->
@@ -129,13 +157,19 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty9-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j-api-version}</version>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>${jetty9-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-proxy</artifactId>
+      <version>${jetty9-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -143,10 +177,64 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <!-- maven-jar-plugin config for Maven plugins. -->
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive combine.self="override">
+            <manifestFile/>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>versions</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>prepare</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>validate</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>readme</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- Generate plugin help -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

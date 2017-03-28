@@ -46,10 +46,10 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
         // get header parameters
-        Object draintToCollection = null;
+        Object drainToCollection = null;
         
         if (headers.containsKey(HazelcastConstants.DRAIN_TO_COLLECTION)) {
-            draintToCollection = headers.get(HazelcastConstants.DRAIN_TO_COLLECTION);
+            drainToCollection = headers.get(HazelcastConstants.DRAIN_TO_COLLECTION);
         }
 
         final int operation = lookupOperationNumber(exchange);
@@ -87,13 +87,8 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
             break;
             
         case HazelcastConstants.DRAIN_TO_OPERATION:
-            if (ObjectHelper.isNotEmpty(draintToCollection)) {
-                this.drainTo((Collection) draintToCollection, exchange);
-            } else {
-                throw new IllegalArgumentException("Drain to collection header must be specified");
-            }
+            this.drainTo((Collection) drainToCollection, exchange);
             break;
-            
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the QUEUE cache.", operation, HazelcastConstants.OPERATION));
         }

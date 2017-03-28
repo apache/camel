@@ -21,6 +21,10 @@ import java.util.Collection;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.CreateTagsRequest;
+import com.amazonaws.services.ec2.model.CreateTagsResult;
+import com.amazonaws.services.ec2.model.DeleteTagsRequest;
+import com.amazonaws.services.ec2.model.DeleteTagsResult;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
@@ -94,6 +98,12 @@ public class EC2Producer extends DefaultProducer {
             break;
         case unmonitorInstances:
             unmonitorInstances(getEndpoint().getEc2Client(), exchange);
+            break; 
+        case createTags:
+            createTags(getEndpoint().getEc2Client(), exchange);
+            break;
+        case deleteTags:
+            deleteTags(getEndpoint().getEc2Client(), exchange);
             break; 
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -357,6 +367,62 @@ public class EC2Producer extends DefaultProducer {
             throw ase;
         }
         LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result); 
+    }
+    
+    private void createTags(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        Collection tags;
+        CreateTagsRequest request = new CreateTagsRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withResources(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_TAGS))) {
+            tags = exchange.getIn().getHeader(EC2Constants.INSTANCES_TAGS, Collection.class);
+            request.withTags(tags);
+        } else {
+            throw new IllegalArgumentException("Tags must be specified");
+        }
+        CreateTagsResult result = new CreateTagsResult();
+        try {
+            result = ec2Client.createTags(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Create tags command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result); 
+    }
+    
+    private void deleteTags(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        Collection tags;
+        DeleteTagsRequest request = new DeleteTagsRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withResources(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_TAGS))) {
+            tags = exchange.getIn().getHeader(EC2Constants.INSTANCES_TAGS, Collection.class);
+            request.withTags(tags);
+        } else {
+            throw new IllegalArgumentException("Tags must be specified");
+        }
+        DeleteTagsResult result = new DeleteTagsResult();
+        try {
+            result = ec2Client.deleteTags(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Delete tags command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result); 
     }

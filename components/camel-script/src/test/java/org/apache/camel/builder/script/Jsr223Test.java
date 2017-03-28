@@ -33,7 +33,7 @@ public class Jsr223Test extends TestCase {
         ScriptEngineManager manager = new ScriptEngineManager();
         for (String scriptName : scriptNames) {
             ScriptEngine engine = manager.getEngineByName(scriptName);
-            assertNotNull("We should get the script engine for " + scriptName , engine);
+            assertNotNull("We should get the script engine for " + scriptName, engine);
         }
     }
 }

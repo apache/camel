@@ -17,6 +17,7 @@
 package org.apache.camel.component.sql;
 
 import java.util.Map;
+import java.util.Set;
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
@@ -29,12 +30,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * The <a href="http://camel.apache.org/sql-component.html">SQL Component</a> is for working with databases using JDBC queries.
- *
- * @version 
+ * 
  */
 public class SqlComponent extends UriEndpointComponent {
+
     private DataSource dataSource;
-    @Metadata(defaultValue = "true")
+    @Metadata(label = "advanced", defaultValue = "true")
     private boolean usePlaceholder = true;
 
     public SqlComponent() {
@@ -69,6 +70,15 @@ public class SqlComponent extends UriEndpointComponent {
         if (target == null) {
             // fallback and use component
             target = dataSource;
+        }
+        if (target == null) {
+            // check if the registry contains a single instance of DataSource
+            Set<DataSource> dataSources = getCamelContext().getRegistry().findByType(DataSource.class);
+            if (dataSources.size() > 1) {
+                throw new IllegalArgumentException("Multiple DataSources found in the registry and no explicit configuration provided");
+            } else if (dataSources.size() == 1) {
+                target = dataSources.stream().findFirst().orElse(null);
+            }
         }
         if (target == null) {
             throw new IllegalArgumentException("DataSource must be configured");

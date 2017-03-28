@@ -38,6 +38,7 @@ import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -290,6 +291,19 @@ public class HazelcastAggregationRepository extends ServiceSupport
         return unmarshallExchange(camelContext, cache.get(key));
     }
     
+    /**
+     * Checks if the key in question is in the repository.
+     * 
+     * @param key Object - key in question
+     */
+    public boolean containsKey(Object key) {
+        if (cache != null) {
+            return cache.containsKey(key);
+        } else {
+            return false;
+        }
+    }
+    
     public boolean isAllowSerializedHeaders() {
         return allowSerializedHeaders;
     }
@@ -332,7 +346,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
                 // if no commit occurs during the timeout. So we are still consistent whether local node crashes.
                 TransactionOptions tOpts = new TransactionOptions();
 
-                tOpts.setTransactionType(TransactionOptions.TransactionType.LOCAL);
+                tOpts.setTransactionType(TransactionOptions.TransactionType.ONE_PHASE);
                 TransactionContext tCtx = hzInstance.newTransactionContext(tOpts);
 
                 try {
@@ -392,7 +406,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
         if (recoveryInterval < 0) {
             throw new IllegalArgumentException("Recovery interval must be zero or a positive integer.");
         }
-        ObjectHelper.notEmpty(mapName, "repositoryName");
+        StringHelper.notEmpty(mapName, "repositoryName");
         if (useLocalHzInstance)  {
             Config cfg = new XmlConfigBuilder().build();
             cfg.setProperty("hazelcast.version.check.enabled", "false");

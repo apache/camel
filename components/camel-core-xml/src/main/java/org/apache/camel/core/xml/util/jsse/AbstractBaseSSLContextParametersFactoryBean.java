@@ -26,73 +26,73 @@ import org.apache.camel.util.jsse.SecureSocketProtocolsParameters;
 
 @XmlTransient
 public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends BaseSSLContextParameters> extends AbstractJsseUtilFactoryBean<T> {
-    
+
     private CipherSuitesParametersDefinition cipherSuites;
-    
+
     private FilterParametersDefinition cipherSuitesFilter;
-    
+
     private SecureSocketProtocolsParametersDefinition secureSocketProtocols;
-    
+
     private FilterParametersDefinition secureSocketProtocolsFilter;
-    
+
     @XmlAttribute
     private String sessionTimeout;
-    
+
     @XmlTransient
     private T instance;
-    
+
     @Override
     public final T getObject() throws Exception {
         if (this.isSingleton()) {
-            if (instance == null) { 
-                instance = createInstanceInternal();   
+            if (instance == null) {
+                instance = createInstanceInternal();
             }
-            
+
             return instance;
         } else {
             return createInstanceInternal();
-        } 
+        }
     }
-    
+
     protected abstract T createInstance() throws Exception;
-    
+
     private T createInstanceInternal() throws Exception {
         T newInstance = createInstance();
         newInstance.setCamelContext(getCamelContext());
 
         if (cipherSuites != null) {
             CipherSuitesParameters cipherSuitesInstance = new CipherSuitesParameters();
-            cipherSuitesInstance.getCipherSuite().addAll(cipherSuites.getCipherSuite());
+            cipherSuitesInstance.setCipherSuite(cipherSuites.getCipherSuite());
             newInstance.setCipherSuites(cipherSuitesInstance);
         }
-        
+
         if (cipherSuitesFilter != null) {
             newInstance.setCipherSuitesFilter(createFilterParameters(cipherSuitesFilter));
         }
-        
+
         if (secureSocketProtocols != null) {
             SecureSocketProtocolsParameters secureSocketProtocolsInstance = new SecureSocketProtocolsParameters();
-            secureSocketProtocolsInstance.getSecureSocketProtocol().addAll(secureSocketProtocols.getSecureSocketProtocol());
+            secureSocketProtocolsInstance.setSecureSocketProtocol(secureSocketProtocols.getSecureSocketProtocol());
             newInstance.setSecureSocketProtocols(secureSocketProtocolsInstance);
         }
-        
+
         if (secureSocketProtocolsFilter != null) {
             newInstance.setSecureSocketProtocolsFilter(createFilterParameters(secureSocketProtocolsFilter));
         }
-        
+
         if (sessionTimeout != null) {
             newInstance.setSessionTimeout(sessionTimeout);
         }
 
         return newInstance;
     }
-    
+
     private FilterParameters createFilterParameters(FilterParametersDefinition definition) {
         FilterParameters filter = new FilterParameters();
         filter.getInclude().addAll(definition.getInclude());
         filter.getExclude().addAll(definition.getExclude());
         filter.setCamelContext(getCamelContext());
-        
+
         return filter;
     }
 

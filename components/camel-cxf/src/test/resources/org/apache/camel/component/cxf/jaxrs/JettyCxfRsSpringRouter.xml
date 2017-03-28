@@ -42,7 +42,7 @@
 
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
   
-  <!-- Defined the client endpoint to create the cxf-rs consumer -->
+  <!-- Defined the client endpoint to create the cxf-rs producer -->
   <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port2}/JettyCxfRsRouterTest/rest"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
     loggingFeatureEnabled="true" skipFaultLogging="true"/>

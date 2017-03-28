@@ -48,6 +48,8 @@ public class NettyHttpAccessHttpRequestBeanTest extends BaseNettyTest {
 
     public static String myTransformer(FullHttpRequest request) {
         String in = request.content().toString(Charset.forName("UTF-8"));
+        // release as no longer in use
+        request.content().release();
         return "Bye " + in;
     }
 

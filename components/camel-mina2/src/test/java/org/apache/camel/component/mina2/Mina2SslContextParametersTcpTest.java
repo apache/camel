@@ -31,8 +31,7 @@ public class Mina2SslContextParametersTcpTest extends BaseMina2Test {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader(String.format("mina2:tcp://localhost:%1$s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
-                getPort()), body, "cheese", 123);
+        template.sendBodyAndHeader("mina2:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }
@@ -46,7 +45,7 @@ public class Mina2SslContextParametersTcpTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina2:tcp://localhost:%1$s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", getPort())
+                fromF("mina2:tcp://localhost:%s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", getPort())
                         .to("log:before?showAll=true")
                         .to("mock:result").to("log:after?showAll=true");
             }

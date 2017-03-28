@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThroughputLogger;
@@ -43,7 +44,8 @@ import org.slf4j.LoggerFactory;
  * It works by allowing you to create DataSet instances both as a source of messages and as a way to assert that the data set is received.
  * Camel will use the throughput logger when sending dataset's.
  */
-@UriEndpoint(scheme = "dataset", title = "Dataset", syntax = "dataset:name", consumerClass = DataSetConsumer.class, label = "core,testing", lenientProperties = true)
+@UriEndpoint(firstVersion = "1.3.0", scheme = "dataset", title = "Dataset", syntax = "dataset:name",
+    consumerClass = DataSetConsumer.class, label = "core,testing", lenientProperties = true)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
@@ -59,6 +61,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long preloadSize;
     @UriParam(label = "consumer", defaultValue = "1000")
     private long initialDelay = 1000;
+    @UriParam(enums = "strict,lenient,off", defaultValue = "lenient")
+    private String dataSetIndex = "lenient";
 
     @Deprecated
     public DataSetEndpoint() {
@@ -85,6 +89,19 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer answer = new DataSetConsumer(this, processor);
         configureConsumer(answer);
+
+        // expectedMessageCount((int) size);
+
+        return answer;
+    }
+
+    @Override
+    public Producer createProducer() throws Exception {
+        Producer answer = super.createProducer();
+
+        long size = getDataSet().getSize();
+        expectedMessageCount((int) size);
+
         return answer;
     }
 
@@ -104,10 +121,13 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
      */
     public Exchange createExchange(long messageIndex) throws Exception {
         Exchange exchange = createExchange();
+
         getDataSet().populateMessage(exchange, messageIndex);
 
-        Message in = exchange.getIn();
-        in.setHeader(Exchange.DATASET_INDEX, messageIndex);
+        if (!getDataSetIndex().equals("off")) {
+            Message in = exchange.getIn();
+            in.setHeader(Exchange.DATASET_INDEX, messageIndex);
+        }
 
         return exchange;
     }
@@ -192,6 +212,33 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         this.initialDelay = initialDelay;
     }
 
+    /**
+     * Controls the behaviour of the CamelDataSetIndex header.
+     * For Consumers:
+     * - off => the header will not be set
+     * - strict/lenient => the header will be set
+     * For Producers:
+     * - off => the header value will not be verified, and will not be set if it is not present
+     * = strict => the header value must be present and will be verified
+     * = lenient => the header value will be verified if it is present, and will be set if it is not present
+     */
+    public void setDataSetIndex(String dataSetIndex) {
+        switch (dataSetIndex) {
+        case "off":
+        case "lenient":
+        case "strict":
+            this.dataSetIndex = dataSetIndex;
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid value specified for the dataSetIndex URI parameter:" + dataSetIndex
+                    + "Supported values are strict, lenient and off ");
+        }
+    }
+
+    public String getDataSetIndex() {
+        return dataSetIndex;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -203,8 +250,13 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
         // now let's assert that they are the same
         if (log.isDebugEnabled()) {
-            log.debug("Received message: {} (DataSet index={}) = {}",
-                    new Object[]{index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy});
+            if (copy.getIn().getHeader(Exchange.DATASET_INDEX) != null) {
+                log.debug("Received message: {} (DataSet index={}) = {}",
+                        new Object[]{index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy});
+            } else {
+                log.debug("Received message: {} = {}",
+                        new Object[]{index, copy});
+            }
         }
 
         assertMessageExpected(index, expected, copy);
@@ -215,8 +267,25 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
-        long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
-        assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
+        switch (getDataSetIndex()) {
+        case "off":
+            break;
+        case "strict":
+            long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
+            assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
+            break;
+        case "lenient":
+        default:
+            // Validate the header value if it is present
+            Long dataSetIndexHeaderValue = actual.getIn().getHeader(Exchange.DATASET_INDEX, Long.class);
+            if (dataSetIndexHeaderValue != null) {
+                assertEquals("Header: " + Exchange.DATASET_INDEX, index, dataSetIndexHeaderValue, actual);
+            } else {
+                // set the header if it isn't there
+                actual.getIn().setHeader(Exchange.DATASET_INDEX, index);
+            }
+            break;
+        }
 
         getDataSet().assertMessageExpected(this, expected, actual, index);
     }
@@ -234,12 +303,11 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     protected void doStart() throws Exception {
         super.doStart();
 
-        long size = getDataSet().getSize();
-        expectedMessageCount((int) size);
         if (reporter == null) {
             reporter = createReporter();
         }
-        log.info(this + " expecting " + size + " messages");
+
+        log.info(this + " expecting " + getExpectedCount() + " messages");
     }
 
 }

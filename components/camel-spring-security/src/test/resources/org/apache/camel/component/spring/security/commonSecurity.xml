@@ -25,12 +25,10 @@
 			http://www.springframework.org/schema/security/spring-security.xsd">
 
     <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-        <property name="allowIfAllAbstainDecisions" value="true"/>
-        <property name="decisionVoters">
-            <list>
-                <bean class="org.springframework.security.access.vote.RoleVoter"/>
-            </list>
-        </property>
+      <constructor-arg index="0">
+        <bean class="org.springframework.security.access.vote.RoleVoter"/>
+      </constructor-arg>
+      <property name="allowIfAllAbstainDecisions" value="true"/>
     </bean>
     
     <spring-security:authentication-manager alias="authenticationManager">

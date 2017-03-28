@@ -19,8 +19,8 @@ package org.apache.camel.component.infinispan.remote;
 import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.component.infinispan.InfinispanConsumer;
 import org.apache.camel.component.infinispan.InfinispanConsumerHandler;
-import org.apache.camel.component.infinispan.InfinispanCustomListener;
 import org.apache.camel.component.infinispan.InfinispanEventListener;
+import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.infinispan.client.hotrod.RemoteCache;
 
 public final class InfinispanConsumerRemoteHandler implements InfinispanConsumerHandler {
@@ -34,25 +34,23 @@ public final class InfinispanConsumerRemoteHandler implements InfinispanConsumer
         if (consumer.getConfiguration().isSync()) {
             throw new UnsupportedOperationException("Sync listeners not supported for remote caches.");
         }
-        RemoteCache<?, ?> remoteCache = (RemoteCache<?, ?>) consumer.getCache();
+        RemoteCache<?, ?> remoteCache = InfinispanUtil.asRemote(consumer.getCache());
         InfinispanConfiguration configuration = consumer.getConfiguration();
         InfinispanEventListener listener;
-        if (configuration.isCustom()) {
+        if (configuration.hasCustomListener()) {
             listener = configuration.getCustomListener();
-            ((InfinispanCustomListener)listener).setInfinispanConsumer(consumer);
+            listener.setInfinispanConsumer(consumer);
         } else {
             listener = new InfinispanRemoteEventListener(consumer, configuration.getEventTypes());
         }
         remoteCache.addClientListener(listener);
         listener.setCacheName(remoteCache.getName());
         return listener;
-
     }
 
     @Override
     public void stop(InfinispanConsumer consumer) {
-        RemoteCache<?, ?> remoteCache = (RemoteCache<?, ?>) consumer.getCache();
-        remoteCache.removeClientListener(consumer.getListener());
+        InfinispanUtil.asRemote(consumer.getCache()).removeClientListener(consumer.getListener());
     }
 
 }

@@ -206,7 +206,6 @@ public class SqlRouteTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testBatch() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -224,7 +223,6 @@ public class SqlRouteTest extends CamelTestSupport {
     }
     
     @Test
-    @SuppressWarnings("unchecked")
     public void testBatchMissingParamAtEnd() throws Exception {
         try {
             List<?> data = Arrays.asList(Arrays.asList(9, "stu", "vwx"), Arrays.asList(10, "yza"));
@@ -238,7 +236,6 @@ public class SqlRouteTest extends CamelTestSupport {
     }
     
     @Test
-    @SuppressWarnings("unchecked")
     public void testBatchMissingParamAtBeginning() throws Exception {
         try {
             List<?> data = Arrays.asList(Arrays.asList(9, "stu"), Arrays.asList(10, "vwx", "yza"));

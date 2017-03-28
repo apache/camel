@@ -24,6 +24,8 @@ import org.cassandraunit.dataset.CQLDataSet;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 
+import static org.apache.camel.component.cassandra.BaseCassandraTest.canTest;
+
 /**
  * Util methods to manage Cassandra in Unit tests
  */
@@ -40,47 +42,71 @@ public final class CassandraUnitUtils {
      * Create Cassandra JUnit Rule.
      */
     public static CassandraCQLUnit cassandraCQLUnit() {
-        if (cassandraCQLUnit == null) {
-            cassandraCQLUnit = cassandraCQLUnit("BasicDataSet.cql");
+        if (canTest()) {
+            if (cassandraCQLUnit == null) {
+                cassandraCQLUnit = cassandraCQLUnit("BasicDataSet.cql");
+            }
         }
         return cassandraCQLUnit;
     }
 
     public static CassandraCQLUnit cassandraCQLUnit(String dataSetCql) {
-        return cassandraCQLUnit(cqlDataSet(dataSetCql));
+        if (canTest()) {
+            return cassandraCQLUnit(cqlDataSet(dataSetCql));
+        } else {
+            return null;
+        }
     }
 
     public static CQLDataSet cqlDataSet(String dataSetCql) {
-        return new ClassPathCQLDataSet(dataSetCql, KEYSPACE);
+        if (canTest()) {
+            return new ClassPathCQLDataSet(dataSetCql, KEYSPACE);
+        } else {
+            return null;
+        }
     }
 
     public static void loadCQLDataSet(Session session, String dataSetCql) {
-        CQLDataLoader loader = new CQLDataLoader(session);
-        loader.load(cqlDataSet(dataSetCql));
+        if (canTest()) {
+            CQLDataLoader loader = new CQLDataLoader(session);
+            loader.load(cqlDataSet(dataSetCql));
+        }
     }
 
     public static CassandraCQLUnit cassandraCQLUnit(CQLDataSet dataset) {
-        return new CassandraCQLUnit(dataset, "/camel-cassandra.yaml");
+        if (canTest()) {
+            return new CassandraCQLUnit(dataset, "/camel-cassandra.yaml");
+        } else {
+            return null;
+        }
     }
 
     /**
      * Start embedded Cassandra.
      */
     public static void startEmbeddedCassandra() throws Exception {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra("/camel-cassandra.yaml", "target/camel-cassandra");
+        if (canTest()) {
+            EmbeddedCassandraServerHelper.startEmbeddedCassandra("/camel-cassandra.yaml", "target/camel-cassandra", 30000);
+        }
     }
 
     /**
      * Clean embedded Cassandra.
      */
     public static void cleanEmbeddedCassandra() throws Exception {
-        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
+        if (canTest()) {
+            EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
+        }
     }
 
     public static Cluster cassandraCluster() {
-        return Cluster.builder()
-                .addContactPoint(HOST)
-                .withClusterName("camel-cluster")
-                .build();
+        if (canTest()) {
+            return Cluster.builder()
+                    .addContactPoint(HOST)
+                    .withClusterName("camel-cluster")
+                    .build();
+        } else {
+            return null;
+        }
     }
 }

@@ -23,8 +23,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
@@ -39,6 +41,7 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +56,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RestsDefinition restCollection = new RestsDefinition();
     private Map<String, RestConfigurationDefinition> restConfigurations;
+    private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
+    private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public RouteBuilder() {
@@ -132,6 +137,28 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
+     * Create a new {@code TransformerBuilder}.
+     * 
+     * @return the builder
+     */
+    public TransformerBuilder transformer() {
+        TransformerBuilder tdb = new TransformerBuilder();
+        transformerBuilders.add(tdb);
+        return tdb;
+    }
+
+    /**
+     * Create a new {@code ValidatorBuilder}.
+     * 
+     * @return the builder
+     */
+    public ValidatorBuilder validator() {
+        ValidatorBuilder vb = new ValidatorBuilder();
+        validatorBuilders.add(vb);
+        return vb;
+    }
+
+    /**
      * Creates a new route from the given URI input
      *
      * @param uri  the from uri
@@ -208,6 +235,36 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
         getRouteCollection().setCamelContext(getContext());
         setErrorHandlerBuilder(errorHandlerBuilder);
+    }
+
+    /**
+     * Injects a property placeholder value with the given key converted to the given type.
+     *
+     * @param key  the property key
+     * @param type the type to convert the value as
+     * @return the value, or <tt>null</tt> if value is empty
+     * @throws Exception is thrown if property with key not found or error converting to the given type.
+     */
+    public <T> T propertyInject(String key, Class<T> type) throws Exception {
+        ObjectHelper.notEmpty(key, "key");
+        ObjectHelper.notNull(type, "Class type");
+
+        // the properties component is mandatory
+        Component component = getContext().hasComponent("properties");
+        if (component == null) {
+            throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
+                + " in CamelContext to support property placeholders in expressions");
+        }
+        PropertiesComponent pc = getContext().getTypeConverter()
+            .mandatoryConvertTo(PropertiesComponent.class, component);
+        // enclose key with {{ }} to force parsing
+        Object value = pc.parseUri(pc.getPrefixToken() + key + pc.getSuffixToken());
+
+        if (value != null) {
+            return getContext().getTypeConverter().mandatoryConvertTo(type, value);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -328,6 +385,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // but populate rests before routes, as we want to turn rests into routes
         populateRests();
+        populateTransformers();
+        populateValidators();
         populateRoutes();
     }
 
@@ -468,6 +527,26 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         // add the rest routes
         for (RouteDefinition route : routes) {
             getRouteCollection().route(route);
+        }
+    }
+
+    protected void populateTransformers() {
+        ModelCamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        for (TransformerBuilder tdb : transformerBuilders) {
+            tdb.configure(camelContext);
+        }
+    }
+
+    protected void populateValidators() {
+        ModelCamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        for (ValidatorBuilder vb : validatorBuilders) {
+            vb.configure(camelContext);
         }
     }
 

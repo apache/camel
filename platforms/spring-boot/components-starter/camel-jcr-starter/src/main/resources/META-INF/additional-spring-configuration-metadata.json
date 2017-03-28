@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jcr.enabled",
+      "description": "Enable jcr component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

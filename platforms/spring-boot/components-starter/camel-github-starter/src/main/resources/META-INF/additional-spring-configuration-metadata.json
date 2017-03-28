@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.github.enabled",
+      "description": "Enable github component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

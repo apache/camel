@@ -25,9 +25,6 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.linkedin.api.model.EventType;
-import org.apache.camel.component.linkedin.internal.CompaniesResourceApiMethod;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

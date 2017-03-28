@@ -45,4 +45,10 @@ public class Project {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "Project{id=" + id + ", name='" + name + '\'' + ", license='" + license + '\'' + '}';
+    }
+
 }

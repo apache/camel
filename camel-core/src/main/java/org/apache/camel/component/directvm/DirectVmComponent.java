@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -38,9 +39,13 @@ public class DirectVmComponent extends UriEndpointComponent {
     // later in case the DirectVmEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
     private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
+    @Metadata(label = "producer")
     private boolean block;
-    @Metadata(defaultValue = "30000")
+    @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
+    private HeaderFilterStrategy headerFilterStrategy;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean propagateProperties = true;
 
     public DirectVmComponent() {
         super(DirectVmEndpoint.class);
@@ -64,7 +69,9 @@ public class DirectVmComponent extends UriEndpointComponent {
         DirectVmEndpoint answer = new DirectVmEndpoint(uri, this);
         answer.setBlock(block);
         answer.setTimeout(timeout);
+        answer.setPropagateProperties(propagateProperties);
         answer.configureProperties(parameters);
+        setProperties(answer, parameters);
         return answer;
     }
 
@@ -132,4 +139,29 @@ public class DirectVmComponent extends UriEndpointComponent {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * Sets a {@link HeaderFilterStrategy} that will only be applied on producer endpoints (on both directions: request and response).
+     * <p>Default value: none.</p>
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public boolean isPropagateProperties() {
+        return propagateProperties;
+    }
+
+    /**
+     * Whether to propagate or not properties from the producer side to the consumer side, and vice versa.
+     * <p>Default value: true.</p>
+     */
+    public void setPropagateProperties(boolean propagateProperties) {
+        this.propagateProperties = propagateProperties;
+    }
+
 }

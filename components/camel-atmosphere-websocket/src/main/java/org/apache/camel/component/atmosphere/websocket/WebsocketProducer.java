@@ -39,8 +39,6 @@ public class WebsocketProducer extends DefaultProducer {
 
     private static ExecutorService executor = Executors.newSingleThreadExecutor();
     
-    private List<String> notValidConnectionKeys = new ArrayList<>();
-    
     public WebsocketProducer(WebsocketEndpoint endpoint) {
         super(endpoint);
     }
@@ -98,11 +96,11 @@ public class WebsocketProducer extends DefaultProducer {
             throw new IllegalArgumentException("Failed to send message to multiple connections; connetion key list is not set.");
         }
 
-        notValidConnectionKeys = new ArrayList<>();
+        List<String> notValidConnectionKeys = new ArrayList<>();
 
         for (final String connectionKey : connectionKeyList) {
             log.debug("Sending to connection key {} -> {}", connectionKey, message);
-            sendMessage(getWebSocket(connectionKey), message);
+            sendMessage(getWebSocket(connectionKey, notValidConnectionKeys), message);
         }
 
         if (!notValidConnectionKeys.isEmpty()) {
@@ -123,7 +121,7 @@ public class WebsocketProducer extends DefaultProducer {
                             websocket.write((byte[]) message, 0, ((byte[]) message).length);
                         } else {
                             // this should not happen unless one of the supported types is missing above.
-                            LOG.error("unexpected message type {}", message == null ? null : message.getClass());
+                            LOG.warn("unexpected message type {}", message.getClass());
                         }
                     } catch (Exception e) {
                         LOG.error("Error when writing to websocket", e);
@@ -133,10 +131,10 @@ public class WebsocketProducer extends DefaultProducer {
         }
     }
 
-    private WebSocket getWebSocket(final String connectionKey) {
+    private WebSocket getWebSocket(final String connectionKey, final List<String> notValidConnectionKeys) {
         WebSocket websocket;
         if (connectionKey == null) {
-            throw new IllegalArgumentException("Failed to send message to single connection; connetion key is not set.");
+            throw new IllegalArgumentException("Failed to send message to single connection; connection key is not set.");
         } else {
             websocket = getEndpoint().getWebSocketStore().getWebSocket(connectionKey);
             if (websocket == null) {

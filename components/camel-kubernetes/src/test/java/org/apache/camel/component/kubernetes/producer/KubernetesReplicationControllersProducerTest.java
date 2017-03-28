@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.EditablePodTemplateSpec;
+import io.fabric8.kubernetes.api.model.PodTemplateSpec;
 import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
@@ -120,7 +120,7 @@ public class KubernetesReplicationControllersProducerTest extends
     }
 
     @Test
-    public void createAndDeleteService() throws Exception {
+    public void createAndDeleteReplicationController() throws Exception {
         if (ObjectHelper.isEmpty(authToken)) {
             return;
         }
@@ -145,7 +145,7 @@ public class KubernetesReplicationControllersProducerTest extends
                         ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
                         rcSpec.setReplicas(2);
                         PodTemplateSpecBuilder builder = new PodTemplateSpecBuilder();
-                        EditablePodTemplateSpec t = builder.withNewMetadata()
+                        PodTemplateSpec t = builder.withNewMetadata()
                                 .withName("nginx-template")
                                 .addToLabels("server", "nginx").endMetadata()
                                 .withNewSpec().addNewContainer()
@@ -187,6 +187,100 @@ public class KubernetesReplicationControllersProducerTest extends
 
         assertTrue(rcDeleted);
     }
+    
+    @Test
+    public void createScaleAndDeleteReplicationController() throws Exception {
+        if (ObjectHelper.isEmpty(authToken)) {
+            return;
+        }
+        Exchange ex = template.request("direct:createReplicationController",
+                new Processor() {
+
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setHeader(
+                                KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                                "default");
+                        exchange.getIn()
+                                .setHeader(
+                                        KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME,
+                                        "test");
+                        Map<String, String> labels = new HashMap<String, String>();
+                        labels.put("this", "rocks");
+                        exchange.getIn()
+                                .setHeader(
+                                        KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS,
+                                        labels);
+                        ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
+                        rcSpec.setReplicas(1);
+                        PodTemplateSpecBuilder builder = new PodTemplateSpecBuilder();
+                        PodTemplateSpec t = builder.withNewMetadata()
+                                .withName("nginx-template")
+                                .addToLabels("server", "nginx").endMetadata()
+                                .withNewSpec().addNewContainer()
+                                .withName("wildfly").withImage("jboss/wildfly")
+                                .addNewPort().withContainerPort(80).endPort()
+                                .endContainer().endSpec().build();
+                        rcSpec.setTemplate(t);
+                        Map<String, String> selectorMap = new HashMap<String, String>();
+                        selectorMap.put("server", "nginx");
+                        rcSpec.setSelector(selectorMap);
+                        exchange.getIn()
+                                .setHeader(
+                                        KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_SPEC,
+                                        rcSpec);
+                    }
+                });
+
+        ReplicationController rc = ex.getOut().getBody(
+                ReplicationController.class);
+
+        assertEquals(rc.getMetadata().getName(), "test");
+        
+        ex = template.request("direct:scaleReplicationController",
+                new Processor() {
+
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setHeader(
+                                KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                                "default");
+                        exchange.getIn()
+                                .setHeader(
+                                        KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME,
+                                        "test");
+                        exchange.getIn()
+                                .setHeader(
+                                        KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_REPLICAS,
+                                        2);
+                    }
+                });
+        
+        Thread.sleep(10000);
+
+        Integer replicas = ex.getOut().getBody(Integer.class);
+        
+        assertTrue(replicas == 2);
+
+        ex = template.request("direct:deleteReplicationController",
+                new Processor() {
+
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setHeader(
+                                KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
+                                "default");
+                        exchange.getIn()
+                                .setHeader(
+                                        KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME,
+                                        "test");
+                    }
+                });
+
+        boolean rcDeleted = ex.getOut().getBody(Boolean.class);
+
+        assertTrue(rcDeleted);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -204,6 +298,9 @@ public class KubernetesReplicationControllersProducerTest extends
                                 host, authToken);
                 from("direct:createReplicationController")
                         .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=createReplicationController",
+                                host, authToken);
+                from("direct:scaleReplicationController")
+                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=scaleReplicationController",
                                 host, authToken);
                 from("direct:deleteReplicationController")
                         .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=deleteReplicationController",

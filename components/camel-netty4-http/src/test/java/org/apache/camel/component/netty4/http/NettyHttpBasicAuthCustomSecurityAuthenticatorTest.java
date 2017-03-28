@@ -43,6 +43,9 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
             assertEquals(401, cause.getStatusCode());
         }
 
+        // wait a little bit before next as the connection was closed when denied
+        Thread.sleep(500);
+
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
         // username:password is scott:secret

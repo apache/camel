@@ -35,6 +35,7 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     private Class<?> unmarshallClass;
     private String bindingName;
+    private boolean contentTypeHeader = true;
 
     public JibxDataFormat() {
     }
@@ -57,6 +58,14 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFo
         IBindingFactory bindingFactory = createBindingFactory(body.getClass(), bindingName);
         IMarshallingContext marshallingContext = bindingFactory.createMarshallingContext();
         marshallingContext.marshalDocument(body, null, null, stream);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
@@ -71,7 +80,6 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFo
         IUnmarshallingContext unmarshallingContext = bindingFactory.createUnmarshallingContext();
         return unmarshallingContext.unmarshalDocument(stream, null);
     }
-
 
     @Override
     protected void doStart() throws Exception {
@@ -98,6 +106,19 @@ public class JibxDataFormat extends ServiceSupport implements DataFormat, DataFo
     public void setBindingName(String bindingName) {
         this.bindingName = bindingName;
     }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then Jibx will set the Content-Type header to <tt>application/xml</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
+    }
+
 
     private IBindingFactory createBindingFactory(Class<?> clazz, String bindingName) throws JiBXException {
         if (bindingName == null) {

@@ -24,9 +24,10 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.util.PredicateToExpressionAdapter;
 
 /**
- * A language for referred expressions.
+ * A language for referred expressions or predicates.
  */
 public class RefLanguage implements Language, IsSingleton {
 
@@ -43,11 +44,21 @@ public class RefLanguage implements Language, IsSingleton {
         final Expression exp = RefLanguage.ref(expression);
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Expression lookup = exp.evaluate(exchange, Expression.class);
-                if (lookup != null) {
-                    return lookup.evaluate(exchange, Object.class);
+                Expression target = null;
+
+                Object lookup = exp.evaluate(exchange, Object.class);
+
+                // must favor expression over predicate
+                if (lookup != null && lookup instanceof Expression) {
+                    target = (Expression) lookup;
+                } else if (lookup != null && lookup instanceof Predicate) {
+                    target = PredicateToExpressionAdapter.toExpression((Predicate) lookup);
+                }
+
+                if (target != null) {
+                    return target.evaluate(exchange, Object.class);
                 } else {
-                    throw new IllegalArgumentException("Cannot find expression in registry with ref: " + expression);
+                    throw new IllegalArgumentException("Cannot find expression or predicate in registry with ref: " + expression);
                 }
             }
 

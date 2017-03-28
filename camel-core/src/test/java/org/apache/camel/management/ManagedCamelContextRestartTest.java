@@ -75,6 +75,9 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);
 
+        long uptimeMillis = (Long) mbeanServer.getAttribute(on, "UptimeMillis");
+        assertTrue(uptimeMillis > 0);
+
         String status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
 
@@ -104,7 +107,7 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").transform(constant("Bye World"));
+                from("direct:foo").delay(10).transform(constant("Bye World"));
             }
         };
     }

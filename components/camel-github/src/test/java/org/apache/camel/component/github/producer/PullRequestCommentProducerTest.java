@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
+import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.CommitComment;
 import org.eclipse.egit.github.core.PullRequest;
 import org.junit.Test;
@@ -81,7 +82,7 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Map<String, Object> headers = in.getHeaders();
-            headers.put("GitHubPullRequest", latestPullRequestId);
+            headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestId);
         }
     }
 

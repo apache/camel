@@ -19,14 +19,14 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel</artifactId>
-  <version>2.17-SNAPSHOT</version>
+  <version>2.19.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel build POM</description>
@@ -34,22 +34,22 @@
   <inceptionYear>2007</inceptionYear>
 
   <prerequisites>
-    <maven>3.1.1</maven>
+    <maven>3.2.5</maven>
   </prerequisites>
 
   <properties>
     <!-- enforce to require using at least this maven version -->
-    <maven-enforcer-require-maven-version>3.1.1</maven-enforcer-require-maven-version>
+    <maven-enforcer-require-maven-version>3.2.5</maven-enforcer-require-maven-version>
 
     <!-- unify the encoding for all the modules -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-    <jdk.version>1.7</jdk.version>
+    <jdk.version>1.8</jdk.version>
     <compiler.fork>false</compiler.fork>
 
-    <maven-compiler-plugin-version>3.5.1</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>3.6.1</maven-compiler-plugin-version>
     <maven-surefire-plugin-version>2.19.1</maven-surefire-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
@@ -138,8 +138,10 @@
     <module>buildingtools</module>
     <module>camel-core</module>
     <module>components</module>
+    <module>archetypes</module>
     <module>tooling</module>
     <module>platforms</module>
+    <module>connectors</module>
     <module>tests</module>
     <module>examples</module>
   </modules>
@@ -159,7 +161,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.4</version>
+          <version>1.4.1</version>
           <executions>
             <execution>
               <id>enforce-maven</id>
@@ -180,6 +182,11 @@
 
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.10.4</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
@@ -230,14 +237,36 @@
                 <exclude>**/test/data*/**/*</exclude>
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**/*</exclude>
-                <!-- tooling/camel-manual/src/styles/print.css use a different
-                  license -->
+                <exclude>**/*.adoc</exclude>
+                <exclude>**/*.md</exclude>
+                <!-- tooling/camel-manual/src/styles/print.css use a different license -->
                 <exclude>**/src/styles/print.css</exclude>
+                <!-- tooling for component docs -->
+                <exclude>**/component-header.mvel</exclude>
+                <exclude>**/component-options.mvel</exclude>
+                <exclude>**/endpoint-options.mvel</exclude>
+                <exclude>**/dataformat-options.mvel</exclude>
+                <exclude>**/language-options.mvel</exclude>
+                <exclude>**/readme-components.mvel</exclude>
+                <exclude>**/readme-components.mvel</exclude>
+                <exclude>**/readme-dataformats.mvel</exclude>
+                <exclude>**/readme-eips.mvel</exclude>
+                <exclude>**/readme-languages.mvel</exclude>
+                <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
                 <!-- cxf does not handle comments here -->
                 <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
                 <exclude>**/src/main/resources/META-INF/cxf/bus-extensions.txt</exclude>
                 <!-- ignore the api signatures files -->
                 <exclude>**/src/signatures/*.txt</exclude>
+                <!-- camel-salesforce BSD license from salesforce developers -->
+                <exclude>**/CometDReplayExtension.java</exclude>
+                <exclude>**/LICENSE-SALESFORCE.txt</exclude>
+                <!-- camel website and user-manual -->
+                <exclude>**/node/**</exclude>
+                <exclude>**/node_modules/**</exclude>
+                <exclude>**/npm-shrinkwrap.json</exclude>
+                <exclude>**/package.json</exclude>
+                <exclude>**/user-manual/**</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
@@ -256,6 +285,8 @@
                 <exclude>**/Dropbox_API_Terms_and_Conditions.txt</exclude>
                 <exclude>**/MerchandiseRestResource.apxc</exclude>
                 <exclude>**/file-sig-api.txt</exclude>
+                <exclude>**/Tasks__c.java</exclude>
+                <exclude>**/additional-spring-configuration-metadata.json</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -280,7 +311,7 @@
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
             <!-- The profile we want to use when doing the release -->
-            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,hibernate</arguments>
+            <arguments>-Prelease,apache-release,enable-schemagen,apt,sourcecheck,hibernate</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
@@ -485,17 +516,34 @@
                   <artifactId>ant-nodeps</artifactId>
                   <version>1.8.1</version>
                 </dependency>
-                <dependency>
-                  <groupId>com.sun</groupId>
-                  <artifactId>tools</artifactId>
-                  <version>1.5.0</version>
-                  <scope>system</scope>
-                  <systemPath>${java.home}/../lib/tools.jar</systemPath>
-                </dependency>
               </dependencies>
             </plugin>
           </plugins>
         </pluginManagement>
+      </build>
+    </profile>
+
+    <profile>
+      <id>jdk8-build</id>
+      <activation>
+        <jdk>(,1.9)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <dependencies>
+              <dependency>
+              <groupId>com.sun</groupId>
+              <artifactId>tools</artifactId>
+              <version>1.5.0</version>
+              <scope>system</scope>
+              <systemPath>${java.home}/../lib/tools.jar</systemPath>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
       </build>
     </profile>
 
@@ -622,11 +670,11 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
-                <configuration>
-                    <additionalparam>${javadoc.opts}</additionalparam>
-                </configuration>
               </execution>
             </executions>
+            <configuration>
+              <additionalparam>${javadoc.opts}</additionalparam>
+            </configuration>
           </plugin>
           <!-- We want to sign the artifact, the POM, and all attached artifacts -->
           <plugin>
@@ -656,5 +704,13 @@
         <javadoc.opts>-Xdoclint:none</javadoc.opts>
       </properties>
      </profile>
+
+     <profile>
+       <id>cleanrepo</id>
+       <build>
+         <defaultGoal>build-helper:remove-project-artifact</defaultGoal>
+       </build>
+     </profile>
+
   </profiles>
 </project>

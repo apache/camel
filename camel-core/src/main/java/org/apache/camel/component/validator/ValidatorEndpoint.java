@@ -42,7 +42,7 @@ import org.apache.camel.spi.UriPath;
  * Validates the payload of a message using XML Schema and JAXP Validation.
  */
 @ManagedResource(description = "Managed ValidatorEndpoint")
-@UriEndpoint(scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, label = "core,validation")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, label = "core,validation")
 public class ValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"
@@ -99,7 +99,6 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-
         if (!schemaReaderConfigured) {
             if (resourceResolver != null) {
                 schemaReader.setResourceResolver(resourceResolver);
@@ -128,8 +127,6 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
         return new ValidatorProducer(this, validator);
     }
-
-
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -235,7 +232,7 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     }
 
     /** For creating a resource resolver which depends on the endpoint resource URI. 
-     * Must not be used in combination with method {@link #setResourceResolver(LSResourceResolver). 
+     * Must not be used in combination with method {@link #setResourceResolver(LSResourceResolver)}. 
      * If not set then {@link DefaultValidatorResourceResolverFactory} is used 
      */
     public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {

@@ -32,17 +32,18 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
         this.mqttEndpoint = mqttEndpoint;
     }
     
-    protected void doStart() throws Exception {
-        // check the mqttEndpoint connection when it is started
-        if (!mqttEndpoint.isConnected()) {
-            mqttEndpoint.connect();
-        }
-        super.doStart();
-    }
-
-
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        if (!mqttEndpoint.isConnected()) {
+            try {
+                ensureConnected();
+            } catch (Exception e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
+        }
+
         byte[] body = exchange.getIn().getBody(byte[].class);
         if (body != null) {
             MQTTConfiguration configuration = mqttEndpoint.getConfiguration();
@@ -94,4 +95,18 @@ public class MQTTProducer extends DefaultAsyncProducer implements Processor {
             return true;
         }
     }
+
+    protected void doStart() throws Exception {
+        if (!mqttEndpoint.getConfiguration().isLazySessionCreation()) {
+            ensureConnected();
+        }
+        super.doStart();
+    }
+
+    protected synchronized void ensureConnected() throws Exception {
+        if (!mqttEndpoint.isConnected()) {
+            mqttEndpoint.connect();
+        }
+    }
+
 }

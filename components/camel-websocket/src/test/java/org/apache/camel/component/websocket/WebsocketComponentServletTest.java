@@ -19,9 +19,7 @@ package org.apache.camel.component.websocket;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +48,7 @@ public class WebsocketComponentServletTest {
     @Mock
     private NodeSynchronization sync;
     @Mock
-    private HttpServletRequest request;
+    private ServletUpgradeRequest request;
 
     private WebsocketComponentServlet websocketComponentServlet;
 
@@ -80,10 +78,10 @@ public class WebsocketComponentServletTest {
     @Test
     public void testDoWebSocketConnect() {
         websocketComponentServlet.setConsumer(consumer);
-        WebSocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
+        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
-        DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;
+        DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);
@@ -93,10 +91,10 @@ public class WebsocketComponentServletTest {
 
     @Test
     public void testDoWebSocketConnectConsumerIsNull() {
-        WebSocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
+        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
-        DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;
+        DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);

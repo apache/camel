@@ -48,7 +48,7 @@ public class JettyFileConsumerTest extends BaseJettyTest {
 
     @Test
     public void testSending4K() throws Exception {
-        File src = new File("src/test/resources/log4j.properties");
+        File src = new File("src/test/resources/log4j2.properties");
         testingSendingFile(src);
     }
     

@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
@@ -29,7 +30,9 @@ import org.apache.camel.util.component.AbstractApiComponent;
  */
 public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName, GoogleMailConfiguration, GoogleMailApiCollection> {
 
+    @Metadata(label = "advanced")
     private Gmail client;
+    @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
 
     public GoogleMailComponent() {
@@ -45,10 +48,11 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
         return GoogleMailApiName.fromValue(apiNameStr);
     }
 
-    public Gmail getClient() {
+    public Gmail getClient(GoogleMailConfiguration googleMailConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getScopes(), configuration.getApplicationName(),
-                    configuration.getRefreshToken(), configuration.getAccessToken());
+            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(), 
+                    googleMailConfiguration.getScopes(), googleMailConfiguration.getApplicationName(),
+                    googleMailConfiguration.getRefreshToken(), googleMailConfiguration.getAccessToken());
         }
         return client;
     }
@@ -66,6 +70,14 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
     @Override
     public void setConfiguration(GoogleMailConfiguration configuration) {
         super.setConfiguration(configuration);
+    }
+
+    @Override
+    public GoogleMailConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new GoogleMailConfiguration();
+        }
+        return super.getConfiguration();
     }
 
     /**

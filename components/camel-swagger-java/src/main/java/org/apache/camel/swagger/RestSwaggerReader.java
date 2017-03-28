@@ -23,9 +23,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
@@ -117,6 +119,19 @@ public class RestSwaggerReader {
         // gather all types in use
         Set<String> types = new LinkedHashSet<>();
         for (VerbDefinition verb : verbs) {
+
+            // check if the Verb Definition must be excluded from documentation
+            Boolean apiDocs;
+            if (verb.getApiDocs() != null) {
+                apiDocs = verb.getApiDocs();
+            } else {
+                // fallback to option on rest
+                apiDocs = rest.getApiDocs();
+            }
+            if (apiDocs != null && !apiDocs) {
+                continue;
+            }
+
             String type = verb.getType();
             if (ObjectHelper.isNotEmpty(type)) {
                 if (type.endsWith("[]")) {
@@ -161,7 +176,17 @@ public class RestSwaggerReader {
         String basePath = rest.getPath();
 
         for (VerbDefinition verb : verbs) {
-
+            // check if the Verb Definition must be excluded from documentation
+            Boolean apiDocs;
+            if (verb.getApiDocs() != null) {
+                apiDocs = verb.getApiDocs();
+            } else {
+                // fallback to option on rest
+                apiDocs = rest.getApiDocs();
+            }
+            if (apiDocs != null && !apiDocs) {
+                continue;
+            }
             // the method must be in lower case
             String method = verb.asVerb().toLowerCase(Locale.US);
             // operation path is a key
@@ -173,9 +198,13 @@ public class RestSwaggerReader {
                 op.addTag(pathAsTag);
             }
 
+            final String routeId = verb.getRouteId();
+            final String operationId = Optional.ofNullable(rest.getId()).orElse(routeId);
+            op.operationId(operationId);
+
             // add id as vendor extensions
             op.getVendorExtensions().put("x-camelContextId", camelContextId);
-            op.getVendorExtensions().put("x-routeId", verb.getRouteId());
+            op.getVendorExtensions().put("x-routeId", routeId);
 
             Path path = swagger.getPath(opPath);
             if (path == null) {
@@ -220,7 +249,6 @@ public class RestSwaggerReader {
 
                 if (parameter != null) {
                     parameter.setName(param.getName());
-                    parameter.setAccess(param.getAccess());
                     parameter.setDescription(param.getDescription());
                     parameter.setRequired(param.getRequired());
 
@@ -274,9 +302,20 @@ public class RestSwaggerReader {
                         BodyParameter bp = (BodyParameter) parameter;
 
                         if (verb.getType() != null) {
-                            String ref = modelTypeAsRef(verb.getType(), swagger);
-                            if (ref != null) {
-                                bp.setSchema(new RefModel(ref));
+                            if (verb.getType().endsWith("[]")) {
+                                String typeName = verb.getType();
+                                typeName = typeName.substring(0, typeName.length() - 2);
+                                Property prop = modelTypeAsProperty(typeName, swagger);
+                                if (prop != null) {
+                                    ArrayModel arrayModel = new ArrayModel();
+                                    arrayModel.setItems(prop);
+                                    bp.setSchema(arrayModel);
+                                }
+                            } else {
+                                String ref = modelTypeAsRef(verb.getType(), swagger);
+                                if (ref != null) {
+                                    bp.setSchema(new RefModel(ref));
+                                }
                             }
                         }
                     }
@@ -483,7 +522,19 @@ public class RestSwaggerReader {
         RestModelConverters converters = new RestModelConverters();
         final Map<String, Model> models = converters.readClass(clazz);
         for (Map.Entry<String, Model> entry : models.entrySet()) {
-            swagger.model(entry.getKey(), entry.getValue());
+
+            // favor keeping any existing model that has the vendor extension in the model
+            boolean oldExt = false;
+            if (swagger.getDefinitions() != null && swagger.getDefinitions().get(entry.getKey()) != null) {
+                Model oldModel = swagger.getDefinitions().get(entry.getKey());
+                if (oldModel.getVendorExtensions() != null && !oldModel.getVendorExtensions().isEmpty()) {
+                    oldExt = oldModel.getVendorExtensions().get("x-className") != null;
+                }
+            }
+
+            if (!oldExt) {
+                swagger.model(entry.getKey(), entry.getValue());
+            }
         }
     }
 

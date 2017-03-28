@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.spi.LoggingEvent;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.rules.Verifier;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -35,21 +38,11 @@ public class LogVerifier extends Verifier {
     private final List<String> messages = new ArrayList<>();
 
     public LogVerifier() {
-        this.appender = new AppenderSkeleton() {
-            @Override
-            public void close() {
-            }
+        appender = newAppender();
+    }
 
-            @Override
-            public boolean requiresLayout() {
-                return false;
-            }
-
-            @Override
-            protected void append(LoggingEvent event) {
-                messages.add(event.getRenderedMessage());
-            }
-        };
+    protected void doAppend(org.apache.logging.log4j.core.LogEvent event) {
+        messages.add(event.getMessage().getFormattedMessage());
     }
 
     public List<String> getMessages() {
@@ -61,15 +54,45 @@ public class LogVerifier extends Verifier {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                LogManager.getRootLogger().addAppender(appender);
                 try {
                     base.evaluate();
                     verify();
                 } finally {
-                    LogManager.getRootLogger().removeAppender(appender);
-                    appender.close();
                 }
             }
         };
+    }
+
+    private class LogAppender extends AbstractAppender {
+        LogAppender(String name) {
+            super(
+                name,
+                null,
+                PatternLayout.newBuilder()
+                    .withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN)
+                    .build()
+            );
+        }
+
+        @Override
+        public void append(org.apache.logging.log4j.core.LogEvent event) {
+            doAppend(event);
+        }
+    }
+
+    private Appender newAppender()  {
+        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        final Configuration config = ctx.getConfiguration();
+
+        LogAppender appender = new LogAppender("cdi-rule");
+        appender.start();
+
+        config.addAppender(appender);
+        config.getRootLogger().removeAppender("cdi-rule");
+        config.getRootLogger().addAppender(appender, Level.TRACE, null);
+
+        ctx.updateLoggers();
+
+        return appender;
     }
 }

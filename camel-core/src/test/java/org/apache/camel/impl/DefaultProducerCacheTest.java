@@ -48,6 +48,9 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             cache.releaseProducer(e, p);
         }
 
+        // the eviction is async so force cleanup
+        cache.cleanUp();
+
         assertEquals("Size should be 1000", 1000, cache.size());
         cache.stop();
     }
@@ -64,7 +67,13 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             cache.releaseProducer(e, p);
         }
 
+        // the eviction is async so force cleanup
+        cache.cleanUp();
+
         assertEquals("Size should be 5", 5, cache.size());
+
+        // the eviction listener is async so sleep a bit
+        Thread.sleep(1000);
 
         // should have stopped the 3 evicted
         assertEquals(3, stopCounter.get());

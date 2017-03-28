@@ -1,0 +1,164 @@
+## Protobuf DataFormat
+[[Protobuf-Protobuf-ProtocolBuffers]]
+*Available as of Camel version 2.2.0*
+
+Protobuf - Protocol Buffers
+---------------------------
+
+"Protocol Buffers - Google's data interchange format"
+
+Camel provides a link:data-format.html[Data Format] to serialse between
+Java and the Protocol Buffer protocol. The project's site details why
+you may wish to
+http://code.google.com/apis/protocolbuffers/docs/overview.html[choose
+this format over xml]. Protocol Buffer is language-neutral and
+platform-neutral, so messages produced by your Camel routes may be
+consumed by other language implementations.
+
+http://code.google.com/apis/protocolbuffers/[API Site] +
+ http://code.google.com/p/protobuf/[Protobuf Implementation] +
+
+http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[Protobuf
+Java Tutorial]
+
+### Protobuf Options
+
+// dataformat options: START
+The Protobuf dataformat supports 2 options which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| instanceClass |  | String | Name of class to use when unarmshalling
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
+|=======================================================================
+// dataformat options: END
+
+### Protobuf overview
+
+This quick overview of how to use Protobuf. For more detail see the
+http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[complete
+tutorial]
+
+### Defining the proto format
+
+The first step is to define the format for the body of your exchange.
+This is defined in a .proto file as so:
+
+*addressbook.proto*
+
+[source,java]
+------------------------------------------------------------
+
+package org.apache.camel.component.protobuf;
+
+option java_package = "org.apache.camel.component.protobuf";
+option java_outer_classname = "AddressBookProtos";
+
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [default = HOME];
+  }
+
+  repeated PhoneNumber phone = 4;
+}
+
+message AddressBook {
+  repeated Person person = 1;
+}
+------------------------------------------------------------
+
+### Generating Java classes
+
+The Protobuf SDK provides a compiler which will generate the Java
+classes for the format we defined in our .proto file. You can run the
+compiler for any additional supported languages you require.
+
+`protoc --java_out=. ./addressbook.proto`
+
+This will generate a single Java class named AddressBookProtos which
+contains inner classes for Person and AddressBook. Builders are also
+implemented for you. The generated classes implement
+com.google.protobuf.Message which is required by the serialisation
+mechanism. For this reason it important that only these classes are used
+in the body of your exchanges. Camel will throw an exception on route
+creation if you attempt to tell the link:data-format.html[Data Format]
+to use a class that does not implement com.google.protobuf.Message. Use
+the generated builders to translate the data from any of your existing
+domain classes.
+
+### Java DSL
+
+You can use create the ProtobufDataFormat instance and pass it to Camel
+DataFormat marshal and unmarsha API like this.
+
+[source,java]
+-----------------------------------------------------------------------------------
+   ProtobufDataFormat format = new ProtobufDataFormat(Person.getDefaultInstance());
+
+   from("direct:in").marshal(format);
+   from("direct:back").unmarshal(format).to("mock:reverse");
+-----------------------------------------------------------------------------------
+
+Or use the DSL protobuf() passing the unmarshal default instance or
+default instance class name like this.
+
+[source,java]
+--------------------------------------------------------------------------------------------------
+   // You don't need to specify the default instance for protobuf marshaling               
+   from("direct:marshal").marshal().protobuf();
+   from("direct:unmarshalA").unmarshal().
+       protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").
+       to ("mock:reverse");
+                
+   from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
+--------------------------------------------------------------------------------------------------
+
+### Spring DSL
+
+The following example shows how to use Castor to unmarshal using Spring
+configuring the protobuf data type
+
+[source,java]
+----------------------------------------------------------------------------------------------------------
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <unmarshal>
+      <protobuf instanceClass="org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person" />
+    </unmarshal>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----------------------------------------------------------------------------------------------------------
+
+### Dependencies
+
+To use Protobuf in your camel routes you need to add the a dependency on
+*camel-protobuf* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+link:download.html[the download page for the latest versions]).
+
+[source,java]
+-----------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-protobuf</artifactId>
+  <version>2.2.0</version>
+</dependency>
+-----------------------------------------

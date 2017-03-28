@@ -96,7 +96,7 @@ public class ExpressionBuilderTest extends TestSupport {
     }
     
     public void testCamelContextPropertiesExpression() throws Exception {
-        camelContext.getProperties().put("CamelTestKey", "CamelTestValue");        
+        camelContext.getGlobalOptions().put("CamelTestKey", "CamelTestValue");
         Expression expression = camelContextPropertyExpression("CamelTestKey");
         assertExpression(expression, exchange, "CamelTestValue");        
         expression = camelContextPropertiesExpression();
@@ -108,6 +108,17 @@ public class ExpressionBuilderTest extends TestSupport {
         assertEquals("world", parseSimpleOrFallbackToConstantExpression("world", camelContext).evaluate(exchange, String.class));
         assertEquals("Hello there!", parseSimpleOrFallbackToConstantExpression("${body}", camelContext).evaluate(exchange, String.class));
         assertEquals("Hello there!", parseSimpleOrFallbackToConstantExpression("$simple{body}", camelContext).evaluate(exchange, String.class));
+    }
+
+    public void testFunction() throws Exception {
+        assertExpression(
+            messageExpression(m -> m.getExchange().getIn().getHeader("name")),
+            exchange,
+            "James");
+        assertExpression(
+            messageExpression(m -> m.getHeader("name")),
+            exchange,
+            "James");
     }
 
     @Override

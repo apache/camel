@@ -359,16 +359,6 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
-     * Whether or not type converters should be lazy loaded (notice core converters is always loaded)
-     *
-     * @return <tt>false</tt> by default.
-     */
-    @Deprecated
-    protected boolean isLazyLoadingTypeConverter() {
-        return false;
-    }
-
-    /**
      * Lets post process this test instance to process any Camel annotations.
      * Note that using Spring Test or Guice is a more powerful approach.
      */
@@ -440,10 +430,8 @@ public abstract class CamelTestSupport extends TestSupport {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
-        context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
         return context;
     }
 

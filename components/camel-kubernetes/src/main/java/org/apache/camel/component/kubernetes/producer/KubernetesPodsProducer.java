@@ -19,18 +19,18 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneablePod;
-import io.fabric8.kubernetes.api.model.EditablePod;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.PodSpec;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientPodResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.PodResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +92,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         PodList podList = getEndpoint().getKubernetesClient().pods().list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(podList.getItems());
     }
 
@@ -103,12 +105,14 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "Get pods by labels require specify a labels set");
         }
-        ClientMixedOperation<Pod, PodList, DoneablePod, ClientPodResource<Pod, DoneablePod>> pods;
-        pods = getEndpoint().getKubernetesClient().pods();
+        
+        MixedOperation<Pod, PodList, DoneablePod, PodResource<Pod, DoneablePod>> pods = getEndpoint().getKubernetesClient().pods();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             pods.withLabel(entry.getKey(), entry.getValue());
         }
         PodList podList = pods.list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(podList.getItems());
     }
 
@@ -131,6 +135,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         pod = getEndpoint().getKubernetesClient().pods()
                 .inNamespace(namespaceName).withName(podName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pod);
     }
 
@@ -160,11 +166,13 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
-        EditablePod podCreating = new PodBuilder().withNewMetadata()
+        Pod podCreating = new PodBuilder().withNewMetadata()
                 .withName(podName).withLabels(labels).endMetadata()
                 .withSpec(podSpec).build();
         pod = getEndpoint().getKubernetesClient().pods()
                 .inNamespace(namespaceName).create(podCreating);
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pod);
     }
 
@@ -186,6 +194,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         boolean podDeleted = getEndpoint().getKubernetesClient().pods()
                 .inNamespace(namespaceName).withName(podName).delete();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(podDeleted);
     }
 }

@@ -78,8 +78,7 @@ public class InjectorManager {
         if (injector != null) {
             classScope.close(injector);
         } else {
-            System.out.println("Could not close Class scope as there is no Injector for module type "
-                               + injector);
+            System.out.println("Could not close Class scope as there is no Injector for module type");
         }
 
         // NOTE that we don't have any good hooks yet to call complete()

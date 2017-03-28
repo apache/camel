@@ -22,6 +22,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
 public class NatsConfiguration {
@@ -34,11 +35,11 @@ public class NatsConfiguration {
     private String topic;
     @UriParam(defaultValue = "true")
     private boolean reconnect = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pedantic;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean verbose;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean ssl;
     @UriParam(defaultValue = "2000")
     private int reconnectTimeWait = 2000;
@@ -46,7 +47,9 @@ public class NatsConfiguration {
     private int maxReconnectAttempts = 3;
     @UriParam(defaultValue = "4000")
     private int pingInterval = 4000;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "producer")
+    private String replySubject;
+    @UriParam
     private boolean noRandomizeServers;
     @UriParam(label = "consumer")
     private String queueName;
@@ -54,6 +57,16 @@ public class NatsConfiguration {
     private String maxMessages;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean flushConnection;
+    @UriParam(label = "common", defaultValue = "1000")
+    private int flushTimeout = 1000;
+    @UriParam(label = "security")
+    private boolean secure;
+    @UriParam(label = "security")
+    private boolean tlsDebug;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
@@ -153,6 +166,18 @@ public class NatsConfiguration {
     public void setPingInterval(int pingInterval) {
         this.pingInterval = pingInterval;
     }
+    
+
+    /**
+     * the subject to which subscribers should send response
+     */
+    public String getReplySubject() {
+        return replySubject;
+    }
+
+    public void setReplySubject(String replySubject) {
+        this.replySubject = replySubject;
+    }
 
     /**
      * Whether or not randomizing the order of servers for the connection attempts
@@ -198,6 +223,61 @@ public class NatsConfiguration {
         this.poolSize = poolSize;
     }
 
+    public boolean isFlushConnection() {
+        return flushConnection;
+    }
+
+    /**
+     * Define if we want to flush connection or not
+     */
+    public void setFlushConnection(boolean flushConnection) {
+        this.flushConnection = flushConnection;
+    }
+
+    public int getFlushTimeout() {
+        return flushTimeout;
+    }
+
+    /**
+     * Set the flush timeout
+     */
+    public void setFlushTimeout(int flushTimeout) {
+        this.flushTimeout = flushTimeout;
+    }
+
+    /**
+     * Set secure option indicating TLS is required
+     */
+    public boolean isSecure() {
+        return secure;
+    }
+
+    public void setSecure(boolean secure) {
+        this.secure = secure;
+    }
+
+    /**
+     * TLS Debug, it will add additional console output
+     */
+    public boolean isTlsDebug() {
+        return tlsDebug;
+    }
+
+    public void setTlsDebug(boolean tlsDebug) {
+        this.tlsDebug = tlsDebug;
+    }
+
+    /**
+     * To configure security using SSLContextParameters
+     */
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
     private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
         if (value != null) {
             props.put(key, value);
@@ -206,7 +286,7 @@ public class NatsConfiguration {
 
     public Properties createProperties() {
         Properties props = new Properties();
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_URI, splitServers());
+        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_URL, splitServers());
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_VERBOSE, getVerbose());
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_PEDANTIC, getPedantic());
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_SSL, getSsl());
@@ -215,13 +295,6 @@ public class NatsConfiguration {
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_RECONNECT_TIME_WAIT, getReconnectTimeWait());
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_PING_INTERVAL, getPingInterval());
         addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_DONT_RANDOMIZE_SERVERS, getNoRandomizeServers());
-        return props;
-    }
-
-    public Properties createSubProperties() {
-        Properties props = new Properties();
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_QUEUE, getQueueName());
-        addPropertyIfNotNull(props, NatsPropertiesConstants.NATS_PROPERTY_MAX_MESSAGES, getMaxMessages());
         return props;
     }
 

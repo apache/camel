@@ -16,25 +16,20 @@
  */
 package org.apache.camel.itest.karaf;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelBoxTest extends AbstractFeatureTest {
+public class CamelBoxTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelBoxTest.class);
 
     @Test
+    @Ignore("CAMEL-10999 Karaf camel-box feature is not updated with new Box 2 SDK")
     public void test() throws Exception {
         testComponent(COMPONENT);
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
     }
 
 }

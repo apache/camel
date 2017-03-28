@@ -169,7 +169,7 @@ public class HttpProducerSelectMethodTest extends CamelTestSupport {
         private String name;
         private String queryString;
 
-        public MyHttpProducer(HttpEndpoint endpoint, String name, String queryString) {
+        MyHttpProducer(HttpEndpoint endpoint, String name, String queryString) {
             super(endpoint);
             this.name = name;
             this.queryString = queryString;

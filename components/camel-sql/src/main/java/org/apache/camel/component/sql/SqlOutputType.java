@@ -18,5 +18,5 @@ package org.apache.camel.component.sql;
 
 public enum SqlOutputType {
 
-    SelectOne, SelectList
+    SelectOne, SelectList, StreamList
 }

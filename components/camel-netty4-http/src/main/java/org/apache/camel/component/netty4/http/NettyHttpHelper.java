@@ -124,7 +124,7 @@ public final class NettyHttpHelper {
 
     public static Exception populateNettyHttpOperationFailedException(Exchange exchange, String url, FullHttpResponse response, int responseCode, boolean transferException) {
         String uri = url;
-        String statusText = response.getStatus().reasonPhrase();
+        String statusText = response.status().reasonPhrase();
 
         if (responseCode >= 300 && responseCode < 400) {
             String redirectLocation = response.headers().get("location");
@@ -184,7 +184,11 @@ public final class NettyHttpHelper {
      * @return the URL to invoke
      */
     public static String createURL(Exchange exchange, NettyHttpEndpoint endpoint) throws URISyntaxException {
-        String uri = endpoint.getEndpointUri();
+        // rest producer may provide an override url to be used which we should discard if using (hence the remove)
+        String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
+        if (uri == null) {
+            uri = endpoint.getEndpointUri();
+        }
 
         // resolve placeholders in uri
         try {
@@ -236,9 +240,14 @@ public final class NettyHttpHelper {
      */
     public static URI createURI(Exchange exchange, String url, NettyHttpEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
+
+        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        String queryString = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
         // is a query string provided in the endpoint URI or in a header
         // (header overrules endpoint, raw query header overrules query header)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        if (queryString == null) {
+            queryString = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        }
         if (queryString == null) {
             queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         }

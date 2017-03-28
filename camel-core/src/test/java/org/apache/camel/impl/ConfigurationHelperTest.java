@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.URIField;
@@ -71,7 +72,7 @@ public class ConfigurationHelperTest {
         assertEquals("URNs don't set the authority field", null, cfg.getParameter(EndpointConfiguration.URI_AUTHORITY));
         assertEquals("URNs don't set the userInfo field", null, cfg.getParameter(EndpointConfiguration.URI_USER_INFO));
         assertEquals("URNs don't set the host field", null, cfg.getParameter(EndpointConfiguration.URI_HOST));
-        assertEquals("URNs don't set the port field", -1, cfg.getParameter(EndpointConfiguration.URI_PORT));
+        assertEquals("URNs don't set the port field", Integer.valueOf(-1), cfg.getParameter(EndpointConfiguration.URI_PORT));
         assertEquals("URNs don't set the path field", null, cfg.getParameter(EndpointConfiguration.URI_PATH));
         assertEquals("URNs don't set the query field", null, cfg.getParameter(EndpointConfiguration.URI_QUERY));
         assertEquals("URNs don't set the fragment field", null, cfg.getParameter(EndpointConfiguration.URI_FRAGMENT));
@@ -86,7 +87,7 @@ public class ConfigurationHelperTest {
         assertEquals("URNs don't set the authority field", null, cfg.getParameter(EndpointConfiguration.URI_AUTHORITY));
         assertEquals("URNs don't set the userInfo field", null, cfg.getParameter(EndpointConfiguration.URI_USER_INFO));
         assertEquals("URNs don't set the host field", null, cfg.getParameter(EndpointConfiguration.URI_HOST));
-        assertEquals("URNs don't set the port field", -1, cfg.getParameter(EndpointConfiguration.URI_PORT));
+        assertEquals("URNs don't set the port field", Integer.valueOf(-1), cfg.getParameter(EndpointConfiguration.URI_PORT));
         assertEquals("URNs don't set the path field", null, cfg.getParameter(EndpointConfiguration.URI_PATH));
         assertEquals("URNs don't set the query field", null, cfg.getParameter(EndpointConfiguration.URI_QUERY));
         assertEquals("URNs don't set the fragment field", null, cfg.getParameter(EndpointConfiguration.URI_FRAGMENT));
@@ -101,7 +102,7 @@ public class ConfigurationHelperTest {
         assertEquals("foo", cfg.getParameter(EndpointConfiguration.URI_AUTHORITY));
         assertEquals(null, cfg.getParameter(EndpointConfiguration.URI_USER_INFO));
         assertEquals("foo", cfg.getParameter(EndpointConfiguration.URI_HOST));
-        assertEquals(-1, cfg.getParameter(EndpointConfiguration.URI_PORT));
+        assertEquals(Integer.valueOf(-1), cfg.getParameter(EndpointConfiguration.URI_PORT));
         assertEquals("", cfg.getParameter(EndpointConfiguration.URI_PATH));
         assertEquals(null, cfg.getParameter(EndpointConfiguration.URI_QUERY));
         assertEquals(null, cfg.getParameter(EndpointConfiguration.URI_FRAGMENT));
@@ -116,7 +117,7 @@ public class ConfigurationHelperTest {
         assertEquals("foo", cfg.getParameter(EndpointConfiguration.URI_AUTHORITY));
         assertEquals(null, cfg.getParameter(EndpointConfiguration.URI_USER_INFO));
         assertEquals("foo", cfg.getParameter(EndpointConfiguration.URI_HOST));
-        assertEquals(-1, cfg.getParameter(EndpointConfiguration.URI_PORT));
+        assertEquals(Integer.valueOf(-1), cfg.getParameter(EndpointConfiguration.URI_PORT));
         assertEquals("/bar#defrag", cfg.getParameter(EndpointConfiguration.URI_PATH));
         assertEquals(null, cfg.getParameter(EndpointConfiguration.URI_QUERY));
         assertEquals(null, cfg.getParameter(EndpointConfiguration.URI_FRAGMENT));
@@ -131,7 +132,7 @@ public class ConfigurationHelperTest {
         assertEquals("hadrian@localhost:9001", cfg.getParameter(EndpointConfiguration.URI_AUTHORITY));
         assertEquals("hadrian", cfg.getParameter(EndpointConfiguration.URI_USER_INFO));
         assertEquals("localhost", cfg.getParameter(EndpointConfiguration.URI_HOST));
-        assertEquals(9001, cfg.getParameter(EndpointConfiguration.URI_PORT));
+        assertEquals(Integer.valueOf(9001), cfg.getParameter(EndpointConfiguration.URI_PORT));
         assertEquals("/context/path/", cfg.getParameter(EndpointConfiguration.URI_PATH));
         assertEquals("bar=true&baz=2#none", cfg.getParameter(EndpointConfiguration.URI_QUERY));
         assertEquals(null, cfg.getParameter(EndpointConfiguration.URI_FRAGMENT));
@@ -155,7 +156,7 @@ public class ConfigurationHelperTest {
         assertNotNull(config);
         assertTrue(config instanceof DummyConfiguration);
         assertEquals("one", config.getParameter("first"));
-        assertEquals(2, config.getParameter("second"));
+        assertEquals(Integer.valueOf(2), config.getParameter("second"));
     }
     
     protected static void logConfigurationObject(EndpointConfiguration config) {

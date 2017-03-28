@@ -27,9 +27,10 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language,script", title = "EL")
+@Metadata(firstVersion = "1.1.0", label = "language,script", title = "EL")
 @XmlRootElement(name = "el")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ELExpression extends ExpressionDefinition {
 
     public ELExpression() {

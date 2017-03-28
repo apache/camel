@@ -30,6 +30,9 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
+import org.apache.maven.plugin.logging.Log;
+
+import static org.apache.camel.maven.XmlHelper.isNullOrEmpty;
 
 /**
  * Enriches xml document with documentation from json files.
@@ -51,10 +54,10 @@ public class DocumentationEnricher {
         }
     }
 
-    public void enrichTypeAttributesDocumentation(NodeList attributeElements, File jsonFile) throws IOException {
+    public void enrichTypeAttributesDocumentation(Log log, NodeList attributeElements, File jsonFile) throws IOException {
         for (int j = 0; j < attributeElements.getLength(); j++) {
             Element item = (Element) attributeElements.item(j);
-            addAttributeDocumentation(item, jsonFile);
+            addAttributeDocumentation(log, item, jsonFile);
         }
     }
 
@@ -69,16 +72,49 @@ public class DocumentationEnricher {
         }
     }
 
-    private void addAttributeDocumentation(Element item, File jsonFile) throws IOException {
+    private void addAttributeDocumentation(Log log, Element item, File jsonFile) throws IOException {
+
+        String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);
+        if (isNullOrEmpty(name)) {
+            return;
+        }
+
+        String descriptionText = null;
+        String defaultValueText = null;
+        String deprecatedText = null;
+
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(Constants.PROPERTIES_ATTRIBUTE_NAME, PackageHelper.fileToString(jsonFile), true);
         for (Map<String, String> row : rows) {
-            if (item.getAttribute(Constants.NAME_ATTRIBUTE_NAME)
-                    .equals(row.get(Constants.NAME_ATTRIBUTE_NAME))) {
-                String descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);
-                if (descriptionText != null) {
-                    addDocumentation(item, descriptionText);
-                    break;
-                }
+            if (name.equals(row.get(Constants.NAME_ATTRIBUTE_NAME))) {
+                descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);
+                defaultValueText = row.get(Constants.DEFAULT_VALUE_ATTRIBUTE_NAME);
+                deprecatedText = row.get(Constants.DEPRECATED_ATTRIBUTE_NAME);
+            }
+        }
+
+        // special as this option is only in camel-blueprint
+        if ("useBlueprintPropertyResolver".equals(name)) {
+            descriptionText = "Whether to automatic detect OSGi Blueprint property placeholder service in use, and bridge with Camel property placeholder."
+                    + " When enabled this allows you to only setup OSGi Blueprint property placeholder and Camel can use the properties in the <camelContext>.";
+            defaultValueText = "true";
+        }
+
+        if ("true".equals(deprecatedText)) {
+            descriptionText = "Deprecated: " + descriptionText;
+        }
+
+        if (!isNullOrEmpty(descriptionText)) {
+            String text = descriptionText;
+            if (!isNullOrEmpty(defaultValueText)) {
+                text += ". Default value: " + defaultValueText;
+            }
+            addDocumentation(item, text);
+        } else {
+            // we should skip warning about these if no documentation as they are special
+            boolean skip = "customId".equals(name) || "inheritErrorHandler".equals(name)
+                    || "rest".equals(name) && jsonFile.getName().endsWith("route.json");
+            if (!skip) {
+                log.warn("Cannot find documentation for name: " + name + " in json schema: " + jsonFile);
             }
         }
     }

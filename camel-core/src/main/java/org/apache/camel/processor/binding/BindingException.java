@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 /**
  * An exception if a binding is not possible, such as binding to json or xml cannot be done.
  */
+@Deprecated
 public class BindingException extends CamelExchangeException {
 
     private static final long serialVersionUID = -3495429794010365522L;

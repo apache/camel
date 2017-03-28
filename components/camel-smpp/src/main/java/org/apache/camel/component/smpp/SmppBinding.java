@@ -34,6 +34,7 @@ import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.COctetString;
 import org.jsmpp.bean.OptionalParameter.Null;
 import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.DefaultDecomposer;
 import org.slf4j.Logger;
@@ -100,8 +101,8 @@ public class SmppBinding {
 
         String messagePayload = null;
 
-        if (deliverSm.getShortMessage() == null && deliverSm.getOptionalParametes() != null) {
-            List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());
+        if (deliverSm.getShortMessage() == null && deliverSm.getOptionalParameters() != null) {
+            List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParameters());
 
             for (OptionalParameter optPara : oplist) {
                 if (OptionalParameter.Tag.MESSAGE_PAYLOAD.code() == optPara.tag && OctetString.class
@@ -137,7 +138,7 @@ public class SmppBinding {
                 smppMessage.setHeader(SmppConstants.FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
             }
 
-            if (deliverSm.getOptionalParametes() != null && deliverSm.getOptionalParametes().length > 0) {
+            if (deliverSm.getOptionalParameters() != null && deliverSm.getOptionalParameters().length > 0) {
                 // the deprecated way
                 Map<String, Object> optionalParameters = createOptionalParameterByName(deliverSm);
                 smppMessage.setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
@@ -150,7 +151,8 @@ public class SmppBinding {
             smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliverSm.toString());
 
             if (deliverSm.getShortMessage() != null) {
-                if (SmppUtils.parseAlphabetFromDataCoding(deliverSm.getDataCoding()) == Alphabet.ALPHA_8_BIT) {
+                Alphabet alphabet = Alphabet.parseDataCoding(deliverSm.getDataCoding());
+                if (SmppUtils.is8Bit(alphabet)) {
                     smppMessage.setBody(deliverSm.getShortMessage());
                 } else {
                     smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(), configuration.getEncoding())));
@@ -177,23 +179,28 @@ public class SmppBinding {
     }
 
     private Map<String, Object> createOptionalParameterByName(DeliverSm deliverSm) {
-        List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());
+        List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParameters());
 
         Map<String, Object> optParams = new HashMap<String, Object>();
         for (OptionalParameter optPara : oplist) {
             try {
-                if (COctetString.class.isInstance(optPara)) {
-                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), ((COctetString) optPara).getValueAsString());
-                } else if (org.jsmpp.bean.OptionalParameter.OctetString.class.isInstance(optPara)) {
-                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), ((OctetString) optPara).getValueAsString());
-                } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
-                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
-                } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
-                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
-                } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
-                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
-                } else if (Null.class.isInstance(optPara)) {
-                    optParams.put(OptionalParameter.Tag.valueOf(optPara.tag).toString(), null);
+                Tag valueOfTag = OptionalParameter.Tag.valueOf(optPara.tag);
+                if (valueOfTag != null) {
+                    if (COctetString.class.isInstance(optPara)) {
+                        optParams.put(valueOfTag.toString(), ((COctetString) optPara).getValueAsString());
+                    } else if (org.jsmpp.bean.OptionalParameter.OctetString.class.isInstance(optPara)) {
+                        optParams.put(valueOfTag.toString(), ((OctetString) optPara).getValueAsString());
+                    } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
+                        optParams.put(valueOfTag.toString(), Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
+                    } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
+                        optParams.put(valueOfTag.toString(), Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
+                    } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
+                        optParams.put(valueOfTag.toString(), Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
+                    } else if (Null.class.isInstance(optPara)) {
+                        optParams.put(valueOfTag.toString(), null);
+                    }
+                } else {
+                    LOG.debug("Skipping optional parameter with tag {} because it was not recogized", optPara.tag);
                 }
             } catch (IllegalArgumentException e) {
                 LOG.debug("Skipping optional parameter with tag {} due " + e.getMessage(), optPara.tag);
@@ -204,7 +211,7 @@ public class SmppBinding {
     }
 
     private Map<Short, Object> createOptionalParameterByCode(DeliverSm deliverSm) {
-        List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());
+        List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParameters());
 
         Map<Short, Object> optParams = new HashMap<Short, Object>();
         for (OptionalParameter optPara : oplist) {

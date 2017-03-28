@@ -51,7 +51,7 @@ public class JpaProducerRemoveTest extends AbstractJpaTest {
         mock.reset();
 
         entityManager = emf.createEntityManager();
-        template.sendBody("direct:remove", new SendEmail("foo@beer.org"));
+        template.sendBody("direct:remove", persistedEntity);
         exchange = mock.getReceivedExchanges().get(0);
         persistedEntity = exchange.getIn().getBody(SendEmail.class);
         emfindEntity = entityManager.find(SendEmail.class, persistedEntity.getId());

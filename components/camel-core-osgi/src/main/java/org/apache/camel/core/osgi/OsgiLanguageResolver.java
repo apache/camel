@@ -21,6 +21,7 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResolverHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -38,21 +39,12 @@ public class OsgiLanguageResolver implements LanguageResolver {
 
     public Language resolveLanguage(String name, CamelContext context) {
         // lookup in registry first
-        Object bean = null;
-        try {
-            bean = context.getRegistry().lookupByName(name);
-            if (bean != null) {
-                LOG.debug("Found language: {} in registry: {}", name, bean);
-            }
-        } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
-            }
+        Language lang = ResolverHelper.lookupLanguageInRegistryWithFallback(context, name);
+        if (lang != null) {
+            return lang;
         }
-        if (bean instanceof Language) {
-            return (Language)bean;
-        }
-        Language lang = getLanguage(name, context);
+
+        lang = getLanguage(name, context);
         if (lang != null) {
             return lang;
         }

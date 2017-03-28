@@ -26,19 +26,29 @@ import org.apache.camel.spi.UriParam;
 /**
  * The spring-redis component allows sending and receiving messages from Redis.
  */
-@UriEndpoint(scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port", consumerClass = RedisConsumer.class, label = "spring,nosql")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port", consumerClass = RedisConsumer.class, label = "spring,nosql")
 public class RedisEndpoint extends DefaultEndpoint {
 
     @UriParam
     private RedisConfiguration configuration;
+    private RedisProcessorsCreator redisProcessorsCreator;
 
     public RedisEndpoint(String uri, RedisComponent component, RedisConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+        redisProcessorsCreator = new AllRedisProcessorsCreator(new RedisClient(configuration.getRedisTemplate()),
+                ((RedisComponent)getComponent()).getExchangeConverter());
     }
 
     public Producer createProducer() throws Exception {
-        return new RedisProducer(this, configuration);
+        Command defaultCommand = configuration.getCommand();
+        if (defaultCommand == null) {
+            defaultCommand = Command.SET;
+        }
+        return new RedisProducer(this,
+                RedisConstants.COMMAND,
+                defaultCommand.name(),
+                redisProcessorsCreator);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

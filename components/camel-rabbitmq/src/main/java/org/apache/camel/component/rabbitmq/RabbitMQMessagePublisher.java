@@ -25,6 +25,8 @@ import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.ReturnListener;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -43,6 +45,14 @@ public class RabbitMQMessagePublisher {
     private final String routingKey;
     private final RabbitMQEndpoint endpoint;
     private final Message message;
+    private volatile boolean basicReturnReceived;
+    private final ReturnListener guaranteedDeliveryReturnListener = new ReturnListener() {
+        @Override
+        public void handleReturn(int replyCode, String replyText, String exchange, String routingKey, AMQP.BasicProperties properties, byte[] body) throws IOException {
+            LOG.warn("Delivery failed for exchange {} and routing key {}; replyCode = {}; replyText = {}", exchange, routingKey, replyCode, replyText);
+            basicReturnReceived = true;
+        }
+    };
 
     public RabbitMQMessagePublisher(final Exchange camelExchange, final Channel channel, final String routingKey, final RabbitMQEndpoint endpoint) {
         this.camelExchange = camelExchange;
@@ -60,7 +70,10 @@ public class RabbitMQMessagePublisher {
             LOG.debug("Removing the {} header", RabbitMQEndpoint.SERIALIZE_HEADER);
             message.getHeaders().remove(RabbitMQEndpoint.SERIALIZE_HEADER);
         }
-        
+        if (routingKey != null && routingKey.startsWith(RabbitMQConstants.RABBITMQ_DIRECT_REPLY_ROUTING_KEY)) {
+            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use default exchange for reply-to messages
+        }
+
         return message;
     }
 
@@ -86,7 +99,7 @@ public class RabbitMQMessagePublisher {
                 throw new RuntimeCamelException(e);
             }
         }
-        
+
         publishToRabbitMQ(properties, body);
     }
 
@@ -98,21 +111,37 @@ public class RabbitMQMessagePublisher {
 
         LOG.debug("Sending message to exchange: {} with CorrelationId = {}", rabbitExchange, properties.getCorrelationId());
 
-        if (endpoint.isPublisherAcknowledgements()) {
+        if (isPublisherAcknowledgements()) {
             channel.confirmSelect();
         }
-
-        channel.basicPublish(rabbitExchange, routingKey, mandatory, immediate, properties, body);
-
-        if (endpoint.isPublisherAcknowledgements()) {
-            waitForConfirmation();
+        if (endpoint.isGuaranteedDeliveries()) {
+            basicReturnReceived = false;
+            channel.addReturnListener(guaranteedDeliveryReturnListener);
         }
+
+        try {
+            channel.basicPublish(rabbitExchange, routingKey, mandatory, immediate, properties, body);
+            if (isPublisherAcknowledgements()) {
+                waitForConfirmation();
+            }
+        } finally {
+            if (endpoint.isGuaranteedDeliveries()) {
+                channel.removeReturnListener(guaranteedDeliveryReturnListener);
+            }
+        }
+    }
+
+    private boolean isPublisherAcknowledgements() {
+        return endpoint.isPublisherAcknowledgements() || endpoint.isGuaranteedDeliveries();
     }
 
     private void waitForConfirmation() throws IOException {
         try {
             LOG.debug("Waiting for publisher acknowledgements for {}ms", endpoint.getPublisherAcknowledgementsTimeout());
             channel.waitForConfirmsOrDie(endpoint.getPublisherAcknowledgementsTimeout());
+            if (basicReturnReceived) {
+                throw new RuntimeCamelException("Failed to deliver message; basic.return received");
+            }
         } catch (InterruptedException | TimeoutException e) {
             LOG.warn("Acknowledgement error for {}", camelExchange);
             throw new RuntimeCamelException(e);

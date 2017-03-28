@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Report results groupings date granularity.

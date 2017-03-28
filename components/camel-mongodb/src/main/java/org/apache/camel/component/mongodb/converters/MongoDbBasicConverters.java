@@ -49,7 +49,7 @@ public final class MongoDbBasicConverters {
     }
     
     @Converter
-    public static DBObject fromMapToDBObject(Map<?, ?> map) {
+    public static BasicDBObject fromMapToDBObject(Map<?, ?> map) {
         return new BasicDBObject(map);
     }
     
@@ -57,7 +57,7 @@ public final class MongoDbBasicConverters {
     public static Map<String, Object> fromBasicDBObjectToMap(BasicDBObject basicDbObject) {
         return basicDbObject;
     }
-    
+
     @Converter
     public static DBObject fromStringToDBObject(String s) {
         DBObject answer = null;
@@ -66,27 +66,38 @@ public final class MongoDbBasicConverters {
         } catch (Exception e) {
             LOG.warn("String -> DBObject conversion selected, but the following exception occurred. Returning null.", e);
         }
+
+        return answer;
+    }
+    @Converter
+    public static BasicDBObject fromStringToBasicDBObject(String s) {
+        BasicDBObject answer = null;
+        try {
+            answer = (BasicDBObject) JSON.parse(s);
+        } catch (Exception e) {
+            LOG.warn("String -> DBObject conversion selected, but the following exception occurred. Returning null.", e);
+        }
         
         return answer;
     }
    
     @Converter
-    public static DBObject fromFileToDBObject(File f, Exchange exchange) throws FileNotFoundException {
+    public static BasicDBObject fromFileToDBObject(File f, Exchange exchange) throws FileNotFoundException {
         return fromInputStreamToDBObject(new FileInputStream(f), exchange);
     }
     
     @Converter
-    public static DBObject fromInputStreamToDBObject(InputStream is, Exchange exchange) {
-        DBObject answer = null;
+    public static BasicDBObject fromInputStreamToDBObject(InputStream is, Exchange exchange) {
+        BasicDBObject answer = null;
         try {
             byte[] input = IOConverter.toBytes(is);
             
             if (isBson(input)) {
                 BSONCallback callback = new JSONCallback();
                 new BasicBSONDecoder().decode(input, callback);
-                answer = (DBObject) callback.get();
+                answer = (BasicDBObject) callback.get();
             } else {
-                answer = (DBObject) JSON.parse(IOConverter.toString(input, exchange));
+                answer = (BasicDBObject) JSON.parse(IOConverter.toString(input, exchange));
             }
         } catch (Exception e) {
             LOG.warn("String -> DBObject conversion selected, but the following exception occurred. Returning null.", e);
@@ -120,8 +131,8 @@ public final class MongoDbBasicConverters {
             Map<?, ?> m = OBJECT_MAPPER.convertValue(value, Map.class);
             answer = new BasicDBObject(m);
         } catch (Exception e) {
-            LOG.warn("Conversion has fallen back to generic Object -> DBObject, but unable to convert type {}. Returning null.", 
-                    value.getClass().getCanonicalName());
+            LOG.warn("Conversion has fallen back to generic Object -> DBObject, but unable to convert type {}. Returning null. {}",
+                    value.getClass().getCanonicalName(), e.getClass().getCanonicalName() + ": " + e.getMessage());
             return null;
         }
         return answer;

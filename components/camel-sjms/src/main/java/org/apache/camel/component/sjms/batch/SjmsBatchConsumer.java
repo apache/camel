@@ -36,6 +36,7 @@ import javax.jms.Queue;
 import javax.jms.Session;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -63,21 +64,21 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     private final int completionSize;
     private final int completionInterval;
     private final int completionTimeout;
+    private final Predicate completionPredicate;
+    private final boolean eagerCheckCompletion;
     private final int consumerCount;
     private final int pollDuration;
     private final ConnectionFactory connectionFactory;
     private final String destinationName;
-    private final Processor processor;
     private ExecutorService jmsConsumerExecutors;
-    private final AtomicBoolean running = new AtomicBoolean(true);
+    private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicReference<CountDownLatch> consumersShutdownLatchRef = new AtomicReference<>();
-    private Connection connection;
+    private volatile Connection connection;
 
     public SjmsBatchConsumer(SjmsBatchEndpoint sjmsBatchEndpoint, Processor processor) {
         super(sjmsBatchEndpoint, processor);
 
         this.sjmsBatchEndpoint = ObjectHelper.notNull(sjmsBatchEndpoint, "batchJmsEndpoint");
-        this.processor = ObjectHelper.notNull(processor, "processor");
 
         destinationName = ObjectHelper.notEmpty(sjmsBatchEndpoint.getDestinationName(), "destinationName");
 
@@ -90,6 +91,8 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         if (sjmsBatchEndpoint.isSendEmptyMessageWhenIdle() && completionTimeout <= 0 && completionInterval <= 0) {
             throw new IllegalArgumentException("SendEmptyMessageWhenIdle can only be enabled if either completionInterval or completionTimeout is also set");
         }
+        completionPredicate = sjmsBatchEndpoint.getCompletionPredicate();
+        eagerCheckCompletion = sjmsBatchEndpoint.isEagerCheckCompletion();
 
         pollDuration = sjmsBatchEndpoint.getPollDuration();
         if (pollDuration < 0) {
@@ -103,7 +106,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             throw new IllegalArgumentException("consumerCount must be greater than 0");
         }
 
-        SjmsBatchComponent sjmsBatchComponent = (SjmsBatchComponent) sjmsBatchEndpoint.getComponent();
+        SjmsBatchComponent sjmsBatchComponent = sjmsBatchEndpoint.getComponent();
         connectionFactory = ObjectHelper.notNull(sjmsBatchComponent.getConnectionFactory(), "jmsBatchComponent.connectionFactory");
     }
 
@@ -124,34 +127,108 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        // start up a shared connection
-        connection = connectionFactory.createConnection();
-        connection.start();
+        boolean recovery = getEndpoint().isAsyncStartListener();
+        StartConsumerTask task = new StartConsumerTask(recovery, getEndpoint().getRecoveryInterval(), getEndpoint().getKeepAliveDelay());
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Starting " + consumerCount + " consumer(s) for " + destinationName + ":" + completionSize);
+        if (recovery) {
+            // use a background thread to keep starting the consumer until
+            getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(task);
+        } else {
+            task.run();
         }
-        consumersShutdownLatchRef.set(new CountDownLatch(consumerCount));
+    }
 
-        jmsConsumerExecutors = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "SjmsBatchConsumer", consumerCount);
+    /**
+     * Task to startup the consumer either synchronously or using asynchronous with recovery
+     */
+    protected class StartConsumerTask implements Runnable {
 
-        final List<AtomicBoolean> triggers = new ArrayList<>();
-        for (int i = 0; i < consumerCount; i++) {
-            BatchConsumptionLoop loop = new BatchConsumptionLoop();
-            triggers.add(loop.getCompletionTimeoutTrigger());
-            jmsConsumerExecutors.execute(loop);
+        private boolean recoveryEnabled;
+        private int recoveryInterval;
+        private int keepAliveDelay;
+        private long attempt;
+
+        public StartConsumerTask(boolean recoveryEnabled, int recoveryInterval, int keepAliveDelay) {
+            this.recoveryEnabled = recoveryEnabled;
+            this.recoveryInterval = recoveryInterval;
+            this.keepAliveDelay = keepAliveDelay;
         }
 
-        if (completionInterval > 0) {
-            LOG.info("Using CompletionInterval to run every " + completionInterval + " millis.");
-            if (timeoutCheckerExecutorService == null) {
-                setTimeoutCheckerExecutorService(getEndpoint().getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, SJMS_BATCH_TIMEOUT_CHECKER, 1));
-                shutdownTimeoutCheckerExecutorService = true;
+        @Override
+        public void run() {
+            jmsConsumerExecutors = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "SjmsBatchConsumer", consumerCount);
+            consumersShutdownLatchRef.set(new CountDownLatch(consumerCount));
+
+            if (completionInterval > 0) {
+                LOG.info("Using CompletionInterval to run every {} millis.", completionInterval);
+                if (timeoutCheckerExecutorService == null) {
+                    setTimeoutCheckerExecutorService(getEndpoint().getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, SJMS_BATCH_TIMEOUT_CHECKER, 1));
+                    shutdownTimeoutCheckerExecutorService = true;
+                }
             }
-            // trigger completion based on interval
-            timeoutCheckerExecutorService.scheduleAtFixedRate(new CompletionIntervalTask(triggers), completionInterval, completionInterval, TimeUnit.MILLISECONDS);
-        }
 
+            // keep loop until we can connect
+            while (isRunAllowed() && !running.get()) {
+                Connection localConnection = null;
+                try {
+                    attempt++;
+
+                    LOG.debug("Attempt #{}. Starting {} consumer(s) for {}:{}", attempt, consumerCount, destinationName, completionSize);
+
+                    // start up a shared connection
+                    localConnection = connectionFactory.createConnection();
+                    localConnection.start();
+
+                    // its success so prepare for exit
+                    connection = localConnection;
+
+                    final List<AtomicBoolean> triggers = new ArrayList<>();
+                    for (int i = 0; i < consumerCount; i++) {
+                        BatchConsumptionLoop loop = new BatchConsumptionLoop();
+                        loop.setKeepAliveDelay(keepAliveDelay);
+                        triggers.add(loop.getCompletionTimeoutTrigger());
+                        jmsConsumerExecutors.submit(loop);
+                    }
+
+                    if (completionInterval > 0) {
+                        // trigger completion based on interval
+                        timeoutCheckerExecutorService.scheduleAtFixedRate(new CompletionIntervalTask(triggers), completionInterval, completionInterval, TimeUnit.MILLISECONDS);
+                    }
+
+                    if (attempt > 1) {
+                        LOG.info("Successfully refreshed connection after {} attempts.", attempt);
+                    }
+
+                    LOG.info("Started {} consumer(s) for {}:{}", consumerCount, destinationName, completionSize);
+                    running.set(true);
+                    return;
+                } catch (Throwable e) {
+                    // we failed so close the local connection as we create a new on next attempt
+                    try {
+                        if (localConnection != null) {
+                            localConnection.close();
+                        }
+                    } catch (Throwable t) {
+                        // ignore
+                    }
+
+                    if (recoveryEnabled) {
+                        getExceptionHandler().handleException("Error starting consumer after " + attempt + " attempts. Will try again in " + recoveryInterval + " millis.", e);
+                    } else {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+                }
+
+                // sleeping before next attempt
+                try {
+                    LOG.debug("Attempt #{}. Sleeping {} before next attempt to recover", attempt, recoveryInterval);
+                    Thread.sleep(recoveryInterval);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+        }
     }
 
     @Override
@@ -165,7 +242,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             if (consumersShutdownLatch.await(60, TimeUnit.SECONDS)) {
                 LOG.warn("Timeout waiting on consumer threads to signal completion - shutting down");
             } else {
-                LOG.info("All consumers have shut down");
+                LOG.info("All consumers have been shutdown");
             }
         } else {
             LOG.info("Stop signalled while there are no consumers yet, so no need to wait for consumers");
@@ -175,14 +252,14 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             LOG.debug("Shutting down JMS connection");
             connection.close();
         } catch (Exception e) {
-            LOG.warn("Exception caught closing JMS connection", e);
+            // ignore
         }
 
-        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(jmsConsumerExecutors);
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(jmsConsumerExecutors);
         jmsConsumerExecutors = null;
 
         if (shutdownTimeoutCheckerExecutorService) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(timeoutCheckerExecutorService);
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(timeoutCheckerExecutorService);
             timeoutCheckerExecutorService = null;
         }
     }
@@ -194,7 +271,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private final List<AtomicBoolean> triggers;
 
-        public CompletionIntervalTask(List<AtomicBoolean> triggers) {
+        CompletionIntervalTask(List<AtomicBoolean> triggers) {
             this.triggers = triggers;
         }
 
@@ -216,53 +293,83 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private final AtomicBoolean completionTimeoutTrigger = new AtomicBoolean();
         private final BatchConsumptionTask task = new BatchConsumptionTask(completionTimeoutTrigger);
+        private int keepAliveDelay;
 
         public AtomicBoolean getCompletionTimeoutTrigger() {
             return completionTimeoutTrigger;
+        }
+        public void setKeepAliveDelay(int i) {
+            keepAliveDelay = i;
         }
 
         @Override
         public void run() {
             try {
-                // a batch corresponds to a single session that will be committed or rolled back by a background thread
-                final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
-                try {
-                    // only batch consumption from queues is supported - it makes no sense to transactionally consume
-                    // from a topic as you don't car about message loss, users can just use a regular aggregator instead
-                    Queue queue = session.createQueue(destinationName);
-                    MessageConsumer consumer = session.createConsumer(queue);
+                // This loop is intended to keep the consumer up and running as long as it's supposed to be, but allow it to bail if signaled.
+                // I'm using a do/while loop because the first time through we want to attempt it regardless of any other conditions... we
+                // only want to try AGAIN if the keepAlive is set.
+                do {
+                    // a batch corresponds to a single session that will be committed or rolled back by a background thread
+                    final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
+                    try {
+                        // only batch consumption from queues is supported - it makes no sense to transactionally consume
+                        // from a topic as you don't car about message loss, users can just use a regular aggregator instead
+                        Queue queue = session.createQueue(destinationName);
+                        MessageConsumer consumer = session.createConsumer(queue);
 
-                    try {
-                        task.consumeBatchesOnLoop(session, consumer);
-                    } finally {
                         try {
-                            consumer.close();
-                        } catch (JMSException ex2) {
-                            // only include stacktrace in debug logging
-                            if (log.isDebugEnabled()) {
-                                log.debug("Exception caught closing consumer", ex2);
-                            }
-                            log.warn("Exception caught closing consumer: {}", ex2.getMessage());
+                            task.consumeBatchesOnLoop(session, consumer);
+                        } finally {
+                            closeJmsConsumer(consumer);
                         }
-                    }
-                } finally {
-                    try {
-                        session.close();
-                    } catch (JMSException ex1) {
-                        // only include stacktrace in debug logging
-                        if (log.isDebugEnabled()) {
-                            log.debug("Exception caught closing session: {}", ex1);
+                    } catch (javax.jms.IllegalStateException ex) {
+                        // from consumeBatchesOnLoop
+                        // if keepAliveDelay was not specified (defaults to -1) just rethrow to break the loop. This preserves original default behavior
+                        if (keepAliveDelay < 0) {
+                            throw ex;
                         }
-                        log.warn("Exception caught closing session: {}", ex1.getMessage());
+                        // this will log the exception and the parent loop will create a new session
+                        getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
+                        //sleep to avoid log spamming
+                        if (keepAliveDelay > 0) {
+                            Thread.sleep(keepAliveDelay);
+                        }
+                    } finally {
+                        closeJmsSession(session);
                     }
-                }
-            } catch (JMSException ex) {
-                // from loop
-                LOG.warn("Exception caught consuming from " + destinationName, ex);
+                }while (running.get() || isStarting());
+            } catch (Throwable ex) {
+                // from consumeBatchesOnLoop
+                // catch anything besides the IllegalStateException and exit the application
+                getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
             } finally {
                 // indicate that we have shut down
                 CountDownLatch consumersShutdownLatch = consumersShutdownLatchRef.get();
                 consumersShutdownLatch.countDown();
+            }
+        }
+
+        private void closeJmsConsumer(MessageConsumer consumer) {
+            try {
+                consumer.close();
+            } catch (JMSException ex2) {
+                // only include stacktrace in debug logging
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception caught closing consumer", ex2);
+                }
+                log.warn("Exception caught closing consumer: {}. This exception is ignored.", ex2.getMessage());
+            }
+        }
+
+        private void closeJmsSession(Session session) {
+            try {
+                session.close();
+            } catch (JMSException ex2) {
+                // only include stacktrace in debug logging
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception caught closing session", ex2);
+                }
+                log.warn("Exception caught closing session: {}. This exception is ignored.", ex2.getMessage());
             }
         }
 
@@ -276,7 +383,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             private long startTime;
             private Exchange aggregatedExchange;
 
-            public BatchConsumptionTask(AtomicBoolean timeoutInterval) {
+            BatchConsumptionTask(AtomicBoolean timeoutInterval) {
                 this.timeoutInterval = timeoutInterval;
             }
 
@@ -309,6 +416,8 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     long waitTime = (usingTimeout && (timeElapsed > 0))
                             ? getReceiveWaitTime(timeElapsed)
                             : pollDuration;
+
+
                     Message message = consumer.receive(waitTime);
 
                     if (running.get()) {
@@ -328,6 +437,26 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                             final Exchange exchange = getEndpoint().createExchange(message, session);
                             aggregatedExchange = aggregationStrategy.aggregate(aggregatedExchange, exchange);
                             aggregatedExchange.setProperty(Exchange.BATCH_SIZE, messageCount);
+
+                            // is the batch complete by predicate?
+                            if (completionPredicate != null) {
+                                try {
+                                    boolean complete;
+                                    if (eagerCheckCompletion) {
+                                        complete = completionPredicate.matches(exchange);
+                                    } else {
+                                        complete = completionPredicate.matches(aggregatedExchange);
+                                    }
+                                    if (complete) {
+                                        // trigger completion predicate
+                                        LOG.trace("Completion batch due predicate");
+                                        completionBatch(session);
+                                        reset();
+                                    }
+                                } catch (Exception e) {
+                                    LOG.warn("Error during evaluation of completion predicate " + e.getMessage() + ". This exception is ignored.", e);
+                                }
+                            }
                         }
 
                         if (usingTimeout && startTime > 0) {
@@ -424,7 +553,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             SessionCompletion sessionCompletion = new SessionCompletion(session);
             exchange.addOnCompletion(sessionCompletion);
             try {
-                processor.process(exchange);
+                getProcessor().process(exchange);
                 long total = MESSAGE_PROCESSED.addAndGet(batchSize);
                 LOG.debug("Completed processing[{}]:total={}", id, total);
             } catch (Exception e) {

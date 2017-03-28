@@ -56,12 +56,12 @@ public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
         ProducerTemplate template = camelContext.createProducerTemplate();
         List<String> params = new ArrayList<String>();
         params.add("Willem");
-        Object result = template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut , 
+        Object result = template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
                                                    params, CxfConstants.OPERATION_NAME, "greetMe");
         assertTrue("Result is a list instance ", result instanceof List);
         assertEquals("Get the wrong response", ((List<?>)result).get(0), "HelloWillem");
         try {
-            template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut , 
+            template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut,
                                             params, CxfConstants.OPERATION_NAME, "pingMe");
             fail("Expect exception here.");
         } catch (Exception ex) {

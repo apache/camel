@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -31,7 +32,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.component.cxf.NullFaultListener;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
@@ -39,6 +42,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
@@ -60,7 +64,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The cxfrs component is used for JAX-RS REST services using Apache CXF.
  */
-@UriEndpoint(scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", consumerClass = CxfRsConsumer.class, label = "rest", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.0.0", scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", consumerClass = CxfRsConsumer.class, label = "rest", lenientProperties = true)
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
@@ -83,6 +87,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private String modelRef;
     @UriParam(label = "consumer", defaultValue = "Default")
     private BindingStyle bindingStyle = BindingStyle.Default;
+    @UriParam(label = "consumer")
+    private String publishedEndpointUrl;
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam(label = "advanced")
@@ -102,6 +108,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean throwExceptionOnFailure = true;
     @UriParam(label = "producer,advanced", defaultValue = "10")
     private int maxClientCacheSize = 10;
+    @UriParam(label = "producer")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "producer")
+    private HostnameVerifier hostnameVerifier;
     @UriParam
     private boolean loggingFeatureEnabled;
     @UriParam
@@ -116,6 +126,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean performInvocation;
     @UriParam(label = "advanced")
     private boolean propagateContexts;
+    @UriParam(label = "advanced")
+    private CxfRsEndpointConfigurer cxfRsEndpointConfigurer;
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public CxfRsEndpoint() {
     }
@@ -182,7 +196,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (bindingStyle == BindingStyle.SimpleConsumer) {
             throw new IllegalArgumentException("The SimpleConsumer Binding Style cannot be used in a camel-cxfrs producer");
         }
-        return new CxfRsProducer(this);
+        final CxfRsProducer cxfRsProducer = new CxfRsProducer(this);
+        if (isSynchronous()) {
+            return new SynchronousDelegateProducer(cxfRsProducer);
+        } else {
+            return cxfRsProducer;
+        }
     }
 
     public boolean isSingleton() {
@@ -204,6 +223,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return skipFaultLogging;
     }
 
+    public CxfRsEndpointConfigurer getChainedCxfRsEndpointConfigurer() {
+        return ChainedCxfRsEndpointConfigurer
+                .create(getNullSafeCxfRsEndpointConfigurer(),
+                        SslCxfRsEndpointConfigurer.create(sslContextParameters, getCamelContext()))
+                .addChild(HostnameVerifierCxfRsEndpointConfigurer.create(hostnameVerifier));
+    }
     /**
      * This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches.
      */
@@ -237,6 +262,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
         setupCommonFactoryProperties(sfb);
         sfb.setStart(false);
+        getNullSafeCxfRsEndpointConfigurer().configure(sfb);
+    }
+
+    private CxfRsEndpointConfigurer getNullSafeCxfRsEndpointConfigurer() {
+        if (cxfRsEndpointConfigurer == null) {
+            return new ChainedCxfRsEndpointConfigurer.NullCxfRsEndpointConfigurer();
+        }
+        return cxfRsEndpointConfigurer;
     }
 
     private void processResourceModel(JAXRSServerFactoryBean sfb) {
@@ -283,6 +316,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
         setupCommonFactoryProperties(cfb);
         cfb.setThreadSafe(true);
+        getNullSafeCxfRsEndpointConfigurer().configure(cfb);
     }
 
     protected void setupCommonFactoryProperties(AbstractJAXRSFactoryBean factory) {
@@ -293,6 +327,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         // setup the features
         if (!getFeatures().isEmpty()) {
             factory.getFeatures().addAll(getFeatures());
+        }
+
+        if (publishedEndpointUrl != null) {
+            factory.setPublishedEndpointUrl(publishedEndpointUrl);
         }
 
         // we need to avoid flushing the setting from spring or blueprint
@@ -416,6 +454,17 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     public String getAddress() {
         return resolvePropertyPlaceholders(address);
+    }
+
+    public String getPublishedEndpointUrl() {
+        return publishedEndpointUrl;
+    }
+
+    /**
+     * This option can override the endpointUrl that published from the WADL which can be accessed with resource address url plus ?_wadl
+     */
+    public void setPublishedEndpointUrl(String publishedEndpointUrl) {
+        this.publishedEndpointUrl = publishedEndpointUrl;
     }
 
     /**
@@ -724,4 +773,49 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private static class InterceptorHolder extends AbstractBasicInterceptorProvider {
     }
 
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * The Camel SSL setting reference. Use the # notation to reference the SSL Context.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public HostnameVerifier getHostnameVerifier() {
+        return hostnameVerifier;
+    }
+
+    /**
+     * The hostname verifier to be used. Use the # notation to reference a HostnameVerifier
+     * from the registry.
+     */
+    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+    }
+
+    public CxfRsEndpointConfigurer getCxfRsEndpointConfigurer() {
+        return cxfRsEndpointConfigurer;
+    }
+
+    /**
+     * This option could apply the implementation of org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer which supports to configure the CXF endpoint
+     * in  programmatic way. User can configure the CXF server and client by implementing configure{Server/Client} method of CxfEndpointConfigurer.
+     */
+    public void setCxfRsEndpointConfigurer(CxfRsEndpointConfigurer configurer) {
+        this.cxfRsEndpointConfigurer = configurer;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
 }

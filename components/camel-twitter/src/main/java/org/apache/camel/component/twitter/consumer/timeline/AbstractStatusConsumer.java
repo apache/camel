@@ -30,7 +30,7 @@ import twitter4j.TwitterException;
  */
 abstract class AbstractStatusConsumer extends TwitterConsumer {
 
-    public AbstractStatusConsumer(TwitterEndpoint endpoint) {
+    AbstractStatusConsumer(TwitterEndpoint endpoint) {
         super(endpoint);
     }
 

@@ -15,215 +15,239 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>tests</artifactId>
-        <version>2.17-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>tests</artifactId>
+    <version>2.19.0-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>camel-itest-karaf</artifactId>
-    <name>Camel :: Integration Tests :: Karaf</name>
-    <description>Performs Karaf compliance integration tests</description>
+  <artifactId>camel-itest-karaf</artifactId>
+  <name>Camel :: Integration Tests :: Karaf</name>
+  <description>Performs Karaf compliance integration tests</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-junit4</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-karaf</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-link-mvn</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.karaf</groupId>
-            <artifactId>apache-karaf</artifactId>
-            <version>${karaf-version}</version>
-            <type>tar.gz</type>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.karaf.shell</groupId>
-                    <artifactId>org.apache.karaf.shell.dev</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>osgi</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.karaf</groupId>
-                    <artifactId>org.apache.karaf.client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>org.apache.felix.framework</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.configadmin</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
-            <version>${javax-inject-bundle-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.junit</artifactId>
-            <version>${junit-bundle-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel.karaf</groupId>
-            <artifactId>apache-camel</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
+  <properties>
+    <karf-test-version>${karaf4-version}</karf-test-version>
+  </properties>
 
-        <!-- test and logging -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-karaf</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-junit4</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-container-karaf</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-link-mvn</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf</groupId>
+      <artifactId>apache-karaf</artifactId>
+      <version>${karf-test-version}</version>
+      <type>tar.gz</type>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.karaf.shell</groupId>
+          <artifactId>org.apache.karaf.shell.dev</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse</groupId>
+          <artifactId>osgi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.karaf</groupId>
+          <artifactId>org.apache.karaf.client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>org.apache.felix.framework</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.configadmin</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+      <version>${javax-inject-bundle-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.junit</artifactId>
+      <version>${junit-bundle-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-blueprint</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.karaf</groupId>
+      <artifactId>apache-camel</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <!-- Eclipse m2e Lifecycle Management -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>${lifecycle-mapping-version}</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.servicemix.tooling</groupId>
-                                        <artifactId>depends-maven-plugin</artifactId>
-                                        <versionRange>${depends-maven-plugin-version}</versionRange>
-                                        <goals>
-                                            <goal>generate-depends-file</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+    <!-- test and logging -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${lifecycle-mapping-version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.servicemix.tooling</groupId>
+                    <artifactId>depends-maven-plugin</artifactId>
+                    <versionRange>${depends-maven-plugin-version}</versionRange>
+                    <goals>
+                      <goal>generate-depends-file</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <!-- generate dependencies versions -->
+      <plugin>
+        <groupId>org.apache.servicemix.tooling</groupId>
+        <artifactId>depends-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-depends-file</id>
+            <goals>
+              <goal>generate-depends-file</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <!-- version 2.19.1 causes pax-exam to fail when testing the 2nd/3rd container when testing all  -->
+        <!-- so we use an older version of surefire which works -->
+        <version>2.16</version>
+        <configuration>
+          <!-- do not re-run these tests -->
+          <!-- not supported by older version of surefire -->
+          <!--<rerunFailingTestsCount>0</rerunFailingTestsCount>-->
+          <systemPropertyVariables>
+            <karafVersion>${karaf-version}</karafVersion>
+            <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>ci-build-profile</id>
+      <activation>
+        <property>
+          <name>maven.repo.local</name>
+        </property>
+      </activation>
+      <build>
         <plugins>
-            <!-- generate dependencies versions -->
-            <plugin>
-                <groupId>org.apache.servicemix.tooling</groupId>
-                <artifactId>depends-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-depends-file</id>
-                        <goals>
-                            <goal>generate-depends-file</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkCount>1</forkCount>
-		    <reuseForks>false</reuseForks>
-                    <systemPropertyVariables>
-                        <karafVersion>${karaf-version}</karafVersion>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <!-- version 2.19.1 causes pax-exam to fail when testing the 2nd/3rd container when testing all  -->
+            <!-- so we use an older version of surefire which works -->
+            <version>2.16</version>
+            <configuration>
+              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+              <!--
+                  when the local repo location has been specified, we need to pass
+                  on this information to PAX mvn url
+              -->
+              <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
+              <systemPropertyVariables>
+                <karafVersion>${karaf-version}</karafVersion>
+                <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
         </plugins>
-    </build>
+      </build>
+    </profile>
 
-    <profiles>
-        <profile>
-            <id>ci-build-profile</id>
-            <activation>
-                <property>
-                    <name>maven.repo.local</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                            <!--
-                                when the local repo location has been specified, we need to pass
-                                on this information to PAX mvn url
-                            -->
-                            <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
-                            <systemPropertyVariables>
-                                <karafVersion>${karaf-version}</karafVersion>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-        <id>karaf3</id>
-            <properties>
-                <karaf-version>${karaf3-version}</karaf-version>
-            </properties>
-        </profile>
-    </profiles>
+    <!-- test with older karaf 3.x -->
+    <profile>
+      <id>karaf3</id>
+      <properties>
+        <karf-test-version>${karaf3-version}</karf-test-version>
+      </properties>
+    </profile>
+
+  </profiles>
 
 </project>

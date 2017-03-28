@@ -32,7 +32,7 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  * The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
  */
-@UriEndpoint(scheme = "guava-eventbus", title = "Guava EventBus", syntax = "guava-eventbus:eventBusRef", consumerClass = GuavaEventBusConsumer.class, label = "eventbus")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "guava-eventbus", title = "Guava EventBus", syntax = "guava-eventbus:eventBusRef", consumerClass = GuavaEventBusConsumer.class, label = "eventbus")
 public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private EventBus eventBus;

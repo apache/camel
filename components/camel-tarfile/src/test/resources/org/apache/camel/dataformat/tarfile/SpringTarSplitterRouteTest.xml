@@ -34,6 +34,7 @@
         <!-- refer to our custom expression, using ref tag -->
         <ref>tarSplitter</ref>
         <convertBodyTo type="java.lang.String" charset="UTF-8"/>
+        <to uri="log:line"/>
         <to uri="mock:processTarEntry"/>
       </split>
     </route>

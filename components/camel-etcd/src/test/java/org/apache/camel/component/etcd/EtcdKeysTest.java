@@ -27,11 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Etcd must be started manually")
-public class EtcdKeysTest extends EtcdTest {
+public class EtcdKeysTest extends EtcdTestSupport {
 
     @Test(expected = EtcdException.class)
     public void testKeys() throws Exception {

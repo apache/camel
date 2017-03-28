@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
  */
-@UriEndpoint(scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url", producerOnly = true, label = "sap")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url", producerOnly = true, label = "sap")
 public class NetWeaverEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -40,9 +40,9 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
     private boolean jsonAsMap = true;
     @UriParam(defaultValue = "true")
     private boolean flatternMap = true;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = "true", secret = true)
     private String username;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = "true", secret = true)
     private String password;
 
     public NetWeaverEndpoint(String endpointUri, Component component) {

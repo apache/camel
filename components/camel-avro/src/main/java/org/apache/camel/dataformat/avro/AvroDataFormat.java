@@ -29,6 +29,7 @@ import org.apache.avro.io.Decoder;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.specific.SpecificData;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.camel.CamelContext;
@@ -134,7 +135,15 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         ObjectHelper.notNull(actualSchema, "schema", this);
 
-        DatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(actualSchema);
+        ClassLoader classLoader = null;
+        Class<?> clazz = camelContext.getClassResolver().resolveClass(actualSchema.getFullName());
+
+        if (clazz != null) {
+            classLoader = clazz.getClassLoader();
+        }
+        SpecificData specificData = new SpecificDataNoCache(classLoader);
+        DatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(null, null, specificData);
+        reader.setSchema(actualSchema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(inputStream, null);
         Object result = reader.read(null, decoder);
         return result;

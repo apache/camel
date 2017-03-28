@@ -22,121 +22,59 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CollectionStringBuffer;
 
 /**
- * The JAXB type class for the configuration of jmxAgent
+ * JMX configuration.
  */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "jmxAgent")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelJMXAgentDefinition extends IdentifiedType {
 
-    /**
-     * Disable JMI (default false)
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String disabled;
-
-    /**
-     * Only register processor if a custom id was defined for it.
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String onlyRegisterProcessorWithCustomId;
-
-    /**
-     * RMI connector registry port (default 1099)
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1099")
     private String registryPort;
-
-    /**
-     * RMI connector server port (default -1 not used)
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "-1")
     private String connectorPort;
-
-    /**
-     * MBean server default domain name (default org.apache.camel)
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "org.apache.camel")
     private String mbeanServerDefaultDomain;
-
-    /**
-     * MBean object domain name (default org.apache.camel)
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "org.apache.camel")
     private String mbeanObjectDomainName;
-
-    /**
-     * JMX Service URL path (default /jmxrmi)
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "/jmxrmi")
     private String serviceUrlPath;
-
-    /**
-     * A flag that indicates whether the agent should be created
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String createConnector;
-
-    /**
-     * A flag that indicates whether the platform mbean server should be used
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private String usePlatformMBeanServer;
-
-    /**
-     * A flag that indicates whether to register mbeans always
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String registerAlways;
-
-    /**
-     * A flag that indicates whether to register mbeans when starting new routes
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String registerNewRoutes;
-
-    /**
-     * Level of granularity for performance statistics enabled
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "Default")
     private String statisticsLevel;
-
-    /**
-     * A flag that indicates whether Load statistics is enabled
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String loadStatisticsEnabled;
-
-    /**
-     * A flag that indicates whether endpoint runtime statistics is enabled
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private String endpointRuntimeStatisticsEnabled;
-
-    /**
-     * A flag that indicates whether to include hostname in JMX MBean names.
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String includeHostName;
-
-    /**
-     * A flag that indicates whether to use hostname or IP Address in the service url.
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String useHostIPAddress;
-
-    /**
-     * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
-     */
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private String mask;
 
     public String getDisabled() {
         return disabled;
     }
 
+    /**
+     * Disable JMI (default false)
+     */
     public void setDisabled(String disabled) {
         this.disabled = disabled;
     }
@@ -145,6 +83,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return onlyRegisterProcessorWithCustomId;
     }
 
+    /**
+     * Only register processor if a custom id was defined for it.
+     */
     public void setOnlyRegisterProcessorWithCustomId(String onlyRegisterProcessorWithCustomId) {
         this.onlyRegisterProcessorWithCustomId = onlyRegisterProcessorWithCustomId;
     }
@@ -153,6 +94,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return registryPort;
     }
 
+    /**
+     * RMI connector registry port (default 1099)
+     */
     public void setRegistryPort(String registryPort) {
         this.registryPort = registryPort;
     }
@@ -161,6 +105,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return connectorPort;
     }
 
+    /**
+     * RMI connector server port (default -1 not used)
+     */
     public void setConnectorPort(String connectorPort) {
         this.connectorPort = connectorPort;
     }
@@ -169,6 +116,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return mbeanServerDefaultDomain;
     }
 
+    /**
+     * MBean server default domain name (default org.apache.camel)
+     */
     public void setMbeanServerDefaultDomain(String mbeanServerDefaultDomain) {
         this.mbeanServerDefaultDomain = mbeanServerDefaultDomain;
     }
@@ -177,6 +127,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return mbeanObjectDomainName;
     }
 
+    /**
+     * MBean object domain name (default org.apache.camel)
+     */
     public void setMbeanObjectDomainName(String mbeanObjectDomainName) {
         this.mbeanObjectDomainName = mbeanObjectDomainName;
     }
@@ -185,6 +138,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return serviceUrlPath;
     }
 
+    /**
+     * JMX Service URL path (default /jmxrmi)
+     */
     public void setServiceUrlPath(String serviceUrlPath) {
         this.serviceUrlPath = serviceUrlPath;
     }
@@ -193,6 +149,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return createConnector;
     }
 
+    /**
+     * A flag that indicates whether the agent should be created
+     */
     public void setCreateConnector(String createConnector) {
         this.createConnector = createConnector;
     }
@@ -201,6 +160,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return usePlatformMBeanServer;
     }
 
+    /**
+     * A flag that indicates whether the platform mbean server should be used
+     */
     public void setUsePlatformMBeanServer(String usePlatformMBeanServer) {
         this.usePlatformMBeanServer = usePlatformMBeanServer;
     }
@@ -209,6 +171,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return statisticsLevel;
     }
 
+    /**
+     * Level of granularity for performance statistics enabled
+     */
     public void setStatisticsLevel(String statisticsLevel) {
         this.statisticsLevel = statisticsLevel;
     }
@@ -217,6 +182,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return registerAlways;
     }
 
+    /**
+     * A flag that indicates whether to register mbeans always
+     */
     public void setRegisterAlways(String registerAlways) {
         this.registerAlways = registerAlways;
     }
@@ -225,6 +193,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return registerNewRoutes;
     }
 
+    /**
+     * A flag that indicates whether to register mbeans when starting new routes
+     */
     public void setRegisterNewRoutes(String registerNewRoutes) {
         this.registerNewRoutes = registerNewRoutes;
     }
@@ -233,6 +204,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return loadStatisticsEnabled;
     }
 
+    /**
+     * A flag that indicates whether Load statistics is enabled
+     */
     public void setLoadStatisticsEnabled(String loadStatisticsEnabled) {
         this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
@@ -241,6 +215,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return endpointRuntimeStatisticsEnabled;
     }
 
+    /**
+     * A flag that indicates whether endpoint runtime statistics is enabled
+     */
     public void setEndpointRuntimeStatisticsEnabled(String endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
     }
@@ -249,6 +226,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return includeHostName;
     }
 
+    /**
+     * A flag that indicates whether to include hostname in JMX MBean names.
+     */
     public void setIncludeHostName(String includeHostName) {
         this.includeHostName = includeHostName;
     }
@@ -257,6 +237,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return mask;
     }
 
+    /**
+     * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
+     */
     public void setMask(String mask) {
         this.mask = mask;
     }
@@ -265,6 +248,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         return useHostIPAddress;
     }
 
+    /**
+     * A flag that indicates whether to use hostname or IP Address in the service url.
+     */
     public void setUseHostIPAddress(String useHostIPAddress) {
         this.useHostIPAddress = useHostIPAddress;
     }

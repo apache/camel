@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -38,10 +42,9 @@ import org.restlet.data.Method;
 /**
  * Component for consuming and producing Restful resources using Restlet.
  */
-@UriEndpoint(scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern",
+@UriEndpoint(firstVersion = "2.0.0", scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern",
         consumerClass = RestletConsumer.class, label = "rest", lenientProperties = true)
-public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
-
+public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";
     private static final String DEFAULT_HOST = "localhost";
@@ -66,18 +69,24 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private Method[] restletMethods;
     @UriParam(label = "consumer")
     private List<String> restletUriPatterns;
-    @UriParam
+    @UriParam(label = "security")
     private Map<String, String> restletRealm;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private RestletBinding restletBinding;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean disableStreamCache;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "producer,advanced")
+    private boolean streamRepresentation;
+    @UriParam(label = "producer,advanced")
+    private boolean autoCloseStream;
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
@@ -306,6 +315,48 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         this.sslContextParameters = scp;
     }
 
+    public boolean isStreamRepresentation() {
+        return streamRepresentation;
+    }
+
+    /**
+     * Whether to support stream representation as response from calling a REST service using the restlet producer.
+     * If the response is streaming then this option can be enabled to use an {@link java.io.InputStream} as the
+     * message body on the Camel {@link Message} body. If using this option you may want to enable the
+     * autoCloseStream option as well to ensure the input stream is closed when the Camel {@link Exchange}
+     * is done being routed. However if you need to read the stream outside a Camel route, you may need
+     * to not auto close the stream.
+     */
+    public void setStreamRepresentation(boolean streamRepresentation) {
+        this.streamRepresentation = streamRepresentation;
+    }
+
+    public boolean isAutoCloseStream() {
+        return autoCloseStream;
+    }
+
+    /**
+     * Whether to auto close the stream representation as response from calling a REST service using the restlet producer.
+     * If the response is streaming and the option streamRepresentation is enabled then you may want to auto close
+     * the {@link InputStream} from the streaming response to ensure the input stream is closed when the Camel {@link Exchange}
+     * is done being routed. However if you need to read the stream outside a Camel route, you may need
+     * to not auto close the stream.
+     */
+    public void setAutoCloseStream(boolean autoCloseStream) {
+        this.autoCloseStream = autoCloseStream;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
+
     // Update the endpointUri with the restlet method information
     protected void updateEndpointUri() {
         String endpointUri = getEndpointUri();
@@ -335,6 +386,10 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         }
         if (restletBinding instanceof HeaderFilterStrategyAware) {
             ((HeaderFilterStrategyAware) restletBinding).setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+        if (restletBinding instanceof DefaultRestletBinding) {
+            ((DefaultRestletBinding) restletBinding).setStreamRepresentation(isStreamRepresentation());
+            ((DefaultRestletBinding) restletBinding).setAutoCloseStream(isAutoCloseStream());
         }
     }
 

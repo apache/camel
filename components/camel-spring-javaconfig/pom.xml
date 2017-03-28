@@ -21,15 +21,20 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-spring-javaconfig</artifactId>
   <name>Camel :: Spring JavaConfig</name>
-  <description>Camel Spring JavaConfig support</description>
-  <packaging>bundle</packaging>
+  <description> Using Camel with Spring Java Configuration</description>
+  <packaging>jar</packaging>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.0.0</firstVersion>
+    <label>spring</label>
+    <title>Spring Java Configuration</title>
+
     <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
   </properties>
 
@@ -69,10 +74,20 @@
       <groupId>javax.annotation</groupId>
       <artifactId>jsr250-api</artifactId>
       <scope>test</scope>
+    </dependency>  
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

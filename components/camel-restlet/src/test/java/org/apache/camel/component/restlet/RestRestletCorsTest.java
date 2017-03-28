@@ -32,6 +32,22 @@ public class RestRestletCorsTest extends RestletTestSupport {
     Splitter headerSplitter = Splitter.on(",").trimResults();
 
     @Test
+    public void testCors() throws Exception {
+        Exchange out = template.request("http://localhost:" + portNum + "/users/123/basic", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
+            }
+        });
+
+        assertEquals("https://localhost:443", out.getOut().getHeader("Access-Control-Allow-Origin"));
+        assertEquals("GET, POST, PUT, DELETE, OPTIONS", out.getOut().getHeader("Access-Control-Allow-Methods"));
+        assertEquals("Origin, Accept, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
+                out.getOut().getHeader("Access-Control-Allow-Headers"));
+        assertEquals("1234", out.getOut().getHeader("Access-Control-Max-Age"));
+    }
+
+    @Test
     public void testRestletProducerGet() throws Exception {
         Exchange exchange = template.request("http://localhost:" + portNum + "/users/123/basic", null);
 

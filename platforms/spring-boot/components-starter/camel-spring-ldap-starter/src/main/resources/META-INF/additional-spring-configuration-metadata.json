@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.spring-ldap.enabled",
+      "description": "Enable spring-ldap component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

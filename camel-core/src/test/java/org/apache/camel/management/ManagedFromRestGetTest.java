@@ -62,10 +62,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 
-        assertTrue(xml.contains("<param name=\"header_letter\" type=\"query\" description=\"header param description2\""
-                + " defaultValue=\"b\" required=\"false\" collectionFormat=\"multi\" dataType=\"string\" access=\"acc2\">"));
-        assertTrue(xml.contains("<param name=\"header_count\" type=\"header\" description=\"header param description1\" "
-                + "defaultValue=\"1\" required=\"true\" dataType=\"integer\" access=\"acc1\">"));
+        assertTrue(xml.contains("<param collectionFormat=\"multi\" dataType=\"string\" defaultValue=\"b\" "
+                + "description=\"header param description2\" name=\"header_letter\" required=\"false\" type=\"query\">"));
+        assertTrue(xml.contains("<param dataType=\"integer\" defaultValue=\"1\" "
+                + "description=\"header param description1\" name=\"header_count\" required=\"true\" type=\"header\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
@@ -92,10 +92,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
                 rest("/say/bye")
                     .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1", "2", "3", "4"))
-                            .defaultValue("1").name("header_count").required(true).access("acc1")
+                            .defaultValue("1").name("header_count").required(true)
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
-                            .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false).access("acc2")
+                            .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .to("direct:bye")

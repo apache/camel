@@ -22,12 +22,12 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>karaf</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.camel.karaf</groupId>
   <artifactId>camel-karaf-commands</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Platforms :: Apache Karaf :: Commands</name>
 
   <properties>
@@ -49,15 +49,16 @@
     <!-- karaf -->
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
+      <artifactId>org.apache.karaf.shell.core</artifactId>
+      <version>${karaf4-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.karaf</groupId>
-      <artifactId>org.apache.karaf.util</artifactId>
-      <version>${karaf-version}</version>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
-    
+
     <!-- Test -->
     <dependency>
       <groupId>junit</groupId>
@@ -76,17 +77,16 @@
         <configuration>
           <instructions>
             <Import-Package>
-              org.apache.felix.service.command;mandatory:=status;status=provisional;version="[0.6,1)",
-              org.apache.felix.gogo.commands;version="[0.6,1)",
-              org.apache.karaf.shell.console;version="[2.2,4)",
+              !org.apache.felix.utils.properties,
+              org.apache.karaf.shell.api.action;version="[4,5)",
+              org.apache.karaf.shell.support.completers;version="[4,5)",
               org.slf4j.*;version="[1.6,2)",
-              jline.*;version="[2.1,3)",
               *
             </Import-Package>
             <Private-Package>
-              org.apache.camel.karaf.commands.internal,
-              org.apache.karaf.util
+              org.apache.camel.karaf.commands.internal
             </Private-Package>
+            <Karaf-Commands>*</Karaf-Commands>
           </instructions>
         </configuration>
       </plugin>

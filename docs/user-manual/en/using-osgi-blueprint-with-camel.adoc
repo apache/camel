@@ -1,0 +1,63 @@
+[[UsingOSGiblueprintwithCamel-UsingOSGiblueprintwithCamel]]
+Using OSGi blueprint with Camel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.4*
+
+A custom XML namespace for Blueprint has been created to let you
+leverage the nice XML dialect. Given Blueprint custom namespaces are not
+standardized yet, this namespace can only be used on the
+http://incubator.apache.org/aries/[Apache Aries] Blueprint
+implementation, which is the one used by http://karaf.apache.org[Apache
+Karaf].
+
+[[UsingOSGiblueprintwithCamel-Overview]]
+Overview
+^^^^^^^^
+
+The XML schema is mostly the same as the one for Spring, so all the xml
+snippets throughout the documentation referring to Spring XML also apply
+to Blueprint routes.
+
+Here is a very simple route definition using blueprint:
+
+[source,xml]
+-------------------------------------------------------------------
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <route>
+            <from uri="timer:test" />
+            <to uri="log:test" />
+        </route>
+    </camelContext>
+
+</blueprint>
+-------------------------------------------------------------------
+
+There are a few limitations at this point about the supported xml
+elements (compared to the Spring xml syntax):
+
+* beanPostProcessor are specific to Spring and aren't allowed
+
+However, using blueprint when you deploy your applications in an OSGi
+enviroment has several advantages:
+
+* when upgrading to a new camel version, you don't have to change the
+namespace, as the correct version will be selected based on the camel
+packages that are imported by your bundle
+* no startup ordering issue with respect to the custom namespaces and
+your bundles
+* you can use Blueprint property placeholders, see more at
+link:using-propertyplaceholder.html[Using PropertyPlaceholder]
+
+[[UsingOSGiblueprintwithCamel-Usingcamel-blueprint]]
+Using camel-blueprint
+^^^^^^^^^^^^^^^^^^^^^
+
+To leverage camel-blueprint in OSGi, you only need the Aries Blueprint
+bundle and the camel-blueprint bundle, in addition to camel-core and its
+dependencies.
+
+If you use Karaf, you can use the feature named `camel-blueprint` which
+will install all the required bundles.

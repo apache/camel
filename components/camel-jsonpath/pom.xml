@@ -22,19 +22,25 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-jsonpath</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: JSon Path</name>
   <description>Camel JSON Path Language</description>
 
   <properties>
-    <!-- need to import spi as felix-bundle-plugin has a bug and do not include this package despite we use in the source code -->
-    <camel.osgi.import.before.defaults>org.apache.camel.spi;${camel.osgi.import.strict.version}</camel.osgi.import.before.defaults>
-    <camel.osgi.export.pkg>org.apache.camel.jsonpath.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>
+      org.apache.camel.jsonpath,
+      !org.apache.camel.jsonpath.jackson
+    </camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=jsonpath</camel.osgi.export.service>
+    <camel.osgi.import>
+      com.fasterxml.jackson.databind;resolution:=optional,
+      com.fasterxml.jackson.module.jaxb;resolution:=optional,
+      *
+    </camel.osgi.import>
   </properties>
 
   <dependencies>
@@ -52,16 +58,36 @@
       <artifactId>json-smart</artifactId>
       <version>${json-smart-version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-jaxb-annotations</artifactId>
+      <optional>true</optional>
+    </dependency>
 
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
+    </dependency>   
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
 

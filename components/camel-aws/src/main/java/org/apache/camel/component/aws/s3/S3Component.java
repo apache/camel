@@ -39,13 +39,17 @@ public class S3Component extends UriEndpointComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
+        if (remaining.startsWith("arn:")) {
+            remaining = remaining.substring(remaining.lastIndexOf(":") + 1, remaining.length());
+        }
         configuration.setBucketName(remaining);
 
-        if (configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonS3Client or accessKey and secretKey must be specified");
+        if (configuration.getAmazonS3Client() == null) {
+            throw new IllegalArgumentException("AmazonS3Client must be specified");
         }
 
         S3Endpoint endpoint = new S3Endpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 }

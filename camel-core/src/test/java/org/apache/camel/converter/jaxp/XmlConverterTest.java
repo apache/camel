@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.ByteBuffer;
+import java.util.Properties;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
@@ -77,6 +78,33 @@ public class XmlConverterTest extends ContextTestSupport {
         Source source = conv.toBytesSource("<foo>bar</foo>".getBytes());
         String out = conv.toString(source, null);
         assertEquals("<foo>bar</foo>", out);
+    }
+
+    public void testToStringWithDocument() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        Document document = conv.createDocument();
+        Element foo = document.createElement("foo");
+        foo.setTextContent("bar");
+        document.appendChild(foo);
+
+        String out = conv.toStringFromDocument(document, null);
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><foo>bar</foo>", out);
+    }
+
+    public void testToStringWithDocumentSourceOutputProperties() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        Document document = conv.createDocument();
+        Element foo = document.createElement("foo");
+        foo.setTextContent("bar");
+        document.appendChild(foo);
+
+        Properties properties = new Properties();
+        properties.put(OutputKeys.ENCODING, "ISO-8859-1");
+
+        String out = conv.toStringFromDocument(document, properties);
+        assertEquals("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?><foo>bar</foo>", out);
     }
 
     public void testToSource() throws Exception {
@@ -492,12 +520,12 @@ public class XmlConverterTest extends ContextTestSupport {
         CamelContext context = new DefaultCamelContext();        
         Exchange exchange =  new DefaultExchange(context);
         // shows how to set the OutputOptions from camelContext
-        context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
-        context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.STANDALONE, "no");
+        context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
+        context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.STANDALONE, "no");
         XmlConverter conv = new XmlConverter();
 
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", exchange);
-        DOMSource out = conv.toDOMSource(source);
+        DOMSource out = conv.toDOMSource(source, exchange);
         assertNotSame(source, out);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><foo>bar</foo>", conv.toString(out, exchange));

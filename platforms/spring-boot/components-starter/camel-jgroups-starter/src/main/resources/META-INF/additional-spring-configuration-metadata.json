@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jgroups.enabled",
+      "description": "Enable jgroups component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

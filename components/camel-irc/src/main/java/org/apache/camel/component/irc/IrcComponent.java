@@ -78,7 +78,7 @@ public class IrcComponent extends UriEndpointComponent {
             if (configuration.getSslContextParameters() != null) {
                 conn = new CamelSSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                                                  configuration.getNickname(), configuration.getUsername(), configuration.getRealname(),
-                                                 configuration.getSslContextParameters());
+                                                 configuration.getSslContextParameters(), getCamelContext());
             } else {
                 SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                         configuration.getNickname(), configuration.getUsername(), configuration.getRealname());

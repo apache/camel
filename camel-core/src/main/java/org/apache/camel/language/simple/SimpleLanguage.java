@@ -46,11 +46,15 @@ import org.apache.camel.util.PredicateToExpressionAdapter;
  * <li>sysenv.foo to access the system environment called 'foo'</li>
  * <li>exception.messsage to access the exception message</li>
  * <li>threadName to access the current thread name</li>
- * <li>date:&lt;command&gt;:&lt;pattern&gt; for date formatting using the {@link java.text.SimpleDateFormat} patterns.
+ * <li>date:&lt;command&gt; evaluates to a Date object
  *     Supported commands are: <tt>now</tt> for current timestamp,
  *     <tt>in.header.xxx</tt> or <tt>header.xxx</tt> to use the Date object in the in header.
  *     <tt>out.header.xxx</tt> to use the Date object in the out header.
+ *     <tt>file</tt> for the last modified timestamp of the file (available with a File consumer).
+ *     Command accepts offsets such as: <tt>now-24h</tt> or <tt>in.header.xxx+1h</tt> or even <tt>now+1h30m-100</tt>.
  * </li>
+ * <li>date:&lt;command&gt;:&lt;pattern&gt; for date formatting using {@link java.text.SimpleDateFormat} patterns</li>
+ * <li>date-with-timezone:&lt;command&gt;:&lt;timezone&gt;:&lt;pattern&gt; for date formatting using {@link java.text.SimpleDateFormat} timezones and patterns</li>
  * <li>bean:&lt;bean expression&gt; to invoke a bean using the
  * {@link org.apache.camel.language.bean.BeanLanguage BeanLanguage}</li>
  * <li>properties:&lt;[locations]&gt;:&lt;key&gt; for using property placeholders using the
@@ -77,10 +81,6 @@ import org.apache.camel.util.PredicateToExpressionAdapter;
  *   <li><tt>file:length</tt> to access the file length as a Long type</li>
  *   <li><tt>file:size</tt> to access the file length as a Long type</li>
  *   <li><tt>file:modified</tt> to access the file last modified as a Date type</li>
- *   <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
- *     Additional Supported commands are: <tt>file</tt> for the last modified timestamp of the file.
- *     All the commands from {@link SimpleLanguage} is also available.
- *   </li>
  * </ul>
  * The <b>relative</b> file is the filename with the starting directory clipped, as opposed to <b>path</b> that will
  * return the full path including the starting directory.
@@ -180,6 +180,16 @@ public class SimpleLanguage extends LanguageSupport {
      */
     public static Predicate predicate(String predicate) {
         return SIMPLE.createPredicate(predicate);
+    }
+
+    /**
+     * Does the expression include a simple function.
+     *
+     * @param expression the expression
+     * @return <tt>true</tt> if one or more simple function is included in the expression
+     */
+    public static boolean hasSimpleFunction(String expression) {
+        return SimpleTokenizer.hasFunctionStartToken(expression);
     }
 
     /**

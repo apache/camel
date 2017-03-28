@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.RatioGauge;
+import com.codahale.metrics.RatioGauge.Ratio;
 import com.codahale.metrics.Slf4jReporter;
 import com.codahale.metrics.annotation.Metric;
 import io.astefanutti.metrics.cdi.MetricsConfiguration;
@@ -92,15 +92,8 @@ class Application {
     @Produces
     @Metric(name = "success-ratio")
     // Register a custom gauge that's the ratio of the 'success' meter on the 'generated' meter
-    // TODO: use a lambda expression and parameter names when Java 8 is a pre-requisite
-    Gauge<Double> successRatio(@Metric(name = "success") final Meter success,
-                               @Metric(name = "generated") final Meter generated) {
-        return new RatioGauge() {
-            @Override
-            protected Ratio getRatio() {
-                return Ratio.of(success.getOneMinuteRate(), generated.getOneMinuteRate());
-            }
-        };
+    Gauge<Double> successRatio(Meter success, Meter generated) {
+        return () -> Ratio.of(success.getOneMinuteRate(), generated.getOneMinuteRate()).getValue();
     }
 
     @Produces

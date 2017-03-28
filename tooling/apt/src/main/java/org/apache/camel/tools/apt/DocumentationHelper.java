@@ -34,6 +34,7 @@ import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.parseJsonSchema
  * Helper to find documentation for inherited options when a component extends another.
  */
 public final class DocumentationHelper {
+
     private DocumentationHelper() {
         //utility class, never constructed
     }
@@ -109,6 +110,8 @@ public final class DocumentationHelper {
             return new File("../camel-ftp/target/classes/org/apache/camel/component/file/remote/ftp.json");
         } else if ("jms".equals(extendsScheme)) {
             return new File("../camel-jms/target/classes/org/apache/camel/component/jms/jms.json");
+        } else if ("sjms".equals(extendsScheme)) {
+            return new File("../camel-sjms/target/classes/org/apache/camel/component/sjms/sjms.json");
         } else if ("http".equals(extendsScheme)) {
             return new File("../camel-http/target/classes/org/apache/camel/component/http/http.json");
         } else if ("https".equals(extendsScheme)) {

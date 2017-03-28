@@ -28,7 +28,7 @@ import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErro
  * <p/>
  * This strategy is <b>not</b> intended for end users to use.
  */
-public final class ShareUnitOfWorkAggregationStrategy implements AggregationStrategy {
+public final class ShareUnitOfWorkAggregationStrategy implements AggregationStrategy, DelegateAggregationStrategy {
 
     private final AggregationStrategy strategy;
 
@@ -36,15 +36,19 @@ public final class ShareUnitOfWorkAggregationStrategy implements AggregationStra
         this.strategy = strategy;
     }
 
+    public AggregationStrategy getDelegate() {
+        return strategy;
+    }
+
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        // aggreagate using the actual strategy first
+        // aggregate using the actual strategy first
         Exchange answer = strategy.aggregate(oldExchange, newExchange);
         // ensure any errors is propagated from the new exchange to the answer
         propagateFailure(answer, newExchange);
 
         return answer;
     }
-    
+
     protected void propagateFailure(Exchange answer, Exchange newExchange) {
         // if new exchange failed then propagate all the error related properties to the answer
         boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(newExchange);

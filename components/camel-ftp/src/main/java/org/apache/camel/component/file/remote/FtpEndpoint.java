@@ -36,7 +36,7 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * The ftp component is used for uploading or downloading files from FTP servers.
  */
-@UriEndpoint(scheme = "ftp", extendsScheme = "file", title = "FTP",
+@UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP",
         syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName",
         consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
@@ -105,6 +105,18 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             soTimeout = getConfiguration().getSoTimeout();
         }
         dataTimeout = getConfiguration().getTimeout();
+
+        if (getConfiguration().getActivePortRange() != null) {
+            // parse it as min-max
+            String[] parts = getConfiguration().getActivePortRange().split("-");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("The option activePortRange should have syntax: min-max");
+            }
+            int min = getCamelContext().getTypeConverter().mandatoryConvertTo(int.class, parts[0]);
+            int max = getCamelContext().getTypeConverter().mandatoryConvertTo(int.class, parts[1]);
+            log.debug("Using active port range: {}-{}", min, max);
+            client.setActivePortRange(min, max);
+        }
 
         // then lookup ftp client parameters and set those
         if (ftpClientParameters != null) {

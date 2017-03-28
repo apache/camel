@@ -104,7 +104,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         order.setAmount(1);
         order.setPrice(99.95);
         
-        String ordereString = "{\"purchase-order\":{\"@name\":\"Tiger\",\"@price\":\"99.95\",\"@amount\":\"1.0\"}}";
+        String ordereString = "{\"purchase-order\":{\"@name\":\"Tiger\",\"@price\":99.95,\"@amount\":1}}";
         mock.expectedBodiesReceived(new Object[] {ordereString, order});
 
         template.sendBody("direct:marshal-json", order);

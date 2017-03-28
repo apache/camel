@@ -34,12 +34,14 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Tidymark (wellformed HTML) data format
  */
-@Metadata(label = "dataformat,transformation", title = "TidyMarkup")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "TidyMarkup")
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TidyMarkupDataFormat extends DataFormatDefinition {
-    @XmlAttribute(name = "dataObjectType")
+    @XmlAttribute(name = "dataObjectType") @Metadata(defaultValue = "org.w3c.dom.Node")
     private String dataObjectTypeName;
+    @XmlAttribute
+    private Boolean omitXmlDeclaration;
     @XmlTransient
     private Class<?> dataObjectType;
 
@@ -82,6 +84,17 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         this.dataObjectTypeName = dataObjectTypeName;
     }
 
+    public Boolean getOmitXmlDeclaration() {
+        return omitXmlDeclaration;
+    }
+
+    /**
+     * When returning a String, do we omit the XML declaration in the top.
+     */
+    public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
+        this.omitXmlDeclaration = omitXmlDeclaration;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (dataObjectType == null && dataObjectTypeName != null) {
@@ -99,6 +112,9 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (dataObjectType != null) {
             setProperty(camelContext, dataFormat, "dataObjectType", dataObjectType);
+        }
+        if (omitXmlDeclaration != null) {
+            setProperty(camelContext, dataFormat, "omitXmlDeclaration", omitXmlDeclaration);
         }
     }
 

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
@@ -23,11 +26,13 @@ import com.amazonaws.ResponseMetadata;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.AddPermissionRequest;
+import com.amazonaws.services.sns.model.AddPermissionResult;
 import com.amazonaws.services.sns.model.ConfirmSubscriptionRequest;
 import com.amazonaws.services.sns.model.ConfirmSubscriptionResult;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
 import com.amazonaws.services.sns.model.DeleteTopicRequest;
+import com.amazonaws.services.sns.model.DeleteTopicResult;
 import com.amazonaws.services.sns.model.GetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.GetTopicAttributesResult;
 import com.amazonaws.services.sns.model.ListSubscriptionsByTopicRequest;
@@ -39,10 +44,14 @@ import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
 import com.amazonaws.services.sns.model.RemovePermissionRequest;
+import com.amazonaws.services.sns.model.RemovePermissionResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
+import com.amazonaws.services.sns.model.SetTopicAttributesResult;
 import com.amazonaws.services.sns.model.SubscribeRequest;
 import com.amazonaws.services.sns.model.SubscribeResult;
+import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.model.UnsubscribeRequest;
+import com.amazonaws.services.sns.model.UnsubscribeResult;
 
 import org.junit.Assert;
 
@@ -80,19 +89,20 @@ public class AmazonSNSClientMock extends AmazonSNSClient {
     }
 
     @Override
-    public void setTopicAttributes(SetTopicAttributesRequest setTopicAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public SetTopicAttributesResult setTopicAttributes(SetTopicAttributesRequest setTopicAttributesRequest) throws AmazonServiceException, AmazonClientException {
         Assert.assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.getTopicArn());
         Assert.assertEquals("Policy", setTopicAttributesRequest.getAttributeName());
         Assert.assertEquals("XXX", setTopicAttributesRequest.getAttributeValue());
+        return new SetTopicAttributesResult();
     }
 
     @Override
-    public void deleteTopic(DeleteTopicRequest deleteTopicRequest) throws AmazonServiceException, AmazonClientException {
+    public DeleteTopicResult deleteTopic(DeleteTopicRequest deleteTopicRequest) throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removePermission(RemovePermissionRequest removePermissionRequest) throws AmazonServiceException, AmazonClientException {
+    public RemovePermissionResult removePermission(RemovePermissionRequest removePermissionRequest) throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
@@ -102,7 +112,7 @@ public class AmazonSNSClientMock extends AmazonSNSClient {
     }
 
     @Override
-    public void addPermission(AddPermissionRequest addPermissionRequest) throws AmazonServiceException, AmazonClientException {
+    public AddPermissionResult addPermission(AddPermissionRequest addPermissionRequest) throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
@@ -119,7 +129,7 @@ public class AmazonSNSClientMock extends AmazonSNSClient {
     }
 
     @Override
-    public void unsubscribe(UnsubscribeRequest unsubscribeRequest) throws AmazonServiceException, AmazonClientException {
+    public UnsubscribeResult unsubscribe(UnsubscribeRequest unsubscribeRequest) throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
     }
 
@@ -143,6 +153,17 @@ public class AmazonSNSClientMock extends AmazonSNSClient {
     @Override
     public ListTopicsResult listTopics() throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public ListTopicsResult listTopics(String nextToken) {
+        ListTopicsResult res = new ListTopicsResult();
+        Topic topic = new Topic();
+        topic.setTopicArn(DEFAULT_TOPIC_ARN);
+        List<Topic> list = new ArrayList<Topic>();
+        list.add(topic);
+        res.setTopics(list);
+        return res;
     }
 
     @Override

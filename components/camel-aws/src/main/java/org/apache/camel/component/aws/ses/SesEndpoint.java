@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The aws-ses component is used for sending emails with Amazon's SES service.
  */
-@UriEndpoint(scheme = "aws-ses", title = "AWS Simple Email Service", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-ses", title = "AWS Simple Email Service", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
 public class SesEndpoint extends DefaultEndpoint {
 
     private AmazonSimpleEmailService sesClient;
@@ -87,14 +87,27 @@ public class SesEndpoint extends DefaultEndpoint {
 
     private AmazonSimpleEmailService createSESClient() {
         AmazonSimpleEmailService client = null;
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            client = new AmazonSimpleEmailServiceClient(credentials, clientConfiguration);
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonSimpleEmailServiceClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonSimpleEmailServiceClient(credentials);
+            }
         } else {
-            client = new AmazonSimpleEmailServiceClient(credentials);
+            if (isClientConfigFound) {
+                client = new AmazonSimpleEmailServiceClient();
+            } else {
+                client = new AmazonSimpleEmailServiceClient(clientConfiguration);
+            }
         }
         return client;
     }

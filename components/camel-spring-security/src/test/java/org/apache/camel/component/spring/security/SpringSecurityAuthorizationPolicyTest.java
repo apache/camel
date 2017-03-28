@@ -112,8 +112,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                                                  "/org/apache/camel/component/spring/security/SpringSecurityCamelContext.xml");
+        return new ClassPathXmlApplicationContext("/org/apache/camel/component/spring/security/SpringSecurityCamelContext.xml");
     }
 
 }

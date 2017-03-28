@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tests</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-itest</artifactId>
@@ -45,6 +45,11 @@
   </repositories>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
@@ -218,11 +223,6 @@
       <version>${mina2-version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
 
     <!-- mocking ftp server -->
     <dependency>
@@ -347,11 +347,29 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- logging -->
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -374,42 +392,57 @@
       <version>1.0.0</version>
     </dependency>
 
-    <!-- atomikos XA TX manager -->
+    <!-- Narayana XA TX manager -->
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions</artifactId>
-      <version>${atomikos-transactions-version}</version>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jdbc</artifactId>
+      <version>${narayana-version}</version>
     </dependency>
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jta</artifactId>
-      <version>${atomikos-transactions-version}</version>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jms</artifactId>
+      <version>${narayana-version}</version>
     </dependency>
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jms</artifactId>
-      <version>${atomikos-transactions-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.jms</groupId>
-          <artifactId>jms</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jta</artifactId>
+      <version>${narayana-version}</version>
     </dependency>
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jdbc</artifactId>
-      <version>${atomikos-transactions-version}</version>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-transaction-spi</artifactId>
+      <version>${jboss-transaction-spi.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>${jboss-logging-version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
+
+      <!-- to validate Camel endpoints: mvn camel:validate -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <failOnError>false</failOnError>
+          <includeTest>true</includeTest>
+          <includeXml>true</includeXml>
+          <ignoreLenientProperties>false</ignoreLenientProperties>
+        </configuration>
+      </plugin>
+            
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <!-- must for per test -->
-          <forkMode>always</forkMode>
+          <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
           <systemPropertyVariables>
             <derby.stream.error.file>target/derby.log</derby.stream.error.file>
@@ -424,6 +457,8 @@
             <id>generate-test-sources</id>
             <phase>generate-sources</phase>
             <configuration>
+              <fork>${cxf.codegenplugin.forkmode}</fork>
+              <additionalJvmArgs>-Dlog4j.configurationFile=${project.basedir}/src/test/resources/log4j2.properties ${cxf.codegen.jvmArgs}</additionalJvmArgs>
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
               <wsdlOptions>
                 <wsdlOption>

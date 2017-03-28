@@ -24,6 +24,7 @@ import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
 import org.apache.camel.component.github.consumer.PullRequestConsumer;
 import org.apache.camel.component.github.consumer.TagConsumer;
 import org.apache.camel.component.github.producer.ClosePullRequestProducer;
+import org.apache.camel.component.github.producer.CreateIssueProducer;
 import org.apache.camel.component.github.producer.GetCommitFileProducer;
 import org.apache.camel.component.github.producer.PullRequestCommentProducer;
 import org.apache.camel.component.github.producer.PullRequestFilesProducer;
@@ -58,7 +59,7 @@ import org.apache.camel.util.ObjectHelper;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(scheme = "github", title = "GitHub", syntax = "github:type/branchName", label = "api,file")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName", label = "api,file")
 public class GitHubEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -97,6 +98,8 @@ public class GitHubEndpoint extends DefaultEndpoint {
             return new PullRequestFilesProducer(this);
         } else if (type == GitHubType.GETCOMMITFILE) {
             return new GetCommitFileProducer(this);
+        } else if (type == GitHubType.CREATEISSUE) {
+            return new CreateIssueProducer(this);
         }
         throw new IllegalArgumentException("Cannot create producer with type " + type);
     }

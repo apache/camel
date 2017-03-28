@@ -152,11 +152,20 @@ public class RabbitMQProducerTest {
     }
 
     @Test
-    public void testPropertiesUsesTimestampHeader() throws IOException {
+    public void testPropertiesUsesTimestampHeaderAsLongValue() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
         message.setHeader(RabbitMQConstants.TIMESTAMP, "12345123");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals(12345123, props.getTimestamp().getTime());
+    }
+
+    @Test
+    public void testPropertiesUsesTimestampHeaderAsDateValue() throws IOException {
+        Date timestamp = new Date();
+        RabbitMQProducer producer = new RabbitMQProducer(endpoint);
+        message.setHeader(RabbitMQConstants.TIMESTAMP, timestamp);
+        AMQP.BasicProperties props = producer.buildProperties(exchange).build();
+        assertEquals(timestamp, props.getTimestamp());
     }
 
     @Test

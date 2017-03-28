@@ -34,13 +34,15 @@ import org.slf4j.LoggerFactory;
 /**
  * The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file and URL.
  */
-@UriEndpoint(scheme = "stream", title = "Stream", syntax = "stream:url", consumerClass = StreamConsumer.class, label = "file,system")
+@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", consumerClass = StreamConsumer.class, label = "file,system")
 public class StreamEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
     private transient Charset charset;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(enums = "in,out,err,header,file,url") @Metadata(required = "true")
+    private String kind;
+    @UriParam
     private String url;
     @UriParam
     private String fileName;
@@ -102,6 +104,18 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     // Properties
     //-------------------------------------------------------------------------
+
+
+    public String getKind() {
+        return kind;
+    }
+
+    /**
+     * Kind of stream to use such as System.in or System.out.
+     */
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
 
     public String getFileName() {
         return fileName;

@@ -58,6 +58,8 @@ public class StreamFileTest extends CamelTestSupport {
 
     @Test
     public void testFile() throws Exception {
+        context.start();
+
         try {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedBodiesReceived("Hello");

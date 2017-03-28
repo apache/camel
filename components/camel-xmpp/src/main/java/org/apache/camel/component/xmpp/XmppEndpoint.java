@@ -49,46 +49,48 @@ import org.slf4j.LoggerFactory;
 /**
  * To send and receive messages from a XMPP (chat) server.
  */
-@UriEndpoint(scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant", alternativeSyntax = "xmpp:user:password@host:port/participant",
+@UriEndpoint(firstVersion = "1.0.0", scheme = "xmpp", title = "XMPP", syntax = "xmpp:host:port/participant", alternativeSyntax = "xmpp:user:password@host:port/participant",
         consumerClass = XmppConsumer.class, label = "chat,messaging")
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
-    private XMPPConnection connection;
+    private volatile XMPPConnection connection;
     private XmppBinding binding;
 
     @UriPath @Metadata(required = "true")
     private String host;
     @UriPath @Metadata(required = "true")
     private int port;
-    @UriPath
+    @UriPath(label = "common")
     private String participant;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String user;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
-    @UriParam(defaultValue = "Camel")
+    @UriParam(label = "common,advanced", defaultValue = "Camel")
     private String resource = "Camel";
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean login = true;
-    @UriParam
+    @UriParam(label = "common,advanced")
     private boolean createAccount;
-    @UriParam
+    @UriParam(label = "common")
     private String room;
-    @UriParam
+    @UriParam(label = "common")
     private String nickname;
-    @UriParam
+    @UriParam(label = "common")
     private String serviceName;
-    @UriParam
+    @UriParam(label = "common")
     private boolean pubsub;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean doc;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "common", defaultValue = "true")
     private boolean testConnectionOnStartup = true;
-    @UriParam(defaultValue = "10")
+    @UriParam(label = "consumer", defaultValue = "10")
     private int connectionPollDelay = 10;
-    @UriParam
+    @UriParam(label = "filter")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    @UriParam(label = "advanced")
+    private ConnectionConfiguration connectionConfig;
 
     public XmppEndpoint() {
     }
@@ -109,6 +111,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             if (isPubsub()) {
                 return createPubSubProducer();
             }
+            if (isDoc()) {
+                return createDirectProducer();
+            }
             if (getParticipant() == null) {
                 throw new IllegalArgumentException("No room or participant configured on this endpoint: " + this);
             }
@@ -122,6 +127,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public Producer createPrivateChatProducer(String participant) throws Exception {
         return new XmppPrivateChatProducer(this, participant);
+    }
+
+    public Producer createDirectProducer() throws Exception {
+        return new XmppDirectProducer(this);
     }
 
     public Producer createPubSubProducer() throws Exception {
@@ -152,60 +161,70 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public synchronized XMPPConnection createConnection() throws XMPPException, SmackException, IOException {
         if (connection != null && connection.isConnected()) {
+            // use existing working connection
             return connection;
         }
 
-        if (connection == null) {
-            connection = createConnectionInternal();
-        }
+        // prepare for creating new connection
+        connection = null;
 
-        connection.connect();
+        LOG.trace("Creating new connection ...");
+        XMPPConnection newConnection = createConnectionInternal();
 
-        connection.addPacketListener(new XmppLogger("INBOUND"), new PacketFilter() {
+        newConnection.connect();
+
+        newConnection.addPacketListener(new XmppLogger("INBOUND"), new PacketFilter() {
             public boolean accept(Packet packet) {
                 return true;
             }
         });
-        connection.addPacketSendingListener(new XmppLogger("OUTBOUND"), new PacketFilter() {
+        newConnection.addPacketSendingListener(new XmppLogger("OUTBOUND"), new PacketFilter() {
             public boolean accept(Packet packet) {
                 return true;
             }
         });
 
-        if (!connection.isAuthenticated()) {
+        if (!newConnection.isAuthenticated()) {
             if (user != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(connection));
+                    LOG.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(newConnection));
                 }
                 if (password == null) {
-                    LOG.warn("No password configured for user: {} on connection: {}", user, getConnectionMessage(connection));
+                    LOG.warn("No password configured for user: {} on connection: {}", user, getConnectionMessage(newConnection));
                 }
 
                 if (createAccount) {
-                    AccountManager accountManager = AccountManager.getInstance(connection);
+                    AccountManager accountManager = AccountManager.getInstance(newConnection);
                     accountManager.createAccount(user, password);
                 }
                 if (login) {
                     if (resource != null) {
-                        connection.login(user, password, resource);
+                        newConnection.login(user, password, resource);
                     } else {
-                        connection.login(user, password);
+                        newConnection.login(user, password);
                     }
                 }
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(connection));
+                    LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(newConnection));
                 }
-                connection.loginAnonymously();
+                newConnection.loginAnonymously();
             }
 
             // presence is not needed to be sent after login
         }
 
+        // okay new connection was created successfully so assign it as the connection
+        LOG.debug("Created new connection successfully: {}", newConnection);
+        connection = newConnection;
         return connection;
     }
 
     private XMPPTCPConnection createConnectionInternal() {
+        if (connectionConfig != null) {
+            return new XMPPTCPConnection(connectionConfig);
+        }
+
         if (port == 0) {
             port = 5222;
         }
@@ -402,6 +421,17 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public ConnectionConfiguration getConnectionConfig() {
+        return connectionConfig;
+    }
+
+    /**
+     * To use an existing connection configuration
+     */
+    public void setConnectionConfig(ConnectionConfiguration connectionConfig) {
+        this.connectionConfig = connectionConfig;
     }
 
     public boolean isTestConnectionOnStartup() {

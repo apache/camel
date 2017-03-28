@@ -43,9 +43,9 @@ public class NagiosConfiguration implements Cloneable {
     private int connectionTimeout = 5000;
     @UriParam(defaultValue = "5000")
     private int timeout = 5000;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
-    @UriParam
+    @UriParam(label = "security")
     private NagiosEncryptionMethod encryptionMethod;
 
     /**

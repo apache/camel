@@ -18,9 +18,14 @@ package org.apache.camel.component.kubernetes.consumer;
 
 import java.util.concurrent.ExecutorService;
 
+import io.fabric8.kubernetes.api.model.DoneablePod;
 import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.PodResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -38,6 +43,7 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
 
     private final Processor processor;
     private ExecutorService executor;
+    private PodsConsumerTask podsWatcher;
 
     public KubernetesPodsConsumer(KubernetesEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -53,8 +59,9 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         executor = getEndpoint().createExecutor();
-
-        executor.submit(new PodsConsumerTask());
+        
+        podsWatcher = new PodsConsumerTask();
+        executor.submit(podsWatcher);
     }
 
     @Override
@@ -64,8 +71,14 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
         LOG.debug("Stopping Kubernetes Pods Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                if (podsWatcher != null) {
+                    podsWatcher.getWatch().close();
+                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
+                if (podsWatcher != null) {
+                    podsWatcher.getWatch().close();
+                }
                 executor.shutdownNow();
             }
         }
@@ -73,64 +86,55 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
     }
 
     class PodsConsumerTask implements Runnable {
+
+        private Watch watch;
         
         @Override
         public void run() {
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getOauthToken())) {
-                if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespaceName())) {
-                    getEndpoint().getKubernetesClient().pods()
-                            .inNamespace(getEndpoint().getKubernetesConfiguration().getNamespaceName())
-                            .watch(new Watcher<Pod>() {
-
-                                @Override
-                                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                                        Pod resource) {
-                                    PodEvent pe = new PodEvent(action, resource);
-                                    Exchange exchange = getEndpoint().createExchange();
-                                    exchange.getIn().setBody(pe.getPod());
-                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, pe.getAction());
-                                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
-                                    try {
-                                        processor.process(exchange);
-                                    } catch (Exception e) {
-                                        getExceptionHandler().handleException("Error during processing", exchange, e);
-                                    }
-                                }
-
-                                @Override
-                                public void onClose(KubernetesClientException cause) {
-                                    if (cause != null) {
-                                        LOG.error(cause.getMessage(), cause);
-                                    }
-
-                                }
-                            });
-                } else {
-                    getEndpoint().getKubernetesClient().pods().watch(new Watcher<Pod>() {
-
-                        @Override
-                        public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Pod resource) {
-                            PodEvent pe = new PodEvent(action, resource);
-                            Exchange exchange = getEndpoint().createExchange();
-                            exchange.getIn().setBody(pe.getPod());
-                            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, pe.getAction());
-                            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
-                            try {
-                                processor.process(exchange);
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException("Error during processing", exchange, e);
-                            }
-                        }
-
-                        @Override
-                        public void onClose(KubernetesClientException cause) {
-                            if (cause != null) {
-                                LOG.error(cause.getMessage(), cause);
-                            }
-                        }
-                    });
-                }
+            MixedOperation<Pod, PodList, DoneablePod, PodResource<Pod, DoneablePod>> w = getEndpoint().getKubernetesClient().pods();
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
+                w.inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
             }
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey()) 
+                && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
+                w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(), getEndpoint().getKubernetesConfiguration().getLabelValue());
+            }
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
+                w.withName(getEndpoint().getKubernetesConfiguration().getResourceName());
+            }
+            watch = w.watch(new Watcher<Pod>() {
+
+                @Override
+                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
+                    Pod resource) {
+                    PodEvent pe = new PodEvent(action, resource);
+                    Exchange exchange = getEndpoint().createExchange();
+                    exchange.getIn().setBody(pe.getPod());
+                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION, pe.getAction());
+                    exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_TIMESTAMP, System.currentTimeMillis());
+                    try {
+                        processor.process(exchange);
+                    } catch (Exception e) {
+                        getExceptionHandler().handleException("Error during processing", exchange, e);
+                    }
+                }
+
+                @Override
+                public void onClose(KubernetesClientException cause) {
+                    if (cause != null) {
+                        LOG.error(cause.getMessage(), cause);
+                    }
+
+                }
+            });
         }
+
+        public Watch getWatch() {
+            return watch;
+        }
+
+        public void setWatch(Watch watch) {
+            this.watch = watch;
+        } 
     }
 }

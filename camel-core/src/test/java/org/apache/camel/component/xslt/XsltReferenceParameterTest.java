@@ -54,10 +54,10 @@ public class XsltReferenceParameterTest extends TestSupport {
 
         ProcessorEndpoint pep1 = context.getEndpoint(TEST_URI_1, ProcessorEndpoint.class);
 
-        builder1 = (XsltBuilder)pep1.getProcessor();
-
         context.addRoutes(builder);
         context.start();
+
+        builder1 = (XsltBuilder)pep1.getProcessor();
     }
 
     public void testConverterReference() {

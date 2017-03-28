@@ -33,24 +33,28 @@ public class SshConsumer extends ScheduledPollConsumer {
     
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
         client = SshClient.setUpDefaultClient();
         client.start();
+        
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
+        
         if (client != null) {
             client.stop();
             client = null;
         }
-
-        super.doStop();
     }
 
     @Override
     protected int poll() throws Exception {
+        if (!isRunAllowed()) {
+            return 0;
+        }
+        
         String command = endpoint.getPollCommand();
         SshResult result = SshHelper.sendExecCommand(command, endpoint, client);
 

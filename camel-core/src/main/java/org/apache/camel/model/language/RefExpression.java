@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For using a custom expression
+ * For using a custom expression or predicate
  */
-@Metadata(label = "language,core", title = "Ref")
+@Metadata(firstVersion = "2.8.0", label = "language,core", title = "Ref")
 @XmlRootElement(name = "ref")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RefExpression extends ExpressionDefinition {

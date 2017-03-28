@@ -32,6 +32,9 @@ import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.util.ReflectionHelper;
 
+import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByType;
+import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
+
 @Vetoed
 final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
 
@@ -45,43 +48,41 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
     }
 
     protected void injectFields(final Object bean, final String beanName) {
-        ReflectionHelper.doWithFields(bean.getClass(), new ReflectionHelper.FieldCallback() {
-            public void doWith(Field field) throws IllegalAccessException {
-                PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
-                if (propertyInject != null) {
-                    try {
-                        injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), propertyInject.context(), bean, beanName);
-                    } catch (Exception cause) {
-                        throw new InjectionException("Injection of [" + propertyInject + "] for field [" + field + "] failed!", cause);
-                    }
+        ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
+            if (propertyInject != null) {
+                try {
+                    injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), propertyInject.context(), bean, beanName);
+                } catch (Exception cause) {
+                    throw new InjectionException("Injection of [" + propertyInject + "] for field [" + field + "] failed!", cause);
                 }
+            }
 
-                BeanInject beanInject = field.getAnnotation(BeanInject.class);
-                // TODO: proper support for multi Camel contexts
-                if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
-                    try {
-                        injectFieldBean(field, beanInject.value(), bean, beanName);
-                    } catch (Exception cause) {
-                        throw new InjectionException("Injection of [" + beanInject + "] for field [" + field + "] failed!", cause);
-                    }
+            BeanInject beanInject = field.getAnnotation(BeanInject.class);
+            // TODO: proper support for multi Camel contexts
+            if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
+                try {
+                    injectFieldBean(field, beanInject.value(), bean, beanName);
+                } catch (Exception cause) {
+                    throw new InjectionException("Injection of [" + beanInject + "] for field [" + field + "] failed!", cause);
                 }
+            }
 
-                EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
-                if (endpointInject != null) {
-                    try {
-                        injectField(field, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), endpointInject.context(), bean, beanName);
-                    } catch (Exception cause) {
-                        throw new InjectionException("Injection of [" + endpointInject + "] for field [" + field + "] failed!", cause);
-                    }
+            EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+            if (endpointInject != null) {
+                try {
+                    injectField(field, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), endpointInject.context(), bean, beanName);
+                } catch (Exception cause) {
+                    throw new InjectionException("Injection of [" + endpointInject + "] for field [" + field + "] failed!", cause);
                 }
+            }
 
-                Produce produce = field.getAnnotation(Produce.class);
-                if (produce != null) {
-                    try {
-                        injectField(field, produce.uri(), produce.ref(), produce.property(), produce.context(), bean, beanName);
-                    } catch (Exception cause) {
-                        throw new InjectionException("Injection of [" + produce + "] for field [" + field + "] failed!", cause);
-                    }
+            Produce produce = field.getAnnotation(Produce.class);
+            if (produce != null) {
+                try {
+                    injectField(field, produce.uri(), produce.ref(), produce.property(), produce.context(), bean, beanName);
+                } catch (Exception cause) {
+                    throw new InjectionException("Injection of [" + produce + "] for field [" + field + "] failed!", cause);
                 }
             }
         });
@@ -110,11 +111,13 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
 
     private CamelContext getOrLookupCamelContext(String contextName) {
         // TODO: proper support for custom context qualifiers
-        return BeanManagerHelper.getReferenceByType(manager, CamelContext.class, contextName.isEmpty() ? DefaultLiteral.INSTANCE : ContextName.Literal.of(contextName));
+        return getReferenceByType(manager, CamelContext.class,
+            contextName.isEmpty() ? DEFAULT : ContextName.Literal.of(contextName))
+            .orElseThrow(() -> new UnsatisfiedResolutionException("No Camel context with name [" + contextName + "] is deployed!"));
     }
 
     @Override
     public CamelContext getOrLookupCamelContext() {
-        return BeanManagerHelper.getReferenceByType(manager, CamelContext.class);
+        return getReferenceByType(manager, CamelContext.class).orElse(null);
     }
 }

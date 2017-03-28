@@ -26,7 +26,6 @@ import java.util.Iterator;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.StreamCache;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -51,14 +50,13 @@ public class TarIterator implements Iterator<Message>, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(TarIterator.class);
 
     private final Message inputMessage;
-    private TarArchiveInputStream tarInputStream;
-    private Message nextMessage;
+    private volatile TarArchiveInputStream tarInputStream;
+    private volatile Message parent;
+    private boolean allowEmptyDirectory;
 
-    private Exchange exchange;
-
-    public TarIterator(Exchange exchange, InputStream inputStream) {
-        this.exchange = exchange;
-        this.inputMessage = exchange.getIn();
+    public TarIterator(Message inputMessage, InputStream inputStream) {
+        this.inputMessage = inputMessage;
+        //InputStream inputStream = inputMessage.getBody(InputStream.class);
 
         if (inputStream instanceof TarArchiveInputStream) {
             tarInputStream = (TarArchiveInputStream) inputStream;
@@ -70,38 +68,47 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }
-        nextMessage = null;
+        parent = null;
     }
 
     @Override
     public boolean hasNext() {
-        tryAdvanceToNext();
-
-        return this.nextMessage != null;
+        try {
+            if (tarInputStream == null) {
+                return false;
+            }
+            boolean availableDataInCurrentEntry = tarInputStream.available() > 0;
+            if (!availableDataInCurrentEntry) {
+                // advance to the next entry.
+                parent = getNextElement();
+                if (parent == null) {
+                    tarInputStream.close();
+                    availableDataInCurrentEntry = false;
+                } else {
+                    availableDataInCurrentEntry = true;
+                }
+            }
+            return availableDataInCurrentEntry;
+        } catch (IOException exception) {
+            //Just wrap the IOException as CamelRuntimeException
+            throw new RuntimeCamelException(exception);
+        }
     }
 
     @Override
     public Message next() {
-        tryAdvanceToNext();
-
-        //consume element
-        Message next = this.nextMessage;
-        this.nextMessage = null;
-        return next;
-    }
-
-
-    private void tryAdvanceToNext() {
-        //return current next
-        if (this.nextMessage != null) {
-            return;
+        if (parent == null) {
+            parent = getNextElement();
         }
 
-        this.nextMessage = createNextMessage();
-        checkNullAnswer(this.nextMessage);
+        Message answer = parent;
+        parent = null;
+        checkNullAnswer(answer);
+
+        return answer;
     }
 
-    private Message createNextMessage() {
+    private Message getNextElement() {
         if (tarInputStream == null) {
             return null;
         }
@@ -116,10 +123,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 answer.setHeader(TARFILE_ENTRY_NAME_HEADER, current.getName());
                 answer.setHeader(Exchange.FILE_NAME, current.getName());
                 if (current.getSize() > 0) {
-                    //Have to cache current entry's portion of tarInputStream here, because getNextTarEntry
-                    //advances tarInputStream beyond current entry
-                    answer.setBody(exchange.getContext().getTypeConverter().mandatoryConvertTo(StreamCache.class, exchange,
-                           new TarElementInputStreamWrapper(tarInputStream)));
+                    answer.setBody(new TarElementInputStreamWrapper(tarInputStream));
                 } else {
                     // Workaround for the case when the entry is zero bytes big
                     answer.setBody(new ByteArrayInputStream(new byte[0]));
@@ -129,16 +133,16 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 LOGGER.trace("Closed tarInputStream");
                 return null;
             }
-        } catch (Exception exception) {
-            this.close();
-            //Just wrap the Exception as CamelRuntimeException
+        } catch (IOException exception) {
+            //Just wrap the IOException as CamelRuntimeException
             throw new RuntimeCamelException(exception);
         }
     }
 
     public void checkNullAnswer(Message answer) {
-        if (answer == null) {
-            this.close();
+        if (answer == null && tarInputStream != null) {
+            IOHelper.close(tarInputStream);
+            tarInputStream = null;
         }
     }
 
@@ -148,6 +152,10 @@ public class TarIterator implements Iterator<Message>, Closeable {
         while ((entry = tarInputStream.getNextTarEntry()) != null) {
             if (!entry.isDirectory()) {
                 return entry;
+            } else {
+                if (allowEmptyDirectory) {
+                    return entry;
+                }
             }
         }
 
@@ -160,9 +168,16 @@ public class TarIterator implements Iterator<Message>, Closeable {
     }
 
     @Override
-    public void close() {
-        //suppress any exceptions from closing
+    public void close() throws IOException {
         IOHelper.close(tarInputStream);
         tarInputStream = null;
+    }
+    
+    public boolean isAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
+
+    public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 }

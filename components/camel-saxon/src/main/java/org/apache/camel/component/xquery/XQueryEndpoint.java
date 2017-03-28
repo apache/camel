@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Transforms the message using a XQuery template using Saxon.
  */
-@UriEndpoint(scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri", label = "transformation")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri", label = "transformation")
 public class XQueryEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);
@@ -47,23 +47,25 @@ public class XQueryEndpoint extends ProcessorEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String resourceUri;
-    @UriParam
+    @UriParam(label = "advanced")
     private Configuration configuration;
-    @UriParam
+    @UriParam(label = "advanced")
+    private Map<String, Object> configurationProperties = new HashMap<>();
+    @UriParam(label = "advanced")
     private StaticQueryContext staticQueryContext;
-    @UriParam
+    @UriParam(label = "advanced")
     private Map<String, Object> parameters = new HashMap<String, Object>();
     @UriParam
     private Map<String, String> namespacePrefixes = new HashMap<String, String>();
     @UriParam(defaultValue = "DOM")
     private ResultFormat resultsFormat = ResultFormat.DOM;
-    @UriParam
+    @UriParam(label = "advanced")
     private Properties properties = new Properties();
     @UriParam
     private Class<?> resultType;
     @UriParam(defaultValue = "true")
     private boolean stripsAllWhiteSpace = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private ModuleURIResolver moduleURIResolver;
     @UriParam
     private boolean allowStAX;
@@ -94,6 +96,17 @@ public class XQueryEndpoint extends ProcessorEndpoint {
      */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    public Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    /**
+     * To set custom Saxon configuration properties
+     */
+    public void setConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.configurationProperties = configurationProperties;
     }
 
     public StaticQueryContext getStaticQueryContext() {
@@ -212,18 +225,19 @@ public class XQueryEndpoint extends ProcessorEndpoint {
 
         LOG.debug("{} using schema resource: {}", this, resourceUri);
         URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), resourceUri);
-        this.xquery = XQueryBuilder.xquery(url);
 
-        xquery.setConfiguration(getConfiguration());
-        xquery.setStaticQueryContext(getStaticQueryContext());
-        xquery.setParameters(getParameters());
-        xquery.setNamespaces(namespacePrefixes);
-        xquery.setResultsFormat(getResultsFormat());
-        xquery.setProperties(getProperties());
-        xquery.setResultType(getResultType());
-        xquery.setStripsAllWhiteSpace(isStripsAllWhiteSpace());
-        xquery.setAllowStAX(isAllowStAX());
-        xquery.setHeaderName(getHeaderName());
+        this.xquery = XQueryBuilder.xquery(url);
+        this.xquery.setConfiguration(getConfiguration());
+        this.xquery.setConfigurationProperties(getConfigurationProperties());
+        this.xquery.setStaticQueryContext(getStaticQueryContext());
+        this.xquery.setParameters(getParameters());
+        this.xquery.setNamespaces(namespacePrefixes);
+        this.xquery.setResultsFormat(getResultsFormat());
+        this.xquery.setProperties(getProperties());
+        this.xquery.setResultType(getResultType());
+        this.xquery.setStripsAllWhiteSpace(isStripsAllWhiteSpace());
+        this.xquery.setAllowStAX(isAllowStAX());
+        this.xquery.setHeaderName(getHeaderName());
 
         setProcessor(xquery);
 

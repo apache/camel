@@ -18,24 +18,26 @@ package org.apache.camel.component.jcache.processor.idempotent;
 
 import javax.cache.Cache;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.jcache.JCacheConfiguration;
+import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "JCache based message id repository")
 public class JCacheIdempotentRepository extends ServiceSupport implements IdempotentRepository<Object> {
-    private JCacheConfiguration configuration = new JCacheConfiguration();
-    private String cacheName;
-    private ClassLoader classLoader;
-    private CamelContext camelContext;
+    private JCacheConfiguration configuration;
     private Cache<Object, Boolean> cache;
-
     private JCacheManager<Object, Boolean> cacheManager;
+
+    public JCacheIdempotentRepository() {
+        this.configuration = new JCacheConfiguration();
+    }
+
 
     public JCacheConfiguration getConfiguration() {
         return configuration;
@@ -43,22 +45,6 @@ public class JCacheIdempotentRepository extends ServiceSupport implements Idempo
 
     public void setConfiguration(JCacheConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
     public Cache<Object, Boolean> getCache() {
@@ -94,12 +80,12 @@ public class JCacheIdempotentRepository extends ServiceSupport implements Idempo
     }
 
     public void setCacheName(String cacheName) {
-        this.cacheName = cacheName;
+        configuration.setCacheName(cacheName);
     }
 
     @ManagedAttribute(description = "The processor name")
     public String getCacheName() {
-        return cacheName;
+        return configuration.getCacheName();
     }
 
     @Override
@@ -112,7 +98,10 @@ public class JCacheIdempotentRepository extends ServiceSupport implements Idempo
         if (cache != null) {
             cacheManager = new JCacheManager<>(cache);
         } else {
-            cacheManager = new JCacheManager(configuration, cacheName, classLoader, camelContext);
+            cacheManager = JCacheHelper.createManager(
+                ObjectHelper.notNull(configuration, "configuration")
+            );
+
             cache = cacheManager.getCache();
         }
     }

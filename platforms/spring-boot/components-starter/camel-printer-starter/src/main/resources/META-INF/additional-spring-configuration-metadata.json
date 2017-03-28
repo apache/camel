@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.lpr.enabled",
+      "description": "Enable lpr component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

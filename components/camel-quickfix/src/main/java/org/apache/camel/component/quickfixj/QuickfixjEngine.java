@@ -533,7 +533,7 @@ public class QuickfixjEngine extends ServiceSupport {
 
             private static final long serialVersionUID = 1L;
 
-            public DispatcherException(Throwable cause) {
+            DispatcherException(Throwable cause) {
                 super(cause);
             }
         }

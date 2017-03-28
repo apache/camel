@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.ignite;
 
-
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,8 +25,6 @@ import javax.cache.Cache.Entry;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.component.ignite.cache.IgniteCacheOperation;
@@ -105,7 +101,6 @@ public class IgniteCacheTest extends AbstractIgniteTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testQuery() {
         IgniteCache<String, String> cache = ignite().getOrCreateCache("testcache1");
         Set<String> keys = new HashSet<>();
@@ -124,8 +119,7 @@ public class IgniteCacheTest extends AbstractIgniteTest {
             }
         });
 
-        Iterator<String> iter = template.requestBodyAndHeader("ignite:cache:testcache1?operation=QUERY", keys, IgniteConstants.IGNITE_CACHE_QUERY, query, Iterator.class);
-        ArrayList<Object> results = Lists.newArrayList(Iterators.toArray(iter, Object.class));
+        List results = template.requestBodyAndHeader("ignite:cache:testcache1?operation=QUERY", keys, IgniteConstants.IGNITE_CACHE_QUERY, query, List.class);
         assert_().that(results.size()).isEqualTo(50);
     }
 

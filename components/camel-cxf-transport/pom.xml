@@ -21,24 +21,27 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-cxf-transport</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: CXF :: Transport</name>
-  <description>Camel Transport for CXF </description>
+  <description>Camel Transport for Apache CXF </description>
 
-   <properties>
-     <camel.osgi.import.before.defaults>
-       javax.servlet.*;version="${servlet-version-range}"
-     </camel.osgi.import.before.defaults>
+  <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.8.0</firstVersion>
+    <label>soap,webservice</label>
+    <title>CXF Transport</title>
+
     <camel.osgi.import>
       !org.apache.camel.component.cxf.*,
       !META-INF.cxf.camel,
       javax.activation*;version="[0.0,2)",
       javax.annotation*;version="[0.0,2)",
       javax.jws*;version="[0.0,3)",
+      javax.servlet.*;version="${servlet-version-range}",
       javax.ws.rs*;version="[0.0,2)",
       javax.xml.stream*;version="[0.0,2)",
       javax.xml.ws*;version="[0.0,3.0)",
@@ -77,8 +80,8 @@
     </dependency>
     
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_3.0_spec</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
     </dependency>
 
     <!-- OSGi, Blueprint -->
@@ -129,7 +132,6 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>${httpclient4-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -150,7 +152,7 @@
     </dependency>
     <dependency>
       <groupId>org.easymock</groupId>
-      <artifactId>easymockclassextension</artifactId>
+      <artifactId>easymock</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -158,10 +160,20 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- logging -->
+    <!-- logging -->    
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -183,6 +195,8 @@
             <id>generate-test-sources</id>
             <phase>generate-sources</phase>
             <configuration>
+              <fork>${cxf.codegenplugin.forkmode}</fork>
+              <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
               <defaultOptions>
                   <frontEnd>jaxws21</frontEnd>

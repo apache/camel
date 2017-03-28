@@ -47,6 +47,7 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -481,7 +482,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
                 if (useHostIPAddress) {
                     hostName = InetAddress.getLocalHost().getHostAddress();
                 } else {
-                    hostName = InetAddress.getLocalHost().getHostName();
+                    hostName = InetAddressUtil.getLocalHostName();
                 }
             } catch (UnknownHostException uhe) {
                 LOG.info("Cannot determine localhost name or address. Using default: " + DEFAULT_REGISTRY_PORT, uhe);

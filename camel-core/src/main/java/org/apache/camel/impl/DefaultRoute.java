@@ -67,14 +67,19 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
         return (String) properties.get(Route.ID_PROPERTY);
     }
 
-    @Override
     public String getUptime() {
-        // compute and log uptime
-        if (startDate == null) {
+        long delta = getUptimeMillis();
+        if (delta == 0) {
             return "";
         }
-        long delta = new Date().getTime() - startDate.getTime();
         return TimeUtils.printDuration(delta);
+    }
+
+    public long getUptimeMillis() {
+        if (startDate == null) {
+            return 0;
+        }
+        return new Date().getTime() - startDate.getTime();
     }
 
     public Endpoint getEndpoint() {

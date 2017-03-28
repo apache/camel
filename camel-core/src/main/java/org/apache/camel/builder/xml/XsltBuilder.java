@@ -42,6 +42,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Node;
 
+import org.xml.sax.EntityResolver;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
@@ -65,10 +67,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * <p/>
  * Will by default output the result as a String. You can chose which kind of output
  * you want using the <tt>outputXXX</tt> methods.
- * <p/>
- * If using the static <tt>xslt</tt> methods to create a {@link org.apache.camel.builder.xml.XsltBuilder} its recommended
- * to inject the {@link org.apache.camel.CamelContext} using the {@link #setCamelContext(org.apache.camel.CamelContext)}
- * and call {@link #start()} to properly initialize the builder before using.
  *
  * @version 
  */
@@ -84,6 +82,7 @@ public class XsltBuilder implements Processor {
     private boolean deleteOutputFile;
     private ErrorListener errorListener;
     private boolean allowStAX = true;
+    private EntityResolver entityResolver;
 
     public XsltBuilder() {
     }
@@ -399,6 +398,10 @@ public class XsltBuilder implements Processor {
         this.uriResolver = uriResolver;
     }
 
+    public void setEntityResolver(EntityResolver entityResolver) {
+        this.entityResolver = entityResolver;
+    }
+
     public boolean isDeleteOutputFile() {
         return deleteOutputFile;
     }
@@ -497,6 +500,7 @@ public class XsltBuilder implements Processor {
             if (source == null) {
                 // then try SAX
                 source = exchange.getContext().getTypeConverter().tryConvertTo(SAXSource.class, exchange, body);
+                tryAddEntityResolver((SAXSource)source);
             }
             if (source == null) {
                 // then try stream
@@ -528,14 +532,20 @@ public class XsltBuilder implements Processor {
         }
         return source;
     }
-   
+
+    private void tryAddEntityResolver(SAXSource source) {
+        //expecting source to have not null XMLReader
+        if (this.entityResolver != null && source != null) {
+            source.getXMLReader().setEntityResolver(this.entityResolver);
+        }
+    }
 
     /**
      * Configures the transformer with exchange specific parameters
      */
     protected void configureTransformer(Transformer transformer, Exchange exchange) throws Exception {
         if (uriResolver == null) {
-            uriResolver = new XsltUriResolver(exchange.getContext().getClassResolver(), null);
+            uriResolver = new XsltUriResolver(exchange.getContext(), null);
         }
         transformer.setURIResolver(uriResolver);
         if (errorListener == null) {

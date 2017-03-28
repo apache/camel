@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -81,10 +82,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         context = exchange.getContext();
 
         if (context.isAllowUseOriginalMessage()) {
-            // TODO: Camel 3.0: the copy on facade strategy will help us here in the future
-            // TODO: optimize to only copy original message if enabled to do so in the route
             // special for JmsMessage as it can cause it to loose headers later.
-            // This will be resolved when we get the message facade with copy on write implemented
             if (exchange.getIn().getClass().getName().equals("org.apache.camel.component.jms.JmsMessage")) {
                 this.originalInMessage = new DefaultMessage();
                 this.originalInMessage.setBody(exchange.getIn().getBody());
@@ -92,9 +90,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             } else {
                 this.originalInMessage = exchange.getIn().copy();
             }
+            // must preserve exchange on the original in message
+            if (this.originalInMessage instanceof MessageSupport) {
+                ((MessageSupport) this.originalInMessage).setExchange(exchange);
+            }
         }
-
-        // TODO: Optimize to only copy if useOriginalMessage has been enabled
 
         // mark the creation time when this Exchange was created
         if (exchange.getProperty(Exchange.CREATED_TIMESTAMP) == null) {
@@ -195,6 +195,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public void handoverSynchronization(Exchange target) {
+        handoverSynchronization(target, null);
+    }
+
+    @Override
+    public void handoverSynchronization(Exchange target, Predicate<Synchronization> filter) {
         if (synchronizations == null || synchronizations.isEmpty()) {
             return;
         }
@@ -209,7 +214,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
                 handover = veto.allowHandover();
             }
 
-            if (handover) {
+            if (handover && (filter == null || filter.test(synchronization))) {
                 log.trace("Handover synchronization {} to: {}", synchronization, target);
                 target.addOnCompletion(synchronization);
                 // remove it if its handed over
@@ -268,7 +273,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     @Override
     public void afterRoute(Exchange exchange, Route route) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork afterRouteL: {} for ExchangeId: {} with {}", new Object[]{route.getId(), exchange.getExchangeId(), exchange});
+            log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", new Object[]{route.getId(), exchange.getExchangeId(), exchange});
         }
         UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, synchronizations, log);
     }
@@ -281,6 +286,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public Message getOriginalInMessage() {
+        if (originalInMessage == null && !context.isAllowUseOriginalMessage()) {
+            throw new IllegalStateException("AllowUseOriginalMessage is disabled. Cannot access the original message.");
+        }
         return originalInMessage;
     }
 

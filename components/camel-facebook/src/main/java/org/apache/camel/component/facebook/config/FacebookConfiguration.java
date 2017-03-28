@@ -35,11 +35,11 @@ public class FacebookConfiguration implements Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookConfiguration.class);
 
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String oAuthAppId;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String oAuthAppSecret;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String oAuthAccessToken;
     @UriParam(label = "security", defaultValue = "https://www.facebook.com/dialog/oauth")
     private String oAuthAuthorizationURL;

@@ -26,6 +26,7 @@ import com.amazonaws.services.dynamodbv2.model.UpdateItemResult;
 import org.apache.camel.Exchange;
 
 public class UpdateItemCommand extends AbstractDdbCommand {
+
     public UpdateItemCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }

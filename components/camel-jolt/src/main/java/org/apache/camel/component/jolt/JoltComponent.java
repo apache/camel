@@ -21,9 +21,11 @@ import java.util.Map;
 import com.bazaarvoice.jolt.Transform;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ResourceHelper;
 
 public class JoltComponent extends UriEndpointComponent {
+    @Metadata(label = "advanced")
     private Transform transform;
 
     public JoltComponent() {

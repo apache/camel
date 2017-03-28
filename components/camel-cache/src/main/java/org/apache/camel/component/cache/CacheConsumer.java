@@ -43,7 +43,7 @@ public class CacheConsumer extends DefaultConsumer {
     
     @Override
     protected void doStop() throws Exception {
-        // unregisty the listenser when the consumer is stopped
+        // unregisty the listener when the consumer is stopped
         cache.getCacheEventNotificationService().unregisterListener(cacheEventListener);
     }
 

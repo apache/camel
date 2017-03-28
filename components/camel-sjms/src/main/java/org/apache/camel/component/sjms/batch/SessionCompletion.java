@@ -31,7 +31,7 @@ class SessionCompletion implements Synchronization {
 
     // TODO: add more details in the commit/rollback eg such as message id
 
-    public SessionCompletion(Session session) {
+    SessionCompletion(Session session) {
         this.session = session;
     }
 

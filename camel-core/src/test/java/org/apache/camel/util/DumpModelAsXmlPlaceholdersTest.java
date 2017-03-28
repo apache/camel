@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelHelper;
 
-/**
- *
- */
 public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
 
     public void testDumpModelAsXml() throws Exception {
@@ -32,9 +29,9 @@ public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
         assertNotNull(xml);
         log.info(xml);
-        assertTrue(xml.contains("<route customId=\"true\" id=\"Gouda\" xmlns=\"http://camel.apache.org/schema/spring\">"));
+        assertTrue(xml.contains("<route xmlns=\"http://camel.apache.org/schema/spring\" customId=\"true\" id=\"Gouda\">"));
         assertTrue(xml.contains("<from uri=\"direct:start-{{cheese.type}}\"/>"));
-        assertTrue(xml.contains("<to uri=\"direct:end-{{cheese.type}}\" customId=\"true\" id=\"log\"/>"));
+        assertTrue(xml.contains("<to customId=\"true\" id=\"log\" uri=\"direct:end-{{cheese.type}}\"/>"));
     }
 
     @Override

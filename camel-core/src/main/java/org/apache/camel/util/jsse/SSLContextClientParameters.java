@@ -17,9 +17,12 @@
 package org.apache.camel.util.jsse;
 
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.net.ssl.SNIHostName;
+import javax.net.ssl.SNIServerName;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -33,6 +36,23 @@ import org.slf4j.LoggerFactory;
 public class SSLContextClientParameters extends BaseSSLContextParameters {
     
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextClientParameters.class);
+
+    private List<SNIServerName> sniHostNames = new ArrayList<>();
+
+    public void addAllSniHostNames(List<String> sniHostNames) {
+        for (String sniHostName : sniHostNames) {
+            this.sniHostNames.add(new SNIHostName(sniHostName));
+        }
+    }
+
+    public void setSniHostName(String sniHostName) {
+        this.sniHostNames.add(new SNIHostName(sniHostName));
+    }
+
+    @Override
+    protected List<SNIServerName> getSNIHostNames() {
+        return sniHostNames;
+    }
 
     @Override
     protected boolean getAllowPassthrough() {

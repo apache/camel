@@ -26,7 +26,6 @@ import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class DropboxProducerSearchTest extends DropboxTestSupport {
 
     public DropboxProducerSearchTest() throws Exception { }
@@ -47,7 +46,7 @@ public class DropboxProducerSearchTest extends DropboxTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUNDED_FILES.name());
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUND_FILES.name());
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);

@@ -18,8 +18,8 @@ package org.apache.camel.component.smpp;
 
 import java.net.URI;
 import java.nio.charset.Charset;
-
 import java.util.Map;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -46,57 +46,59 @@ public class SmppConfiguration implements Cloneable {
     private String host = "localhost";
     @UriPath(defaultValue = "2775")
     private Integer port = 2775;
-    @UriParam(defaultValue = "smppclient")
+    @UriParam(label = "security", defaultValue = "smppclient", secret = true)
     private String systemId = "smppclient";
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password = "password";
-    @UriParam(defaultValue = "cp")
+    @UriParam(label = "common", defaultValue = "cp")
     private String systemType = "cp";
-    @UriParam
+    @UriParam(label = "codec")
     private byte dataCoding = (byte) 0;
-    @UriParam(enums = "0,4,8")
+    @UriParam(label = "codec", enums = "0,4,8")
     private byte alphabet = Alphabet.ALPHA_DEFAULT.value();
-    @UriParam(defaultValue = "ISO-8859-1")
+    @UriParam(label = "codec", defaultValue = "ISO-8859-1")
     private String encoding = "ISO-8859-1";
-    @UriParam(defaultValue = "5000")
+    @UriParam(label = "advanced", defaultValue = "5000")
     private Integer enquireLinkTimer = 5000;
-    @UriParam(defaultValue = "10000")
+    @UriParam(label = "advanced", defaultValue = "10000")
     private Integer transactionTimer = 10000;
-    @UriParam(enums = "0,1,2")
+    @UriParam(label = "producer", enums = "0,1,2")
     private byte registeredDelivery = SMSCDeliveryReceipt.SUCCESS_FAILURE.value();
-    @UriParam(defaultValue = "CMT", enums = "CMT,CPT,VMN,VMA,WAP,USSD")
+    @UriParam(label = "producer", defaultValue = "CMT", enums = "CMT,CPT,VMN,VMA,WAP,USSD")
     private String serviceType = "CMT";
-    @UriParam(defaultValue = "1616")
+    @UriParam(label = "producer", defaultValue = "1616")
     private String sourceAddr = "1616";
-    @UriParam(defaultValue = "1717")
+    @UriParam(label = "producer", defaultValue = "1717")
     private String destAddr = "1717";
-    @UriParam(enums = "0,1,2,3,4,5,6")
+    @UriParam(label = "producer", enums = "0,1,2,3,4,5,6")
     private byte sourceAddrTon = TypeOfNumber.UNKNOWN.value();
-    @UriParam(enums = "0,1,2,3,4,5,6")
+    @UriParam(label = "producer", enums = "0,1,2,3,4,5,6")
     private byte destAddrTon = TypeOfNumber.UNKNOWN.value();
-    @UriParam(enums = "0,1,2,3,6,8,9,10,13,18")
+    @UriParam(label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
     private byte sourceAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
-    @UriParam(enums = "0,1,2,3,6,8,9,10,13,18")
+    @UriParam(label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
     private byte destAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
-    @UriParam
+    @UriParam(label = "consumer")
     private String addressRange = "";
-    @UriParam
+    @UriParam(label = "producer")
     private byte protocolId = (byte) 0;
-    @UriParam(enums = "0,1,2,3")
+    @UriParam(label = "producer", enums = "0,1,2,3")
     private byte priorityFlag = (byte) 1;
-    @UriParam(enums = "0,1")
+    @UriParam(label = "producer", enums = "0,1")
     private byte replaceIfPresentFlag = ReplaceIfPresentFlag.DEFAULT.value();
-    @UriParam(enums = "0,1,2,3,4,5,6")
+    @UriParam(label = "producer", enums = "0,1,2,3,4,5,6")
     private byte typeOfNumber = TypeOfNumber.UNKNOWN.value();
-    @UriParam(enums = "0,1,2,3,6,8,9,10,13,18")
+    @UriParam(label = "producer", enums = "0,1,2,3,6,8,9,10,13,18")
     private byte numberingPlanIndicator = NumberingPlanIndicator.UNKNOWN.value();
-    @UriParam
+    @UriParam(label = "security")
     private boolean usingSSL;
-    @UriParam(defaultValue = "5000")
+    @UriParam(label = "common", defaultValue = "5000")
     private long initialReconnectDelay = 5000;
-    @UriParam(defaultValue = "5000")
+    @UriParam(label = "common", defaultValue = "5000")
     private long reconnectDelay = 5000;
-    @UriParam
+    @UriParam(label = "common", defaultValue = "2147483647")
+    private int maxReconnect = Integer.MAX_VALUE;
+    @UriParam(label = "producer")
     private boolean lazySessionCreation;
     @UriParam(label = "proxy")
     private String httpProxyHost;
@@ -106,14 +108,13 @@ public class SmppConfiguration implements Cloneable {
     private String httpProxyUsername;
     @UriParam(label = "proxy")
     private String httpProxyPassword;
+    @UriParam(label = "proxy")
+    private Map<String, String> proxyHeaders;
     @UriParam(label = "advanced")
     private SessionStateListener sessionStateListener;
     @UriParam(defaultValue = "ALLOW")
     private SmppSplittingPolicy splittingPolicy = SmppSplittingPolicy.ALLOW;
-    @UriParam(label = "proxy")
-    private Map<String, String> proxyHeaders;
 
-    
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
      * 
@@ -542,7 +543,18 @@ public class SmppConfiguration implements Cloneable {
     public void setReconnectDelay(long reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }
-    
+
+    /**
+     * Defines the maximum number of attempts to reconnect to the SMSC, if SMSC returns a negative bind response
+     */
+    public int getMaxReconnect() {
+        return maxReconnect;
+    }
+
+    public void setMaxReconnect(int maxReconnect) {
+        this.maxReconnect = maxReconnect;
+    }
+
     public boolean isLazySessionCreation() {
         return lazySessionCreation;
     }
@@ -555,7 +567,7 @@ public class SmppConfiguration implements Cloneable {
     public void setLazySessionCreation(boolean lazySessionCreation) {
         this.lazySessionCreation = lazySessionCreation;
     }
-    
+
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
@@ -566,7 +578,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyHost(String httpProxyHost) {
         this.httpProxyHost = httpProxyHost;
     }
-    
+
     public Integer getHttpProxyPort() {
         return httpProxyPort;
     }
@@ -577,7 +589,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
-    
+
     public String getHttpProxyUsername() {
         return httpProxyUsername;
     }
@@ -588,7 +600,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyUsername(String httpProxyUsername) {
         this.httpProxyUsername = httpProxyUsername;
     }
-    
+
     public String getHttpProxyPassword() {
         return httpProxyPassword;
     }
@@ -599,7 +611,7 @@ public class SmppConfiguration implements Cloneable {
     public void setHttpProxyPassword(String httpProxyPassword) {
         this.httpProxyPassword = httpProxyPassword;
     }
-    
+
     public SessionStateListener getSessionStateListener() {
         return sessionStateListener;
     }
@@ -680,6 +692,7 @@ public class SmppConfiguration implements Cloneable {
             + ", numberingPlanIndicator=" + numberingPlanIndicator
             + ", initialReconnectDelay=" + initialReconnectDelay
             + ", reconnectDelay=" + reconnectDelay
+            + ", maxReconnect=" + maxReconnect
             + ", lazySessionCreation=" + lazySessionCreation
             + ", httpProxyHost=" + httpProxyHost
             + ", httpProxyPort=" + httpProxyPort

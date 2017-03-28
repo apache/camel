@@ -16,10 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -33,7 +30,7 @@ public class DefaultCamelContextEndpointCacheTest extends ContextTestSupport {
 
     public void testCacheEndpoints() throws Exception {
         // test that we cache at most 1000 endpoints in camel context to avoid it eating to much memory
-        for (int i = 0; i < 1003; i++) {
+        for (int i = 0; i < 1234; i++) {
             String uri = "my:endpoint?id=" + i;
             DefaultEndpoint e = new DefaultEndpoint() {
                 public Producer createProducer() throws Exception {
@@ -52,11 +49,11 @@ public class DefaultCamelContextEndpointCacheTest extends ContextTestSupport {
             context.addEndpoint(uri, e);
         }
 
+        // the eviction is async so force cleanup
+        context.getEndpointRegistry().cleanUp();
+
         Collection<Endpoint> col = context.getEndpoints();
         assertEquals("Size should be 1000", 1000, col.size());
-        List<Endpoint> list = new ArrayList<Endpoint>(col);
-        assertEquals("my:endpoint?id=3", list.get(0).getEndpointUri());
-        assertEquals("my:endpoint?id=1002", list.get(999).getEndpointUri());
     }
 
 }

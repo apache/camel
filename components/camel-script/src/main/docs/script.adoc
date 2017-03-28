@@ -1,0 +1,102 @@
+[[Script-Script]]
+Script
+~~~~~~
+
+*Available as of Camel 2.16*
+
+Is used to execute a script which does not change the message (by
+default). This is useful when you need to invoke some logic that are not
+in Java code such as JavaScript, Groovy or any of the
+other link:languages.html[Languages]. The message body is not changed
+(by default) however the scripting context has access to the current
+Exchange and can essentially change the message or headers directly. But
+the return value from the script is discarded and not used. If the
+return value should be used as a changed message body then
+use link:message-translator.html[Message Translator] EIP instead.
+
+[[Script-UsingfromJavaDSL]]
+Using from Java DSL
+^^^^^^^^^^^^^^^^^^^
+
+The route below will read the file contents and validate them against a
+regular expression.
+
+[source,java]
+---------------------------------------------------
+from("file://inbox")
+  .script().groovy("// some groovy code goes here")
+  .to("bean:MyServiceBean.processLine");
+---------------------------------------------------
+
+[[Script-UsingfromSpringDSL]]
+Using from Spring DSL
+^^^^^^^^^^^^^^^^^^^^^
+
+And from XML its easy as well
+
+[source,xml]
+--------------------------------------------------------------
+<route>
+  <from uri="file://inbox"/>
+  <script>
+    <groovy>// some groovy code goes here</groovy>
+  </script>
+  <beanRef ref="myServiceBean" method="processLine"/>
+</route>
+
+<bean id="myServiceBean" class="com.mycompany.MyServiceBean"/>
+--------------------------------------------------------------
+
+Mind that you can use CDATA in XML if the groovy scrip uses < > etc
+
+ 
+
+[source,xml]
+-------------------------------------------------------------------------------------------------
+<route>
+  <from uri="file://inbox"/>
+  <script>
+    <groovy><![CDATA[ some groovy script here that can be multiple lines and whatnot ]]></groovy>
+  </script>
+  <beanRef ref="myServiceBean" method="processLine"/>
+</route>
+
+<bean id="myServiceBean" class="com.mycompany.MyServiceBean"/>
+-------------------------------------------------------------------------------------------------
+
+[[Script-Usingexternalscriptfiles]]
+Using external script files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can refer to external script files instead of inlining the script.
+For example to load a groovy script from the classpath you need to
+prefix the value with *resource:* as shown:
+
+[source,xml]
+---------------------------------------------------------------
+<route>
+  <from uri="file://inbox"/>
+  <script>
+    <groovy>resource:classpath:com/foo/myscript.groovy</groovy>
+  </script>
+  <beanRef ref="myServiceBean" method="processLine"/>
+</route>
+
+<bean id="myServiceBean" class="com.mycompany.MyServiceBean"/>
+---------------------------------------------------------------
+
+You can also refer to the script from the file system with file: instead
+of classpath: such as file:/var/myscript.groovy
+
+ 
+
+[[Script-UsingThisPattern]]
+Using This Pattern
+++++++++++++++++++
+
+If you would like to use this EIP Pattern then please read the
+link:getting-started.html[Getting Started], you may also find the
+link:architecture.html[Architecture] useful particularly the description
+of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
+try out some of the link:examples.html[Examples] first before trying
+this pattern out.

@@ -33,9 +33,11 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
+import com.amazonaws.services.sqs.model.ChangeMessageVisibilityResult;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
+import com.amazonaws.services.sqs.model.DeleteMessageResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
@@ -43,6 +45,7 @@ import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
+import com.amazonaws.services.sqs.model.SetQueueAttributesResult;
 
 public class AmazonSQSClientMock extends AmazonSQSClient {
 
@@ -151,16 +154,17 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     }
 
     @Override
-    public void deleteMessage(DeleteMessageRequest deleteMessageRequest) throws AmazonClientException {
+    public DeleteMessageResult deleteMessage(DeleteMessageRequest deleteMessageRequest) throws AmazonClientException {
         String receiptHandle = deleteMessageRequest.getReceiptHandle();
         if (inFlight.containsKey(receiptHandle)) {
             ScheduledFuture inFlightTask = inFlight.get(receiptHandle);
             inFlightTask.cancel(true);
         }
+        return new DeleteMessageResult();
     }
 
     @Override
-    public void setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest) throws AmazonServiceException, AmazonClientException {
+    public SetQueueAttributesResult setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest) throws AmazonServiceException, AmazonClientException {
         synchronized (queueAttributes) {
             if (!queueAttributes.containsKey(setQueueAttributesRequest.getQueueUrl())) {
                 queueAttributes.put(setQueueAttributesRequest.getQueueUrl(), new HashMap<String, String>());
@@ -169,10 +173,12 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
                 queueAttributes.get(setQueueAttributesRequest.getQueueUrl()).put(entry.getKey(), entry.getValue());
             }
         }
+        return new SetQueueAttributesResult();
     }
 
     @Override
-    public void changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest) throws AmazonServiceException, AmazonClientException {
+    public ChangeMessageVisibilityResult changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest) throws AmazonServiceException, AmazonClientException {
         this.changeMessageVisibilityRequests.add(changeMessageVisibilityRequest);
+        return new ChangeMessageVisibilityResult();
     }
 }

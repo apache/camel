@@ -70,7 +70,6 @@ import facebook4j.User;
 import facebook4j.Video;
 import facebook4j.VideoUpdate;
 import facebook4j.internal.org.json.JSONArray;
-
 import org.apache.camel.component.facebook.FacebookConstants;
 
 /**
@@ -98,8 +97,8 @@ public enum FacebookMethodsType {
     COMMENTALBUM_UPDATE(String.class, "commentAlbum", String.class, "albumId", CommentUpdate.class, "commentUpdate"),
     CREATEALBUM(String.class, "createAlbum", AlbumUpdate.class, "albumUpdate"),
     CREATEALBUM_WITH_ID(String.class, "createAlbum", String.class, "userId", AlbumUpdate.class, "albumUpdate"),
-    GETALBUM(Album.class,  "getAlbum", String.class, "albumId"),
-    GETALBUM_WITH_OPTIONS(Album.class,  "getAlbum", String.class, "albumId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETALBUM(Album.class, "getAlbum", String.class, "albumId"),
+    GETALBUM_WITH_OPTIONS(Album.class, "getAlbum", String.class, "albumId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETALBUMCOMMENTS(ResponseList.class, "getAlbumComments", String.class, "albumId"),
     GETALBUMCOMMENTS_WITH_OPTIONS(ResponseList.class, "getAlbumComments", String.class, "albumId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETALBUMCOVERPHOTO(URL.class, "getAlbumCoverPhoto", String.class, "albumId"),
@@ -110,6 +109,8 @@ public enum FacebookMethodsType {
     GETALBUMS(ResponseList.class, "getAlbums"),
     GETALBUMS_WITH_OPTIONS(ResponseList.class, "getAlbums", Reading.class, FacebookConstants.READING_PROPERTY),
     GETALBUMS_WITH_ID(ResponseList.class, "getAlbums", String.class, "userId"),
+    GETALBUM_REACTIONS(ResponseList.class, "getAlbumReactions", String.class, "albumId"),
+    GETALBUM_REACTIONS_WITH_OPTIONS(ResponseList.class, "getAlbumReactions", String.class, "albumId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETALBUMS_WITH_ID_OPTIONS(ResponseList.class, "getAlbums", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
     LIKEALBUM(boolean.class, "likeAlbum", String.class, "albumId"),
     UNLIKEALBUM(boolean.class, "unlikeAlbum", String.class, "albumId"),
@@ -141,7 +142,16 @@ public enum FacebookMethodsType {
     GETCOMMENTLIKES_WITH_OPTIONS(ResponseList.class, "getCommentLikes", String.class, "commentId", Reading.class, FacebookConstants.READING_PROPERTY),
     LIKECOMMENT(boolean.class, "likeComment", String.class, "commentId"),
     UNLIKECOMMENT(Boolean.class, "unlikeComment", String.class, "commentId"),
-
+    
+    // ConversationMethods
+    GETCONVERSATIONS_WITH_OPTIONS(InboxResponseList.class, "getConversations", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETCONVERSATIONS_WITH_ID(InboxResponseList.class, "getConversations", String.class, "pageId"),
+    GETCONVERSATIONS_WITH_READING(InboxResponseList.class, "getConversations", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETCONVERSATIONS(InboxResponseList.class, "getConversations"),
+    GETCONVERSATION(InboxResponseList.class, "getConversation", String.class, "conversationId"),
+    GETCONVERSATION_WITH_OPTIONS(InboxResponseList.class, "getConversation", String.class, "conversationId", Reading.class, FacebookConstants.READING_PROPERTY),
+    ANSWERCONVERSATION(String.class, "answerConversation", String.class, "conversationId", String.class, "conversation"),
+    
     // DomainMethods
     GETDOMAIN(Domain.class, "getDomain", String.class, "domainId"),
     GETDOMAINBYNAME(Domain.class, "getDomainByName", String.class, "domainName"),
@@ -150,15 +160,15 @@ public enum FacebookMethodsType {
     // EventMethods
     CREATEEVENT(String.class, "createEvent", EventUpdate.class, "eventUpdate"),
     CREATEEVENT_WITH_ID(String.class, "createEvent", String.class, "userId", EventUpdate.class, "eventUpdate"),
-    DELETEEVENT(Boolean.class,  "deleteEvent", String.class, "eventId"),
-    DELETEEVENTPICTURE(Boolean.class,  "deleteEventPicture", String.class, "eventId"),
-    EDITEVENT(Boolean.class,  "editEvent", String.class, "eventId", EventUpdate.class, "eventUpdate"),
-    GETEVENT(Event.class,  "getEvent", String.class, "eventId"),
-    GETEVENT_WITH_OPTIONS(Event.class,  "getEvent", String.class, "eventId", Reading.class, FacebookConstants.READING_PROPERTY),
+    DELETEEVENT(Boolean.class, "deleteEvent", String.class, "eventId"),
+    DELETEEVENTPICTURE(Boolean.class, "deleteEventPicture", String.class, "eventId"),
+    EDITEVENT(Boolean.class, "editEvent", String.class, "eventId", EventUpdate.class, "eventUpdate"),
+    GETEVENT(Event.class, "getEvent", String.class, "eventId"),
+    GETEVENT_WITH_OPTIONS(Event.class, "getEvent", String.class, "eventId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETEVENTPHOTOS(ResponseList.class, "getEventPhotos", String.class, "eventId"),
     GETEVENTPHOTOS_WITH_OPTIONS(ResponseList.class, "getEventPhotos", String.class, "eventId", Reading.class, FacebookConstants.READING_PROPERTY),
-    GETEVENTPICTUREURL(URL.class,  "getEventPictureURL", String.class, "eventId"),
-    GETEVENTPICTUREURL_WITH_PICTURESIZE(URL.class,  "getEventPictureURL", String.class, "eventId", PictureSize.class, "size"),
+    GETEVENTPICTUREURL(URL.class, "getEventPictureURL", String.class, "eventId"),
+    GETEVENTPICTUREURL_WITH_PICTURESIZE(URL.class, "getEventPictureURL", String.class, "eventId", PictureSize.class, "size"),
     GETEVENTS(ResponseList.class, "getEvents"),
     GETEVENTS_WITH_OPTIONS(ResponseList.class, "getEvents", Reading.class, FacebookConstants.READING_PROPERTY),
     GETEVENTS_WITH_ID(ResponseList.class, "getEvents", String.class, "userId"),
@@ -175,20 +185,20 @@ public enum FacebookMethodsType {
     GETRSVPSTATUSINDECLINED_WITH_ID(ResponseList.class, "getRSVPStatusInDeclined", String.class, "eventId", String.class, "userId"),
     GETRSVPSTATUSINMAYBE(ResponseList.class, "getRSVPStatusInMaybe", String.class, "eventId"),
     GETRSVPSTATUSINMAYBE_WITH_ID(ResponseList.class, "getRSVPStatusInMaybe", String.class, "eventId", String.class, "userId"),
-    INVITETOEVENT(Boolean.class,  "inviteToEvent", String.class, "eventId", String.class, "userId"),
-    INVITETOEVENT_WITH_IDS(Boolean.class,  "inviteToEvent", String.class, "eventId", new String[0].getClass(), "userIds"),
-    POSTEVENTLINK_WITH_LINK(String.class, "postEventLink", String.class, "eventId", URL.class , "link"),
-    POSTEVENTLINK_WITH_LINK_MSG(String.class, "postEventLink", String.class, "eventId", URL.class , "link", String.class, "message"),
+    INVITETOEVENT(Boolean.class, "inviteToEvent", String.class, "eventId", String.class, "userId"),
+    INVITETOEVENT_WITH_IDS(Boolean.class, "inviteToEvent", String.class, "eventId", new String[0].getClass(), "userIds"),
+    POSTEVENTLINK_WITH_LINK(String.class, "postEventLink", String.class, "eventId", URL.class, "link"),
+    POSTEVENTLINK_WITH_LINK_MSG(String.class, "postEventLink", String.class, "eventId", URL.class, "link", String.class, "message"),
     POSTEVENTPHOTO_WITH_MEDIA(String.class, "postEventPhoto", String.class, "eventId", Media.class, "source"),
     POSTEVENTPHOTO_WITH_MEDIA_MSG(String.class, "postEventPhoto", String.class, "eventId", Media.class, "source", String.class, "message"),
     POSTEVENTSTATUSMESSAGE_WITH_MSG(String.class, "postEventStatusMessage", String.class, "eventId", String.class, "message"),
     POSTEVENTVIDEO_WITH_MEDIA(String.class, "postEventVideo", String.class, "eventId", Media.class, "source"),
     POSTEVENTVIDEO_WITH_MEDIA_TITLE_DESC(String.class, "postEventVideo", String.class, "eventId", Media.class, "source", String.class, "title", String.class, "description"),
-    RSVPEVENTASATTENDING(Boolean.class,  "rsvpEventAsAttending", String.class, "eventId"),
-    RSVPEVENTASDECLINED(Boolean.class,  "rsvpEventAsDeclined", String.class, "eventId"),
-    RSVPEVENTASMAYBE(Boolean.class,  "rsvpEventAsMaybe", String.class, "eventId"),
-    UNINVITEFROMEVENT(Boolean.class,  "uninviteFromEvent", String.class, "eventId", String.class, "userId"),
-    UPDATEEVENTPICTURE(Boolean.class,  "updateEventPicture", String.class, "eventId", Media.class, "source"),
+    RSVPEVENTASATTENDING(Boolean.class, "rsvpEventAsAttending", String.class, "eventId"),
+    RSVPEVENTASDECLINED(Boolean.class, "rsvpEventAsDeclined", String.class, "eventId"),
+    RSVPEVENTASMAYBE(Boolean.class, "rsvpEventAsMaybe", String.class, "eventId"),
+    UNINVITEFROMEVENT(Boolean.class, "uninviteFromEvent", String.class, "eventId", String.class, "userId"),
+    UPDATEEVENTPICTURE(Boolean.class, "updateEventPicture", String.class, "eventId", Media.class, "source"),
 
     // FamilyMethods
     GETFAMILY(ResponseList.class, "getFamily"),
@@ -208,7 +218,7 @@ public enum FacebookMethodsType {
     GETINTERESTS(ResponseList.class, "getInterests"),
     GETINTERESTS_WITH_ID(ResponseList.class, "getInterests", String.class, "userId"),
     GETINTERESTS_WITH_OPTIONS(ResponseList.class, "getInterests", Reading.class, FacebookConstants.READING_PROPERTY),
-    GETINTERESTS_WITH_ID_OPTIONS(ResponseList.class, "getInterests",  String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETINTERESTS_WITH_ID_OPTIONS(ResponseList.class, "getInterests", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETMOVIES(ResponseList.class, "getMovies"),
     GETMOVIES_WITH_OPTIONS(ResponseList.class, "getMovies", Reading.class, FacebookConstants.READING_PROPERTY),
     GETMOVIES_WITH_ID(ResponseList.class, "getMovies", String.class, "userId"),
@@ -265,7 +275,7 @@ public enum FacebookMethodsType {
 
     // GameMethods
     DELETEACHIEVEMENT(Boolean.class, "deleteAchievement", URL.class, "achievementURL"),
-    DELETEACHIEVEMENT_WITH_ID(Boolean.class, "deleteAchievement", String.class, "userId", URL.class , "achievementURL"),
+    DELETEACHIEVEMENT_WITH_ID(Boolean.class, "deleteAchievement", String.class, "userId", URL.class, "achievementURL"),
     DELETESCORE(Boolean.class, "deleteScore"),
     DELETESCORE_WITH_ID(Boolean.class, "deleteScore", String.class, "userId"),
     GETACHIEVEMENTS(ResponseList.class, "getAchievements"),
@@ -279,18 +289,18 @@ public enum FacebookMethodsType {
     POSTACHIEVEMENT(String.class, "postAchievement", URL.class, "achievementURL"),
     POSTACHIEVEMENT_WITH_ID(String.class, "postAchievement", String.class, "userId", URL.class, "achievementURL"),
     POSTSCORE(Boolean.class, "postScore", int.class, "scoreValue"),
-    POSTSCORE_WITH_ID(Boolean.class,  "postScore", String.class, "userId", int.class, "scoreValue"),
+    POSTSCORE_WITH_ID(Boolean.class, "postScore", String.class, "userId", int.class, "scoreValue"),
 
     // GroupMethods
-    GETGROUP(Group.class,  "getGroup", String.class, "groupId"),
-    GETGROUP_WITH_OPTIONS(Group.class,  "getGroup", String.class, "groupId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETGROUP(Group.class, "getGroup", String.class, "groupId"),
+    GETGROUP_WITH_OPTIONS(Group.class, "getGroup", String.class, "groupId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETGROUPDOCS(ResponseList.class, "getGroupDocs", String.class, "groupId"),
     GETGROUPDOCS_WITH_OPTIONS(ResponseList.class, "getGroupDocs", String.class, "groupId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETGROUPFEED(ResponseList.class, "getGroupFeed", String.class, "groupId"),
     GETGROUPFEED_WITH_OPTIONS(ResponseList.class, "getGroupFeed", String.class, "groupId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETGROUPMEMBERS(ResponseList.class, "getGroupMembers", String.class, "groupId"),
     GETGROUPMEMBERS_WITH_OPTIONS(ResponseList.class, "getGroupMembers", String.class, "groupId", Reading.class, FacebookConstants.READING_PROPERTY),
-    GETGROUPPICTUREURL(URL.class,  "getGroupPictureURL", String.class, "groupId"),
+    GETGROUPPICTUREURL(URL.class, "getGroupPictureURL", String.class, "groupId"),
     GETGROUPS(ResponseList.class, "getGroups"),
     GETGROUPS_WITH_OPTIONS(ResponseList.class, "getGroups", Reading.class, FacebookConstants.READING_PROPERTY),
     GETGROUPS_WITH_ID(ResponseList.class, "getGroups", String.class, "userId"),
@@ -313,14 +323,14 @@ public enum FacebookMethodsType {
     // LinkMethods
     COMMENTLINK(String.class, "commentLink", String.class, "linkId", String.class, "message"),
     COMMENTLINK_UPDATE(String.class, "commentLink", String.class, "linkId", CommentUpdate.class, "commentUpdate"),
-    GETLINK(Link.class,  "getLink", String.class, "linkId"),
-    GETLINK_WITH_OPTIONS(Link.class,  "getLink", String.class, "linkId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETLINK(Link.class, "getLink", String.class, "linkId"),
+    GETLINK_WITH_OPTIONS(Link.class, "getLink", String.class, "linkId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETLINKCOMMENTS(ResponseList.class, "getLinkComments", String.class, "linkId"),
     GETLINKCOMMENTS_WITH_OPTIONS(ResponseList.class, "getLinkComments", String.class, "linkId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETLINKLIKES(ResponseList.class, "getLinkLikes", String.class, "linkId"),
     GETLINKLIKES_WITH_OPTIONS(ResponseList.class, "getLinkLikes", String.class, "linkId", Reading.class, FacebookConstants.READING_PROPERTY),
-    LIKELINK(Boolean.class,  "likeLink", String.class, "linkId"),
-    UNLIKELINK(Boolean.class,  "unlikeLink", String.class, "linkId"),
+    LIKELINK(Boolean.class, "likeLink", String.class, "linkId"),
+    UNLIKELINK(Boolean.class, "unlikeLink", String.class, "linkId"),
 
     // LocationMethods
     GETLOCATIONS(ResponseList.class, "getLocations"),
@@ -337,8 +347,8 @@ public enum FacebookMethodsType {
     GETINBOX_WITH_OPTIONS(InboxResponseList.class, "getInbox", Reading.class, FacebookConstants.READING_PROPERTY),
     GETINBOX_WITH_ID(InboxResponseList.class, "getInbox", String.class, "userId"),
     GETINBOX_WITH_ID_OPTIONS(InboxResponseList.class, "getInbox", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
-    GETMESSAGE(Message.class,  "getMessage", String.class, "messageId"),
-    GETMESSAGE_WITH_OPTIONS(Message.class,  "getMessage", String.class, "messageId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETMESSAGE(Message.class, "getMessage", String.class, "messageId"),
+    GETMESSAGE_WITH_OPTIONS(Message.class, "getMessage", String.class, "messageId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETOUTBOX(ResponseList.class, "getOutbox"),
     GETOUTBOX_WITH_OPTIONS(ResponseList.class, "getOutbox", Reading.class, FacebookConstants.READING_PROPERTY),
     GETOUTBOX_WITH_ID(ResponseList.class, "getOutbox", String.class, "userId"),
@@ -352,8 +362,8 @@ public enum FacebookMethodsType {
     COMMENTNOTE(String.class, "commentNote", String.class, "noteId", String.class, "message"),
     CREATENOTE(String.class, "createNote", String.class, "subject", String.class, "message"),
     CREATENOTE_WITH_ID_MSG(String.class, "createNote", String.class, "userId", String.class, "subject", String.class, "message"),
-    GETNOTE(Note.class,  "getNote", String.class, "noteId"),
-    GETNOTE_WITH_OPTIONS(Note.class,  "getNote", String.class, "noteId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETNOTE(Note.class, "getNote", String.class, "noteId"),
+    GETNOTE_WITH_OPTIONS(Note.class, "getNote", String.class, "noteId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETNOTECOMMENTS(ResponseList.class, "getNoteComments", String.class, "noteId"),
     GETNOTECOMMENTS_WITH_OPTIONS(ResponseList.class, "getNoteComments", String.class, "noteId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETNOTELIKES(ResponseList.class, "getNoteLikes", String.class, "noteId"),
@@ -362,8 +372,8 @@ public enum FacebookMethodsType {
     GETNOTES_WITH_OPTIONS(ResponseList.class, "getNotes", Reading.class, FacebookConstants.READING_PROPERTY),
     GETNOTES_WITH_ID(ResponseList.class, "getNotes", String.class, "userId"),
     GETNOTES_WITH_ID_OPTIONS(ResponseList.class, "getNotes", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
-    LIKENOTE(Boolean.class,  "likeNote", String.class, "noteId"),
-    UNLIKENOTE(Boolean.class,  "unlikeNote", String.class, "noteId"),
+    LIKENOTE(Boolean.class, "likeNote", String.class, "noteId"),
+    UNLIKENOTE(Boolean.class, "unlikeNote", String.class, "noteId"),
 
     // NotificationMethods
     GETNOTIFICATIONS(ResponseList.class, "getNotifications"),
@@ -374,27 +384,27 @@ public enum FacebookMethodsType {
     GETNOTIFICATIONS_WITH_ID_INCLUDEREAD(ResponseList.class, "getNotifications", String.class, "userId", boolean.class, "includeRead"),
     GETNOTIFICATIONS_WITH_ID_OPTIONS(ResponseList.class, "getNotifications", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETNOTIFICATIONS_WITH_ID_OPTIONS_INCLUDEREAD(ResponseList.class, "getNotifications", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY, boolean.class, "includeRead"),
-    MARKNOTIFICATIONASREAD(Boolean.class,  "markNotificationAsRead", String.class, "notificationId"),
+    MARKNOTIFICATIONASREAD(Boolean.class, "markNotificationAsRead", String.class, "notificationId"),
 
     // PermissionMethods
-    DELETEALLPERMISSIONS(Boolean.class,  "deleteAllPermissions"),
-    DELETEALLPERMISSIONS_WITH_ID(Boolean.class,  "deleteAllPermissions", String.class, "userId"),
+    DELETEALLPERMISSIONS(Boolean.class, "deleteAllPermissions"),
+    DELETEALLPERMISSIONS_WITH_ID(Boolean.class, "deleteAllPermissions", String.class, "userId"),
     GETPERMISSIONS(List.class, "getPermissions"),
     GETPERMISSIONS_WITH_ID(List.class, "getPermissions", String.class, "userId"),
-    REVOKEPERMISSION(Boolean.class,  "revokePermission", String.class, "permissionName"),
-    REVOKEPERMISSION_WITH_ID(Boolean.class,  "revokePermission", String.class, "userId", String.class, "permissionName"),
-    REVOKEALLPERMISSIONS(Boolean.class,  "revokeAllPermissions"),
-    REVOKEALLPERMISSIONS_WITH_ID(Boolean.class,  "revokeAllPermissions", String.class, "userId"),
+    REVOKEPERMISSION(Boolean.class, "revokePermission", String.class, "permissionName"),
+    REVOKEPERMISSION_WITH_ID(Boolean.class, "revokePermission", String.class, "userId", String.class, "permissionName"),
+    REVOKEALLPERMISSIONS(Boolean.class, "revokeAllPermissions"),
+    REVOKEALLPERMISSIONS_WITH_ID(Boolean.class, "revokeAllPermissions", String.class, "userId"),
 
     // PhotoMethods
-    ADDTAGTOPHOTO(Boolean.class,  "addTagToPhoto", String.class, "photoId", String.class, "toUserId"),
-    ADDTAGTOPHOTO_WITH_IDS(Boolean.class,  "addTagToPhoto", String.class, "photoId", List.class, "toUserIds"),
-    ADDTAGTOPHOTO_WITH_TAGUPDATE(Boolean.class,  "addTagToPhoto", String.class, "photoId", TagUpdate.class, "tagUpdate"),
+    ADDTAGTOPHOTO(Boolean.class, "addTagToPhoto", String.class, "photoId", String.class, "toUserId"),
+    ADDTAGTOPHOTO_WITH_IDS(Boolean.class, "addTagToPhoto", String.class, "photoId", List.class, "toUserIds"),
+    ADDTAGTOPHOTO_WITH_TAGUPDATE(Boolean.class, "addTagToPhoto", String.class, "photoId", TagUpdate.class, "tagUpdate"),
     COMMENTPHOTO(String.class, "commentPhoto", String.class, "photoId", String.class, "message"),
     COMMENTPHOTO_UPDATE(String.class, "commentPhoto", String.class, "photoId", CommentUpdate.class, "commentUpdate"),
-    DELETEPHOTO(Boolean.class,  "deletePhoto", String.class, "photoId"),
-    GETPHOTO(Photo.class,  "getPhoto", String.class, "photoId"),
-    GETPHOTO_WITH_OPTIONS(Photo.class,  "getPhoto", String.class, "photoId", Reading.class, FacebookConstants.READING_PROPERTY),
+    DELETEPHOTO(Boolean.class, "deletePhoto", String.class, "photoId"),
+    GETPHOTO(Photo.class, "getPhoto", String.class, "photoId"),
+    GETPHOTO_WITH_OPTIONS(Photo.class, "getPhoto", String.class, "photoId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETPHOTOCOMMENTS(ResponseList.class, "getPhotoComments", String.class, "photoId"),
     GETPHOTOCOMMENTS_WITH_OPTIONS(ResponseList.class, "getPhotoComments", String.class, "photoId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETPHOTOLIKES(ResponseList.class, "getPhotoLikes", String.class, "photoId"),
@@ -403,14 +413,18 @@ public enum FacebookMethodsType {
     GETPHOTOS_WITH_OPTIONS(ResponseList.class, "getPhotos", Reading.class, FacebookConstants.READING_PROPERTY),
     GETPHOTOS_WITH_ID(ResponseList.class, "getPhotos", String.class, "userId"),
     GETPHOTOS_WITH_ID_OPTIONS(ResponseList.class, "getPhotos", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
-    GETPHOTOURL(URL.class,  "getPhotoURL", String.class, "photoId"),
+    GETPHOTO_REACTIONS(ResponseList.class, "getPhotoReactions", String.class, "photoId"),
+    GETPHOTO_REACTIONS_WITH_OPTIONS(ResponseList.class, "getPhotoReactions", String.class, "photoId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETPHOTOURL(URL.class, "getPhotoURL", String.class, "photoId"),
+    GETPHOTOSHAREDPOSTS(ResponseList.class, "getPhotoSharedposts", String.class, "photoId"),
+    GETPHOTOSHAREDPOSTS_WITH_OPTIONS(ResponseList.class, "getPhotoSharedposts", String.class, "photoId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETTAGSONPHOTO(ResponseList.class, "getTagsOnPhoto", String.class, "photoId"),
     GETTAGSONPHOTO_WITH_OPTIONS(ResponseList.class, "getTagsOnPhoto", String.class, "photoId", Reading.class, FacebookConstants.READING_PROPERTY),
-    LIKEPHOTO(Boolean.class,  "likePhoto", String.class, "photoId"),
+    LIKEPHOTO(Boolean.class, "likePhoto", String.class, "photoId"),
     POSTPHOTO(String.class, "postPhoto", Media.class, "source"),
     POSTPHOTO_WITH_MEDIA(String.class, "postPhoto", String.class, "userId", Media.class, "source"),
-    UNLIKEPHOTO(Boolean.class,  "unlikePhoto", String.class, "photoId"),
-    UPDATETAGONPHOTO_WITH_TAGUPDATE(Boolean.class,  "updateTagOnPhoto", String.class, "photoId", TagUpdate.class, "tagUpdate"),
+    UNLIKEPHOTO(Boolean.class, "unlikePhoto", String.class, "photoId"),
+    UPDATETAGONPHOTO_WITH_TAGUPDATE(Boolean.class, "updateTagOnPhoto", String.class, "photoId", TagUpdate.class, "tagUpdate"),
 
     // PokeMethods
     GETPOKES(ResponseList.class, "getPokes"),
@@ -421,7 +435,7 @@ public enum FacebookMethodsType {
     // PostMethods
     COMMENTPOST(String.class, "commentPost", String.class, "postId", String.class, "message"),
     COMMENTPOST_UPDATE(String.class, "commentPost", String.class, "postId", CommentUpdate.class, "commentUpdate"),
-    DELETEPOST(Boolean.class,  "deletePost", String.class, "postId"),
+    DELETEPOST(Boolean.class, "deletePost", String.class, "postId"),
     GETFEED(ResponseList.class, "getFeed"),
     GETFEED_WITH_OPTIONS(ResponseList.class, "getFeed", Reading.class, FacebookConstants.READING_PROPERTY),
     GETFEED_WITH_ID(ResponseList.class, "getFeed", String.class, "userId"),
@@ -432,8 +446,10 @@ public enum FacebookMethodsType {
     GETLINKS_WITH_OPTIONS(ResponseList.class, "getLinks", Reading.class, FacebookConstants.READING_PROPERTY),
     GETLINKS_WITH_ID(ResponseList.class, "getLinks", String.class, "userId"),
     GETLINKS_WITH_ID_OPTIONS(ResponseList.class, "getLinks", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
-    GETPOST(Post.class,  "getPost", String.class, "postId"),
-    GETPOST_WITH_OPTIONS(Post.class,  "getPost", String.class, "postId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETPOST(Post.class, "getPost", String.class, "postId"),
+    GETPOST_WITH_OPTIONS(Post.class, "getPost", String.class, "postId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETPOST_REACTIONS(ResponseList.class, "getPostReactions", String.class, "postId"),
+    GETPOST_REACTIONS_WITH_OPTIONS(ResponseList.class, "getPostReactions", String.class, "postId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETPOSTCOMMENTS(ResponseList.class, "getPostComments", String.class, "postId"),
     GETPOSTCOMMENTS_WITH_OPTIONS(ResponseList.class, "getPostComments", String.class, "postId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETPOSTLIKES(ResponseList.class, "getPostLikes", String.class, "postId"),
@@ -442,6 +458,8 @@ public enum FacebookMethodsType {
     GETPOSTS_WITH_OPTIONS(ResponseList.class, "getPosts", Reading.class, FacebookConstants.READING_PROPERTY),
     GETPOSTS_WITH_ID(ResponseList.class, "getPosts", String.class, "userId"),
     GETPOSTS_WITH_ID_OPTIONS(ResponseList.class, "getPosts", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETSHAREDPOSTS(ResponseList.class, "getSharedPosts", String.class, "postId"),
+    GETSHAREDPOSTS_WITH_OPTIONS(ResponseList.class, "getSharedPosts", String.class, "postId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETSTATUSES(ResponseList.class, "getStatuses"),
     GETSTATUSES_WITH_OPTIONS(ResponseList.class, "getStatuses", Reading.class, FacebookConstants.READING_PROPERTY),
     GETSTATUSES_WITH_ID(ResponseList.class, "getStatuses", String.class, "userId"),
@@ -450,7 +468,7 @@ public enum FacebookMethodsType {
     GETTAGGED_WITH_OPTIONS(ResponseList.class, "getTagged", Reading.class, FacebookConstants.READING_PROPERTY),
     GETTAGGED_WITH_ID(ResponseList.class, "getTagged", String.class, "userId"),
     GETTAGGED_WITH_ID_OPTIONS(ResponseList.class, "getTagged", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
-    LIKEPOST(Boolean.class,  "likePost", String.class, "postId"),
+    LIKEPOST(Boolean.class, "likePost", String.class, "postId"),
     POSTFEED(String.class, "postFeed", PostUpdate.class, "postUpdate"),
     POSTFEED_WITH_POSTUPDATE(String.class, "postFeed", String.class, "userId", PostUpdate.class, "postUpdate"),
     POSTLINK(String.class, "postLink", URL.class, "link"),
@@ -459,13 +477,13 @@ public enum FacebookMethodsType {
     POSTLINK_WITH_ID_MSG(String.class, "postLink", String.class, "userId", URL.class, "link", String.class, "message"),
     POSTSTATUSMESSAGE(String.class, "postStatusMessage", String.class, "message"),
     POSTSTATUSMESSAGE_WITH_ID(String.class, "postStatusMessage", String.class, "userId", String.class, "message"),
-    UNLIKEPOST(Boolean.class,  "unlikePost", String.class, "postId"),
+    UNLIKEPOST(Boolean.class, "unlikePost", String.class, "postId"),
 
     // QuestionMethods
     ADDQUESTIONOPTION(String.class, "addQuestionOption", String.class, "questionId", String.class, "optionDescription"),
-    DELETEQUESTION(Boolean.class,  "deleteQuestion", String.class, "questionId"),
-    GETQUESTION(Question.class,  "getQuestion", String.class, "questionId"),
-    GETQUESTION_WITH_OPTIONS(Question.class,  "getQuestion", String.class, "questionId", Reading.class, FacebookConstants.READING_PROPERTY),
+    DELETEQUESTION(Boolean.class, "deleteQuestion", String.class, "questionId"),
+    GETQUESTION(Question.class, "getQuestion", String.class, "questionId"),
+    GETQUESTION_WITH_OPTIONS(Question.class, "getQuestion", String.class, "questionId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETQUESTIONOPTIONS(ResponseList.class, "getQuestionOptions", String.class, "questionId"),
     GETQUESTIONOPTIONS_WITH_OPTIONS(ResponseList.class, "getQuestionOptions", String.class, "questionId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETQUESTIONOPTIONVOTES(ResponseList.class, "getQuestionOptionVotes", String.class, "questionId"),
@@ -485,49 +503,54 @@ public enum FacebookMethodsType {
     GETSUBSCRIBERS_WITH_ID_OPTIONS(ResponseList.class, "getSubscribers", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
 
     // TestUserMethods
-    CREATETESTUSER(TestUser.class,  "createTestUser", String.class, "appId"),
-    CREATETESTUSER_WITH_NAME(TestUser.class,  "createTestUser", String.class, "appId", String.class, "name", String.class, "userLocale", String.class, "permissions"),
-    DELETETESTUSER(Boolean.class,  "deleteTestUser", String.class, "testUserId"),
+    CREATETESTUSER(TestUser.class, "createTestUser", String.class, "appId"),
+    CREATETESTUSER_WITH_NAME(TestUser.class, "createTestUser", String.class, "appId", String.class, "name", String.class, "userLocale", String.class, "permissions"),
+    DELETETESTUSER(Boolean.class, "deleteTestUser", String.class, "testUserId"),
     GETTESTUSERS(List.class, "getTestUsers", String.class, "appId"),
-    MAKEFRIENDTESTUSER(Boolean.class,  "makeFriendTestUser", TestUser.class, "testUser1", TestUser.class, "testUser2"),
+    MAKEFRIENDTESTUSER(Boolean.class, "makeFriendTestUser", TestUser.class, "testUser1", TestUser.class, "testUser2"),
 
     // UserMethods
-    GETME(User.class,  "getMe"),
-    GETME_WITH_OPTIONS(User.class,  "getMe", Reading.class, FacebookConstants.READING_PROPERTY),
-    GETPICTUREURL(URL.class,  "getPictureURL"),
-    GETPICTUREURL_WITH_DIM(URL.class,  "getPictureURL", int.class, "pictureId", int.class, "pictureId2"),
-    GETPICTUREURL_WITH_PICTURESIZE(URL.class,  "getPictureURL", PictureSize.class, "size"),
-    GETPICTUREURL_WITH_ID(URL.class,  "getPictureURL", String.class, "userId"),
-    GETPICTUREURL_WITH_ID_PICTURESIZE(URL.class,  "getPictureURL", String.class, "userId", PictureSize.class, "size"),
-    GETPICTUREURL_WITH_ID_AND_DIM(URL.class,  "getPictureURL", String.class, "userId", int.class, "pictureId", int.class, "pictureId2"),
-    GETSSLPICTUREURL(URL.class,  "getSSLPictureURL"),
-    GETSSLPICTUREURL_WITH_PICTURESIZE(URL.class,  "getSSLPictureURL", PictureSize.class, "size"),
-    GETSSLPICTUREURL_WITH_ID(URL.class,  "getSSLPictureURL", String.class, "userId"),
-    GETSSLPICTUREURL_WITH_ID_SIZE(URL.class,  "getSSLPictureURL", String.class, "userId", PictureSize.class, "size"),
-    GETUSER(User.class,  "getUser", String.class, "userId"),
-    GETUSER_WITH_OPTIONS(User.class,  "getUser", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETME(User.class, "getMe"),
+    GETME_WITH_OPTIONS(User.class, "getMe", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETPICTUREURL(URL.class, "getPictureURL"),
+    GETPICTUREURL_WITH_DIM(URL.class, "getPictureURL", int.class, "pictureId", int.class, "pictureId2"),
+    GETPICTUREURL_WITH_PICTURESIZE(URL.class, "getPictureURL", PictureSize.class, "size"),
+    GETPICTUREURL_WITH_ID(URL.class, "getPictureURL", String.class, "userId"),
+    GETPICTUREURL_WITH_ID_PICTURESIZE(URL.class, "getPictureURL", String.class, "userId", PictureSize.class, "size"),
+    GETPICTUREURL_WITH_ID_AND_DIM(URL.class, "getPictureURL", String.class, "userId", int.class, "pictureId", int.class, "pictureId2"),
+    GETSSLPICTUREURL(URL.class, "getSSLPictureURL"),
+    GETSSLPICTUREURL_WITH_PICTURESIZE(URL.class, "getSSLPictureURL", PictureSize.class, "size"),
+    GETSSLPICTUREURL_WITH_ID(URL.class, "getSSLPictureURL", String.class, "userId"),
+    GETSSLPICTUREURL_WITH_ID_SIZE(URL.class, "getSSLPictureURL", String.class, "userId", PictureSize.class, "size"),
+    GETUSER(User.class, "getUser", String.class, "userId"),
+    GETUSER_WITH_OPTIONS(User.class, "getUser", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETUSERS(List.class, "getUsers", new String[0].getClass(), "ids"),
 
     // VideoMethods
     COMMENTVIDEO(String.class, "commentVideo", String.class, "videoId", String.class, "message"),
     COMMENTVIDEO_UPDATE(String.class, "commentVideo", String.class, "videoId", CommentUpdate.class, "commentUpdate"),
-    GETVIDEO(Video.class,  "getVideo", String.class, "videoId"),
-    GETVIDEO_WITH_OPTIONS(Video.class,  "getVideo", String.class, "videoId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETVIDEO(Video.class, "getVideo", String.class, "videoId"),
+    GETVIDEO_WITH_OPTIONS(Video.class, "getVideo", String.class, "videoId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETVIDEO_REACTIONS(ResponseList.class, "getVideoReactions", String.class, "videoId"),
+    GETVIDEO_REACTIONS_WITH_OPTIONS(ResponseList.class, "getVideoReactions", String.class, "videoId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETVIDEOSHAREDPOSTS(ResponseList.class, "getVideoSharedposts", String.class, "videoId"),
+    GETVIDEOSHAREDPOSTS_WITH_OPTIONS(ResponseList.class, "getVideoSharedposts", String.class, "videoId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETVIDEOCOMMENTS(ResponseList.class, "getVideoComments", String.class, "videoId"),
     GETVIDEOCOMMENTS_WITH_OPTIONS(ResponseList.class, "getVideoComments", String.class, "videoId", Reading.class, FacebookConstants.READING_PROPERTY),
-    GETVIDEOCOVER(URL.class,  "getVideoCover", String.class, "videoId"),
+    GETVIDEOCOVER(URL.class, "getVideoCover", String.class, "videoId"),
     GETVIDEOLIKES(ResponseList.class, "getVideoLikes", String.class, "videoId"),
     GETVIDEOLIKES_WITH_OPTIONS(ResponseList.class, "getVideoLikes", String.class, "videoId", Reading.class, FacebookConstants.READING_PROPERTY),
     GETVIDEOS(ResponseList.class, "getVideos"),
     GETVIDEOS_WITH_OPTIONS(ResponseList.class, "getVideos", Reading.class, FacebookConstants.READING_PROPERTY),
     GETVIDEOS_WITH_ID(ResponseList.class, "getVideos", String.class, "userId"),
     GETVIDEOS_WITH_ID_OPTIONS(ResponseList.class, "getVideos", String.class, "userId", Reading.class, FacebookConstants.READING_PROPERTY),
-    LIKEVIDEO(Boolean.class,  "likeVideo", String.class, "videoId"),
-    UNLIKEVIDEO(Boolean.class,  "unlikeVideo", String.class, "videoId"),
+    LIKEVIDEO(Boolean.class, "likeVideo", String.class, "videoId"),
+    UNLIKEVIDEO(Boolean.class, "unlikeVideo", String.class, "videoId"),
 
     // SearchMethods get the highest priority with higher ordinal values
     SEARCH(ResponseList.class, "search", String.class, "query"),
     SEARCH_WITH_OPTIONS(ResponseList.class, "search", String.class, "query", Reading.class, FacebookConstants.READING_PROPERTY),
+    SEARCH_WITH_TYPE(ResponseList.class, "search", String.class, "query", String.class, "type", Reading.class, FacebookConstants.READING_PROPERTY),
     SEARCHCHECKINS(ResponseList.class, "searchCheckins"),
     SEARCHCHECKINS_WITH_OPTIONS(ResponseList.class, "searchCheckins", Reading.class, FacebookConstants.READING_PROPERTY),
     SEARCHEVENTS(ResponseList.class, "searchEvents", String.class, "query"),
@@ -552,12 +575,12 @@ public enum FacebookMethodsType {
     BLOCK_USERLIST_WITH_PAGEID(Map.class, "block", String.class, "pageId", List.class, "list"),
     GET_PROMOTABLE_POSTS(ResponseList.class, "getPromotablePosts"),
     GET_PROMOTABLE_POSTS_WITH_PAGEID(ResponseList.class, "getPromotablePosts", String.class, "pageId"),
-    GET_PROMOTABLE_POSTS_WITH_READING(ResponseList.class, "getPromotablePosts", Reading.class , FacebookConstants.READING_PROPERTY),
-    GET_PROMOTABLE_POSTS_WITH_PAGEID_AND_READING(ResponseList.class, "getPromotablePosts", String.class, "pageId", Reading.class , FacebookConstants.READING_PROPERTY),
-    POST_PAGE_PHOTO(String.class, "postPagePhoto", PagePhotoUpdate.class , "pagePhotoUpdate"),
-    POST_PAGE_PHOTO_WITH_PAGEID(String.class, "postPagePhoto", String.class, "pageId", PagePhotoUpdate.class , "pagePhotoUpdate"),
+    GET_PROMOTABLE_POSTS_WITH_READING(ResponseList.class, "getPromotablePosts", Reading.class, FacebookConstants.READING_PROPERTY),
+    GET_PROMOTABLE_POSTS_WITH_PAGEID_AND_READING(ResponseList.class, "getPromotablePosts", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
+    POST_PAGE_PHOTO(String.class, "postPagePhoto", PagePhotoUpdate.class, "pagePhotoUpdate"),
+    POST_PAGE_PHOTO_WITH_PAGEID(String.class, "postPagePhoto", String.class, "pageId", PagePhotoUpdate.class, "pagePhotoUpdate"),
     GET_PAGE_TAGGED(ResponseList.class, "getPageTagged", String.class, "pageId"),
-    GET_PAGE_TAGGED_WITH_READING(ResponseList.class, "getPageTagged", String.class, "pageId", Reading.class , FacebookConstants.READING_PROPERTY),
+    GET_PAGE_TAGGED_WITH_READING(ResponseList.class, "getPageTagged", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_PAGE(Page.class, "getPage"),
     GET_PAGE_WITH_ID(Page.class, "getPage", String.class, "pageId"),
     GET_PAGE_WITH_READING(Page.class, "getPage", Reading.class, FacebookConstants.READING_PROPERTY),
@@ -601,8 +624,8 @@ public enum FacebookMethodsType {
     GET_TABS_WITH_READING(ResponseList.class, "getTabs", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_TABS_WITH_PAGEID_AND_READING(ResponseList.class, "getTabs", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_INSTALLED_TABS(ResponseList.class, "getInstalledTabs", List.class, "appIds"),
-    GET_INSTALLED_TABS_WITH_PAGEID(ResponseList.class, "getInstalledTabs", String.class, "pageId",  List.class, "appIds"),
-    GET_INSTALLED_TABS_WITH_READING(ResponseList.class, "getInstalledTabs",  List.class, "appIds", Reading.class, FacebookConstants.READING_PROPERTY),
+    GET_INSTALLED_TABS_WITH_PAGEID(ResponseList.class, "getInstalledTabs", String.class, "pageId", List.class, "appIds"),
+    GET_INSTALLED_TABS_WITH_READING(ResponseList.class, "getInstalledTabs", List.class, "appIds", Reading.class, FacebookConstants.READING_PROPERTY),
     GET_INSTALLED_TABS_WITH_PAGEID_AND_READING(ResponseList.class, "getInstalledTabs", String.class, "pageId", List.class, "appIds", Reading.class, FacebookConstants.READING_PROPERTY),
     INSTALL_TAB(boolean.class, "installTab", String.class, "appId"),
     INSTALL_TAB_WITH_PAGEID(boolean.class, "installTab", String.class, "pageId", String.class, "appId"),
@@ -643,7 +666,7 @@ public enum FacebookMethodsType {
     POST_VIDEO_WITH_ID(String.class, "postVideo", String.class, "id", VideoUpdate.class, "videoUpdate"),
     SEARCH_PAGES(ResponseList.class, "searchPages", String.class, "query"),
     SEARCH_PAGES_WITH_READING(ResponseList.class, "searchPages", String.class, "query", Reading.class, FacebookConstants.READING_PROPERTY),
-    CREATETESTUSER_WITH_INSTALLED(TestUser.class,  "createTestUser", String.class, "appId", String.class, "name", String.class, "userLocale", String.class, "permissions", boolean.class, "installed"),
+    CREATETESTUSER_WITH_INSTALLED(TestUser.class, "createTestUser", String.class, "appId", String.class, "name", String.class, "userLocale", String.class, "permissions", boolean.class, "installed"),
     GETTESTUSERS_WITH_LIMIT(ResponseList.class, "getTestUsers", String.class, "appId", Integer.class, "limit"),
     EXECUTE_BATCH(List.class, "executeBatch", BatchRequests.class, "requests"),
     CALL_POST_API(RawAPIResponse.class, "callPostAPI", String.class, "relativeUrl"),
@@ -654,7 +677,7 @@ public enum FacebookMethodsType {
     CALL_GET_API_WITH_MAP(RawAPIResponse.class, "callGetAPI", String.class, "relativeUrl", Map.class, "parameters"),
     CALL_DELETE_API(RawAPIResponse.class, "callDeleteAPI", String.class, "relativeUrl"),
     CALL_DELETE_API_WITH_MAP(RawAPIResponse.class, "callDeleteAPI", String.class, "relativeUrl", Map.class, "parameters");
-    
+
     // name, result class, ordered argument names and classes, and Method to invoke
     private final String name;
     private final Class<?> resultType;
@@ -662,13 +685,13 @@ public enum FacebookMethodsType {
     private final List<Class<?>> argTypes;
     private final Method method;
 
-    private FacebookMethodsType(Class<?> resultType, String name, Object... args) throws IllegalArgumentException {
+    FacebookMethodsType(Class<?> resultType, String name, Object... args) throws IllegalArgumentException {
         this.name = name;
         this.resultType = resultType;
 
         if (args.length % 2 != 0) {
             throw new IllegalArgumentException("Invalid parameter list, "
-                + "must be of the form 'Class arg1, String arg1Name, Class arg2, String arg2Name...");
+                    + "must be of the form 'Class arg1, String arg1Name, Class arg2, String arg2Name...");
         }
         int nArgs = args.length / 2;
         this.argNames = new ArrayList<String>(nArgs);
@@ -683,8 +706,8 @@ public enum FacebookMethodsType {
             this.method = Facebook.class.getMethod(name, argTypes.toArray(new Class[nArgs]));
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
-                String.format("Missing method %s %s", name, argTypes.toString().replace('[', '(').replace(']', ')')),
-                e);
+                    String.format("Missing method %s %s", name, argTypes.toString().replace('[', '(').replace(']', ')')),
+                    e);
         }
     }
 
@@ -698,7 +721,7 @@ public enum FacebookMethodsType {
         for (FacebookMethodsType method : values()) {
             if (method.name.equals(name)) {
                 if ((method.argTypes.isEmpty() && (args == null || args.length == 0))
-                    || Arrays.equals(method.argTypes.toArray(), args)) {
+                        || Arrays.equals(method.argTypes.toArray(), args)) {
                     return method;
                 }
             }
@@ -731,11 +754,11 @@ public enum FacebookMethodsType {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("{")
-            .append("name=").append(name)
-            .append(", resultType=").append(resultType)
-            .append(", argNames=").append(argNames)
-            .append(", argTypes=").append(argTypes)
-            .append("}");
+                .append("name=").append(name)
+                .append(", resultType=").append(resultType)
+                .append(", argNames=").append(argNames)
+                .append(", argTypes=").append(argTypes)
+                .append("}");
         return builder.toString();
     }
 

@@ -20,12 +20,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.BodyPart;
@@ -42,9 +43,11 @@ import javax.mail.internet.MimeUtility;
 import javax.mail.internet.ParseException;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -99,17 +102,24 @@ public class MimeMultipartDataFormat implements DataFormat {
             BodyPart part = new MimeBodyPart();
             writeBodyPart(bodyContent, part, contentType);
             mp.addBodyPart(part);
-            for (Map.Entry<String, DataHandler> entry : exchange.getIn().getAttachments().entrySet()) {
+            for (Map.Entry<String, Attachment> entry : exchange.getIn().getAttachmentObjects().entrySet()) {
                 String attachmentFilename = entry.getKey();
-                DataHandler handler = entry.getValue();
+                Attachment attachment = entry.getValue();
                 part = new MimeBodyPart();
-                part.setDataHandler(handler);
+                part.setDataHandler(attachment.getDataHandler());
                 part.setFileName(MimeUtility.encodeText(attachmentFilename, "UTF-8", null));
-                String ct = handler.getContentType();
+                String ct = attachment.getDataHandler().getContentType();
                 contentType = new ContentType(ct);
                 part.setHeader(CONTENT_TYPE, ct);
                 if (!contentType.match("text/*") && binaryContent) {
                     part.setHeader(CONTENT_TRANSFER_ENCODING, "binary");
+                }
+                // Set headers to the attachment
+                for (String headerName : attachment.getHeaderNames()) {
+                    List<String> values = attachment.getHeaderAsList(headerName);
+                    for (String value : values) {
+                        part.setHeader(headerName, value);
+                    }
                 }
                 mp.addBodyPart(part);
                 exchange.getOut().removeAttachment(attachmentFilename);
@@ -236,25 +246,31 @@ public class MimeMultipartDataFormat implements DataFormat {
             content = mp.getBodyPart(0);
             for (int i = 1; i < mp.getCount(); i++) {
                 BodyPart bp = mp.getBodyPart(i);
-                camelMessage.addAttachment(MimeUtility.decodeText(bp.getFileName()), bp.getDataHandler());
+                DefaultAttachment camelAttachment = new DefaultAttachment(bp.getDataHandler());
+                @SuppressWarnings("unchecked")
+                Enumeration<Header> headers = bp.getAllHeaders();
+                while (headers.hasMoreElements()) {
+                    Header header = headers.nextElement();
+                    camelAttachment.addHeader(header.getName(), header.getValue());
+                }
+                camelMessage.addAttachmentObject(getAttachmentKey(bp), camelAttachment);
             }
         }
         if (content instanceof BodyPart) {
             BodyPart bp = (BodyPart) content;
             camelMessage.setBody(bp.getInputStream());
             contentType = bp.getContentType();
-        } else {
-            // Last fallback: I don't see how this can happen, but we do this
-            // just to be safe
-            camelMessage.setBody(content);
-        }
-        if (contentType != null && !DEFAULT_CONTENT_TYPE.equals(contentType)) {
-            camelMessage.setHeader(CONTENT_TYPE, contentType);
-            ContentType ct = new ContentType(contentType);
-            String charset = ct.getParameter("charset");
-            if (charset != null) {
-                camelMessage.setHeader(Exchange.CONTENT_ENCODING, MimeUtility.javaCharset(charset));
+            if (contentType != null && !DEFAULT_CONTENT_TYPE.equals(contentType)) {
+                camelMessage.setHeader(CONTENT_TYPE, contentType);
+                ContentType ct = new ContentType(contentType);
+                String charset = ct.getParameter("charset");
+                if (charset != null) {
+                    camelMessage.setHeader(Exchange.CONTENT_ENCODING, MimeUtility.javaCharset(charset));
+                }
             }
+        } else {
+            // If we find no body part, try to leave the message alone
+            LOG.info("no MIME part found");
         }
         return camelMessage;
     }
@@ -265,5 +281,23 @@ public class MimeMultipartDataFormat implements DataFormat {
             headers.addHeader(headerMame, h);
             camelMessage.removeHeader(headerMame);
         }
+    }
+
+    private String getAttachmentKey(BodyPart bp) throws MessagingException, UnsupportedEncodingException {
+        // use the filename as key for the map
+        String key = bp.getFileName();
+        // if there is no file name we use the Content-ID header
+        if (key == null && bp instanceof MimeBodyPart) {
+            key = ((MimeBodyPart) bp).getContentID();
+            if (key != null && key.startsWith("<") && key.length() > 2) {
+                // strip <>
+                key = key.substring(1, key.length() - 1);
+            }
+        }
+        // or a generated content id
+        if (key == null) {
+            key = UUID.randomUUID().toString() + "@camel.apache.org";
+        }
+        return MimeUtility.decodeText(key);
     }
 }

@@ -26,6 +26,7 @@ import java.util.UUID;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.util.FilePathResolver;
@@ -186,7 +187,8 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     }
 
     public StreamCache cache(Exchange exchange) {
-        StreamCache cache = exchange.getIn().getBody(StreamCache.class);
+        Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        StreamCache cache = message.getBody(StreamCache.class);
         if (cache != null) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Cached stream to {} -> {}", cache.inMemory() ? "memory" : "spool", cache);
@@ -233,10 +235,10 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             return;
         }
 
-        String bufferSize = camelContext.getProperty(BUFFER_SIZE);
-        String hold = camelContext.getProperty(THRESHOLD);
-        String chiper = camelContext.getProperty(CIPHER_TRANSFORMATION);
-        String dir = camelContext.getProperty(TEMP_DIR);
+        String bufferSize = camelContext.getGlobalOption(BUFFER_SIZE);
+        String hold = camelContext.getGlobalOption(THRESHOLD);
+        String chiper = camelContext.getGlobalOption(CIPHER_TRANSFORMATION);
+        String dir = camelContext.getGlobalOption(TEMP_DIR);
 
         boolean warn = false;
         if (bufferSize != null) {

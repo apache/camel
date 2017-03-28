@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.gora.enabled",
+      "description": "Enable gora component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

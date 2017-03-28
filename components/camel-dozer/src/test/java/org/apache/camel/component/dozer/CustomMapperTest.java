@@ -35,12 +35,12 @@ public class CustomMapperTest {
     @Test
     public void selectMapperOneMethod() {
         customMapper.setParameter(MapperWithOneMethod.class.getName());
-        Assert.assertNotNull(customMapper.selectMethod(MapperWithOneMethod.class, "test"));
+        Assert.assertNotNull(customMapper.selectMethod(MapperWithOneMethod.class, String.class));
     }
     
     @Test
     public void selectMapperMultipleMethods() throws Exception {
-        Method selectedMethod = customMapper.selectMethod(MapperWithTwoMethods.class, new B());
+        Method selectedMethod = customMapper.selectMethod(MapperWithTwoMethods.class, B.class);
         Assert.assertNotNull(selectedMethod);
         Assert.assertEquals(
                 MapperWithTwoMethods.class.getMethod("convertToA", B.class),
@@ -50,24 +50,30 @@ public class CustomMapperTest {
     @Test
     public void mapCustomFindOperation() throws Exception {
         customMapper.setParameter(MapperWithTwoMethods.class.getName());
-        Assert.assertNotNull(customMapper.mapCustom(new B()));
+        Assert.assertNotNull(customMapper.mapCustom(new B(), B.class));
     }
     
     @Test
     public void mapCustomDeclaredOperation() throws Exception {
         customMapper.setParameter(MapperWithTwoMethods.class.getName() + ",convertToA");
-        Assert.assertNotNull(customMapper.mapCustom(new B()));
+        Assert.assertNotNull(customMapper.mapCustom(new B(), B.class));
     }
     
     @Test
     public void mapCustomInvalidOperation() {
         customMapper.setParameter(MapperWithTwoMethods.class.getName() + ",convertToB");
         try {
-            customMapper.mapCustom(new B());
+            customMapper.mapCustom(new B(), B.class);
             Assert.fail("Invalid operation should result in exception");
         } catch (RuntimeException ex) {
             Assert.assertTrue(ex.getCause() instanceof NoSuchMethodException);
         }
+    }
+
+    @Test
+    public void mapCustomNullField() throws Exception {
+        customMapper.setParameter(MapperWithTwoMethods.class.getName());
+        Assert.assertNotNull(customMapper.mapCustom(null, B.class));
     }
 }
 

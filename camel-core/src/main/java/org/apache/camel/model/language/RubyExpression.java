@@ -27,9 +27,10 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language,script", title = "Ruby")
+@Metadata(firstVersion = "1.0.0", label = "language,script", title = "Ruby")
 @XmlRootElement(name = "ruby")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class RubyExpression extends ExpressionDefinition {
 
     public RubyExpression() {

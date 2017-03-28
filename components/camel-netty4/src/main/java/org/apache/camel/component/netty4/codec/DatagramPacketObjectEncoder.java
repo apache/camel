@@ -39,10 +39,10 @@ public class DatagramPacketObjectEncoder extends
                           List<Object> out) throws Exception {
         if (msg.content() instanceof Serializable) {
             Serializable payload = (Serializable) msg.content();
-            ByteBuf buf = ctx.alloc().heapBuffer();
+            ByteBuf buf = ctx.alloc().buffer();
             delegateObjectEncoder.encode(ctx, payload, buf);
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = 
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(buf.retain(), msg.recipient(), msg.sender());
+                new DefaultAddressedEnvelope<Object, InetSocketAddress>(buf, msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         }
         

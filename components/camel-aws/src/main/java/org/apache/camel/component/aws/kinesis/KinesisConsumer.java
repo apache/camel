@@ -28,6 +28,7 @@ import com.amazonaws.services.kinesis.model.GetRecordsResult;
 import com.amazonaws.services.kinesis.model.GetShardIteratorRequest;
 import com.amazonaws.services.kinesis.model.GetShardIteratorResult;
 import com.amazonaws.services.kinesis.model.Record;
+import com.amazonaws.services.kinesis.model.ShardIteratorType;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -96,14 +97,28 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
     private String getShardItertor() {
         // either return a cached one or get a new one via a GetShardIterator request.
         if (currentShardIterator == null) {
-            DescribeStreamRequest req1 = new DescribeStreamRequest()
-                    .withStreamName(getEndpoint().getStreamName());
-            DescribeStreamResult res1 = getClient().describeStream(req1);
+            String shardId;
+
+            //If ShardId supplied use it, else choose first one
+            if (!getEndpoint().getShardId().isEmpty()) {
+                shardId = getEndpoint().getShardId();
+            } else {
+                DescribeStreamRequest req1 = new DescribeStreamRequest()
+                        .withStreamName(getEndpoint().getStreamName());
+                DescribeStreamResult res1 = getClient().describeStream(req1);
+                shardId = res1.getStreamDescription().getShards().get(0).getShardId();
+            }
+            LOG.debug("ShardId is: {}", shardId);
 
             GetShardIteratorRequest req = new GetShardIteratorRequest()
                     .withStreamName(getEndpoint().getStreamName())
-                    .withShardId(res1.getStreamDescription().getShards().get(0).getShardId()) // XXX only uses the first shard
+                    .withShardId(shardId)
                     .withShardIteratorType(getEndpoint().getIteratorType());
+
+            if (hasSequenceNumber()) {
+                req.withStartingSequenceNumber(getEndpoint().getSequenceNumber());
+            }
+
             GetShardIteratorResult result = getClient().getShardIterator(req);
             currentShardIterator = result.getShardIterator();
         }
@@ -117,5 +132,11 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
             exchanges.add(getEndpoint().createExchange(record));
         }
         return exchanges;
+    }
+
+    private boolean hasSequenceNumber() {
+        return !getEndpoint().getSequenceNumber().isEmpty()
+                && (getEndpoint().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
+                    || getEndpoint().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
     }
 }

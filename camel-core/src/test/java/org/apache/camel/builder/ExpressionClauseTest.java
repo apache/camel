@@ -22,11 +22,13 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultAttachment;
 
 /**
  * @version 
@@ -46,20 +48,20 @@ public class ExpressionClauseTest extends ContextTestSupport {
     public void testAttachments() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.expectedBodiesReceivedInAnyOrder("log4j.properties", "jndi-example.properties");
+        mock.expectedBodiesReceivedInAnyOrder("log4j2.properties", "jndi-example.properties");
 
         template.send("direct:begin", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 Message m = exchange.getIn();
                 m.setBody("Hello World");
-                m.addAttachment("log4j", new DataHandler(new FileDataSource("src/test/resources/log4j.properties")));
+                m.addAttachmentObject("log4j", new DefaultAttachment(new FileDataSource("src/test/resources/log4j2.properties")));
                 m.addAttachment("jndi-example", new DataHandler(new FileDataSource("src/test/resources/jndi-example.properties")));
             }
         });
 
         assertMockEndpointsSatisfied();
-        Map<String, DataHandler> attachments = mock.getExchanges().get(0).getIn().getAttachments();
+        Map<String, Attachment> attachments = mock.getExchanges().get(0).getIn().getAttachmentObjects();
         assertTrue(attachments == null || attachments.size() == 0);
     }
 

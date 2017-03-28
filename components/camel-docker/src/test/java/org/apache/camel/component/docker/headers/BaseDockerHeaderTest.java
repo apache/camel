@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.dockerjava.api.DockerClient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docker.DockerClientProfile;
@@ -31,9 +32,12 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
     @Mock
@@ -70,12 +74,11 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
         DockerComponent dockerComponent = new DockerComponent(dockerConfiguration);
         dockerComponent.setClient(getClientProfile(), dockerClient);
-        camelContext.addComponent("docker", dockerComponent);
 
+        camelContext.addComponent("docker", dockerComponent);
 
         return camelContext;
     }
-
 
     protected String getHost() {
         return "localhost";
@@ -105,16 +108,20 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         return false;
     }
 
+    public boolean isTlsVerify() {
+        return false;
+    }
+
+    public boolean isSocket() {
+        return false;
+    }
+
+    public String getCmdExecFactory() {
+        return DockerConstants.DEFAULT_CMD_EXEC_FACTORY;
+    }
+
     public T getMockObject() {
         return mockObject;
-    }
-    
-    public boolean getLoggingFilter() {
-        return false;
-    }
-    
-    public boolean getFollowRedirectFilter() {
-        return false;
     }
 
     protected Map<String, Object> getDefaultParameters() {
@@ -125,9 +132,10 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         parameters.put(DockerConstants.DOCKER_SERVER_ADDRESS, getServerAddress());
         parameters.put(DockerConstants.DOCKER_MAX_PER_ROUTE_CONNECTIONS, getMaxPerRouteConnections());
         parameters.put(DockerConstants.DOCKER_MAX_TOTAL_CONNECTIONS, getMaxTotalConnections());
-        parameters.put(DockerConstants.DOCKER_LOGGING_FILTER, getLoggingFilter());
-        parameters.put(DockerConstants.DOCKER_FOLLOW_REDIRECT_FILTER, getFollowRedirectFilter());
-
+        parameters.put(DockerConstants.DOCKER_SECURE, isSecure());
+        parameters.put(DockerConstants.DOCKER_TLSVERIFY, isTlsVerify());
+        parameters.put(DockerConstants.DOCKER_SOCKET_ENABLED, isSocket());
+        parameters.put(DockerConstants.DOCKER_CMD_EXEC_FACTORY, getCmdExecFactory());
         return parameters;
     }
 
@@ -139,17 +147,17 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setServerAddress(getServerAddress());
         clientProfile.setMaxPerRouteConnections(getMaxPerRouteConnections());
         clientProfile.setMaxTotalConnections(getMaxTotalConnections());
-        clientProfile.setLoggingFilter(getLoggingFilter());
-        clientProfile.setFollowRedirectFilter(getFollowRedirectFilter());
         clientProfile.setSecure(isSecure());
+        clientProfile.setTlsVerify(isTlsVerify());
+        clientProfile.setSocket(isSocket());
+        clientProfile.setCmdExecFactory(getCmdExecFactory());
+
         return clientProfile;
 
     }
 
-
     protected abstract void setupMocks();
 
     protected abstract DockerOperation getOperation();
-
 
 }

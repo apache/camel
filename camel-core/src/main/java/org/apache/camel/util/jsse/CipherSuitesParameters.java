@@ -17,14 +17,12 @@
 package org.apache.camel.util.jsse;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Represents a list of TLS/SSL cipher suite names.
  */
 public class CipherSuitesParameters {
-
     private List<String> cipherSuite;
 
     /**
@@ -34,19 +32,26 @@ public class CipherSuitesParameters {
      */
     public List<String> getCipherSuite() {
         if (this.cipherSuite == null) {
-            this.cipherSuite = new ArrayList<String>();
+            this.cipherSuite = new ArrayList<>();
         }
         return this.cipherSuite;
+    }
+
+    /**
+     * Sets the cipher suite. It creates a copy of the given cipher suite.
+     *
+     * @param cipherSuite cipher suite
+     */
+    public void setCipherSuite(List<String> cipherSuite) {
+        this.cipherSuite = cipherSuite == null ? null : new ArrayList<>(cipherSuite);
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("CipherSuitesParameters[cipherSuite=");
-        builder.append(Arrays.toString(getCipherSuite().toArray(new String[getCipherSuite().size()])));
+        builder.append(getCipherSuite());
         builder.append("]");
         return builder.toString();
     }
-    
-    
 }

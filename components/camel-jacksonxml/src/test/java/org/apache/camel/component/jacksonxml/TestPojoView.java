@@ -53,4 +53,33 @@ public class TestPojoView {
     public void setWeight(int weight) {
         this.weight = weight;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        TestPojoView that = (TestPojoView) o;
+
+        if (age != that.age) {
+            return false;
+        }
+        if (height != that.height) {
+            return false;
+        }
+        return weight == that.weight;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = age;
+        result = 31 * result + height;
+        result = 31 * result + weight;
+        return result;
+    }
+
 }

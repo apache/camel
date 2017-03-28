@@ -22,6 +22,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.security.cert.X509Certificate;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -40,8 +41,8 @@ import org.jboss.netty.util.Timer;
 /**
  * Socket level networking using TCP or UDP with the Netty 3.x library.
  */
-@UriEndpoint(scheme = "netty", title = "Netty", syntax = "netty:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
-public class NettyEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "2.3.0", scheme = "netty", title = "Netty", syntax = "netty:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
+public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam
     private NettyConfiguration configuration;
     @UriParam(label = "advanced", javaType = "org.apache.camel.component.netty.NettyServerBootstrapConfiguration",

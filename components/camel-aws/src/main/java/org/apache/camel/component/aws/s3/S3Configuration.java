@@ -18,15 +18,13 @@ package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
 
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 
 @UriParams
 public class S3Configuration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
     private String bucketName;
     @UriParam
     private AmazonS3 amazonS3Client;
@@ -62,6 +60,12 @@ public class S3Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
+    @UriParam
+    private boolean pathStyleAccess;
+    @UriParam(label = "producer", enums = "copyObject,deleteBucket,listBuckets")
+    private S3Operations operation;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean autocloseBody = true;
 
     public long getPartSize() {
         return partSize;
@@ -175,13 +179,11 @@ public class S3Configuration implements Cloneable {
         this.region = region;
     }
 
-    public boolean isDeleteAfterRead() {
-        return deleteAfterRead;
-    }
-
     /**
-     * *Camel 2.17*: If it is true, the exchange body will be set to a stream to the contents of the file.
-     * If false, the headers will be set with the S3 object metadata, but the body will be null.
+     * If it is true, the exchange body will be set to a stream to the contents of the file.
+     * If false, the headers will be set with the S3 object metadata, but the body will be null. 
+     * This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it 
+     * will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically.
      */
     public void setIncludeBody(boolean includeBody) {
         this.includeBody = includeBody;
@@ -191,9 +193,17 @@ public class S3Configuration implements Cloneable {
         return includeBody;
     }
 
+    public boolean isDeleteAfterRead() {
+        return deleteAfterRead;
+    }
+
     /**
      * Delete objects from S3 after they have been retrieved.  The delete is only performed if the Exchange is committed.
      * If a rollback occurs, the object is not deleted.
+     * <p/>
+     * If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you
+     * need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the
+     * {@link S3Constants#BUCKET_NAME} and {@link S3Constants#KEY} headers, or only the {@link S3Constants#KEY} header.
      */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
@@ -265,4 +275,45 @@ public class S3Configuration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
+
+    /**
+     * Whether or not the S3 client should use path style access
+     */
+    public void setPathStyleAccess(final boolean pathStyleAccess) {
+        this.pathStyleAccess = pathStyleAccess;
+    }
+
+    public boolean isPathStyleAccess() {
+        return pathStyleAccess;
+    }
+
+    public S3Operations getOperation() {
+        return operation;
+    }
+
+    /**
+     * *Camel 2.18*: The operation to do in case the user don't want to do only an upload
+     */
+    public void setOperation(S3Operations operation) {
+        this.operation = operation;
+    }
+
+    public boolean isAutocloseBody() {
+        return autocloseBody;
+    }
+
+    /**
+     * If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange completion
+     * This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it 
+     * will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically.
+     */
+    public void setAutocloseBody(boolean autocloseBody) {
+        this.autocloseBody = autocloseBody;
+    }
+
+    boolean hasProxyConfiguration() {
+        return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
+    }
+    
+    
 }

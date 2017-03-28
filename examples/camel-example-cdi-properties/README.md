@@ -40,11 +40,11 @@ When the Camel application runs, you should see the following messages
 being logged to the console, e.g.:
 ```
 2016-01-28 15:02:46,223 [cdi.Main.main()] INFO  CdiCamelExtension   - Camel CDI is starting Camel context [hello]
-2016-01-28 15:02:46,223 [cdi.Main.main()] INFO  DefaultCamelContext - Apache Camel 2.17-SNAPSHOT (CamelContext: hello) is starting
+2016-01-28 15:02:46,223 [cdi.Main.main()] INFO  DefaultCamelContext - Apache Camel 2.17.0 (CamelContext: hello) is starting
 ...
 2016-01-28 15:02:46,460 [cdi.Main.main()] INFO  DefaultCamelContext - Route: route1 started and consuming from: Endpoint[direct://hello]
 2016-01-28 15:02:46,461 [cdi.Main.main()] INFO  DefaultCamelContext - Total 1 routes, of which 1 is started.
-2016-01-28 15:02:46,461 [cdi.Main.main()] INFO  DefaultCamelContext - Apache Camel 2.17-SNAPSHOT (CamelContext: hello) started in 0.238 seconds
+2016-01-28 15:02:46,461 [cdi.Main.main()] INFO  DefaultCamelContext - Apache Camel 2.17.0 (CamelContext: hello) started in 0.238 seconds
 2016-01-28 15:02:46,661 [cdi.Main.main()] INFO  route1              - Hello from CamelContext (hello)
 ```
 

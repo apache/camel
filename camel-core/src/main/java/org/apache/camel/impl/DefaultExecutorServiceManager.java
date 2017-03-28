@@ -55,18 +55,17 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link org.apache.camel.spi.ExecutorServiceManager}.
  *
- * @version 
  */
 public class DefaultExecutorServiceManager extends ServiceSupport implements ExecutorServiceManager {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExecutorServiceManager.class);
 
     private final CamelContext camelContext;
     private ThreadPoolFactory threadPoolFactory = new DefaultThreadPoolFactory();
-    private final List<ExecutorService> executorServices = new CopyOnWriteArrayList<ExecutorService>();
+    private final List<ExecutorService> executorServices = new CopyOnWriteArrayList<>();
     private String threadNamePattern;
     private long shutdownAwaitTermination = 10000;
     private String defaultThreadPoolProfileId = "defaultThreadPoolProfile";
-    private final Map<String, ThreadPoolProfile> threadPoolProfiles = new ConcurrentHashMap<String, ThreadPoolProfile>();
+    private final Map<String, ThreadPoolProfile> threadPoolProfiles = new ConcurrentHashMap<>();
     private ThreadPoolProfile defaultProfile;
 
     public DefaultExecutorServiceManager(CamelContext camelContext) {
@@ -132,8 +131,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     @Override
     public void setThreadNamePattern(String threadNamePattern) {
         // must set camel id here in the pattern and let the other placeholders be resolved on demand
-        String name = threadNamePattern.replaceFirst("#camelId#", this.camelContext.getName());
-        this.threadNamePattern = name;
+        this.threadNamePattern = threadNamePattern.replaceFirst("#camelId#", this.camelContext.getName());
     }
 
     @Override
@@ -190,7 +188,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         ExecutorService executorService = threadPoolFactory.newThreadPool(profile, threadFactory);
         onThreadPoolCreated(executorService, source, profile.getId());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new ThreadPool for source: {} with name: {}. -> {}", new Object[]{source, sanitizedName, executorService});
+            LOG.debug("Created new ThreadPool for source: {} with name: {}. -> {}", source, sanitizedName, executorService);
         }
 
         return executorService;
@@ -216,7 +214,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new CachedThreadPool for source: {} with name: {}. -> {}", new Object[]{source, sanitizedName, answer});
+            LOG.debug("Created new CachedThreadPool for source: {} with name: {}. -> {}", source, sanitizedName, answer);
         }
         return answer;
     }
@@ -243,7 +241,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new ScheduledThreadPool for source: {} with name: {}. -> {}", new Object[]{source, sanitizedName, answer});
+            LOG.debug("Created new ScheduledThreadPool for source: {} with name: {}. -> {}", source, sanitizedName, answer);
         }
         return answer;
     }
@@ -320,10 +318,10 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
             // if we logged at WARN level, then report at INFO level when we are complete so the end user can see this in the log
             if (warned) {
                 LOG.info("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
-                        new Object[]{executorService, executorService.isShutdown(), executorService.isTerminated(), TimeUtils.printDuration(watch.taken())});
+                    executorService, executorService.isShutdown(), executorService.isTerminated(), TimeUtils.printDuration(watch.taken()));
             } else if (LOG.isDebugEnabled()) {
                 LOG.debug("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {} took: {}.",
-                    new Object[]{executorService, executorService.isShutdown(), executorService.isTerminated(), TimeUtils.printDuration(watch.taken())});
+                    executorService, executorService.isShutdown(), executorService.isTerminated(), TimeUtils.printDuration(watch.taken()));
             }
         }
 
@@ -367,7 +365,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
             answer = executorService.shutdownNow();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {}.",
-                        new Object[]{executorService, executorService.isShutdown(), executorService.isTerminated()});
+                    executorService, executorService.isShutdown(), executorService.isTerminated());
             }
         }
 
@@ -439,7 +437,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         // as by normal all threads pool should have been shutdown using proper lifecycle
         // by their EIPs, components etc. This is acting as a fail-safe during shutdown
         // of CamelContext itself.
-        Set<ExecutorService> forced = new LinkedHashSet<ExecutorService>();
+        Set<ExecutorService> forced = new LinkedHashSet<>();
         if (!executorServices.isEmpty()) {
             // at first give a bit of time to shutdown nicely as the thread pool is most likely in the process of being shutdown also
             LOG.debug("Giving time for {} ExecutorService's to shutdown properly (acting as fail-safe)", executorServices.size());
@@ -547,8 +545,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     }
 
     private ThreadFactory createThreadFactory(String name, boolean isDaemon) {
-        ThreadFactory threadFactory = new CamelThreadFactory(threadNamePattern, name, isDaemon);
-        return threadFactory;
+        return new CamelThreadFactory(threadNamePattern, name, isDaemon);
     }
 
 }

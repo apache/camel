@@ -21,15 +21,20 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-cdi</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: CDI</name>
-  <description>Camel Contexts and Dependency Injection Support</description>
+  <description>Using Camel with CDI</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.10.0</firstVersion>
+    <label>java</label>
+    <title>CDI</title>
+
     <camel.osgi.import>
       !org.apache.camel.cdi.*,
       !org.apache.deltaspike.cdise.api.*,
@@ -89,6 +94,13 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core-xml</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-osgi</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
@@ -126,21 +138,25 @@
     </dependency>
 
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
       <version>${slf4j-version}</version>
+      <scope>test</scope>
+    </dependency>
+        
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -175,6 +191,7 @@
             <configuration>
               <excludes>
                 <exclude>**/*Cdi12Test.java</exclude>
+                <exclude>**/*Cdi20Test.java</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -211,7 +228,7 @@
         <dependency>
           <groupId>org.jboss.arquillian.container</groupId>
           <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-          <version>${arquillian-weld-se-embedded-version}</version>
+          <version>1.0.0.CR9</version>
           <scope>test</scope>
         </dependency>
 
@@ -220,6 +237,20 @@
 
     <profile>
       <id>weld-1.2</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/*Cdi20Test.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
 
       <dependencies>
 
@@ -243,13 +274,47 @@
 
         <dependency>
           <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-          <version>${arquillian-weld-se-embedded-version}</version>
+          <artifactId>arquillian-weld-embedded</artifactId>
+          <version>${arquillian-weld-embedded-version}</version>
           <scope>test</scope>
         </dependency>
 
       </dependencies>
     </profile>
+
+    <profile>
+      <id>weld-2.0</id>
+
+      <dependencies>
+
+        <!-- provided dependencies -->
+
+        <dependency>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+          <version>${cdi-api-2.0-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core-impl</artifactId>
+          <version>${weld3-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-embedded</artifactId>
+          <version>${arquillian-weld-embedded-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+      </dependencies>
+    </profile>
+
 
     <profile>
       <id>owb-1.0</id>
@@ -262,10 +327,13 @@
             <configuration>
               <excludes>
                 <exclude>**/*Cdi12Test.java</exclude>
+                <exclude>**/*Cdi20Test.java</exclude>
                 <!-- OWB does not call the InjectionTarget#preDestroy method -->
                 <exclude>**/UnstoppedCamelContext*Test.java</exclude>
-                <!-- Reactivate when OWB-1122 is fixed -->
+                <!-- Reactivate when OWB-1155 is fixed -->
                 <exclude>**/ProgrammaticLookupTest.java</exclude>
+                <!-- Reactivate when OWB-1126 is fixed -->
+                <exclude>**/Xml*Test.java</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -326,8 +394,11 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
-                <!-- Reactivate when OWB-1122 is fixed -->
+                <exclude>**/*Cdi20Test.java</exclude>
+                <!-- Reactivate when OWB-1155 is fixed -->
                 <exclude>**/ProgrammaticLookupTest.java</exclude>
+                <!-- Reactivate when OWB-1126 is fixed -->
+                <exclude>**/Xml*Test.java</exclude>
               </excludes>
             </configuration>
           </plugin>

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.krati.enabled",
+      "description": "Enable krati component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.WaitContainerCmd;
-
+import com.github.dockerjava.core.command.WaitContainerResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -35,6 +35,9 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
     @Mock
     private WaitContainerCmd mockObject;
 
+    @Mock
+    private WaitContainerResultCallback callback;
+    
     @Test
     public void waitContainerHeaderTest() {
 
@@ -53,6 +56,8 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.waitContainerCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        Mockito.when(callback.awaitStatusCode()).thenReturn(Matchers.anyInt());
     }
 
     @Override

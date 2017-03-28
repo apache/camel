@@ -106,18 +106,28 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(resolvedQuery, getEndpoint().isAllowNamedParameters());
+        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(resolvedQuery, getEndpoint().isAllowNamedParameters(), null);
+
+        log.trace("poll: {}", preparedQuery);
         final PreparedStatementCallback<Integer> callback = new PreparedStatementCallback<Integer>() {
             @Override
-            public Integer doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
+            public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
                 Queue<DataHolder> answer = new LinkedList<DataHolder>();
 
                 log.debug("Executing query: {}", preparedQuery);
-                ResultSet rs = preparedStatement.executeQuery();
+                ResultSet rs = ps.executeQuery();
                 SqlOutputType outputType = getEndpoint().getOutputType();
+                boolean closeEager = true;
                 try {
                     log.trace("Got result list from query: {}, outputType={}", rs, outputType);
-                    if (outputType == SqlOutputType.SelectList) {
+                    if (outputType == SqlOutputType.StreamList) {
+                        ResultSetIterator data = getEndpoint().queryForStreamList(ps.getConnection(), ps, rs);
+                        // only process if we have data
+                        if (data.hasNext()) {
+                            addListToQueue(data, answer);
+                            closeEager = false;
+                        }
+                    } else if (outputType == SqlOutputType.SelectList) {
                         List<?> data = getEndpoint().queryForList(rs, true);
                         addListToQueue(data, answer);
                     } else if (outputType == SqlOutputType.SelectOne) {
@@ -129,15 +139,24 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                         throw new IllegalArgumentException("Invalid outputType=" + outputType);
                     }
                 } finally {
-                    closeResultSet(rs);
+                    if (closeEager) {
+                        closeResultSet(rs);
+                    }
                 }
 
                 // process all the exchanges in this batch
                 try {
-                    int rows = processBatch(CastUtils.cast(answer));
-                    return rows;
+                    if (answer.isEmpty()) {
+                        // no data
+                        return 0;
+                    } else {
+                        int rows = processBatch(CastUtils.cast(answer));
+                        return rows;
+                    }
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
+                } finally {
+                    closeResultSet(rs);
                 }
             }
         };
@@ -191,9 +210,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
-        // limit if needed
         if (maxMessagesPerPoll > 0 && total == maxMessagesPerPoll) {
-            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was more messages in this poll.");
+            log.debug("Maximum messages to poll is {} and there were exactly {} messages in this poll.", maxMessagesPerPoll, total);
         }
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {

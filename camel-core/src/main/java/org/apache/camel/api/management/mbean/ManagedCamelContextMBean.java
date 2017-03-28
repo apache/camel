@@ -40,14 +40,21 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Camel State")
     String getState();
 
-    @ManagedAttribute(description = "Uptime")
+    @ManagedAttribute(description = "Uptime [human readable text]")
     String getUptime();
+
+    @ManagedAttribute(description = "Uptime [milliseconds]")
+    long getUptimeMillis();
 
     @ManagedAttribute(description = "Camel Management StatisticsLevel")
     String getManagementStatisticsLevel();
 
+    @Deprecated
     @ManagedAttribute(description = "Camel Properties")
     Map<String, String> getProperties();
+
+    @ManagedAttribute(description = "Camel Global Options")
+    Map<String, String> getGlobalOptions();
 
     @ManagedAttribute(description = "ClassResolver class name")
     String getClassResolver();
@@ -58,26 +65,34 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "ApplicationContext class name")
     String getApplicationContextClassName();
 
+    @Deprecated
+    @ManagedOperation(description = "Gets the value of a Camel global option")
+    String getProperty(String key) throws Exception;
+
     /**
-     * Gets the value of a CamelContext property name
+     * Gets the value of a CamelContext global option
      *
-     * @param name the name of the property
-     * @return String the value of the property
-     * @throws Exception is thrown if error occurred
+     * @param key the global option key
+     * @return the global option value
+     * @throws Exception when an error occurred
      */
-    @ManagedOperation(description = "Get the value of a Camel property")
-    String getProperty(String name) throws Exception;
-    
+    @ManagedOperation(description = "Gets the value of a Camel global option")
+    String getGlobalOption(String key) throws Exception;
+
+    @Deprecated
+    @ManagedOperation(description = "Sets the value of a Camel global option")
+    void setProperty(String key, String value) throws Exception;
+
     /**
      * Sets the value of a CamelContext property name
      *
-     * @param name the name of the property
-     * @param value the new value of the property
-     * @throws Exception is thrown if error occurred
+     * @param key the global option key
+     * @param value the global option value
+     * @throws Exception when an error occurred
      */
-    @ManagedOperation(description = "Set the value of a Camel property")
-    void setProperty(String name, String value) throws Exception;
-    
+    @ManagedOperation(description = "Sets the value of a Camel global option")
+    void setGlobalOption(String key, String value) throws Exception;
+
     @ManagedAttribute(description = "Tracing")
     Boolean getTracing();
 
@@ -133,6 +148,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Whether message history is enabled")
     boolean isMessageHistory();
 
+    @ManagedAttribute(description = "Whether security mask for Logging is enabled")
+    boolean isLogMask();
+
     @ManagedAttribute(description = "Whether MDC logging is supported")
     boolean isUseMDCLogging();
 
@@ -178,8 +196,14 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Dumps the rests as XML")
     String dumpRestsAsXml() throws Exception;
 
+    @ManagedOperation(description = "Dumps the rests as XML")
+    String dumpRestsAsXml(boolean resolvePlaceholders) throws Exception;
+
     @ManagedOperation(description = "Dumps the routes as XML")
     String dumpRoutesAsXml() throws Exception;
+
+    @ManagedOperation(description = "Dumps the routes as XML")
+    String dumpRoutesAsXml(boolean resolvePlaceholders) throws Exception;
 
     @ManagedOperation(description = "Adds or updates existing routes from XML")
     void addOrUpdateRoutesFromXml(String xml) throws Exception;
@@ -275,6 +299,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the endpoint parameters for the given component name")
+    @Deprecated
     String componentParameterJsonSchema(String componentName) throws Exception;
 
     /**
@@ -354,14 +379,17 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the list of available endpoint paths for the given component name, endpoint properties and completion text")
+    @Deprecated
     List<String> completeEndpointPath(String componentName, Map<String, Object> endpointParameters, String completionText) throws Exception;
 
     /**
      * Returns the HTML documentation for the given camel component
      *
      * @param componentName  the component name
+     * @deprecated use camel-catalog instead
      */
     @ManagedOperation(description = "Returns the HTML documentation for the given camel component")
+    @Deprecated
     String getComponentDocumentation(String componentName) throws IOException;
 
     @ManagedOperation(description = "Returns the JSON representation of all the static and dynamic endpoints defined in all the routes")

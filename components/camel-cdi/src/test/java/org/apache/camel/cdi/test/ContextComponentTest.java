@@ -69,11 +69,8 @@ public class ContextComponentTest {
             @Override
             public void configure() {
                 from("direct:inbound").to("first:in");
-                // FIXME: The context component does not support multiple logical endpoints
-                // with the same remaining defined in two distinct Camel contexts.
-                // See https://issues.apache.org/jira/browse/CAMEL-9200.
-                // from("first:out").to("second:in");
-                from("first:out").to("mock:outbound");
+                from("first:out").to("second:in");
+                from("second:out").to("mock:outbound");
             }
         });
     }
@@ -83,7 +80,7 @@ public class ContextComponentTest {
     public void sendMessageToInbound(@Uri("direct:inbound") ProducerTemplate inbound,
                                      @Uri("mock:outbound") MockEndpoint outbound) throws InterruptedException {
         outbound.expectedMessageCount(1);
-        outbound.expectedBodiesReceived("first-test");
+        outbound.expectedBodiesReceived("second-first-test");
 
         inbound.sendBody("test");
 

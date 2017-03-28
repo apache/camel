@@ -20,6 +20,10 @@ public class DropboxException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
+    public DropboxException(Throwable e) {
+        super(e);
+    }
+
     public DropboxException(String message) {
         super(message);
     }

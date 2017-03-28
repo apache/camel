@@ -20,6 +20,8 @@ import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.spi.Injector;
 
+import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByType;
+
 final class CdiCamelInjector implements Injector {
 
     private final Injector injector;
@@ -33,12 +35,8 @@ final class CdiCamelInjector implements Injector {
 
     @Override
     public <T> T newInstance(Class<T> type) {
-        T instance = BeanManagerHelper.getReferenceByType(manager, type);
-        if (instance != null) {
-            return instance;
-        } else {
-            return injector.newInstance(type);
-        }
+        return getReferenceByType(manager, type)
+            .orElseGet(() -> injector.newInstance(type));
     }
 
     @Override

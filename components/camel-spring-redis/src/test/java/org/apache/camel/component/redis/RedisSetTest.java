@@ -80,12 +80,12 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSDIFF() throws Exception {
-        Set<String> difference = new HashSet<String>();
+        Set<String> difference = new HashSet<>();
         difference.add("a");
         difference.add("b");
         when(setOperations.difference(anyString(), anyCollection())).thenReturn(difference);
 
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         Object result = sendHeaders(
@@ -99,7 +99,7 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSDIFFSTORE() throws Exception {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         sendHeaders(
@@ -113,12 +113,12 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSINTER() throws Exception {
-        Set<String> difference = new HashSet<String>();
+        Set<String> difference = new HashSet<>();
         difference.add("a");
         difference.add("b");
         when(setOperations.intersect(anyString(), anyCollection())).thenReturn(difference);
 
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         Object result = sendHeaders(
@@ -132,7 +132,7 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSINTERSTORE() throws Exception {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         sendHeaders(
@@ -159,7 +159,7 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSMEMBERS() throws Exception {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
 
@@ -220,18 +220,18 @@ public class RedisSetTest extends RedisTestSupport {
                 RedisConstants.VALUE, "value");
 
         verify(setOperations).remove("key", "value");
-        assertEquals(Long.valueOf(1), result);
+        assertEquals(1L, result);
     }
 
     @Test
     public void shouldExecuteSUNION() throws Exception {
-        Set<String> resultKeys = new HashSet<String>();
+        Set<String> resultKeys = new HashSet<>();
         resultKeys.add("key2");
         resultKeys.add("key3");
 
         when(setOperations.union(anyString(), anyCollection())).thenReturn(resultKeys);
 
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key4");
 
@@ -246,7 +246,7 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSUNIONSTORE() throws Exception {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key4");
 

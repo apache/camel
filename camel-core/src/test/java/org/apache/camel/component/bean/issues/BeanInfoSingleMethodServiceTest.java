@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean.issues;
 
+import java.lang.reflect.Method;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.BeanInfo;
@@ -34,12 +36,19 @@ public class BeanInfoSingleMethodServiceTest extends ContextTestSupport {
 
     public void testBeanInfoSingleMethod() throws Exception {
         BeanInfo beaninfo = new BeanInfo(context, SingleMethodService.class);
-        assertEquals("Should find the single method", 1, beaninfo.getMethods().size());
+        assertEquals(1, beaninfo.getMethods().size());
+        assertEquals("doSomething", beaninfo.getMethods().get(0).getMethod().getName());
     }
 
     public void testBeanInfoSingleMethodImpl() throws Exception {
         BeanInfo beaninfo = new BeanInfo(context, SingleMethodServiceImpl.class);
-        assertEquals("Should find the single method", 1, beaninfo.getMethods().size());
+        assertEquals(2, beaninfo.getMethods().size());
+        assertEquals("doSomething", beaninfo.getMethods().get(0).getMethod().getName());
+        assertEquals("hello", beaninfo.getMethods().get(1).getMethod().getName());
+
+        Method method = beaninfo.getMethods().get(0).getMethod();
+        Object out = method.invoke(myService, "Bye World");
+        assertEquals("You said Bye World", out);
     }
 
     @Override
@@ -48,7 +57,7 @@ public class BeanInfoSingleMethodServiceTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .bean(myService)
+                    .bean(myService, "doSomething")
                     .to("mock:result");
             }
         };

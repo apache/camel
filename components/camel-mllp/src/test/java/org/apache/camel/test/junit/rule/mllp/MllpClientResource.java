@@ -60,6 +60,7 @@ public class MllpClientResource extends ExternalResource {
     boolean reuseAddress;
     boolean tcpNoDelay = true;
 
+    DisconnectMethod disconnectMethod = DisconnectMethod.CLOSE;
 
     /**
      * Use this constructor to avoid having the connection started by JUnit (since the port is still -1)
@@ -89,7 +90,22 @@ public class MllpClientResource extends ExternalResource {
     @Override
     protected void after() {
         super.after();
-        this.disconnect();
+        this.close();
+    }
+
+    public void close() {
+        try {
+            if (null != inputStream) {
+                clientSocket.close();
+            }
+        } catch (IOException e) {
+            log.warn(String.format("Exception encountered closing connection to {}:{}", mllpHost, mllpPort), e);
+        } finally {
+            inputStream = null;
+            outputStream = null;
+            clientSocket = null;
+        }
+        return;
     }
 
     public void connect() {
@@ -116,33 +132,36 @@ public class MllpClientResource extends ExternalResource {
         }
     }
 
-    public void close() {
-        this.disconnect();
-        return;
-    }
-
     public void reset() {
         try {
             clientSocket.setSoLinger(true, 0);
         } catch (SocketException socketEx) {
             log.warn("Exception encountered setting set SO_LINGER to force a TCP reset", socketEx);
         }
-        this.disconnect();
-        return;
-    }
-
-    public void disconnect() {
         try {
             if (null != inputStream) {
                 clientSocket.close();
             }
         } catch (IOException e) {
-            log.warn(String.format("Exception encountered closing connection to {}:{}", mllpHost, mllpPort), e);
+            log.warn(String.format("Exception encountered resetting connection to {}:{}", mllpHost, mllpPort), e);
         } finally {
             inputStream = null;
             outputStream = null;
             clientSocket = null;
         }
+        return;
+    }
+
+    public void disconnect() {
+        if (DisconnectMethod.RESET == disconnectMethod) {
+            reset();
+        } else {
+            close();
+        }
+    }
+
+    public DisconnectMethod getDisconnectMethod() {
+        return disconnectMethod;
     }
 
     public boolean isConnected() {
@@ -238,9 +257,9 @@ public class MllpClientResource extends ExternalResource {
             } else {
                 log.warn("Not sending START_OF_BLOCK");
             }
-            for (int i = 0; i < payloadBytes.length; ++i) {
-                outputStream.write(payloadBytes[i]);
-                if (flushByte == payloadBytes[i]) {
+            for (byte payloadByte : payloadBytes) {
+                outputStream.write(payloadByte);
+                if (flushByte == payloadByte) {
                     outputStream.flush();
                 }
             }
@@ -458,4 +477,12 @@ public class MllpClientResource extends ExternalResource {
         this.tcpNoDelay = tcpNoDelay;
     }
 
+    public void setDisconnectMethod(DisconnectMethod disconnectMethod) {
+        this.disconnectMethod = disconnectMethod;
+    }
+
+    public enum DisconnectMethod {
+        CLOSE,
+        RESET
+    }
 }

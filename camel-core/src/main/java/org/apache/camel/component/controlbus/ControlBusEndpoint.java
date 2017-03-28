@@ -35,7 +35,7 @@ import org.apache.camel.util.CamelLogger;
  *
  * For example, by sending a message to an Endpoint you can control the lifecycle of routes, or gather performance statistics.
  */
-@UriEndpoint(scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, label = "core,monitoring")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, label = "core,monitoring")
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Command can be either route or language", enums = "route,language") @Metadata(required = "true")

@@ -292,7 +292,6 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         this.expressionType = expressionType;
     }
 
-    @SuppressWarnings("unchecked")
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         // allows to perform additional logic after the properties has been configured which may be needed
         // in the various camel components outside camel-core
@@ -301,7 +300,6 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         // allows to perform additional logic after the properties has been configured which may be needed
         // in the various camel components outside camel-core

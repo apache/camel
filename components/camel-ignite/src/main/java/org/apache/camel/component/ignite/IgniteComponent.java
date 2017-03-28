@@ -179,13 +179,13 @@ public class IgniteComponent extends UriEndpointComponent {
             return;
         }
 
-        ignite.close();
+        if (ignite != null) {
+            ignite.close();
+        }
     }
 
     /**
      * Returns the {@link Ignite} instance.
-     * 
-     * @return
      */
     public Ignite getIgnite() {
         return ignite;
@@ -193,8 +193,6 @@ public class IgniteComponent extends UriEndpointComponent {
 
     /**
      * Sets the {@link Ignite} instance.
-     * 
-     * @param ignite
      */
     public void setIgnite(Ignite ignite) {
         this.ignite = ignite;
@@ -203,8 +201,6 @@ public class IgniteComponent extends UriEndpointComponent {
     /**
      * Gets the resource from where to load the configuration. It can be a: {@link URI}, {@link String} (URI) 
      * or an {@link InputStream}.
-     * 
-     * @return
      */
     public Object getConfigurationResource() {
         return configurationResource;
@@ -213,8 +209,6 @@ public class IgniteComponent extends UriEndpointComponent {
     /**
      * Sets the resource from where to load the configuration. It can be a: {@link URI}, {@link String} (URI) 
      * or an {@link InputStream}.
-     * 
-     * @param configurationResource
      */
     public void setConfigurationResource(Object configurationResource) {
         this.configurationResource = configurationResource;
@@ -222,7 +216,6 @@ public class IgniteComponent extends UriEndpointComponent {
 
     /**
      * Gets the {@link IgniteConfiguration} if the user set it explicitly.
-     * @return
      */
     public IgniteConfiguration getIgniteConfiguration() {
         return igniteConfiguration;
@@ -230,8 +223,6 @@ public class IgniteComponent extends UriEndpointComponent {
 
     /**
      * Allows the user to set a programmatic {@link IgniteConfiguration}.
-     * 
-     * @param igniteConfiguration
      */
     public void setIgniteConfiguration(IgniteConfiguration igniteConfiguration) {
         this.igniteConfiguration = igniteConfiguration;

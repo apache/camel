@@ -18,55 +18,31 @@ package org.apache.camel.component.infinispan;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.infinispan.client.hotrod.RemoteCacheManager;
-import org.infinispan.client.hotrod.configuration.Configuration;
-import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-import org.infinispan.commons.api.BasicCache;
-import org.infinispan.commons.api.BasicCacheContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InfinispanProducer extends DefaultProducer {
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanProducer.class);
     private final InfinispanConfiguration configuration;
-    private BasicCacheContainer cacheContainer;
-    private boolean isManagedCacheContainer;
+    private final InfinispanManager manager;
 
     public InfinispanProducer(InfinispanEndpoint endpoint, InfinispanConfiguration configuration) {
         super(endpoint);
         this.configuration = configuration;
+        this.manager = new InfinispanManager(endpoint.getCamelContext(), configuration);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        InfinispanOperation.process(exchange, configuration, getCache(exchange));
+        InfinispanOperation.process(exchange, configuration, manager.getCache(exchange));
     }
 
     @Override
     protected void doStart() throws Exception {
-        cacheContainer = configuration.getCacheContainer();
-        if (cacheContainer == null) {
-            Configuration config = new ConfigurationBuilder().classLoader(Thread.currentThread().getContextClassLoader()).addServers(configuration.getHost()).build();
-            cacheContainer = new RemoteCacheManager(config, true);
-            isManagedCacheContainer = true;
-        }
         super.doStart();
+        manager.start();
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (isManagedCacheContainer) {
-            cacheContainer.stop();
-        }
+        manager.stop();
         super.doStop();
-    }
-
-    private BasicCache<Object, Object> getCache(Exchange exchange) {
-        String cacheName = exchange.getIn().getHeader(InfinispanConstants.CACHE_NAME, String.class);
-        if (cacheName == null) {
-            cacheName = configuration.getCacheName();
-        }
-        LOGGER.trace("Cache[{}]", cacheName);
-        return cacheName != null ? cacheContainer.getCache(cacheName) : cacheContainer.getCache();
     }
 }

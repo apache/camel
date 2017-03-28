@@ -41,7 +41,6 @@ import org.apache.camel.Service;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
@@ -92,12 +91,12 @@ import org.slf4j.LoggerFactory;
  * You can customize this using the {@link #setShutdownRoutesInReverseOrder(boolean)} method.
  * <p/>
  * After route consumers have been shutdown, then any {@link ShutdownPrepared} services on the routes
- * is being prepared for shutdown, by invoking {@link ShutdownPrepared#prepareShutdown(boolean)} which
+ * is being prepared for shutdown, by invoking {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} which
  * <tt>force=false</tt>.
  * <p/>
  * Then if a timeout occurred and the strategy has been configured with shutdown-now on timeout, then
  * the strategy performs a more aggressive forced shutdown, by forcing all consumers to shutdown
- * and then invokes {@link ShutdownPrepared#prepareShutdown(boolean)} with <tt>force=true</tt>
+ * and then invokes {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} with <tt>force=true</tt>
  * on the services. This allows the services to know they should force shutdown now.
  * <p/>
  * When timeout occurred and a forced shutdown is happening, then there may be threads/tasks which are
@@ -181,7 +180,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         // at first sort according to route startup order
         List<RouteStartupOrder> routesOrdered = new ArrayList<RouteStartupOrder>(routes);
-        Collections.sort(routesOrdered, new Comparator<RouteStartupOrder>() {
+        routesOrdered.sort(new Comparator<RouteStartupOrder>() {
             public int compare(RouteStartupOrder o1, RouteStartupOrder o2) {
                 return o1.getStartupOrder() - o2.getStartupOrder();
             }

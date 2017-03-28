@@ -46,17 +46,17 @@ public class HdfsConfiguration {
     private boolean overwrite = true;
     @UriParam(label = "producer")
     private boolean append;
-    @UriParam
+    @UriParam(label = "advanced")
     private String splitStrategy;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
     private int bufferSize = HdfsConstants.DEFAULT_BUFFERSIZE;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_REPLICATION)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_REPLICATION)
     private short replication = HdfsConstants.DEFAULT_REPLICATION;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BLOCKSIZE)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_BLOCKSIZE)
     private long blockSize = HdfsConstants.DEFAULT_BLOCKSIZE;
-    @UriParam(defaultValue = "NONE")
+    @UriParam(label = "advanced", defaultValue = "NONE")
     private SequenceFile.CompressionType compressionType = HdfsConstants.DEFAULT_COMPRESSIONTYPE;
-    @UriParam(defaultValue = "DEFAULT")
+    @UriParam(label = "advanced", defaultValue = "DEFAULT")
     private HdfsCompressionCodec compressionCodec = HdfsConstants.DEFAULT_CODEC;
     @UriParam(defaultValue = "NORMAL_FILE")
     private HdfsFileType fileType = HdfsFileType.NORMAL_FILE;
@@ -66,19 +66,19 @@ public class HdfsConfiguration {
     private WritableType keyType = WritableType.NULL;
     @UriParam(defaultValue = "BYTES")
     private WritableType valueType = WritableType.BYTES;
-    @UriParam(defaultValue = HdfsConstants.DEFAULT_OPENED_SUFFIX)
+    @UriParam(label = "advanced", defaultValue = HdfsConstants.DEFAULT_OPENED_SUFFIX)
     private String openedSuffix = HdfsConstants.DEFAULT_OPENED_SUFFIX;
-    @UriParam(defaultValue = HdfsConstants.DEFAULT_READ_SUFFIX)
+    @UriParam(label = "advanced", defaultValue = HdfsConstants.DEFAULT_READ_SUFFIX)
     private String readSuffix = HdfsConstants.DEFAULT_READ_SUFFIX;
-    @UriParam(label = "consumer")
-    private long initialDelay;
+    @UriParam(label = "consumer", defaultValue = "" + HdfsConsumer.DEFAULT_CONSUMER_INITIAL_DELAY)
+    private long initialDelay = HdfsConsumer.DEFAULT_CONSUMER_INITIAL_DELAY;
     @UriParam(label = "consumer", defaultValue = "" + HdfsConstants.DEFAULT_DELAY)
     private long delay = HdfsConstants.DEFAULT_DELAY;
     @UriParam(label = "consumer", defaultValue = HdfsConstants.DEFAULT_PATTERN)
     private String pattern = HdfsConstants.DEFAULT_PATTERN;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
     private int chunkSize = HdfsConstants.DEFAULT_BUFFERSIZE;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL)
     private int checkIdleInterval = HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL;
     @UriParam(defaultValue = "true")
     private boolean connectOnStartup = true;

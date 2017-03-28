@@ -16,43 +16,43 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpExchange;
-import org.eclipse.jetty.client.RedirectListener;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(Standalone.class)
 public class BulkApiIntegrationTest extends AbstractBulkApiTestBase {
 
     @Test
     public void testRetry() throws Exception {
-        SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
-        String accessToken = sf.getSession().getAccessToken();
+        final SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
+        final String accessToken = sf.getSession().getAccessToken();
 
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext());
-        HttpClient httpClient = new HttpClient(sslContextFactory);
+        final SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext(context));
+        final HttpClient httpClient = new HttpClient(sslContextFactory);
         httpClient.setConnectTimeout(60000);
-        httpClient.setTimeout(60000);
-        httpClient.registerListener(RedirectListener.class.getName());
         httpClient.start();
 
-        ContentExchange logoutGet = new ContentExchange(true);
-        logoutGet.setURL(sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken);
-        logoutGet.setMethod(HttpMethods.GET);
-        httpClient.send(logoutGet);
-        assertEquals(HttpExchange.STATUS_COMPLETED, logoutGet.waitForDone());
-        assertEquals(HttpStatus.OK_200, logoutGet.getResponseStatus());
+        final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
+        final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
 
-        JobInfo jobInfo = new JobInfo();
+        final ContentResponse response = logoutGet.send();
+        assertEquals(HttpStatus.OK_200, response.getStatus());
+
+        final JobInfo jobInfo = new JobInfo();
         jobInfo.setOperation(OperationEnum.INSERT);
         jobInfo.setContentType(ContentType.CSV);
         jobInfo.setObject(Merchandise__c.class.getSimpleName());

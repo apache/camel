@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
@@ -51,7 +51,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
     public DefaultJettyHttpBinding() {
     }
-    
+
     public void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception {
         int responseCode = httpExchange.getResponseStatus();
 
@@ -211,7 +211,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     }
 
     Map<String, String> getSimpleMap(Map<String, Collection<String>> headers) {
-        Map<String, String> result = new HashMap<String , String>();
+        Map<String, String> result = new HashMap<String, String>();
         for (String key : headers.keySet()) {
             Collection<String> valueCol = headers.get(key);
             String value = (valueCol == null) ? null : valueCol.iterator().next();

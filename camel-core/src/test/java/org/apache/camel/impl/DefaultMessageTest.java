@@ -18,8 +18,8 @@ package org.apache.camel.impl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.activation.DataHandler;
 
+import org.apache.camel.Attachment;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -31,7 +31,7 @@ public class DefaultMessageTest {
     public void testAttachmentsAreSorted() {
         DefaultMessage message = new DefaultMessage();
 
-        Map<String, DataHandler> attachments = message.createAttachments();
+        Map<String, Attachment> attachments = message.createAttachments();
 
         assertThat(attachments, instanceOf(LinkedHashMap.class));
     }

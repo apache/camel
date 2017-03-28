@@ -19,19 +19,19 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneableResourceQuota;
-import io.fabric8.kubernetes.api.model.EditableResourceQuota;
 import io.fabric8.kubernetes.api.model.ResourceQuota;
 import io.fabric8.kubernetes.api.model.ResourceQuotaBuilder;
 import io.fabric8.kubernetes.api.model.ResourceQuotaList;
 import io.fabric8.kubernetes.api.model.ResourceQuotaSpec;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +106,7 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, ClientResource<ResourceQuota, DoneableResourceQuota>> resQuota; 
+            NonNamespaceOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, Resource<ResourceQuota, DoneableResourceQuota>> resQuota; 
             resQuota = getEndpoint().getKubernetesClient().resourceQuotas()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -114,13 +114,15 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
             }
             resList = resQuota.list();
         } else {
-            ClientMixedOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, ClientResource<ResourceQuota, DoneableResourceQuota>> resQuota; 
+            MixedOperation<ResourceQuota, ResourceQuotaList, DoneableResourceQuota, Resource<ResourceQuota, DoneableResourceQuota>> resQuota; 
             resQuota = getEndpoint().getKubernetesClient().resourceQuotas();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 resQuota.withLabel(entry.getKey(), entry.getValue());
             }
             resList = resQuota.list();
         }
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resList.getItems());
     }
 
@@ -144,6 +146,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         }
         rq = getEndpoint().getKubernetesClient().resourceQuotas()
                 .inNamespace(namespaceName).withName(rqName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rq);
     }
 
@@ -176,11 +180,13 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS,
                 Map.class);
-        EditableResourceQuota rqCreating = new ResourceQuotaBuilder()
+        ResourceQuota rqCreating = new ResourceQuotaBuilder()
                 .withNewMetadata().withName(rqName).withLabels(labels)
                 .endMetadata().withSpec(rqSpec).build();
         rq = getEndpoint().getKubernetesClient().resourceQuotas()
                 .inNamespace(namespaceName).create(rqCreating);
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rq);
     }
 
@@ -204,6 +210,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         boolean rqDeleted = getEndpoint().getKubernetesClient()
                 .resourceQuotas().inNamespace(namespaceName).withName(rqName)
                 .delete();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rqDeleted);
     }
 }

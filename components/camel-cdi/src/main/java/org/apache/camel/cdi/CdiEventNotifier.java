@@ -17,11 +17,20 @@
 package org.apache.camel.cdi;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EventObject;
+import java.util.List;
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.apache.camel.management.event.RouteAddedEvent;
+import org.apache.camel.management.event.RouteRemovedEvent;
+import org.apache.camel.management.event.RouteStartedEvent;
+import org.apache.camel.management.event.RouteStoppedEvent;
 import org.apache.camel.support.EventNotifierSupport;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 final class CdiEventNotifier extends EventNotifierSupport {
 
@@ -37,7 +46,26 @@ final class CdiEventNotifier extends EventNotifierSupport {
 
     @Override
     public void notify(EventObject event) {
-        manager.fireEvent(event, qualifiers);
+        String id = null;
+
+        if (event instanceof RouteAddedEvent) {
+            id = ((RouteAddedEvent) event).getRoute().getId();
+        } else if (event instanceof RouteStartedEvent) {
+            id = ((RouteStartedEvent) event).getRoute().getId();
+        } else if (event instanceof RouteStoppedEvent) {
+            id = ((RouteStoppedEvent) event).getRoute().getId();
+        } else if (event instanceof RouteRemovedEvent) {
+            id = ((RouteRemovedEvent) event).getRoute().getId();
+        }
+
+        if (isNotEmpty(id)) {
+            List<Annotation> annotations = new ArrayList<>();
+            Collections.addAll(annotations, qualifiers);
+            annotations.add(NamedLiteral.of(id));
+            manager.fireEvent(event, annotations.stream().toArray(Annotation[]::new));
+        } else {
+            manager.fireEvent(event, qualifiers);
+        }
     }
 
     @Override

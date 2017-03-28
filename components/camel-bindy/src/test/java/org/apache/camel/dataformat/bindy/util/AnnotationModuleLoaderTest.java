@@ -31,7 +31,7 @@ public class AnnotationModuleLoaderTest extends Assert {
     public void testLoadModels() throws Exception {
         AnnotationModelLoader loader = new AnnotationModelLoader(new DefaultPackageScanClassResolver());
         Set<Class<?>> classes = loader.loadModels("org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink");
-        assertNotNull("The find classes should not be null ", classes);
+        assertNotNull("The findForFormattingOptions classes should not be null ", classes);
         assertEquals("There should have 3 classes", 3, classes.size());
         assertTrue(classes.contains(Client.class));
         assertTrue(classes.contains(Order.class));

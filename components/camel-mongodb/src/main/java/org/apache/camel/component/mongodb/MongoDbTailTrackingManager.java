@@ -17,83 +17,78 @@
 package org.apache.camel.component.mongodb;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
-import com.mongodb.WriteConcern;
-
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import org.bson.types.BSONTimestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MongoDbTailTrackingManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbTailTrackingManager.class);
-    
     public Object lastVal;
-
-    private final Mongo connection;
+    private final MongoClient connection;
     private final MongoDbTailTrackingConfig config;
-    private DBCollection dbCol;
-    private DBObject trackingObj;
-    
-    public MongoDbTailTrackingManager(Mongo connection, MongoDbTailTrackingConfig config) {
+    private MongoCollection<BasicDBObject> dbCol;
+    private BasicDBObject trackingObj;
+
+    public MongoDbTailTrackingManager(MongoClient connection, MongoDbTailTrackingConfig config) {
         this.connection = connection;
         this.config = config;
     }
-    
+
     public void initialize() throws Exception {
         if (!config.persistent) {
             return;
         }
-        
-        dbCol = connection.getDB(config.db).getCollection(config.collection);
-        DBObject filter = new BasicDBObject("persistentId", config.persistentId);
-        trackingObj = dbCol.findOne(filter);
+
+        dbCol = connection.getDatabase(config.db).getCollection(config.collection, BasicDBObject.class);
+        BasicDBObject filter = new BasicDBObject("persistentId", config.persistentId);
+        trackingObj = dbCol.find(filter).first();
         if (trackingObj == null) {
-            dbCol.insert(filter, WriteConcern.SAFE);
-            trackingObj = dbCol.findOne(filter);
+            dbCol.insertOne(filter);
+            trackingObj = dbCol.find(filter).first();
         }
         // keep only the _id, the rest is useless and causes more overhead during update
         trackingObj = new BasicDBObject("_id", trackingObj.get("_id"));
     }
-    
+
     public synchronized void persistToStore() {
         if (!config.persistent || lastVal == null) {
             return;
         }
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Persisting lastVal={} to store, collection: {}", lastVal, config.collection);
         }
-        
-        DBObject updateObj = BasicDBObjectBuilder.start().add("$set", new BasicDBObject(config.field, lastVal)).get();
-        dbCol.update(trackingObj, updateObj, false, false, WriteConcern.SAFE);
-        trackingObj = dbCol.findOne();
+
+        BasicDBObject updateObj = new BasicDBObject().append("$set", new BasicDBObject(config.field, lastVal));
+        dbCol.updateOne(trackingObj, updateObj);
+        trackingObj = dbCol.find().first();
     }
-    
+
     public synchronized Object recoverFromStore() {
         if (!config.persistent) {
             return null;
         }
-        
-        lastVal = dbCol.findOne(trackingObj).get(config.field);
-        
+
+        lastVal = dbCol.find(trackingObj).first().get(config.field);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Recovered lastVal={} from store, collection: {}", lastVal, config.collection);
         }
-        
+
         return lastVal;
     }
-    
+
     public void setLastVal(DBObject o) {
         if (config.increasingField == null) {
             return;
         }
-        
-        lastVal = o.get(config.increasingField);
+        lastVal = config.mongoDBTailTrackingStrategy.extractLastVal(o, config.increasingField);
     }
-    
+
     public String getIncreasingFieldName() {
         return config.increasingField;
     }

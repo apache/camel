@@ -19,8 +19,8 @@ package org.apache.camel.cdi.rule;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -44,28 +44,23 @@ public final class ExpectedDeploymentException implements TestRule {
     private ExpectedDeploymentException() {
         chain = RuleChain
             .outerRule(log)
-            .around(new TestRule() {
+            .around((base, description) -> new Statement() {
                 @Override
-                public Statement apply(final Statement base, Description description) {
-                    return new Statement() {
-                        @Override
-                        public void evaluate() throws Throwable {
-                            try {
-                                base.evaluate();
-                            } catch (Throwable exception) {
-                                assertThat(exception, allOf(pecs(exceptions)));
-                                try {
-                                    // OpenWebBeans logs the deployment exception details
-                                    // TODO: OpenWebBeans only log the root cause of exception thrown in producer methods
-                                    //assertThat(log.getMessages(), containsInRelativeOrder(pecs(messages)))
-                                    assertThat(log.getMessages(), anyOf(hasItems(messages)));
-                                } catch (AssertionError error) {
-                                    // Weld stores the deployment exception details in the exception message
-                                    assertThat(exception.getMessage(), allOf(pecs(messages)));
-                                }
-                            }
+                public void evaluate() throws Throwable {
+                    try {
+                        base.evaluate();
+                    } catch (Throwable exception) {
+                        assertThat(exception, allOf(pecs(exceptions)));
+                        try {
+                            // OpenWebBeans logs the deployment exception details
+                            // TODO: OpenWebBeans only log the root cause of exception thrown in producer methods
+                            //assertThat(log.getMessages(), containsInRelativeOrder(pecs(messages)))
+                            assertThat(log.getMessages(), anyOf(hasItems(messages)));
+                        } catch (AssertionError error) {
+                            // Weld stores the deployment exception details in the exception message
+                            assertThat(exception.getMessage(), allOf(pecs(messages)));
                         }
-                    };
+                    }
                 }
             });
     }
@@ -75,7 +70,7 @@ public final class ExpectedDeploymentException implements TestRule {
     }
 
     public ExpectedDeploymentException expect(Class<? extends Throwable> type) {
-        exceptions.add(CoreMatchers.<Throwable>instanceOf(type));
+        exceptions.add(Matchers.instanceOf(type));
         return this;
     }
 

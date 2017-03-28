@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.cm-sms.enabled",
+      "description": "Enable cm-sms component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

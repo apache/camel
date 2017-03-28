@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The properties component is used for using property placeholders in endpoint uris.
  */
-@UriEndpoint(scheme = "properties", title = "Properties", syntax = "properties:key", label = "core,endpoint")
+@UriEndpoint(firstVersion = "2.3.0", scheme = "properties", title = "Properties", syntax = "properties:key", label = "core,endpoint")
 public class PropertiesEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;

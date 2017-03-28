@@ -22,11 +22,11 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-olingo2-parent</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-olingo2</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Olingo2 :: Component</name>
   <description>Camel Olingo2 component</description>
 
@@ -38,6 +38,7 @@
 
     <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
+    <maven.exe.file.extension></maven.exe.file.extension>
   </properties>
 
   <dependencies>
@@ -72,35 +73,24 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- logging -->
+    <!-- logging -->   
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
 
     <!-- testing -->
-    <dependency>
-      <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata2-core</artifactId>
-      <version>${olingo2-version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.ws.rs</groupId>
-          <artifactId>javax.ws.rs-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-odata2-api-annotation</artifactId>
@@ -134,13 +124,13 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
-      <version>${jetty9-version}</version>
+      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty9-version}</version>
+      <version>${jetty-version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -152,7 +142,7 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-webapp</artifactId>
-      <version>${jetty9-version}</version>
+      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -276,6 +266,17 @@
 
   <profiles>
     <profile>
+      <id>Windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <maven.exe.file.extension>.cmd</maven.exe.file.extension>
+      </properties>
+    </profile>
+    <profile>
       <!-- REVISIT as of now, the olingo odata2 sample service that is used in the tests 
            is not available in nexus and needs to be generated and built using its architype plugin.
            If the sample service jar becomes available, we can use it directly -->
@@ -298,6 +299,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
+            <version>${exec-maven-plugin-version}</version>
             <executions>
               <execution>
                 <id>generate-sources</id>
@@ -308,7 +310,7 @@
               </execution>
             </executions>
             <configuration>
-              <executable>mvn</executable>
+              <executable>mvn${maven.exe.file.extension}</executable>
               <workingDirectory>${basedir}/target</workingDirectory>
               <arguments>
                 <argument>archetype:generate</argument>

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.netty4.http;
 
-import java.nio.charset.Charset;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -71,7 +69,7 @@ public class NettyHttpHandle404Test extends BaseNettyTest {
                                 // instead as an exception that will get thrown and thus the route breaks
                                 NettyHttpOperationFailedException cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, NettyHttpOperationFailedException.class);
                                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
-                                exchange.getOut().setBody(cause.getHttpContent().content().toString(Charset.defaultCharset()));
+                                exchange.getOut().setBody(cause.getContentAsString());
                             }
                         })
                         .end();

@@ -51,7 +51,7 @@ public class ParserTest extends CamelTestSupport {
         InputParameter param1 = (InputParameter) template.getParameterList().get(0);
         Assert.assertEquals("_0", param1.getName());
         Assert.assertEquals(Types.INTEGER, param1.getSqlType());
-        Assert.assertEquals(Integer.valueOf(1), param1.getValueExtractor().eval(exchange, null));
+        Assert.assertEquals(1, param1.getValueExtractor().eval(exchange, null));
 
         InputParameter param2 = (InputParameter) template.getParameterList().get(1);
         Assert.assertEquals("_1", param2.getName());
@@ -85,27 +85,41 @@ public class ParserTest extends CamelTestSupport {
     @Test
     public void nestedSimpleExpression() {
         Exchange exchange = createExchangeWithBody(1);
-        exchange.getIn().setHeader("body", "body");
-        Template template = parser.parseTemplate("ADDNUMBERS2(INTEGER ${${header.body}})");
+        exchange.getIn().setHeader("foo", 1);
+        exchange.getIn().setHeader("bar", 3);
+        Template template = parser.parseTemplate("ADDNUMBERS2(INTEGER ${header.foo},INTEGER ${header.bar})");
         assertEquals(1, ((InputParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
+        assertEquals(3, ((InputParameter) template.getParameterList().get(1)).getValueExtractor().eval(exchange, null));
     }
 
     @Test
-    public void vendorSpeficSqlType() {
-        Template template = parser.parseTemplate("ADDNUMBERS2(1342 ${${header.body}})");
+    public void vendorSpecificPositiveSqlType() {
+        Template template = parser.parseTemplate("ADDNUMBERS2(1342 ${header.foo})");
         assertEquals(1342, ((InputParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void vendorSpeficSqlTypeOut() {
+    public void vendorSpecificNegativeSqlType() {
+        Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${header.foo})");
+        assertEquals(-1342, ((InputParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void vendorSpecificPositiveSqlTypeOut() {
         Template template = parser.parseTemplate("ADDNUMBERS2(OUT 1342 h1)");
         assertEquals(1342, ((OutParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void vendorSpecificNegativeSqlTypeOut() {
+        Template template = parser.parseTemplate("ADDNUMBERS2(OUT -1342 h1)");
+        assertEquals(-1342, ((OutParameter) template.getParameterList().get(0)).getSqlType());
     }
 
 
     @Test
     public void nableIssueSyntax() {
-        Map params = new HashMap<>();
+        Map<String, String> params = new HashMap<>();
         params.put("P_STR_IN", "a");
         Template template = parser.parseTemplate("IBS.\"Z$IMS_INTERFACE_WS\".TEST_STR(VARCHAR :#P_STR_IN,OUT VARCHAR P_STR_OUT)");
         assertEquals("a", ((InputParameter) template.getParameterList().get(0)).getValueExtractor().eval(null, params));

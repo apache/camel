@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
  */
 public final class JsonSchemaHelper {
 
-    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]");
+    // 0 = text, 1 = enum, 2 = boolean, 3 = integer or number
+    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]|(true|false)|(-?\\d+\\.?\\d*)");
     private static final String QUOT = "&quot;";
 
     private JsonSchemaHelper() {
@@ -49,10 +50,10 @@ public final class JsonSchemaHelper {
             return "array";
         }
         if (type.isAssignableFrom(URI.class) || type.isAssignableFrom(URL.class)) {
-            return "sting";
+            return "string";
         }
 
-        String primitive = getPrimitiveType(type);
+        String primitive = getPrimitiveType(type.getCanonicalName());
         if (primitive != null) {
             return primitive;
         }
@@ -63,11 +64,10 @@ public final class JsonSchemaHelper {
     /**
      * Gets the JSon schema primitive type.
      *
-     * @param type the java type
-     * @return the json schema primitive type, or <tt>null</tt> if not a primitive
+     * @param   name the java type
+     * @return  the json schema primitive type, or <tt>null</tt> if not a primitive
      */
-    public static String getPrimitiveType(Class<?> type) {
-        String name = type.getCanonicalName();
+    public static String getPrimitiveType(String name) {
 
         // special for byte[] or Object[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
@@ -78,36 +78,23 @@ public final class JsonSchemaHelper {
             return "array";
         } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
             return "array";
-            // and these is common as well
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name) || "char".equals(name)) {
+            return "string";
         } else if ("java.lang.String".equals(name) || "String".equals(name)) {
             return "string";
-        } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name)) {
+        } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name) || "boolean".equals(name)) {
             return "boolean";
-        } else if ("boolean".equals(name)) {
-            return "boolean";
-        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name)) {
+        } else if ("java.lang.Integer".equals(name) || "Integer".equals(name) || "int".equals(name)) {
             return "integer";
-        } else if ("int".equals(name)) {
+        } else if ("java.lang.Long".equals(name) || "Long".equals(name) || "long".equals(name)) {
             return "integer";
-        } else if ("java.lang.Long".equals(name) || "Long".equals(name)) {
+        } else if ("java.lang.Short".equals(name) || "Short".equals(name) || "short".equals(name)) {
             return "integer";
-        } else if ("long".equals(name)) {
+        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name) || "byte".equals(name)) {
             return "integer";
-        } else if ("java.lang.Short".equals(name) || "Short".equals(name)) {
-            return "integer";
-        } else if ("short".equals(name)) {
-            return "integer";
-        } else if ("java.lang.Byte".equals(name) || "Byte".equals(name)) {
-            return "integer";
-        } else if ("byte".equals(name)) {
-            return "integer";
-        } else if ("java.lang.Float".equals(name) || "Float".equals(name)) {
+        } else if ("java.lang.Float".equals(name) || "Float".equals(name) || "float".equals(name)) {
             return "number";
-        } else if ("float".equals(name)) {
-            return "number";
-        } else if ("java.lang.Double".equals(name) || "Double".equals(name)) {
-            return "number";
-        } else if ("double".equals(name)) {
+        } else if ("java.lang.Double".equals(name) || "Double".equals(name) || "double".equals(name)) {
             return "number";
         }
 
@@ -118,7 +105,7 @@ public final class JsonSchemaHelper {
      * Parses the json schema to split it into a list or rows, where each row contains key value pairs with the metadata
      *
      * @param group the group to parse from such as <tt>component</tt>, <tt>componentProperties</tt>, or <tt>properties</tt>.
-     * @param json  the json
+     * @param json the json
      * @return a list of all the rows, where each row is a set of key value pairs with metadata
      */
     public static List<Map<String, String>> parseJsonSchema(String group, String json, boolean parseProperties) {
@@ -162,19 +149,34 @@ public final class JsonSchemaHelper {
                     key = matcher.group(1);
                 } else {
                     String value = matcher.group(1);
-                    if (value == null) {
-                        value = matcher.group(2);
-                        // its an enum so strip out " and trim spaces after comma
-                        value = value.replaceAll("\"", "");
-                        value = value.replaceAll(", ", ",");
-                    }
                     if (value != null) {
+                        // its text based
                         value = value.trim();
                         // decode
                         value = value.replaceAll(QUOT, "\"");
                         value = decodeJson(value);
                     }
-                    row.put(key, value);
+                    if (value == null) {
+                        // not text then its maybe an enum?
+                        value = matcher.group(2);
+                        if (value != null) {
+                            // its an enum so strip out " and trim spaces after comma
+                            value = value.replaceAll("\"", "");
+                            value = value.replaceAll(", ", ",");
+                            value = value.trim();
+                        }
+                    }
+                    if (value == null) {
+                        // not text then its maybe a boolean?
+                        value = matcher.group(3);
+                    }
+                    if (value == null) {
+                        // not text then its maybe a integer?
+                        value = matcher.group(4);
+                    }
+                    if (value != null) {
+                        row.put(key, value);
+                    }
                     // reset
                     key = null;
                 }
@@ -238,6 +240,54 @@ public final class JsonSchemaHelper {
             }
             if (found) {
                 return defaultValue;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Is the property multi valued
+     *
+     * @param rows the rows of properties
+     * @param name name of the property
+     * @return <tt>true</tt> if multi valued, or <tt>false</tt> if not
+     */
+    public static boolean isPropertyMultiValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            boolean multiValue = false;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("multiValue")) {
+                multiValue = "true".equals(row.get("multiValue"));
+            }
+            if (found) {
+                return multiValue;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets the prefix value of the property
+     *
+     * @param rows the rows of properties
+     * @param name name of the property
+     * @return the prefix value or <tt>null</tt> if no prefix value exists
+     */
+    public static String getPropertyPrefix(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String prefix = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("prefix")) {
+                prefix = row.get("prefix");
+            }
+            if (found) {
+                return prefix;
             }
         }
         return null;

@@ -22,7 +22,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
 
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
@@ -48,9 +47,7 @@ public enum PaxExamOptions {
         // Don't bother with local console output as it just ends up cluttering the logs
         configureConsole().ignoreLocalConsole(),
         // Force the log level to INFO so we have more details during the test. It defaults to WARN.
-        logLevel(LogLevelOption.LogLevel.INFO),
-        // JUnit and Hamcrest
-        junitBundles()
+        logLevel(LogLevelOption.LogLevel.INFO)
     ),
     CAMEL_COMMANDS(
         mavenBundle()

@@ -21,18 +21,24 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.17-SNAPSHOT</version>
+        <version>2.19.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-blueprint</artifactId>
     <name>Camel :: Blueprint</name>
-    <description>Camel OSGi Blueprint support</description>
-    <packaging>bundle</packaging>
+    <description>Using Camel with OSGi Blueprint</description>
+    <packaging>jar</packaging>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>2.4.0</firstVersion>
+        <label>java,osgi</label>
+
         <camel.osgi.import>
             !org.apache.camel.blueprint.*,
             !org.apache.camel.util.blueprint.*,
+            !org.apache.camel.core.osgi.*,
+            !org.apache.camel.core.xml.*,
             org.apache.camel.*;${camel.osgi.import.strict.version},
             org.osgi.service.event*;resolution:=optional,
             org.apache.aries*;version="[1.0,2)",
@@ -43,10 +49,10 @@
             org.apache.camel.blueprint*;${camel.osgi.version},
             org.apache.camel.util.blueprint*;${camel.osgi.version}
         </camel.osgi.export>
-		<camel.osgi.private.pkg>
-			org.apache.camel.core.osgi*,
-			org.apache.camel.core.xml*
-		</camel.osgi.private.pkg>
+    		<camel.osgi.private.pkg>
+    			org.apache.camel.core.osgi*,
+    			org.apache.camel.core.xml*
+    		</camel.osgi.private.pkg>
     </properties>
 
     <dependencies>
@@ -96,9 +102,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-          <scope>test</scope>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -120,6 +136,39 @@
         </resources>
 
         <plugins>
+            <!-- Inline the contents of camel-core-osgi and camel-core-xml into this bundle. -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <version>2.10</version>
+              <executions>
+                <execution>
+                  <id>unpack</id>
+                  <phase>prepare-package</phase>
+                  <goals>
+                    <goal>unpack</goal>
+                  </goals>
+                  <configuration>
+                    <artifactItems>
+                      <artifactItem>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-core-xml</artifactId>
+                        <version>${project.version}</version>
+                        <includes>org/apache/camel/**</includes>
+                        <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                      </artifactItem>
+                      <artifactItem>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-core-osgi</artifactId>
+                        <version>${project.version}</version>
+                        <includes>org/apache/camel/**</includes>
+                        <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                      </artifactItem>
+                    </artifactItems>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
 
             <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-blueprint-sources.jar -->
             <plugin>
@@ -165,6 +214,17 @@
               </executions>
             </plugin>
 
+            <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
+            <plugin>
+              <groupId>org.apache.felix</groupId>
+              <artifactId>maven-bundle-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>bundle-manifest</id>
+                  <phase>prepare-package</phase>
+                </execution>
+              </executions>
+            </plugin>
 
         </plugins>
 
@@ -280,6 +340,16 @@
                       <artifactId>jaxb-xjc</artifactId>
                       <version>${jaxb-version}</version>
                     </dependency>
+                    <dependency>
+                      <groupId>javax.xml.bind</groupId>
+                      <artifactId>jaxb-api</artifactId>
+                      <version>${jaxb-version}</version>
+                    </dependency>
+                    <dependency>
+                      <groupId>javax.activation</groupId>
+                      <artifactId>activation</artifactId>
+                      <version>1.1.1</version>
+                    </dependency>
                   </dependencies>
                   <executions>
                       <execution>
@@ -315,6 +385,8 @@
                                   <echo>Generating XSD schema</echo>
                                   <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
                                       <schema namespace="http://camel.apache.org/schema/spring" file="camel-blueprint.xsd" />
+                                      <compilerarg line="-target ${jdk.version}"/>
+                                      <compilerarg line="-source ${jdk.version}"/>
                                       <classpath refid="maven.compile.classpath" />
                                   </schemagen>
 

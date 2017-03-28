@@ -69,6 +69,26 @@ public class HandlerTest extends BaseJettyTest {
         assertEquals(1, statisticsHandler3.getRequests());
     }
 
+    @Test
+    public void testWithTwoHandlersTwoEndpointsOnSamePort() throws Exception {
+        // First test the situation where one should invoke the handler once
+        assertEquals(0, statisticsHandler1.getRequests());
+        assertEquals(0, statisticsHandler2.getRequests());
+        assertEquals(0, statisticsHandler3.getRequests());
+
+        InputStream html1 = (InputStream) template.requestBody("http://localhost:" + port2, "");
+        BufferedReader br1 = IOHelper.buffered(new InputStreamReader(html1));
+        assertEquals(htmlResponse, br1.readLine());
+        
+        InputStream html2 = (InputStream) template.requestBody("http://localhost:" + port2 + "/endpoint2", "");
+        BufferedReader br2 = IOHelper.buffered(new InputStreamReader(html2));
+        assertEquals(htmlResponse, br2.readLine());
+        
+        assertEquals(0, statisticsHandler1.getRequests());
+        assertEquals(2, statisticsHandler2.getRequests());
+        assertEquals(2, statisticsHandler3.getRequests());
+    }
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -93,6 +113,12 @@ public class HandlerTest extends BaseJettyTest {
                         });
 
                 from("jetty:http://localhost:" + port2 + "/?handlers=#statisticsHandler2,#statisticsHandler3")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getOut().setBody(htmlResponse);
+                            }
+                        });
+                from("jetty:http://localhost:" + port2 + "/endpoint2?handlers=#statisticsHandler2,#statisticsHandler3")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody(htmlResponse);

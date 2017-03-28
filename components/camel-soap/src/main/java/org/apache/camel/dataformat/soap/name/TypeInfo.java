@@ -28,11 +28,8 @@ final class TypeInfo {
 
     /**
      * Initialize TypeInfo with given name and resolved element name for a type
-     * 
-     * @param typeName
-     * @param elName
      */
-    public TypeInfo(final String typeName, final QName elName) {
+    TypeInfo(final String typeName, final QName elName) {
         this.typeName = typeName;
         this.elName = elName;
     }

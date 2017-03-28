@@ -46,9 +46,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int port;
     @UriPath(name = "directoryName")
     private String directoryName;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private boolean binary;

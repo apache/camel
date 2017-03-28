@@ -1,0 +1,161 @@
+[[Guice-CamelGuice]]
+Camel Guice
+~~~~~~~~~~~
+
+We have support for http://code.google.com/p/google-guice/[Google Guice]
+as a dependency injection framework.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-guice</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+[[Guice-DependencyInjectingCamelwithGuice]]
+Dependency Injecting Camel with Guice
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The http://camel.apache.org/maven/current/camel-guice/apidocs/org/apache/camel/guice/GuiceCamelContext.html[GuiceCamelContext]
+is designed to work nicely inside Guice. You then need to bind it using
+some Guice Module.
+
+The camel-guice library comes with a number of reusable Guice Modules
+you can use if you wish - or you can bind the GuiceCamelContext yourself
+in your own module.
+
+* http://camel.apache.org/maven/current/camel-guice/apidocs/org/apache/camel/guice/CamelModule.html[CamelModule]
+is the base module which binds the GuiceCamelContext but leaves it up
+you to bind the RouteBuilder instances
+* http://camel.apache.org/maven/current/camel-guice/apidocs/org/apache/camel/guice/CamelModuleWithRouteTypes.html[CamelModuleWithRouteTypes]
+extends CamelModule so that in the constructor of the module you specify
+the RouteBuilder classes or instances to use
+* http://camel.apache.org/maven/current/camel-guice/apidocs/org/apache/camel/guice/CamelModuleWithMatchingRoutes.html[CamelModuleWithMatchingRoutes]
+extends CamelModule so that all bound RouteBuilder instances will be
+injected into the CamelContext or you can supply an optional Matcher to
+find RouteBuilder instances matching some kind of predicate.
+
+So you can specify the exact link:routebuilder.html[RouteBuilder]
+instances you want
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------
+Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes(MyRouteBuilder.class, AnotherRouteBuilder.class));
+// if required you can lookup the CamelContext
+CamelContext camelContext = injector.getInstance(CamelContext.class);
+-------------------------------------------------------------------------------------------------------------------------
+
+Or inject them all
+
+[source,java]
+--------------------------------------------------------------------------
+Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes());
+// if required you can lookup the CamelContext
+CamelContext camelContext = injector.getInstance(CamelContext.class);
+--------------------------------------------------------------------------
+
+You can then use Guice in the usual way to inject the route instances or
+any other dependent objects.
+
+[[Guice-BootstrappingwithJNDI]]
+Bootstrapping with JNDI
+^^^^^^^^^^^^^^^^^^^^^^^
+
+A common pattern used in J2EE is to bootstrap your application or root
+objects by looking them up in JNDI. This has long been the approach when
+working with JMS for example - looking up the JMS ConnectionFactory in
+JNDI for example.
+
+You can follow a similar pattern with Guice using the
+http://code.google.com/p/guiceyfruit/wiki/GuiceyJndi[GuiceyFruit JNDI
+Provider] which lets you bootstrap Guice from a *jndi.properties* file
+which can include the Guice Modules to create along with environment
+specific properties you can inject into your modules and objects.
+
+If the *jndi.properties* is conflict with other component, you can
+specify the jndi properties file name in the Guice Main with option -j
+or -jndiProperties with the properties file location to let Guice Main
+to load right jndi properties file.
+
+[[Guice-ConfiguringComponent,EndpointorRouteBuilderinstances]]
+Configuring Component, Endpoint or RouteBuilder instances
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use link:guice.html[Guice] to dependency inject whatever objects
+you need to create, be it an link:endpoint.html[Endpoint],
+link:component.html[Component], link:routebuilder.html[RouteBuilder] or
+arbitrary link:bean-integration.html[bean used within a route].
+
+The easiest way to do this is to create your own Guice Module class
+which extends one of the above module classes and add a provider method
+for each object you wish to create. A provider method is annotated with
+*@Provides* as follows
+
+[source,java]
+-----------------------------------------------------------------------------------
+public class MyModule extends CamelModuleWithMatchingRoutes {
+
+    @Provides
+    @JndiBind("jms")
+    JmsComponent jms(@Named("activemq.brokerURL") String brokerUrl) {
+        return JmsComponent.jmsComponent(new ActiveMQConnectionFactory(brokerUrl));
+    }
+}
+-----------------------------------------------------------------------------------
+
+You can optionally annotate the method with *@JndiBind* to bind the
+object to JNDI at some name if the object is a component, endpoint or
+bean you wish to refer to by name in your routes.
+
+You can inject any environment specific properties (such as URLs,
+machine names, usernames/passwords and so forth) from the
+jndi.properties file easily using the *@Named* annotation as shown
+above. This allows most of your configuration to be in Java code which
+is typesafe and easily refactorable - then leaving some properties to be
+environment specific (the jndi.properties file) which you can then
+change based on development, testing, production etc.
+
+[[Guice-CreatingmultipleRouteBuilderinstancespertype]]
+Creating multiple RouteBuilder instances per type
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+It is sometimes useful to create multiple instances of a particular
+link:routebuilder.html[RouteBuilder] with different configurations.
+
+To do this just create multiple provider methods for each configuration;
+or create a single provider method that returns a collection of
+RouteBuilder instances.
+
+For example
+
+[source,java]
+----------------------------------------------------------------------------------------------------------
+import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
+import com.google.common.collect.Lists;
+
+public class MyModule extends CamelModuleWithMatchingRoutes {
+
+    @Provides
+    @JndiBind("foo")
+    Collection<RouteBuilder> foo(@Named("fooUrl") String fooUrl) {
+        return Lists.newArrayList(new MyRouteBuilder(fooUrl), new MyRouteBuilder("activemq:CheeseQueue"));
+    }
+}
+----------------------------------------------------------------------------------------------------------
+
+[[Guice-SeeAlso]]
+See Also
+^^^^^^^^
+
+* there are a number of link:examples.html[Examples] you can look at to
+see Guice and Camel being used such as link:guice-jms-example.html[Guice
+JMS Example]
+* link:guice-maven-plugin.html[Guice Maven Plugin] for running your
+Guice based routes via Maven
+

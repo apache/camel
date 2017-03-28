@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spring.javaconfig;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -31,22 +31,22 @@ import org.springframework.context.support.AbstractApplicationContext;
 public class Main extends org.apache.camel.spring.Main {
     
     private String basedPackages;
-    
-    private String configClassesString;
-    
+    private String configClasses;
+    private Class[] configClass;
+
     public Main() {
 
         addOption(new ParameterOption("bp", "basedPackages",
-            "Sets the based packages of spring java config ApplicationContext", "basedPackages") {
+            "Sets the based packages of Spring java config ApplicationContext", "basedPackages") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setBasedPackages(parameter);
             }
         });
 
         addOption(new ParameterOption("cc", "configClasses",
-            "Sets the config Class of spring java config ApplicationContext", "configureClasses") {
+            "Sets the config of Spring java config ApplicationContext", "configureClasses") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                setConfigClassesString(parameter);
+                setConfigClasses(parameter);
             }
         });
     }
@@ -56,27 +56,63 @@ public class Main extends org.apache.camel.spring.Main {
         instance = main;
         main.run(args);
     }
-    
+
+    /**
+     * Sets the base packages where Spring annotation scanning is performed.
+     * You can separate multiple packages using comma or semi colon.
+     */
     public void setBasedPackages(String config) {
         basedPackages = config;
     }
-    
+
     public String getBasedPackages() {
         return basedPackages;
     }
+
+    /**
+     * Sets the name of Spring <tt>@Configuration</tt> classes to use.
+     * You can separate multiple classes using comma or semi colon.
+     */
+    public void setConfigClasses(String config) {
+        configClasses = config;
+    }
     
+    public String getConfigClasses() {
+        return configClasses;
+    }
+
+    /**
+     * @deprecated use {@link #setConfigClasses(String)}
+     */
+    @Deprecated
     public void setConfigClassesString(String config) {
-        configClassesString = config;
+        setConfigClasses(config);
     }
-    
+
+    /**
+     * @deprecated use {@link #getConfigClasses()}
+     */
+    @Deprecated
     public String getConfigClassesString() {
-        return configClassesString;
+        return getConfigClasses();
     }
-    
+
+    public Class[] getConfigClass() {
+        return configClass;
+    }
+
+    /**
+     * Sets the Spring <tt>@Configuration</tt> classes to use.
+     */
+    public void setConfigClass(Class... configClass) {
+        this.configClass = configClass;
+    }
+
     private Class<?>[] getConfigClasses(String configureClasses) {
         List<Class<?>> answer = new ArrayList<Class<?>>();
-        String[] classes =  configureClasses.split(";");
+        String[] classes =  configureClasses.split("(;|,)");
         for (String className :  classes) {
+            className = className.trim();
             Class<?> configClass = ObjectHelper.loadClass(className);
             if (configClass != null) {
                 answer.add(configClass);
@@ -91,21 +127,26 @@ public class Main extends org.apache.camel.spring.Main {
         if (parentContext != null) {
             acApplicationContext.setParent(parentContext);
         }
-        if (getConfigClassesString() != null) {
-            Class<?>[] configClasses = getConfigClasses(getConfigClassesString());
+        if (getConfigClasses() != null) {
+            Class<?>[] configClasses = getConfigClasses(getConfigClasses());
             for (Class<?> cls : configClasses) {
                 acApplicationContext.register(cls);
             }
         }
+        if (getConfigClass() != null) {
+            for (Class<?> cls : getConfigClass()) {
+                acApplicationContext.register(cls);
+            }
+        }
         if (getBasedPackages() != null) {
-            String[] basePackages = getBasedPackages().split(";");
+            String[] basePackages = getBasedPackages().split("(;|,)");
             for (String basePackage : basePackages) {
+                basePackage = basePackage.trim();
                 acApplicationContext.scan(basePackage);
             }
         }
         acApplicationContext.refresh();
         return acApplicationContext;
-        
     }
 
 }

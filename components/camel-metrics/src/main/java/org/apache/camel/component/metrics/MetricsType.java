@@ -38,7 +38,7 @@ public enum MetricsType {
         }
     }
 
-    private MetricsType(String name) {
+    MetricsType(String name) {
         this.name = name;
     }
 

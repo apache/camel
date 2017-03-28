@@ -23,18 +23,17 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-jsch</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Jsch</name>
   <description>Camel SCP Support</description>
 
   <properties>
     <camel.osgi.import.before.defaults>
-        com.jcraft.jsch.*;version="[0.1.40,0.2)",
-        org.apache.camel.component.file.strategy;${camel.osgi.import.strict.version}
+        com.jcraft.jsch.*;version="[0.1.40,0.2)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.scp.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=scp</camel.osgi.export.service>
@@ -65,10 +64,20 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ssh</artifactId>
       <scope>test</scope>
-    </dependency>  
+    </dependency>    
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

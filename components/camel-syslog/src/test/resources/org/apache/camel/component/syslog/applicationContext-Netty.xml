@@ -31,7 +31,7 @@
     </dataFormats>
 
     <route>
-      <from uri="netty:udp://localhost:{{server-port}}?sync=false&amp;allowDefaultCodec=false"/>
+      <from uri="netty4:udp://localhost:{{server-port}}?sync=false&amp;allowDefaultCodec=false"/>
       <unmarshal ref="mySyslog"/>
       <to uri="mock:stop1"/>
       <marshal ref="mySyslog"/>

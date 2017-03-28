@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.IRepositoryIdProvider;
+import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.service.IssueService;
 
 public class MockIssueService extends IssueService {
@@ -43,5 +44,23 @@ public class MockIssueService extends IssueService {
     public Comment createComment(IRepositoryIdProvider repository, int issueNumber, String commentText) throws IOException {
         Comment addedComment = mockPullRequestService.addComment((long) issueNumber, commentText);
         return addedComment;
+    }
+    
+    @Override
+    public Issue createIssue(IRepositoryIdProvider repository, Issue issue) {
+        Issue finalIssue = new Issue();
+        issue.setBody("There's an error");
+        issue.setTitle("Error");
+        issue.setId(1L);
+        return finalIssue;
+    }
+    
+    @Override
+    public Issue getIssue(IRepositoryIdProvider repository, String issueNumber) {
+        Issue issue = new Issue();
+        issue.setBody("There's an error");
+        issue.setTitle("Error");
+        issue.setId(1L);
+        return issue;
     }
 }

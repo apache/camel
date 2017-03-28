@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.ahc;
 
-import com.ning.http.client.AsyncHttpClientConfig;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Test;
 
 public class AhcComponentClientConfigTest extends BaseAhcTest {
@@ -27,10 +28,10 @@ public class AhcComponentClientConfigTest extends BaseAhcTest {
     public void configureComponent() {
         // START SNIPPET: e1
         // create a client config builder
-        AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
+        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
         // use the builder to set the options we want, in this case we want to follow redirects and try
         // at most 3 retries to send a request to the host
-        AsyncHttpClientConfig config = builder.setFollowRedirect(true).setMaxRequestRetry(3).build();
+        DefaultAsyncHttpClientConfig config = builder.setFollowRedirect(true).setMaxRequestRetry(3).build();
 
         // lookup AhcComponent
         AhcComponent component = context.getComponent("ahc", AhcComponent.class);

@@ -16,6 +16,13 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.function.Function;
+
 import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
@@ -68,6 +75,39 @@ public final class StringHelper {
         return matches;
     }
 
+    /**
+     * Limits the length of a string
+     * 
+     * @param s the string
+     * @param maxLength the maximum length of the returned string
+     * @return s if the length of s is less than maxLength or the first maxLength characters of s
+     * @deprecated use {@link #limitLength(String, int)}
+     */
+    @Deprecated
+    public static String limitLenght(String s, int maxLength) {
+        return limitLength(s, maxLength);
+    }
+
+    /**
+     * Limits the length of a string
+     *
+     * @param s the string
+     * @param maxLength the maximum length of the returned string
+     * @return s if the length of s is less than maxLength or the first maxLength characters of s
+     */
+    public static String limitLength(String s, int maxLength) {
+        if (ObjectHelper.isEmpty(s)) {
+            return s;
+        }
+        return s.length() <= maxLength ? s : s.substring(0, maxLength);
+    }
+
+    /**
+     * Removes all quotes (single and double) from the string
+     *
+     * @param s  the string
+     * @return the string without quotes (single and double)
+     */
     public static String removeQuotes(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
@@ -78,6 +118,12 @@ public final class StringHelper {
         return s;
     }
 
+    /**
+     * Removes all leading and ending quotes (single and double) from the string
+     *
+     * @param s  the string
+     * @return the string without leading and ending quotes (single and double)
+     */
     public static String removeLeadingAndEndingQuotes(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
@@ -95,6 +141,12 @@ public final class StringHelper {
         return s;
     }
 
+    /**
+     * Whether the string starts and ends with either single or double quotes.
+     *
+     * @param s the string
+     * @return <tt>true</tt> if the string starts and ends with either single or double quotes.
+     */
     public static boolean isQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return false;
@@ -254,5 +306,346 @@ public final class StringHelper {
             return doubleQuote(name) + ": " + doubleQuote(value);
         }
     }
+
+    /**
+     * Asserts whether the string is <b>not</b> empty.
+     *
+     * @param value  the string to test
+     * @param name   the key that resolved the value
+     * @return the passed {@code value} as is
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static String notEmpty(String value, String name) {
+        if (ObjectHelper.isEmpty(value)) {
+            throw new IllegalArgumentException(name + " must be specified and not empty");
+        }
+
+        return value;
+    }
+
+    /**
+     * Asserts whether the string is <b>not</b> empty.
+     *
+     * @param value  the string to test
+     * @param on     additional description to indicate where this problem occurred (appended as toString())
+     * @param name   the key that resolved the value
+     * @return the passed {@code value} as is
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static String notEmpty(String value, String name, Object on) {
+        if (on == null) {
+            ObjectHelper.notNull(value, name);
+        } else if (ObjectHelper.isEmpty(value)) {
+            throw new IllegalArgumentException(name + " must be specified and not empty on: " + on);
+        }
+
+        return value;
+    }
+
+    // TODO: add javadoc
+    public static String[] splitOnCharacter(String value, String needle, int count) {
+        String rc[] = new String[count];
+        rc[0] = value;
+        for (int i = 1; i < count; i++) {
+            String v = rc[i - 1];
+            int p = v.indexOf(needle);
+            if (p < 0) {
+                return rc;
+            }
+            rc[i - 1] = v.substring(0, p);
+            rc[i] = v.substring(p + 1);
+        }
+        return rc;
+    }
+
+    /**
+     * Removes any starting characters on the given text which match the given
+     * character
+     *
+     * @param text the string
+     * @param ch the initial characters to remove
+     * @return either the original string or the new substring
+     */
+    public static String removeStartingCharacters(String text, char ch) {
+        int idx = 0;
+        while (text.charAt(idx) == ch) {
+            idx++;
+        }
+        if (idx > 0) {
+            return text.substring(idx);
+        }
+        return text;
+    }
+
+    /**
+     * Capitalize the string (upper case first character)
+     *
+     * @param text  the string
+     * @return the string capitalized (upper case first character)
+     */
+    public static String capitalize(String text) {
+        if (text == null) {
+            return null;
+        }
+        int length = text.length();
+        if (length == 0) {
+            return text;
+        }
+        String answer = text.substring(0, 1).toUpperCase(Locale.ENGLISH);
+        if (length > 1) {
+            answer += text.substring(1, length);
+        }
+        return answer;
+    }
+
+    /**
+     * Returns the string after the given token
+     *
+     * @param text  the text
+     * @param after the token
+     * @return the text after the token, or <tt>null</tt> if text does not contain the token
+     */
+    public static String after(String text, String after) {
+        if (!text.contains(after)) {
+            return null;
+        }
+        return text.substring(text.indexOf(after) + after.length());
+    }
+
+    /**
+     * Returns an object after the given token
+     *
+     * @param text  the text
+     * @param after the token
+     * @param mapper a mapping function to convert the string after the token to type T
+     * @return an Optional describing the result of applying a mapping function to the text after the token.
+     */
+    public static <T> Optional<T> after(String text, String after, Function<String, T> mapper) {
+        String result = after(text, after);
+        if (result == null) {
+            return Optional.empty();            
+        } else {
+            return Optional.ofNullable(mapper.apply(result));
+        }
+    }
+
+    /**
+     * Returns the string before the given token
+     *
+     * @param text the text
+     * @param before the token
+     * @return the text before the token, or <tt>null</tt> if text does not
+     *         contain the token
+     */
+    public static String before(String text, String before) {
+        if (!text.contains(before)) {
+            return null;
+        }
+        return text.substring(0, text.indexOf(before));
+    }
+
+    /**
+     * Returns an object before the given token
+     *
+     * @param text  the text
+     * @param before the token
+     * @param mapper a mapping function to convert the string before the token to type T
+     * @return an Optional describing the result of applying a mapping function to the text before the token.
+     */
+    public static <T> Optional<T> before(String text, String before, Function<String, T> mapper) {
+        String result = before(text, before);
+        if (result == null) {
+            return Optional.empty();            
+        } else {
+            return Optional.ofNullable(mapper.apply(result));
+        }
+    }
+
+    /**
+     * Returns the string between the given tokens
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @return the text between the tokens, or <tt>null</tt> if text does not contain the tokens
+     */
+    public static String between(String text, String after, String before) {
+        text = after(text, after);
+        if (text == null) {
+            return null;
+        }
+        return before(text, before);
+    }
+
+    /**
+     * Returns an object between the given token
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @param mapper a mapping function to convert the string between the token to type T
+     * @return an Optional describing the result of applying a mapping function to the text between the token.
+     */
+    public static <T> Optional<T> between(String text, String after, String before, Function<String, T> mapper) {
+        String result = between(text, after, before);
+        if (result == null) {
+            return Optional.empty();            
+        } else {
+            return Optional.ofNullable(mapper.apply(result));
+        }
+    }
+
+    /**
+     * Returns the string between the most outer pair of tokens
+     * <p/>
+     * The number of token pairs must be evenly, eg there must be same number of before and after tokens, otherwise <tt>null</tt> is returned
+     * <p/>
+     * This implementation skips matching when the text is either single or double quoted.
+     * For example:
+     * <tt>${body.matches("foo('bar')")</tt>
+     * Will not match the parenthesis from the quoted text.
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @return the text between the outer most tokens, or <tt>null</tt> if text does not contain the tokens
+     */
+    public static String betweenOuterPair(String text, char before, char after) {
+        if (text == null) {
+            return null;
+        }
+
+        int pos = -1;
+        int pos2 = -1;
+        int count = 0;
+        int count2 = 0;
+
+        boolean singleQuoted = false;
+        boolean doubleQuoted = false;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (!doubleQuoted && ch == '\'') {
+                singleQuoted = !singleQuoted;
+            } else if (!singleQuoted && ch == '\"') {
+                doubleQuoted = !doubleQuoted;
+            }
+            if (singleQuoted || doubleQuoted) {
+                continue;
+            }
+
+            if (ch == before) {
+                count++;
+            } else if (ch == after) {
+                count2++;
+            }
+
+            if (ch == before && pos == -1) {
+                pos = i;
+            } else if (ch == after) {
+                pos2 = i;
+            }
+        }
+
+        if (pos == -1 || pos2 == -1) {
+            return null;
+        }
+
+        // must be even paris
+        if (count != count2) {
+            return null;
+        }
+
+        return text.substring(pos + 1, pos2);
+    }
+
+    /**
+     * Returns an object between the most outer pair of tokens
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @param mapper a mapping function to convert the string between the most outer pair of tokens to type T
+     * @return an Optional describing the result of applying a mapping function to the text between the most outer pair of tokens.
+     */
+    public static <T> Optional<T> betweenOuterPair(String text, char before, char after, Function<String, T> mapper) {
+        String result = betweenOuterPair(text, before, after);
+        if (result == null) {
+            return Optional.empty();            
+        } else {
+            return Optional.ofNullable(mapper.apply(result));
+        }
+    }
+
+    /**
+     * Returns true if the given name is a valid java identifier
+     */
+    public static boolean isJavaIdentifier(String name) {
+        if (name == null) {
+            return false;
+        }
+        int size = name.length();
+        if (size < 1) {
+            return false;
+        }
+        if (Character.isJavaIdentifierStart(name.charAt(0))) {
+            for (int i = 1; i < size; i++) {
+                if (!Character.isJavaIdentifierPart(name.charAt(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Cleans the string to a pure Java identifier so we can use it for loading class names.
+     * <p/>
+     * Especially from Spring DSL people can have \n \t or other characters that otherwise
+     * would result in ClassNotFoundException
+     *
+     * @param name the class name
+     * @return normalized classname that can be load by a class loader.
+     */
+    public static String normalizeClassName(String name) {
+        StringBuilder sb = new StringBuilder(name.length());
+        for (char ch : name.toCharArray()) {
+            if (ch == '.' || ch == '[' || ch == ']' || ch == '-' || Character.isJavaIdentifierPart(ch)) {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Compares old and new text content and report back which lines are changed
+     *
+     * @param oldText  the old text
+     * @param newText  the new text
+     * @return a list of line numbers that are changed in the new text
+     */
+    public static List<Integer> changedLines(String oldText, String newText) {
+        if (oldText == null || oldText.equals(newText)) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> changed = new ArrayList<>();
+
+        String[] oldLines = oldText.split("\n");
+        String[] newLines = newText.split("\n");
+
+        for (int i = 0; i < newLines.length; i++) {
+            String newLine = newLines[i];
+            String oldLine = i < oldLines.length ? oldLines[i] : null;
+            if (oldLine == null) {
+                changed.add(i);
+            } else if (!newLine.equals(oldLine)) {
+                changed.add(i);
+            }
+        }
+
+        return changed;
+    }
+
 
 }

@@ -35,6 +35,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.OnCompletionProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
@@ -53,7 +54,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     private Boolean onCompleteOnly;
     @XmlAttribute
     private Boolean onFailureOnly;
-    @XmlElement(name = "onWhen")
+    @XmlElement(name = "onWhen") @AsPredicate
     private WhenDefinition onWhen;
     @XmlAttribute
     private Boolean parallelProcessing;
@@ -125,6 +126,10 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
         if (isOnCompleteOnly && isOnFailureOnly) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+        }
+        if (original) {
+            // ensure allow original is turned on
+            routeContext.setAllowUseOriginalMessage(true);
         }
 
         String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
@@ -245,7 +250,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @param predicate predicate that determines true or false
      * @return the builder
      */
-    public OnCompletionDefinition onWhen(Predicate predicate) {
+    public OnCompletionDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
     }

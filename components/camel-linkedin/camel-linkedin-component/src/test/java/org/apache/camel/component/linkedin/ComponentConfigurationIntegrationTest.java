@@ -26,8 +26,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.linkedin.internal.CommentsResourceApiMethod;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

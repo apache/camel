@@ -20,20 +20,25 @@ package org.apache.camel.component.mllp;
  * Base class for HL7 Application Acknowledgement Exceptions
  */
 public abstract class MllpAcknowledgementException extends MllpException {
+
     public MllpAcknowledgementException(String message) {
         super(message);
     }
 
-    public MllpAcknowledgementException(String message, byte[] mllpPayload) {
-        super(message, mllpPayload);
+    public MllpAcknowledgementException(String message, byte[] hl7Message) {
+        super(message, hl7Message);
     }
 
-    public MllpAcknowledgementException(String message, Throwable cause) {
-        super(message, cause);
+    public MllpAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
+        super(message, hl7Message, hl7Acknowledgement);
     }
 
-    public MllpAcknowledgementException(String message, byte[] mllpPayload, Throwable cause) {
-        super(message, mllpPayload, cause);
+    public MllpAcknowledgementException(String message, byte[] hl7Message, Throwable cause) {
+        super(message, hl7Message, cause);
+    }
+
+    public MllpAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+        super(message, hl7Message, hl7Acknowledgement, cause);
     }
 
 }

@@ -33,7 +33,7 @@ public final class GsonUtil {
         private Map<String, Object> headers = new HashMap<String, Object>();
         private String body;
 
-        public IronMqMessage(String body, Map<String, Object> headers) {
+        IronMqMessage(String body, Map<String, Object> headers) {
             super();
             this.headers = headers;
             this.body = body;

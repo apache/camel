@@ -64,7 +64,7 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
         
         Node node = result.get(0);
         
-        assertTrue(node.getStatus().getCapacity().get("pods").getAmount().equals("40"));
+        assertTrue(node.getStatus().getCapacity().get("pods").getAmount().equals("110"));
     }
 
     @Override

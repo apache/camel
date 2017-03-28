@@ -48,6 +48,27 @@ public class CreateOperationTest extends ZooKeeperTestSupport {
     }
 
     @Test
+    public void createBasicSubPath() throws Exception {
+        CreateOperation create = new CreateOperation(connection, "/sub/sub2");
+
+        OperationResult<String> result = create.get();
+        assertEquals("/sub/sub2", result.getResult());
+
+        verifyNodeContainsData("/sub/sub2", null);
+    }
+
+    @Test
+    public void createBasicSubPathWithData() throws Exception {
+        CreateOperation create = new CreateOperation(connection, "/sub/sub3");
+        create.setData(testPayload.getBytes());
+
+        OperationResult<String> result = create.get();
+        assertEquals("/sub/sub3", result.getResult());
+
+        verifyNodeContainsData("/sub/sub3", testPayloadBytes);
+    }
+
+    @Test
     public void createBasicWithData() throws Exception {
         CreateOperation create = new CreateOperation(connection, "/two");
         create.setData(testPayload.getBytes());

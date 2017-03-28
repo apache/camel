@@ -1,0 +1,187 @@
+## SAP NetWeaver Component
+
+*Available as of Camel version 2.12*
+
+The *sap-netweaver* integrates with the
+http://scn.sap.com/community/developer-center/netweaver-gateway[SAP
+NetWeaver Gateway] using HTTP transports.
+
+This camel component supports only producer endpoints.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-sap-netweaver</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+The URI scheme for a sap netweaver gateway component is as follows
+
+[source,java]
+-----------------------------------------------------------------
+sap-netweaver:https://host:8080/path?username=foo&password=secret
+-----------------------------------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+### Prerequisites
+
+You would need to have an account to the SAP NetWeaver system to be able
+to leverage this component. SAP provides a
+http://scn.sap.com/docs/DOC-31221#section6[demo setup] where you can
+requires for an account.
+
+This component uses the basic authentication scheme for logging into SAP
+NetWeaver.
+
+### SAPNetWeaver options
+
+
+// component options: START
+The SAP NetWeaver component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The SAP NetWeaver endpoint is configured using URI syntax:
+
+    sap-netweaver:url
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **url** | *Required* Url to the SAP net-weaver gateway server. |  | String
+|=======================================================================
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **flatternMap** (producer) | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body. | true | boolean
+| **json** (producer) | Whether to return data in JSON format. If this option is false then XML is returned in Atom format. | true | boolean
+| **jsonAsMap** (producer) | To transform the JSON from a String to a Map in the message body. | true | boolean
+| **password** (producer) | *Required* Password for account. |  | String
+| **username** (producer) | *Required* Username for account. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
+// endpoint options: END
+
+
+### Message Headers
+
+The following headers can be used by the producer.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|`CamelNetWeaverCommand` |`String` |*Mandatory*: The command to execute in
+http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data
+Service] format.
+|=======================================================================
+
+### Examples
+
+This example is using the flight demo example from SAP, which is
+available online over the internet
+http://scn.sap.com/docs/DOC-31221[here].
+
+In the route below we request the SAP NetWeaver demo server using the
+following url
+
+[source,java]
+----------------------------------------------------------------------
+https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/
+----------------------------------------------------------------------
+
+And we want to execute the following command
+
+[source,java]
+-------------------------------------------------------------------------------------------------------
+FlightCollection(AirLineID='AA',FlightConnectionID='0017',FlightDate=datetime'2012-08-29T00%3A00%3A00')
+-------------------------------------------------------------------------------------------------------
+
+To get flight details for the given flight. The command syntax is in
+http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data
+Service] format.
+
+We have the following Camel route
+
+[source,java]
+-----------------------------------------------------------------------------
+from("direct:start")
+    .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
+    .to("log:response")
+    .to("velocity:flight-info.vm")
+-----------------------------------------------------------------------------
+
+Where url, username, and password is defined as:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------
+    private String username = "P1909969254";
+    private String password = "TODO";
+    private String url = "https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/";
+    private String command = "FlightCollection(AirLineID='AA',FlightConnectionID='0017',FlightDate=datetime'2012-08-29T00%3A00%3A00')";
+---------------------------------------------------------------------------------------------------------------------------------------
+
+The password is invalid. You would need to create an account at SAP
+first to run the demo.
+
+The velocity template is used for formatting the response to a basic
+HTML page
+
+[source,xml]
+------------------------------------------------------------------------
+<html>
+  <body>
+  Flight information:
+
+  <p/>
+  <br/>Airline ID: $body["AirLineID"]
+  <br/>Aircraft Type: $body["AirCraftType"]
+  <br/>Departure city: $body["FlightDetails"]["DepartureCity"]
+  <br/>Departure airport: $body["FlightDetails"]["DepartureAirPort"]
+  <br/>Destination city: $body["FlightDetails"]["DestinationCity"]
+  <br/>Destination airport: $body["FlightDetails"]["DestinationAirPort"]
+
+  </body>
+</html>
+------------------------------------------------------------------------
+
+When running the application you get sampel output:
+
+[source,java]
+-------------------------------
+Flight information:
+Airline ID: AA
+Aircraft Type: 747-400
+Departure city: new york
+Departure airport: JFK
+Destination city: SAN FRANCISCO
+Destination airport: SFO
+-------------------------------
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:http.html[HTTP]

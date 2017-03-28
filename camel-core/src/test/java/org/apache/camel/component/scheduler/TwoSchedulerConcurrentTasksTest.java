@@ -39,9 +39,11 @@ public class TwoSchedulerConcurrentTasksTest extends ContextTestSupport {
                 comp.setConcurrentTasks(2);
 
                 from("scheduler://foo?delay=100")
+                    .to("log:a")
                     .to("mock:a");
 
                 from("scheduler://foo?delay=200")
+                    .to("log:b")
                     .to("mock:b");
             }
         };

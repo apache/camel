@@ -1,0 +1,123 @@
+[[Debugger-Debugger]]
+Debugger
+~~~~~~~~
+
+*Available as of Camel 2.6*
+
+Camel link:debugger.html[Debugger] is much related to
+link:tracer.html[Tracer], in fact they are sisters. Debugger is a
+enhanced tracer with a debugger framework so that tooling can be
+developed to easily monitor Camel routes, trace messages and set
+breakpoints at points in a route etc.
+
+TIP:There is also a link:backlogdebugger.html[BacklogDebugger] which allows
+to debug from JMX, and 3rd party tooling.
+
+[[Debugger-AbouttheDebugger]]
+About the Debugger
+^^^^^^^^^^^^^^^^^^
+
+The Debugger allows tooling or the likes to attach breakpoints which is
+being invoked when link:exchange.html[Exchange]s is being routed.
+
+[[Debugger-Defaultimplementation]]
+Default implementation
+^^^^^^^^^^^^^^^^^^^^^^
+
+Camel provides a default implementation
+`org.apache.camel.impl.DefaultDebugger` which you can set on the
+`CamelContext` using the `setDebugger` method. +
+ Likewise you can get hold of the link:debugger.html[Debugger] using the
+`getDebugger` method on `CamelContext`.
+
+The `org.apache.camel.spi.Debugger` has methods to attach and remove
+breakpoints. And to suspend/resume all breakpoints etc. +
+ You can also attach a condition to the breakpoint so it only reacts if
+the condition matches.
+
+[[Debugger-EasilydebuggingCamelroutesfromcamel-test]]
+Easily debugging Camel routes from `camel-test`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you are developing unit tests using the `camel-test` component, then
+the link:debugger.html[Debugger] comes out of the box. +
+ From *Camel 2.9* onwards you would need to explicit enable the
+debugger, by overriding `isUseDebugger()` method and return `true`.
+
+[[Debugger-Example]]
+Example
++++++++
+
+In this unit test
+
+[source,java]
+-----------------------------------------------
+public class DebugTest extends CamelTestSupport
+-----------------------------------------------
+
+We want to debug the following route
+
+[source,java]
+-----------------------------------------------
+@Override
+protected RouteBuilder createRouteBuilder() throws Exception {
+    return new RouteBuilder() {
+        @Override
+        public void configure() throws Exception {
+            // this is the route we want to debug
+            from("direct:start")
+                .to("mock:a")
+                .transform(body().prepend("Hello "))
+                .to("mock:b");
+        }
+    };
+}
+-----------------------------------------------
+
+Which can easily done by overriding the `debugBefore` method as shown
+
+[source,java]
+-----------------------------------------------
+@Override
+public boolean isUseDebugger() {
+    // must enable debugger
+    return true;
+}
+ 
+@Override
+protected void debugBefore(Exchange exchange, Processor processor,
+                           ProcessorDefinition<?> definition, String id, String shortName) {
+    // this method is invoked before we are about to enter the given processor
+    // from your Java editor you can just add a breakpoint in the code line below
+    log.info("Before " + definition + " with body " + exchange.getIn().getBody());
+}
+-----------------------------------------------
+
+Then from your Java editor just add a breakpoint inside the
+`debugBefore` method. Then fire up the unit test and wait for the Java
+editor to hit the breakpoint. Then you can inspect the
+link:exchange.html[Exchange] during debugging while it advances during
+routing. The `ProcessorDefinition` and the `id` and `shortName`
+parameters is all information which tells you where in the route the
+breakpoint was hit. 
+
+TIP:There is also a `debugAfter` method which is invoked after the processor
+has been invoked. This allows you to _see_ what happens to the
+link:exchange.html[Exchange] right after it has invoked a processor in
+the route.
+
+The screenshot below shows the link:debugger.html[Debugger] in action.
+The IDE (IDEA) has hit the breakpoint and we can inspect the
+parameters. +
+ Notice how we can see that the message is to be send to the "mock:a"
+endpoint.
+
+image:debugger.data/debug.png[image]
+
+[[Debugger-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:tracer.html[Tracer]
+* link:backlogdebugger.html[BacklogDebugger]
+

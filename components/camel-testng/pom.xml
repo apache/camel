@@ -21,15 +21,20 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.17-SNAPSHOT</version>
+        <version>2.19.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-testng</artifactId>
-    <packaging>bundle</packaging>
-    <name>Camel :: TestNG</name>
-    <description>Camel Testing Library using TestNG</description>
+    <packaging>jar</packaging>
+    <name>Camel :: TestNG (deprecated)</name>
+    <description>Camel unit testing with TestNG</description>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>2.8.0</firstVersion>
+        <label>testing,java</label>
+        <title>TestNG</title>
+
         <camel.osgi.export.pkg>org.apache.camel.testng.*</camel.osgi.export.pkg>
     </properties>
 
@@ -56,10 +61,20 @@
             <artifactId>testng</artifactId>
         </dependency>
 
-        <!-- optional dependencies for running tests -->
+        <!-- optional dependencies for running tests -->          
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
 

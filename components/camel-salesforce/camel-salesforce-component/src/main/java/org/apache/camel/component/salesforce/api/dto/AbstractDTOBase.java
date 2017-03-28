@@ -19,14 +19,19 @@ package org.apache.camel.component.salesforce.api.dto;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 
 // disable null values in json output
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+// avoid running into Salesforce backward compatibility breaks
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractDTOBase {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonUtils.createObjectMapper();
 
     @Override
     public String toString() {

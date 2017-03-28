@@ -25,26 +25,28 @@ import javax.cache.Cache;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jcache.JCacheConfiguration;
+import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JCacheAggregationRepository extends ServiceSupport implements  OptimisticLockingAggregationRepository {
     private static final Logger LOG = LoggerFactory.getLogger(JCacheAggregationRepository.class);
 
-    private JCacheConfiguration configuration = new JCacheConfiguration();
-    private String cacheName;
-    private ClassLoader classLoader;
-    private CamelContext camelContext;
+    private JCacheConfiguration configuration;
     private Cache<String, DefaultExchangeHolder> cache;
     private boolean optimistic;
     private boolean allowSerializedHeaders;
-
     private JCacheManager<String, DefaultExchangeHolder> cacheManager;
+
+    public JCacheAggregationRepository() {
+        this.configuration = new JCacheConfiguration();
+    }
 
     public JCacheConfiguration getConfiguration() {
         return configuration;
@@ -55,27 +57,11 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
     }
 
     public String getCacheName() {
-        return cacheName;
+        return configuration.getCacheName();
     }
 
     public void setCacheName(String cacheName) {
-        this.cacheName = cacheName;
-    }
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        configuration.setCacheName(cacheName);
     }
 
     public Cache<String, DefaultExchangeHolder> getCache() {
@@ -185,7 +171,10 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
         if (cache != null) {
             cacheManager = new JCacheManager<>(cache);
         } else {
-            cacheManager = new JCacheManager(configuration, cacheName, classLoader, camelContext);
+            cacheManager = JCacheHelper.createManager(
+                ObjectHelper.notNull(configuration, "configuration")
+            );
+
             cache = cacheManager.getCache();
         }
     }

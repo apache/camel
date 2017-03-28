@@ -29,11 +29,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * For expressions and predicates using a body or header tokenizer.
+ * For expressions and predicates using a body or header tokenizer
  *
  * @see TokenizeLanguage
  */
-@Metadata(label = "language,core", title = "Tokenize")
+@Metadata(firstVersion = "2.0.0", label = "language,core", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends ExpressionDefinition {
@@ -69,7 +69,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * The (start) token to use as tokenizer, for example \n for a new line token
+     * The (start) token to use as tokenizer, for example \n for a new line token.
+     * You can use simple language as the token to support dynamic tokens.
      */
     public void setToken(String token) {
         this.token = token;
@@ -81,6 +82,7 @@ public class TokenizerExpression extends ExpressionDefinition {
 
     /**
      * The end token to use as tokenizer if using start/end token pairs.
+     * You can use simple language as the token to support dynamic tokens.
      */
     public void setEndToken(String endToken) {
         this.endToken = endToken;
@@ -115,7 +117,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * To inherit namepaces from a root/parent tag name when using XML
+     * To inherit namespaces from a root/parent tag name when using XML
+     * You can use simple language as the tag name to support dynamic names.
      */
     public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
         this.inheritNamespaceTagName = inheritNamespaceTagName;

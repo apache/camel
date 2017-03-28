@@ -39,6 +39,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -46,7 +47,7 @@ import org.apache.camel.util.ResourceHelper;
 /**
  * The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
  */
-@UriEndpoint(scheme = "flatpack", title = "Flatpack", syntax = "flatpack:type:resourceUri", consumerClass = FlatpackConsumer.class, label = "transformation")
+@UriEndpoint(firstVersion = "1.4.0", scheme = "flatpack", title = "Flatpack", syntax = "flatpack:type:resourceUri", consumerClass = FlatpackConsumer.class, label = "transformation")
 public class FlatpackEndpoint extends DefaultPollingEndpoint {
 
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
@@ -93,7 +94,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
     }
 
     public void processDataSet(Exchange originalExchange, DataSet dataSet, int counter) throws Exception {
-        Exchange exchange = originalExchange.copy();
+        Exchange exchange = ExchangeHelper.createCorrelatedCopy(originalExchange, false);
         Message in = exchange.getIn();
         in.setBody(dataSet);
         in.setHeader("CamelFlatpackCounter", counter);

@@ -42,7 +42,7 @@ import org.apache.camel.util.OgnlHelper;
  *
  * @version
  */
-@Metadata(label = "language,core,java", title = "Bean method")
+@Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean method")
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {

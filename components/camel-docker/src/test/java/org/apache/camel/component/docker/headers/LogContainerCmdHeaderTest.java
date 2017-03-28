@@ -19,7 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.LogContainerCmd;
-
+import com.github.dockerjava.core.command.LogContainerResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -35,6 +35,9 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
     @Mock
     private LogContainerCmd mockObject;
 
+    @Mock
+    private LogContainerResultCallback callback;
+    
     @Test
     public void logContainerHeaderTest() {
 
@@ -70,6 +73,12 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.logContainerCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        try {
+            Mockito.when(callback.awaitCompletion()).thenReturn(callback);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

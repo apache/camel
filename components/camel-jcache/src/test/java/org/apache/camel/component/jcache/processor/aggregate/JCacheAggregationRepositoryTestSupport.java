@@ -23,8 +23,7 @@ class JCacheAggregationRepositoryTestSupport extends CamelTestSupport {
 
     protected JCacheAggregationRepository createRepository(boolean optimistic) throws Exception {
         JCacheAggregationRepository repository = new JCacheAggregationRepository();
-        repository.setConfiguration(new JCacheConfiguration());
-        repository.setCacheName("aggregation-repository");
+        repository.setConfiguration(new JCacheConfiguration("aggregation-repository"));
         repository.setOptimistic(optimistic);
 
         return repository;

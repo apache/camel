@@ -108,7 +108,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
             loadBalancer = loadBalancerType.createLoadBalancer(routeContext);
             loadBalancerType.setLoadBalancer(loadBalancer);
 
-            // some load balancers can only support a fixed number of outputs
+            // some load balancer can only support a fixed number of outputs
             int max = loadBalancerType.getMaximumNumberOfOutputs();
             int size = getOutputs().size();
             if (size > max) {
@@ -127,7 +127,15 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
                 loadBalancer.addProcessor(processor);
             }
         }
-        return loadBalancer;
+
+        Boolean inherit = inheritErrorHandler;
+        if (loadBalancerType instanceof FailoverLoadBalancerDefinition) {
+            // special for failover load balancer where you can configure it to not inherit error handler for its children
+            // but the load balancer itself should inherit so Camels error handler can react afterwards
+            inherit = true;
+        }
+        Processor target = wrapChannel(routeContext, loadBalancer, this, inherit);
+        return target;
     }
     
     // Fluent API
@@ -227,7 +235,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @param halfOpenAfter     time interval in milliseconds for half open state.
      * @param exceptions        exception classes which we want to break if one of them was thrown
      * @return the builder
+     * @deprecated use Hystrix EIP instead which is the popular Netflix implementation of circuit breaker
      */
+    @Deprecated
     public LoadBalanceDefinition circuitBreaker(int threshold, long halfOpenAfter, Class<?>... exceptions) {
         CircuitBreakerLoadBalancerDefinition def = new CircuitBreakerLoadBalancerDefinition();
         def.setExceptionTypes(Arrays.asList(exceptions));

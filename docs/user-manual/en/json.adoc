@@ -1,0 +1,636 @@
+[[JSON-JSON]]
+JSON
+~~~~
+
+JSON is a link:data-format.html[Data Format] to marshal and unmarshal
+Java objects to and from http://www.json.org/[JSON].
+
+For JSON to object marshalling, Camel provides integration with three
+popular JSON libraries:
+
+* The http://xstream.codehaus.org/[XStream library] and
+http://jettison.codehaus.org/[Jettsion]
+* The https://github.com/FasterXML/jackson[Jackson library]
+* *Camel 2.10:* The http://code.google.com/p/google-gson/[GSon library]
+* *Camel 2.18:* The http://johnzon.apache.org/[Johnzon library]
+
+Every library requires adding the special camel component (see
+"Dependency..." paragraphs further down). By default Camel uses the
+XStream library.
+
+
+*Direct, bi-directional JSON <=> XML conversions*
+
+As of Camel 2.10, Camel supports direct, bi-directional JSON <=> XML
+conversions via the link:xmljson.html[camel-xmljson] data format, which
+is documented separately.
+
+[[JSON-UsingJSONdataformatwiththeXStreamlibrary]]
+Using JSON data format with the XStream library
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[source,java]
+------------------------------------------------------------
+// lets turn Object messages into json then send to MQSeries
+from("activemq:My.Queue").
+  marshal().json().
+  to("mqseries:Another.Queue");
+------------------------------------------------------------
+
+[[JSON-UsingJSONdataformatwiththeJacksonlibrary]]
+Using JSON data format with the Jackson library
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[source,java]
+------------------------------------------------------------
+// lets turn Object messages into json then send to MQSeries
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.Jackson).
+  to("mqseries:Another.Queue");
+------------------------------------------------------------
+
+[[JSON-UsingJSONdataformatwiththeGSONlibrary]]
+Using JSON data format with the GSON library
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[source,java]
+------------------------------------------------------------
+// lets turn Object messages into json then send to MQSeries
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.Gson).
+  to("mqseries:Another.Queue");
+------------------------------------------------------------
+
+[[JSON-UsingJSONdataformatwiththeJohnzonlibrary]]
+Using JSON data format with the Johnzon library
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[source,java]
+------------------------------------------------------------
+// lets turn Object messages into json then send to MQSeries
+from("activemq:My.Queue").
+  marshal().json(JsonLibrary.Johnzon).
+  to("mqseries:Another.Queue");
+------------------------------------------------------------
+
+[[JSON-UsingJSONinSpringDSL]]
+Using JSON in Spring DSL
+++++++++++++++++++++++++
+
+When using link:data-format.html[Data Format] in Spring DSL you need to
+declare the data formats first. This is done in the *DataFormats* XML
+tag.
+
+[source,xml]
+------------------------------------------------------------------------------------------------------------------------------
+        <dataFormats>
+            <!-- here we define a Json data format with the id jack and that it should use the TestPojo as the class type when
+                 doing unmarshal. The unmarshalTypeName is optional, if not provided Camel will use a Map as the type -->
+            <json id="jack" library="Jackson" unmarshalTypeName="org.apache.camel.component.jackson.TestPojo"/>
+        </dataFormats>
+------------------------------------------------------------------------------------------------------------------------------
+
+And then you can refer to this id in the route:
+
+[source,xml]
+-------------------------------------
+       <route>
+            <from uri="direct:back"/>
+            <unmarshal ref="jack"/>
+            <to uri="mock:reverse"/>
+        </route>
+-------------------------------------
+
+[[JSON-ExcludingPOJOfieldsfrommarshalling]]
+Excluding POJO fields from marshalling
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*As of Camel 2.10* +
+ When marshalling a POJO to JSON you might want to exclude certain
+fields from the JSON output. With Jackson you can use
+http://wiki.fasterxml.com/JacksonJsonViews[JSON views] to accomplish
+this. First create one or more marker classes.
+
+Use the marker classes with the `@JsonView` annotation to
+include/exclude certain fields. The annotation also works on getters.
+
+Finally use the Camel `JacksonDataFormat` to marshall the above POJO to
+JSON.
+
+Note that the height field is missing in the resulting JSON:
+
+[source,java]
+-----------------------
+{"age":30, "weight":70}
+-----------------------
+
+The GSON library supports a similar feature through the notion of
+http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/ExclusionStrategy.html[ExclusionStrategies]:
+
+The `GsonDataFormat` accepts an `ExclusionStrategy` in its constructor:
+
+The line above will exclude fields annotated with `@ExcludeAge` when
+marshalling to JSON.
+
+[[JSON-Configuringfieldnamingpolicy]]
+Configuring field naming policy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.11*
+
+The GSON library supports specifying policies and strategies for mapping
+from json to POJO fields. A common naming convention is to map json
+fields using lower case with underscores.
+
+We may have this JSON string
+
+[source,java]
+-------------------------
+{
+  "id" : 123,
+  "first_name" : "Donald"
+  "last_name" : "Duck"
+}
+-------------------------
+
+Which we want to map to a POJO that has getter/setters as
+
+*PersonPojo.java*
+
+[source,java]
+------------------------------------------------
+public class PersonPojo {
+
+    private int id;
+    private String firstName;
+    private String lastName;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+}
+------------------------------------------------
+
+Then we can configure the
+`org.apache.camel.component.gson.GsonDataFormat` in a Spring XML files
+as shown below. Notice we use `fieldNamingPolicy` property to set the
+field mapping. This property is an enum from GSon
+`com.google.gson.FieldNamingPolicy` which has a number of pre defined
+mappings. If you need full control you can use the property
+`FieldNamingStrategy` and implement a custom
+`com.google.gson.FieldNamingStrategy` where you can control the mapping.
+
+*Configuring GsonDataFromat in Spring XML file*
+
+[source,xml]
+-------------------------------------------------------------------------------------------------
+    <!-- define the gson data format, where we configure the data format using the properties -->
+    <bean id="gson" class="org.apache.camel.component.gson.GsonDataFormat">
+        <!-- we want to unmarshal to person pojo -->
+        <property name="unmarshalType" value="org.apache.camel.component.gson.PersonPojo"/>
+        <!-- we want to map fields to use lower case and underscores -->
+        <property name="fieldNamingPolicy" value="LOWER_CASE_WITH_UNDERSCORES"/>
+    </bean>
+-------------------------------------------------------------------------------------------------
+
+And use it in Camel routes by referring to its bean id as shown:
+
+*Using gson from Camel Routes*
+
+[source,xml]
+---------------------------------------------------------------
+   <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+        <route>
+            <from uri="direct:inPojo"/>
+            <marshal ref="gson"/>
+        </route>
+
+        <route>
+            <from uri="direct:backPojo"/>
+            <unmarshal ref="gson"/>
+        </route>
+
+    </camelContext>
+---------------------------------------------------------------
+
+[[JSON-IncludeExcludefieldsusingthejsonViewattributewithJacksonDataFormat]]
+Include/Exclude fields using the `jsonView` attribute with  `JacksonDataFormat`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.12*
+
+As an example of using this attribute you can instead of:
+
+[source,java]
+---------------------------------------------------------------------------------------------
+JacksonDataFormat ageViewFormat = new JacksonDataFormat(TestPojoView.class, Views.Age.class);
+from("direct:inPojoAgeView").
+  marshal(ageViewFormat);
+---------------------------------------------------------------------------------------------
+
+Directly specify your http://wiki.fasterxml.com/JacksonJsonViews[JSON
+view] inside the Java DSL as:
+
+[source,java]
+------------------------------------------------------
+from("direct:inPojoAgeView").
+  marshal().json(TestPojoView.class, Views.Age.class);
+------------------------------------------------------
+
+And the same in XML DSL:
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+<from uri="direct:inPojoAgeView"/>
+  <marshal>
+    <json library="Jackson" unmarshalTypeName="org.apache.camel.component.jackson.TestPojoView" jsonView="org.apache.camel.component.jackson.Views$Age"/>
+  </marshal>
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[[JSON-SettingserializationincludeoptionforJacksonmarshal]]
+Setting serialization include option for Jackson marshal
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.13.3/2.14*
+
+If you want to marshal a pojo to JSON, and the pojo has some fields with
+null values. And you want to skip these null values, then you need to
+set either an annotation on the pojo, 
+
+[source,java]
+------------------------------
+@JsonInclude(Include.NON_NULL)
+public class MyPojo {
+   ...
+}
+------------------------------
+
+But this requires you to include that annotation in your pojo source
+code. You can also configure the Camel JsonDataFormat to set the include
+option, as shown below:
+
+[source,java]
+---------------------------------------------------
+JacksonDataFormat format = new JacksonDataFormat();
+format.setInclude("NON_NULL");
+---------------------------------------------------
+
+Or from XML DSL you configure this as
+
+[source,java]
+------------------------------------------------------------
+    <dataFormats>
+      <json id="json" library="Jackson" include="NOT_NULL"/>
+    </dataFormats>
+------------------------------------------------------------
+
+[[JSON-UnmarshallingfromjsontoPOJOwithdynamicclassname]]
+Unmarshalling from json to POJO with dynamic class name
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.14*
+
+If you use jackson to unmarshal json to POJO, then you can now specify a
+header in the message that indicate which class name to unmarshal to. +
+The header has key `CamelJacksonUnmarshalType` if that header is present
+in the message, then Jackson will use that as FQN for the POJO class to
+unmarshal the json payload as. Notice that behavior is enabled out of
+the box from Camel 2.14 onwards. 
+
+ For JMS end users there is the JMSType header from the JMS spec that
+indicates that also. To enable support for JMSType you would need to
+turn that on, on the jackson data format as shown:
+
+[source,java]
+---------------------------------------------------
+JacksonDataFormat format = new JacksonDataFormat();
+format.setAllowJmsType(true);
+---------------------------------------------------
+
+Or from XML DSL you configure this as
+
+[source,java]
+-------------------------------------------------------------
+    <dataFormats>
+      <json id="json" library="Jackson" allowJmsType="true"/>
+    </dataFormats>
+-------------------------------------------------------------
+
+[[JSON-UnmarshallingfromjsontoListMaporListpojo]]
+Unmarshalling from json to List<Map> or List<pojo>
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.14*
+
+If you are using Jackson to unmarshal json to a list of map/pojo, you
+can now specify this by setting `useList="true"` or use
+the `org.apache.camel.component.jackson.ListJacksonDataFormat`. For
+example with Java you can do as shown below:
+
+[source,java]
+-------------------------------------------------------
+JacksonDataFormat format = new ListJacksonDataFormat();
+// or
+JacksonDataFormat format = new JacksonDataFormat();
+format.useList();
+// and you can specify the pojo class type also
+format.setUnmarshalType(MyPojo.class);
+-------------------------------------------------------
+
+And if you use XML DSL then you configure to use list using `useList`
+attribute as shown below:
+
+[source,java]
+--------------------------------------------------------
+    <dataFormats>
+      <json id="json" library="Jackson" useList="true"/>
+    </dataFormats>
+--------------------------------------------------------
+
+And you can specify the pojo type also
+
+[source,java]
+-------------------------------------------------------------------------------------------
+    <dataFormats>
+      <json id="json" library="Jackson" useList="true" unmarshalTypeName="com.foo.MyPojo"/>
+    </dataFormats>
+-------------------------------------------------------------------------------------------
+
+[[JSON-UsingcustomJacksonObjectMapper]]
+Using custom Jackson ObjectMapper
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.17*
+
+You can use custom Jackson ObjectMapper instance, can be configured as
+shown below.
+
+[source,java]
+-----------------------------------------------------------------
+    <dataFormats>
+      <json id="json" library="Jackson" objectMapper="myMapper"/>
+    </dataFormats>
+-----------------------------------------------------------------
+
+Where myMapper is the id of the custom instance that Camel will lookup
+in the link:registry.html[Registry]
+
+[[JSON-UsingcustomJacksonmodules]]
+Using custom Jackson modules
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.15*
+
+You can use custom Jackson modules by specifying the class names of
+those using the moduleClassNames option as shown below.
+
+[source,java]
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+    <dataFormats>
+      <json id="json" library="Jackson" useList="true" unmarshalTypeName="com.foo.MyPojo" moduleClassNames="com.foo.MyModule,com.foo.MyOtherModule"/>
+    </dataFormats>
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+When using moduleClassNames then the custom jackson modules are not
+configured, by created using default constructor and used as-is. If a
+custom module needs any custom configuration, then an instance of the
+module can be created and configured, and then use modulesRefs to refer
+to the module as shown below:
+
+[source,java]
+------------------------------------------------------------------------------------------------------------------------
+    <bean id="myJacksonModule" class="com.foo.MyModule">
+      ... // configure the module as you want
+    </bean>
+ 
+    <dataFormats>
+      <json id="json" library="Jackson" useList="true" unmarshalTypeName="com.foo.MyPojo" moduleRefs="myJacksonModule"/>
+    </dataFormats>
+------------------------------------------------------------------------------------------------------------------------
+
+ Multiple modules can be specified separated by comma, such as
+moduleRefs="myJacksonModule,myOtherModule"
+
+[[JSON-EnablingordisablefeaturesusingJackson]]
+Enabling or disable features using Jackson
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.15*
+
+Jackson has a number of features you can enable or disable, which its
+ObjectMapper uses. For example to disable failing on unknown properties
+when marshalling, you can configure this using the disableFeatures:
+
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------
+ <dataFormats>
+      <json id="json" library="Jackson" unmarshalTypeName="com.foo.MyPojo" disableFeatures="FAIL_ON_UNKNOWN_PROPERTIES"/>
+ </dataFormats>
+-------------------------------------------------------------------------------------------------------------------------
+
+You can disable multiple features by separating the values using comma.
+The values for the features must be the name of the enums from Jackson
+from the following enum classes
+
+* com.fasterxml.jackson.databind.SerializationFeature
+* com.fasterxml.jackson.databind.DeserializationFeature
+* com.fasterxml.jackson.databind.MapperFeature
+
+To enable a feature use the enableFeatures options instead.
+
+From Java code you can use the type safe methods from camel-jackson
+module:
+
+[source,java]
+----------------------------------------------------------------------
+JacksonDataFormat df = new JacksonDataFormat(MyPojo.class);
+df.disableFeature(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+df.disableFeature(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
+----------------------------------------------------------------------
+
+[[JSON-ConvertingMapstoPOJOusingJackson]]
+Converting Maps to POJO using Jackson
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Available since *Camel 2.16*. Jackson `ObjectMapper` can be used to
+convert maps to POJO objects. Jackson component comes with the data
+converter that can be used to convert `java.util.Map` instance to
+non-String, non-primitive and non-Number objects.
+
+[source,java]
+----------------------------------------------------------------
+Map<String, Object> invoiceData = new HashMap<String, Object>();
+invoiceData.put("netValue", 500);
+producerTemplate.sendBody("direct:mapToInvoice", invoiceData);
+...
+// Later in the processor
+Invoice invoice = exchange.getIn().getBody(Invoice.class);
+----------------------------------------------------------------
+
+If there is a single `ObjectMapper` instance available in the Camel
+registry, it will used by the converter to perform the conversion.
+Otherwise the default mapper will be used.  
+
+[[JSON-FormattedJSONmarshalling-pretty-printing]]
+Formatted JSON marshalling (pretty-printing)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.16*
+
+Using the `prettyPrint` option one can output a well formatted JSON
+while marshalling:
+
+[source,java]
+---------------------------------------------------------------
+ <dataFormats>
+      <json id="xstream" prettyPrint="true"/>
+      <json id="jackson" prettyPrint="true" library="Jackson"/>
+      <json id="gson" prettyPrint="true" library="Gson"/>
+ </dataFormats>
+---------------------------------------------------------------
+
+And in Java DSL:
+
+[source,java]
+------------------------------------------------------------------
+from("direct:inPretty").marshal().json(true);
+ 
+from("direct:inPretty").marshal().json(JsonLibrary.Jackson, true);
+ 
+from("direct:inPretty").marshal().json(JsonLibrary.Gson, true);
+------------------------------------------------------------------
+
+Please note that as of Camel 2.16 there’re 5 different overloaded
+`json()` DSL methods which support the `prettyPrint` option in
+combination with other settings for `JsonLibrary`, `unmarshalType`,
+`jsonView` etc. 
+
+[[JSON]]
+
+[[JSON-IntegratingJacksonwithCamelsTypeConverters]]
+Integrating Jackson with Camel's TypeConverters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[[JSON.1]]
+
+*Available as of Camel 2.17*
+
+The `camel-jackson` module allows to integrate Jackson as
+a link:type-converter.html[Type Converter] in the Camel registry. This
+works in similar ways that `camel-jaxb` integrates with the type
+converter as well. However `camel-jackson` must be explicit enabled,
+which is done by setting some options on the `CamelContext` properties,
+as shown below:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------------------------
+// enable Jackson json type converter
+getContext().getProperties().put("CamelJacksonEnableTypeConverter", "true");
+// allow Jackson json to convert to pojo types also (by default jackson only converts to String and other simple types)
+getContext().getProperties().put("CamelJacksonTypeConverterToPojo", "true");
+-----------------------------------------------------------------------------------------------------------------------
+
+The `camel-jackson` type converter integrates with JAXB which means you
+can annotate POJO class with JAXB annotations that Jackson can
+leverage. 
+
+[[JSON-DependenciesforXStream]]
+Dependencies for XStream
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use JSON in your camel routes you need to add the a dependency on
+*camel-xstream* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+link:download.html[the download page for the latest versions]).
+
+[source,xml]
+----------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-xstream</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----------------------------------------
+
+[[JSON-DependenciesforJackson]]
+Dependencies for Jackson
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use JSON in your camel routes you need to add the a dependency on
+*camel-jackson* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+link:download.html[the download page for the latest versions]).
+
+[source,xml]
+----------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jackson</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----------------------------------------
+
+[[JSON-DependenciesforGSON]]
+Dependencies for GSON
+^^^^^^^^^^^^^^^^^^^^^
+
+To use JSON in your camel routes you need to add the a dependency on
+*camel-gson* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+link:download.html[the download page for the latest versions]).
+
+[source,xml]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-gson</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------
+
+[[JSON-DependenciesforJohnzon]]
+Dependencies for Johnzon
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use JSON in your camel routes you need to add the a dependency on
+*camel-johnzon* which implements this data format.
+
+If you use maven you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+link:download.html[the download page for the latest versions]).
+
+[source,xml]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-johnzon</artifactId>
+  <version>x.x.x</version>
+</dependency>
+-------------------------------------

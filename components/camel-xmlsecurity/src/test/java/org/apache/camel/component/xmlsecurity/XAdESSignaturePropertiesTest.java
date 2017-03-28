@@ -899,7 +899,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
 
         private String alias = "bob";
 
-        public CertChainXAdESSignatureProperties() {
+        CertChainXAdESSignatureProperties() {
             setAddSigningTime(false);
         }
 

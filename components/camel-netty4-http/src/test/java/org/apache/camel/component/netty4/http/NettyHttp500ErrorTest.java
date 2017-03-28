@@ -18,6 +18,7 @@ package org.apache.camel.component.netty4.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -33,7 +34,7 @@ public class NettyHttp500ErrorTest extends BaseNettyTest {
         } catch (CamelExecutionException e) {
             NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
             assertEquals(500, cause.getStatusCode());
-            assertEquals("Camel cannot do this", context.getTypeConverter().convertTo(String.class, cause.getHttpContent().content()));
+            assertEquals("Camel cannot do this", cause.getContentAsString());
         }
 
         assertMockEndpointsSatisfied();
@@ -45,6 +46,24 @@ public class NettyHttp500ErrorTest extends BaseNettyTest {
 
         String body = template.requestBody("netty4-http:http://localhost:{{port}}/foo?throwExceptionOnFailure=false", "Hello World", String.class);
         assertEquals("Camel cannot do this", body);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttp500ErrorDisabledStatusCode() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+
+        Exchange out = template.request("netty4-http:http://localhost:{{port}}/foo?throwExceptionOnFailure=false", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+            }
+        });
+        assertNotNull(out);
+
+        assertEquals(500, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("Internal Server Error", out.getOut().getHeader(Exchange.HTTP_RESPONSE_TEXT));
 
         assertMockEndpointsSatisfied();
     }

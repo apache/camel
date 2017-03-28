@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import java.io.InputStream;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.client.config.XmlClientConfigBuilder;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberEndpoint;
@@ -36,91 +41,106 @@ import org.apache.camel.component.hazelcast.ringbuffer.HazelcastRingbufferEndpoi
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
 import org.apache.camel.component.hazelcast.set.HazelcastSetEndpoint;
+import org.apache.camel.component.hazelcast.topic.HazelcastTopicConfiguration;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicEndpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_PARAM;
+import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_URI_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_NAME_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_PARAM;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
-public class HazelcastComponent extends UriEndpointComponent {
+public class HazelcastComponent extends DefaultComponent {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastComponent.class);
 
-    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
-
+    private final Set<HazelcastInstance> customHazelcastInstances;
+    @Metadata(label = "advanced")
     private HazelcastInstance hazelcastInstance;
-    private transient boolean createOwnInstance;
+    @Metadata(label = "advanced", defaultValue = "" + HazelcastConstants.HAZELCAST_NODE_MODE)
+    private String hazelcastMode = HazelcastConstants.HAZELCAST_NODE_MODE;
 
     public HazelcastComponent() {
-        super(HazelcastDefaultEndpoint.class);
+        super();
+        this.customHazelcastInstances = new LinkedHashSet<>();
     }
 
     public HazelcastComponent(final CamelContext context) {
-        super(context, HazelcastDefaultEndpoint.class);
+        super(context);
+        this.customHazelcastInstances = new LinkedHashSet<>();
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         // use the given hazelcast Instance or create one if not given
-        HazelcastInstance hzInstance = getOrCreateHzInstance(parameters);
+        HazelcastInstance hzInstance;
+        if (ObjectHelper.equal(hazelcastMode, HazelcastConstants.HAZELCAST_NODE_MODE)) {
+            hzInstance = getOrCreateHzInstance(getCamelContext(), parameters);
+        } else {
+            hzInstance = getOrCreateHzClientInstance(getCamelContext(), parameters);
+        }
 
-        int defaultOperation = -1;
-        Object operation = getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, Object.class);
-        if (operation == null) {
-            operation = getAndRemoveOrResolveReferenceParameter(parameters, "defaultOperation", Object.class);
+        String defaultOperation = getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, String.class);
+        if (defaultOperation == null) {
+            defaultOperation = getAndRemoveOrResolveReferenceParameter(parameters, "defaultOperation", String.class);
         }
-        if (operation != null) {
-            defaultOperation = helper.extractOperationNumber(operation, -1);
-        }
-       
+
         HazelcastDefaultEndpoint endpoint = null;
 
         // check type of endpoint
         if (remaining.startsWith(HazelcastConstants.MAP_PREFIX)) {
             // remaining is the cache name
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.MAP_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.MAP_PREFIX.length()), '/');
             endpoint = new HazelcastMapEndpoint(hzInstance, uri, remaining, this);
             endpoint.setCommand(HazelcastCommand.map);
         }
 
         if (remaining.startsWith(HazelcastConstants.MULTIMAP_PREFIX)) {
             // remaining is the cache name
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.MULTIMAP_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.MULTIMAP_PREFIX.length()), '/');
             endpoint = new HazelcastMultimapEndpoint(hzInstance, uri, remaining, this);
             endpoint.setCommand(HazelcastCommand.multimap);
         }
 
         if (remaining.startsWith(HazelcastConstants.ATOMICNUMBER_PREFIX)) {
             // remaining is the name of the atomic value
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.ATOMICNUMBER_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.ATOMICNUMBER_PREFIX.length()), '/');
             endpoint = new HazelcastAtomicnumberEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.atomicvalue);
         }
 
         if (remaining.startsWith(HazelcastConstants.INSTANCE_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.INSTANCE_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.INSTANCE_PREFIX.length()), '/');
             endpoint = new HazelcastInstanceEndpoint(hzInstance, uri, this);
             endpoint.setCommand(HazelcastCommand.instance);
         }
 
         if (remaining.startsWith(HazelcastConstants.QUEUE_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.QUEUE_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.QUEUE_PREFIX.length()), '/');
             endpoint = new HazelcastQueueEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.queue);
         }
 
         if (remaining.startsWith(HazelcastConstants.TOPIC_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.TOPIC_PREFIX.length()), '/');
-            endpoint = new HazelcastTopicEndpoint(hzInstance, uri, this, remaining);
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.TOPIC_PREFIX.length()), '/');
+            final HazelcastTopicConfiguration config = new HazelcastTopicConfiguration();
+            setProperties(config, parameters);
+            endpoint = new HazelcastTopicEndpoint(hzInstance, uri, this, remaining, config);
             endpoint.setCommand(HazelcastCommand.topic);
         }
 
         if (remaining.startsWith(HazelcastConstants.SEDA_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.SEDA_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.SEDA_PREFIX.length()), '/');
             final HazelcastSedaConfiguration config = new HazelcastSedaConfiguration();
             setProperties(config, parameters);
             config.setQueueName(remaining);
@@ -131,21 +151,21 @@ public class HazelcastComponent extends UriEndpointComponent {
 
         if (remaining.startsWith(HazelcastConstants.LIST_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.LIST_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.LIST_PREFIX.length()), '/');
             endpoint = new HazelcastListEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.list);
         }
 
         if (remaining.startsWith(HazelcastConstants.REPLICATEDMAP_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.REPLICATEDMAP_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.REPLICATEDMAP_PREFIX.length()), '/');
             endpoint = new HazelcastReplicatedmapEndpoint(hzInstance, uri, remaining, this);
             endpoint.setCommand(HazelcastCommand.replicatedmap);
         } 
         
         if (remaining.startsWith(HazelcastConstants.SET_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.SET_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.SET_PREFIX.length()), '/');
             endpoint = new HazelcastSetEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.set);
         } 
@@ -153,7 +173,7 @@ public class HazelcastComponent extends UriEndpointComponent {
         
         if (remaining.startsWith(HazelcastConstants.RINGBUFFER_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.RINGBUFFER_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.RINGBUFFER_PREFIX.length()), '/');
             endpoint = new HazelcastRingbufferEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.ringbuffer);
         } 
@@ -165,9 +185,7 @@ public class HazelcastComponent extends UriEndpointComponent {
                     HazelcastConstants.SEDA_PREFIX, HazelcastConstants.LIST_PREFIX, HazelcastConstants.REPLICATEDMAP_PREFIX, HazelcastConstants.SET_PREFIX, HazelcastConstants.RINGBUFFER_PREFIX, uri));
         }
 
-        if (defaultOperation != -1) {
-            endpoint.setDefaultOperation(defaultOperation);
-        }
+        endpoint.setDefaultOperation(defaultOperation);
 
         return endpoint;
     }
@@ -179,9 +197,12 @@ public class HazelcastComponent extends UriEndpointComponent {
 
     @Override
     public void doStop() throws Exception {
-        if (createOwnInstance && hazelcastInstance != null) {
+        for (HazelcastInstance hazelcastInstance : customHazelcastInstances) {
             hazelcastInstance.getLifecycleService().shutdown();
         }
+
+        customHazelcastInstances.clear();
+
         super.doStop();
     }
 
@@ -197,31 +218,115 @@ public class HazelcastComponent extends UriEndpointComponent {
         this.hazelcastInstance = hazelcastInstance;
     }
 
-    private HazelcastInstance createOwnInstance() {
-        Config config = new XmlConfigBuilder().build();
-        // Disable the version check
-        config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
-        return Hazelcast.newHazelcastInstance(config);
+    public String getHazelcastMode() {
+        return hazelcastMode;
     }
 
-    private HazelcastInstance getOrCreateHzInstance(Map<String, Object> parameters) {
+    /**
+     * The hazelcast mode reference which kind of instance should be used.
+     * If you don't specify the mode, then the node mode will be the default. 
+     */
+    public void setHazelcastMode(String hazelcastMode) {
+        this.hazelcastMode = hazelcastMode;
+    }
+
+    private HazelcastInstance getOrCreateHzInstance(CamelContext context, Map<String, Object> parameters) throws Exception {
+        HazelcastInstance hzInstance = null;
+        Config config = null;
 
         // Query param named 'hazelcastInstance' (if exists) overrides the instance that was set
-        HazelcastInstance hzInstance = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_INSTANCE_PARAM, HazelcastInstance.class);
+        hzInstance = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_INSTANCE_PARAM, HazelcastInstance.class);
 
-        // check if an already created instance is given then just get instance by its name.
+        // Check if an already created instance is given then just get instance by its name.
         if (hzInstance == null && parameters.get(HAZELCAST_INSTANCE_NAME_PARAM) != null) {
             hzInstance = Hazelcast.getHazelcastInstanceByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
         }
 
-        // Now create onw instance component
+        // If instance neither supplied nor found by name, try to lookup its config
+        // as reference or as xml configuration file.
         if (hzInstance == null) {
-            if (hazelcastInstance == null) {
-                createOwnInstance = true;
-                hazelcastInstance = createOwnInstance();
+            config = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_CONFIGU_PARAM, Config.class);
+            if (config == null) {
+                String configUri = getAndRemoveParameter(parameters, HAZELCAST_CONFIGU_URI_PARAM, String.class);
+                if (configUri != null) {
+                    configUri = getCamelContext().resolvePropertyPlaceholders(configUri);
+                }
+                if (configUri != null) {
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configUri);
+                    config = new XmlConfigBuilder(is).build();
+                }
             }
-            hzInstance = hazelcastInstance;
+
+            if (hazelcastInstance == null && config == null) {
+                config = new XmlConfigBuilder().build();
+                // Disable the version check
+                config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
+                config.getProperties().setProperty("hazelcast.phone.home.enabled", "false");
+
+                hzInstance = Hazelcast.newHazelcastInstance(config);
+            } else if (config != null) {
+                if (ObjectHelper.isNotEmpty(config.getInstanceName())) {
+                    hzInstance = Hazelcast.getOrCreateHazelcastInstance(config);
+                } else {
+                    hzInstance = Hazelcast.newHazelcastInstance(config);
+                }
+            }
+
+            if (hzInstance != null) {
+                if (this.customHazelcastInstances.add(hzInstance)) {
+                    LOGGER.debug("Add managed HZ instance {}", hzInstance.getName());
+                }
+            }
         }
-        return hzInstance;
+
+        return hzInstance == null ? hazelcastInstance : hzInstance;
+    }
+
+    private HazelcastInstance getOrCreateHzClientInstance(CamelContext context, Map<String, Object> parameters) throws Exception {
+        HazelcastInstance hzInstance = null;
+        ClientConfig config = null;
+
+        // Query param named 'hazelcastInstance' (if exists) overrides the instance that was set
+        hzInstance = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_INSTANCE_PARAM, HazelcastInstance.class);
+
+        // Check if an already created instance is given then just get instance by its name.
+        if (hzInstance == null && parameters.get(HAZELCAST_INSTANCE_NAME_PARAM) != null) {
+            hzInstance = Hazelcast.getHazelcastInstanceByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
+        }
+
+        // If instance neither supplied nor found by name, try to lookup its config
+        // as reference or as xml configuration file.
+        if (hzInstance == null) {
+            config = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_CONFIGU_PARAM, ClientConfig.class);
+            if (config == null) {
+                String configUri = getAndRemoveParameter(parameters, HAZELCAST_CONFIGU_URI_PARAM, String.class);
+                if (configUri != null) {
+                    configUri = getCamelContext().resolvePropertyPlaceholders(configUri);
+                }
+                if (configUri != null) {
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configUri);
+                    config = new XmlClientConfigBuilder(is).build();
+                }
+            }
+
+            if (hazelcastInstance == null && config == null) {
+                config = new XmlClientConfigBuilder().build();
+                // Disable the version check
+                config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
+                config.getProperties().setProperty("hazelcast.phone.home.enabled", "false");
+
+                hzInstance = HazelcastClient.newHazelcastClient(config);
+            } else if (config != null) {
+                hzInstance = HazelcastClient.newHazelcastClient(config);
+            }
+
+            if (hzInstance != null) {
+                if (this.customHazelcastInstances.add(hzInstance)) {
+                    LOGGER.debug("Add managed HZ instance {}", hzInstance.getName());
+                }
+            }
+        }
+
+        return hzInstance == null ? hazelcastInstance : hzInstance;
     }
 }

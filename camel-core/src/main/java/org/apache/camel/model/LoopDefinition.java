@@ -22,9 +22,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.LoopProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
@@ -40,12 +42,19 @@ public class LoopDefinition extends ExpressionNode {
 
     @XmlAttribute
     private Boolean copy;
+    @XmlAttribute
+    private Boolean doWhile;
 
     public LoopDefinition() {
     }
 
     public LoopDefinition(Expression expression) {
         super(expression);
+    }
+
+    public LoopDefinition(Predicate predicate) {
+        super(predicate);
+        setDoWhile(true);
     }
 
     public LoopDefinition(ExpressionDefinition expression) {
@@ -63,6 +72,17 @@ public class LoopDefinition extends ExpressionNode {
 
     public Boolean getCopy() {
         return copy;
+    }
+
+    public Boolean getDoWhile() {
+        return doWhile;
+    }
+
+    /**
+     * Enables the while loop that loops until the predicate evaluates to false or null.
+     */
+    public void setDoWhile(Boolean doWhile) {
+        this.doWhile = doWhile;
     }
 
     /**
@@ -90,7 +110,16 @@ public class LoopDefinition extends ExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor output = this.createChildProcessor(routeContext, true);
         boolean isCopy = getCopy() != null && getCopy();
-        return new LoopProcessor(output, getExpression().createExpression(routeContext), isCopy);
+        boolean isWhile = getDoWhile() != null && getDoWhile();
+
+        Predicate predicate = null;
+        Expression expression = null;
+        if (isWhile) {
+            predicate = getExpression().createPredicate(routeContext);
+        } else {
+            expression = getExpression().createExpression(routeContext);
+        }
+        return new LoopProcessor(output, expression, predicate, isCopy);
     }
 
     /**

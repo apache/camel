@@ -30,9 +30,14 @@ ExpressionSubElementDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition
+GlobalOptionsDefinition
+GlobalOptionDefinition
+HystrixDefinition
+HystrixConfigurationDefinition
 IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition
+InputTypeDefinition
 InterceptDefinition
 InterceptFromDefinition
 InterceptSendToEndpointDefinition
@@ -45,9 +50,11 @@ MulticastDefinition
 OnCompletionDefinition
 OnCompletionMode
 OnExceptionDefinition
+OnFallbackDefinition
 OptimisticLockRetryPolicyDefinition
 OptionalIdentifiedDefinition
 OtherwiseDefinition
+OutputTypeDefinition
 PackageScanDefinition
 PipelineDefinition
 PolicyDefinition

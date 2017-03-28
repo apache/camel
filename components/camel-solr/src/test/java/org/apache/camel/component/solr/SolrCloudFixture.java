@@ -17,10 +17,12 @@
 package org.apache.camel.component.solr;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.IOHelper;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
@@ -63,8 +65,8 @@ public class SolrCloudFixture {
     CloudSolrClient solrClient;
     
     public SolrCloudFixture(String solrHome) throws Exception {
-       
-        miniCluster = new MiniSolrCloudCluster(1, "/solr", new File("target/tmp"), new File(solrHome, "solr-no-core.xml"), null, null);
+        String xml = IOHelper.loadText(new FileInputStream(new File(solrHome, "solr-no-core.xml")));
+        miniCluster = new MiniSolrCloudCluster(1, "/solr", new File("target/tmp").toPath(), xml, null, null);
         String zkAddr = miniCluster.getZkServer().getZkAddress();
         String zkHost = miniCluster.getZkServer().getZkHost();
 

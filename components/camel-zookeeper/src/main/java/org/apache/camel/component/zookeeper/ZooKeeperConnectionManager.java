@@ -48,7 +48,7 @@ public class ZooKeeperConnectionManager {
         private ConnectionHolder holder;
         private ZooKeeperConfiguration configuration;
 
-        public DefaultZookeeperConnectionStrategy(ZooKeeperEndpoint endpoint) {
+        DefaultZookeeperConnectionStrategy(ZooKeeperEndpoint endpoint) {
             this.configuration = endpoint.getConfiguration();
             LOG.debug("Creating connection to ZooKeeper: {}", configuration);
             holder = new ConnectionHolder(configuration);

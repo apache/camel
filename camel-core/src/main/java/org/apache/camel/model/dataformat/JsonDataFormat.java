@@ -31,7 +31,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Json data format
+ * JSon data format
  *
  * @version 
  */
@@ -73,6 +73,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     private String disableFeatures;
     @XmlAttribute
     private String permissions;
+    @XmlAttribute
+    private Boolean allowUnmarshallType;
 
     public JsonDataFormat() {
         super("json");
@@ -133,9 +135,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Which json library to use such.
-     * <p/>
-     * Is by default xstream
+     * Which json library to use.
      */
     public void setLibrary(JsonLibrary library) {
         this.library = library;
@@ -305,6 +305,19 @@ public class JsonDataFormat extends DataFormatDefinition {
         setPermissions(csb.toString());
     }
 
+    public Boolean getAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
+
+    /**
+     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling.
+     * <p/>
+     * This should only be enabled when desired to be used.
+     */
+    public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
+        this.allowUnmarshallType = allowUnmarshallType;
+    }
+
     @Override
     public String getDataFormatName() {
         // json data format is special as the name can be from different bundles
@@ -317,8 +330,10 @@ public class JsonDataFormat extends DataFormatDefinition {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-xstream");
         } else if (library == JsonLibrary.Jackson) {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-jackson");
-        } else {
+        } else if (library == JsonLibrary.Gson) {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-gson");
+        } else {
+            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-johnzon");
         }
 
         if (unmarshalType == null && unmarshalTypeName != null) {
@@ -371,7 +386,7 @@ public class JsonDataFormat extends DataFormatDefinition {
             setProperty(camelContext, dataFormat, "enableJaxbAnnotationModule", enableJaxbAnnotationModule);
         }
         if (moduleClassNames != null) {
-            setProperty(camelContext, dataFormat, "modulesClassNames", moduleClassNames);
+            setProperty(camelContext, dataFormat, "moduleClassNames", moduleClassNames);
         }
         if (moduleRefs != null) {
             setProperty(camelContext, dataFormat, "moduleRefs", moduleRefs);
@@ -384,6 +399,9 @@ public class JsonDataFormat extends DataFormatDefinition {
         }
         if (permissions != null) {
             setProperty(camelContext, dataFormat, "permissions", permissions);
+        }
+        if (allowUnmarshallType != null) {
+            setProperty(camelContext, dataFormat, "allowUnmarshallType", allowUnmarshallType);
         }
         // if we have the unmarshal type, but no permission set, then use it to be allowed
         if (permissions == null && unmarshalType != null) {

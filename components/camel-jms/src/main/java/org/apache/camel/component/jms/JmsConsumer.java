@@ -185,6 +185,7 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         // then we will use updated configuration from jms endpoint that may have been managed using JMX
         listenerContainer = null;
         messageListener = null;
+        initialized = false;
 
         // shutdown thread pool if listener container was using a private thread pool
         if (shutdownExecutorService && executorService != null) {
@@ -236,6 +237,8 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         } else {
             if (listenerContainer != null) {
                 startListenerContainer();
+            } else {
+                log.warn("The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
             }
         }
     }

@@ -22,7 +22,7 @@ import javax.servlet.Filter;
  * Please use the CamelFilterWrapper instead of using this classs
  */
 @Deprecated 
-class CamelMultipartFilter extends CamelFilterWrapper {
+public class CamelMultipartFilter extends CamelFilterWrapper {
     
     public CamelMultipartFilter(Filter wrapped) {
         super(wrapped);

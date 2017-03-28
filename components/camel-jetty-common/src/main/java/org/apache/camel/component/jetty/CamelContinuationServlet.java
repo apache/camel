@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +57,7 @@ public class CamelContinuationServlet extends CamelServlet {
     private final Map<String, String> expiredExchanges = new ConcurrentHashMap<String, String>();
 
     @Override
-    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    protected void doService(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
 
         // is there a consumer registered for the request.
@@ -89,7 +90,7 @@ public class CamelContinuationServlet extends CamelServlet {
             log.trace("Start request with continuation timeout of {}", continuationTimeout != null ? continuationTimeout : "jetty default");
         } else {
             log.trace("Usage of continuation is disabled, either by component or endpoint configuration, fallback to normal servlet processing instead");
-            super.service(request, response);
+            super.doService(request, response);
             return;
         }
 
@@ -141,7 +142,7 @@ public class CamelContinuationServlet extends CamelServlet {
                 // remember this id as expired
                 expiredExchanges.put(id, id);
                 log.warn("Continuation expired of exchangeId: {}", id);
-                response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                consumer.getBinding().doWriteExceptionResponse(new TimeoutException(), response);
                 return;
             }
 

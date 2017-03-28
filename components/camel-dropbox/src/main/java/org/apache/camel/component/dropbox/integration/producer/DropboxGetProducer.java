@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.dropbox.integration.producer;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
-import org.apache.camel.component.dropbox.dto.DropboxResult;
+import org.apache.camel.component.dropbox.dto.DropboxFileDownloadResult;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +36,24 @@ public class DropboxGetProducer extends DropboxProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
+        DropboxFileDownloadResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
                 .get(configuration.getRemotePath());
-        result.populateExchange(exchange);
-        LOG.info("producer --> downloaded: " + result.toString());
 
+        Map<String, Object> map = result.getEntries();
+        if (map.size() == 1) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILE.name(), entry.getKey());
+                exchange.getIn().setBody(entry.getValue());
+            }
+        } else {
+            StringBuilder pathsExtracted = new StringBuilder();
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                pathsExtracted.append(entry.getKey()).append("\n");
+            }
+            exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILES.name(), pathsExtracted.toString());
+            exchange.getIn().setBody(map);
+        }
+        LOG.debug("Downloaded: {}", result.toString());
     }
 
 }

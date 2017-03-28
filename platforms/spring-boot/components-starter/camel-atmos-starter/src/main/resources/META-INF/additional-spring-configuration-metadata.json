@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.atmos.enabled",
+      "description": "Enable atmos component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

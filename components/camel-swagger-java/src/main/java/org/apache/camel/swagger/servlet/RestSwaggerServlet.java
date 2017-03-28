@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.jaxrs.config.BeanConfig;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.swagger.RestApiResponseAdapter;
@@ -94,6 +95,11 @@ public class RestSwaggerServlet extends HttpServlet {
             Object value = config.getInitParameter(name);
             parameters.put(name, value);
         }
+        // when using servlet then use the cors filter to enable cors
+        if (parameters.get("cors") != null) {
+            LOG.warn("Use RestSwaggerCorsFilter when uisng this Servlet to enable CORS");
+            parameters.remove("cors");
+        }
         support.initSwagger(swaggerConfig, parameters);
 
         // allow to configure these options from the servlet config as well
@@ -116,13 +122,33 @@ public class RestSwaggerServlet extends HttpServlet {
 
         String contextId = null;
         String route = request.getPathInfo();
+        String accept = request.getHeader(Exchange.ACCEPT_CONTENT_TYPE);
+
+        // whether to use json or yaml
+        boolean json = false;
+        boolean yaml = false;
+        if (route != null && route.endsWith("/swagger.json")) {
+            json = true;
+            route = route.substring(0, route.length() - 13);
+        } else if (route != null && route.endsWith("/swagger.yaml")) {
+            yaml = true;
+            route = route.substring(0, route.length() - 13);
+        }
+        if (accept != null && !json && !yaml) {
+            json = accept.contains("json");
+            yaml = accept.contains("yaml");
+        }
+        if (!json && !yaml) {
+            // json is default
+            json = true;
+        }
 
         RestApiResponseAdapter adapter = new ServletRestApiResponseAdapter(response);
 
         try {
             // render list of camel contexts as root
             if (apiContextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
-                support.renderCamelContexts(adapter, contextId, apiContextIdPattern);
+                support.renderCamelContexts(adapter, contextId, apiContextIdPattern, json, yaml, null);
             } else {
                 String name = null;
                 if (ObjectHelper.isNotEmpty(route)) {
@@ -162,7 +188,7 @@ public class RestSwaggerServlet extends HttpServlet {
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route, classResolver);
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, classResolver, null);
                 }
             }
         } catch (Exception e) {

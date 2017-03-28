@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelLogger;
@@ -36,10 +37,12 @@ public class LogProcessor extends ServiceSupport implements AsyncProcessor, Trac
     private String id;
     private final Expression expression;
     private final CamelLogger logger;
+    private final MaskingFormatter formatter;
 
-    public LogProcessor(Expression expression, CamelLogger logger) {
+    public LogProcessor(Expression expression, CamelLogger logger, MaskingFormatter formatter) {
         this.expression = expression;
         this.logger = logger;
+        this.formatter = formatter;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -51,6 +54,9 @@ public class LogProcessor extends ServiceSupport implements AsyncProcessor, Trac
         try {
             if (logger.shouldLog()) {
                 String msg = expression.evaluate(exchange, String.class);
+                if (formatter != null) {
+                    msg = formatter.format(msg);
+                }
                 logger.doLog(msg);
             }
         } catch (Exception e) {
@@ -85,6 +91,10 @@ public class LogProcessor extends ServiceSupport implements AsyncProcessor, Trac
 
     public CamelLogger getLogger() {
         return logger;
+    }
+
+    public MaskingFormatter getLogFormatter() {
+        return formatter;
     }
 
     @Override

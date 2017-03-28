@@ -35,7 +35,7 @@ public enum OAuthScope {
 
     private final String value;
 
-    private OAuthScope(String value) {
+    OAuthScope(String value) {
         this.value = value;
     }
 

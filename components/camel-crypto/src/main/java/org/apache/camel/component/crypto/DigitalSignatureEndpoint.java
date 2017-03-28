@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
  */
-@UriEndpoint(scheme = "crypto", title = "Crypto (JCE)", syntax = "crypto:cryptoOperation:name", producerOnly = true, label = "security,transformation")
+@UriEndpoint(firstVersion = "2.3.0", scheme = "crypto", title = "Crypto (JCE)", syntax = "crypto:cryptoOperation:name", producerOnly = true, label = "security,transformation")
 public class DigitalSignatureEndpoint extends DefaultEndpoint {
     @UriParam
     private DigitalSignatureConfiguration configuration;

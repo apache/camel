@@ -5,6 +5,7 @@
     "syntax": "grape:defaultCoordinates",
     "title": "Grape",
     "description": "Grape component allows you to fetch, load and manage additional jars when CamelContext is running.",
+    "firstVersion": "2.16.0",
     "label": "management,deployment",
     "producerOnly": "true",
     "javaType": "org.apache.camel.component.grape.GrapeEndpoint",

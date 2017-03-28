@@ -19,19 +19,19 @@ package org.apache.camel.component.kubernetes.producer;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.DoneablePersistentVolumeClaim;
-import io.fabric8.kubernetes.api.model.EditablePersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimList;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,21 +108,23 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<PersistentVolumeClaim, PersistentVolumeClaimList, DoneablePersistentVolumeClaim, 
-            ClientResource<PersistentVolumeClaim, DoneablePersistentVolumeClaim>> pvcs = getEndpoint().getKubernetesClient().persistentVolumeClaims()
+            NonNamespaceOperation<PersistentVolumeClaim, PersistentVolumeClaimList, DoneablePersistentVolumeClaim, 
+            Resource<PersistentVolumeClaim, DoneablePersistentVolumeClaim>> pvcs = getEndpoint().getKubernetesClient().persistentVolumeClaims()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 pvcs.withLabel(entry.getKey(), entry.getValue());
             }
             pvcList = pvcs.list();
         } else {
-            ClientMixedOperation<PersistentVolumeClaim, PersistentVolumeClaimList, DoneablePersistentVolumeClaim, 
-            ClientResource<PersistentVolumeClaim, DoneablePersistentVolumeClaim>> pvcs = getEndpoint().getKubernetesClient().persistentVolumeClaims();
+            MixedOperation<PersistentVolumeClaim, PersistentVolumeClaimList, DoneablePersistentVolumeClaim, 
+            Resource<PersistentVolumeClaim, DoneablePersistentVolumeClaim>> pvcs = getEndpoint().getKubernetesClient().persistentVolumeClaims();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 pvcs.withLabel(entry.getKey(), entry.getValue());
             }
             pvcList = pvcs.list();
         }
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pvcList.getItems());
     }
 
@@ -146,6 +148,8 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         }
         pvc = getEndpoint().getKubernetesClient().persistentVolumeClaims()
                 .inNamespace(namespaceName).withName(pvcName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pvc);
     }
 
@@ -180,11 +184,13 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
                 .getHeader(
                         KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS,
                         Map.class);
-        EditablePersistentVolumeClaim pvcCreating = new PersistentVolumeClaimBuilder()
+        PersistentVolumeClaim pvcCreating = new PersistentVolumeClaimBuilder()
                 .withNewMetadata().withName(pvcName).withLabels(labels)
                 .endMetadata().withSpec(pvcSpec).build();
         pvc = getEndpoint().getKubernetesClient().persistentVolumeClaims()
                 .inNamespace(namespaceName).create(pvcCreating);
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pvc);
     }
 
@@ -208,6 +214,8 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         boolean pvcDeleted = getEndpoint().getKubernetesClient()
                 .persistentVolumeClaims().inNamespace(namespaceName)
                 .withName(pvcName).delete();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pvcDeleted);
     }
 }

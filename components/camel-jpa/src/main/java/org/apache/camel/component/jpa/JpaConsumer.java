@@ -165,7 +165,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total + " messages in this poll.");
             total = maxMessagesPerPoll;
         }
 
@@ -371,7 +371,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             if (resultClass != null) {
                 return QueryBuilder.nativeQuery(nativeQuery, resultClass);
             } else {
-                return QueryBuilder.nativeQuery(nativeQuery);                
+                return QueryBuilder.nativeQuery(nativeQuery);
             }
         } else {
             Class<?> entityType = getEndpoint().getEntityType();

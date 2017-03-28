@@ -98,7 +98,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     
     private void invokeRsService(String getUrl, String expected) throws Exception {
         HttpGet get = new HttpGet(getUrl);
-        get.addHeader("Accept" , "application/json");
+        get.addHeader("Accept", "application/json");
         get.addHeader("key", "customer");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
@@ -171,7 +171,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testPostConsumer() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + PORT1 + "/customerservice/customers");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
@@ -191,7 +191,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testPostConsumerUniqueResponseCode() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + PORT1 + "/customerservice/customersUniqueResponseCode");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         StringEntity entity = new StringEntity(POST2_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
@@ -228,7 +228,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testJaxWsBean() throws Exception {        
         HttpPost post = new HttpPost("http://localhost:" + PORT2 + "/customerservice/customers");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 
             + "<personId>hello</personId></GetPerson></soap:Body></soap:Envelope>";

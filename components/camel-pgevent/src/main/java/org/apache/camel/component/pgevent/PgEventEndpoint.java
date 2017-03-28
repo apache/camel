@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * This requires using PostgreSQL 8.3 or newer.
  */
-@UriEndpoint(scheme = "pgevent", title = "PostgresSQL Event", syntax = "pgevent:host:port/database/channel", consumerClass = PgEventConsumer.class, label = "database,sql")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event", syntax = "pgevent:host:port/database/channel", consumerClass = PgEventConsumer.class, label = "database,sql")
 public class PgEventEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
 
@@ -57,9 +57,9 @@ public class PgEventEndpoint extends DefaultEndpoint {
     private String database;
     @UriPath @Metadata(required = "true")
     private String channel;
-    @UriParam(defaultValue = "postgres")
+    @UriParam(defaultValue = "postgres", label = "security", secret = true)
     private String user = "postgres";
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String pass;
     @UriParam
     private DataSource datasource;

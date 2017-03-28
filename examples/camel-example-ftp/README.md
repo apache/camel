@@ -8,6 +8,18 @@ This example requires that an existing FTP server is available.
 You can configure the location of this FTP server in the file:
   `src/main/resources/ftp.properties`
 
+### Implementation
+
+This example is implemented in Java code, and there is a client and a server application.
+The client is used for uploading files from the local file system (from target/upload) to the FTP server.
+The server is used for downloading files from the FTP server to the local file system (to target/download).
+You can see the Java implementation by opening the src/main/java/org/apache/camel/example/ftp/MyFtpClientRouteBuilder.java for the client Java route.
+And the server example is implemented in the src/main/java/org/apache/camel/example/ftp/MyFtpClientRouteBuilder.java file.
+
+### Prerequisites
+
+An existing FTP server should be running.
+
 ### Build
 
 You will need to compile this example first:
@@ -35,11 +47,6 @@ To run the server you type:
 	mvn compile exec:java -Pserver
 
 ... and instructions will be printed on the console.
-
-
-### Documentation
-
-This example is documented at [http://camel.apache.org/ftp-example.html](http://camel.apache.org/ftp-example.html)
 
 You can enable verbose logging by adjustung the `src/main/resources/log4j.properties` file as documented in the file.
 

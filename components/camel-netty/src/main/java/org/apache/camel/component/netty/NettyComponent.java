@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
@@ -34,9 +35,12 @@ import org.jboss.netty.util.Timer;
 public class NettyComponent extends UriEndpointComponent {
     // use a shared timer for Netty (see javadoc for HashedWheelTimer)
     private Timer timer;
-    private NettyConfiguration configuration;
-    private int maximumPoolSize = 16;
     private volatile OrderedMemoryAwareThreadPoolExecutor executorService;
+
+    @Metadata(label = "advanced")
+    private NettyConfiguration configuration;
+    @Metadata(label = "advanced", defaultValue = "16")
+    private int maximumPoolSize = 16;
 
     public NettyComponent() {
         super(NettyEndpoint.class);

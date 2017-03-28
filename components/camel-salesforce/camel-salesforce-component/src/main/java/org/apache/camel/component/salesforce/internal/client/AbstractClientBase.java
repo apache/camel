@@ -16,21 +16,37 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.xstream.XStream;
 
 import org.apache.camel.Service;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.TypeReferences;
+import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.eclipse.jetty.client.ContentExchange;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpEventListenerWrapper;
-import org.eclipse.jetty.client.HttpExchange;
-import org.eclipse.jetty.http.HttpSchemes;
+import org.apache.camel.component.salesforce.internal.dto.RestErrors;
+import org.eclipse.jetty.client.HttpContentResponse;
+import org.eclipse.jetty.client.api.ContentProvider;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.client.util.BufferingResponseListener;
+import org.eclipse.jetty.client.util.ByteBufferContentProvider;
+import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.io.Buffer;
-import org.eclipse.jetty.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,15 +57,15 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    protected final HttpClient httpClient;
+    protected final SalesforceHttpClient httpClient;
     protected final SalesforceSession session;
     protected final String version;
 
     protected String accessToken;
     protected String instanceUrl;
 
-    public AbstractClientBase(String version,
-                              SalesforceSession session, HttpClient httpClient) throws SalesforceException {
+    public AbstractClientBase(String version, SalesforceSession session,
+                              SalesforceHttpClient httpClient) throws SalesforceException {
 
         this.version = version;
         this.session = session;
@@ -89,111 +105,99 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
         // SalesforceSecurityListener will auto login!
     }
 
-    protected SalesforceExchange getContentExchange(String method, String url) {
-        SalesforceExchange get = new SalesforceExchange();
-        get.setMethod(method);
-        get.setURL(url);
-        get.setClient(this);
-        return get;
+    protected Request getRequest(HttpMethod method, String url) {
+        return getRequest(method.asString(), url);
+    }
+
+    protected Request getRequest(String method, String url) {
+        SalesforceHttpRequest request = (SalesforceHttpRequest) httpClient.newRequest(url)
+            .method(method)
+            .timeout(session.getTimeout(), TimeUnit.MILLISECONDS);
+        request.getConversation().setAttribute(SalesforceSecurityHandler.CLIENT_ATTRIBUTE, this);
+        return request;
     }
 
     protected interface ClientResponseCallback {
         void onResponse(InputStream response, SalesforceException ex);
     }
 
-    protected void doHttpRequest(final ContentExchange request, final ClientResponseCallback callback) {
-
-        // use SalesforceSecurityListener for security login retries
-        final SalesforceSecurityListener securityListener;
-        try {
-            final boolean isHttps = HttpSchemes.HTTPS.equals(String.valueOf(request.getScheme()));
-            securityListener = new SalesforceSecurityListener(
-                    httpClient.getDestination(request.getAddress(), isHttps),
-                    request, session, accessToken) {
-
-                private String reason;
-
-                @Override
-                public void onResponseStatus(Buffer version, int status, Buffer reason) throws IOException {
-                    super.onResponseStatus(version, status, reason);
-                    // remember status reason
-                    this.reason = reason.toString(StringUtil.__ISO_8859_1);
-                }
-
-                @Override
-                protected SalesforceException createExceptionResponse() {
-                    final int responseStatus = request.getResponseStatus();
-                    if (responseStatus < HttpStatus.OK_200 || responseStatus >= HttpStatus.MULTIPLE_CHOICES_300) {
-                        final String msg = String.format("Error {%s:%s} executing {%s:%s}",
-                                responseStatus, reason, request.getMethod(), request.getRequestURI());
-                        return new SalesforceException(msg, responseStatus, createRestException(request, reason));
-                    } else {
-                        return super.createExceptionResponse();
-                    }
-                }
-            };
-        } catch (IOException e) {
-            // propagate exception
-            callback.onResponse(null, new SalesforceException(
-                    String.format("Error registering security listener: %s", e.getMessage()),
-                    e));
-            return;
+    protected void doHttpRequest(final Request request, final ClientResponseCallback callback) {
+        // Highly memory inefficient,
+        // but buffer the request content to allow it to be replayed for authentication retries
+        final ContentProvider content = request.getContent();
+        if (content instanceof InputStreamContentProvider) {
+            final List<ByteBuffer> buffers = new ArrayList<>();
+            for (ByteBuffer buffer : content) {
+                buffers.add(buffer);
+            }
+            request.content(new ByteBufferContentProvider(buffers.toArray(new ByteBuffer[buffers.size()])));
+            buffers.clear();
         }
-
-        // use HttpEventListener for lifecycle events
-        request.setEventListener(new HttpEventListenerWrapper(request.getEventListener(), true) {
-
-            @Override
-            public void onConnectionFailed(Throwable ex) {
-                super.onConnectionFailed(ex);
-                callback.onResponse(null,
-                        new SalesforceException("Connection error: " + ex.getMessage(), ex));
-            }
-
-            @Override
-            public void onException(Throwable ex) {
-                super.onException(ex);
-                callback.onResponse(null,
-                        new SalesforceException("Unexpected exception: " + ex.getMessage(), ex));
-            }
-
-            @Override
-            public void onExpire() {
-                super.onExpire();
-                callback.onResponse(null,
-                        new SalesforceException("Request expired", null));
-            }
-
-            @Override
-            public void onResponseComplete() throws IOException {
-                super.onResponseComplete();
-
-                SalesforceException e = securityListener.getExceptionResponse();
-                if (e != null) {
-                    callback.onResponse(null, e);
-                } else {
-                    // TODO not memory efficient for large response messages,
-                    // doesn't seem to be possible in Jetty 7 to directly stream to response parsers
-                    final byte[] bytes = request.getResponseContentBytes();
-                    callback.onResponse(bytes != null ? new ByteArrayInputStream(bytes) : null, null);
-                }
-
-            }
-        });
-
-        // wrap the above lifecycle event listener with SalesforceSecurityListener
-        securityListener.setEventListener(request.getEventListener());
-        request.setEventListener(securityListener);
 
         // execute the request
-        try {
-            httpClient.send(request);
-        } catch (IOException e) {
-            String msg = "Unexpected Error: " + e.getMessage();
-            // send error through callback
-            callback.onResponse(null, new SalesforceException(msg, e));
-        }
+        request.send(new BufferingResponseListener(httpClient.getMaxContentLength()) {
+            @Override
+            public void onComplete(Result result) {
+                Response response = result.getResponse();
+                if (result.isFailed()) {
 
+                    // Failure!!!
+                    // including Salesforce errors reported as exception from SalesforceSecurityHandler
+                    Throwable failure = result.getFailure();
+                    if (failure instanceof SalesforceException) {
+                        callback.onResponse(null, (SalesforceException) failure);
+                    } else {
+                        final String msg = String.format("Unexpected error {%s:%s} executing {%s:%s}",
+                            response.getStatus(), response.getReason(), request.getMethod(), request.getURI());
+                        callback.onResponse(null, new SalesforceException(msg, response.getStatus(), failure));
+                    }
+                } else {
+
+                    // HTTP error status
+                    final int status = response.getStatus();
+                    SalesforceHttpRequest request = (SalesforceHttpRequest) ((SalesforceHttpRequest) result.getRequest())
+                        .getConversation()
+                        .getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE);
+
+                    if (status == HttpStatus.BAD_REQUEST_400 && request != null) {
+                        // parse login error
+                        ContentResponse contentResponse = new HttpContentResponse(response, getContent(), getMediaType(), getEncoding());
+                        try {
+
+                            session.parseLoginResponse(contentResponse, getContentAsString());
+                            final String msg = String.format("Unexpected Error {%s:%s} executing {%s:%s}",
+                                status, response.getReason(), request.getMethod(), request.getURI());
+                            callback.onResponse(null, new SalesforceException(msg, null));
+
+                        } catch (SalesforceException e) {
+
+                            final String msg = String.format("Error {%s:%s} executing {%s:%s}",
+                                status, response.getReason(), request.getMethod(), request.getURI());
+                            callback.onResponse(null, new SalesforceException(msg, response.getStatus(), e));
+
+                        }
+                    } else if (status < HttpStatus.OK_200 || status >= HttpStatus.MULTIPLE_CHOICES_300) {
+                        // Salesforce HTTP failure!
+                        final SalesforceException exception = createRestException(response, getContentAsInputStream());
+
+                        // for APIs that return body on status 400, such as Composite API we need content as well
+                        callback.onResponse(getContentAsInputStream(), exception);
+                    } else {
+
+                        // Success!!!
+                        callback.onResponse(getContentAsInputStream(), null);
+                    }
+                }
+            }
+
+            @Override
+            public InputStream getContentAsInputStream() {
+                if (getContent().length == 0) {
+                    return null;
+                }
+                return super.getContentAsInputStream();
+            }
+        });
     }
 
     public void setAccessToken(String accessToken) {
@@ -204,8 +208,22 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
         this.instanceUrl = instanceUrl;
     }
 
-    protected abstract void setAccessToken(HttpExchange httpExchange);
+    final List<RestError> readErrorsFrom(final InputStream responseContent, final PayloadFormat format,
+        final ObjectMapper objectMapper, final XStream xStream)
+        throws IOException, JsonParseException, JsonMappingException {
+        final List<RestError> restErrors;
+        if (PayloadFormat.JSON.equals(format)) {
+            restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
+        } else {
+            RestErrors errors = new RestErrors();
+            xStream.fromXML(responseContent, errors);
+            restErrors = errors.getErrors();
+        }
+        return restErrors;
+    }
 
-    protected abstract SalesforceException createRestException(ContentExchange httpExchange, String reason);
+    protected abstract void setAccessToken(Request request);
+
+    protected abstract SalesforceException createRestException(Response response, InputStream responseContent);
 
 }

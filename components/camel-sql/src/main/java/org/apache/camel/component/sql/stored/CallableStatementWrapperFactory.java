@@ -24,7 +24,7 @@ import org.apache.camel.util.LRUCache;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * Statefull class that cached template functions.
+ * Stateful class that cached template functions.
  */
 public class CallableStatementWrapperFactory extends ServiceSupport {
 

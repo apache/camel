@@ -17,14 +17,23 @@
 -->
 <configuration>
 
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%-15.15thread] %-5level %-30.30logger - %msg%n</pattern>
+    </encoder>
+  </appender>
+
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      <pattern>%d{HH:mm:ss.SSS} [%-15.15thread] %-5level %-30.30logger - %msg%n</pattern>
     </encoder>
     <file>target/camel-spring-boot-test.log</file>
   </appender>
 
   <root level="INFO">
+    <!--<appender-ref ref="STDOUT"/>-->
     <appender-ref ref="FILE"/>
   </root>
 

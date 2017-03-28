@@ -32,7 +32,8 @@ import org.apache.camel.component.hbase.model.HBaseRow;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
@@ -102,8 +103,8 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
                 byte[] row = result.getRow();
                 resultRow.setId(endpoint.getCamelContext().getTypeConverter().convertTo(rowModel.getRowType(), row));
 
-                List<KeyValue> keyValues = result.list();
-                if (keyValues != null) {
+                List<Cell> cells = result.listCells();
+                if (cells != null) {
                     Set<HBaseCell> cellModels = rowModel.getCells();
                     if (cellModels.size() > 0) {
                         for (HBaseCell modelCell : cellModels) {
@@ -120,13 +121,13 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
                         }
                     } else {
                         // just need to put every key value into the result Cells
-                        for (KeyValue keyValue : keyValues) {
-                            String qualifier = new String(keyValue.getQualifier());
-                            String family = new String(keyValue.getFamily());
+                        for (Cell cell : cells) {
+                            String qualifier = new String(CellUtil.cloneQualifier(cell));
+                            String family = new String(CellUtil.cloneFamily(cell));
                             HBaseCell resultCell = new HBaseCell();
                             resultCell.setFamily(family);
                             resultCell.setQualifier(qualifier);
-                            resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(String.class, keyValue.getValue()));
+                            resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(String.class, CellUtil.cloneValue(cell)));
                             resultRow.getCells().add(resultCell); 
                         }
                     }
@@ -153,7 +154,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there was {} messages in this poll.", maxMessagesPerPoll, total);
+            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 

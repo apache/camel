@@ -88,7 +88,7 @@ public class CassandraCamelCodec {
 
         private final ByteBuffer buffer;
 
-        public ByteBufferInputStream(ByteBuffer buffer) {
+        ByteBufferInputStream(ByteBuffer buffer) {
             this.buffer = buffer;
         }
 

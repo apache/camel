@@ -16,8 +16,8 @@
  */
 package org.apache.camel.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
@@ -44,12 +45,13 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.MessageSupport;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
  *
- * @version 
+ * @version
  */
 public final class ExchangeHelper {
 
@@ -123,6 +125,24 @@ public final class ExchangeHelper {
         T answer = exchange.getIn().getHeader(headerName, type);
         if (answer == null) {
             throw new NoSuchHeaderException(exchange, headerName, type);
+        }
+        return answer;
+    }
+
+    /**
+     * Gets an header or property of the correct type
+     *
+     * @param exchange      the exchange
+     * @param name          the name of the header or the property
+     * @param type          the type
+     * @return the header or property value
+     * @throws TypeConversionException is thrown if error during type conversion
+     * @throws NoSuchHeaderException is thrown if no headers exists
+     */
+    public static <T> T getHeaderOrProperty(Exchange exchange, String name, Class<T> type) throws TypeConversionException {
+        T answer = exchange.getIn().getHeader(name, type);
+        if (answer == null) {
+            answer = exchange.getProperty(name, type);
         }
         return answer;
     }
@@ -229,6 +249,21 @@ public final class ExchangeHelper {
      * @param useSameMessageId whether to use same message id on the copy message.
      */
     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId) {
+        return createCorrelatedCopy(exchange, handover, useSameMessageId, null);
+    }
+
+    /**
+     * Creates a new instance and copies from the current message exchange so that it can be
+     * forwarded to another destination as a new instance. Unlike regular copy this operation
+     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
+     * for async messaging, where the original and copied exchange are independent.
+     *
+     * @param exchange original copy of the exchange
+     * @param handover whether the on completion callbacks should be handed over to the new copy.
+     * @param useSameMessageId whether to use same message id on the copy message.
+     * @param filter whether to handover the on completion
+     */
+    public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId, Predicate<Synchronization> filter) {
         String id = exchange.getExchangeId();
 
         // make sure to do a safe copy as the correlated copy can be routed independently of the source.
@@ -246,7 +281,7 @@ public final class ExchangeHelper {
         // hand over on completion to the copy if we got any
         UnitOfWork uow = exchange.getUnitOfWork();
         if (handover && uow != null) {
-            uow.handoverSynchronization(copy);
+            uow.handoverSynchronization(copy, filter);
         }
         // set a correlation id so we can track back the original exchange
         copy.setProperty(Exchange.CORRELATION_ID, id);
@@ -718,7 +753,7 @@ public final class ExchangeHelper {
      * @return the result body, can be <tt>null</tt>.
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      */
-    public static <T> T extractFutureBody(CamelContext context, Future<Object> future, Class<T> type) {
+    public static <T> T extractFutureBody(CamelContext context, Future<?> future, Class<T> type) {
         try {
             return doExtractFutureBody(context, future.get(), type);
         } catch (InterruptedException e) {
@@ -748,7 +783,7 @@ public final class ExchangeHelper {
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
      */
-    public static <T> T extractFutureBody(CamelContext context, Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+    public static <T> T extractFutureBody(CamelContext context, Future<?> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         try {
             if (timeout > 0) {
                 return doExtractFutureBody(context, future.get(timeout, unit), type);
@@ -915,7 +950,7 @@ public final class ExchangeHelper {
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
         if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new ArrayList<MessageHistory>(history));
+            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
         }
 
         return answer;

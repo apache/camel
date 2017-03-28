@@ -32,6 +32,9 @@ public class AttributeNewLineTest extends CamelBlueprintTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+
+        Object stub = context.hasEndpoint("stub:GET    /v1/phonebook/companies/{companyCode}?oauth=OPTIONAL");
+        assertNotNull("Should have stub endpoint with double spaces", stub);
     }
 
 }

@@ -20,15 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
 public class SpringBatchComponent extends UriEndpointComponent {
 
     private static final String DEFAULT_JOB_LAUNCHER_REF_NAME = "jobLauncher";
 
-    private JobLauncher jobLauncher;
     private JobLauncher defaultResolvedJobLauncher;
     private Map<String, JobLauncher> allResolvedJobLaunchers;
+
+    private JobLauncher jobLauncher;
+    private JobRegistry jobRegistry;
 
     public SpringBatchComponent() {
         super(SpringBatchEndpoint.class);
@@ -36,7 +39,8 @@ public class SpringBatchComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(uri, this, jobLauncher, defaultResolvedJobLauncher, allResolvedJobLaunchers, remaining);
+        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(uri, this, jobLauncher, defaultResolvedJobLauncher, 
+                allResolvedJobLaunchers, remaining, jobRegistry);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -56,5 +60,16 @@ public class SpringBatchComponent extends UriEndpointComponent {
      */
     public void setJobLauncher(JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
+    }
+
+    public JobRegistry getJobRegistry() {
+        return jobRegistry;
+    }
+
+    /**
+     * Explicitly specifies a JobRegistry to be used.
+     */    
+    public void setJobRegistry(JobRegistry jobRegistry) {
+        this.jobRegistry = jobRegistry;
     }
 }

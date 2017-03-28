@@ -18,7 +18,6 @@ package org.apache.camel.component.directvm;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**

@@ -20,11 +20,13 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.naming.Context;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.util.jndi.JndiContext;
 
 public class BeanMethodWithExchangeTest extends ContextTestSupport {
@@ -39,7 +41,9 @@ public class BeanMethodWithExchangeTest extends ContextTestSupport {
             
         });
         
-        assertTrue(result.getOut().getAttachments().containsKey("attachment2"));
+        assertTrue(result.getOut().getAttachmentObjects().containsKey("attachment2"));
+        assertTrue(result.getOut().getAttachments().containsKey("attachment1"));
+        assertEquals("attachmentValue1", result.getOut().getAttachmentObjects().get("attachment1").getHeader("attachmentHeader1"));
         assertFalse(result.getOut().getAttachments().containsKey("attachment"));
 
     }
@@ -60,6 +64,9 @@ public class BeanMethodWithExchangeTest extends ContextTestSupport {
 
     public static class AttachmentProcessor {
         public void doSomething(Exchange exchange) {
+            Attachment att = new DefaultAttachment(new FileDataSource("src/test/org/apache/camel/component/bean/BeanMethodWithExchangeTest.java"));
+            att.addHeader("attachmentHeader1", "attachmentValue1");
+            exchange.getOut().addAttachmentObject("attachment1", att);
             exchange.getOut().addAttachment("attachment2", new DataHandler(new FileDataSource("src/test/org/apache/camel/component/bean/BeanMethodWithExchangeTest.java")));
         }
        

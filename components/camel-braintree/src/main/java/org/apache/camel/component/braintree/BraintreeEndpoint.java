@@ -29,7 +29,7 @@ import org.apache.camel.component.braintree.internal.BraintreeApiName;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.BraintreePropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
@@ -37,21 +37,20 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * The braintree component is used for integrating with the Braintree Payment System.
  */
-@UriEndpoint(scheme = "braintree", title = "Braintree", syntax = "braintree:name", consumerClass = BraintreeConsumer.class, label = "Braintree")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName", consumerClass = BraintreeConsumer.class, label = "api,cloud,payment")
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
 
-    @UriPath(description = "the method name")
-    private final String name;
+    @UriParam
+    private final BraintreeConfiguration configuration;
 
     private Object apiProxy;
     private final BraintreeGateway gateway;
 
     public BraintreeEndpoint(String uri, BraintreeComponent component,
-                         BraintreeApiName apiName, String methodName, BraintreeConfiguration endpointConfiguration, BraintreeGateway gateway) {
-        super(uri, component, apiName, methodName, BraintreeApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-
+                         BraintreeApiName apiName, String methodName, BraintreeConfiguration configuration, BraintreeGateway gateway) {
+        super(uri, component, apiName, methodName, BraintreeApiCollection.getCollection().getHelper(apiName), configuration);
+        this.configuration = configuration;
         this.gateway = gateway;
-        this.name = methodName;
     }
 
     @Override

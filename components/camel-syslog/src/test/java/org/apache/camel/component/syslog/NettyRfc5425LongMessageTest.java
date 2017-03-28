@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.syslog;
 
+import io.netty.buffer.ByteBuf;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,7 +28,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.jboss.netty.buffer.ChannelBuffer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -50,7 +51,7 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
     @BeforeClass
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
-        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoder=#encoder";
+        uri = "netty4:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoder=#encoder";
     }
 
     @Override
@@ -92,8 +93,8 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }
                 }).to("mock:syslogReceiver").marshal(syslogDataFormat).to("mock:syslogReceiver2");
-                // Here we need to turn the request body into channelbuffer
-                from("direct:start").convertBodyTo(ChannelBuffer.class).to(uri);
+                // Here we need to turn the request body into ByteBuf
+                from("direct:start").convertBodyTo(ByteBuf.class).to(uri);
             }
         };
     }

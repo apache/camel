@@ -24,9 +24,9 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.cdi.Beans;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +35,7 @@ import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 @ApplicationScoped
 @RunWith(CamelCdiRunner.class)
+@Beans(classes = TestRoute.class)
 public class ApplicationScopedTest {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
@@ -58,13 +59,5 @@ public class ApplicationScopedTest {
     @Test
     public void testTwo(@Uri("mock:out") MockEndpoint mock) throws InterruptedException {
         assertIsSatisfied(1L, TimeUnit.SECONDS, mock);
-    }
-
-    static class TestRoute extends RouteBuilder {
-
-        @Override
-        public void configure() {
-            from("direct:out").to("mock:out");
-        }
     }
 }

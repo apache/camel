@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.quickfix.enabled",
+      "description": "Enable quickfix component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

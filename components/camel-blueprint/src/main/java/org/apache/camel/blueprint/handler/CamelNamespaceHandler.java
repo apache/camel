@@ -16,6 +16,7 @@
  */
 package org.apache.camel.blueprint.handler;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -79,6 +80,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.SortDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -149,13 +151,18 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             for (int i = 0; i < map.getLength(); i++) {
                 Node att = map.item(i);
                 if (att.getNodeName().equals("uri") || att.getNodeName().endsWith("Uri")) {
-                    String value = att.getNodeValue();
-                    // remove all double spaces
-                    String changed = value.replaceAll("\\s{2,}", "");
+                    final String value = att.getNodeValue();
+                    String before = ObjectHelper.before(value, "?");
+                    String after = ObjectHelper.after(value, "?");
 
-                    if (!value.equals(changed)) {
-                        LOG.debug("Removed whitespace noise from attribute {} -> {}", value, changed);
-                        att.setNodeValue(changed);
+                    if (before != null && after != null) {
+                        // remove all double spaces in the uri parameters
+                        String changed = after.replaceAll("\\s{2,}", "");
+                        if (!after.equals(changed)) {
+                            String newAtr = before.trim() + "?" + changed.trim();
+                            LOG.debug("Removed whitespace noise from attribute {} -> {}", value, newAtr);
+                            att.setNodeValue(newAtr);
+                        }
                     }
                 }
             }
@@ -167,10 +174,13 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     public URL getSchemaLocation(String namespace) {
-        return getClass().getClassLoader().getResource("camel-blueprint.xsd");
+        if (BLUEPRINT_NS.equals(namespace)) {
+            return getClass().getClassLoader().getResource("camel-blueprint.xsd");
+        }
+        return null;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"rawtypes"})
     public Set<Class> getManagedClasses() {
         return new HashSet<Class>(Arrays.asList(BlueprintCamelContext.class));
     }
@@ -276,7 +286,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         registerBeans(context, contextId, ccfb.getThreadPools());
         registerBeans(context, contextId, ccfb.getEndpoints());
         registerBeans(context, contextId, ccfb.getRedeliveryPolicies());
-        registerBeans(context, contextId, ccfb.getBeans());
+        registerBeans(context, contextId, ccfb.getBeansFactory());
 
         // Register processors
         MutablePassThroughMetadata beanProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
@@ -649,6 +659,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private static ComponentMetadata getDataformatResolverReference(ParserContext context, String dataformat) {
+        // we cannot resolve dataformat names using property placeholders at this point in time
+        if (dataformat.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            return null;
+        }
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
         ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.dataformatResolver." + dataformat);
         if (cm == null) {
@@ -679,6 +693,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private static ComponentMetadata getLanguageResolverReference(ParserContext context, String language) {
+        // we cannot resolve language names using property placeholders at this point in time
+        if (language.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            return null;
+        }
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
         ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.languageResolver." + language);
         if (cm == null) {
@@ -709,6 +727,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private static ComponentMetadata getComponentResolverReference(ParserContext context, String component) {
+        // we cannot resolve component names using property placeholders at this point in time
+        if (component.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            return null;
+        }
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
         ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.componentResolver." + component);
         if (cm == null) {
@@ -962,14 +984,13 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             this.blueprintContainer = blueprintContainer;
         }
 
-        @SuppressWarnings("deprecation")
         public void process(ComponentDefinitionRegistry componentDefinitionRegistry) {
             CamelContextFactoryBean ccfb = (CamelContextFactoryBean) blueprintContainer.getComponentInstance(".camelBlueprint.factory." + camelContextName);
             CamelContext camelContext = ccfb.getContext();
 
-            Set<String> components = new HashSet<String>();
-            Set<String> languages = new HashSet<String>();
-            Set<String> dataformats = new HashSet<String>();
+            Set<String> components = new HashSet<>();
+            Set<String> languages = new HashSet<>();
+            Set<String> dataformats = new HashSet<>();
 
             // regular camel routes
             for (RouteDefinition rd : camelContext.getRouteDefinitions()) {
@@ -987,6 +1008,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         findOutputComponents(route.getOutputs(), components, languages, dataformats);
                     } else if (o instanceof ToDefinition) {
                         findUriComponent(((ToDefinition) o).getUri(), components);
+                    } else if (o instanceof ToDynamicDefinition) {
+                        findUriComponent(((ToDynamicDefinition) o).getUri(), components);
                     }
                 }
             }
@@ -1030,7 +1053,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             // because the factory has already been instantiated
             try {
                 for (String component : components) {
-                    getComponentResolverReference(context, component);
+                    if (camelContext.getComponent(component) == null) {
+                        getComponentResolverReference(context, component);
+                    } else {
+                        LOG.debug("Not creating a service reference for component {} because a component already exists in the Camel Context", component);
+                    }
                 }
                 for (String language : languages) {
                     getLanguageResolverReference(context, language);
@@ -1040,7 +1067,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 }
             } catch (UnsupportedOperationException e) {
                 LOG.warn("Unable to add dependencies to Camel components OSGi services. "
-                    + "The Apache Aries blueprint implementation used is too old and the blueprint bundle can not see the org.apache.camel.spi package.");
+                    + "The Apache Aries blueprint implementation used is too old and the blueprint bundle cannot see the org.apache.camel.spi package.");
                 components.clear();
                 languages.clear();
                 dataformats.clear();
@@ -1125,16 +1152,20 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         private void findUriComponent(String uri, Set<String> components) {
             // if the uri is a placeholder then skip it
-            if (uri != null && uri.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            if (uri == null || uri.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
                 return;
             }
 
-            if (uri != null) {
-                String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
-                if (splitURI[1] != null) {
-                    String scheme = splitURI[0];
-                    components.add(scheme);
-                }
+            // validate uri here up-front so a meaningful error can be logged for blueprint
+            // it will also speed up tests in case of failure
+            if (!validateUri(uri)) {
+                return;
+            }
+
+            String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
+            if (splitURI[1] != null) {
+                String scheme = splitURI[0];
+                components.add(scheme);
             }
         }
 
@@ -1160,11 +1191,21 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         }
                     }
                 } catch (URISyntaxException e) {
-                    // ignore
+                    // ignore as uri should be already validated at findUriComponent method
                 }
             }
         }
 
+        private static boolean validateUri(String uri) {
+            try {
+                // the same validation as done in DefaultCamelContext#normalizeEndpointUri(String)
+                URISupport.normalizeUri(uri);
+            } catch (URISyntaxException | UnsupportedEncodingException e) {
+                LOG.error("Endpoint URI '" + uri + "' is not valid due to: " + e.getMessage(), e);
+                return false;
+            }
+            return true;
+        }
     }
 
 }

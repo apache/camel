@@ -22,7 +22,6 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.jaxb.message.Message;
 import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
 import org.apache.camel.foo.bar.PersonType;
@@ -117,14 +116,4 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
         value = converter.convertTo(String.class, exchange, person);
         assertTrue("Should not filter the non-xml chars", value.indexOf("<lastName>BAR\uD8FF</lastName>") > 0);
     }
-
-    @Test
-    public void testNoXmlRootElementAnnotation() throws Exception {
-        Message in = new Message("Hello World");
-        TypeConverter converter = context.getTypeConverter();
-        String marshalled = converter.convertTo(String.class, in);
-        Message out = converter.convertTo(Message.class, marshalled);
-        assertEquals(in, out);
-    }
-
 }

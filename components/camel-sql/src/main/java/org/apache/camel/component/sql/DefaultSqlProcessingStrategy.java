@@ -41,7 +41,7 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
     @Override
     public int commit(final DefaultSqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
 
-        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters());
+        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters(), exchange);
 
         return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {
@@ -67,7 +67,7 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
 
     @Override
     public int commitBatchComplete(final DefaultSqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
-        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters());
+        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters(), null);
 
         return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {

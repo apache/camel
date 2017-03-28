@@ -27,13 +27,14 @@ import org.apache.camel.ComponentConfiguration;
  * {@link org.apache.camel.Component} implementations should try to implement this API to make your component
  * behave nicer in command line, IDE and web based tools.
  */
+@Deprecated
 public interface EndpointCompleter {
 
     /**
      * Given the configuration and completion text, return a list of possible completion values
      * for a command line, IDE or web based tool.
      *
-     * @returns the list of completion values if any (rather like bash completion, prefix values can be returned
+     * @return the list of completion values if any (rather like bash completion, prefix values can be returned
      * - such as just the directories in the current path rather than returning every possible file name on a disk).
      */
     List<String> completeEndpointPath(ComponentConfiguration configuration, String completionText);

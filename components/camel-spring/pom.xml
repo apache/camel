@@ -21,47 +21,42 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.17-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-spring</artifactId>
   <name>Camel :: Spring</name>
-  <description>Camel Spring support</description>
-  <packaging>bundle</packaging>
+  <description>Camel Spring with XML DSL</description>
+  <packaging>jar</packaging>
 
   <properties>
-      <camel.osgi.import>
-        !org.apache.camel.spring.*,
-        !org.apache.camel.osgi.*,
-        !org.apache.camel.component,
-        !org.apache.camel.component.event,
-        !org.apache.camel.language.spel,
-        org.apache.camel.*;${camel.osgi.import.strict.version},
-        org.springframework.osgi.*;version="[1.2,2)",
-        org.osgi.service.event;resolution:=optional,
-        ${camel.osgi.import.defaults},
-        *
-      </camel.osgi.import>
-      <camel.osgi.export>
-        org.apache.camel.spring.*;${camel.osgi.version},
-        org.apache.camel.osgi.*;${camel.osgi.version},
-        org.apache.camel.util.spring.*;${camel.osgi.version},
-        org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
-        org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
-      </camel.osgi.export>
-      <camel.osgi.private.pkg>
-        org.apache.camel.core.osgi*,
-        org.apache.camel.core.xml*
-      </camel.osgi.private.pkg>
-      <camel.osgi.export.service>
-        org.apache.camel.spi.ComponentResolver;component=spring-event,
-        org.apache.camel.spi.LanguageResolver;language=spel
-      </camel.osgi.export.service>
-      <camel.osgi.activator>
-        org.apache.camel.osgi.Activator
-      </camel.osgi.activator>
-      <!-- do not skip any tests by default -->
-      <platform.skip.tests />
+    <!-- use spring-all-version-range to support camel-spring-dm also -->
+    <camel.osgi.import>
+      !org.springframework.boot.*,
+      !org.springframework.context.annotation.*;resolution:=optional,
+      !org.apache.camel.spring.*,
+      !org.apache.camel.component,
+      !org.apache.camel.component.event,
+      !org.apache.camel.language.spel,
+      !org.apache.camel.core.xml*,
+      org.apache.camel.*;${camel.osgi.import.strict.version},
+      org.springframework*;version="${spring-all-version-range}",
+      org.osgi.service.event;resolution:=optional,
+      ${camel.osgi.import.defaults},
+      *
+    </camel.osgi.import>
+    <camel.osgi.export>
+      org.apache.camel.spring.*;${camel.osgi.version},
+      org.apache.camel.util.spring.*;${camel.osgi.version},
+      org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
+      org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
+    </camel.osgi.export>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.ComponentResolver;component=spring-event,
+      org.apache.camel.spi.LanguageResolver;language=spel
+    </camel.osgi.export.service>
+    <!-- do not skip any tests by default -->
+    <platform.skip.tests/>
   </properties>
 
   <dependencies>
@@ -98,52 +93,16 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-osgi</artifactId>
-      <scope>provided</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <scope>provided</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <scope>provided</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-core</artifactId>
-      <optional>true</optional>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>org.springframework.aop</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>org.springframework.beans</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>org.springframework.context</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>org.springframework.core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <!-- for testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -171,10 +130,26 @@
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
       <scope>test</scope>
+    </dependency>  
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- todo: remove log4j loggin if possible -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -183,39 +158,31 @@
       <version>${xmlunit-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-      <!-- for testing Spring AOP at class level -->
-      <dependency>
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjrt</artifactId>
-        <version>${aspectj-version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjweaver</artifactId>
-        <version>${aspectj-version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>cglib</groupId>
-        <artifactId>cglib</artifactId>
-        <version>${cglib-version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>asm</groupId>
-        <artifactId>asm</artifactId>
-        <version>${asm-version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <!-- for testing with osgi -->
-      <dependency>
-        <groupId>org.springframework.osgi</groupId>
-        <artifactId>spring-osgi-mock</artifactId>
-        <scope>test</scope>
-      </dependency>
+    <!-- for testing Spring AOP at class level -->
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>${aspectj-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>${aspectj-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>${cglib-version}</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
@@ -237,6 +204,45 @@
     </resources>
 
     <plugins>
+
+      <!-- Inline the contents of camel-core-xml into this jar. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.camel</groupId>
+                  <artifactId>camel-core-xml</artifactId>
+                  <version>${project.version}</version>
+                  <includes>org/apache/camel/**</includes>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -272,12 +278,34 @@
         </dependencies>
         <executions>
           <execution>
+            <id>store-camel-schema-version-in-file</id>
+            <phase>initialize</phase>
+            <configuration>
+              <target>
+                <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
+                <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp" />
+                <property name="mv" value="${project.version}" />
+                <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0" />
+                <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0" />
+                <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0" />
+                <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
+                <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}" />
+                <mkdir dir="target" />
+                <echo file="target/camel.osgi.version.txt">
+                      camel.schema.version = ${camel.schema.version}
+                </echo>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
             <id>generate-sources</id>
             <phase>process-classes</phase>
             <configuration>
               <target>
                 <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
-
                 <echo>Copying code together for the XSD generation</echo>
                 <mkdir dir="${project.build.directory}/schema-src" />
                 <copy todir="${project.build.directory}/schema-src">
@@ -303,25 +331,12 @@
                     <include name="org/apache/camel/package-info.java" />
                   </fileset>
                 </copy>
-
-
-                <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
-                <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp" />
-                <property name="mv" value="${project.version}" />
-                <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0" />
-                <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0" />
-                <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0" />
-                <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
-                <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}" />
-                <mkdir dir="target" />
-                <echo file="target/camel.osgi.version.txt">
-                      camel.schema.version = ${camel.schema.version}
-                </echo>
-
                 <echo>Generating XSD schema</echo>
                 <mkdir dir="${project.build.directory}/schema" />
                 <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
                     <schema namespace="http://camel.apache.org/schema/spring" file="camel-spring.xsd" />
+                    <compilerarg line="-target ${jdk.version}"/>
+                    <compilerarg line="-source ${jdk.version}"/>
                     <classpath refid="maven.compile.classpath" />
                 </schemagen>
 
@@ -347,7 +362,7 @@
               <goal>run</goal>
             </goals>
           </execution>
-          <!-- after the eip-documentation-enricher we need to copy some shchema files -->
+          <!-- after the eip-documentation-enricher we need to copy some schema files -->
           <execution>
             <id>include-schemas</id>
             <phase>prepare-package</phase>
@@ -369,12 +384,14 @@
           </execution>
         </executions>
       </plugin>
+      
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>properties-maven-plugin</artifactId>
         <executions>
           <execution>
-            <phase>process-classes</phase>
+            <id>init-camel-schema-version-property-from-file</id>
+            <phase>initialize</phase>
             <goals>
               <goal>read-project-properties</goal>
             </goals>
@@ -386,6 +403,7 @@
           </execution>
         </executions>
       </plugin>
+      
       <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-spring-sources.jar -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -547,6 +565,35 @@
             <scope>test</scope>
           </dependency>
         </dependencies>
+    </profile>
+
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-antrun-plugin</artifactId>
+              <dependencies>
+                <dependency>
+                  <groupId>javax.xml.bind</groupId>
+                  <artifactId>jaxb-api</artifactId>
+                  <version>${jaxb-version}</version>
+                </dependency>
+                <dependency>
+                  <groupId>javax.activation</groupId>
+                  <artifactId>activation</artifactId>
+                  <version>1.1.1</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
     </profile>
   </profiles>
 

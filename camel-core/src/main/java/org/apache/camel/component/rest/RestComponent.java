@@ -16,25 +16,68 @@
  */
 package org.apache.camel.component.rest;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.model.rest.RestConstants;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * REST-DSL component.
+ * Rest component.
  */
-public class RestComponent extends UriEndpointComponent {
+public class RestComponent extends DefaultComponent {
 
-    public RestComponent() {
-        super(RestEndpoint.class);
-    }
+    @Metadata(label = "common")
+    private String componentName;
+    @Metadata(label = "producer")
+    private String apiDoc;
+    @Metadata(label = "producer")
+    private String host;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        String restConfigurationName = getAndRemoveParameter(parameters, "componentName", String.class, componentName);
+
         RestEndpoint answer = new RestEndpoint(uri, this);
+        answer.setComponentName(restConfigurationName);
+        answer.setApiDoc(apiDoc);
+
+        RestConfiguration config = new RestConfiguration();
+        mergeConfigurations(config, findGlobalRestConfiguration());
+        mergeConfigurations(config, getCamelContext().getRestConfiguration(restConfigurationName, true));
+
+        // if no explicit host was given, then fallback and use default configured host
+        String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
+        if (h == null && config != null) {
+            h = config.getHost();
+            int port = config.getPort();
+            // is there a custom port number
+            if (port > 0 && port != 80 && port != 443) {
+                h += ":" + port;
+            }
+        }
+        // host must start with http:// or https://
+        if (h != null && !(h.startsWith("http://") || h.startsWith("https://"))) {
+            h = "http://" + h;
+        }
+        answer.setHost(h);
+
+        String query = ObjectHelper.after(uri, "?");
+        if (query != null) {
+            answer.setQueryParameters(query);
+        }
+
         setProperties(answer, parameters);
         answer.setParameters(parameters);
 
@@ -64,11 +107,118 @@ public class RestComponent extends UriEndpointComponent {
         answer.setUriTemplate(uriTemplate);
 
         // if no explicit component name was given, then fallback and use default configured component name
-        if (answer.getComponentName() == null && getCamelContext().getRestConfiguration() != null) {
-            answer.setComponentName(getCamelContext().getRestConfiguration().getComponent());
+        if (answer.getComponentName() == null && config != null) {
+            String name = config.getProducerComponent();
+            if (name == null) {
+                // fallback and use the consumer name
+                name = config.getComponent();
+            }
+            answer.setComponentName(name);
+        }
+        // if no explicit producer api was given, then fallback and use default configured
+        if (answer.getApiDoc() == null && config != null) {
+            answer.setApiDoc(config.getProducerApiDoc());
         }
 
         return answer;
+    }
+
+    public String getComponentName() {
+        return componentName;
+    }
+
+    /**
+     * The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
+     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory (consumer)
+     * or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry.
+     * If either one is found, then that is being used.
+     */
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
+
+    public String getApiDoc() {
+        return apiDoc;
+    }
+
+    /**
+     * The swagger api doc resource to use.
+     * The resource is loaded from classpath by default and must be in JSon format.
+     */
+    public void setApiDoc(String apiDoc) {
+        this.apiDoc = apiDoc;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * Host and port of HTTP service to use (override host in swagger schema)
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    // ****************************************
+    // Helpers
+    // ****************************************
+
+    private RestConfiguration findGlobalRestConfiguration() {
+        CamelContext context = getCamelContext();
+
+        RestConfiguration conf = CamelContextHelper.lookup(context, RestConstants.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
+        if (conf == null) {
+            conf = CamelContextHelper.findByType(getCamelContext(), RestConfiguration.class);
+        }
+
+        return conf;
+    }
+
+    private RestConfiguration mergeConfigurations(RestConfiguration conf, RestConfiguration from) throws Exception {
+        if (from != null) {
+            Map<String, Object> map = IntrospectionSupport.getNonNullProperties(from);
+
+            // Remove properties as they need to be manually managed
+            Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Object> entry = it.next();
+                if (entry.getValue() instanceof Map) {
+                    it.remove();
+                }
+            }
+
+            // Copy common options, will override those in conf
+            IntrospectionSupport.setProperties(getCamelContext(), getCamelContext().getTypeConverter(), conf, map);
+
+            // Merge properties
+            mergeProperties(conf::getComponentProperties, from::getComponentProperties, conf::setComponentProperties);
+            mergeProperties(conf::getEndpointProperties, from::getEndpointProperties, conf::setEndpointProperties);
+            mergeProperties(conf::getConsumerProperties, from::getConsumerProperties, conf::setConsumerProperties);
+            mergeProperties(conf::getDataFormatProperties, from::getDataFormatProperties, conf::setDataFormatProperties);
+            mergeProperties(conf::getApiProperties, from::getApiProperties, conf::setApiProperties);
+            mergeProperties(conf::getCorsHeaders, from::getCorsHeaders, conf::setCorsHeaders);
+        }
+
+        return conf;
+    }
+
+    private <T> void mergeProperties(Supplier<Map<String, T>> base, Supplier<Map<String, T>> addons, Consumer<Map<String, T>> consumer) {
+        Map<String, T> baseMap = base.get();
+        Map<String, T> addonsMap = addons.get();
+
+        if (baseMap != null || addonsMap != null) {
+            HashMap<String, T> result = new HashMap<>();
+            if (baseMap != null) {
+                result.putAll(baseMap);
+            }
+            if (addonsMap != null) {
+                result.putAll(addonsMap);
+            }
+
+            consumer.accept(result);
+        }
     }
 
 }

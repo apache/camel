@@ -17,11 +17,18 @@
 package org.apache.camel.component.nats;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Properties;
+import java.util.concurrent.TimeoutException;
+
+import javax.net.ssl.SSLContext;
+
+import io.nats.client.Connection;
+import io.nats.client.ConnectionFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.nats.Connection;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +53,13 @@ public class NatsProducer extends DefaultProducer {
         String body = exchange.getIn().getMandatoryBody(String.class);
 
         LOG.debug("Publishing to topic: {}", config.getTopic());
-        connection.publish(config.getTopic(), body.getBytes());
+        
+        if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
+            String replySubject = config.getReplySubject();
+            connection.publish(config.getTopic(), replySubject, body.getBytes());
+        } else {
+            connection.publish(config.getTopic(), body.getBytes());
+        }
     }
     
     @Override
@@ -64,14 +77,26 @@ public class NatsProducer extends DefaultProducer {
         LOG.debug("Stopping Nats Producer");
         
         LOG.debug("Closing Nats Connection");
-        if (connection != null && connection.isConnected()) {
+        if (connection != null && !connection.isClosed()) {
+            if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
+                LOG.debug("Flushing Nats Connection");
+                connection.flush(getEndpoint().getNatsConfiguration().getFlushTimeout());
+            }
             connection.close();
         }
     }
 
-    private Connection getConnection() throws IOException, InterruptedException {
+    private Connection getConnection() throws TimeoutException, IOException, GeneralSecurityException {
         Properties prop = getEndpoint().getNatsConfiguration().createProperties();
-        connection = Connection.connect(prop);
+        ConnectionFactory factory = new ConnectionFactory(prop);
+        if (getEndpoint().getNatsConfiguration().getSslContextParameters() != null && getEndpoint().getNatsConfiguration().isSecure()) {
+            SSLContext sslCtx = getEndpoint().getNatsConfiguration().getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()); 
+            factory.setSSLContext(sslCtx);
+            if (getEndpoint().getNatsConfiguration().isTlsDebug()) {
+                factory.setTlsDebug(getEndpoint().getNatsConfiguration().isTlsDebug());
+            }
+        }
+        connection = factory.createConnection();
         return connection;
     }
 

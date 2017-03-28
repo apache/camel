@@ -40,11 +40,13 @@ And to list all the users
 
 <http://localhost:8080/user/view/list>
 
-The rest services provides Swagger API which can be accessed from the following url
+The rest services provides Swagger API which can be accessed
+from the following url in json or yaml format:
 
-    curl http://localhost:8080/api-doc
+    curl http://localhost:8080/api-doc/swagger.json
+    curl http://localhost:8080/api-doc/swagger.yaml
 
-<http://localhost:8080/api-doc>
+<http://localhost:8080/api-doc/swagger.json>
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 

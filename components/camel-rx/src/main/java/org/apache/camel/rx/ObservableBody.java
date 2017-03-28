@@ -22,7 +22,7 @@ import org.apache.camel.rx.support.ObservableProcessor;
 /**
  * A base class for a {@link org.apache.camel.Processor} which allows you to process
  * messages using an {@link rx.Observable < org.apache.camel.Message>} by implementing the
- * abstract {@link org.apache.camel.rx.support.ObservableProcessor#configure(rx.Observable}) method.
+ * abstract {@link org.apache.camel.rx.support.ObservableProcessor#configure(rx.Observable) method.
  */
 public abstract class ObservableBody<T> extends ObservableProcessor<T> {
     private final Class<T> bodyType;

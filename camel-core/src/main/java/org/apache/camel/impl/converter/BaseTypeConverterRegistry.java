@@ -29,6 +29,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -60,7 +62,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
+public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry, CamelContextAware {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final ConcurrentMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
     // for misses use a soft reference cache map, as the classes may be un-deployed at runtime
@@ -68,6 +70,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<FallbackTypeConverter>();
     protected final PackageScanClassResolver resolver;
+    protected CamelContext camelContext;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
@@ -97,6 +100,16 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         addFallbackTypeConverter(new FutureTypeConverter(this), false);
         // add sync processor to async processor converter is to be promoted
         addFallbackTypeConverter(new AsyncProcessorTypeConverter(), true);
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public List<TypeConverterLoader> getTypeConverterLoaders() {
@@ -443,6 +456,12 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
+        }
+        if (typeConverter instanceof CamelContextAware) {
+            CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
+            if (camelContext != null) {
+                camelContextAware.setCamelContext(camelContext);
+            }
         }
     }
 

@@ -158,7 +158,10 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     public void clear() {
         synchronized (cache) {
             cache.clear();
-        }        
+            if (cache instanceof LRUCache) {
+                ((LRUCache) cache).cleanUp();
+            }
+        }
     }
 
     public File getFileStore() {
@@ -224,6 +227,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             // trunk and clear, before we reload the store
             trunkStore();
             cache.clear();
+            if (cache instanceof LRUCache) {
+                ((LRUCache) cache).cleanUp();
+            }
             loadStore();
         }
     }
@@ -336,6 +342,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         // reset will trunk and clear the cache
         trunkStore();
         cache.clear();
+        if (cache instanceof LRUCache) {
+            ((LRUCache) cache).cleanUp();
+        }
         init.set(false);
     }
 

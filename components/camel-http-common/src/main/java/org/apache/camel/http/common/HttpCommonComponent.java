@@ -16,16 +16,58 @@
  */
 package org.apache.camel.http.common;
 
+import java.util.Map;
+
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 
 public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent {
 
+    @Metadata(label = "advanced", description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     protected HttpBinding httpBinding;
+    @Metadata(label = "advanced", description = "To use the shared HttpConfiguration as base configuration.")
     protected HttpConfiguration httpConfiguration;
+    @Metadata(label = "advanced", description = "Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object."
+        + " This is by default turned off. "
+        + " If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.")
     protected boolean allowJavaSerializedObject;
 
     public HttpCommonComponent(Class<? extends HttpCommonEndpoint> endpointClass) {
         super(endpointClass);
+    }
+
+    /**
+     * Gets the parameter. This method doesn't resolve reference parameters in the registry.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @return  the converted value parameter
+     */
+    public <T> T getParameter(Map<String, Object> parameters, String key, Class<T> type) {
+        return getParameter(parameters, key, type, null);
+    }
+
+    /**
+     * Gets the parameter. This method doesn't resolve reference parameters in the registry.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @param defaultValue  use this default value if the parameter does not contain the key
+     * @return  the converted value parameter
+     */
+    public <T> T getParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
+        Object value = parameters.get(key);
+        if (value == null) {
+            value = defaultValue;
+        }
+        if (value == null) {
+            return null;
+        }
+
+        return CamelContextHelper.convertTo(getCamelContext(), type, value);
     }
 
     /**

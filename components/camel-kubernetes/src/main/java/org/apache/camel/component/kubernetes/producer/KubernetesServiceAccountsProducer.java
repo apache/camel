@@ -21,14 +21,15 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.DoneableServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccountList;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +103,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<ServiceAccount, ServiceAccountList, DoneableServiceAccount, ClientResource<ServiceAccount, DoneableServiceAccount>> serviceAccounts; 
+            NonNamespaceOperation<ServiceAccount, ServiceAccountList, DoneableServiceAccount, Resource<ServiceAccount, DoneableServiceAccount>> serviceAccounts; 
             serviceAccounts = getEndpoint().getKubernetesClient().serviceAccounts()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -110,13 +111,15 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             }
             saList = serviceAccounts.list();
         } else {
-            ClientMixedOperation<ServiceAccount, ServiceAccountList, DoneableServiceAccount, ClientResource<ServiceAccount, DoneableServiceAccount>> serviceAccounts; 
+            MixedOperation<ServiceAccount, ServiceAccountList, DoneableServiceAccount, Resource<ServiceAccount, DoneableServiceAccount>> serviceAccounts; 
             serviceAccounts = getEndpoint().getKubernetesClient().serviceAccounts();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 serviceAccounts.withLabel(entry.getKey(), entry.getValue());
             }
             saList = serviceAccounts.list();
         }
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(saList.getItems());
     }
 
@@ -139,6 +142,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         }
         sa = getEndpoint().getKubernetesClient().serviceAccounts()
                 .inNamespace(namespaceName).withName(saName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(sa);
     }
 
@@ -163,6 +168,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
                 KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
         sa = getEndpoint().getKubernetesClient().serviceAccounts()
                 .inNamespace(namespaceName).create(saToCreate);
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(sa);
     }
 
@@ -184,6 +191,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         }
         boolean saDeleted = getEndpoint().getKubernetesClient().serviceAccounts()
                 .inNamespace(namespaceName).withName(saName).delete();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(saDeleted);
     }
 }

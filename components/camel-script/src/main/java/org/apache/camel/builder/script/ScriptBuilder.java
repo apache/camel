@@ -496,7 +496,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         context.setAttribute("body", in.getBody(), scope);
         if (exchange.hasOut()) {
             Message out = exchange.getOut();
-            context.setAttribute("out", out , scope);
+            context.setAttribute("out", out, scope);
             context.setAttribute("response", out, scope);
         }
         // to make using properties component easier

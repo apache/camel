@@ -38,7 +38,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
-import org.apache.camel.core.osgi.OsgiServiceRegistry;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
@@ -54,21 +53,20 @@ public abstract class AbstractCamelRunner implements Runnable {
 
     public static final int START_DELAY = 5000;
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
-    
+
     protected Logger log = LoggerFactory.getLogger(getClass());
-    protected CamelContext context;
-    protected Registry registry;
 
     // Configured fields
     private String camelContextId;
     private boolean active;
 
+    private CamelContext context;
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture starter;
     private volatile boolean activated;
     private volatile boolean started;
 
-    public synchronized void activate(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
+    public final synchronized void activate(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
         if (activated) {
             return;
         }
@@ -81,7 +79,7 @@ public abstract class AbstractCamelRunner implements Runnable {
         runWithDelay(this);
     }
 
-    public synchronized void prepare(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
+    public final synchronized void prepare(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
         createCamelContext(bundleContext, props);
 
         // Configure fields from properties
@@ -92,27 +90,22 @@ public abstract class AbstractCamelRunner implements Runnable {
 
     protected void createCamelContext(final BundleContext bundleContext, final Map<String, String> props) {
         if (bundleContext != null) {
-            registry = new OsgiServiceRegistry(bundleContext);
-            context = new OsgiDefaultCamelContext(bundleContext, registry);
+            context = new OsgiDefaultCamelContext(bundleContext, createRegistry(bundleContext));
             // Setup the application context classloader with the bundle classloader
             context.setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
             // and make sure the TCCL is our classloader
             Thread.currentThread().setContextClassLoader(context.getApplicationContextClassLoader());
         } else {
-            registry = new SimpleRegistry();
-            context = new DefaultCamelContext(registry);
+            context = new DefaultCamelContext(createRegistry());
         }
         setupPropertiesComponent(context, props, log);
     }
-    
+
     protected void setupCamelContext(final BundleContext bundleContext, final String camelContextId) throws Exception {
         // Set up CamelContext
         if (camelContextId != null) {
             context.setNameStrategy(new ExplicitCamelContextNameStrategy(camelContextId));
         }
-        // TODO: allow to configure these options and not hardcode
-        context.setUseMDCLogging(true);
-        context.setUseBreadcrumb(true);
 
         // Add routes
         for (RoutesBuilder route : getRouteBuilders()) {
@@ -141,17 +134,11 @@ public abstract class AbstractCamelRunner implements Runnable {
             Properties initialProps = new Properties();
             initialProps.putAll(props);
             log.debug(String.format("Added %d initial properties", props.size()));
-            try {
-                pc.setInitialProperties(initialProps);
-            } catch (NoSuchMethodError e) {
-                // For Camel versions without setInitialProperties
-                pc.setOverrideProperties(initialProps);
-                pc.setLocation("default.properties");
-            }
+            pc.setInitialProperties(initialProps);
         }
     }
 
-    protected abstract List<RoutesBuilder> getRouteBuilders();
+    protected abstract List<RoutesBuilder> getRouteBuilders() throws Exception;
 
     // Run after a delay unless the method is called again
     private void runWithDelay(final Runnable runnable) {
@@ -169,11 +156,11 @@ public abstract class AbstractCamelRunner implements Runnable {
         }
     }
 
-    public synchronized void run() {
+    public final synchronized void run() {
         startCamelContext();
     }
 
-    public synchronized void deactivate() {
+    public final synchronized void deactivate() {
         if (!activated) {
             return;
         }
@@ -186,7 +173,7 @@ public abstract class AbstractCamelRunner implements Runnable {
         stop();
     }
 
-    public synchronized void stop() {
+    public final synchronized void stop() {
         stopCamelContext();
     }
 
@@ -220,16 +207,16 @@ public abstract class AbstractCamelRunner implements Runnable {
         }
     }
     
-    public CamelContext getContext() {
+    public final CamelContext getContext() {
         return context;
     }
 
-    protected void gotCamelComponent(final ServiceReference serviceReference) {
+    protected final void gotCamelComponent(final ServiceReference serviceReference) {
         log.trace("Got a new Camel Component.");
         runWithDelay(this);
     }
 
-    protected void lostCamelComponent(final ServiceReference serviceReference) {
+    protected final void lostCamelComponent(final ServiceReference serviceReference) {
         log.trace("Lost a Camel Component.");
     }
 
@@ -275,11 +262,9 @@ public abstract class AbstractCamelRunner implements Runnable {
         } else if (type instanceof Class) {
             clazz = (Class<?>) type;
         }
-        if (null != value) {
-            if (clazz.isInstance(value)) {
-                return value;
-            } else if (clazz == String.class) {
-                return value;
+        if (clazz != null && value != null) {
+            if (clazz.isAssignableFrom(value.getClass())) {
+                return clazz.cast(value);
             } else if (clazz == Boolean.class || clazz == boolean.class) {
                 return Boolean.parseBoolean(value);
             } else if (clazz == Integer.class || clazz == int.class) {
@@ -295,10 +280,26 @@ public abstract class AbstractCamelRunner implements Runnable {
             } else if (clazz == URL.class) {
                 return new URL(value);
             } else {
-                throw new IllegalArgumentException("Unsupported type: " + (clazz != null ? clazz.getName() : null));
+                throw new IllegalArgumentException("Unsupported type: " + clazz.getName());
             }
         } else {
             return null;
         }
+    }
+
+    public static <T extends Registry> T getRegistry(CamelContext context, Class<T> type) throws Exception {
+        T result = context.getRegistry(type);
+        if (result == null) {
+            throw new Exception(type.getName() + " not available in " + context.getName());
+        }
+        return result;
+    }
+
+    protected Registry createRegistry() {
+        return new SimpleRegistry();
+    }
+
+    protected Registry createRegistry(BundleContext bundleContext) {
+        return createRegistry();
     }
 }

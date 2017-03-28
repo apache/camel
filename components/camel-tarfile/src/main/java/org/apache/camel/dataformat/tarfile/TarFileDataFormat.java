@@ -42,6 +42,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
  */
 public class TarFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean usingIterator;
+    private boolean allowEmptyDirectory;
 
     @Override
     public String getDataFormatName() {
@@ -86,7 +87,9 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
         if (usingIterator) {
-            return new TarIterator(exchange, stream);
+            TarIterator tarIterator = new TarIterator(exchange.getIn(), stream);
+            tarIterator.setAllowEmptyDirectory(allowEmptyDirectory);
+            return tarIterator;
         } else {
             BufferedInputStream bis = new BufferedInputStream(stream);
             TarArchiveInputStream tis = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, bis);
@@ -118,6 +121,14 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     public void setUsingIterator(boolean usingIterator) {
         this.usingIterator = usingIterator;
+    }
+    
+    public boolean isAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
+
+    public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
     @Override

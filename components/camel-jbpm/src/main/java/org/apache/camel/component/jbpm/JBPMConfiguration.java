@@ -67,13 +67,13 @@ public class JBPMConfiguration {
     private Long contentId;
     @UriParam
     private Task task;
-    @UriParam
+    @UriParam(label = "advanced")
     private List<OrganizationalEntity> entities;
-    @UriParam
+    @UriParam(label = "filter")
     private List<Status> statuses;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String userName;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private Integer timeout;

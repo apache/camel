@@ -32,7 +32,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
 /**
  * Solves the planning problem contained in a message with OptaPlanner.
  */
-@UriEndpoint(scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", label = "engine,planning")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", label = "engine,planning")
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver> SOLVERS = new HashMap<String, Solver>();
 
@@ -46,7 +46,8 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     public OptaPlannerEndpoint(String uri, Component component, OptaPlannerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile());
+        ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
+        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
     }
 
     protected Solver getOrCreateSolver(String solverId) throws Exception {

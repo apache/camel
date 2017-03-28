@@ -17,13 +17,20 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 public class KafkaComponent extends UriEndpointComponent {
+
+    private KafkaConfiguration configuration;
+
+    @Metadata(label = "advanced")
+    private ExecutorService workerPool;
 
     public KafkaComponent() {
         super(KafkaEndpoint.class);
@@ -34,30 +41,69 @@ public class KafkaComponent extends UriEndpointComponent {
     }
 
     @Override
-    protected KafkaEndpoint createEndpoint(String uri,
-                                           String remaining,
-                                           Map<String, Object> params) throws Exception {
+    protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
+        if (ObjectHelper.isEmpty(remaining)) {
+            throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
+        }
 
         KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
-        String brokers = remaining.split("\\?")[0];
-        Object confparam = params.get("configuration");
-        if (confparam != null) {
-            // need a special handling to resolve the reference before other parameters are set/merged into the config
-            KafkaConfiguration confobj = null;
-            if (confparam instanceof KafkaConfiguration) {
-                confobj = (KafkaConfiguration)confparam;
-            } else if (confparam instanceof String && EndpointHelper.isReferenceParameter((String)confparam)) { 
-                confobj = (KafkaConfiguration)CamelContextHelper.lookup(getCamelContext(), ((String)confparam).substring(1));
-            }
-            if (confobj != null) {
-                endpoint.setConfiguration(confobj.copy());
-            }
-            params.remove("configuration");
+
+        if (configuration != null) {
+            KafkaConfiguration copy = configuration.copy();
+            endpoint.setConfiguration(copy);
         }
-        if (brokers != null) {
-            endpoint.getConfiguration().setBrokers(brokers);
-        }
+
+        endpoint.getConfiguration().setTopic(remaining);
+        endpoint.getConfiguration().setWorkerPool(getWorkerPool());
+
+        // brokers can be configured on either component or endpoint level
+        // and the consumer and produce is aware of this and act accordingly
+
+        setProperties(endpoint.getConfiguration(), params);
         setProperties(endpoint, params);
         return endpoint;
     }
+
+    public KafkaConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Allows to pre-configure the Kafka component with common options that the endpoints will reuse.
+     */
+    public void setConfiguration(KafkaConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getBrokers() {
+        return configuration != null ? configuration.getBrokers() : null;
+    }
+
+    /**
+     * URL of the Kafka brokers to use.
+     * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
+     * <p/>
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
+     */
+    public void setBrokers(String brokers) {
+        if (configuration == null) {
+            configuration = new KafkaConfiguration();
+        }
+        configuration.setBrokers(brokers);
+    }
+
+
+    public ExecutorService getWorkerPool() {
+        return workerPool;
+    }
+
+    /**
+     * To use a shared custom worker pool for continue routing {@link Exchange} after kafka server has acknowledge
+     * the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing.
+     * If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed.
+     */
+    public void setWorkerPool(ExecutorService workerPool) {
+        this.workerPool = workerPool;
+    }
+
 }

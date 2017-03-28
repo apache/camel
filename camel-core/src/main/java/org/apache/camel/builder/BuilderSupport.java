@@ -449,7 +449,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler() {
         return new LoggingErrorHandlerBuilder();
     }
@@ -459,7 +461,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler(String log) {
         return loggingErrorHandler(LoggerFactory.getLogger(log));
     }
@@ -469,7 +473,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler(Logger log) {
         return new LoggingErrorHandlerBuilder(log);
     }
@@ -479,7 +485,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler(Logger log, LoggingLevel level) {
         return new LoggingErrorHandlerBuilder(log, level);
     }

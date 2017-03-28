@@ -19,8 +19,8 @@ package org.apache.camel.component.infinispan.embedded;
 import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.component.infinispan.InfinispanConsumer;
 import org.apache.camel.component.infinispan.InfinispanConsumerHandler;
-import org.apache.camel.component.infinispan.InfinispanCustomListener;
 import org.apache.camel.component.infinispan.InfinispanEventListener;
+import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.infinispan.Cache;
 
 public final class InfinispanConsumerEmbeddedHandler implements InfinispanConsumerHandler {
@@ -31,13 +31,13 @@ public final class InfinispanConsumerEmbeddedHandler implements InfinispanConsum
 
     @Override
     public InfinispanEventListener start(InfinispanConsumer consumer) {
-        Cache<?, ?> embeddedCache = (Cache<?, ?>) consumer.getCache();
+        Cache<?, ?> embeddedCache = InfinispanUtil.asEmbedded(consumer.getCache());
         InfinispanConfiguration configuration = consumer.getConfiguration();
         InfinispanEventListener listener;
-        if (configuration.isCustom()) {
+        if (configuration.hasCustomListener()) {
             listener = configuration.getCustomListener();
-            ((InfinispanCustomListener)listener).setInfinispanConsumer(consumer);
-        } else if (configuration.isClustered()) {
+            listener.setInfinispanConsumer(consumer);
+        } else if (configuration.isClusteredListener()) {
             if (configuration.isSync()) {
                 listener = new InfinispanSyncClusteredEventListener(consumer, configuration.getEventTypes());
             } else {
@@ -56,8 +56,7 @@ public final class InfinispanConsumerEmbeddedHandler implements InfinispanConsum
 
     @Override
     public void stop(InfinispanConsumer consumer) {
-        Cache<?, ?> embeddedCache = (Cache<?, ?>) consumer.getCache();
+        Cache<?, ?> embeddedCache = InfinispanUtil.asEmbedded(consumer.getCache());
         embeddedCache.removeListener(consumer.getListener());
     }
-
 }

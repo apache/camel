@@ -176,7 +176,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there was {} messages in this poll.", maxMessagesPerPoll, total);
+            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 
@@ -287,7 +287,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             try {
                 Message msg = folder.getMessage(i);
                 msgs.add(msg);
-            } catch (MessagingException e) {
+            } catch (Exception e) {
                 if (skipFailedMessage) {
                     LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
                 } else if (handleFailedMessage) {
@@ -337,33 +337,43 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
 
         for (int i = 0; i < count; i++) {
-            KeyValueHolder<String, Message> holder = messages.get(i);
-            String key = holder.getKey();
-            Message message = holder.getValue();
+            try {
+                KeyValueHolder<String, Message> holder = messages.get(i);
+                String key = holder.getKey();
+                Message message = holder.getValue();
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Mail #{} is of type: {} - {}", new Object[]{i, ObjectHelper.classCanonicalName(message), message});
-            }
-
-            if (!message.getFlags().contains(Flags.Flag.DELETED)) {
-                Exchange exchange = getEndpoint().createExchange(message);
-                if (getEndpoint().getConfiguration().isMapMailMessage()) {
-                    // ensure the mail message is mapped, which can be ensured by touching the body/header/attachment
-                    LOG.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
-                    exchange.getIn().getBody();
-                    exchange.getIn().getHeaders();
-                    exchange.getIn().getAttachments();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Mail #{} is of type: {} - {}", new Object[]{i, ObjectHelper.classCanonicalName(message), message});
                 }
 
-                // If the protocol is POP3 we need to remember the uid on the exchange
-                // so we can find the mail message again later to be able to delete it
-                // we also need to remember the UUID for idempotent repository
-                exchange.setProperty(MAIL_MESSAGE_UID, key);
+                if (!message.getFlags().contains(Flags.Flag.DELETED)) {
+                    Exchange exchange = getEndpoint().createExchange(message);
+                    if (getEndpoint().getConfiguration().isMapMailMessage()) {
+                        // ensure the mail message is mapped, which can be ensured by touching the body/header/attachment
+                        LOG.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
+                        exchange.getIn().getBody();
+                        exchange.getIn().getHeaders();
+                        exchange.getIn().getAttachments();
+                    }
 
-                answer.add(exchange);
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Skipping message as it was flagged as deleted: {}", MailUtils.dumpMessage(message));
+                    // If the protocol is POP3 we need to remember the uid on the exchange
+                    // so we can find the mail message again later to be able to delete it
+                    // we also need to remember the UUID for idempotent repository
+                    exchange.setProperty(MAIL_MESSAGE_UID, key);
+
+                    answer.add(exchange);
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Skipping message as it was flagged as deleted: {}", MailUtils.dumpMessage(message));
+                    }
+                }
+            } catch (Exception e) {
+                if (skipFailedMessage) {
+                    LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
+                } else if (handleFailedMessage) {
+                    handleException(e);
+                } else {
+                    throw e;
                 }
             }
         }

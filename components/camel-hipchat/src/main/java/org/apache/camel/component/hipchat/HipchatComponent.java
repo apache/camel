@@ -17,7 +17,6 @@
 package org.apache.camel.component.hipchat;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;

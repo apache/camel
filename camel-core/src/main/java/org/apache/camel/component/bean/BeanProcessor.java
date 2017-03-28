@@ -21,6 +21,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -181,6 +182,10 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         return processor;
     }
 
+    protected BeanHolder getBeanHolder() {
+        return this.beanHolder;
+    }
+
     public Object getBean() {
         return beanHolder.getBean();
     }
@@ -228,11 +233,29 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         if (beanHolder.supportProcessor() && allowProcessor(method, beanHolder.getBeanInfo())) {
             processor = beanHolder.getProcessor();
             ServiceHelper.startService(processor);
+        } else if (beanHolder instanceof ConstantBeanHolder) {
+            try {
+                // Start the bean if it implements Service interface and if cached
+                // so meant to be reused
+                ServiceHelper.startService(beanHolder.getBean());
+            } catch (NoSuchBeanException e) {
+                // ignore
+            }
         }
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processor);
+        if (processor != null) {
+            ServiceHelper.stopService(processor);
+        } else if (beanHolder instanceof ConstantBeanHolder) {
+            try {
+                // Stop the bean if it implements Service interface and if cached
+                // so meant to be reused
+                ServiceHelper.stopService(beanHolder.getBean());
+            } catch (NoSuchBeanException e) {
+                // ignore
+            }
+        }
     }
 
     private boolean allowProcessor(String explicitMethodName, BeanInfo info) {

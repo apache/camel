@@ -18,7 +18,6 @@ package org.apache.camel.commands;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * CamelController interface defines the expected behaviors to manipulate Camel resources (context, route, etc).
@@ -66,12 +65,13 @@ public interface CamelController {
      * Browses the inflight exchanges
      *
      * @param camelContextName        the Camel context.
+     * @param route                   the Camel route ID
      * @param limit                   maximum number of exchanges to return
      * @param sortByLongestDuration   <tt>true</tt> to sort by longest duration, <tt>false</tt> to sort by exchange id
      * @return a list of key/value pairs with inflight exchange information
      * @throws java.lang.Exception can be thrown
      */
-    List<Map<String, Object>> browseInflightExchanges(String camelContextName, int limit, boolean sortByLongestDuration) throws Exception;
+    List<Map<String, Object>> browseInflightExchanges(String camelContextName, String route, int limit, boolean sortByLongestDuration) throws Exception;
 
     /**
      * Starts the given Camel context.
@@ -267,71 +267,20 @@ public interface CamelController {
     List<Map<String, String>> listComponents(String camelContextName) throws Exception;
 
     /**
-     * Lists all EIPs from the Camel EIP catalog
+     * Return the transformers
      *
-     * @param filter optional filter to filter by labels
-     * @return a list of key/value pairs with model information
+     * @param camelContextName the Camel context.
+     * @return a list of key/value pairs with transformer information
      * @throws java.lang.Exception can be thrown
      */
-    List<Map<String, String>> listEipsCatalog(String filter) throws Exception;
+    List<Map<String, String>> getTransformers(String camelContextName) throws Exception;
 
     /**
-     * Lists all the labels from the Camel EIP catalog
+     * Return the validators
      *
-     * @return a map which key is the label, and the set is the models names that has the given label
+     * @param camelContextName the Camel context.
+     * @return a list of key/value pairs with validator information
      * @throws java.lang.Exception can be thrown
      */
-    Map<String, Set<String>> listEipsLabelCatalog() throws Exception;
-
-    /**
-     * Lists all components from the Camel components catalog
-     *
-     * @param filter optional filter to filter by labels
-     * @return a list of key/value pairs with component information
-     * @throws java.lang.Exception can be thrown
-     */
-    List<Map<String, String>> listComponentsCatalog(String filter) throws Exception;
-
-    /**
-     * Lists all the labels from the Camel components catalog
-     *
-     * @return a map which key is the label, and the set is the component names that has the given label
-     * @throws java.lang.Exception can be thrown
-     */
-    Map<String, Set<String>> listComponentsLabelCatalog() throws Exception;
-
-    /**
-     * Lists all data formats from the Camel components catalog
-     *
-     * @param filter optional filter to filter by labels
-     * @return a list of key/value pairs with data format information
-     * @throws java.lang.Exception can be thrown
-     */
-    List<Map<String, String>> listDataFormatsCatalog(String filter) throws Exception;
-
-    /**
-     * Lists all the labels from the Camel data formats catalog
-     *
-     * @return a map which key is the label, and the set is the data format names that has the given label
-     * @throws java.lang.Exception can be thrown
-     */
-    Map<String, Set<String>> listDataFormatsLabelCatalog() throws Exception;
-
-    /**
-     * Lists all languages from the Camel components catalog
-     *
-     * @param filter optional filter to filter by labels
-     * @return a list of key/value pairs with language information
-     * @throws java.lang.Exception can be thrown
-     */
-    List<Map<String, String>> listLanguagesCatalog(String filter) throws Exception;
-
-    /**
-     * Lists all the labels from the Camel languages catalog
-     *
-     * @return a map which key is the label, and the set is the language names that has the given label
-     * @throws java.lang.Exception can be thrown
-     */
-    Map<String, Set<String>> listLanguagesLabelCatalog() throws Exception;
-
+    List<Map<String, String>> getValidators(String camelContextName) throws Exception;
 }

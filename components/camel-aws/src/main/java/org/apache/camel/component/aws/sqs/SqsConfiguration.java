@@ -16,35 +16,32 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import java.util.Collection;
-
 import com.amazonaws.services.sqs.AmazonSQS;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class SqsConfiguration {
 
     // common properties
-    @UriPath @Metadata(required = "true")
     private String queueName;
     @UriParam
     private AmazonSQS amazonSQSClient;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam(defaultValue = "amazonaws.com")
+    private String amazonAWSHost = "amazonaws.com";
     @UriParam
     private String amazonSQSEndpoint;
-    @UriParam
+    @UriParam(secret = true)
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
-    @UriParam
+    @UriParam(label = "proxy")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer proxyPort;
 
     // consumer properties
@@ -72,17 +69,17 @@ public class SqsConfiguration {
     private Integer delaySeconds;
 
     // queue properties
-    @UriParam
+    @UriParam(label = "queue")
     private Integer maximumMessageSize;
-    @UriParam
+    @UriParam(label = "queue")
     private Integer messageRetentionPeriod;
-    @UriParam
+    @UriParam(label = "queue")
     private Integer receiveMessageWaitTimeSeconds;
-    @UriParam
+    @UriParam(label = "queue")
     private String policy;
     
     // dead letter queue properties
-    @UriParam
+    @UriParam(label = "queue")
     private String redrivePolicy;
 
     /**
@@ -96,6 +93,17 @@ public class SqsConfiguration {
 
     public String getAmazonSQSEndpoint() {
         return amazonSQSEndpoint;
+    }
+
+    public String getAmazonAWSHost() {
+        return amazonAWSHost;
+    }
+
+    /**
+     * The hostname of the Amazon AWS cloud.
+     */
+    public void setAmazonAWSHost(String amazonAWSHost) {
+        this.amazonAWSHost = amazonAWSHost;
     }
 
     public String getQueueName() {
@@ -360,6 +368,7 @@ public class SqsConfiguration {
     @Override
     public String toString() {
         return "SqsConfiguration[queueName=" + queueName
+            + ", amazonAWSHost=" + amazonAWSHost
             + ", amazonSQSClient=" + amazonSQSClient
             + ", accessKey=" + accessKey
             + ", secretKey=xxxxxxxxxxxxxxx"

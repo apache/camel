@@ -16,13 +16,17 @@
  */
 package org.apache.camel.maven;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -32,11 +36,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -45,14 +55,18 @@ import org.apache.camel.component.salesforce.api.dto.PickListValue;
 import org.apache.camel.component.salesforce.api.dto.SObject;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -65,27 +79,35 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.eclipse.jetty.client.Address;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.RedirectListener;
-import org.eclipse.jetty.client.security.ProxyAuthorization;
+import org.eclipse.jetty.client.HttpProxy;
+import org.eclipse.jetty.client.Origin;
+import org.eclipse.jetty.client.ProxyConfiguration;
+import org.eclipse.jetty.client.Socks4Proxy;
+import org.eclipse.jetty.client.api.Authentication;
+import org.eclipse.jetty.client.util.BasicAuthentication;
+import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
  * Goal to generate DTOs for Salesforce SObjects
  */
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "generate", requiresProject = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class CamelSalesforceMojo extends AbstractMojo {
-
     // default connect and call timeout
     protected static final int DEFAULT_TIMEOUT = 60000;
 
+    private static final String UTF_8 = "UTF-8";
+
     private static final String JAVA_EXT = ".java";
-    private static final String PACKAGE_NAME_PATTERN = "^[a-z]+(\\.[a-z][a-z0-9]*)*$";
+    private static final String PACKAGE_NAME_PATTERN = "(\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*\\.)+\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+
+    private static final Pattern MATCH_EVERYTHING_PATTERN = Pattern.compile(".*");
+    private static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("^$");
 
     private static final String SOBJECT_POJO_VM = "/sobject-pojo.vm";
+    private static final String SOBJECT_POJO_OPTIONAL_VM = "/sobject-pojo-optional.vm";
     private static final String SOBJECT_QUERY_RECORDS_VM = "/sobject-query-records.vm";
+    private static final String SOBJECT_QUERY_RECORDS_OPTIONAL_VM = "/sobject-query-records-optional.vm";
     private static final String SOBJECT_PICKLIST_VM = "/sobject-picklist.vm";
 
     // used for velocity logging, to avoid creating velocity.log
@@ -116,6 +138,30 @@ public class CamelSalesforceMojo extends AbstractMojo {
     protected Integer httpProxyPort;
 
     /**
+     * Is it a SOCKS4 Proxy?
+     */
+    @Parameter(property = "camelSalesforce.isHttpProxySocks4")
+    protected boolean isHttpProxySocks4;
+
+    /**
+     * Is HTTP Proxy secure, i.e. using secure sockets, true by default.
+     */
+    @Parameter(property = "camelSalesforce.isHttpProxySecure")
+    protected boolean isHttpProxySecure = true;
+
+    /**
+     * Addresses to Proxy.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyIncludedAddresses")
+    protected Set<String> httpProxyIncludedAddresses;
+
+    /**
+     * Addresses to NOT Proxy.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyExcludedAddresses")
+    protected Set<String> httpProxyExcludedAddresses;
+
+    /**
      * Proxy authentication username.
      */
     @Parameter(property = "camelSalesforce.httpProxyUsername")
@@ -126,6 +172,24 @@ public class CamelSalesforceMojo extends AbstractMojo {
      */
     @Parameter(property = "camelSalesforce.httpProxyPassword")
     protected String httpProxyPassword;
+
+    /**
+     * Proxy authentication URI.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyAuthUri")
+    protected String httpProxyAuthUri;
+
+    /**
+     * Proxy authentication realm.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyRealm")
+    protected String httpProxyRealm;
+
+    /**
+     * Proxy uses Digest authentication.
+     */
+    @Parameter(property = "camelSalesforce.httpProxyUseDigestAuth")
+    protected boolean httpProxyUseDigestAuth;
 
     /**
      * Salesforce client id.
@@ -200,7 +264,14 @@ public class CamelSalesforceMojo extends AbstractMojo {
     @Parameter(property = "camelSalesforce.packageName", defaultValue = "org.apache.camel.salesforce.dto")
     protected String packageName;
 
-    private VelocityEngine engine;
+    @Parameter(property = "camelSalesforce.useOptionals", defaultValue = "false")
+    protected boolean useOptionals;
+
+    @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
+    protected Boolean useStringsForPicklists;
+
+    VelocityEngine engine;
+
     private long responseTimeout;
 
     /**
@@ -209,25 +280,19 @@ public class CamelSalesforceMojo extends AbstractMojo {
      * @throws MojoExecutionException
      */
     public void execute() throws MojoExecutionException {
-        // initialize velocity to load resources from class loader and use Log4J
-        Properties velocityProperties = new Properties();
-        velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
-        velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
-        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM + ".log4j.logger", LOG.getName());
-        engine = new VelocityEngine(velocityProperties);
-        engine.init();
+        engine = createVelocityEngine();
 
         // make sure we can load both templates
-        if (!engine.resourceExists(SOBJECT_POJO_VM) || !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM)) {
+        if (!engine.resourceExists(SOBJECT_POJO_VM)
+                || !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM)
+                || !engine.resourceExists(SOBJECT_POJO_OPTIONAL_VM)
+                || !engine.resourceExists(SOBJECT_QUERY_RECORDS_OPTIONAL_VM)) {
             throw new MojoExecutionException("Velocity templates not found");
         }
 
         // connect to Salesforce
-        final HttpClient httpClient = createHttpClient();
-
-        final SalesforceSession session = new SalesforceSession(httpClient,
-                new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
+        final SalesforceHttpClient httpClient = createHttpClient();
+        final SalesforceSession session = httpClient.getSession();
 
         getLog().info("Salesforce login...");
         try {
@@ -252,7 +317,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
         try {
             // use Jackson json
-            final ObjectMapper mapper = new ObjectMapper();
+            final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
             // call getGlobalObjects to get all SObjects
             final Set<String> objectNames = new TreeSet<String>();
@@ -275,7 +340,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
                     objectNames.add(sObject.getName());
                 }
             } catch (Exception e) {
-                String msg = "Error getting global Objects " + e.getMessage();
+                String msg = "Error getting global Objects: " + e.getMessage();
                 throw new MojoExecutionException(msg, e);
             }
 
@@ -318,6 +383,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
             if (!packageName.matches(PACKAGE_NAME_PATTERN)) {
                 throw new MojoExecutionException("Invalid package name " + packageName);
             }
+            if (outputDirectory.getAbsolutePath().contains("$")) {
+                outputDirectory = new File("generated-sources/camel-salesforce");
+            }
             final File pkgDir = new File(outputDirectory, packageName.trim().replace('.', File.separatorChar));
             if (!pkgDir.exists()) {
                 if (!pkgDir.mkdirs()) {
@@ -327,11 +395,15 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
             getLog().info("Generating Java Classes...");
             // generate POJOs for every object description
-            final GeneratorUtility utility = new GeneratorUtility();
+            final GeneratorUtility utility = new GeneratorUtility(useStringsForPicklists);
             // should we provide a flag to control timestamp generation?
             final String generatedDate = new Date().toString();
             for (SObjectDescription description : descriptions) {
-                processDescription(pkgDir, description, utility, generatedDate);
+                try {
+                    processDescription(pkgDir, description, utility, generatedDate);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Unable to generate source files for: " + description.getName(), e);
+                }
             }
             getLog().info(String.format("Successfully generated %s Java Classes", descriptions.size() * 2));
 
@@ -354,6 +426,19 @@ public class CamelSalesforceMojo extends AbstractMojo {
             } catch (Exception ignore) {
             }
         }
+    }
+
+    static VelocityEngine createVelocityEngine() {
+        // initialize velocity to load resources from class loader and use Log4J
+        final Properties velocityProperties = new Properties();
+        velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
+        velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
+        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
+        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM + ".log4j.logger", LOG.getName());
+
+        final VelocityEngine engine = new VelocityEngine(velocityProperties);
+
+        return engine;
     }
 
     protected void filterObjectNames(Set<String> objectNames) throws MojoExecutionException {
@@ -387,10 +472,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
             incPattern = Pattern.compile(includePattern.trim());
         } else if (includedNames.isEmpty()) {
             // include everything by default if no include names are set
-            incPattern = Pattern.compile(".*");
+            incPattern = MATCH_EVERYTHING_PATTERN;
         } else {
             // include nothing by default if include names are set
-            incPattern = Pattern.compile("^$");
+            incPattern = MATCH_NOTHING_PATTERN;
         }
 
         // check whether a pattern is in effect
@@ -399,7 +484,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             excPattern = Pattern.compile(excludePattern.trim());
         } else {
             // exclude nothing by default
-            excPattern = Pattern.compile("^$");
+            excPattern = MATCH_NOTHING_PATTERN;
         }
 
         final Set<String> acceptedNames = new HashSet<String>();
@@ -417,27 +502,32 @@ public class CamelSalesforceMojo extends AbstractMojo {
         getLog().info(String.format("Found %s matching Objects", objectNames.size()));
     }
 
-    protected HttpClient createHttpClient() throws MojoExecutionException {
+    protected SalesforceHttpClient createHttpClient() throws MojoExecutionException {
 
-        final HttpClient httpClient = new HttpClient();
-
-        // default settings
-        httpClient.registerListener(RedirectListener.class.getName());
-        httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
-        httpClient.setConnectTimeout(DEFAULT_TIMEOUT);
-        httpClient.setTimeout(DEFAULT_TIMEOUT);
+        final SalesforceHttpClient httpClient;
 
         // set ssl context parameters
         try {
+
             final SSLContextParameters contextParameters = sslContextParameters != null
                 ? sslContextParameters : new SSLContextParameters();
-            final SslContextFactory sslContextFactory = httpClient.getSslContextFactory();
+            final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setSslContext(contextParameters.createSSLContext());
+
+            httpClient = new SalesforceHttpClient(sslContextFactory);
+
         } catch (GeneralSecurityException e) {
             throw new MojoExecutionException("Error creating default SSL context: " + e.getMessage(), e);
         } catch (IOException e) {
             throw new MojoExecutionException("Error creating default SSL context: " + e.getMessage(), e);
         }
+
+        // default settings
+        httpClient.setConnectTimeout(DEFAULT_TIMEOUT);
+        httpClient.setTimeout(DEFAULT_TIMEOUT);
+
+        // enable redirects, no need for a RedirectListener class in Jetty 9
+        httpClient.setFollowRedirects(true);
 
         // set HTTP client parameters
         if (httpClientProperties != null && !httpClientProperties.isEmpty()) {
@@ -452,24 +542,44 @@ public class CamelSalesforceMojo extends AbstractMojo {
         responseTimeout = httpClient.getTimeout() + 1000L;
 
         // set http proxy settings
+        // set HTTP proxy settings
         if (this.httpProxyHost != null && httpProxyPort != null) {
-            httpClient.setProxy(new Address(this.httpProxyHost, this.httpProxyPort));
+            Origin.Address proxyAddress = new Origin.Address(this.httpProxyHost, this.httpProxyPort);
+            ProxyConfiguration.Proxy proxy;
+            if (isHttpProxySocks4) {
+                proxy = new Socks4Proxy(proxyAddress, isHttpProxySecure);
+            } else {
+                proxy = new HttpProxy(proxyAddress, isHttpProxySecure);
+            }
+            if (httpProxyIncludedAddresses != null && !httpProxyIncludedAddresses.isEmpty()) {
+                proxy.getIncludedAddresses().addAll(httpProxyIncludedAddresses);
+            }
+            if (httpProxyExcludedAddresses != null && !httpProxyExcludedAddresses.isEmpty()) {
+                proxy.getExcludedAddresses().addAll(httpProxyExcludedAddresses);
+            }
+            httpClient.getProxyConfiguration().getProxies().add(proxy);
         }
         if (this.httpProxyUsername != null && httpProxyPassword != null) {
-            try {
-                httpClient.setProxyAuthentication(new ProxyAuthorization(this.httpProxyUsername, this.httpProxyPassword));
-            } catch (IOException e) {
-                throw new MojoExecutionException("Error configuring proxy authorization: " + e.getMessage(), e);
+
+            ObjectHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
+            ObjectHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
+
+            final Authentication authentication;
+            if (httpProxyUseDigestAuth) {
+                authentication = new DigestAuthentication(URI.create(httpProxyAuthUri),
+                    httpProxyRealm, httpProxyUsername, httpProxyPassword);
+            } else {
+                authentication = new BasicAuthentication(URI.create(httpProxyAuthUri),
+                    httpProxyRealm, httpProxyUsername, httpProxyPassword);
             }
+            httpClient.getAuthenticationStore().addAuthentication(authentication);
         }
 
-        // add redirect listener to handle Salesforce redirects
-        // this is ok to do since the RedirectListener is in the same classloader as Jetty client
-        String listenerClass = RedirectListener.class.getName();
-        if (httpClient.getRegisteredListeners() == null
-            || !httpClient.getRegisteredListeners().contains(listenerClass)) {
-            httpClient.registerListener(listenerClass);
-        }
+        // set session before calling start()
+        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), httpClient,
+            httpClient.getTimeout(),
+            new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
+        httpClient.setSession(session);
 
         try {
             httpClient.start();
@@ -479,71 +589,64 @@ public class CamelSalesforceMojo extends AbstractMojo {
         return httpClient;
     }
 
-    private void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws MojoExecutionException {
+    void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws IOException {
         // generate a source file for SObject
-        String fileName = description.getName() + JAVA_EXT;
-        BufferedWriter writer = null;
-        try {
-            final File pojoFile = new File(pkgDir, fileName);
-            writer = new BufferedWriter(new FileWriter(pojoFile));
+        final VelocityContext context = new VelocityContext();
+        context.put("packageName", packageName);
+        context.put("utility", utility);
+        context.put("esc", StringEscapeUtils.class);
+        context.put("desc", description);
+        context.put("generatedDate", generatedDate);
+        context.put("useStringsForPicklists", useStringsForPicklists);
 
-            VelocityContext context = new VelocityContext();
-            context.put("packageName", packageName);
-            context.put("utility", utility);
-            context.put("desc", description);
-            context.put("generatedDate", generatedDate);
-
-            Template pojoTemplate = engine.getTemplate(SOBJECT_POJO_VM);
+        final String pojoFileName = description.getName() + JAVA_EXT;
+        final File pojoFile = new File(pkgDir, pojoFileName);
+        try (final Writer writer = new OutputStreamWriter(new FileOutputStream(pojoFile), StandardCharsets.UTF_8)) {
+            final Template pojoTemplate = engine.getTemplate(SOBJECT_POJO_VM, UTF_8);
             pojoTemplate.merge(context, writer);
-            // close pojoFile
-            writer.close();
+        }
 
-            // write required Enumerations for any picklists
-            for (SObjectField field : description.getFields()) {
-                if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
-                    fileName = utility.enumTypeName(field.getName()) + JAVA_EXT;
-                    File enumFile = new File(pkgDir, fileName);
-                    writer = new BufferedWriter(new FileWriter(enumFile));
+        if (useOptionals) {
+            final String optionalFileName = description.getName() + "Optional" + JAVA_EXT;
+            final File optionalFile = new File(pkgDir, optionalFileName);
+            try (final Writer writer = new OutputStreamWriter(new FileOutputStream(optionalFile), StandardCharsets.UTF_8)) {
+                final Template optionalTemplate = engine.getTemplate(SOBJECT_POJO_OPTIONAL_VM, UTF_8);
+                optionalTemplate.merge(context, writer);
+            }
+        }
 
-                    context = new VelocityContext();
-                    context.put("packageName", packageName);
-                    context.put("utility", utility);
-                    context.put("field", field);
-                    context.put("generatedDate", generatedDate);
+        // write required Enumerations for any picklists
+        for (SObjectField field : description.getFields()) {
+            if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
+                final String enumName = description.getName() + "_" + utility.enumTypeName(field.getName());
+                final String enumFileName = enumName + JAVA_EXT;
+                final File enumFile = new File(pkgDir, enumFileName);
 
-                    Template queryTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM);
-                    queryTemplate.merge(context, writer);
+                context.put("field", field);
+                context.put("enumName", enumName);
+                final Template enumTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM, UTF_8);
 
-                    // close Enum file
-                    writer.close();
+                try (final Writer writer = new OutputStreamWriter(new FileOutputStream(enumFile), StandardCharsets.UTF_8)) {
+                    enumTemplate.merge(context, writer);
                 }
             }
+        }
 
-            // write the QueryRecords class
-            fileName = "QueryRecords" + description.getName() + JAVA_EXT;
-            File queryFile = new File(pkgDir, fileName);
-            writer = new BufferedWriter(new FileWriter(queryFile));
-
-            context = new VelocityContext();
-            context.put("packageName", packageName);
-            context.put("desc", description);
-            context.put("generatedDate", generatedDate);
-
-            Template queryTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_VM);
+        // write the QueryRecords class
+        final String queryRecordsFileName = "QueryRecords" + description.getName() + JAVA_EXT;
+        final File queryRecordsFile = new File(pkgDir, queryRecordsFileName);
+        final Template queryTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_VM, UTF_8);
+        try (final Writer writer = new OutputStreamWriter(new FileOutputStream(queryRecordsFile), StandardCharsets.UTF_8)) {
             queryTemplate.merge(context, writer);
+        }
 
-            // close QueryRecords file
-            writer.close();
-
-        } catch (Exception e) {
-            String msg = "Error creating " + fileName + ": " + e.getMessage();
-            throw new MojoExecutionException(msg, e);
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException ignore) {
-                }
+        if (useOptionals) {
+            // write the QueryRecords Optional class
+            final String queryRecordsOptionalFileName = "QueryRecords" + description.getName() + "Optional" + JAVA_EXT;
+            final File queryRecordsOptionalFile = new File(pkgDir, queryRecordsOptionalFileName);
+            final Template queryRecordsOptionalTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_OPTIONAL_VM, UTF_8);
+            try (final Writer writer = new OutputStreamWriter(new FileOutputStream(queryRecordsOptionalFile), StandardCharsets.UTF_8)) {
+                queryRecordsOptionalTemplate.merge(context, writer);
             }
         }
     }
@@ -577,8 +680,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 {"byte", "Byte"},
 //                {"QName", "javax.xml.namespace.QName"},
 
-//                {"dateTime", "javax.xml.datatype.XMLGregorianCalendar"},
-                {"dateTime", "org.joda.time.DateTime"},
+                {"dateTime", "java.time.ZonedDateTime"},
 
                     // the blob base64Binary type is mapped to String URL for retrieving the blob
                 {"base64Binary", "String"},
@@ -589,11 +691,11 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 {"unsignedByte", "Short"},
 
 //                {"time", "javax.xml.datatype.XMLGregorianCalendar"},
-                {"time", "org.joda.time.DateTime"},
+                {"time", "java.time.ZonedDateTime"},
 //                {"date", "javax.xml.datatype.XMLGregorianCalendar"},
-                {"date", "org.joda.time.DateTime"},
+                {"date", "java.time.ZonedDateTime"},
 //                {"g", "javax.xml.datatype.XMLGregorianCalendar"},
-                {"g", "org.joda.time.DateTime"},
+                {"g", "java.time.ZonedDateTime"},
 
                     // Salesforce maps any types like string, picklist, reference, etc. to string
                 {"anyType", "String"},
@@ -615,6 +717,14 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private static final String BASE64BINARY = "base64Binary";
         private static final String MULTIPICKLIST = "multipicklist";
         private static final String PICKLIST = "picklist";
+        private static final List<String> BLACKLISTED_PROPERTIES = Arrays.asList("PicklistValues", "ChildRelationships");
+        private boolean useStringsForPicklists;
+        private final Map<String, AtomicInteger> varNames = new HashMap<>();
+        private Stack<String> stack;
+
+        public GeneratorUtility(Boolean useStringsForPicklists) {
+            this.useStringsForPicklists = Boolean.TRUE.equals(useStringsForPicklists);
+        }
 
         public boolean isBlobField(SObjectField field) {
             final String soapType = field.getSoapType();
@@ -625,14 +735,22 @@ public class CamelSalesforceMojo extends AbstractMojo {
             return !BASE_FIELDS.contains(name);
         }
 
-        public String getFieldType(SObjectField field) throws MojoExecutionException {
+        public String getFieldType(SObjectDescription description, SObjectField field) throws MojoExecutionException {
             // check if this is a picklist
             if (isPicklist(field)) {
-                // use a pick list enum, which will be created after generating the SObject class
-                return enumTypeName(field.getName());
+                if (useStringsForPicklists) {
+                    return String.class.getName();
+                } else {
+                    // use a pick list enum, which will be created after generating the SObject class
+                    return description.getName() + "_" + enumTypeName(field.getName());
+                }
             } else if (isMultiSelectPicklist(field)) {
-                // use a pick list enum array, enum will be created after generating the SObject class
-                return enumTypeName(field.getName()) + "[]";
+                if (useStringsForPicklists) {
+                    return String.class.getName() + "[]";
+                } else {
+                    // use a pick list enum array, enum will be created after generating the SObject class
+                    return description.getName() + "_" + enumTypeName(field.getName()) + "[]";
+                }
             } else {
                 // map field to Java type
                 final String soapType = field.getSoapType();
@@ -691,7 +809,6 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         public boolean isPicklist(SObjectField field) {
-//            return field.getPicklistValues() != null && !field.getPicklistValues().isEmpty();
             return PICKLIST.equals(field.getType());
         }
 
@@ -720,6 +837,67 @@ public class CamelSalesforceMojo extends AbstractMojo {
             }
 
             return changed ? result.toString().toUpperCase() : value.toUpperCase();
+        }
+
+        public boolean includeList(final List<?> list, final String propertyName) {
+            return !list.isEmpty() && !BLACKLISTED_PROPERTIES.contains(propertyName);
+        }
+        public boolean notNull(final Object val) {
+            return val != null;
+        }
+
+        public Set<Map.Entry<String, Object>> propertiesOf(final Object object) {
+            final Map<String, Object> properties = new HashMap<>();
+            IntrospectionSupport.getProperties(object, properties, null, false);
+
+            return properties.entrySet().stream()
+                .collect(Collectors.toMap(e -> StringUtils.capitalize(e.getKey()), Map.Entry::getValue)).entrySet();
+        }
+
+        public String variableName(final String given) {
+            final String base = StringUtils.uncapitalize(given);
+
+            AtomicInteger counter = varNames.get(base);
+            if (counter == null) {
+                counter = new AtomicInteger(0);
+                varNames.put(base, counter);
+            }
+
+            return base + counter.incrementAndGet();
+        }
+
+        public boolean isPrimitiveOrBoxed(final Object object) {
+            final Class<?> clazz = object.getClass();
+
+            final boolean isWholeNumberWrapper = Byte.class.equals(clazz) || Short.class.equals(clazz)
+                || Integer.class.equals(clazz) || Long.class.equals(clazz);
+
+            final boolean isFloatingPointWrapper = Double.class.equals(clazz) || Float.class.equals(clazz);
+
+            final boolean isWrapper = isWholeNumberWrapper || isFloatingPointWrapper || Boolean.class.equals(clazz)
+                || Character.class.equals(clazz);
+
+            final boolean isPrimitive = clazz.isPrimitive();
+
+            return isPrimitive || isWrapper;
+        }
+
+        public void start(final String initial) {
+            stack = new Stack<>();
+            stack.push(initial);
+            varNames.clear();
+        }
+
+        public String current() {
+            return stack.peek();
+        }
+
+        public void push(final String additional) {
+            stack.push(additional);
+        }
+
+        public void pop() {
+            stack.pop();
         }
     }
 

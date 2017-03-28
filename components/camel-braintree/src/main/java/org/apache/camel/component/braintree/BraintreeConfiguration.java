@@ -16,11 +16,18 @@
  */
 package org.apache.camel.component.braintree;
 
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
+import org.apache.camel.component.braintree.internal.BraintreeApiName;
+import org.apache.camel.component.braintree.internal.BraintreeLogHandler;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -32,6 +39,12 @@ public class BraintreeConfiguration {
     private static final String MERCHANT_ID = "merchant_id";
     private static final String PUBLIC_KEY  = "public_key";
     private static final String PRIVATE_KEY = "private_key";
+
+    @UriPath
+    @Metadata(required = "true")
+    private BraintreeApiName apiName;
+    @UriPath
+    private String methodName;
 
     @UriParam
     @Metadata(required = "true")
@@ -56,6 +69,39 @@ public class BraintreeConfiguration {
     @UriParam
     @Metadata(label = "proxy")
     private Integer proxyPort;
+
+    @UriParam(javaType = "java.lang.String")
+    @Metadata(label = "advanced,logging")
+    private Level httpLogLevel;
+
+    @Metadata(label = "advanced,logging")
+    private String httpLogName;
+
+    @UriParam
+    @Metadata(label = "advanced")
+    private Integer httpReadTimeout;
+
+    public BraintreeApiName getApiName() {
+        return apiName;
+    }
+
+    /**
+     * What kind of operation to perform
+     */
+    public void setApiName(BraintreeApiName apiName) {
+        this.apiName = apiName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    /**
+     * What sub operation to use for the selected operation
+     */
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
 
     public String getEnvironment() {
         return ObjectHelper.notNull(environment, ENVIRONMENT);
@@ -123,19 +169,58 @@ public class BraintreeConfiguration {
         this.proxyPort = proxyPort;
     }
 
+    public Level getHttpLogLevel() {
+        return httpLogLevel;
+    }
+
+    /**
+     * Set logging level for http calls, @see java.util.logging.Level
+     */
+    public void setHttpLogLevel(String httpLogLevel) {
+        this.httpLogLevel = Level.parse(httpLogLevel);
+    }
+
+    /**
+     * Set logging level for http calls, @see java.util.logging.Level
+     */
+    public void setHttpLogLevel(Level httpLogLevel) {
+        this.httpLogLevel = httpLogLevel;
+    }
+
+    public String getHttpLogName() {
+        return httpLogName;
+    }
+
+    /**
+     * Set log category to use to log http calls, default "Braintree"
+     */
+    public void setHttpLogName(String httpLogName) {
+        this.httpLogName = httpLogName;
+    }
+
+    public Integer getHttpReadTimeout() {
+        return httpReadTimeout;
+    }
+
+    /**
+     * Set read timeout for http calls.
+     */
+    public void setHttpReadTimeout(Integer httpReadTimeout) {
+        this.httpReadTimeout = httpReadTimeout;
+    }
+
     /**
      * Helper method to get and Environment object from its name
      */
     private Environment getBraintreeEnvironment() {
         String name = getEnvironment();
-
-        if (Environment.DEVELOPMENT.getEnvironmentName().equalsIgnoreCase(name)) {
+        if (ObjectHelper.equal(Environment.DEVELOPMENT.getEnvironmentName(), name, true)) {
             return Environment.DEVELOPMENT;
         }
-        if (Environment.SANDBOX.getEnvironmentName().equalsIgnoreCase(name)) {
+        if (ObjectHelper.equal(Environment.SANDBOX.getEnvironmentName(), name, true)) {
             return Environment.SANDBOX;
         }
-        if (Environment.PRODUCTION.getEnvironmentName().equalsIgnoreCase(name)) {
+        if (ObjectHelper.equal(Environment.PRODUCTION.getEnvironmentName(), name, true)) {
             return Environment.PRODUCTION;
         }
 
@@ -146,7 +231,7 @@ public class BraintreeConfiguration {
     /**
      * Construct a BraintreeGateway from configuration
      */
-    BraintreeGateway newBraintreeGateway() {
+    synchronized BraintreeGateway newBraintreeGateway() {
         final BraintreeGateway gateway = new BraintreeGateway(
             getBraintreeEnvironment(),
             getMerchantId(),
@@ -156,6 +241,29 @@ public class BraintreeConfiguration {
         if (ObjectHelper.isNotEmpty(proxyHost) && ObjectHelper.isNotEmpty(proxyPort)) {
             gateway.setProxy(proxyHost, proxyPort);
         }
+
+        if (httpReadTimeout != null) {
+            gateway.getConfiguration().setTimeout(httpReadTimeout);
+        }
+
+        // If custom log name is defined, a new logger wil be requested otherwise
+        // the one supplied by Braintree' SDK will be used
+        final Logger logger = ObjectHelper.isNotEmpty(httpLogName)
+            ? Logger.getLogger(httpLogName)
+            : gateway.getConfiguration().getLogger();
+
+        // Cleanup handlers as by default braintree install a ConsoleHandler
+        for (Handler handler : logger.getHandlers()) {
+            logger.removeHandler(handler);
+        }
+
+        logger.addHandler(new BraintreeLogHandler());
+
+        if (httpLogLevel != null) {
+            logger.setLevel(httpLogLevel);
+        }
+
+        gateway.getConfiguration().setLogger(logger);
 
         return gateway;
     }

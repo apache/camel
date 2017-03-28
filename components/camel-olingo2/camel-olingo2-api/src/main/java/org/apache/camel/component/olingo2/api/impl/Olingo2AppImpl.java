@@ -17,6 +17,7 @@
 package org.apache.camel.component.olingo2.api.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -46,6 +47,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -57,12 +59,14 @@ import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
-import org.apache.http.nio.client.util.HttpAsyncClientUtils;
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
@@ -111,7 +115,10 @@ public final class Olingo2AppImpl implements Olingo2App {
     private static final String MULTIPART_MIME_TYPE = "multipart/";
     private static final ContentType TEXT_PLAIN_WITH_CS_UTF_8 = ContentType.TEXT_PLAIN.withCharset(Consts.UTF_8);
 
-    private final CloseableHttpAsyncClient client;
+    /**
+     * Reference to CloseableHttpAsyncClient (default) or CloseableHttpClient
+     */
+    private final Closeable client;
 
     private String serviceUri;
     private ContentType contentType;
@@ -121,11 +128,12 @@ public final class Olingo2AppImpl implements Olingo2App {
      * Create Olingo2 Application with default HTTP configuration.
      */
     public Olingo2AppImpl(String serviceUri) {
-        this(serviceUri, null);
+        // By default create HTTP Asynchronous client
+        this(serviceUri, (HttpAsyncClientBuilder) null);
     }
 
     /**
-     * Create Olingo2 Application with custom HTTP client builder.
+     * Create Olingo2 Application with custom HTTP Asynchronous client builder.
      *
      * @param serviceUri Service Application base URI.
      * @param builder custom HTTP client builder.
@@ -133,12 +141,30 @@ public final class Olingo2AppImpl implements Olingo2App {
     public Olingo2AppImpl(String serviceUri, HttpAsyncClientBuilder builder) {
         setServiceUri(serviceUri);
 
+        CloseableHttpAsyncClient asyncClient;
         if (builder == null) {
-            this.client = HttpAsyncClients.createDefault();
+            asyncClient = HttpAsyncClients.createDefault();
+        } else {
+            asyncClient = builder.build();
+        }
+        asyncClient.start();
+        this.client = asyncClient;
+        this.contentType = ContentType.create("application/json", Consts.UTF_8);
+    }
+
+    /**
+     * Create Olingo2 Application with custom HTTP Synchronous client builder.
+     *
+     * @param serviceUri Service Application base URI.
+     * @param builder Custom HTTP Synchronous client builder.
+     */
+    public Olingo2AppImpl(String serviceUri, HttpClientBuilder builder) {
+        setServiceUri(serviceUri);
+        if (builder == null) {
+            this.client = HttpClients.createDefault();
         } else {
             this.client = builder.build();
         }
-        this.client.start();
         this.contentType = ContentType.create("application/json", Consts.UTF_8);
     }
 
@@ -178,7 +204,12 @@ public final class Olingo2AppImpl implements Olingo2App {
 
     @Override
     public void close() {
-        HttpAsyncClientUtils.closeQuietly(client);
+        if (client != null) {
+            try {
+                client.close();
+            } catch (final IOException ignore) {
+            }
+        }
     }
 
     @Override
@@ -386,6 +417,17 @@ public final class Olingo2AppImpl implements Olingo2App {
                 getContentType(),
                 uriInfo.getTargetEntitySet(),
                 content,
+                EntityProviderReadProperties.init().build());
+            break;
+
+        // Function Imports
+        case URI10:
+        case URI11:
+        case URI12:
+        case URI13:
+        case URI14:
+            response = (T) EntityProvider.readFunctionImport(getContentType(),
+                uriInfo.getFunctionImport(), content,
                 EntityProviderReadProperties.init().build());
             break;
 
@@ -1003,7 +1045,18 @@ public final class Olingo2AppImpl implements Olingo2App {
         }
 
         // execute request
-        client.execute(httpUriRequest, callback);
+        if (client instanceof CloseableHttpAsyncClient) {
+            ((CloseableHttpAsyncClient) client).execute(httpUriRequest, callback);
+        } else {
+            // invoke the callback methods explicitly after executing the
+            // request synchronously
+            try {
+                CloseableHttpResponse result = ((CloseableHttpClient) client).execute(httpUriRequest);
+                callback.completed(result);
+            } catch (IOException e) {
+                callback.failed(e);
+            }
+        }
     }
 
 }

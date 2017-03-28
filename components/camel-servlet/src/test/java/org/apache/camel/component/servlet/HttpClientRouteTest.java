@@ -28,6 +28,7 @@ import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -121,9 +122,9 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
                 }
             });
             fail("Excepts exception here");
-        } catch (Exception ex) {
-            assertTrue("Get a wrong exception.", ex instanceof FailedToCreateProducerException);
-            assertTrue("Get a wrong cause of exception.", ex.getCause() instanceof UnsupportedOperationException);
+        } catch (FailedToCreateRouteException ex) {
+            assertTrue("Get a wrong exception.", ex.getCause() instanceof FailedToCreateProducerException);
+            assertTrue("Get a wrong cause of exception.", ex.getCause().getCause() instanceof UnsupportedOperationException);
         }
     }
 

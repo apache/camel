@@ -14,9 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cmis;
 
-interface CMISSessionFacadeFactory {
-    CMISSessionFacade create() throws Exception;
+/**
+ * Factory to create {@link CMISSessionFacade} instances.
+ */
+public interface CMISSessionFacadeFactory {
+
+    /**
+     * Creates a new instance of CMISSessionFacade
+     */
+    CMISSessionFacade create(CMISEndpoint endpoint) throws Exception;
 }

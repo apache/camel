@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
@@ -251,6 +252,20 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         answer.setFileName(answer.getRelativeFilePath());
 
         return answer;
+    }
+
+    @Override
+    protected void updateFileHeaders(GenericFile<FTPFile> file, Message message) {
+        long length = file.getFile().getSize();
+        long modified = file.getFile().getTimestamp() != null ? file.getFile().getTimestamp().getTimeInMillis() : -1;
+        file.setFileLength(length);
+        file.setLastModified(modified);
+        if (length >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, length);
+        }
+        if (modified >= 0) {
+            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+        }
     }
 
     private boolean isStepwise() {

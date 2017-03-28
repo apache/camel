@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* package-private */ final class CdiEventProducer<T> extends DefaultProducer {
+final class CdiEventProducer<T> extends DefaultProducer {
 
     private final Logger logger = LoggerFactory.getLogger(CdiEventProducer.class);
 

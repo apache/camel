@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpoint.class);
+    private final String id = EndpointHelper.createEndpointId();
     private transient String endpointUriToString;
     private String endpointUri;
     private EndpointConfiguration endpointConfiguration;
@@ -63,22 +64,26 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private Component component;
     @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
                     + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
-                    + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored.")
+                    + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private boolean bridgeErrorHandler;
     @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.", description = "To let the consumer use a custom ExceptionHandler."
             + " Notice if the option bridgeErrorHandler is enabled then this options is not in use."
-            + " By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.")
+            + " By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private ExceptionHandler exceptionHandler;
-    @UriParam(defaultValue = "InOnly", label = "advanced",
-            description = "Sets the default exchange pattern when creating an exchange")
+    @UriParam(label = "consumer,advanced",
+            description = "Sets the exchange pattern when the consumer creates an exchange.")
+    // no default value set on @UriParam as the MEP is sometimes InOnly or InOut depending on the component in use
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // option to allow end user to dictate whether async processing should be
     // used or not (if possible)
     @UriParam(defaultValue = "false", label = "advanced",
             description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous;
-    private final String id = EndpointHelper.createEndpointId();
+    // these options are not really in use any option related to the consumer has a specific option on the endpoint
+    // and consumerProperties was added from the very start of Camel.
     private Map<String, Object> consumerProperties;
+    // pooling consumer options only related to EventDrivenPollingConsumer which are very seldom in use
+    // so lets not expose them in the component docs as it will be included in every component
     private int pollingConsumerQueueSize = 1000;
     private boolean pollingConsumerBlockWhenFull = true;
     private long pollingConsumerBlockTimeout;
@@ -147,7 +152,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public boolean equals(Object object) {
         if (object instanceof DefaultEndpoint) {
             DefaultEndpoint that = (DefaultEndpoint)object;
-            return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri());
+            // must also match the same CamelContext in case we compare endpoints from different contexts
+            String thisContextName = this.getCamelContext() != null ? this.getCamelContext().getName() : null;
+            String thatContextName = that.getCamelContext() != null ? that.getCamelContext().getName() : null;
+            return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri()) && ObjectHelper.equal(thisContextName, thatContextName);
         }
         return false;
     }
@@ -161,7 +169,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             } catch (RuntimeException e) {
                 // ignore any exception and use null for building the string value
             }
-            endpointUriToString = String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
+            // ensure to sanitize uri so we do not show sensitive information such as passwords
+            endpointUriToString = URISupport.sanitizeUri(value);
         }
         return endpointUriToString;
     }
@@ -197,6 +206,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      *
      * @param endpointConfiguration a custom endpoint configuration to be used.
      */
+    @Deprecated
     public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
         this.endpointConfiguration = endpointConfiguration;
     }
@@ -420,6 +430,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * A factory method to lazily create the endpoint configuration if none is specified
      */
+    @Deprecated
     protected EndpointConfiguration createEndpointConfiguration(String uri) {
         // using this factory method to be backwards compatible with the old code
         if (getComponent() != null) {
@@ -482,6 +493,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     protected void configureConsumer(Consumer consumer) throws Exception {
+        // inject CamelContext
+        if (consumer instanceof CamelContextAware) {
+            ((CamelContextAware) consumer).setCamelContext(getCamelContext());
+        }
+
         if (consumerProperties != null) {
             // use a defensive copy of the consumer properties as the methods below will remove the used properties
             // and in case we restart routes, we need access to the original consumer properties again

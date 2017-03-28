@@ -26,7 +26,8 @@
          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
   <spring-security:http realm="User Restrict Realm">
-    <spring-security:intercept-url pattern="/camel/**" access="ROLE_USER"/>
+    <spring-security:intercept-url pattern="/camel/**"
+                                   access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')"/>
     <spring-security:http-basic/>
     <spring-security:remember-me/>
   </spring-security:http>
@@ -42,12 +43,10 @@
   </spring-security:user-service>
 
   <bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+    <constructor-arg>
+      <bean class="org.springframework.security.access.vote.RoleVoter"/>
+    </constructor-arg>
     <property name="allowIfAllAbstainDecisions" value="true"/>
-    <property name="decisionVoters">
-      <list>
-        <bean class="org.springframework.security.access.vote.RoleVoter"/>
-      </list>
-    </property>
   </bean>
 
   <!-- The Policy for checking the authentication role of ADMIN -->

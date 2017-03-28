@@ -21,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -60,8 +61,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
  */
-@UriEndpoint(scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging,iot")
-public class MQTTEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "2.10.0", scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging,iot")
+public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 
     private static final int PUBLISH_MAX_RECONNECT_ATTEMPTS = 3;
@@ -277,25 +278,27 @@ public class MQTTEndpoint extends DefaultEndpoint {
         });
     }
 
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (connection != null) {
-            final Promise<Void> promise = new Promise<Void>();
+        if (connection != null && connected) {
+            final Promise<Void> promise = new Promise<>();
             connection.getDispatchQueue().execute(new Task() {
                 @Override
                 public void run() {
                     connection.disconnect(new Callback<Void>() {
                         public void onSuccess(Void value) {
+                            connected = false;
                             promise.onSuccess(value);
                         }
-
                         public void onFailure(Throwable value) {
                             promise.onFailure(value);
                         }
                     });
                 }
             });
+
             promise.await(configuration.getDisconnectWaitInSeconds(), TimeUnit.SECONDS);
         }
     }

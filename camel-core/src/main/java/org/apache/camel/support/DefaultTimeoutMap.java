@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -211,7 +210,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
             // if we found any expired then we need to sort, onEviction and remove
             if (!expired.isEmpty()) {
                 // sort according to the expired time so we got the first expired first
-                Collections.sort(expired, new Comparator<TimeoutMapEntry<K, V>>() {
+                expired.sort(new Comparator<TimeoutMapEntry<K, V>>() {
                     public int compare(TimeoutMapEntry<K, V> a, TimeoutMapEntry<K, V> b) {
                         long diff = a.getExpireTime() - b.getExpireTime();
                         if (diff == 0) {

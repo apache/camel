@@ -49,6 +49,7 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             Exchange theNewestEx = createExchangeWithBody(theNewestBody);
 
             oldEx = repoTwo.add(context(), key, newEx, theNewestEx);
+            assertNotNull("oldEx is null", oldEx);
             assertEquals(newEx.getIn().getBody(), oldEx.getIn().getBody());
 
         } finally {
@@ -77,6 +78,7 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             Exchange theNewestEx = createExchangeWithBody(theNewestBody);
 
             oldEx = repoTwo.add(context(), key, theNewestEx);
+            assertNotNull("oldEx is null", oldEx);
             assertEquals(newEx.getIn().getBody(), oldEx.getIn().getBody());
 
         } finally {
@@ -90,8 +92,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
         HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(THREAD_SAFE_REPO, true, getFirstInstance());
         HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(THREAD_SAFE_REPO, true, getSecondInstance());
         try {
-            repoOne.doStart();
-            repoTwo.doStart();
+            repoOne.start();
+            repoTwo.start();
 
             final String testBody = "This is an optimistic test body. Sincerely yours, Captain Obvious.";
             final String key = "optimisticKey";
@@ -99,7 +101,11 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             Exchange ex = createExchangeWithBody(testBody);
             repoOne.add(context(), key, null, ex);
 
+            assertEquals(1, getFirstInstance().getMap(THREAD_SAFE_REPO).size());
+            assertEquals(1, getSecondInstance().getMap(THREAD_SAFE_REPO).size());
+
             Exchange gotEx = repoTwo.get(context(), key);
+            assertNotNull("gotEx is null", gotEx);
             assertEquals("ex and gotEx should be equal", gotEx.getIn().getBody(), ex.getIn().getBody());
         } finally {
             repoOne.doStop();
@@ -113,8 +119,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
         HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(OPTIMISTIC_REPO, false, getSecondInstance());
 
         try {
-            repoOne.doStart();
-            repoTwo.doStart();
+            repoOne.start();
+            repoTwo.start();
 
 
             final String testBody = "This is a thread-safe test body. Sincerely yours, Captain Obvious.";
@@ -124,6 +130,7 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
             repoOne.add(context(), key, ex);
 
             Exchange gotEx = repoTwo.get(context(), key);
+            assertNotNull("gotEx is null", gotEx);
             assertEquals("ex and gotEx should be equal", gotEx.getIn().getBody(), ex.getIn().getBody());
         } finally {
             repoOne.doStop();

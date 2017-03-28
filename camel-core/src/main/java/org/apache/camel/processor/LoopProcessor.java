@@ -16,12 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
@@ -39,11 +40,13 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     private String id;
     private final Expression expression;
+    private final Predicate predicate;
     private final boolean copy;
 
-    public LoopProcessor(Processor processor, Expression expression, boolean copy) {
+    public LoopProcessor(Processor processor, Expression expression, Predicate predicate, boolean copy) {
         super(processor);
         this.expression = expression;
+        this.predicate = predicate;
         this.copy = copy;
     }
 
@@ -52,19 +55,25 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
         // use atomic integer to be able to pass reference and keep track on the values
         AtomicInteger index = new AtomicInteger();
         AtomicInteger count = new AtomicInteger();
+        AtomicBoolean doWhile = new AtomicBoolean();
 
-        // Intermediate conversion to String is needed when direct conversion to Integer is not available
-        // but evaluation result is a textual representation of a numeric value.
-        String text = expression.evaluate(exchange, String.class);
         try {
-            int num = ExchangeHelper.convertToMandatoryType(exchange, Integer.class, text);
-            count.set(num);
-        } catch (NoTypeConversionAvailableException e) {
+            if (expression != null) {
+                // Intermediate conversion to String is needed when direct conversion to Integer is not available
+                // but evaluation result is a textual representation of a numeric value.
+                String text = expression.evaluate(exchange, String.class);
+                int num = ExchangeHelper.convertToMandatoryType(exchange, Integer.class, text);
+                count.set(num);
+            } else {
+                boolean result = predicate.matches(exchange);
+                doWhile.set(result);
+            }
+        } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
         }
-        
+
         // we hold on to the original Exchange in case it's needed for copies
         final Exchange original = exchange;
         
@@ -72,19 +81,23 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
         Exchange target = exchange;
 
         // set the size before we start
-        exchange.setProperty(Exchange.LOOP_SIZE, count);
+        if (predicate == null) {
+            exchange.setProperty(Exchange.LOOP_SIZE, count);
+        }
 
         // loop synchronously
-        while (index.get() < count.get()) {
+        while ((predicate != null && doWhile.get()) || (index.get() < count.get())) {
 
             // and prepare for next iteration
             // if (!copy) target = exchange; else copy of original
             target = prepareExchange(exchange, index.get(), original);
-            boolean sync = process(target, callback, index, count, original);
+            // the following process method will in the done method re-evaluate the predicate
+            // so we do not need to do it here as well
+            boolean sync = process(target, callback, index, count, doWhile, original);
 
             if (!sync) {
                 LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", target.getExchangeId());
-                // the remainder of the routing slip will be completed async
+                // the remainder of the loop will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
@@ -95,9 +108,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
             if (!continueProcessing(target, "so breaking out of loop", LOG)) {
                 break;
             }
-
-            // increment counter before next loop
-            index.getAndIncrement();
         }
 
         // we are done so prepare the result
@@ -108,47 +118,57 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     }
 
     protected boolean process(final Exchange exchange, final AsyncCallback callback,
-                              final AtomicInteger index, final AtomicInteger count,
+                              final AtomicInteger index, final AtomicInteger count, final AtomicBoolean doWhile,
                               final Exchange original) {
 
         // set current index as property
         LOG.debug("LoopProcessor: iteration #{}", index.get());
         exchange.setProperty(Exchange.LOOP_INDEX, index.get());
-        
+
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                // we only have to handle async completion of the routing slip
+                // increment counter after done
+                index.getAndIncrement();
+
+                // evaluate predicate for next loop
+                if (predicate != null && index.get() > 0) {
+                    try {
+                        boolean result = predicate.matches(exchange);
+                        doWhile.set(result);
+                    } catch (Exception e) {
+                        // break out looping due that exception
+                        exchange.setException(e);
+                        doWhile.set(false);
+                    }
+                }
+
+                // we only have to handle async completion of the loop
+                // (as the sync is done in the outer processor)
                 if (doneSync) {
                     return;
                 }
 
                 Exchange target = exchange;
 
-                // increment index as we have just processed once
-                index.getAndIncrement();
-
                 // continue looping asynchronously
-                while (index.get() < count.get()) {
-
-                    // and prepare for next iteration
-                    target = prepareExchange(exchange, index.get(), original);
-
-                    // process again
-                    boolean sync = process(target, callback, index, count, original);
-                    if (!sync) {
-                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", target.getExchangeId());
-                        // the remainder of the routing slip will be completed async
-                        // so we break out now, then the callback will be invoked which then continue routing from where we left here
-                        return;
-                    }
+                while ((predicate != null && doWhile.get()) || (index.get() < count.get())) {
 
                     // check for error if so we should break out
                     if (!continueProcessing(target, "so breaking out of loop", LOG)) {
                         break;
                     }
 
-                    // increment counter before next loop
-                    index.getAndIncrement();
+                    // and prepare for next iteration
+                    target = prepareExchange(exchange, index.get(), original);
+
+                    // process again
+                    boolean sync = process(target, callback, index, count, doWhile, original);
+                    if (!sync) {
+                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", target.getExchangeId());
+                        // the remainder of the routing slip will be completed async
+                        // so we break out now, then the callback will be invoked which then continue routing from where we left here
+                        return;
+                    }
                 }
 
                 // we are done so prepare the result
@@ -183,12 +203,20 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
         return expression;
     }
 
+    public Predicate getPredicate() {
+        return predicate;
+    }
+
     public boolean isCopy() {
         return copy;
     }
 
     public String getTraceLabel() {
-        return "loop[" + expression + "]";
+        if (predicate != null) {
+            return "loopWhile[" + predicate + "]";
+        } else {
+            return "loop[" + expression + "]";
+        }
     }
 
     public String getId() {
@@ -201,6 +229,10 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     @Override
     public String toString() {
-        return "Loop[for: " + expression + " times do: " + getProcessor() + "]";
+        if (predicate != null) {
+            return "Loop[while: " + predicate + " do: " + getProcessor() + "]";
+        } else {
+            return "Loop[for: " + expression + " times do: " + getProcessor() + "]";
+        }
     }
 }

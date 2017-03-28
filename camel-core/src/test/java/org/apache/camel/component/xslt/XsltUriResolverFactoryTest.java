@@ -19,7 +19,6 @@ package org.apache.camel.component.xslt;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
@@ -32,7 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.spi.ClassResolver;
 import org.junit.Assert;
 
 /**
@@ -82,8 +80,8 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         assertNotNull(xsltEndpoint);
         CustomXsltUriResolver resolver = (CustomXsltUriResolver)xsltEndpoint.getUriResolver();
-        checkResourceUri(resolver.resolvedRsourceUris, "xslt/staff/staff.xsl");
-        checkResourceUri(resolver.resolvedRsourceUris, "../common/staff_template.xsl");
+        checkResourceUri(resolver.resolvedResourceUris, "xslt/staff/staff.xsl");
+        checkResourceUri(resolver.resolvedResourceUris, "../common/staff_template.xsl");
     }
 
     @Override
@@ -120,27 +118,23 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
     }
 
     static class CustomXsltUriResolverFactory implements XsltUriResolverFactory {
-
         @Override
         public URIResolver createUriResolver(CamelContext camelContext, String resourceUri) {
-            return new CustomXsltUriResolver(camelContext.getClassResolver(), resourceUri);
+            return new CustomXsltUriResolver(camelContext, resourceUri);
         }
-
     }
 
     static class CustomXsltUriResolver extends XsltUriResolver {
+        private final Set<String> resolvedResourceUris = new HashSet<>();
 
-        private final Set<String> resolvedRsourceUris = new HashSet<>();
-
-        CustomXsltUriResolver(ClassResolver resolver, String location) {
-            super(resolver, location);
+        CustomXsltUriResolver(CamelContext context, String location) {
+            super(context, location);
         }
 
         public Source resolve(String href, String base) throws TransformerException {
             Source result = super.resolve(href, base);
-            resolvedRsourceUris.add(href);
+            resolvedResourceUris.add(href);
             return result;
         }
-
     }
 }

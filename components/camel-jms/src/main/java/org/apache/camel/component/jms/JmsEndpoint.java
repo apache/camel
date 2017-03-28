@@ -30,6 +30,7 @@ import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
@@ -68,13 +69,13 @@ import org.springframework.util.ErrorHandler;
  * This component uses Spring JMS.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
-public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
+public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
     private boolean pubSubDomain;
     private JmsBinding binding;
-    @UriPath(defaultValue = "queue", enums = "queue,topic,temp:queue,temp:topic", description = "The kind of destination to use")
+    @UriPath(defaultValue = "queue", enums = "queue,topic,temp-queue,temp-topic", description = "The kind of destination to use")
     private String destinationType;
     @UriPath(description = "Name of the queue or topic to use as destination")
     @Metadata(required = "true")
@@ -228,7 +229,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
             log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
-                    listenerContainer, configuration.getDefaultTaskExecutorType());
+                    listenerContainer, getDefaultTaskExecutorType());
         }
 
         // set a default transaction name if none provided
@@ -604,6 +605,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public int getReplyToOnTimeoutMaxConcurrentConsumers() {
+        return getConfiguration().getReplyToOnTimeoutMaxConcurrentConsumers();
+    }
+
+    @ManagedAttribute
     public int getMaxMessagesPerTask() {
         return getConfiguration().getMaxMessagesPerTask();
     }
@@ -693,6 +699,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().isAcceptMessagesWhileStopping();
     }
 
+    @ManagedAttribute
+    public boolean isAllowReplyManagerQuickStop() {
+        return getConfiguration().isAllowReplyManagerQuickStop();
+    }
+    
     @ManagedAttribute
     public boolean isAlwaysCopyMessage() {
         return getConfiguration().isAlwaysCopyMessage();
@@ -790,6 +801,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
     }
 
+    @ManagedAttribute
+    public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
+        getConfiguration().setAllowReplyManagerQuickStop(allowReplyManagerQuickStop);
+    }
+    
     @ManagedAttribute
     public void setAcknowledgementMode(int consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);
@@ -1090,6 +1106,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public boolean isAllowSerializedHeaders() {
+        return getConfiguration().isAllowSerializedHeaders();
+    }
+
+    @ManagedAttribute
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        getConfiguration().setAllowSerializedHeaders(allowSerializedHeaders);
+    }
+
+    @ManagedAttribute
     public boolean isTransferException() {
         return getConfiguration().isTransferException();
     }
@@ -1244,6 +1270,26 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setSelector(String selector) {
         configuration.setSelector(selector);
+    }
+
+    @ManagedAttribute
+    public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
+        return configuration.getWaitForProvisionCorrelationToBeUpdatedCounter();
+    }
+
+    @ManagedAttribute
+    public void setWaitForProvisionCorrelationToBeUpdatedCounter(int counter) {
+        configuration.setWaitForProvisionCorrelationToBeUpdatedCounter(counter);
+    }
+
+    @ManagedAttribute
+    public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
+        return configuration.getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
+    }
+
+    @ManagedAttribute
+    public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
+        configuration.setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(sleepingTime);
     }
 
     // Implementation methods

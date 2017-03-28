@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.optaplanner.enabled",
+      "description": "Enable optaplanner component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

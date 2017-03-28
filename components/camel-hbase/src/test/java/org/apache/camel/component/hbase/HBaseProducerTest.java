@@ -30,7 +30,6 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.junit.Test;
@@ -126,7 +125,8 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             template.sendBodyAndHeaders("direct:start", null, headers);
 
             Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-            HTable bar = new HTable(configuration, PERSON_TABLE.getBytes());
+            Connection conn = ConnectionFactory.createConnection(configuration);
+            Table bar = conn.getTable(TableName.valueOf(PERSON_TABLE));
 
             //Check row 1
             for (int row = 0; row < key.length; row++) {
@@ -280,6 +280,28 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             assertTrue(bodies.contains(result1) && bodies.contains(result2) && bodies.contains(result3));
         }
     }
+    
+    @Test
+    public void testPutMultiRowsAndScanWithStop() throws Exception {
+        testPutMultiRows();
+        if (systemReady) {
+            Exchange resp = template.request("direct:scan", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
+                    exchange.getIn().setHeader(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0][0]);
+                    exchange.getIn().setHeader(HBaseConstants.FROM_ROW, key[0]);
+                    exchange.getIn().setHeader(HBaseConstants.STOP_ROW, key[1]);
+                }
+            });
+
+            Object result1 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(1));
+            Object result2 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
+            Object result3 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
+
+            List<?> bodies = Arrays.asList(body[0][0][0], body[1][0][0], body[2][0][0]);
+            assertTrue(bodies.contains(result1) && !bodies.contains(result2) && !bodies.contains(result3));
+        }
+    }
 
     @Test
     public void testPutAndScan() throws Exception {
@@ -294,7 +316,10 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             template.sendBodyAndHeaders("direct:start", null, headers);
 
             Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-            HTable bar = new HTable(configuration, PERSON_TABLE.getBytes());
+            
+            Connection conn = ConnectionFactory.createConnection(configuration);
+            Table bar = conn.getTable(TableName.valueOf(PERSON_TABLE));
+            
             Get get = new Get("1".getBytes());
             get.addColumn("info".getBytes(), "id".getBytes());
             Result result = bar.get(get);

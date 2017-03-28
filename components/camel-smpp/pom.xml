@@ -20,16 +20,16 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.17-SNAPSHOT</version>
+        <version>2.19.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-smpp</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: SMPP</name>
     <description>Camel SMPP support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.smpp.*</camel.osgi.export.pkg>
+      <camel.osgi.export.pkg>org.apache.camel.component.smpp.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>
           org.apache.camel.spi.ComponentResolver;component=smpp,
           org.apache.camel.spi.ComponentResolver;component=smpps
@@ -70,12 +70,22 @@
         </dependency>
         <dependency>
             <groupId>org.easymock</groupId>
-            <artifactId>easymockclassextension</artifactId>
+            <artifactId>easymock</artifactId>
+            <scope>test</scope>
+        </dependency>  
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

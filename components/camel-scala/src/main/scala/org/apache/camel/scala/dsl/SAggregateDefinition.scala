@@ -61,10 +61,10 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
       = wrap(target.setTimeoutCheckerExecutorService(executorService))
   def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
   def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
-  
-  def completionPredicate(filter: Exchange => Any) {
+
+  def completionPredicate(filter: Exchange => Any) = {
      // uses implicit conversion
      val predicate = filter
-     target.completionPredicate(predicate)
+     wrap(target.completionPredicate(predicate))
   }
 }

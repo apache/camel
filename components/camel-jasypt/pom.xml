@@ -21,18 +21,22 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.17-SNAPSHOT</version>
+        <version>2.19.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jasypt</artifactId>
     <!-- the packaging will be a bundle, however we need to add maniclass etc so we use the jar packaging -->
     <packaging>jar</packaging>
     <name>Camel :: Jasypt</name>
-    <description>Camel Jasypt support</description>
+    <description>Security using Jasypt</description>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>2.5.0</firstVersion>
+        <label>security</label>
+
         <camel.osgi.export.pkg>org.apache.camel.component.jasypt.*</camel.osgi.export.pkg>
-        <camel.osgi.import.before.defaults>org.jasypt.encryption.*;version="[1.7,2)"</camel.osgi.import.before.defaults>
+        <camel.osgi.import.before.defaults>org.jasypt.encryption.*;version="[1.9,2)"</camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>
@@ -62,10 +66,20 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+        </dependency>   
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

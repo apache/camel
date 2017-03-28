@@ -26,6 +26,8 @@
            http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
            http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
     <!-- jdbc idempotent repository, per default creates the table CAMEL_MESSAGEPROCESSED if not already existing -->
     <bean id="messageIdRepository" class="org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository">
         <constructor-arg index="0" ref="myXADataSource"/>
@@ -41,42 +43,24 @@
         <property name="transactionTemplate" ref="requiredTemplate"/>
     </bean>
 
-    <!-- setup Atomikos for XA transaction -->
-    <bean id="atomikosTransactionManager"
-          class="com.atomikos.icatch.jta.UserTransactionManager"
-          init-method="init" destroy-method="close" depends-on="my-broker">
-        <!-- when close is called, should we force transactions to terminate or not? -->
-        <property name="forceShutdown" value="false"/>
-    </bean>
+    <!-- Setup Narayana transaction manager and user transaction -->
+    <bean id="narayanaTransactionManager" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple" />
+    <bean id="narayanaUserTransaction" class="com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple" />
 
-    <!-- this is some atomikos setup you must do -->
-    <bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp" depends-on="my-broker">
-        <property name="transactionTimeout" value="300"/>
-    </bean>
-
-    <!-- this is some atomikos setup you must do -->
-    <bean id="connectionFactory"
-          class="com.atomikos.jms.AtomikosConnectionFactoryBean"
-          init-method="init" destroy-method="close" depends-on="my-broker">
-        <property name="uniqueResourceName" value="myUniqueResource"/>
-        <property name="xaConnectionFactory" ref="jmsXaConnectionFactory"/>
-    </bean>
-
-    <!-- this is the Spring JtaTransactionManager which under the hood uses Atomikos -->
-    <bean id="jtaTransactionManager"
-          class="org.springframework.transaction.jta.JtaTransactionManager" depends-on="my-broker">
-        <property name="transactionManager" ref="atomikosTransactionManager"/>
-        <property name="userTransaction" ref="atomikosUserTransaction"/>
+    <!-- this is the Spring JtaTransactionManager which under the hood uses Narayana -->
+    <bean id="jtaTransactionManager" class="org.springframework.transaction.jta.JtaTransactionManager" depends-on="my-broker">
+        <property name="transactionManager" ref="narayanaTransactionManager"/>
+        <property name="userTransaction" ref="narayanaUserTransaction"/>
     </bean>
 
     <!-- Is the ConnectionFactory to connect to the JMS broker -->
     <!-- notice how we must use the XA connection factory -->
     <bean id="jmsXaConnectionFactory" class="org.apache.activemq.ActiveMQXAConnectionFactory" depends-on="my-broker">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="brokerURL" value="tcp://localhost:${ITestSupport.port3}"/>
     </bean>
 
     <!-- define the activemq Camel component so we can integrate with the AMQ broker below -->
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" depends-on="my-broker">
+    <bean id="activemq2" class="org.apache.activemq.camel.component.ActiveMQComponent" depends-on="my-broker">
         <!-- must indicate that we use transacted acknowledge mode -->
         <property name="transacted" value="true"/>
         <!-- refer to the transaction manager -->
@@ -86,7 +70,7 @@
     <!-- setup a local JMS Broker for testing purpose -->
     <broker:broker id="my-broker" useJmx="false" persistent="false" brokerName="localhost">
         <broker:transportConnectors>
-            <broker:transportConnector uri="tcp://localhost:61616"/>
+            <broker:transportConnector uri="tcp://localhost:${ITestSupport.port3}"/>
         </broker:transportConnectors>
     </broker:broker>
 

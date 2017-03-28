@@ -27,6 +27,7 @@ import org.apache.camel.Producer;
  *
  * @version 
  */
+@Deprecated
 public class DefaultProducerServicePool extends DefaultServicePool<Endpoint, Producer> {
 
     public DefaultProducerServicePool() {

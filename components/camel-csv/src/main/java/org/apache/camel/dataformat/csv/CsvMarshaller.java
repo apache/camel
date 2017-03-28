@@ -73,7 +73,7 @@ abstract class CsvMarshaller {
      * @throws IOException                        if we cannot write into the given stream
      */
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
-        CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream), format);
+        CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream, IOHelper.getCharsetName(exchange)), format);
         try {
             Iterator it = ObjectHelper.createIterator(object);
             while (it.hasNext()) {

@@ -35,4 +35,5 @@ public interface EC2Constants {
     String INSTANCES_KEY_PAIR       = "CamelAwsEC2InstancesKeyPair";
     String INSTANCES_CLIENT_TOKEN   = "CamelAwsEC2InstancesClientToken";
     String INSTANCES_PLACEMENT      = "CamelAwsEC2InstancesPlacement";
+    String INSTANCES_TAGS           = "CamelAwsEC2InstancesTags";
 }

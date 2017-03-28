@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * To collect various metrics directly from Camel routes using the DropWizard metrics library.
  */
-@UriEndpoint(scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
 public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;
@@ -50,6 +50,8 @@ public class MetricsEndpoint extends DefaultEndpoint {
     private Long increment;
     @UriParam(description = "Decrement value when using counter type")
     private Long decrement;
+    @UriParam(description = "Subject value when using gauge type")
+    private Object subject;
 
     public MetricsEndpoint(String uri, Component component, MetricRegistry registry, MetricsType metricsType, String metricsName) {
         super(uri, component);
@@ -73,6 +75,8 @@ public class MetricsEndpoint extends DefaultEndpoint {
             return new MeterProducer(this);
         } else if (metricsType == MetricsType.TIMER) {
             return new TimerProducer(this);
+        } else if (metricsType == MetricsType.GAUGE) {
+            return new GaugeProducer(this);
         } else {
             throw new IllegalArgumentException("Metrics type " + metricsType + " is not supported");
         }
@@ -133,5 +137,13 @@ public class MetricsEndpoint extends DefaultEndpoint {
 
     public void setDecrement(Long decrement) {
         this.decrement = decrement;
+    }
+
+    public Object getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Object subject) {
+        this.subject = subject;
     }
 }

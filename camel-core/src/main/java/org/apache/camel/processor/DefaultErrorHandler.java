@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
@@ -53,11 +52,6 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
 
         super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, true, false, retryWhile, executorService, onPrepareProcessor, onExceptionOccurredProcessor);
         setExceptionPolicy(exceptionPolicyStrategy);
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        // just to let the stacktrace reveal that this is a dead letter channel
-        super.process(exchange);
     }
 
     @Override

@@ -25,11 +25,10 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.ws.WebSocket;
-import com.ning.http.client.ws.WebSocketTextListener;
-import com.ning.http.client.ws.WebSocketUpgradeHandler;
+import javax.net.ssl.SSLContext;
+
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.JdkSslContext;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -40,6 +39,13 @@ import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.SSLContextServerParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -103,13 +109,15 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         AsyncHttpClient c;
         AsyncHttpClientConfig config;
 
-        AsyncHttpClientConfig.Builder builder =
-                new AsyncHttpClientConfig.Builder();
+        DefaultAsyncHttpClientConfig.Builder builder =
+                new DefaultAsyncHttpClientConfig.Builder();
 
-        builder.setSSLContext(new SSLContextParameters().createSSLContext());
+        SSLContext sslContext = new SSLContextParameters().createSSLContext(context());
+        JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
+        builder.setSslContext(ssl);
         builder.setAcceptAnyCertificate(true);
         config = builder.build();
-        c = new AsyncHttpClient(config);
+        c = new DefaultAsyncHttpClient(config);
 
         return c;
     }
@@ -164,7 +172,9 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(20);
                 from(uri)
                      .log(">>> Message received from WebSocket Client : ${body}")
                      .to("mock:client")

@@ -33,7 +33,7 @@ public class MarshalDomainObjectJSONTest extends MarshalDomainObjectTest {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(PurchaseOrder.class);
-        mock.message(0).body().equals(order);
+        mock.message(0).body().isEqualTo(order);
 
         Object marshalled = template.requestBody("direct:inPretty", order);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);

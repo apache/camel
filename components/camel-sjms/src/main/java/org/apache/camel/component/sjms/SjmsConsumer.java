@@ -18,8 +18,8 @@ package org.apache.camel.component.sjms;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
 import javax.jms.Connection;
-import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
@@ -31,7 +31,6 @@ import org.apache.camel.component.sjms.consumer.AbstractMessageHandler;
 import org.apache.camel.component.sjms.consumer.InOnlyMessageHandler;
 import org.apache.camel.component.sjms.consumer.InOutMessageHandler;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.component.sjms.tx.BatchTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
@@ -106,6 +105,7 @@ public class SjmsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
         if (consumers == null) {
             consumers = new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory());
@@ -179,11 +179,11 @@ public class SjmsConsumer extends DefaultConsumer {
      */
     private MessageConsumerResources createConsumer() throws Exception {
         MessageConsumerResources answer;
-        Connection conn = getConnectionResource().borrowConnection();
+        ConnectionResource connectionResource = getOrCreateConnectionResource();
+        Connection conn = connectionResource.borrowConnection();
         try {
             Session session = conn.createSession(isTransacted(), isTransacted() ? Session.SESSION_TRANSACTED : Session.AUTO_ACKNOWLEDGE);
-            Destination destination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getDestinationName(), isTopic());
-            MessageConsumer messageConsumer = JmsObjectFactory.createMessageConsumer(session, destination, getMessageSelector(), isTopic(), getDurableSubscriptionId());
+            MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session, getEndpoint());
             MessageListener handler = createMessageHandler(session);
             messageConsumer.setMessageListener(handler);
 
@@ -192,7 +192,7 @@ public class SjmsConsumer extends DefaultConsumer {
             log.error("Unable to create the MessageConsumer", e);
             throw e;
         } finally {
-            getConnectionResource().returnConnection(conn);
+            connectionResource.returnConnection(conn);
         }
         return answer;
     }
@@ -237,16 +237,30 @@ public class SjmsConsumer extends DefaultConsumer {
                 messageHandler = new InOutMessageHandler(getEndpoint(), executor);
             }
         }
+
         messageHandler.setSession(session);
         messageHandler.setProcessor(getAsyncProcessor());
         messageHandler.setSynchronous(isSynchronous());
         messageHandler.setTransacted(isTransacted());
+        messageHandler.setSharedJMSSession(isSharedJMSSession());
         messageHandler.setTopic(isTopic());
         return messageHandler;
     }
 
+    /**
+     * @deprecated use {@link #getOrCreateConnectionResource()}
+     */
+    @Deprecated
     protected ConnectionResource getConnectionResource() {
         return getEndpoint().getConnectionResource();
+    }
+
+    protected ConnectionResource getOrCreateConnectionResource() {
+        ConnectionResource answer = getEndpoint().getConnectionResource();
+        if (answer == null) {
+            answer = getEndpoint().createConnectionResource(this);
+        }
+        return answer;
     }
 
     public int getAcknowledgementMode() {
@@ -262,6 +276,14 @@ public class SjmsConsumer extends DefaultConsumer {
         return getEndpoint().isTransacted();
     }
 
+    /**
+     * Use to determine if JMS session should be propagated to share with other SJMS endpoints.
+     *
+     * @return true if shared, otherwise false
+     */
+    public boolean isSharedJMSSession() {
+        return getEndpoint().isSharedJMSSession();
+    }
     /**
      * Use to determine whether or not to process exchanges synchronously.
      *
@@ -342,4 +364,5 @@ public class SjmsConsumer extends DefaultConsumer {
     public long getTransactionBatchTimeout() {
         return getEndpoint().getTransactionBatchTimeout();
     }
+
 }

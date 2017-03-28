@@ -19,7 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.ExecStartCmd;
-
+import com.github.dockerjava.core.command.ExecStartResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
@@ -35,6 +35,9 @@ public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
     @Mock
     private ExecStartCmd mockObject;
 
+    @Mock
+    private ExecStartResultCallback callback;
+    
     @Test
     public void execCreateHeaderTest() {
 
@@ -55,6 +58,12 @@ public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.execStartCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        try {
+            Mockito.when(callback.awaitCompletion()).thenReturn(callback);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

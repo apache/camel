@@ -117,7 +117,7 @@ public interface XmlSignatureProperties {
 
     }
 
-    public static class Output {
+    class Output {
 
         private String contentReferenceId;
 

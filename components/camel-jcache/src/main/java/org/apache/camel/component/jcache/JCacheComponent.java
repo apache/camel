@@ -17,6 +17,11 @@
 package org.apache.camel.component.jcache;
 
 import java.util.Map;
+import java.util.Properties;
+
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+import javax.cache.configuration.Configuration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -26,6 +31,12 @@ import org.apache.camel.impl.UriEndpointComponent;
  * Represents the component that manages {@link JCacheEndpoint}.
  */
 public class JCacheComponent extends UriEndpointComponent {
+
+    private String cachingProvider;
+    private Configuration cacheConfiguration;
+    private Properties cacheConfigurationProperties;
+    private String configurationUri;
+
     public JCacheComponent() {
         super(JCacheEndpoint.class);
     }
@@ -36,9 +47,61 @@ public class JCacheComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        JCacheConfiguration configuration = new JCacheConfiguration(getCamelContext());
-        setProperties(configuration, parameters);
+        String cacheName = remaining;
+        JCacheConfiguration configuration = new JCacheConfiguration(getCamelContext(), cacheName);
 
-        return new JCacheEndpoint(uri, this, configuration, remaining);
+        configuration.setCachingProvider(cachingProvider);
+        configuration.setCacheConfiguration(cacheConfiguration);
+        configuration.setCacheConfigurationProperties(cacheConfigurationProperties);
+        configuration.setConfigurationUri(configurationUri);
+
+        setProperties(configuration, parameters);
+        return new JCacheEndpoint(uri, this, configuration);
     }
+
+    /**
+     * The fully qualified class name of the {@link javax.cache.spi.CachingProvider}
+     */
+    public String getCachingProvider() {
+        return cachingProvider;
+    }
+
+    public void setCachingProvider(String cachingProvider) {
+        this.cachingProvider = cachingProvider;
+    }
+
+    /**
+     * A {@link Configuration} for the {@link Cache}
+     */
+    public Configuration getCacheConfiguration() {
+        return cacheConfiguration;
+    }
+
+    public void setCacheConfiguration(Configuration cacheConfiguration) {
+        this.cacheConfiguration = cacheConfiguration;
+    }
+
+    /**
+     * The {@link Properties} for the {@link javax.cache.spi.CachingProvider} to
+     * create the {@link CacheManager}
+     */
+    public Properties getCacheConfigurationProperties() {
+        return cacheConfigurationProperties;
+    }
+
+    public void setCacheConfigurationProperties(Properties cacheConfigurationProperties) {
+        this.cacheConfigurationProperties = cacheConfigurationProperties;
+    }
+
+    /**
+     * An implementation specific URI for the {@link CacheManager}
+     */
+    public String getConfigurationUri() {
+        return configurationUri;
+    }
+
+    public void setConfigurationUri(String configurationUri) {
+        this.configurationUri = configurationUri;
+    }
+
 }

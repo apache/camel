@@ -23,11 +23,11 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.17-SNAPSHOT</version>
+        <version>2.19.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ldap</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: LDAP</name>
     <description>Camel LDAP support</description>
 
@@ -65,6 +65,12 @@
             <artifactId>apacheds-server-integ</artifactId>
             <version>${apacheds-version}</version>
             <scope>test</scope>
+            <exclusions>
+              <exclusion>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.directory.server</groupId>
@@ -76,10 +82,25 @@
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
             <scope>test</scope>
+        </dependency>   
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

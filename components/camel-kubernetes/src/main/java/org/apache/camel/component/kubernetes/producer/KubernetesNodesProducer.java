@@ -21,13 +21,14 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.DoneableNode;
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.NodeList;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,17 +77,21 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         NodeList nodeList = getEndpoint().getKubernetesClient().nodes().list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(nodeList.getItems());
     }
 
     protected void doListNodesByLabels(Exchange exchange, String operation) throws Exception {
         NodeList nodeList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
-        ClientNonNamespaceOperation<Node, NodeList, DoneableNode, ClientResource<Node, DoneableNode>> nodes = getEndpoint().getKubernetesClient().nodes();
+        NonNamespaceOperation<Node, NodeList, DoneableNode, Resource<Node, DoneableNode>> nodes = getEndpoint().getKubernetesClient().nodes();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             nodes.withLabel(entry.getKey(), entry.getValue());
         }
         nodeList = nodes.list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(nodeList.getItems());
     }
 
@@ -99,6 +104,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         }
         node = getEndpoint().getKubernetesClient().nodes().withName(pvName).get();
 
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(node);
     }
 }

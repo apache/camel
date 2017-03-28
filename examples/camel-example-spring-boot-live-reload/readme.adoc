@@ -1,0 +1,23 @@
+= Spring Boot Camel LiveReload Sample
+
+This example shows how to use the live reload feature of Spring Boot with Apache Camel.
+
+The example exposes a rest endpoint on http://localhost:8080/.
+The route can be tested with a browser having the LiveReload extension installed.
+LiveReload browser extensions are freely available for the most popular browsers from http://livereload.com[livereload.com].
+
+The example should be launched with the following maven command:
+
+   mvn spring-boot:run
+
+Once the application is started, you can visit http://localhost:8080/ with a browser and activate the LiveReload feature
+(usually, by clicking on the extension's icon).
+
+Changing the source code (eg. changing the default message returned by the route) will produce a refresh in the browser.
+When using IntelliJ Idea, after doing the changes, you should compile the project (eg. by clicking on the _"Make Project"_ button)
+in order to see the changes in the browser.
+
+== More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/.
+For information about the LiveReload feature, check the http://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html[dev tools documentation].

@@ -64,7 +64,8 @@ public class Mina2ClientModeTcpTextlineDelimiterTest extends BaseMina2Test {
     private class Server {
         private final int port;
         private IoAcceptor acceptor;
-        public Server(int port) {
+
+        Server(int port) {
             this.port = port;
         }
         
@@ -85,7 +86,7 @@ public class Mina2ClientModeTcpTextlineDelimiterTest extends BaseMina2Test {
     private class ServerHandler extends IoHandlerAdapter {
         public void sessionOpened(IoSession session) throws Exception {
             session.write("Hello there!\n");
-            session.close(true);
+            session.closeNow();
         }
     }
 }

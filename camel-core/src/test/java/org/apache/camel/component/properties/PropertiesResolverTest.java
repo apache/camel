@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.properties;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -63,7 +64,7 @@ public class PropertiesResolverTest extends ContextTestSupport {
 
     public static class MyCustomResolver implements PropertiesResolver {
 
-        public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
+        public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
             Properties answer = new Properties();
             answer.put("foo", "mock:result");
             return answer;

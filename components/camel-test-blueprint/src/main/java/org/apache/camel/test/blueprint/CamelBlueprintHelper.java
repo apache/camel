@@ -108,18 +108,38 @@ public final class CamelBlueprintHelper {
     public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle,
                                                     String bundleFilter, String testBundleVersion, String testBundleDirectives,
                                                     String[] ... configAdminPidFiles) throws Exception {
+        return createBundleContext(name, descriptors, includeTestBundle,
+                bundleFilter, testBundleVersion, testBundleDirectives,
+                null,
+                configAdminPidFiles);
+    }
+
+    public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle,
+                                                    String bundleFilter, String testBundleVersion, String testBundleDirectives,
+                                                    ClassLoader loader,
+                                                    String[] ... configAdminPidFiles) throws Exception {
         TinyBundle bundle = null;
+        TinyBundle configAdminInitBundle = null;
 
         if (includeTestBundle) {
             // add ourselves as a bundle
             bundle = createTestBundle(testBundleDirectives == null ? name : name + ';' + testBundleDirectives,
-                    testBundleVersion, descriptors, configAdminPidFiles);
+                    testBundleVersion, descriptors);
+        }
+        if (configAdminPidFiles != null) {
+            configAdminInitBundle = createConfigAdminInitBundle(configAdminPidFiles);
         }
 
-        return createBundleContext(name, bundleFilter, bundle);
+        return createBundleContext(name, bundleFilter, bundle, configAdminInitBundle, loader);
     }
 
     public static BundleContext createBundleContext(String name, String bundleFilter, TinyBundle bundle) throws Exception {
+        return createBundleContext(name, bundleFilter, bundle, null, null);
+    }
+
+    public static BundleContext createBundleContext(String name, String bundleFilter,
+                                                    TinyBundle bundle, TinyBundle configAdminInitBundle,
+                                                    ClassLoader loader) throws Exception {
         // ensure felix-connect stores bundles in an unique target directory
         String uid = "" + System.currentTimeMillis();
         String tempDir = "target/bundles/" + uid;
@@ -133,12 +153,17 @@ public final class CamelBlueprintHelper {
 
         List<BundleDescriptor> bundles = new LinkedList<>();
 
+        if (configAdminInitBundle != null) {
+            String jarName = "configAdminInitBundle-" + uid + ".jar";
+            bundles.add(getBundleDescriptor("target/test-bundles/" + jarName, configAdminInitBundle));
+        }
+
         if (bundle != null) {
             String jarName = name.toLowerCase(Locale.ENGLISH) + "-" + uid + ".jar";
             bundles.add(getBundleDescriptor("target/test-bundles/" + jarName, bundle));
         }
 
-        List<BundleDescriptor> bundleDescriptors = getBundleDescriptors(bundleFilter);
+        List<BundleDescriptor> bundleDescriptors = getBundleDescriptors(bundleFilter, loader);
         // let's put configadmin before blueprint.core
         int idx1 = -1;
         int idx2 = -1;
@@ -261,7 +286,7 @@ public final class CamelBlueprintHelper {
     }
 
     public static <T> T getOsgiService(BundleContext bundleContext, Class<T> type, String filter, long timeout) {
-        ServiceTracker tracker = null;
+        ServiceTracker<T, T> tracker = null;
         try {
             String flt;
             if (filter != null) {
@@ -274,7 +299,7 @@ public final class CamelBlueprintHelper {
                 flt = "(" + Constants.OBJECTCLASS + "=" + type.getName() + ")";
             }
             Filter osgiFilter = FrameworkUtil.createFilter(flt);
-            tracker = new ServiceTracker(bundleContext, osgiFilter, null);
+            tracker = new ServiceTracker<T, T>(bundleContext, osgiFilter, null);
             tracker.open(true);
             // Note that the tracker is not closed to keep the reference
             // This is buggy, as the service reference may change i think
@@ -331,20 +356,20 @@ public final class CamelBlueprintHelper {
         if (runAndWait != null) {
             runAndWait.run();
         }
-        latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+        boolean found = latch.await(CamelBlueprintHelper.DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
         registration.unregister();
+
+        if (!found) {
+            throw new RuntimeException("Gave up waiting for BlueprintContainer from bundle \"" + symbolicName + "\"");
+        }
 
         if (pThrowable[0] != null) {
             throw new RuntimeException(pThrowable[0].getMessage(), pThrowable[0]);
         }
     }
 
-    protected static TinyBundle createTestBundle(String name, String version, String descriptors, String[] ... configAdminPidFiles) throws IOException {
+    protected static TinyBundle createConfigAdminInitBundle(String[] ... configAdminPidFiles) throws IOException {
         TinyBundle bundle = TinyBundles.newBundle();
-        for (URL url : getBlueprintDescriptors(descriptors)) {
-            LOG.info("Using Blueprint XML file: " + url.getFile());
-            bundle.add("OSGI-INF/blueprint/blueprint-" + url.getFile().replace("/", "-"), url);
-        }
         StringWriter configAdminInit = null;
         for (String[] configAdminPidFile : configAdminPidFiles) {
             if (configAdminPidFile == null) {
@@ -362,12 +387,28 @@ public final class CamelBlueprintHelper {
         bundle.add(Util.class);
         bundle.set("Manifest-Version", "2")
                 .set("Bundle-ManifestVersion", "2")
-                .set("Bundle-SymbolicName", name)
-                .set("Bundle-Version", version)
+                .set("Bundle-SymbolicName", "ConfigAdminInit")
+                .set("Bundle-Version", BUNDLE_VERSION)
                 .set("Bundle-Activator", TestBundleActivator.class.getName());
+
         if (configAdminInit != null) {
             bundle.set("X-Camel-Blueprint-ConfigAdmin-Init", configAdminInit.toString());
         }
+
+        return bundle;
+    }
+
+    protected static TinyBundle createTestBundle(String name, String version, String descriptors) throws IOException {
+        TinyBundle bundle = TinyBundles.newBundle();
+        for (URL url : getBlueprintDescriptors(descriptors)) {
+            LOG.info("Using Blueprint XML file: " + url.getFile());
+            bundle.add("OSGI-INF/blueprint/blueprint-" + url.getFile().replace("/", "-"), url);
+        }
+        bundle.set("Manifest-Version", "2")
+                .set("Bundle-ManifestVersion", "2")
+                .set("Bundle-SymbolicName", name)
+                .set("Bundle-Version", version);
+
         return bundle;
     }
 
@@ -401,8 +442,8 @@ public final class CamelBlueprintHelper {
      * @return List pointers to OSGi bundles.
      * @throws Exception If looking up the bundles fails.
      */
-    private static List<BundleDescriptor> getBundleDescriptors(final String bundleFilter) throws Exception {
-        return new ClasspathScanner().scanForBundles(bundleFilter);
+    private static List<BundleDescriptor> getBundleDescriptors(final String bundleFilter, ClassLoader loader) throws Exception {
+        return new ClasspathScanner().scanForBundles(bundleFilter, loader);
     }
 
     /**
@@ -414,10 +455,9 @@ public final class CamelBlueprintHelper {
      */
     protected static Collection<URL> getBlueprintDescriptors(String descriptors) throws FileNotFoundException, MalformedURLException {
         List<URL> answer = new ArrayList<URL>();
-        String descriptor = descriptors;
-        if (descriptor != null) {
+        if (descriptors != null) {
             // there may be more resources separated by comma
-            Iterator<Object> it = ObjectHelper.createIterator(descriptor);
+            Iterator<Object> it = ObjectHelper.createIterator(descriptors);
             while (it.hasNext()) {
                 String s = (String) it.next();
                 LOG.trace("Resource descriptor: {}", s);

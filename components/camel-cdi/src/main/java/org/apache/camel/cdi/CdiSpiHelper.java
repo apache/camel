@@ -19,22 +19,38 @@ package org.apache.camel.cdi;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.security.PrivilegedAction;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static java.security.AccessController.doPrivileged;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
+
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedConstructor;
 import javax.enterprise.inject.spi.AnnotatedField;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.util.Nonbinding;
 
-import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.cdi.AnyLiteral.ANY;
+import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 
 @Vetoed
 final class CdiSpiHelper {
@@ -42,35 +58,14 @@ final class CdiSpiHelper {
     private CdiSpiHelper() {
     }
 
-    static <T extends Annotation> T getQualifierByType(InjectionPoint ip, Class<T> type) {
-        return getFirstElementOfType(ip.getQualifiers(), type);
+    static Predicate<Bean> hasType(Type type) {
+        requireNonNull(type);
+        return bean -> bean.getTypes().contains(type);
     }
 
-    static <E, T extends E> T getFirstElementOfType(Collection<E> collection, Class<T> type) {
-        for (E item : collection) {
-            if ((item != null) && type.isAssignableFrom(item.getClass())) {
-                return ObjectHelper.cast(type, item);
-            }
-        }
-        return null;
-    }
-
-    @SafeVarargs
-    static <T> Set<T> excludeElementOfTypes(Set<T> annotations, Class<? extends T>... exclusions) {
-        Set<T> set = new HashSet<>();
-        for (T annotation : annotations) {
-            boolean exclude = false;
-            for (Class<? extends T> exclusion : exclusions) {
-                if (exclusion.isAssignableFrom(annotation.getClass())) {
-                    exclude = true;
-                    break;
-                }
-            }
-            if (!exclude) {
-                set.add(annotation);
-            }
-        }
-        return set;
+    static Predicate<Annotation> isAnnotationType(Class<? extends Annotation> clazz) {
+        requireNonNull(clazz);
+        return annotation -> clazz.equals(annotation.annotationType());
     }
 
     static Class<?> getRawType(Type type) {
@@ -101,12 +96,8 @@ final class CdiSpiHelper {
 
     @SafeVarargs
     static boolean hasAnnotation(AnnotatedType<?> type, Class<? extends Annotation>... annotations) {
-        for (Class<? extends Annotation> annotation : annotations) {
-            if (hasAnnotation(type, annotation)) {
-                return true;
-            }
-        }
-        return false;
+        return Stream.of(annotations)
+            .anyMatch(annotation -> hasAnnotation(type, annotation));
     }
 
     static boolean hasAnnotation(AnnotatedType<?> type, Class<? extends Annotation> annotation) {
@@ -132,16 +123,102 @@ final class CdiSpiHelper {
     }
 
     static Set<Annotation> getQualifiers(Annotated annotated, BeanManager manager) {
-        Set<Annotation> qualifiers = new HashSet<>();
-        for (Annotation annotation : annotated.getAnnotations()) {
-            if (manager.isQualifier(annotation.annotationType())) {
-                qualifiers.add(annotation);
-            }
+        return annotated.getAnnotations().stream()
+            .filter(annotation -> manager.isQualifier(annotation.annotationType()))
+            .collect(collectingAndThen(toSet(),
+                qualifiers -> {
+                    if (qualifiers.isEmpty()) {
+                        qualifiers.add(DEFAULT);
+                    }
+                    qualifiers.add(ANY);
+                    return qualifiers;
+                })
+            );
+    }
+
+    /**
+     * Generates a unique signature for {@link Bean}.
+     */
+    static String createBeanId(Bean<?> bean) {
+        return Stream.of(bean.getName(),
+            bean.getScope().getName(),
+            createAnnotationCollectionId(bean.getQualifiers()),
+            createTypeCollectionId(bean.getTypes()))
+            .filter(Objects::nonNull)
+            .collect(joining(","));
+    }
+
+    /**
+     * Generates a unique signature of a collection of types.
+     */
+    private static String createTypeCollectionId(Collection<Type> types) {
+        return types.stream()
+            .sorted(comparing(CdiSpiHelper::createTypeId))
+            .map(CdiSpiHelper::createTypeId)
+            .collect(joining(",", "[", "]"));
+    }
+
+    /**
+     * Generates a unique signature for a {@link Type}.
+     */
+    private static String createTypeId(Type type) {
+        if (type instanceof Class<?>) {
+            return Class.class.cast(type).getName();
         }
-        if (qualifiers.isEmpty()) {
-            qualifiers.add(DefaultLiteral.INSTANCE);
+
+        if (type instanceof ParameterizedType) {
+            return createTypeId(((ParameterizedType) type).getRawType())
+                + Stream.of(((ParameterizedType) type).getActualTypeArguments())
+                .map(CdiSpiHelper::createTypeId)
+                .collect(joining(",", "<", ">"));
         }
-        qualifiers.add(AnyLiteral.INSTANCE);
-        return qualifiers;
+
+        if (type instanceof TypeVariable<?>) {
+            return TypeVariable.class.cast(type).getName();
+        }
+
+        if (type instanceof GenericArrayType) {
+            return createTypeId(GenericArrayType.class.cast(type).getGenericComponentType());
+        }
+
+        throw new UnsupportedOperationException("Unable to create type id for type [" + type + "]");
+    }
+
+    /**
+     * Generates a unique signature for a collection of annotations.
+     */
+    private static String createAnnotationCollectionId(Collection<Annotation> annotations) {
+        if (annotations.isEmpty()) {
+            return "";
+        }
+
+        return annotations.stream()
+            .sorted(comparing(a -> a.annotationType().getName()))
+            .map(CdiSpiHelper::createAnnotationId)
+            .collect(joining(",", "[", "]"));
+    }
+
+    /**
+     * Generates a unique signature for an {@link Annotation}.
+     */
+    static String createAnnotationId(Annotation annotation) {
+        Method[] methods = doPrivileged(
+            (PrivilegedAction<Method[]>) () -> annotation.annotationType().getDeclaredMethods());
+
+        return Stream.of(methods)
+            .filter(method -> !method.isAnnotationPresent(Nonbinding.class))
+            .sorted(comparing(Method::getName))
+            .collect(() -> new StringJoiner(",", "@" + annotation.annotationType().getCanonicalName() + "(", ")"),
+                (joiner, method) -> {
+                    try {
+                        joiner.add(method.getName() + "=" + method.invoke(annotation).toString());
+                    } catch (NullPointerException | IllegalArgumentException | IllegalAccessException | InvocationTargetException cause) {
+                        throw new RuntimeException(
+                            "Error while accessing member [" + method.getName() + "]"
+                                + " of annotation [" + annotation.annotationType().getName() + "]", cause);
+                    }
+                },
+                StringJoiner::merge)
+            .toString();
     }
 }

@@ -28,7 +28,7 @@ class JCacheEntryEventFilters {
     public static class Named implements CacheEntryEventFilter<Object, Object> {
         private List<EventType> filteredEvents;
 
-        public Named(Collection<EventType> filteredEventNames) {
+        Named(Collection<EventType> filteredEventNames) {
             if (filteredEventNames != null && !filteredEventNames.isEmpty()) {
                 this.filteredEvents = new ArrayList<>(filteredEventNames);
             }
@@ -48,7 +48,7 @@ class JCacheEntryEventFilters {
         private final List<CacheEntryEventFilter> filteredEvents;
         private final int filteredEventsSize;
 
-        public Chained(List<CacheEntryEventFilter> filteredEvents) {
+        Chained(List<CacheEntryEventFilter> filteredEvents) {
             if (filteredEvents != null && !filteredEvents.isEmpty()) {
                 this.filteredEvents = new ArrayList<>(filteredEvents);
                 this.filteredEventsSize = this.filteredEvents.size();

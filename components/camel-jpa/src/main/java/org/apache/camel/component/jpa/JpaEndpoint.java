@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.InvalidPayloadRuntimeException;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
@@ -47,7 +48,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * The jpa component enables you to store and retrieve Java objects from databases using JPA.
  */
-@UriEndpoint(scheme = "jpa", title = "JPA", syntax = "jpa:entityType", consumerClass = JpaConsumer.class, label = "database,sql")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", consumerClass = JpaConsumer.class, label = "database,sql")
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
@@ -62,7 +63,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean joinTransaction = true;
     @UriParam
     private boolean sharedEntityManager;
-    @UriParam(label = "consumer", defaultValue = "-1")
+    @UriParam(defaultValue = "-1")
     private int maximumResults = -1;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean consumeDelete = true;
@@ -71,17 +72,17 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer")
     private int maxMessagesPerPoll;
 
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(optionalPrefix = "consumer.")
     private String query;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(optionalPrefix = "consumer.")
     private String namedQuery;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(optionalPrefix = "consumer.")
     private String nativeQuery;
     @UriParam(label = "consumer", optionalPrefix = "consumer.", defaultValue = "PESSIMISTIC_WRITE")
     private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.", multiValue = true)
+    @UriParam(optionalPrefix = "consumer.", multiValue = true)
     private Map<String, Object> parameters;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.")
+    @UriParam(optionalPrefix = "consumer.")
     private Class<?> resultClass;
     @UriParam(label = "consumer", optionalPrefix = "consumer.")
     private boolean transacted;
@@ -100,6 +101,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean usePassedInEntityManager;
     @UriParam(label = "producer")
     private boolean remove;
+    @UriParam(label = "producer")
+    private Boolean useExecuteUpdate;
 
     @UriParam(label = "advanced", prefix = "emf.", multiValue = true)
     private Map<String, Object> entityManagerProperties;
@@ -141,9 +144,21 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.transactionManager = transactionManager;
     }
 
+    @Override
+    public JpaComponent getComponent() {
+        return (JpaComponent) super.getComponent();
+    }
+
     public Producer createProducer() throws Exception {
         validate();
-        return new JpaProducer(this, getProducerExpression());
+        JpaProducer producer = new JpaProducer(this, getProducerExpression());
+        producer.setQuery(getQuery());
+        producer.setNamedQuery(getNamedQuery());
+        producer.setNativeQuery(getNativeQuery());
+        producer.setParameters(getParameters());
+        producer.setResultClass(getResultClass());
+        producer.setUseExecuteUpdate(isUseExecuteUpdate());
+        return producer;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -161,6 +176,18 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         consumer.setDeleteHandler(getDeleteHandler());
         consumer.setPreDeleteHandler(getPreDeleteHandler());
         configureConsumer(consumer);
+        return consumer;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        JpaPollingConsumer consumer = new JpaPollingConsumer(this);
+        consumer.setQuery(getQuery());
+        consumer.setNamedQuery(getNamedQuery());
+        consumer.setNativeQuery(getNativeQuery());
+        consumer.setLockModeType(getLockModeType());
+        consumer.setParameters(getParameters());
+        consumer.setResultClass(getResultClass());
         return consumer;
     }
 
@@ -385,7 +412,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To use a custom query when consuming data.
+     * To use a custom query.
      */
     public void setQuery(String query) {
         this.query = query;
@@ -396,7 +423,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To use a named query when consuming data.
+     * To use a named query.
      */
     public void setNamedQuery(String namedQuery) {
         this.namedQuery = namedQuery;
@@ -407,7 +434,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To use a custom native query when consuming data. You may want to use the option consumer.resultClass also when using native queries.
+     * To use a custom native query. You may want to use the option resultClass also when using native queries.
      */
     public void setNativeQuery(String nativeQuery) {
         this.nativeQuery = nativeQuery;
@@ -429,9 +456,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * This key/value mapping is used for building the query parameters.
-     * It's is expected to be of the generic type java.util.Map<String, Object> where the keys are the named parameters
-     * of a given JPA query and the values are their corresponding effective values you want to select for.
+     * <p>This key/value mapping is used for building the query parameters.
+     * It is expected to be of the generic type java.util.Map<String, Object> where the keys are the named parameters
+     * of a given JPA query and the values are their corresponding effective values you want to select for.</p>
+     * <p>When it's used for producer, Simple expression can be used as a parameter value. It allows you to
+     * retrieve parameter values from the message body, header and etc.</p>
      */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
@@ -494,6 +523,19 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
      */
     public void setPreDeleteHandler(DeleteHandler<Object> preDeleteHandler) {
         this.preDeleteHandler = preDeleteHandler;
+    }
+
+    public Boolean isUseExecuteUpdate() {
+        return useExecuteUpdate;
+    }
+
+    /**
+     * To configure whether to use executeUpdate() when producer executes a query.
+     * When you use INSERT, UPDATE or DELETE statement as a named query, you need to specify
+     * this option to 'true'.
+     */
+    public void setUseExecuteUpdate(Boolean useExecuteUpdate) {
+        this.useExecuteUpdate = useExecuteUpdate;
     }
 
     // Implementation methods

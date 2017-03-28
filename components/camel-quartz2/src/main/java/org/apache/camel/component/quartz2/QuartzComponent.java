@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -50,14 +51,22 @@ import org.slf4j.LoggerFactory;
  */
 public class QuartzComponent extends UriEndpointComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
-    private SchedulerFactory schedulerFactory;
+    @Metadata(label = "advanced")
     private Scheduler scheduler;
+    @Metadata(label = "advanced")
+    private SchedulerFactory schedulerFactory;
     private Properties properties;
     private String propertiesFile;
+    @Metadata(label = "scheduler")
     private int startDelayedSeconds;
+    @Metadata(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;
-    private boolean prefixJobNameWithEndpointId;
+    @Metadata(label = "scheduler")
+    private boolean interruptJobsOnShutdown;
+    @Metadata(defaultValue = "true")
     private boolean enableJmx = true;
+    private boolean prefixJobNameWithEndpointId;
+    @Metadata(defaultValue = "true")
     private boolean prefixInstanceName = true;
 
     public QuartzComponent() {
@@ -154,6 +163,18 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         this.prefixInstanceName = prefixInstanceName;
     }
 
+    public boolean isInterruptJobsOnShutdown() {
+        return interruptJobsOnShutdown;
+    }
+
+    /**
+     * Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs.
+     * If this is enabled then any running jobs can fail due to being interrupted.
+     */
+    public void setInterruptJobsOnShutdown(boolean interruptJobsOnShutdown) {
+        this.interruptJobsOnShutdown = interruptJobsOnShutdown;
+    }
+
     public SchedulerFactory getSchedulerFactory() throws SchedulerException {
         if (schedulerFactory == null) {
             schedulerFactory = createSchedulerFactory();
@@ -175,6 +196,10 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             if (isPrefixInstanceName()) {
                 String instName = createInstanceName(prop);
                 prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
+            }
+
+            if (isInterruptJobsOnShutdown()) {
+                prop.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true");
             }
 
             // enable jmx unless configured to not do so
@@ -213,6 +238,10 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             // force disabling update checker (will do online check over the internet)
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
             prop.put("org.terracotta.quartz.skipUpdateCheck", "true");
+
+            if (isInterruptJobsOnShutdown()) {
+                prop.setProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN, "true");
+            }
 
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
@@ -354,7 +383,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
             group = host;
             name = path;
         } else {
-            String camelContextName = getCamelContext().getManagementName();
+            String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
             group = camelContextName == null ? "Camel" : "Camel_" + camelContextName;
             name = host;
         }
@@ -408,13 +437,19 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         super.doStop();
 
         if (scheduler != null) {
-            AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
-            if (number != null && number.get() > 0) {
-                LOG.info("Cannot shutdown scheduler: " + scheduler.getSchedulerName() + " as there are still " + number.get() + " jobs registered.");
-            } else {
-                LOG.info("Shutting down scheduler. (will wait for all jobs to complete first.)");
-                scheduler.shutdown(true);
+            if (isInterruptJobsOnShutdown()) {
+                LOG.info("Shutting down scheduler. (will interrupts jobs to shutdown quicker.)");
+                scheduler.shutdown(false);
                 scheduler = null;
+            } else {
+                AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
+                if (number != null && number.get() > 0) {
+                    LOG.info("Cannot shutdown scheduler: " + scheduler.getSchedulerName() + " as there are still " + number.get() + " jobs registered.");
+                } else {
+                    LOG.info("Shutting down scheduler. (will wait for all jobs to complete first.)");
+                    scheduler.shutdown(true);
+                    scheduler = null;
+                }
             }
         }
     }

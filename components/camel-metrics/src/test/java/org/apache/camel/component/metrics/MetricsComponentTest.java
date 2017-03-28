@@ -143,10 +143,11 @@ public class MetricsComponentTest {
         assertThat(endpoint, is(instanceOf(MetricsEndpoint.class)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateNewEndpointForGauge() throws Exception {
         MetricsEndpoint endpoint = new MetricsEndpoint(null, null, metricRegistry, MetricsType.GAUGE, "a name");
-        endpoint.createProducer();
+        assertThat(endpoint, is(notNullValue()));
+        assertThat(endpoint, is(instanceOf(MetricsEndpoint.class)));
     }
 
     @Test

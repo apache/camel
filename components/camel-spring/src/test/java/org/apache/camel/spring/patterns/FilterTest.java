@@ -31,6 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
  * @version 
  */
 // START SNIPPET: example
+// tag::example[]
 @ContextConfiguration
 public class FilterTest extends SpringRunWithTestSupport {
 
@@ -62,4 +63,5 @@ public class FilterTest extends SpringRunWithTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 }
+// end::example[]
 // END SNIPPET: example

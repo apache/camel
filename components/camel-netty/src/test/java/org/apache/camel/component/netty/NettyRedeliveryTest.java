@@ -196,7 +196,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     private class ClosingClientRunnable implements Runnable {
         private final Socket socket;
 
-        public ClosingClientRunnable(Socket socket) {
+        ClosingClientRunnable(Socket socket) {
             this.socket = socket;
         }
 

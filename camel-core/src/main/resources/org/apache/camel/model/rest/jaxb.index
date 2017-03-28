@@ -21,6 +21,7 @@ HeadVerbDefinition
 OptionsVerbDefinition
 PostVerbDefinition
 PutVerbDefinition
+PatchVerbDefinition
 RestBindingDefinition
 RestBindingMode
 RestConfigurationDefinition

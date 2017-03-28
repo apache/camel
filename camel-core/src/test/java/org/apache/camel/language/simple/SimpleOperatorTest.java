@@ -321,7 +321,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} contains 'abc'", true);
         assertPredicate("${in.header.foo} contains 'def'", false);
     }
-
+  
     public void testNotContains() throws Exception {
         assertPredicate("${in.header.foo} not contains 'a'", false);
         assertPredicate("${in.header.foo} not contains 'ab'", false);
@@ -498,6 +498,26 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar}-- == 122", true);
         assertPredicate("${in.header.bar}-- == 123", false);
         assertPredicate("${in.header.bar}-- == 124", false);
+    }
+
+    public void testStartsWith() throws Exception {
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} starts with 'Hello'", true);
+        assertPredicate("${in.body} starts with 'H'", true);
+        assertPredicate("${in.body} starts with 'Hello there'", true);
+        assertPredicate("${in.body} starts with 'Hello ther'", true);
+        assertPredicate("${in.body} starts with 'ello there'", false);
+        assertPredicate("${in.body} starts with 'Hi'", false);
+    }
+    
+    public void testEndsWith() throws Exception {
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} ends with 'there'", true);
+        assertPredicate("${in.body} ends with 're'", true);
+        assertPredicate("${in.body} ends with ' there'", true);
+        assertPredicate("${in.body} ends with 'Hello there'", true);
+        assertPredicate("${in.body} ends with 'Hello ther'", false);
+        assertPredicate("${in.body} ends with 'Hi'", false);
     }
 
     protected String getLanguageName() {

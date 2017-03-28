@@ -175,9 +175,9 @@ public final class MessageHelper {
     public static String extractValueForLogging(Object value, Message message) {
         boolean streams = false;
         if (message.getExchange() != null) {
-            String property = message.getExchange().getContext().getProperty(Exchange.LOG_DEBUG_BODY_STREAMS);
-            if (property != null) {
-                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(), property);
+            String globalOption = message.getExchange().getContext().getGlobalOption(Exchange.LOG_DEBUG_BODY_STREAMS);
+            if (globalOption != null) {
+                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(), globalOption);
             }
         }
 
@@ -185,7 +185,7 @@ public final class MessageHelper {
         int maxChars = 1000;
 
         if (message.getExchange() != null) {
-            String property = message.getExchange().getContext().getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
+            String property = message.getExchange().getContext().getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
             if (property != null) {
                 maxChars = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
             }
@@ -208,23 +208,39 @@ public final class MessageHelper {
     public static String extractBodyForLogging(Message message, String prepend) {
         boolean streams = false;
         if (message.getExchange() != null) {
-            String property = message.getExchange().getContext().getProperty(Exchange.LOG_DEBUG_BODY_STREAMS);
-            if (property != null) {
-                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(), property);
+            String globalOption = message.getExchange().getContext().getGlobalOption(Exchange.LOG_DEBUG_BODY_STREAMS);
+            if (globalOption != null) {
+                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(), globalOption);
             }
         }
+        return extractBodyForLogging(message, prepend, streams, false);
+    }
 
+    /**
+     * Extracts the body for logging purpose.
+     * <p/>
+     * Will clip the body if its too big for logging.
+     *
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param message the message
+     * @param prepend a message to prepend
+     * @param allowStreams whether or not streams is allowed
+     * @param allowFiles whether or not files is allowed (currently not in use)
+     * @return the logging message
+     */
+    public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, boolean allowFiles) {
         // default to 1000 chars
         int maxChars = 1000;
 
         if (message.getExchange() != null) {
-            String property = message.getExchange().getContext().getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
-            if (property != null) {
-                maxChars = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
+            String globalOption = message.getExchange().getContext().getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
+            if (globalOption != null) {
+                maxChars = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, globalOption);
             }
         }
 
-        return extractBodyForLogging(message, prepend, streams, false, maxChars);
+        return extractBodyForLogging(message, prepend, allowStreams, allowFiles, maxChars);
     }
 
     /**
@@ -554,7 +570,10 @@ public final class MessageHelper {
             routeId = history.getRouteId() != null ? history.getRouteId() : "";
             id = history.getNode().getId();
             // we need to avoid leak the sensible information here
-            label =  URISupport.sanitizeUri(history.getNode().getLabel());
+            // the sanitizeUri takes a very long time for very long string and the format cuts this to
+            // 78 characters, anyway. Cut this to 100 characters. This will give enough space for removing
+            // characters in the sanitizeUri method and will be reasonably fast
+            label =  URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
             elapsed = history.getElapsed();
 
             sb.append(String.format(MESSAGE_HISTORY_OUTPUT, routeId, id, label, elapsed));

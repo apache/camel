@@ -97,7 +97,11 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         case HazelcastConstants.GET_ALL_OPERATION:
             this.getAll(oid, exchange);
             break;
-            
+
+        case HazelcastConstants.GET_KEYS_OPERATION:
+            this.getKeys(exchange);
+            break;
+
         case HazelcastConstants.CONTAINS_KEY_OPERATION:
             this.containsKey(oid, exchange);
             break;
@@ -263,5 +267,12 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     private void containsValue(Exchange exchange) {
         Object body = exchange.getIn().getBody();
         exchange.getOut().setBody(this.cache.containsValue(body));
+    }
+
+    /**
+    * get keys set of objects and give it back
+    */
+    private void getKeys(Exchange exchange) {
+        exchange.getOut().setBody(this.cache.keySet());
     }
 }

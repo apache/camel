@@ -17,15 +17,17 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RouteStopCommand;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-@Command(scope = "camel", name = " route-stop", description = "Stop a Camel route")
+@Command(scope = "camel", name = "route-stop", description = "Stop a Camel route")
+@Service
 public class RouteStop extends AbstractRouteCommand {
 
     @Override
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         RouteStopCommand command = new RouteStopCommand(route, context);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }

@@ -40,10 +40,21 @@ public class SqsComponent extends UriEndpointComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Queue name must be specified.");
         }
-        configuration.setQueueName(remaining);
 
-        if (configuration.getAmazonSQSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
+        if (remaining.startsWith("arn:")) {
+            String[] parts = remaining.split(":");
+            if (parts.length != 6 || !parts[2].equals("sqs")) {
+                throw new IllegalArgumentException("Queue arn must be in format arn:aws:sqs:region:account:name.");
+            }
+            configuration.setRegion(parts[3]);
+            configuration.setQueueOwnerAWSAccountId(parts[4]);
+            configuration.setQueueName(parts[5]);
+        } else {
+            configuration.setQueueName(remaining);
+        }
+
+        if (configuration.getAmazonSQSClient() == null) {
+            throw new IllegalArgumentException("AmazonSQSClient must be specified.");
         }
         
         // Verify that visibilityTimeout is set if extendMessageVisibility is set to true.

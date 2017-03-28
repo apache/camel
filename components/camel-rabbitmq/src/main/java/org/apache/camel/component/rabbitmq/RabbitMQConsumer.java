@@ -131,8 +131,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
             try {
                 consumer.stop();
             } catch (TimeoutException e) {
-                log.error("Timeout occured");
-                throw e;
+                log.warn("Timeout occurred while stopping consumer. This exception is ignored", e);
             }
         }
         this.consumers.clear();
@@ -184,7 +183,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         private final long connectionRetryInterval;
         private final AtomicBoolean running = new AtomicBoolean(true);
 
-        public StartConsumerCallable(long connectionRetryInterval) {
+        StartConsumerCallable(long connectionRetryInterval) {
             this.connectionRetryInterval = connectionRetryInterval;
         }
 

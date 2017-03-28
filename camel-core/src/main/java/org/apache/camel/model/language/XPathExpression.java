@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * For XPath expressions and predicates
  */
-@Metadata(label = "language,core,xml", title = "XPath")
+@Metadata(firstVersion = "1.1.0", label = "language,core,xml", title = "XPath")
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {

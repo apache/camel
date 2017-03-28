@@ -17,10 +17,9 @@
 package org.apache.camel.component.kubernetes.consumer;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.EditablePodTemplateSpec;
+import io.fabric8.kubernetes.api.model.PodTemplateSpec;
 import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
@@ -61,7 +60,7 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
                 ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
                 rcSpec.setReplicas(2);
                 PodTemplateSpecBuilder builder = new PodTemplateSpecBuilder();
-                EditablePodTemplateSpec t = builder.withNewMetadata().withName("nginx-template")
+                PodTemplateSpec t = builder.withNewMetadata().withName("nginx-template")
                         .addToLabels("server", "nginx").endMetadata().withNewSpec().addNewContainer()
                         .withName("wildfly").withImage("jboss/wildfly").addNewPort().withContainerPort(80).endPort()
                         .endContainer().endSpec().build();
@@ -115,7 +114,7 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
                 from("direct:deleteReplicationController").toF(
                         "kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=deleteReplicationController",
                         host, authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=replicationControllers", host, authToken)
+                fromF("kubernetes://%s?oauthToken=%s&category=replicationControllers&resourceName=wildfly", host, authToken)
                         .process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };

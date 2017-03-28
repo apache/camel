@@ -23,6 +23,7 @@ import javax.jms.Session;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sjms.SjmsHeaderFilterStrategy;
@@ -33,6 +34,7 @@ import org.apache.camel.component.sjms.jms.JmsBinding;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -44,7 +46,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The sjms-batch component is a specialized for highly performant, transactional batch consumption from a JMS queue.
  */
-@UriEndpoint(scheme = "sjms-batch", title = "Simple JMS Batch", syntax = "sjms-batch:destinationName",
+@UriEndpoint(firstVersion = "2.16.0", scheme = "sjms-batch", title = "Simple JMS Batch", syntax = "sjms-batch:destinationName",
         consumerClass = SjmsBatchComponent.class, label = "messaging", consumerOnly = true)
 public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
@@ -65,6 +67,10 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     private int completionTimeout = DEFAULT_COMPLETION_TIMEOUT;
     @UriParam(defaultValue = "1000")
     private int completionInterval;
+    @UriParam(javaType = "java.lang.String")
+    private Predicate completionPredicate;
+    @UriParam
+    private boolean eagerCheckCompletion;
     @UriParam
     private boolean sendEmptyMessageWhenIdle;
     @UriParam(defaultValue = "1000")
@@ -83,6 +89,12 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     @UriParam(label = "advanced")
     private ScheduledExecutorService timeoutCheckerExecutorService;
+    @UriParam(label = "advanced")
+    private boolean asyncStartListener;
+    @UriParam(label = "advanced", defaultValue = "5000")
+    private int recoveryInterval = 5000;
+    @UriParam(label = "advanced", defaultValue = "-1")
+    private int keepAliveDelay = -1;
 
     public SjmsBatchEndpoint() {
     }
@@ -101,6 +113,11 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    @Override
+    public SjmsBatchComponent getComponent() {
+        return (SjmsBatchComponent) super.getComponent();
     }
 
     @Override
@@ -210,6 +227,38 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
      */
     public void setCompletionInterval(int completionInterval) {
         this.completionInterval = completionInterval;
+    }
+
+    public Predicate getCompletionPredicate() {
+        return completionPredicate;
+    }
+
+    /**
+     * The completion predicate, which causes batches to be completed when the predicate evaluates as true.
+     * <p/>
+     * The predicate can also be configured using the simple language using the string syntax.
+     * You may want to set the option eagerCheckCompletion to true to let the predicate match the incoming message,
+     * as otherwise it matches the aggregated message.
+     */
+    public void setCompletionPredicate(Predicate completionPredicate) {
+        this.completionPredicate = completionPredicate;
+    }
+
+    public void setCompletionPredicate(String predicate) {
+        // uses simple language
+        this.completionPredicate = SimpleLanguage.predicate(predicate);
+    }
+
+    public boolean isEagerCheckCompletion() {
+        return eagerCheckCompletion;
+    }
+
+    /**
+     * Use eager completion checking which means that the completionPredicate will use the incoming Exchange.
+     * As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange.
+     */
+    public void setEagerCheckCompletion(boolean eagerCheckCompletion) {
+        this.eagerCheckCompletion = eagerCheckCompletion;
     }
 
     public boolean isSendEmptyMessageWhenIdle() {
@@ -328,4 +377,49 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
         this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
     }
+
+    public boolean isAsyncStartListener() {
+        return asyncStartListener;
+    }
+
+    /**
+     * Whether to startup the consumer message listener asynchronously, when starting a route.
+     * For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying
+     * and/or failover. This will cause Camel to block while starting routes. By setting this option to true,
+     * you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread
+     * in asynchronous mode. If this option is used, then beware that if the connection could not be established,
+     * then an exception is logged at WARN level, and the consumer will not be able to receive messages;
+     * You can then restart the route to retry.
+     */
+    public void setAsyncStartListener(boolean asyncStartListener) {
+        this.asyncStartListener = asyncStartListener;
+    }
+
+    public int getRecoveryInterval() {
+        return recoveryInterval;
+    }
+
+    /**
+     * Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds.
+     * The default is 5000 ms, that is, 5 seconds.
+     */
+    public void setRecoveryInterval(int recoveryInterval) {
+        this.recoveryInterval = recoveryInterval;
+    }
+
+    /**
+     * The delay in millis between attempts to re-establish a valid session.
+     * If this is a positive value the SjmsBatchConsumer will attempt to create a new session if it sees an IllegalStateException
+     * during message consumption. This delay value allows you to pause between attempts to prevent spamming the logs.
+     * If this is a negative value (default is -1) then the SjmsBatchConsumer will behave as it always has before - that is
+     * it will bail out and the route will shut down if it sees an IllegalStateException.
+     */
+    public void setKeepAliveDelay(int keepAliveDelay) {
+        this.keepAliveDelay = keepAliveDelay;
+    }
+
+    public int getKeepAliveDelay() {
+        return keepAliveDelay;
+    }
+
 }

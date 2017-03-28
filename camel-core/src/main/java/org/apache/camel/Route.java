@@ -53,6 +53,13 @@ public interface Route extends EndpointAware {
     String getUptime();
 
     /**
+     * Gets the uptime in milli seconds
+     *
+     * @return the uptime in millis seconds
+     */
+    long getUptimeMillis();
+
+    /**
      * Gets the inbound {@link Consumer}
      *
      * @return the inbound consumer

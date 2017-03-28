@@ -29,7 +29,7 @@ import com.thoughtworks.xstream.security.WildcardTypePermission;
  */
 public final class XStreamUtils {
     private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
-    private static final String PERMISSIONS_PROPERTY_DEFAULT = "-*,java.lang.*,java.util.*";
+    private static final String PERMISSIONS_PROPERTY_DEFAULT = "java.lang.*,java.util.*";
 
     private XStreamUtils() {
     }

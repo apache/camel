@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -92,10 +93,6 @@ public final class DefaultExchange implements Exchange {
     public Exchange copy(boolean safeCopy) {
         DefaultExchange exchange = new DefaultExchange(this);
 
-        if (hasProperties()) {
-            exchange.setProperties(safeCopyProperties(getProperties()));
-        }
-
         if (safeCopy) {
             exchange.getIn().setBody(getIn().getBody());
             exchange.getIn().setFault(getIn().isFault());
@@ -122,10 +119,15 @@ public final class DefaultExchange implements Exchange {
             }
         }
         exchange.setException(getException());
+
+        // copy properties after body as body may trigger lazy init
+        if (hasProperties()) {
+            exchange.setProperties(safeCopyProperties(getProperties()));
+        }
+
         return exchange;
     }
 
-    @SuppressWarnings("unchecked")
     private static Map<String, Object> safeCopyHeaders(Map<String, Object> headers) {
         if (headers == null) {
             return null;
@@ -148,7 +150,7 @@ public final class DefaultExchange implements Exchange {
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
         if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new ArrayList<MessageHistory>(history));
+            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
         }
 
         return answer;

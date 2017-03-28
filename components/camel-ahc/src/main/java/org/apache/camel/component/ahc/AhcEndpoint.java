@@ -20,11 +20,14 @@ import java.net.URI;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.JdkSslContext;
+
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -34,12 +37,16 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 /**
  * To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
  */
-@UriEndpoint(scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http", lenientProperties = true)
-public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+@UriEndpoint(firstVersion = "2.8.0", scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http", lenientProperties = true)
+public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;
     @UriPath @Metadata(required = "true")
@@ -54,7 +61,7 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private int bufferSize = 4 * 1024;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    @UriParam
+    @UriParam(label = "advanced")
     private AhcBinding binding;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -62,6 +69,12 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private AsyncHttpClientConfig clientConfig;
     @UriParam(label = "advanced", prefix = "clientConfig.", multiValue = true)
     private Map<String, Object> clientConfigOptions;
+    @UriParam(label = "advanced,security", prefix = "clientConfig.realm.", multiValue = true)
+    private Map<String, Object> clientConfigRealmOptions;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean connectionClose;
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -229,6 +242,39 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.clientConfigOptions = clientConfigOptions;
     }
 
+    public Map<String, Object> getClientConfigRealmOptions() {
+        return clientConfigRealmOptions;
+    }
+
+    /**
+     * To configure the AsyncHttpClientConfig Realm using the key/values from the Map.
+     */
+    public void setClientConfigRealmOptions(Map<String, Object> clientConfigRealmOptions) {
+        this.clientConfigRealmOptions = clientConfigRealmOptions;
+    }
+
+    public boolean isConnectionClose() {
+        return connectionClose;
+    }
+    
+    /**
+     * Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default
+     */
+    public void setConnectionClose(boolean connectionClose) {
+        this.connectionClose = connectionClose;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -237,19 +283,21 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             AsyncHttpClientConfig config = null;
             
             if (clientConfig != null) {
-                AsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
+                DefaultAsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
                 
                 if (sslContextParameters != null) {
-                    SSLContext ssl = sslContextParameters.createSSLContext();
-                    builder.setSSLContext(ssl);
+                    SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
+                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
+                    builder.setSslContext(ssl);
                 }
                 
                 config = builder.build();
             } else {
                 if (sslContextParameters != null) {
-                    AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-                    SSLContext ssl = sslContextParameters.createSSLContext();
-                    builder.setSSLContext(ssl);
+                    DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
+                    SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
+                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
+                    builder.setSslContext(ssl);
                     config = builder.build();
                 }
             }
@@ -259,9 +307,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     protected AsyncHttpClient createClient(AsyncHttpClientConfig config) {
         if (config == null) {
-            return new AsyncHttpClient();
+            return new DefaultAsyncHttpClient();
         } else {
-            return new AsyncHttpClient(config);
+            return new DefaultAsyncHttpClient(config);
         }
     }
 

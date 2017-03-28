@@ -50,7 +50,7 @@ public class AMQPConnectionDetails {
             PropertiesComponent propertiesComponent = camelContext.getComponent("properties", PropertiesComponent.class);
 
             String host = property(propertiesComponent, AMQP_HOST, "localhost");
-            int port = Integer.parseInt(property(propertiesComponent, AMQP_PORT , "5672"));
+            int port = Integer.parseInt(property(propertiesComponent, AMQP_PORT, "5672"));
             String username = property(propertiesComponent, AMQP_USERNAME, null);
             String password = property(propertiesComponent, AMQP_PASSWORD, null);
 

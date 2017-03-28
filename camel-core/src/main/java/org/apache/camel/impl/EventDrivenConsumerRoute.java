@@ -98,7 +98,6 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Processor> filter(String pattern) {
         List<Processor> match = new ArrayList<Processor>();
         doFilter(pattern, navigate(), match);

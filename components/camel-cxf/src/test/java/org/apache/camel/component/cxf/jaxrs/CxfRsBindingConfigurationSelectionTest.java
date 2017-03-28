@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.camel.Exchange;
@@ -105,6 +106,11 @@ public class CxfRsBindingConfigurationSelectionTest extends CamelTestSupport {
 
         @Override
         public Map<String, Object> bindResponseHeadersToCamelHeaders(Object response, Exchange camelExchange) throws Exception {
+            return null;
+        }
+
+        @Override
+        public Entity<Object> bindCamelMessageToRequestEntity(Object body, Message camelMessage, Exchange camelExchange) {
             return null;
         }
 

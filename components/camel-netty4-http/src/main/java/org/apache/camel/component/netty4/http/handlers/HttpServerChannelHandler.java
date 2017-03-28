@@ -21,7 +21,6 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Locale;
-
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -29,9 +28,12 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.base64.Base64;
 import io.netty.handler.codec.http.DefaultHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpUtil;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.netty4.NettyConverter;
@@ -43,9 +45,9 @@ import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -92,7 +94,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         // if its an OPTIONS request then return which methods is allowed
         boolean isRestrictedToOptions = consumer.getEndpoint().getHttpMethodRestrict() != null
                 && consumer.getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
-        if ("OPTIONS".equals(request.getMethod().name()) && !isRestrictedToOptions) {
+        if ("OPTIONS".equals(request.method().name()) && !isRestrictedToOptions) {
             String s;
             if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
                 s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
@@ -108,7 +110,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             return;
         }
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
-                && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod().name())) {
+                && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.method().name())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
@@ -116,7 +118,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             ctx.channel().close();
             return;
         }
-        if ("TRACE".equals(request.getMethod().name()) && !consumer.getEndpoint().isTraceEnabled()) {
+        if ("TRACE".equals(request.method().name()) && !consumer.getEndpoint().isTraceEnabled()) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
@@ -125,7 +127,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             return;
         }
         // must include HOST header as required by HTTP 1.1
-        if (!request.headers().contains(HttpHeaders.Names.HOST)) {
+        if (!request.headers().contains(HttpHeaderNames.HOST.toString())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
             //response.setChunked(false);
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
@@ -138,7 +140,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         // is basic auth configured
         NettyHttpSecurityConfiguration security = consumer.getEndpoint().getSecurityConfiguration();
         if (security != null && security.isAuthenticate() && "Basic".equalsIgnoreCase(security.getConstraint())) {
-            String url = request.getUri();
+            String url = request.uri();
 
             // drop parameters from url
             if (url.contains("?")) {
@@ -146,7 +148,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             }
 
             // we need the relative path without the hostname and port
-            URI uri = new URI(request.getUri());
+            URI uri = new URI(request.uri());
             String target = uri.getPath();
 
             // strip the starting endpoint path so the target is relative to the endpoint uri
@@ -247,13 +249,17 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                     // the decoded part is base64 encoded, so we need to decode that
                     ByteBuf buf = NettyConverter.toByteBuffer(decoded.getBytes());
                     ByteBuf out = Base64.decode(buf);
-                    String userAndPw = out.toString(Charset.defaultCharset());
-                    String username = ObjectHelper.before(userAndPw, ":");
-                    String password = ObjectHelper.after(userAndPw, ":");
-                    HttpPrincipal principal = new HttpPrincipal(username, password);
-
-                    LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
-                    return principal;
+                    try {
+                        String userAndPw = out.toString(Charset.defaultCharset());
+                        String username = ObjectHelper.before(userAndPw, ":");
+                        String password = ObjectHelper.after(userAndPw, ":");
+                        HttpPrincipal principal = new HttpPrincipal(username, password);
+                        LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
+                        return principal;
+                    } finally {
+                        buf.release();
+                        out.release();
+                    }
                 }
             }
         }
@@ -285,10 +291,10 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
         HttpRequest request = (HttpRequest) message;
         // setup the connection property in case of the message header is removed
-        boolean keepAlive = HttpHeaders.isKeepAlive(request);
+        boolean keepAlive = HttpUtil.isKeepAlive(request);
         if (!keepAlive) {
             // Just make sure we close the connection this time.
-            exchange.setProperty(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
+            exchange.setProperty(HttpHeaderNames.CONNECTION.toString(), HttpHeaderValues.CLOSE.toString());
         }
     }
 

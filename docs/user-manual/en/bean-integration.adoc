@@ -1,0 +1,103 @@
+[[BeanIntegration-BeanIntegration]]
+Bean Integration
+~~~~~~~~~~~~~~~~
+
+Camel supports the integration of beans and POJOs in a number of ways
+
+[[BeanIntegration-Annotations]]
+Annotations
+^^^^^^^^^^^
+
+If a bean is defined in link:spring.html[Spring] XML or scanned using
+the Spring component scanning mechanism and a *<camelContext>* is used
+or a `CamelBeanPostProcessor` then we process a number of Camel
+annotations to do various things such as injecting resources or
+producing, consuming or routing messages.
+
+The following annotations is supported and inject by Camel's
+`CamelBeanPostProcessor`
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Annotation |Description
+
+|`@EndpointInject` |To inject an endpoint, see more details at link:pojo-producing.html[POJO
+Producing].
+
+|`@BeanInject` |*Camel 2.13:* To inject a bean obtained from the
+link:registry.html[Registry]. See link:bean-injection.html[Bean
+Injection].
+
+|`@PropertyInject` |*Camel 2.12:* To inject a value using
+link:using-propertyplaceholder.html[property placeholder].
+
+|`@Produce` |To inject a producer to send message to an endpoint. See
+link:pojo-producing.html[POJO Producing].
+
+|`@Consume` |To inject a consumer on a method. See link:pojo-consuming.html[POJO
+Consuming].
+|=======================================================================
+
+See more details at:
+
+* link:pojo-consuming.html[POJO Consuming] to consume and possibly route
+messages from Camel
+* link:pojo-producing.html[POJO Producing] to make it easy to produce
+camel messages from your POJOs
+* link:dynamicrouter-annotation.html[DynamicRouter Annotation] for
+creating a link:dynamic-router.html[Dynamic Router] from a POJO method
+* link:recipientlist-annotation.html[RecipientList Annotation] for
+creating a link:recipient-list.html[Recipient List] from a POJO method
+* link:routingslip-annotation.html[RoutingSlip Annotation] for creating
+a link:routing-slip.html[Routing Slip] for a POJO method
+* link:bean-injection.html[Bean Injection] to inject Camel related
+resources into your POJOs
+* link:using-exchange-pattern-annotations.html[Using Exchange Pattern
+Annotations] describes how the pattern annotations can be used to change
+the behaviour of method invocations with
+link:spring-remoting.html[Spring Remoting] or
+link:pojo-producing.html[POJO Producing]
+
+*Example*
+
+See the link:pojo-messaging-example.html[POJO Messaging Example] for how
+to use the annotations for routing and messaging.
+
+[[BeanIntegration-BeanComponent]]
+Bean Component
+^^^^^^^^^^^^^^
+
+The link:bean.html[Bean] component allows one to invoke a particular
+method. Alternately the link:bean.html[Bean] component supports the
+creation of a proxy via
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/bean/ProxyHelper.html[ProxyHelper]
+to a Java interface; which the implementation just sends a message
+containing a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/bean/BeanInvocation.html[BeanInvocation]
+to some Camel endpoint.
+
+[[BeanIntegration-SpringRemoting]]
+Spring Remoting
+^^^^^^^^^^^^^^^
+
+We support a link:spring-remoting.html[Spring Remoting] provider which
+uses Camel as the underlying transport mechanism. The nice thing about
+this approach is we can use any of the Camel transport
+link:components.html[Components] to communicate between beans. It also
+means we can use link:content-based-router.html[Content Based Router]
+and the other link:enterprise-integration-patterns.html[Enterprise
+Integration Patterns] in between the beans; in particular we can use
+link:message-translator.html[Message Translator] to be able to convert
+what the on-the-wire messages look like in addition to adding various
+headers and so forth.
+
+*Bean binding*
+
+Whenever Camel invokes a bean method via one of the above methods
+(link:bean.html[Bean] component, link:spring-remoting.html[Spring
+Remoting] or link:pojo-consuming.html[POJO Consuming]) then the
+*link:bean-binding.html[Bean Binding]* mechanism is used to figure out
+what method to use (if it is not explicit) and how to bind the
+link:message.html[Message] to the parameters possibly using the
+link:parameter-binding-annotations.html[Parameter Binding Annotations]
+or using a link:bean-binding.html[method name option].

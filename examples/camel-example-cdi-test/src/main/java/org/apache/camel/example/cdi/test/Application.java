@@ -18,7 +18,9 @@ package org.apache.camel.example.cdi.test;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.apache.camel.Body;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
@@ -40,7 +42,7 @@ public class Application {
                 .routeId("route")
                 .log("${body} from ${camelContext.name} at ${date:now:hh:mm:ss a}!");
 
-            from("direct:in").to("direct:out");
+            from("direct:in").routeId("in»out").bean("bean").to("direct:out");
         }
     }
 
@@ -54,5 +56,13 @@ public class Application {
 
     void bye(@Observes CamelContextStoppingEvent event) {
         producer.sendBody("Bye");
+    }
+
+    @Named("bean")
+    public static class Bean {
+
+        public String process(@Body String body) {
+            return body;
+        }
     }
 }

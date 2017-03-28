@@ -95,7 +95,8 @@ public final class TestIgniteComputeResources {
         public String reduce(List<ComputeJobResult> results) throws IgniteException {
             StringBuilder answer = new StringBuilder();
             for (ComputeJobResult res : results) {
-                answer.append(res.getData()).append(",");
+                Object data = res.getData();
+                answer.append(data).append(",");
             }
             answer.deleteCharAt(answer.length() - 1);
             return answer.toString();

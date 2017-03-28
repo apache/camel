@@ -17,6 +17,7 @@
 package org.apache.camel.utils.cassandra;
 
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
+import com.datastax.driver.core.policies.LatencyAwarePolicy;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
@@ -26,6 +27,7 @@ public class CassandraLoadBalancingPolicies {
     public final String roundRobinPolicy = "RoundRobinPolicy";
     public final String tokenAwarePolicy = "TokenAwarePolicy";
     public final String dcAwareRoundRobinPolicy = "DcAwareRoundRobinPolicy";
+    public final String latencyAwarePolicy = "LatencyAwarePolicy";
     
     public LoadBalancingPolicy getLoadBalancingPolicy(String policy) {
         LoadBalancingPolicy loadBalancingPolicy = new RoundRobinPolicy();
@@ -37,7 +39,10 @@ public class CassandraLoadBalancingPolicies {
             loadBalancingPolicy = new TokenAwarePolicy(new RoundRobinPolicy());
             break;
         case dcAwareRoundRobinPolicy:
-            loadBalancingPolicy = new DCAwareRoundRobinPolicy();
+            loadBalancingPolicy = DCAwareRoundRobinPolicy.builder().build();
+            break;
+        case latencyAwarePolicy:
+            loadBalancingPolicy = LatencyAwarePolicy.builder(new RoundRobinPolicy()).build();
             break;
         default:
             throw new IllegalArgumentException("Cassandra load balancing policy can be " + roundRobinPolicy + " ," + tokenAwarePolicy 

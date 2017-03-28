@@ -60,7 +60,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test
     public void testGetCustomer() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/123");
-        get.addHeader("Accept" , "application/json");
+        get.addHeader("Accept", "application/json");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
@@ -77,7 +77,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test
     public void testGetCustomerWithQuery() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers?id=123");
-        get.addHeader("Accept" , "application/json");
+        get.addHeader("Accept", "application/json");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
@@ -93,7 +93,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test
     public void testGetCustomers() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/");
-        get.addHeader("Accept" , "application/xml");
+        get.addHeader("Accept", "application/xml");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
@@ -116,7 +116,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test
     public void testGetSubResource() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/orders/223/products/323");
-        get.addHeader("Accept" , "application/json");
+        get.addHeader("Accept", "application/json");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
@@ -149,7 +149,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test
     public void testPostConsumer() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
@@ -174,7 +174,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test
     public void testPostConsumerUniqueResponseCode() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customersUniqueResponseCode");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);

@@ -124,7 +124,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
         for (int r = 0; r < key.length; r++) {
             Put put = new Put(key[r].getBytes());
-            put.add(family[0].getBytes(), column[0][0].getBytes(), body[r][0][0].getBytes());
+            put.addColumn(family[0].getBytes(), column[0][0].getBytes(), body[r][0][0].getBytes());
             table.put(put);
         }
 

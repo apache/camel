@@ -184,6 +184,16 @@ public class ValueBuilder implements Expression, Predicate {
         return onNewValueBuilder(newExp);
     }
 
+    public ValueBuilder tokenize(String token, int group, boolean skipFirst) {
+        Expression newExp = ExpressionBuilder.tokenizeExpression(expression, token);
+        if (group == 0 && skipFirst) {
+            // wrap in skip first (if group then it has its own skip first logic)
+            newExp = ExpressionBuilder.skipFirstExpression(newExp);
+        }
+        newExp = ExpressionBuilder.groupIteratorExpression(newExp, token, group, skipFirst);
+        return onNewValueBuilder(newExp);
+    }
+
     public ValueBuilder tokenizeXML(String tagName, String inheritNamespaceTagName) {
         Expression newExp = ExpressionBuilder.tokenizeXMLExpression(tagName, inheritNamespaceTagName);
         return onNewValueBuilder(newExp);

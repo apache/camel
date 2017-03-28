@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
  */
-@UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging,iot", syntax = "paho:topic")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging,iot", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
@@ -55,11 +55,11 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String brokerUrl = PahoConstants.DEFAULT_BROKER_URL;
     @UriParam(defaultValue = "2")
     private int qos = PahoConstants.DEFAULT_QOS;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean retained;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = PahoPersistence.MEMORY;
-    @UriParam(description = "Base directory used by file persistence.", defaultValue = "Current directory")
+    @UriParam(description = "Base directory used by file persistence. Will by default use current directory.")
     private String filePersistenceDirectory;
 
     // Collaboration members

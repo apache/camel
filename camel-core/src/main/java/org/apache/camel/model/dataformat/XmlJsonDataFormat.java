@@ -31,11 +31,11 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * xml-json data format
+ * XML-JSon data format
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation,xml,json", title = "XML JSon")
+@Metadata(firstVersion = "2.10.0", label = "dataformat,transformation,xml,json", title = "XML JSon")
 @XmlRootElement(name = "xmljson")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XmlJsonDataFormat extends DataFormatDefinition {

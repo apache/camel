@@ -15,50 +15,62 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.apache.camel</groupId>
-		<artifactId>components</artifactId>
-		<version>2.17-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>components</artifactId>
+    <version>2.19.0-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>camel-protobuf</artifactId>
-	<packaging>bundle</packaging>
-	<name>Camel :: Protobuf</name>
+  <artifactId>camel-protobuf</artifactId>
+  <packaging>jar</packaging>
+  <name>Camel :: Protobuf</name>
+  <description>Camel Google Protobuf data format support</description>
 
-	<properties>
-		<camel.osgi.export.pkg>org.apache.camel.dataformat.protobuf.*</camel.osgi.export.pkg>
-		<camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=protobuf</camel.osgi.export.service>
-	</properties>
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.dataformat.protobuf.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=protobuf</camel.osgi.export.service>
+  </properties>
 
-	<dependencies>	
-        <dependency>
-		    <groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<version>${protobuf-version}</version>
-		</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>${protobuf-version}</version>
+    </dependency>
 
-		<!-- testing -->
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test-spring</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
-        </dependency>
-	</dependencies>
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

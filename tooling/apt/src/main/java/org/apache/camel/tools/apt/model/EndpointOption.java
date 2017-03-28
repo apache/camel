@@ -25,6 +25,7 @@ import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
 public final class EndpointOption {
 
     private String name;
+    private String displayName;
     private String type;
     private String required;
     private String defaultValue;
@@ -34,16 +35,18 @@ public final class EndpointOption {
     private String prefix;
     private boolean multiValue;
     private boolean deprecated;
+    private boolean secret;
     private String group;
     private String label;
     private boolean enumType;
     private Set<String> enums;
 
-    public EndpointOption(String name, String type, String required, String defaultValue, String defaultValueNote,
+    public EndpointOption(String name, String displayName, String type, String required, String defaultValue, String defaultValueNote,
                           String documentation, String optionalPrefix, String prefix, boolean multiValue,
-                          boolean deprecated,  String group, String label,
+                          boolean deprecated, boolean secret, String group, String label,
                           boolean enumType, Set<String> enums) {
         this.name = name;
+        this.displayName = displayName;
         this.type = type;
         this.required = required;
         this.defaultValue = defaultValue;
@@ -53,6 +56,7 @@ public final class EndpointOption {
         this.prefix = prefix;
         this.multiValue = multiValue;
         this.deprecated = deprecated;
+        this.secret = secret;
         this.group = group;
         this.label = label;
         this.enumType = enumType;
@@ -61,6 +65,10 @@ public final class EndpointOption {
 
     public String getName() {
         return name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getType() {
@@ -95,14 +103,8 @@ public final class EndpointOption {
         return deprecated;
     }
 
-    public String getEnumValuesAsHtml() {
-        CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
-        if (enums != null && enums.size() > 0) {
-            for (String e : enums) {
-                csb.append(e);
-            }
-        }
-        return csb.toString();
+    public boolean isSecret() {
+        return secret;
     }
 
     public String getDocumentationWithNotes() {

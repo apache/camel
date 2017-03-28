@@ -118,7 +118,7 @@ public class CreateContainerCmdHeaderTest extends BaseDockerHeaderTest<CreateCon
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(attachStdErr);
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdin(attachStdIn);
         Mockito.verify(mockObject, Mockito.times(1)).withAttachStdout(attachStdOut);
-        Mockito.verify(mockObject, Mockito.times(1)).withMemoryLimit(memoryLimit);
+        Mockito.verify(mockObject, Mockito.times(1)).withMemory(memoryLimit);
         Mockito.verify(mockObject, Mockito.times(1)).withMemorySwap(swapMemory);
         Mockito.verify(mockObject, Mockito.times(1)).withCpuShares(cpuShares);
         Mockito.verify(mockObject, Mockito.times(1)).withVolumes(volumes);

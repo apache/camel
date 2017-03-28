@@ -23,6 +23,10 @@ import java.util.Iterator;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.CreateTagsRequest;
+import com.amazonaws.services.ec2.model.CreateTagsResult;
+import com.amazonaws.services.ec2.model.DeleteTagsRequest;
+import com.amazonaws.services.ec2.model.DeleteTagsResult;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
@@ -40,6 +44,7 @@ import com.amazonaws.services.ec2.model.MonitorInstancesResult;
 import com.amazonaws.services.ec2.model.Monitoring;
 import com.amazonaws.services.ec2.model.MonitoringState;
 import com.amazonaws.services.ec2.model.RebootInstancesRequest;
+import com.amazonaws.services.ec2.model.RebootInstancesResult;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -73,7 +78,7 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
             ins.setImageId(runInstancesRequest.getImageId());
             ins.setInstanceType(runInstancesRequest.getInstanceType());
             ins.setInstanceId("instance-1");
-            if (ObjectHelper.isNotEmpty(runInstancesRequest.getSecurityGroups()) && ObjectHelper.isNotEmpty(runInstancesRequest.getSecurityGroups())) {
+            if (runInstancesRequest.getSecurityGroups() != null) {
                 if (runInstancesRequest.getSecurityGroups().contains("secgroup-1") && runInstancesRequest.getSecurityGroups().contains("secgroup-2")) {
                     GroupIdentifier id1 = new GroupIdentifier();
                     id1.setGroupId("id-1");
@@ -254,8 +259,8 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
     }
 
     @Override
-    public void rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
-        return;
+    public RebootInstancesResult rebootInstances(RebootInstancesRequest rebootInstancesRequest) {
+        return new RebootInstancesResult();
     }
     
     @Override
@@ -296,5 +301,15 @@ public class AmazonEC2ClientMock extends AmazonEC2Client {
             result.setInstanceMonitorings(coll);
         }
         return result;
+    }
+    
+    @Override
+    public CreateTagsResult createTags(CreateTagsRequest createTagsRequest) {
+        return new CreateTagsResult();
+    }
+    
+    @Override
+    public DeleteTagsResult deleteTags(DeleteTagsRequest deleteTagsRequest) {
+        return new DeleteTagsResult();
     }
 }

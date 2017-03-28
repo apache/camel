@@ -44,6 +44,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -99,6 +100,44 @@ public class KinesisConsumerTest {
         assertThat(getShardIteratorReqCap.getValue().getShardId(), is("shardId"));
         assertThat(getShardIteratorReqCap.getValue().getShardIteratorType(), is("LATEST"));
     }
+
+    @Test
+    public void itDoesNotMakeADescribeStreamRequestIfShardIdIsSet() throws Exception {
+        undertest.getEndpoint().setShardId("shardIdPassedAsUrlParam");
+
+        undertest.poll();
+
+        verify(kinesisClient, never()).describeStream(any(DescribeStreamRequest.class));
+
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+
+        verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
+        assertThat(getShardIteratorReqCap.getValue().getStreamName(), is("streamName"));
+        assertThat(getShardIteratorReqCap.getValue().getShardId(), is("shardIdPassedAsUrlParam"));
+        assertThat(getShardIteratorReqCap.getValue().getShardIteratorType(), is("LATEST"));
+    }
+
+    @Test
+    public void itObtainsAShardIteratorOnFirstPollForSequenceNumber() throws Exception {
+        undertest.getEndpoint().setSequenceNumber("12345");
+        undertest.getEndpoint().setIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER);
+
+        undertest.poll();
+
+        final ArgumentCaptor<DescribeStreamRequest> describeStreamReqCap = ArgumentCaptor.forClass(DescribeStreamRequest.class);
+        final ArgumentCaptor<GetShardIteratorRequest> getShardIteratorReqCap = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
+
+        verify(kinesisClient).describeStream(describeStreamReqCap.capture());
+        assertThat(describeStreamReqCap.getValue().getStreamName(), is("streamName"));
+
+        verify(kinesisClient).getShardIterator(getShardIteratorReqCap.capture());
+        assertThat(getShardIteratorReqCap.getValue().getStreamName(), is("streamName"));
+        assertThat(getShardIteratorReqCap.getValue().getShardId(), is("shardId"));
+        assertThat(getShardIteratorReqCap.getValue().getShardIteratorType(), is("AFTER_SEQUENCE_NUMBER"));
+        assertThat(getShardIteratorReqCap.getValue().getStartingSequenceNumber(), is("12345"));
+
+    }
+
 
     @Test
     public void itUsesTheShardIteratorOnPolls() throws Exception {

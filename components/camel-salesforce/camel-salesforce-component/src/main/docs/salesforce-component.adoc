@@ -1,0 +1,595 @@
+## Salesforce Component
+
+*Available as of Camel version 2.12*
+
+This component supports producer and consumer endpoints to communicate
+with Salesforce using Java DTOs.  +
+ There is a companion maven plugin Camel Salesforce Plugin that
+generates these DTOs (see further below).
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-salesforce</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+NOTE: Developers wishing to contribute to the component are instructed
+to look at the README.md file on instructions on how to get started and
+setup your environment for running integration tests.
+
+## Authenticating to Salesforce
+
+The component supports three OAuth authentication flows:
+
+* https://help.salesforce.com/articleView?id=remoteaccess_oauth_username_password_flow.htm[OAuth 2.0 Username-Password Flow]
+* https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm[OAuth 2.0 Refresh Token Flow]
+* https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm[OAuth 2.0 JWT Bearer Token Flow]
+
+For each of the flow different set of properties needs to be set:
+
+.Properties to set for each authentication flow
+|===
+| Property     | Where to find it on Salesforce     | Flow
+
+| clientId     | Connected App, Consumer Key        | All flows
+| clientSecret | Connected App, Consumer Secret     | Username-Password, Refresh Token
+| userName     | Salesforce user username           | Username-Password, JWT Bearer Token
+| password     | Salesforce user password           | Username-Password
+| refreshToken | From OAuth flow callback           | Refresh Token
+| keystore     | Connected App, Digital Certificate | JWT Bearer Token
+|===
+
+The component auto determines what flow you're trying to configure, to
+be remove ambiguity set the `authenticationType` property.
+
+NOTE: Using Username-Password Flow in production is not encouraged.
+
+NOTE: The certificate used in JWT Bearer Token Flow can be a selfsigned 
+certificate. The KeyStore holding the certificate and the private key
+must contain only single certificate-private key entry.
+
+### URI format
+
+The URI scheme for a salesforce component is as follows
+
+[source,java]
+------------------------
+salesforce:topic?options
+------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+### Supported Salesforce APIs
+
+The component supports the following Salesforce APIs
+
+Producer endpoints can use the following APIs. Most of the APIs process
+one record at a time, the Query API can retrieve multiple Records.
+
+#### Rest API
+
+* getVersions - Gets supported Salesforce REST API versions
+* getResources - Gets available Salesforce REST Resource endpoints
+* getGlobalObjects - Gets metadata for all available SObject types
+* getBasicInfo - Gets basic metadata for a specific SObject type
+* getDescription - Gets comprehensive metadata for a specific SObject
+type
+* getSObject - Gets an SObject using its Salesforce Id
+* createSObject - Creates an SObject
+* updateSObject - Updates an SObject using Id
+* deleteSObject - Deletes an SObject using Id
+* getSObjectWithId - Gets an SObject using an external (user defined) id
+field
+* upsertSObject - Updates or inserts an SObject using an external id
+* deleteSObjectWithId - Deletes an SObject using an external id
+* query - Runs a Salesforce SOQL query
+* queryMore - Retrieves more results (in case of large number of
+results) using result link returned from the 'query' API
+* search - Runs a Salesforce SOSL query
+* limits - fetching organization API usage limits
+* recent - fetching recent items
+* approval - submit a record or records (batch) for approval process
+* approvals - fetch a list of all approval processes
+* composite-tree - create up to 200 records with parent-child relationships (up to 5 levels) in one go
+* composite-batch - submit a composition of requests in batch
+
+For example, the following producer endpoint uses the upsertSObject API,
+with the sObjectIdName parameter specifying 'Name' as the external id
+field. 
+The request message body should be an SObject DTO generated using the
+maven plugin.  
+The response message will either be `null` if an existing record was
+updated, or `CreateSObjectResult` with an id of the new record, or a
+list of errors while creating the new object.
+
+[source,java]
+-----------------------------------------------------------
+    ...to("salesforce:upsertSObject?sObjectIdName=Name")...
+-----------------------------------------------------------
+
+#### Rest Bulk API
+
+Producer endpoints can use the following APIs. All Job data formats,
+i.e. xml, csv, zip/xml, and zip/csv are supported.  +
+ The request and response have to be marshalled/unmarshalled by the
+route. Usually the request will be some stream source like a CSV file,
+ +
+ and the response may also be saved to a file to be correlated with the
+request.
+
+* createJob - Creates a Salesforce Bulk Job
+* getJob - Gets a Job using its Salesforce Id
+* closeJob - Closes a Job
+* abortJob - Aborts a Job
+* createBatch - Submits a Batch within a Bulk Job
+* getBatch - Gets a Batch using Id
+* getAllBatches - Gets all Batches for a Bulk Job Id
+* getRequest - Gets Request data (XML/CSV) for a Batch
+* getResults - Gets the results of the Batch when its complete
+* createBatchQuery - Creates a Batch from an SOQL query
+* getQueryResultIds - Gets a list of Result Ids for a Batch Query
+* getQueryResult - Gets results for a Result Id
+
+For example, the following producer endpoint uses the createBatch API to
+create a Job Batch. The in message must contain a body that can be converted into an
+`InputStream` (usually UTF-8 CSV or XML content from a file, etc.) and
+header fields 'jobId' for the Job and 'contentType' for the Job content
+type, which can be XML, CSV, ZIP_XML or ZIP_CSV. The put message body
+will contain `BatchInfo` on success, or throw a `SalesforceException` on
+error.
+
+[source,java]
+----------------------------------------
+    ...to("salesforce:createBatchJob")..
+----------------------------------------
+
+#### Rest Streaming API
+
+Consumer endpoints can use the following sytax for streaming endpoints
+to receive Salesforce notifications on create/update.
+
+To create and subscribe to a topic
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+To subscribe to an existing topic
+
+[source,java]
+-------------------------------------------------------------------
+    from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
+-------------------------------------------------------------------
+
+### Examples
+
+### Uploading a document to a ContentWorkspace
+
+Create the ContentVersion in Java, using a Processor instance:
+
+[source,java]
+-----------------------------------------------------------------------------------
+public class ContentProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        Message message = exchange.getIn();
+
+        ContentVersion cv = new ContentVersion();
+        ContentWorkspace cw = getWorkspace(exchange);
+        cv.setFirstPublishLocationId(cw.getId());
+        cv.setTitle("test document");
+        cv.setPathOnClient("test_doc.html");
+        byte[] document = message.getBody(byte[].class);
+        ObjectMapper mapper = new ObjectMapper();
+        String enc = mapper.convertValue(document, String.class);
+        cv.setVersionDataUrl(enc);
+        message.setBody(cv);
+    }
+
+    protected ContentWorkspace getWorkSpace(Exchange exchange) {
+        // Look up the content workspace somehow, maybe use enrich() to add it to a
+        // header that can be extracted here
+        ....
+    }
+} 
+-----------------------------------------------------------------------------------
+
+Give the output from the processor to the Salesforce component:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+    from("file:///home/camel/library")
+        .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject 
+                                        // for the salesforce component
+        .to("salesforce:createSObject"); 
+-----------------------------------------------------------------------------------------------------
+
+### Using Salesforce Limits API
+
+With `salesforce:limits` operation you can fetch of API limits from Salesforce and then act upon that data received.
+The result of `salesforce:limits` operation is mapped to `org.apache.camel.component.salesforce.api.dto.Limits`
+class and can be used in a custom processors or expressions.
+
+For instance, consider that you need to limit the API usage of Salesforce so that 10% of daily API requests is left for
+other routes. The body of output message contains an instance of
+`org.apache.camel.component.salesforce.api.dto.Limits` object that can be used in conjunction with
+link:content-based-router.html[Content Based Router] and link:content-based-router.html[Content Based Router] and 
+link:spel-language.html[Spring Expression Language (SpEL)] to choose when to perform queries.
+
+Notice how multiplying `1.0` with the integer value held in `body.dailyApiRequests.remaining` makes the expression
+evaluate as with floating point arithmetic, without it - it would end up making integral division which would result
+with either `0` (some API limits consumed) or `1` (no API limits consumed).
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+from("direct:querySalesforce")
+    .to("salesforce:limits")
+    .choice()
+    .when(spel("#{1.0 * body.dailyApiRequests.remaining / body.dailyApiRequests.max < 0.1}"))
+        .to("salesforce:query?...")
+    .otherwise()
+        .setBody(constant("Used up Salesforce API limits, leaving 10% for critical routes"))
+    .endChoice()
+-----------------------------------------------------------------------------------------------------
+
+### Working with approvals
+
+All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
+approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
+that any property not present in either body or header will be taken from the Endpoint configuration. Or you can set
+the approval template on the Endpoint by assigning `approval` property to a reference onto a bean in the Registry.
+
+You can also provide header values using the same `approval.PropertyName` in the incoming message headers.
+
+And finally body can contain one `AprovalRequest` or an `Iterable` of `ApprovalRequest` objects to process as
+a batch.
+
+The important thing to remember is the priority of the values specified in these three mechanisms:
+
+. value in body takes precedence before any other
+. value in message header takes precedence before template value
+. value in template is set if no other value in header or body was given
+
+For example to send one record for approval using values in headers use:
+
+Given a route:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+from("direct:example1")//
+        .setHeader("approval.ContextId", simple("${body['contextId']}"))
+        .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
+        .to("salesforce:approval?"//
+            + "approval.actionType=Submit"//
+            + "&approval.comments=this is a test"//
+            + "&approval.processDefinitionNameOrId=Test_Account_Process"//
+            + "&approval.skipEntryCriteria=true");
+-----------------------------------------------------------------------------------------------------
+
+You could send a record for approval using:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+final Map<String, String> body = new HashMap<>();
+body.put("contextId", accountIds.iterator().next());
+body.put("nextApproverIds", userId);
+
+final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
+-----------------------------------------------------------------------------------------------------
+
+### Using Salesforce Recent Items API
+
+To fetch the recent items use `salesforce:recent` operation. This operation returns an `java.util.List` of
+`org.apache.camel.component.salesforce.api.dto.RecentItem` objects (`List<RecentItem>`) that in turn contain
+the `Id`, `Name` and `Attributes` (with `type` and `url` properties). You can limit the number of returned items
+by specifying `limit` parameter set to maximum number of records to return. For example:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+from("direct:fetchRecentItems")
+    to("salesforce:recent")
+        .split().body()
+            .log("${body.name} at ${body.attributes.url}");
+-----------------------------------------------------------------------------------------------------
+
+### Working with approvals
+
+All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
+approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
+that any property not present in either body or header will be taken from the Endpoint configuration. Or you can set
+the approval template on the Endpoint by assigning `approval` property to a reference onto a bean in the Registry.
+
+You can also provide header values using the same `approval.PropertyName` in the incoming message headers.
+
+And finally body can contain one `AprovalRequest` or an `Iterable` of `ApprovalRequest` objects to process as
+a batch.
+
+The important thing to remember is the priority of the values specified in these three mechanisms:
+
+. value in body takes precedence before any other
+. value in message header takes precedence before template value
+. value in template is set if no other value in header or body was given
+
+For example to send one record for approval using values in headers use:
+
+Given a route:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+from("direct:example1")//
+        .setHeader("approval.ContextId", simple("${body['contextId']}"))
+        .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
+        .to("salesforce:approval?"//
+            + "approvalActionType=Submit"//
+            + "&approvalComments=this is a test"//
+            + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
+            + "&approvalSkipEntryCriteria=true");
+-----------------------------------------------------------------------------------------------------
+
+You could send a record for approval using:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+final Map<String, String> body = new HashMap<>();
+body.put("contextId", accountIds.iterator().next());
+body.put("nextApproverIds", userId);
+
+final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
+-----------------------------------------------------------------------------------------------------
+
+### Using Salesforce Composite API to submit SObject tree
+
+To create up to 200 records including parent-child relationships use `salesforce:composite-tree` operation. This
+requires an instance of `org.apache.camel.component.salesforce.api.dto.composite.SObjectTree` in the input 
+message and returns the same tree of objects in the output message. The 
+`org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase` instances within the tree get updated with
+the identifier values (`Id` property) or their corresponding
+`org.apache.camel.component.salesforce.api.dto.composite.SObjectNode` is populated with `errors` on failure.
+
+Note that for some records operation can succeed and for some it can fail -- so you need to manually check for errors.
+
+Easiest way to use this functionality is to use the DTOs generated by the `camel-salesforce-maven-plugin`, but you
+also have the option of customizing the references that identify the each object in the tree, for instance primary keys
+from your database.
+
+Lets look at an example:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+Account account = ...
+Contact president = ...
+Contact marketing = ...
+
+Account anotherAccount = ...
+Contact sales = ...
+Asset someAsset = ...
+
+// build the tree
+SObjectTree request = new SObjectTree();
+request.addObject(account).addChildren(president, marketing);
+request.addObject(anotherAccount).addChild(sales).addChild(someAsset);
+
+final SObjectTree response = template.requestBody("salesforce:composite-tree", tree, SObjectTree.class);
+final Map<Boolean, List<SObjectNode>> result = response.allNodes()
+                                                   .collect(Collectors.groupingBy(SObjectNode::hasErrors));
+
+final List<SObjectNode> withErrors = result.get(true);
+final List<SObjectNode> succeeded = result.get(false);
+
+final String firstId = succeeded.get(0).getId();
+-----------------------------------------------------------------------------------------------------
+
+### Using Salesforce Composite API to submit multiple requests in a batch
+The Composite API batch operation (`composite-batch`) allows you to accumulate multiple requests in a batch and then
+submit them in one go, saving the round trip cost of multiple individual requests. Each response is then received in a
+list of responses with the order perserved, so that the n-th requests response is in the n-th place of the response.
+
+NOTE: The results can vary from API to API so the result of the request is given as a `java.lang.Object`. In most cases
+the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests made in
+JSON format hold some type information (i.e. it is known what values are strings and what values are numbers), so in
+general those will be more type friendly. Note that the responses will vary between XML and JSON, this is due to the
+responses from Salesforce API being different. So be careful if you switch between formats without changing the response
+handling code.
+
+Lets look at an example:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+final String acountId = ...
+final SObjectBatch batch = new SObjectBatch("38.0");
+
+final Account updates = new Account();
+updates.setName("NewName");
+batch.addUpdate("Account", accountId, updates);
+
+final Account newAccount = new Account();
+newAccount.setName("Account created from Composite batch API");
+batch.addCreate(newAccount);
+
+batch.addGet("Account", accountId, "Name", "BillingPostalCode");
+
+batch.addDelete("Account", accountId);
+
+final SObjectBatchResponse response = template.requestBody("salesforce:composite-batch?format=JSON", batch, SObjectBatchResponse.class);
+
+boolean hasErrors = response.hasErrors(); // if any of the requests has resulted in either 4xx or 5xx HTTP status
+final List<SObjectBatchResult> results = response.getResults(); // results of three operations sent in batch
+
+final SObjectBatchResult updateResult = results.get(0); // update result
+final int updateStatus = updateResult.getStatusCode(); // probably 204
+final Object updateResultData = updateResult.getResult(); // probably null
+
+final SObjectBatchResult createResult = results.get(1); // create result
+@SuppressWarnings("unchecked")
+final Map<String, Object> createData = (Map<String, Object>) createResult.getResult();
+final String newAccountId = createData.get("id"); // id of the new account, this is for JSON, for XML it would be createData.get("Result").get("id")
+
+final SObjectBatchResult retrieveResult = results.get(2); // retrieve result
+@SuppressWarnings("unchecked")
+final Map<String, Object> retrieveData = (Map<String, Object>) retrieveResult.getResult();
+final String accountName = retrieveData.get("Name"); // Name of the retrieved account, this is for JSON, for XML it would be createData.get("Account").get("Name")
+final String accountBillingPostalCode = retrieveData.get("BillingPostalCode"); // Name of the retrieved account, this is for JSON, for XML it would be createData.get("Account").get("BillingPostalCode")
+
+final SObjectBatchResult deleteResult = results.get(3); // delete result
+final int updateStatus = deleteResult.getStatusCode(); // probably 204
+final Object updateResultData = deleteResult.getResult(); // probably null
+
+-----------------------------------------------------------------------------------------------------
+
+### Camel Salesforce Maven Plugin
+
+This Maven plugin generates DTOs for the Camel
+link:salesforce.html[Salesforce].
+
+### Options
+
+
+
+
+
+
+
+// component options: START
+The Salesforce component supports 26 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **authenticationType** (security) | Explicit authentication method to be used one of USERNAME_PASSWORD REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set set this property to eliminate any ambiguity. |  | AuthenticationType
+| **loginConfig** (security) | All authentication configuration in one nested bean all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
+| **loginUrl** (security) | *Required* URL of the Salesforce instance by default set to https://login.salesforce.com | https://login.salesforce.com | String
+| **clientId** (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
+| **clientSecret** (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
+| **keystore** (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
+| **refreshToken** (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token or configure using the builtin callback at https://login.salesforce.com/services/oauth2/success or https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
+| **userName** (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow but in general one should avoid it as it is deemed less secure than other flows. |  | String
+| **password** (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
+| **lazyLogin** (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generaly set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
+| **config** (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpoint Config
+| **httpClientProperties** (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
+| **sslContextParameters** (security) | SSL parameters to use see SSLContextParameters class for all available options. |  | SSLContextParameters
+| **httpProxyHost** (proxy) | Hostname of the HTTP proxy server to use. |  | String
+| **httpProxyPort** (proxy) | Port number of the HTTP proxy server to use. |  | Integer
+| **httpProxyUsername** (security) | Username to use to authenticate against the HTTP proxy server. |  | String
+| **httpProxyPassword** (security) | Password to use to authenticate against the HTTP proxy server. |  | String
+| **isHttpProxySocks4** (proxy) | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | boolean
+| **isHttpProxySecure** (security) | If set to false disables the use of TLS when accessing the HTTP proxy. | true | boolean
+| **httpProxyIncluded Addresses** (proxy) | A list of addresses for which HTTP proxy server should be used. |  | Set
+| **httpProxyExcluded Addresses** (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
+| **httpProxyAuthUri** (security) | Used in authentication against the HTTP proxy server needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
+| **httpProxyRealm** (security) | Realm of the proxy server used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
+| **httpProxyUseDigest Auth** (security) | If set to true Digest authentication will be used when authenticating to the HTTP proxyotherwise Basic authorization method will be used | false | boolean
+| **packages** (common) | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
+// component options: END
+
+
+
+
+
+
+
+
+
+
+// endpoint options: START
+The Salesforce endpoint is configured using URI syntax:
+
+    salesforce:operationName:topicName
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **operationName** | The operation to use |  | OperationName
+| **topicName** | The name of the topic to use |  | String
+|=======================================================================
+
+#### Query Parameters (42 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **apexMethod** (common) | APEX method name |  | String
+| **apexQueryParams** (common) | Query params for APEX method |  | Map
+| **apexUrl** (common) | APEX method URL |  | String
+| **apiVersion** (common) | Salesforce API version defaults to SalesforceEndpointConfig.DEFAULT_VERSION |  | String
+| **backoffIncrement** (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
+| **batchId** (common) | Bulk API Batch ID |  | String
+| **contentType** (common) | Bulk API content type one of XML CSV ZIP_XML ZIP_CSV |  | ContentType
+| **defaultReplayId** (common) | Default replayId setting if no value is found in link initialReplayIdMap |  | Long
+| **format** (common) | Payload format to use for Salesforce API calls either JSON or XML defaults to JSON |  | PayloadFormat
+| **httpClient** (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
+| **includeDetails** (common) | Include details in Salesforce1 Analytics report defaults to false. |  | Boolean
+| **initialReplayIdMap** (common) | Replay IDs to start from per channel name. |  | Map
+| **instanceId** (common) | Salesforce1 Analytics report execution instance ID |  | String
+| **jobId** (common) | Bulk API Job ID |  | String
+| **limit** (common) | Limit on number of returned records. Applicable to some of the API check the Salesforce documentation. |  | Integer
+| **maxBackoff** (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
+| **notFoundBehaviour** (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL link NotFoundBehaviourNULL or should a exception be signaled on the exchange link NotFoundBehaviourEXCEPTION - the default. |  | NotFoundBehaviour
+| **notifyForFields** (common) | Notify for fields options are ALL REFERENCED SELECT WHERE |  | NotifyForFieldsEnum
+| **notifyForOperationCreate** (common) | Notify for create operation defaults to false (API version = 29.0) |  | Boolean
+| **notifyForOperationDelete** (common) | Notify for delete operation defaults to false (API version = 29.0) |  | Boolean
+| **notifyForOperations** (common) | Notify for operations options are ALL CREATE EXTENDED UPDATE (API version 29.0) |  | NotifyForOperations Enum
+| **notifyForOperationUndelete** (common) | Notify for un-delete operation defaults to false (API version = 29.0) |  | Boolean
+| **notifyForOperationUpdate** (common) | Notify for update operation defaults to false (API version = 29.0) |  | Boolean
+| **objectMapper** (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
+| **reportId** (common) | Salesforce1 Analytics report Id |  | String
+| **reportMetadata** (common) | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
+| **resultId** (common) | Bulk API Result ID |  | String
+| **sObjectBlobFieldName** (common) | SObject blob field name |  | String
+| **sObjectClass** (common) | Fully qualified SObject class name usually generated using camel-salesforce-maven-plugin |  | String
+| **sObjectFields** (common) | SObject fields to retrieve |  | String
+| **sObjectId** (common) | SObject ID if required by API |  | String
+| **sObjectIdName** (common) | SObject external ID field name |  | String
+| **sObjectIdValue** (common) | SObject external ID field value |  | String
+| **sObjectName** (common) | SObject name if required or supported by API |  | String
+| **sObjectQuery** (common) | Salesforce SOQL query string |  | String
+| **sObjectSearch** (common) | Salesforce SOSL search string |  | String
+| **updateTopic** (common) | Whether to update an existing Push Topic when using the Streaming API defaults to false | false | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **replayId** (consumer) | The replayId value to use when subscribing |  | Long
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
+// endpoint options: END
+
+
+
+
+For obvious security reasons it is recommended that the clientId,
+clientSecret, userName and password fields be not set in the pom.xml.  
+The plugin should be configured for the rest of the properties, and can
+be executed using the following command:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------
+mvn camel-salesforce:generate -DcamelSalesforce.clientId=<clientid> -DcamelSalesforce.clientSecret=<clientsecret> \
+    -DcamelSalesforce.userName=<username> -DcamelSalesforce.password=<password>
+---------------------------------------------------------------------------------------------------------------------------------
+
+The generated DTOs use Jackson and XStream annotations. All Salesforce
+field types are supported. Date and time fields are mapped to Joda
+DateTime, and picklist fields are mapped to generated Java Enumerations.
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]

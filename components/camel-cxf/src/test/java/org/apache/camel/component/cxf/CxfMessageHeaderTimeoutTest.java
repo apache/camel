@@ -78,7 +78,7 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
                 clientPolicy.setReceiveTimeout(100);
                 requestContext.put(HTTPClientPolicy.class.getName(), clientPolicy);
                 exchange.getIn().setBody(params);
-                exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
+                exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
                 
             }
         });

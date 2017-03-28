@@ -20,25 +20,28 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.salesforce.NotFoundBehaviour;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
+import org.apache.camel.component.salesforce.api.dto.Limits;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
-import org.apache.camel.component.salesforce.api.dto.SearchResult;
-import org.apache.camel.component.salesforce.api.dto.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.type.TypeReference;
-import org.eclipse.jetty.util.StringUtil;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
+import org.apache.camel.component.salesforce.api.dto.approval.Approvals;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 
 public class JsonRestProcessor extends AbstractRestProcessor {
 
@@ -50,9 +53,11 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     public JsonRestProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        this.objectMapper = new ObjectMapper();
-        // enable date time support including Joda DateTime
-        this.objectMapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+        if (endpoint.getConfiguration().getObjectMapper() != null) {
+            this.objectMapper = endpoint.getConfiguration().getObjectMapper();
+        } else {
+            this.objectMapper = JsonUtils.createObjectMapper();
+        }
     }
 
     @Override
@@ -61,8 +66,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         switch (operationName) {
         case GET_VERSIONS:
             // handle in built response types
-            exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<Version>>() {
-            });
+            exchange.setProperty(RESPONSE_TYPE, TypeReferences.VERSION_LIST_TYPE);
             break;
 
         case GET_RESOURCES:
@@ -97,8 +101,27 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
         case SEARCH:
             // handle known response type
-            exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<SearchResult>>() {
-            });
+            exchange.setProperty(RESPONSE_TYPE, TypeReferences.SEARCH_RESULT_TYPE);
+            break;
+
+        case RECENT:
+            // handle known response type
+            exchange.setProperty(RESPONSE_TYPE, TypeReferences.RECENT_ITEM_LIST_TYPE);
+            break;
+
+        case LIMITS:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, Limits.class);
+            break;
+
+        case APPROVAL:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, ApprovalResult.class);
+            break;
+
+        case APPROVALS:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, Approvals.class);
             break;
 
         default:
@@ -108,36 +131,41 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
     @Override
     protected InputStream getRequestStream(Exchange exchange) throws SalesforceException {
-        try {
-            InputStream request;
-            Message in = exchange.getIn();
-            request = in.getBody(InputStream.class);
-            if (request == null) {
-                AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
-                if (dto != null) {
-                    // marshall the DTO
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    objectMapper.writeValue(out, dto);
-                    request = new ByteArrayInputStream(out.toByteArray());
+        InputStream request;
+        Message in = exchange.getIn();
+        request = in.getBody(InputStream.class);
+        if (request == null) {
+            AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
+            if (dto != null) {
+                // marshall the DTO
+                request = getRequestStream(dto);
+            } else {
+                // if all else fails, get body as String
+                final String body = in.getBody(String.class);
+                if (null == body) {
+                    String msg = "Unsupported request message body "
+                        + (in.getBody() == null ? null : in.getBody().getClass());
+                    throw new SalesforceException(msg, null);
                 } else {
-                    // if all else fails, get body as String
-                    final String body = in.getBody(String.class);
-                    if (null == body) {
-                        String msg = "Unsupported request message body "
-                            + (in.getBody() == null ? null : in.getBody().getClass());
-                        throw new SalesforceException(msg, null);
-                    } else {
-                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));
-                    }
+                    request = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
                 }
             }
+        }
 
-            return request;
+        return request;
+    }
 
+    @Override
+    protected InputStream getRequestStream(final Object object) throws SalesforceException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            objectMapper.writeValue(out, object);
         } catch (IOException e) {
-            String msg = "Error marshaling request: " + e.getMessage();
+            final String msg = "Error marshaling request: " + e.getMessage();
             throw new SalesforceException(msg, e);
         }
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
 
     @Override
@@ -145,8 +173,17 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
         // process JSON response for TypeReference
         try {
-            // do we need to un-marshal a response
-            if (responseEntity != null) {
+            final Message out = exchange.getOut();
+            final Message in = exchange.getIn();
+            out.copyFromWithNewBody(in, null);
+
+            if (ex != null) {
+                // if an exception is reported we should not loose it
+                if (shouldReport(ex)) {
+                    exchange.setException(ex);
+                }
+            } else if (responseEntity != null) {
+                // do we need to un-marshal a response
                 Object response = null;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 if (responseClass != null) {
@@ -160,13 +197,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                         response = responseEntity;
                     }
                 }
-                exchange.getOut().setBody(response);
-            } else {
-                exchange.setException(ex);
+                out.setBody(response);
             }
-            // copy headers and attachments
-            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
         } catch (IOException e) {
             String msg = "Error parsing JSON response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));
@@ -188,5 +220,4 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         }
 
     }
-
 }

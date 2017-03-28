@@ -50,7 +50,7 @@ public class CamelWebSocketServlet extends CamelHttpTransportServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
 
         // Is there a consumer registered for the request.

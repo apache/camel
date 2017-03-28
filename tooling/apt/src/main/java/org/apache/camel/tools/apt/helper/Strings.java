@@ -100,4 +100,41 @@ public final class Strings {
         return quote + text + quote;
     }
 
+    /**
+     * Clips the text between the start and end markers
+     */
+    public static String between(String text, String start, String end) {
+        int pos = text.indexOf(start);
+        if (pos > 0) {
+            text = text.substring(pos + 1);
+        }
+        int pos2 = text.lastIndexOf(end);
+        if (pos2 > 0) {
+            text = text.substring(0, pos2);
+        }
+        return text;
+    }
+
+    /**
+     * Capitalizes the name as a title
+     *
+     * @param name  the name
+     * @return as a title
+     */
+    public static String asTitle(String name) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : name.toCharArray()) {
+            boolean upper = Character.isUpperCase(c);
+            boolean first = sb.length() == 0;
+            if (first) {
+                sb.append(Character.toUpperCase(c));
+            } else if (upper) {
+                sb.append(' ');
+                sb.append(c);
+            } else {
+                sb.append(Character.toLowerCase(c));
+            }
+        }
+        return sb.toString().trim();
+    }
 }

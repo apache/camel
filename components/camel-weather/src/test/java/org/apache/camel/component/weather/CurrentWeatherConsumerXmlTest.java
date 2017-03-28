@@ -22,9 +22,8 @@ public class CurrentWeatherConsumerXmlTest extends BaseWeatherConsumerTest {
 
     @Override
     protected void checkWeatherContent(String weather) {
-        log.debug("The weather in {} format is {}{}", new Object[] {WeatherMode.XML, LS, weather});
+        log.debug("The weather in {} format is {}{}", WeatherMode.XML, LS, weather);
 
-        assertStringContains(weather, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         assertStringContains(weather, "<coord");
         assertStringContains(weather, "<temperature");
     }
@@ -34,7 +33,7 @@ public class CurrentWeatherConsumerXmlTest extends BaseWeatherConsumerTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("weather:foo?mode=XML&appid=9162755b2efa555823cfe0451d7fff38").to("mock:result");
+                from("weather:foo?mode=XML&appid=9162755b2efa555823cfe0451d7fff38&ids=2747373").to("mock:result");
             }
         };
     }

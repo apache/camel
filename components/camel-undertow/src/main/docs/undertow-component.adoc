@@ -1,0 +1,179 @@
+## Undertow Component
+
+*Available as of Camel version 2.16*
+
+The *undertow* component provides HTTP-based
+link:endpoint.html[endpoints] for consuming and producing HTTP requests.
+That is, the Undertow component behaves as a simple Web server. +
+ Undertow can also be used as a http client which mean you can also use
+it with Camel as a producer.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-undertow</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-------------------------------------------------------
+undertow:http://hostname[:port][/resourceUri][?options]
+-------------------------------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+### Options
+
+
+
+
+
+// component options: START
+The Undertow component supports 4 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **undertowHttpBinding** (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | UndertowHttpBinding
+| **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **hostOptions** (advanced) | To configure common options such as thread pools |  | UndertowHostOptions
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
+// component options: END
+
+
+
+
+
+
+
+// endpoint options: START
+The Undertow endpoint is configured using URI syntax:
+
+    undertow:httpURI
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **httpURI** | *Required* The url of the HTTP endpoint to use. |  | URI
+|=======================================================================
+
+#### Query Parameters (17 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **httpMethodRestrict** (consumer) | Used to only allow consuming if the HttpMethod matches such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
+| **matchOnUriPrefix** (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | true | Boolean
+| **optionsEnabled** (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **cookieHandler** (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
+| **keepAlive** (producer) | Setting to ensure socket is not closed due to inactivity | true | Boolean
+| **options** (producer) | Sets additional channel options. The options that can be used are defined in org.xnio.Options. To configure from endpoint uri then prefix each option with option. such as option.close-abort=true&option.send-buffer=8192 |  | Map
+| **reuseAddresses** (producer) | Setting to facilitate socket multiplexing | true | Boolean
+| **tcpNoDelay** (producer) | Setting to improve TCP protocol performance | true | Boolean
+| **throwExceptionOnFailure** (producer) | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the producer send all the fault response back. | true | Boolean
+| **transferException** (producer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | false | Boolean
+| **headerFilterStrategy** (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **undertowHttpBinding** (advanced) | To use a custom UndertowHttpBinding to control the mapping between Camel message and undertow. |  | UndertowHttpBinding
+| **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+|=======================================================================
+// endpoint options: END
+
+
+
+### Message Headers
+
+Camel uses the same message headers as the link:http.html[HTTP]
+component. 
+ From Camel 2.2, it also uses
+`Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
+the chuched encoding on the camel-undertow consumer.
+
+Camel also populates *all* request.parameter and request.headers. For
+example, given a client request with the URL,
+`http://myserver/myserver?orderid=123`, the exchange will contain a
+header named `orderid` with the value 123.
+
+### Producer Example
+
+The following is a basic example of how to send an HTTP request to an
+existing HTTP endpoint.
+
+in Java DSL
+
+[source,java]
+----------------------------------------------------------
+from("direct:start").to("undertow:http://www.google.com");
+----------------------------------------------------------
+
+or in Spring XML
+
+[source,xml]
+----------------------------------------------
+<route>
+    <from uri="direct:start"/>
+    <to uri="undertow:http://www.google.com"/>
+<route>
+----------------------------------------------
+
+### Consumer Example
+
+In this sample we define a route that exposes a HTTP service at
+`http://localhost:8080/myapp/myservice`:
+
+[source,xml]
+--------------------------------------------------------------
+<route>
+  <from uri="undertow:http://localhost:8080/myapp/myservice"/>
+  <to uri="bean:myBean"/>
+</route>
+--------------------------------------------------------------
+
+NOTE:*Usage of localhost*
+When you specify `localhost` in a URL, Camel exposes the endpoint only
+on the local TCP/IP network interface, so it cannot be accessed from
+outside the machine it operates on.
+
+If you need to expose a Jetty endpoint on a specific network interface,
+the numerical IP address of this interface should be used as the host.
+If you need to expose a Jetty endpoint on all network interfaces, the
+`0.0.0.0` address should be used.
+
+TIP:To listen across an entire URI prefix, see
+link:how-do-i-let-jetty-match-wildcards.html[How do I let Jetty match
+wildcards].
+
+
+TIP:If you actually want to expose routes by HTTP and already have a
+Servlet, you should instead refer to the
+https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=46339[Servlet
+Transport].
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:jetty.html[Jetty]
+* link:http.html[HTTP]

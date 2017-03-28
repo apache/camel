@@ -71,7 +71,7 @@ public class MarshalDomainObjectTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(PurchaseOrder.class);
-        mock.message(0).body().equals(order);
+        mock.message(0).body().isEqualTo(order);
 
         // we get it back as byte array so type convert it to string
         Object result = template.requestBody("direct:marshal", order);

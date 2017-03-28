@@ -16,34 +16,18 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.JsonDataFormat;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelGsonTest extends AbstractFeatureTest {
+public class CamelGsonTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelGsonTest.class);
 
-    protected DataFormatDefinition createDataformatDefinition(String format) {
-        JsonDataFormat answer = new JsonDataFormat();
-        answer.setLibrary(JsonLibrary.Gson);
-        return answer;
-    }
-
     @Test
     public void test() throws Exception {
-        testDataFormat(COMPONENT);
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
+        testDataFormat(COMPONENT, "json-gson");
     }
 
 }

@@ -55,7 +55,7 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 /**
  * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
  */
-@UriEndpoint(scheme = "quartz2", title = "Quartz2", syntax = "quartz2:groupName/triggerName", consumerOnly = true, consumerClass = QuartzComponent.class, label = "scheduling")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "quartz2", title = "Quartz2", syntax = "quartz2:groupName/triggerName", consumerOnly = true, consumerClass = QuartzComponent.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
     private TriggerKey triggerKey;
@@ -72,7 +72,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private String cron;
     @UriParam
     private boolean stateful;
-    @UriParam
+    @UriParam(label = "scheduler")
     private boolean fireNow;
     @UriParam(defaultValue = "true")
     private boolean deleteJob = true;
@@ -82,21 +82,21 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private boolean durableJob;
     @UriParam
     private boolean recoverableJob;
-    @UriParam(defaultValue = "500")
+    @UriParam(label = "scheduler", defaultValue = "500")
     private long triggerStartDelay = 500;
-    @UriParam
+    @UriParam(label = "scheduler")
     private int startDelayedSeconds;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean usingFixedCamelContextName;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean prefixJobNameWithEndpointId;
-    @UriParam(prefix = "trigger.", multiValue = true)
+    @UriParam(prefix = "trigger.", multiValue = true, label = "advanced")
     private Map<String, Object> triggerParameters;
-    @UriParam(prefix = "job.", multiValue = true)
+    @UriParam(prefix = "job.", multiValue = true, label = "advanced")
     private Map<String, Object> jobParameters;
-    @UriParam
+    @UriParam(label = "advanced")
     private Calendar customCalendar;
 
     public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
@@ -326,7 +326,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     @Override

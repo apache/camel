@@ -32,7 +32,7 @@
     </rest>
     <rest path="/say/bye">
       <get consumes="application/json">
-         <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" required="true" access="acc1">
+         <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" required="true">
             <allowableValues>
                <value>1</value>
                <value>2</value>
@@ -40,7 +40,7 @@
                <value>4</value>
             </allowableValues>
          </param>
-         <param name="header_letter" type="query" description="header param description2" dataType="string" defaultValue="b" collectionFormat="multi" required="false" access="acc2">
+         <param name="header_letter" type="query" description="header param description2" dataType="string" defaultValue="b" collectionFormat="multi" required="false">
             <allowableValues>
                <value>a</value>
                <value>b</value>

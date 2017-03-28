@@ -132,7 +132,7 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
             } else {
                 // check if we already have the key
                 if (idempotentRepository instanceof ExchangeIdempotentRepository) {
-                    newKey = ((ExchangeIdempotentRepository<String>) idempotentRepository).contains(exchange, messageId);
+                    newKey = !((ExchangeIdempotentRepository<String>) idempotentRepository).contains(exchange, messageId);
                 } else {
                     newKey = !idempotentRepository.contains(messageId);
                 }
@@ -204,10 +204,11 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
     // -------------------------------------------------------------------------
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor, idempotentRepository);
+        // must add before start so it will have CamelContext injected first
         if (!camelContext.hasService(idempotentRepository)) {
             camelContext.addService(idempotentRepository);
         }
+        ServiceHelper.startServices(processor, idempotentRepository);
     }
 
     protected void doStop() throws Exception {

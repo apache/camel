@@ -39,19 +39,19 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
 
     @UriPath @Metadata(required = "true")
     private CryptoOperation cryptoOperation;
-    @UriParam @Metadata(required = "true")
+    @UriPath @Metadata(required = "true")
     private String name;
-    @UriParam
+    @UriParam(secret = true)
     private PrivateKey privateKey;
-    @UriParam
+    @UriParam(label = "advanced")
     private KeyStoreParameters keyStoreParameters;
     @UriParam
     private KeyStore keystore;
-    @UriParam
+    @UriParam(label = "advanced", secret = true)
     private SecureRandom secureRandom;
     @UriParam(defaultValue = "SHA1WithDSA")
     private String algorithm = "SHA1WithDSA";
-    @UriParam(defaultValue = "" + 2048)
+    @UriParam(label = "advanced", defaultValue = "" + 2048)
     private Integer bufferSize = 2048;
     @UriParam
     private String provider;
@@ -59,11 +59,11 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String signatureHeaderName;
     @UriParam
     private String alias;
-    @UriParam(javaType = "java.lang.String")
+    @UriParam(label = "security", javaType = "java.lang.String", secret = true)
     private char[] password;
-    @UriParam
+    @UriParam(label = "advanced")
     private PublicKey publicKey;
-    @UriParam
+    @UriParam(label = "advanced")
     private Certificate certificate;
 
     /** references that should be resolved when the context changes */
@@ -71,13 +71,13 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String publicKeyName;
     @UriParam
     private String certificateName;
-    @UriParam
+    @UriParam(secret = true)
     private String privateKeyName;
     @UriParam
     private String keystoreName;
     @UriParam
     private String secureRandomName;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean clearHeaders = true;
 
     public DigitalSignatureConfiguration copy() {

@@ -30,9 +30,19 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A helper class for loading route definitions from a file, URL or the classpath
+ * A helper class for loading route definitions from a file, URL or the classpath.
+ *
+ * @deprecated Use {@link org.apache.camel.cdi.ImportResource} instead:
+ *
+ * <pre><code>
+ * {@literal @}ImportResource("foo-camel-context.xml")
+ *  class BarBean {
+ *
+ *  };
+ * </code></pre>
  */
 @Vetoed
+@Deprecated
 public final class RoutesXml {
 
     private RoutesXml() {

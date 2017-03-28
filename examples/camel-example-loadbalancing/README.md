@@ -42,11 +42,6 @@ To run the example, then execute the following command in the respective folder:
 
 	mvn exec:java -Ploadbalancer
 
-### Documentation
-
-This example is documented at
-  <http://camel.apache.org/loadbalancing-mina-example.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

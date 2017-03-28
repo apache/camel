@@ -27,9 +27,9 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * lzf data format
+ * LZF compression data format
  */
-@Metadata(label = "dataformat,transformation", title = "LZF Deflate Compression")
+@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "LZF Deflate Compression")
 @XmlRootElement(name = "lzf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LZFDataFormat extends DataFormatDefinition {

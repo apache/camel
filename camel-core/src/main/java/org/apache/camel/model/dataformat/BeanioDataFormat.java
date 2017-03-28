@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation,csv", title = "BeanIO")
+@Metadata(firstVersion = "2.10.0", label = "dataformat,transformation,csv", title = "BeanIO")
 @XmlRootElement(name = "beanio")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanioDataFormat extends DataFormatDefinition {
@@ -48,6 +48,8 @@ public class BeanioDataFormat extends DataFormatDefinition {
     private Boolean ignoreInvalidRecords;
     @XmlAttribute
     private String encoding;
+    @XmlAttribute
+    private String beanReaderErrorHandlerType;
 
     public BeanioDataFormat() {
         super("beanio");
@@ -68,6 +70,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         }
         if (encoding != null) {
             setProperty(camelContext, dataFormat, "encoding", encoding);
+        }
+        if (beanReaderErrorHandlerType != null) {
+            setProperty(camelContext, dataFormat, "beanReaderErrorHandlerType", beanReaderErrorHandlerType);
         }
     }
 
@@ -140,4 +145,17 @@ public class BeanioDataFormat extends DataFormatDefinition {
         this.encoding = encoding;
     }
 
+    public String getBeanReaderErrorHandlerType() {
+        return beanReaderErrorHandlerType;
+    }
+
+    /**
+     * To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler
+     * while parsing. Configure the fully qualified class name of the error handler.
+     * Notice the options ignoreUnidentifiedRecords, ignoreUnexpectedRecords, and ignoreInvalidRecords
+     * may not be in use when you use a custom error handler.
+     */
+    public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
+        this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
+    }
 }

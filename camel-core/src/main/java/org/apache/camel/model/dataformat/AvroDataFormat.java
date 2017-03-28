@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "Avro")
+@Metadata(firstVersion = "2.14.0", label = "dataformat,transformation", title = "Avro")
 @XmlRootElement(name = "avro")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AvroDataFormat extends DataFormatDefinition {

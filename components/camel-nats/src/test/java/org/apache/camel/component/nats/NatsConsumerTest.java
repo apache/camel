@@ -34,7 +34,7 @@ public class NatsConsumerTest extends CamelTestSupport {
     @Test
     public void testConsumer() throws InterruptedException, IOException {
         mockResultEndpoint.expectedMessageCount(1);
-        mockResultEndpoint.expectedBodiesReceived("test");
+        mockResultEndpoint.expectedBodiesReceived("{Subject=test;Reply=null;Payload=<test>}");
         template.requestBody("direct:send", "test");
 
         mockResultEndpoint.assertIsSatisfied();
@@ -45,8 +45,8 @@ public class NatsConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://localhost:4222?topic=test");
-                from("nats://localhost:4222?topic=test").to(mockResultEndpoint);
+                from("direct:send").to("nats://localhost:4222?topic=test&flushConnection=true");
+                from("nats://localhost:4222?topic=test&flushConnection=true").to(mockResultEndpoint);
             }
         };
     }

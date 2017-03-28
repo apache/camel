@@ -40,16 +40,16 @@ public abstract class GitHubComponentTestBase extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         commitService = new MockCommitService();
-        registry.bind("githubCommitService", commitService);
+        registry.bind(GitHubConstants.GITHUB_COMMIT_SERVICE, commitService);
 
         repositoryService = new MockRepositoryService();
-        registry.bind("githubRepositoryService", repositoryService);
+        registry.bind(GitHubConstants.GITHUB_REPOSITORY_SERVICE, repositoryService);
 
         pullRequestService = new MockPullRequestService();
-        registry.bind("githubPullRequestService", pullRequestService);
+        registry.bind(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE, pullRequestService);
 
         issueService = new MockIssueService(pullRequestService);
-        registry.bind("githbIssueService", issueService);
+        registry.bind(GitHubConstants.GITHUB_ISSUE_SERVICE, issueService);
 
         return registry;
     }

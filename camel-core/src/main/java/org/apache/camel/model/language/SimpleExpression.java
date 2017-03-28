@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "language,core,java", title = "Simple")
+@Metadata(firstVersion = "1.1.0", label = "language,core,java", title = "Simple")
 @XmlRootElement(name = "simple")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleExpression extends ExpressionDefinition {

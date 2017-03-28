@@ -285,7 +285,19 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 loadConverterMethods(registry, superclass);
             }
         } catch (NoClassDefFoundError e) {
-            LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+            boolean ignore = false;
+            // does the class allow to ignore the type converter when having load errors
+            if (ObjectHelper.hasAnnotation(type, Converter.class, true)) {
+                if (type.getAnnotation(Converter.class) != null) {
+                    ignore = type.getAnnotation(Converter.class).ignoreOnLoadError();
+                }
+            }
+            // if we should ignore then only log at debug level
+            if (ignore) {
+                LOG.debug("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+            } else {
+                LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+            }
         }
     }
 

@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.http4.HttpEndpoint;
 import org.apache.camel.component.http4.HttpMethods;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 public final class HttpMethodHelper {
@@ -62,16 +63,22 @@ public final class HttpMethodHelper {
 
         // compute what method to use either GET or POST
         HttpMethods answer;
-        HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
-        if (m != null) {
-            // always use what end-user provides in a header
-            answer = m;
-        } else if (queryString != null) {
-            // if a query string is provided then use GET
-            answer = HttpMethods.GET;
+        if (endpoint.getHttpMethod() != null) {
+            // endpoint configured take precedence
+            answer = HttpMethods.valueOf(endpoint.getHttpMethod().name());
         } else {
-            // fallback to POST if we have payload, otherwise GET
-            answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            // compute what method to use either GET or POST (header take precedence)
+            HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
+            if (m != null) {
+                // always use what end-user provides in a header
+                answer = m;
+            } else if (queryString != null) {
+                // if a query string is provided then use GET
+                answer = HttpMethods.GET;
+            } else {
+                // fallback to POST if we have payload, otherwise GET
+                answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            }
         }
 
         return answer;

@@ -1,0 +1,174 @@
+## Blueprint Testing
+
+*Available as of Camel 2.10*
+
+camel-test-blueprint does only support testing _one_ CamelContext. So
+if you have two or more CamelContexts in your blueprint XML files, then
+only the CamelContext first found is used during testing.
+
+link:testing.html[Testing] is a crucial part of any development or
+integration work. Camel supports the definition of
+link:using-osgi-blueprint-with-camel.html[Blueprint routes], but given
+that Blueprint is an OSGi specific technology, writing unit tests is
+quite difficult. This library leverages
+http://code.google.com/p/pojosr/[PojoSR] (now Felix Connect) which
+provides a service registry without using a fully compliant OSGi
+container. This allows defining real unit tests (as opposed to
+integration tests using
+http://team.ops4j.org/wiki/display/paxexam/Pax+Exam[Pax Exam]. Please
+make sure all test jars in your classpath are OSGi bundles.
+
+Also notice the use of *`getBlueprintDescriptor`* to specify the
+location of the OSGi Blueprint XML file. +
+ If you have multiple OSGi Blueprint XML files, then you can specify
+them with a comma-separated list in the *`getBlueprintDescriptor`*
+method.
+
+Here's the
+http://svn.apache.org/viewvc/camel/trunk/components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml?view=markup[Blueprint
+XML file]:
+
+In order to define blueprint tests, add the following dependency to your
+pom:
+
+[source,xml]
+-----------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-test-blueprint</artifactId>
+  <version>2.10</version>
+  <scope>test</scope>
+</dependency>
+-----------------------------------------------
+
+### Classpath scanning
+
+By default PojoSR test container scans the test classpath for all the
+OSGi bundles available there. All the bundles with Blueprint descriptor
+files will be automatically started by the test container. If you would
+like to prevent particular bundles from being started by the test
+container, override the `getBundleFilter` method, just as demonstrated
+in the snippet below. 
+
+[source,java]
+--------------------------------------------------------------------------------
+@Override
+protected String getBundleFilter() {
+  // I don't want test container to scan and load Logback bundle during the test
+  return "(!(Bundle-SymbolicName=ch.qos.logback.core))";
+}
+--------------------------------------------------------------------------------
+
+Keep in mind that not specifying the Blueprint descriptor in the
+getBlueprintDescriptor method will not prevent the test container from
+loading a given descriptor. The `getBundleFilter` method is the proper
+way of filtering out bundles you don't want to start during the test.
+
+### Setting timeout when getting CamelContext
+
+*Available as of Camel 2.13.0/2.12.1/2.11.2*
+
+`CamelBlueprintTestSupport` waits 30 seconds for Camel Context to be
+ready by default, now you can override this value in two ways:
+
+* Globally, by setting
+`org.apache.camel.test.blueprint.camelContextCreationTimeout` system
+property.
+* Locally for each test, by overriding _getCamelContextCreationTimeout_
+method.
+
+### Adding services on startup
+
+*Available as of Camel 2.11.2/2.12.0*
+
+When using `camel-test-blueprint` you may do unit tests which requires
+using shared services which are not available during unit testing, but
+only in the real OSGi container, for example a shared `DataSource`.
+
+To make it easier to register services on startup, such as a standalone
+`DataSource` or any other service, you can override the method
+`addServicesOnStartup` when your unit test class extends
+`CamelBlueprintTestSupport`.
+
+In the example below we register a service
+`org.apache.camel.test.blueprint.MyService` using the name `myService`
+having a property `beer=Carlsberg`, as shown below:
+
+[source,java]
+---------------------------------------------------------------------------------------------------
+    @Override
+    protected void addServicesOnStartup(Map<String, KeyValueHolder<Object, Dictionary>> services) {
+        services.put("myService", asService(myService, "beer", "Carlsberg"));
+    }
+---------------------------------------------------------------------------------------------------
+
+The asService is a builder method that makes it easy to register a
+service with a single property. If you need more properties you can use
+the `asService` method that takes a `Dictionary` as argument. And if you
+do not need any properties, then just pass in `null`, eg:
+
+[source,java]
+------------------------------------------------------
+services.put("myService", asService(myService, null));
+------------------------------------------------------
+
+This allows us to use the service by calling a method on it from a Camel
+link:bean.html[Bean] component in a route as shown:
+
+[source,xml]
+--------------------------------
+    <route>
+      <from uri="direct:start"/>
+      <to uri="bean:myService"/>
+      <to uri="mock:result"/>
+    </route>
+--------------------------------
+
+Notice the bean endpoint uses the service name `myService` which was the
+name we registered the service as. You can also use the fully qualified
+class name instead, which is more common with OSGi.
+
+[source,java]
+---------------------------------------------------------------------------------------------------
+    @Override
+    protected void addServicesOnStartup(Map<String, KeyValueHolder<Object, Dictionary>> services) {
+        services.put(MyService.class.getName(), asService(myService, "beer", "Carlsberg"));
+    }
+---------------------------------------------------------------------------------------------------
+
+And in the route we use the FQN name:
+
+[source,xml]
+----------------------------------------------------------------
+    <route>
+      <from uri="direct:start"/>
+      <to uri="bean:org.apache.camel.test.blueprint.MyService"/>
+      <to uri="mock:result"/>
+    </route>
+----------------------------------------------------------------
+
+ 
+
+From *Camel 2.16.0*, an additional `addServicesOnStartup` method is
+available to be overridden making it ideal for when needing to specify
+multiple services with the same interface. 
+
+[source,java]
+------------------------------------------------------------------------------------------------------------------
+  @Override
+  protected void addServicesOnStartup(List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> services) {
+      Dictionary<String, String> dict1 = new Hashtable<String, String>();
+      dict1.put("osgi.jndi.service.name", "jdbc/db1");
+        
+      Dictionary<String, String> dict2 = new Hashtable<String, String>();
+      dict2.put("osgi.jndi.service.name", "jdbc/db2");
+        
+      services.add(asKeyValueService(javax.sql.DataSource.class.getName(), mockService1, dict1));
+      services.add(asKeyValueService(javax.sql.DataSource.class.getName(), mockService2, dict2));
+    }
+------------------------------------------------------------------------------------------------------------------
+
+The `asKeyValueService` builder method can be used to construct the
+necessary parameters to create the service. The method takes in the name
+of the registered service, the object, and and a `Dictionary` as
+arguments.

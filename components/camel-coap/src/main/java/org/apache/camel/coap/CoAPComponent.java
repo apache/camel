@@ -102,12 +102,14 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
             }
         }
 
-
         Map<String, Object> map = new HashMap<String, Object>();
         // setup endpoint options
         if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
             map.putAll(config.getEndpointProperties());
         }
+
+        // allow HTTP Options as we want to handle CORS in rest-dsl
+        boolean cors = config.isEnableCORS();
 
         String query = URISupport.createQueryString(map);
 
@@ -116,6 +118,10 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
             url += ":" + config.getPort();
         }
         String restrict = verb.toUpperCase(Locale.US);
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
+
         if (uriTemplate == null) {
             uriTemplate = "";
         }
@@ -140,7 +146,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         super.doStart();
 
         RestConfiguration config = getCamelContext().getRestConfiguration("coap", true);
-        // configure additional options on spark configuration
+        // configure additional options on coap configuration
         if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
             setProperties(this, config.getComponentProperties());
         }

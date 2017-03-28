@@ -45,6 +45,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.binding.Binding;
+import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.helpers.CastUtils;
@@ -159,6 +160,7 @@ public class DefaultCxfBindingTest extends Assert {
         exchange.getIn().setHeader("MyFruitHeader", "peach");
         exchange.getIn().setHeader("MyBrewHeader", Arrays.asList("cappuccino", "espresso"));
         exchange.getIn().addAttachment("att-1", new DataHandler(new FileDataSource("pom.xml")));
+        exchange.getIn().getAttachmentObject("att-1").setHeader("attachment-header", "value 1");
 
         cxfBinding.populateCxfRequestFromExchange(cxfExchange, exchange, requestContext);
         
@@ -181,6 +183,24 @@ public class DefaultCxfBindingTest extends Assert {
         assertNotNull(attachments.size() == 1);
         Attachment att = attachments.iterator().next();
         assertEquals("att-1", att.getId());
+        assertEquals("value 1", att.getHeader("attachment-header"));
+    }
+
+    @Test
+    public void testPopulateCxfSoapHeaderRequestFromExchange() {
+        DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
+        cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
+        Exchange exchange = new DefaultExchange(context);
+        org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
+        Map<String, Object> requestContext = new HashMap<>();
+
+        String expectedSoapActionHeader = "urn:hello:world";
+        exchange.getIn().setHeader("soapAction", expectedSoapActionHeader);
+
+        cxfBinding.populateCxfRequestFromExchange(cxfExchange, exchange, requestContext);
+
+        String actualSoapActionHeader = (String)requestContext.get(SoapBindingConstants.SOAP_ACTION);
+        assertEquals(expectedSoapActionHeader, actualSoapActionHeader);
     }
     
     @Test
@@ -200,7 +220,9 @@ public class DefaultCxfBindingTest extends Assert {
         cxfExchange.setInMessage(cxfMessage);
         
         Set<Attachment> attachments = new HashSet<Attachment>();
-        attachments.add(new AttachmentImpl("att-1", new DataHandler(new FileDataSource("pom.xml"))));
+        AttachmentImpl attachment = new AttachmentImpl("att-1", new DataHandler(new FileDataSource("pom.xml")));
+        attachment.setHeader("additional-header", "value 1");
+        attachments.add(attachment);
         cxfMessage.setAttachments(attachments);
         
         cxfBinding.populateExchangeFromCxfResponse(exchange, cxfExchange, responseContext);
@@ -209,9 +231,10 @@ public class DefaultCxfBindingTest extends Assert {
         assertNotNull(camelHeaders);
         assertEquals(responseContext, camelHeaders.get(Client.RESPONSE_CONTEXT));
         
-        Map<String, DataHandler> camelAttachments = exchange.getOut().getAttachments();
+        Map<String, org.apache.camel.Attachment> camelAttachments = exchange.getOut().getAttachmentObjects();
         assertNotNull(camelAttachments);
         assertNotNull(camelAttachments.get("att-1"));
+        assertEquals("value 1", camelAttachments.get("att-1").getHeader("additional-header"));
     }
 
     @Test
@@ -249,6 +272,7 @@ public class DefaultCxfBindingTest extends Assert {
         exchange.getOut().setHeader("soapAction", "urn:hello:world");
         exchange.getOut().setHeader("MyFruitHeader", "peach");
         exchange.getOut().addAttachment("att-1", new DataHandler(new FileDataSource("pom.xml")));
+        exchange.getOut().getAttachmentObject("att-1").setHeader("attachment-header", "value 1");
         
         IMocksControl control = EasyMock.createNiceControl();
         
@@ -281,6 +305,7 @@ public class DefaultCxfBindingTest extends Assert {
         assertNotNull(attachments.size() == 1);
         Attachment att = attachments.iterator().next();
         assertEquals("att-1", att.getId());
+        assertEquals("value 1", att.getHeader("attachment-header"));
     }
 
     @Test
@@ -300,7 +325,9 @@ public class DefaultCxfBindingTest extends Assert {
         cxfMessage.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headers);
 
         Set<Attachment> attachments = new HashSet<Attachment>();
-        attachments.add(new AttachmentImpl("att-1", new DataHandler(new FileDataSource("pom.xml"))));
+        AttachmentImpl attachment = new AttachmentImpl("att-1", new DataHandler(new FileDataSource("pom.xml")));
+        attachment.setHeader("attachment-header", "value 1");
+        attachments.add(attachment);
         cxfMessage.setAttachments(attachments);
         
         cxfExchange.setInMessage(cxfMessage);
@@ -315,11 +342,11 @@ public class DefaultCxfBindingTest extends Assert {
         assertEquals("241", camelHeaders.get("content-length"));
         assertEquals("peach", camelHeaders.get("MyFruitHeader"));
         assertEquals(Arrays.asList("cappuccino", "espresso"), camelHeaders.get("MyBrewHeader"));
-        
-        Map<String, DataHandler> camelAttachments = exchange.getIn().getAttachments();
+
+        Map<String, org.apache.camel.Attachment> camelAttachments = exchange.getIn().getAttachmentObjects();
         assertNotNull(camelAttachments);
         assertNotNull(camelAttachments.get("att-1"));
-        
+        assertEquals("value 1", camelAttachments.get("att-1").getHeader("attachment-header"));
     }
 
     @Test

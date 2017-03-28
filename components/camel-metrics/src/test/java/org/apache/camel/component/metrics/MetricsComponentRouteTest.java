@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_PERFIX;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_PREFIX;
 
 public class MetricsComponentRouteTest extends CamelTestSupport {
 
@@ -72,14 +72,14 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         Date now = new Date();
 
         mock.expectedBodiesReceived(body);
-        mock.expectedHeaderReceived("." + HEADER_PERFIX, "value");
+        mock.expectedHeaderReceived("." + HEADER_PREFIX, "value");
         mock.expectedHeaderReceived("date", now);
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(HEADER_METRIC_NAME, "a name");
         headers.put(HEADER_HISTOGRAM_VALUE, 34L);
-        headers.put(HEADER_PERFIX + "notExistingHeader", "?");
-        headers.put("." + HEADER_PERFIX, "value");
+        headers.put(HEADER_PREFIX + "notExistingHeader", "?");
+        headers.put("." + HEADER_PREFIX, "value");
         headers.put("date", now);
 
         template2.sendBodyAndHeaders(body, headers);

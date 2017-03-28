@@ -34,7 +34,9 @@ public class DropboxConsumerTest extends DropboxTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/path").to("mock:test");
+                from("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/path").to("mock:test1");
+                
+                from("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/path with spaces/file").to("mock:test2");
             }
         };
     }
@@ -42,13 +44,22 @@ public class DropboxConsumerTest extends DropboxTestSupport {
     @Test
     public void shouldCreateGetConsumer() throws Exception {
         // Given
-        Endpoint dropboxEndpoint = context.getEndpoint("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/path");
+        Endpoint dropboxEndpoint1 = context.getEndpoint("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/path");
 
         // When
-        Consumer consumer = dropboxEndpoint.createConsumer(null);
+        Consumer consumer1 = dropboxEndpoint1.createConsumer(null);
 
         // Then
-        Assert.assertTrue(consumer instanceof DropboxScheduledPollGetConsumer);
+        Assert.assertTrue(consumer1 instanceof DropboxScheduledPollGetConsumer);
+        
+        // Given
+        Endpoint dropboxEndpoint2 = context.getEndpoint("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/path with spaces/file");
+
+        // When
+        Consumer consumer2 = dropboxEndpoint2.createConsumer(null);
+
+        // Then
+        Assert.assertTrue(consumer2 instanceof DropboxScheduledPollGetConsumer);
     }
 
 }
