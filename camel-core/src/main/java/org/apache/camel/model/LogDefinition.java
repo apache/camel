@@ -27,11 +27,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.DefaultMaskingFormatter;
 import org.apache.camel.processor.LogProcessor;
-import org.apache.camel.processor.MaskingStringFormatter;
+import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.StringFormatter;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
@@ -125,11 +125,18 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         LoggingLevel level = getLoggingLevel() != null ? getLoggingLevel() : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, getMarker());
 
-        StringFormatter formatter = routeContext.getCamelContext().getRegistry().lookupByNameAndType("logEipFormatter", StringFormatter.class);
-        if (formatter == null && routeContext.isLogEipMask()) {
-            formatter = new MaskingStringFormatter();
+        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext));
+    }
+
+    private MaskingFormatter getMaskingFormatter(RouteContext routeContext) {
+        if (routeContext.isLogMask()) {
+            MaskingFormatter formatter = routeContext.getCamelContext().getRegistry().lookupByNameAndType(Constants.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            if (formatter == null) {
+                formatter = new DefaultMaskingFormatter();
+            }
+            return formatter;
         }
-        return new LogProcessor(exp, camelLogger, formatter);
+        return null;
     }
 
     @Override

@@ -18,8 +18,9 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.Constants;
 import org.apache.camel.processor.LogEipMaskTest;
-import org.apache.camel.spi.StringFormatter;
+import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,7 +37,6 @@ public class SpringLogEipMaskTest {
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
         MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
         mock.expectedMessageCount(1);
-        context.setLogEipMask(true);
         context.start();
         context.createProducerTemplate().sendBody("direct:foo", "mask password=\"my passw0rd!\"");
         context.createProducerTemplate().sendBody("direct:noMask", "no-mask password=\"my passw0rd!\"");
@@ -49,13 +49,13 @@ public class SpringLogEipMaskTest {
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/logEipCustomFormatterTest.xml");
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
         context.start();
-        MockStringFormatter customFormatter = applicationContext.getBean("logEipFormatter", MockStringFormatter.class);
+        MockMaskingFormatter customFormatter = applicationContext.getBean(Constants.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
         context.createProducerTemplate().sendBody("direct:foo", "mock password=\"my passw0rd!\"");
         Assert.assertEquals("Got mock password=\"my passw0rd!\"", customFormatter.received);
         context.stop();
     }
 
-    public static class MockStringFormatter implements StringFormatter {
+    public static class MockMaskingFormatter implements MaskingFormatter {
         private String received;
         @Override
         public String format(String source) {

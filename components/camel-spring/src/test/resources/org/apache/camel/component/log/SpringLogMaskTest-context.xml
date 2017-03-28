@@ -23,19 +23,16 @@
     ">
 
     <camelContext logMask="true" xmlns="http://camel.apache.org/schema/spring">
-
-        <route id="foo">
-            <from uri="direct:foo"/>
-            <log message="Got ${body}"/>
-            <to uri="mock:foo"/>
+        <route id="mask">
+            <from uri="direct:mask"/>
+            <to uri="log:mask?showHeaders=true&amp;showProperties=true"/>
+            <to uri="mock:mask"/>
         </route>
-
-        <route id="noMask" logMask="false">
-            <from uri="direct:noMask"/>
-            <log message="Got ${body}"/>
-            <to uri="mock:noMask"/>
+        <route id="no-mask">
+            <from uri="direct:no-mask"/>
+            <to uri="log:no-mask?showHeaders=true&amp;showProperties=true&amp;logMask=false"/>
+            <to uri="mock:no-mask"/>
         </route>
-
     </camelContext>
 
 </beans>

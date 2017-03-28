@@ -83,7 +83,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("allowUseOriginalMessage", context.isAllowUseOriginalMessage());
             answer.put("messageHistory", context.isMessageHistory());
             answer.put("tracing", context.isTracing());
-            answer.put("logEipMask", context.isLogEipMask());
+            answer.put("logMask", context.isLogMask());
             answer.put("shutdownTimeout", context.getShutdownStrategy().getTimeUnit().toSeconds(context.getShutdownStrategy().getTimeout()));
             answer.put("classResolver", context.getClassResolver().toString());
             answer.put("packageScanClassResolver", context.getPackageScanClassResolver().toString());

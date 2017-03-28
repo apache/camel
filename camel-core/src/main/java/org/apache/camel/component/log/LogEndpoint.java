@@ -21,10 +21,13 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.model.Constants;
 import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.processor.DefaultMaskingFormatter;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -62,6 +65,8 @@ public class LogEndpoint extends ProcessorEndpoint {
     // we want to include the uri options of the DefaultExchangeFormatter
     @UriParam(label = "advanced")
     private DefaultExchangeFormatter exchangeFormatter;
+    @UriParam
+    private Boolean logMask;
 
     public LogEndpoint() {
     }
@@ -136,11 +141,22 @@ public class LogEndpoint extends ProcessorEndpoint {
             Long groupDelay = getGroupDelay();
             answer = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
         } else {
-            answer = new CamelLogProcessor(camelLogger, localFormatter);
+            answer = new CamelLogProcessor(camelLogger, localFormatter, getMaskingFormatter());
         }
         // the logger is the processor
         setProcessor(answer);
         return answer;
+    }
+
+    private MaskingFormatter getMaskingFormatter() {
+        if (logMask != null ? logMask : getCamelContext().isLogMask()) {
+            MaskingFormatter formatter = getCamelContext().getRegistry().lookupByNameAndType(Constants.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            if (formatter == null) {
+                formatter = new DefaultMaskingFormatter();
+            }
+            return formatter;
+        }
+        return null;
     }
 
     /**
@@ -260,4 +276,16 @@ public class LogEndpoint extends ProcessorEndpoint {
     public void setLoggerName(String loggerName) {
         this.loggerName = loggerName;
     }
+
+    public Boolean getLogMask() {
+        return logMask;
+    }
+
+    /**
+     * If true, mask sensitive information like password or passphrase in the log.
+     */
+    public void setLogMask(Boolean logMask) {
+        this.logMask = logMask;
+    }
+
 }
