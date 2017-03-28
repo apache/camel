@@ -284,15 +284,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 continue;
             }
 
+            if ("java.util.List<org.apache.camel.model.PropertyDefinition>".equalsIgnoreCase(type)) {
+                type = "java.util.Map<java.lang.String, java.lang.String>";
+            }
+
             // generate inner class for non-primitive options
             PropertySource<JavaClassSource> prop = commonClass.addProperty(type, option.getName());
             if (!Strings.isBlank(option.getDescription())) {
                 prop.getField().getJavaDoc().setFullText(option.getDescription());
             }
             if (!Strings.isBlank(option.getDefaultValue())) {
-                if ("java.lang.String".equals(option.getJavaType())) {
+                if ("java.lang.String".equals(type)) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
-                } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
+                } else if ("long".equals(type) || "java.lang.Long".equals(type)) {
                     // the value should be a Long number
                     String value = option.getDefaultValue() + "L";
                     prop.getField().setLiteralInitializer(value);
