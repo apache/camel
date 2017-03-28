@@ -264,6 +264,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
             // no outputs so there should be some sort of configuration
             if (handledPolicy == null && continuedPolicy == null && retryWhilePolicy == null
                     && redeliveryPolicyType == null && useOriginalMessagePolicy == null
+                    && redeliveryPolicy == null && onRedeliveryRef == null
                     && onRedelivery == null && onExceptionOccurred == null) {
                 throw new IllegalArgumentException(this + " is not configured.");
             }
