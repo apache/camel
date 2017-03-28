@@ -74,7 +74,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlAttribute(name = "onRedeliveryRef")
     private String onRedeliveryRef;
     @XmlAttribute(name = "onExceptionOccurredRef")
-    private String onExceptionbOccurredRef;
+    private String onExceptionOccurredRef;
     @XmlAttribute(name = "useOriginalMessage")
     private Boolean useOriginalMessagePolicy;
     @XmlElementRef
@@ -838,7 +838,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param ref  reference to the processor
      */
     public OnExceptionDefinition onExceptionOccurredRef(String ref) {
-        setOnExceptionbOccurredRef(ref);
+        setOnExceptionOccurredRef(ref);
         return this;
     }
 
@@ -988,12 +988,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.onExceptionOccurred = onExceptionOccurred;
     }
 
-    public String getOnExceptionbOccurredRef() {
-        return onExceptionbOccurredRef;
+    public String getOnExceptionOccurredRef() {
+        return onExceptionOccurredRef;
     }
 
-    public void setOnExceptionbOccurredRef(String onExceptionbOccurredRef) {
-        this.onExceptionbOccurredRef = onExceptionbOccurredRef;
+    public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
+        this.onExceptionOccurredRef = onExceptionOccurredRef;
     }
 
     public Boolean getUseOriginalMessagePolicy() {
@@ -1060,9 +1060,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     private void setOnExceptionOccurredFromOnExceptionOccurredRef(RouteContext routeContext) {
         // lookup onRedelivery if ref is provided
-        if (ObjectHelper.isNotEmpty(onExceptionbOccurredRef)) {
+        if (ObjectHelper.isNotEmpty(onExceptionOccurredRef)) {
             // if ref is provided then use mandatory lookup to fail if not found
-            Processor onExceptionOccurred = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onExceptionbOccurredRef, Processor.class);
+            Processor onExceptionOccurred = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onExceptionOccurredRef, Processor.class);
             setOnExceptionOccurred(onExceptionOccurred);
         }
     }
