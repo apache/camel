@@ -25,10 +25,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
 
-
-/**
- * Created by bryan.love on 3/22/17.
- */
 public class MockConnectionFactory extends ActiveMQConnectionFactory {
     private int returnBadSessionNTimes;
 

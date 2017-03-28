@@ -25,10 +25,8 @@ import org.apache.activemq.ActiveMQSession;
 import org.apache.activemq.command.ActiveMQDestination;
 import org.apache.activemq.command.ConsumerId;
 
-/**
- * Created by bryan.love on 3/22/17.
- */
 public class MockMessageConsumer extends ActiveMQMessageConsumer {
+
     private boolean isBadSession;
 
     public MockMessageConsumer(ActiveMQSession session, ConsumerId consumerId, ActiveMQDestination dest, String name, String selector, int prefetch,

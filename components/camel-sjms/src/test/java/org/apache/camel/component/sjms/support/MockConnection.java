@@ -23,9 +23,6 @@ import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
 import org.apache.activemq.util.IdGenerator;
 
-/**
- * Created by bryan.love on 3/22/17.
- */
 public class MockConnection extends ActiveMQConnection {
     private int returnBadSessionNTimes;
 
