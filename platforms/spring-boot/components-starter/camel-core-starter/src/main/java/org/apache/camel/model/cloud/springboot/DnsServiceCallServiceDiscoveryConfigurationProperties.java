@@ -14,18 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dns.springboot.cloud;
+package org.apache.camel.model.cloud.springboot;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.camel.component.dns.DnsConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.cloud.dns")
-public class DnsCloudConfiguration {
+@ConfigurationProperties(prefix = "camel.cloud.dns.service-discovery")
+public class DnsServiceCallServiceDiscoveryConfigurationProperties
+        extends
+            DnsServiceCallServiceDiscoveryConfigurationCommon {
+
+    /**
+     * Enable the component
+     */
     private boolean enabled = true;
-    private ServiceDiscoveryConfiguration serviceDiscovery = new ServiceDiscoveryConfiguration();
+    /**
+     * Define additional configuration definitions
+     */
+    private Map<String, DnsServiceCallServiceDiscoveryConfigurationCommon> configurations = new HashMap<>();
+
+    public Map<String, DnsServiceCallServiceDiscoveryConfigurationCommon> getConfigurations() {
+        return configurations;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -33,21 +44,5 @@ public class DnsCloudConfiguration {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public ServiceDiscoveryConfiguration getServiceDiscovery() {
-        return serviceDiscovery;
-    }
-
-    // *************************************************************************
-    //
-    // *************************************************************************
-
-    public class ServiceDiscoveryConfiguration extends DnsConfiguration {
-        private final Map<String, DnsConfiguration> configurations = new HashMap<>();
-
-        public Map<String, DnsConfiguration> getConfigurations() {
-            return configurations;
-        }
     }
 }

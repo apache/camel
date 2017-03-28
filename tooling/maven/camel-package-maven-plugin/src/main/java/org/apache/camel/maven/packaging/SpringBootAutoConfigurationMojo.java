@@ -207,7 +207,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
             // Generate properties, auto-configuration happens in camel-hystrix-starter
-            createHystrixConfigurationSource(pkg, model, "camel.hystrix");
+            createOtherModelConfigurationSource(pkg, model, "camel.hystrix");
         }
 
         // Consul
@@ -219,7 +219,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
             // Generate properties, auto-configuration happens in camel-consul-starter
-            createHystrixConfigurationSource(pkg, model, "camel.cloud.consul.service-discovery");
+            createOtherModelConfigurationSource(pkg, model, "camel.cloud.consul.service-discovery");
+        }
+
+        // DNS
+        json = loadModelJson(files, "dnsServiceDiscovery");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-consul-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.cloud.dns.service-discovery");
         }
 
         // Etcd
@@ -231,11 +243,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
             // Generate properties, auto-configuration happens in camel-etcd-starter
-            createHystrixConfigurationSource(pkg, model, "camel.cloud.etcd.service-discovery");
+            createOtherModelConfigurationSource(pkg, model, "camel.cloud.etcd.service-discovery");
         }
     }
 
-    private void createHystrixConfigurationSource(String packageName, OtherModel model, String propertiesPrefix) throws MojoFailureException {
+    private void createOtherModelConfigurationSource(String packageName, OtherModel model, String propertiesPrefix) throws MojoFailureException {
         final int pos = model.getJavaType().lastIndexOf(".");
         final String commonName = model.getJavaType().substring(pos + 1) + "Common";
         final String configName = model.getJavaType().substring(pos + 1) + "Properties";
