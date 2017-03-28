@@ -22,11 +22,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="logEipFormatter" class="org.apache.camel.spring.processor.SpringLogEipMaskTest.MockStringFormatter"/>
+    <bean id="CamelCustomLogMask" class="org.apache.camel.spring.processor.SpringLogEipMaskTest.MockMaskingFormatter"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-        <route id="foo">
+        <route id="foo" logMask="true">
             <from uri="direct:foo"/>
             <log message="Got ${body}"/>
             <to uri="mock:foo"/>

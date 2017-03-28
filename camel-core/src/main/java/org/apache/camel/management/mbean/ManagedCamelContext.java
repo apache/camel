@@ -268,8 +268,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return context.isMessageHistory() != null ? context.isMessageHistory() : false;
     }
 
-    public boolean isLogEipMask() {
-        return context.isLogEipMask() != null ? context.isLogEipMask() : false;
+    public boolean isLogMask() {
+        return context.isLogMask() != null ? context.isLogMask() : false;
     }
 
     public boolean isUseMDCLogging() {

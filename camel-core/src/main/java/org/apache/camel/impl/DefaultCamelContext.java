@@ -240,7 +240,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
     private Boolean messageHistory = Boolean.TRUE;
-    private Boolean logEipMask = Boolean.FALSE;
+    private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
@@ -2708,12 +2708,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.messageHistory = messageHistory;
     }
 
-    public void setLogEipMask(Boolean useLogEipMask) {
-        this.logEipMask = useLogEipMask;
+    public void setLogMask(Boolean logMask) {
+        this.logMask = logMask;
     }
 
-    public Boolean isLogEipMask() {
-        return logEipMask != null && logEipMask;
+    public Boolean isLogMask() {
+        return logMask != null && logMask;
     }
 
     public Boolean isLogExhaustedMessageBody() {

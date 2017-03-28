@@ -22,20 +22,14 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext logMask="true" xmlns="http://camel.apache.org/schema/spring">
+    <bean id="CamelCustomLogMask" class="org.apache.camel.component.log.SpringLogMaskTest.MockMaskingFormatter"/>
 
-        <route id="foo">
-            <from uri="direct:foo"/>
-            <log message="Got ${body}"/>
-            <to uri="mock:foo"/>
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route id="mask">
+            <from uri="direct:mock"/>
+            <to uri="log:mock?logMask=true"/>
+            <to uri="mock:mock"/>
         </route>
-
-        <route id="noMask" logMask="false">
-            <from uri="direct:noMask"/>
-            <log message="Got ${body}"/>
-            <to uri="mock:noMask"/>
-        </route>
-
     </camelContext>
 
 </beans>

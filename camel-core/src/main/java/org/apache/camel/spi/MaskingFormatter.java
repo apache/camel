@@ -19,10 +19,10 @@ package org.apache.camel.spi;
 import org.apache.camel.Exchange;
 
 /**
- * A plugin used to format a log String, for example to mask security information
+ * A plugin used to mask a log String, for example security information
  * like password or passphrase.
  */
-public interface StringFormatter {
+public interface MaskingFormatter {
 
     /**
      * Format a given string.

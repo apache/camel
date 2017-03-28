@@ -29,11 +29,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class MaskingStringFormatterTest {
+public class DefaultMaskingFormatterTest {
 
     @Test
     public void testDefaultOption() throws Exception {
-        MaskingStringFormatter formatter = new MaskingStringFormatter();
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         String answer = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
         Assert.assertEquals("key=value, myPassword=\"xxxxx\",\n myPassphrase=\"xxxxx\", secretKey=\"xxxxx\"", answer);
 
@@ -46,7 +46,7 @@ public class MaskingStringFormatterTest {
 
     @Test
     public void testDisableKeyValueMask() throws Exception {
-        MaskingStringFormatter formatter = new MaskingStringFormatter(false, true, true);
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(false, true, true);
         String answer = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
         Assert.assertEquals("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'", answer);
 
@@ -59,7 +59,7 @@ public class MaskingStringFormatterTest {
 
     @Test
     public void testDisableXmlElementMask() throws Exception {
-        MaskingStringFormatter formatter = new MaskingStringFormatter(true, false, true);
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, false, true);
         String answer = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo bar\", secretKey='!@#$%^&*() -+[]{};:'");
         Assert.assertEquals("key=value, myPassword=\"xxxxx\",\n myPassphrase=\"xxxxx\", secretKey=\"xxxxx\"", answer);
 
@@ -72,7 +72,7 @@ public class MaskingStringFormatterTest {
 
     @Test
     public void testDisableJsonMask() throws Exception {
-        MaskingStringFormatter formatter = new MaskingStringFormatter(true, true, false);
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter(true, true, false);
         String answer = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
         Assert.assertEquals("key=value, myPassword=\"xxxxx\",\n myPassphrase=\"xxxxx\", secretKey=\"xxxxx\"", answer);
 
@@ -85,7 +85,7 @@ public class MaskingStringFormatterTest {
 
     @Test
     public void testCustomMaskString() throws Exception {
-        MaskingStringFormatter formatter = new MaskingStringFormatter();
+        DefaultMaskingFormatter formatter = new DefaultMaskingFormatter();
         formatter.setMaskString("**********");
         String answer = formatter.format("key=value, myPassword=foo,\n myPassphrase=\"foo　bar\", secretKey='!@#$%^&*() -+[]{};:'");
         Assert.assertEquals("key=value, myPassword=\"**********\",\n myPassphrase=\"**********\", secretKey=\"**********\"", answer);

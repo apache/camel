@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.ExchangeFormatter;
-import org.apache.camel.spi.StringFormatter;
+import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.MessageHelper;
@@ -37,11 +37,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
- * The {@link StringFormatter} that searches the specified keywards in the source
+ * The {@link MaskingFormatter} that searches the specified keywards in the source
  * and replace its value with mask string. By default passphrase, password and secretKey
  * are used as keywards to replace its value.
  */
-public class MaskingStringFormatter implements StringFormatter {
+public class DefaultMaskingFormatter implements MaskingFormatter {
 
     private static final Set<String> DEFAULT_KEYWORDS = new HashSet<String>(Arrays.asList("passphrase", "password", "secretKey"));
     private Set<String> keywords;
@@ -53,15 +53,15 @@ public class MaskingStringFormatter implements StringFormatter {
     private Pattern xmlElementMaskPattern;
     private Pattern jsonMaskPattern;
 
-    public MaskingStringFormatter() {
+    public DefaultMaskingFormatter() {
         this(DEFAULT_KEYWORDS, true, true, true);
     }
 
-    public MaskingStringFormatter(boolean maskKeyValue, boolean maskXml, boolean maskJson) {
+    public DefaultMaskingFormatter(boolean maskKeyValue, boolean maskXml, boolean maskJson) {
         this(DEFAULT_KEYWORDS, maskKeyValue, maskXml, maskJson);
     }
 
-    public MaskingStringFormatter(Set<String> keywords, boolean maskKeyValue, boolean maskXmlElement, boolean maskJson) {
+    public DefaultMaskingFormatter(Set<String> keywords, boolean maskKeyValue, boolean maskXmlElement, boolean maskJson) {
         this.keywords = keywords;
         setMaskKeyValue(maskKeyValue);
         setMaskXmlElement(maskXmlElement);

@@ -14,13 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.component.log;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.Constants;
@@ -28,28 +26,38 @@ import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.util.jndi.JndiTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class LogEipMaskTest {
+public class LogMaskTest {
 
     protected JndiRegistry registry;
 
     protected CamelContext createCamelContext() throws Exception {
         registry = new JndiRegistry(JndiTest.createInitialContext());
         CamelContext context = new DefaultCamelContext(registry);
-        context.addRoutes(createRouteBuilder());
         return context;
     }
 
     @Test
-    public void testLogEipMask() throws Exception {
+    public void testLogMask() throws Exception {
         CamelContext context = createCamelContext();
-        MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
-        mock.expectedMessageCount(1);
         context.setLogMask(true);
         context.start();
-        context.createProducerTemplate().sendBody("direct:foo", "mask password=\"my passw0rd!\"");
-        context.createProducerTemplate().sendBody("direct:noMask", "no-mask password=\"my passw0rd!\"");
-        mock.assertIsSatisfied();
+        ProducerTemplate template = context.createProducerTemplate();
+        template.sendBodyAndHeader("log:mask?showHeaders=true", "password=passw0rd@", "headerPassword", "#header-password$");
+        template.sendBodyAndProperty("log:mask?showProperties=true", "password=passw0rd@", "propertyPassphrase", "#property-passphrase$");
+        context.stop();
+    }
+
+    @Test
+    public void testDisableLogMaskViaParam() throws Exception {
+        CamelContext context = createCamelContext();
+        context.setLogMask(true);
+        context.start();
+        ProducerTemplate template = context.createProducerTemplate();
+        template.sendBodyAndHeader("log:mask?showHeaders=true", "password=passw0rd@", "headerPassword", "#header-password$");
+        template.sendBodyAndProperty("log:no-mask?showProperties=true&logMask=false", "password=passw0rd@", "propertyPassphrase", "#property-passphrase$");
         context.stop();
     }
 
@@ -58,11 +66,11 @@ public class LogEipMaskTest {
         CamelContext context = createCamelContext();
         MockMaskingFormatter customFormatter = new MockMaskingFormatter();
         registry.bind(Constants.CUSTOM_LOG_MASK_REF, customFormatter);
-        context.setLogMask(true);
         context.start();
-        context.createProducerTemplate().sendBody("direct:foo", "mock password=\"my passw0rd!\"");
-        Assert.assertEquals("Got mock password=\"my passw0rd!\"", customFormatter.received);
+        ProducerTemplate template = context.createProducerTemplate();
+        template.sendBody("log:mock?logMask=true", "password=passw0rd@");
         context.stop();
+        Assert.assertTrue(customFormatter.received, customFormatter.received.contains("password=passw0rd@"));
     }
 
     public static class MockMaskingFormatter implements MaskingFormatter {
@@ -72,16 +80,6 @@ public class LogEipMaskTest {
             received = source;
             return source;
         }
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:foo").routeId("foo").log("Got ${body}").to("mock:foo");
-                from("direct:noMask").routeId("noMask").logMask("false").log("Got ${body}").to("mock:noMask");
-            }
-        };
     }
 
 }

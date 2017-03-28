@@ -77,7 +77,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private String streamCache;
     private String trace;
     private String messageHistory;
-    private String logEipMask;
+    private String logMask;
     private String handleFault;
     private String delayer;
     private String autoStartup;
@@ -479,23 +479,23 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
-     * Enable security mask in Log EIP for this route.
+     * Enable security mask for Logging on this route.
      *
      * @return the builder
      */
-    public RouteDefinition logEipMask() {
-        setLogEipMask("true");
+    public RouteDefinition logMask() {
+        setLogMask("true");
         return this;
     }
 
     /**
-     * Sets whether security mask in Log EIP is enabled for this route.
+     * Sets whether security mask for logging is enabled on this route.
      *
-     * @param logEipMask whether to enable security mask in Log EIP (true or false), the value can be a property placeholder
+     * @param logMask whether to enable security mask for Logging (true or false), the value can be a property placeholder
      * @return the builder
      */
-    public RouteDefinition logEipMask(String logEipMask) {
-        setLogEipMask(logEipMask);
+    public RouteDefinition logMask(String logMask) {
+        setLogMask(logMask);
         return this;
     }
 
@@ -897,18 +897,18 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
-     * Whether security mask for Log EIP is enabled on this route.
+     * Whether security mask for Logging is enabled on this route.
      */
-    public String getLogEipMask() {
-        return logEipMask;
+    public String getLogMask() {
+        return logMask;
     }
 
     /**
-     * Whether security mask for Log EIP is enabled on this route.
+     * Whether security mask for Logging is enabled on this route.
      */
     @XmlAttribute @Metadata(defaultValue = "false")
-    public void setLogEipMask(String logEipMask) {
-        this.logEipMask = logEipMask;
+    public void setLogMask(String logMask) {
+        this.logMask = logMask;
     }
 
     /**
@@ -1170,12 +1170,12 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
 
         // configure Log EIP mask
-        if (logEipMask != null) {
-            Boolean isLogEipMask = CamelContextHelper.parseBoolean(camelContext, getLogEipMask());
-            if (isLogEipMask != null) {
-                routeContext.setLogEipMask(isLogEipMask);
-                if (isLogEipMask) {
-                    log.debug("Security mask for Log EIP is enabled on route: {}", getId());
+        if (logMask != null) {
+            Boolean isLogMask = CamelContextHelper.parseBoolean(camelContext, getLogMask());
+            if (isLogMask != null) {
+                routeContext.setLogMask(isLogMask);
+                if (isLogMask) {
+                    log.debug("Security mask for Logging is enabled on route: {}", getId());
                 }
             }
         }

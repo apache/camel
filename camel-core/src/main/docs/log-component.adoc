@@ -86,7 +86,7 @@ with the following path and query parameters:
 | **loggerName** | *Required* The logger name to use |  | String
 |=======================================================================
 
-#### Query Parameters (25 parameters):
+#### Query Parameters (26 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -96,6 +96,7 @@ with the following path and query parameters:
 | **groupInterval** (producer) | If specified will group message stats by this time interval (in millis) |  | Long
 | **groupSize** (producer) | An integer that specifies a group size for throughput logging. |  | Integer
 | **level** (producer) | Logging level to use. The default value is INFO. | INFO | String
+| **logMask** (producer) | If true mask sensitive information like password or passphrase in the log. |  | Boolean
 | **marker** (producer) | An optional Marker name to use. |  | String
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | **maxChars** (formatting) | Limits the number of characters logged per line. | 10000 | int
@@ -181,6 +182,48 @@ The following will be logged:
 ------------------------------------------------------------------------------------------------------------------------------------
 "Received: 1000 new messages, with total 2000 so far. Last group took: 10000 millis which is: 100 messages per second. average: 100"
 ------------------------------------------------------------------------------------------------------------------------------------
+
+### Masking sensitive information like password
+*Available as of Camel 2.19*
+
+You can enable security masking for logging by setting `logMask` flag to `true`.
+Note that this option also affects link:logeip.html[Log EIP].
+
+To enable mask in Java DSL at CamelContext level:
+[source,java]
+--------------------------------------------------------
+CamelContext context = ...
+context.setLogMask(true);
+--------------------------------------------------------
+
+And in XML:
+[source,java]
+--------------------------------------------------------
+<camelContext logMask="true">
+...
+--------------------------------------------------------
+
+
+You can also turn it on|off at endpoint level. To enable mask in Java DSL at endpoint level,
+add logMask=true option in the URI for the log endpoint:
+[source,java]
+--------------------------------------------------------
+from("direct:start").to("log:foo?logMask=true");
+--------------------------------------------------------
+
+And in XML:
+[source,java]
+--------------------------------------------------------
+<route>
+  <from uri="direct:foo"/>
+  <to uri="log:foo?logMask=true"/>
+...
+--------------------------------------------------------
+
+`org.apache.camel.processor.DefaultMaskingFormatter` is used for the masking by default.
+If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
+Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
+
 
 ### Full customization of the logging output
 
