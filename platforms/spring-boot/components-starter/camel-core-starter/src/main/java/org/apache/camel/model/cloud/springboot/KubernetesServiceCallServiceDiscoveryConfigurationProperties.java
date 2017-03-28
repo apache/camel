@@ -14,18 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kubernetes.springboot.cloud;
+package org.apache.camel.model.cloud.springboot;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.cloud.kubernetes")
-public class KubernetesCloudConfiguration {
+@ConfigurationProperties(prefix = "camel.cloud.kubernetes.service-discovery")
+public class KubernetesServiceCallServiceDiscoveryConfigurationProperties
+        extends
+            KubernetesServiceCallServiceDiscoveryConfigurationCommon {
+
+    /**
+     * Enable the component
+     */
     private boolean enabled = true;
-    private ServiceDiscoveryConfiguration serviceDiscovery = new ServiceDiscoveryConfiguration();
+    /**
+     * Define additional configuration definitions
+     */
+    private Map<String, KubernetesServiceCallServiceDiscoveryConfigurationCommon> configurations = new HashMap<>();
+
+    public Map<String, KubernetesServiceCallServiceDiscoveryConfigurationCommon> getConfigurations() {
+        return configurations;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -33,30 +44,5 @@ public class KubernetesCloudConfiguration {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public ServiceDiscoveryConfiguration getServiceDiscovery() {
-        return serviceDiscovery;
-    }
-
-    // *************************************************************************
-    //
-    // *************************************************************************
-
-    public class ServiceDiscoveryConfiguration extends KubernetesConfiguration {
-        private final Map<String, KubernetesConfiguration> configurations = new HashMap<>();
-        private String lookup;
-
-        public String getLookup() {
-            return lookup;
-        }
-
-        public void setLookup(String lookup) {
-            this.lookup = lookup;
-        }
-
-        public Map<String, KubernetesConfiguration> getConfigurations() {
-            return configurations;
-        }
     }
 }

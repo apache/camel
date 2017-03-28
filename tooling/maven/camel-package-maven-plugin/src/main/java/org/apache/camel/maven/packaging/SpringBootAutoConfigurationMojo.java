@@ -230,7 +230,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             int pos = model.getJavaType().lastIndexOf(".");
             String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-            // Generate properties, auto-configuration happens in camel-consul-starter
+            // Generate properties, auto-configuration happens in camel-dns-starter
             createOtherModelConfigurationSource(pkg, model, "camel.cloud.dns.service-discovery");
         }
 
@@ -244,6 +244,18 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
             // Generate properties, auto-configuration happens in camel-etcd-starter
             createOtherModelConfigurationSource(pkg, model, "camel.cloud.etcd.service-discovery");
+        }
+
+        // Kubernetes
+        json = loadModelJson(files, "kubernetesServiceDiscovery");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-kubernetes-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.cloud.kubernetes.service-discovery");
         }
     }
 
