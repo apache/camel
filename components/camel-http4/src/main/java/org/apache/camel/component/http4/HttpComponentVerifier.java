@@ -37,7 +37,7 @@ final class HttpComponentVerifier extends DefaultComponentVerifier {
     private final HttpComponent component;
 
     HttpComponentVerifier(HttpComponent component) {
-        super("http", component.getCamelContext());
+        super("http4", component.getCamelContext());
         
         this.component = component;
     }
