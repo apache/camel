@@ -44,7 +44,7 @@ external stream processing systems.
 
 
 // component options: START
-The Reactive Streams component supports 3 options which are listed below.
+The Reactive Streams component supports 4 options which are listed below.
 
 
 
@@ -53,6 +53,7 @@ The Reactive Streams component supports 3 options which are listed below.
 | Name | Description | Default | Type
 | **internalEngine Configuration** (advanced) | Configures the internal engine for Reactive Streams. |  | ReactiveStreamsEngine Configuration
 | **backpressureStrategy** (producer) | The backpressure strategy to use when pushing events to a slow subscriber. | BUFFER | ReactiveStreams BackpressureStrategy
+| **serviceType** (advanced) | Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the registry or using a ServiceLoader the default implementation is DefaultCamelReactiveStreamsService |  | String
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
@@ -76,12 +77,11 @@ with the following path and query parameters:
 | **stream** | Name of the stream channel used by the endpoint to exchange messages. |  | String
 |=======================================================================
 
-#### Query Parameters (10 parameters):
+#### Query Parameters (9 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **serviceName** (common) | Allows using an alternative CamelReactiveStreamService implementation. The implementation is looked up from the registry. |  | String
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **concurrentConsumers** (consumer) | Number of threads used to process exchanges in the Camel route. | 1 | int
 | **forwardOnComplete** (consumer) | Determines if onComplete events should be pushed to the Camel route. | false | boolean

@@ -16,28 +16,13 @@
  */
 package org.apache.camel.component.reactive.streams.engine;
 
-import org.apache.camel.component.reactive.streams.api.DispatchCallback;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsServiceFactory;
 
-/**
- * A helper object that wraps the emitted item and the corresponding dispatch callback.
- */
-public class StreamPayload<D> {
-
-    private D item;
-
-    private DispatchCallback<D> callback;
-
-    public StreamPayload(D item, DispatchCallback<D> callback) {
-        this.item = item;
-        this.callback = callback;
+public class DefaultCamelReactiveStreamsServiceFactory implements CamelReactiveStreamsServiceFactory {
+    @Override
+    public CamelReactiveStreamsService newInstance(CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
+        return new DefaultCamelReactiveStreamsService(context, configuration);
     }
-
-    public D getItem() {
-        return item;
-    }
-
-    public DispatchCallback<D> getCallback() {
-        return callback;
-    }
-
 }

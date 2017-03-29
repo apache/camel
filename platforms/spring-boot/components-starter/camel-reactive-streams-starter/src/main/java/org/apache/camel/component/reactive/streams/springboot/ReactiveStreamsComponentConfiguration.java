@@ -40,6 +40,13 @@ public class ReactiveStreamsComponentConfiguration {
      */
     private ReactiveStreamsBackpressureStrategy backpressureStrategy = ReactiveStreamsBackpressureStrategy.BUFFER;
     /**
+     * Set the type of the underlying reactive streams implementation to use.
+     * The implementation is looked up from the registry or using a
+     * ServiceLoader the default implementation is
+     * DefaultCamelReactiveStreamsService
+     */
+    private String serviceType;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -62,6 +69,14 @@ public class ReactiveStreamsComponentConfiguration {
     public void setBackpressureStrategy(
             ReactiveStreamsBackpressureStrategy backpressureStrategy) {
         this.backpressureStrategy = backpressureStrategy;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

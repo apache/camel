@@ -18,19 +18,19 @@ package org.apache.camel.component.reactive.streams.api;
 
 import java.util.function.Function;
 
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.StaticService;
+import org.apache.camel.Service;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.engine.CamelSubscriber;
+import org.apache.camel.spi.HasId;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 /**
  * The interface to which any implementation of the reactive-streams engine should comply.
  */
-public interface CamelReactiveStreamsService extends CamelContextAware, StaticService {
+public interface CamelReactiveStreamsService extends Service, HasId {
 
     /*
      * Main API methods.
@@ -282,9 +282,8 @@ public interface CamelReactiveStreamsService extends CamelContextAware, StaticSe
      *
      * @param name the stream name
      * @param exchange the exchange to be forwarded to the external subscribers
-     * @param callback the callback that signals the delivery of the exchange
      */
-    void sendCamelExchange(String name, Exchange exchange, DispatchCallback<Exchange> callback);
+    void sendCamelExchange(String name, Exchange exchange);
 
     /*
      * Methods for Camel consumers.

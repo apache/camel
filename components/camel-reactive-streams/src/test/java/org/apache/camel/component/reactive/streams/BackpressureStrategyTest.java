@@ -199,8 +199,10 @@ public class BackpressureStrategyTest extends CamelTestSupport {
         subscriber.cancel();
     }
 
+    /*
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
+    */
 }

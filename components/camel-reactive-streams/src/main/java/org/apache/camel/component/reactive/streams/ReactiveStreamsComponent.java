@@ -19,33 +19,65 @@ package org.apache.camel.component.reactive.streams;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * The Camel reactive-streams component.
  */
-public class ReactiveStreamsComponent extends UriEndpointComponent {
-
+public class ReactiveStreamsComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private ReactiveStreamsEngineConfiguration internalEngineConfiguration = new ReactiveStreamsEngineConfiguration();
-
     @Metadata(label = "producer", defaultValue = "BUFFER")
     private ReactiveStreamsBackpressureStrategy backpressureStrategy = ReactiveStreamsBackpressureStrategy.BUFFER;
+    @Metadata(label = "advanced")
+    private String serviceType;
+
+    private CamelReactiveStreamsService service;
 
     public ReactiveStreamsComponent() {
-        super(ReactiveStreamsEndpoint.class);
+    }
+
+    // ****************************************
+    //
+    // ****************************************
+
+    @Override
+    protected void doStart() throws Exception {
+        // instantiate a ReactiveStreamsService
+        getReactiveStreamsService();
+
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(service);
+
+        super.doStop();
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ReactiveStreamsEndpoint endpoint = new ReactiveStreamsEndpoint(uri, this);
         endpoint.setStream(remaining);
+
         setProperties(endpoint, parameters);
+
+        if (endpoint.getBackpressureStrategy() == null) {
+            endpoint.setBackpressureStrategy(this.backpressureStrategy);
+        }
 
         return endpoint;
     }
+
+    // ****************************************
+    // Properties
+    // ****************************************
 
     public ReactiveStreamsEngineConfiguration getInternalEngineConfiguration() {
         return internalEngineConfiguration;
@@ -69,4 +101,46 @@ public class ReactiveStreamsComponent extends UriEndpointComponent {
         this.backpressureStrategy = backpressureStrategy;
     }
 
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    /**
+     * Set the type of the underlying reactive streams implementation to use. The
+     * implementation is looked up from the registry or using a ServiceLoader, the
+     * default implementation is DefaultCamelReactiveStreamsService
+     */
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public synchronized CamelReactiveStreamsService getReactiveStreamsService() {
+        if (service == null) {
+            this.service = ReactiveStreamsHelper.resolveReactiveStreamsService(
+                getCamelContext(),
+                this.serviceType,
+                this.internalEngineConfiguration
+            );
+
+            try {
+                // Start the service
+                ServiceHelper.startService(service);
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+        }
+
+        return service;
+    }
+
+    // ****************************************
+    //
+    // ****************************************
+
+    public static final ReactiveStreamsComponent withServiceType(String serviceType) {
+        ReactiveStreamsComponent component = new ReactiveStreamsComponent();
+        component.setServiceType(serviceType);
+
+        return component;
+    }
 }
