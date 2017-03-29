@@ -83,18 +83,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>redhat-ga-repository</id>
-      <url>https://maven.repository.redhat.com/ga</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>redhat-ga-repository</id>
-      <url>https://maven.repository.redhat.com/ga</url>
-    </pluginRepository>
-  </pluginRepositories>
   <build>
     <defaultGoal>install</defaultGoal>
     <pluginManagement>
@@ -102,6 +90,7 @@
         <plugin>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-api-component-maven-plugin</artifactId>
+          <version>${project.version}</version>
           <configuration>
             <scheme>${schemeName}</scheme>
             <componentName>${componentName}</componentName>

@@ -56,12 +56,4 @@
     </dependency>
     <!--END OF GENERATED CODE-->
   </dependencies>
-  <!--START OF GENERATED CODE-->
-  <repositories>
-    <repository>
-      <id>redhat-ga-repository</id>
-      <url>https://maven.repository.redhat.com/ga</url>
-    </repository>
-  </repositories>
-  <!--END OF GENERATED CODE-->
 </project>
