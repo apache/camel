@@ -55,6 +55,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostParam;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isMediaRange;
@@ -134,7 +135,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         final URI componentSpecificationUri = component.getSpecificationUri();
 
-        specificationUri = ofNullable(before(remaining, "#")).map(URI::create)
+        specificationUri = before(remaining, "#", StringHelper::trimToNull).map(URI::create)
             .orElse(ofNullable(componentSpecificationUri).orElse(RestSwaggerComponent.DEFAULT_SPECIFICATION_URI));
 
         operationId = ofNullable(after(remaining, "#")).orElse(remaining);
