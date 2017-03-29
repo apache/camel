@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,9 +37,6 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 
     @UriPath
     private String stream;
-
-    @UriParam
-    private String serviceName;
 
     @UriParam(label = "consumer", defaultValue = "128")
     private Integer maxInflightExchanges = 128;
@@ -66,12 +64,12 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new ReactiveStreamsProducer(this, stream);
+        return new ReactiveStreamsProducer(this, stream, getReactiveStreamsService());
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new ReactiveStreamsConsumer(this, processor);
+        return new ReactiveStreamsConsumer(this, processor, getReactiveStreamsService());
     }
 
     @ManagedAttribute(description = "Name of the stream channel used by the endpoint to exchange messages")
@@ -112,17 +110,6 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    /**
-     * Allows using an alternative CamelReactiveStreamService implementation. The implementation is looked up from the registry.
-     */
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
     public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
         return backpressureStrategy;
     }
@@ -157,6 +144,10 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
      */
     public void setForwardOnError(boolean forwardOnError) {
         this.forwardOnError = forwardOnError;
+    }
+
+    CamelReactiveStreamsService getReactiveStreamsService() {
+        return ((ReactiveStreamsComponent)getComponent()).getReactiveStreamsService();
     }
 
 }

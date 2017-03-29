@@ -894,7 +894,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 36 in 36 JAR artifacts (14 deprecated)
+Number of Miscellaneous Components: 37 in 37 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -925,6 +925,8 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (14 deprecated)
 | link:camel-leveldb/src/main/docs/leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
+
+| link:camel-reactor/src/main/docs/reactor.adoc[Reactor] (camel-reactor) |  | Camel Reactor  Component
 
 | link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 

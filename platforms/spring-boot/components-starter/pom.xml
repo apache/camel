@@ -240,6 +240,7 @@
     <module>camel-quickfix-starter</module>
     <module>camel-rabbitmq-starter</module>
     <module>camel-reactive-streams-starter</module>
+    <module>camel-reactor-starter</module>
     <module>camel-rest-swagger-starter</module>
     <module>camel-restlet-starter</module>
     <module>camel-ribbon-starter</module>

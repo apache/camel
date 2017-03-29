@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.reactive.streams.engine;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
@@ -32,23 +33,22 @@ import javax.management.openmbean.TabularType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.apache.camel.component.reactive.streams.util.ConvertingPublisher;
 import org.apache.camel.component.reactive.streams.util.ConvertingSubscriber;
 import org.apache.camel.component.reactive.streams.util.MonoPublisher;
 import org.apache.camel.component.reactive.streams.util.UnwrapStreamProcessor;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.function.Suppliers;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -58,26 +58,36 @@ import org.reactivestreams.Subscriber;
 @ManagedResource(description = "Managed CamelReactiveStreamsService")
 public class DefaultCamelReactiveStreamsService extends ServiceSupport implements CamelReactiveStreamsService {
 
-    private CamelContext context;
+    private final CamelContext context;
+    private final ReactiveStreamsEngineConfiguration configuration;
+    private final Supplier<UnwrapStreamProcessor> unwrapStreamProcessorSupplier;
 
     private ExecutorService workerPool;
 
-    private final Map<String, CamelPublisher> publishers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, CamelPublisher> publishers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, CamelSubscriber> subscribers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, String> publishedUriToStream = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, String> requestedUriToStream = new ConcurrentHashMap<>();
 
-    private final Map<String, CamelSubscriber> subscribers = new ConcurrentHashMap<>();
+    public DefaultCamelReactiveStreamsService(CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
+        this.context = context;
+        this.configuration = configuration;
+        this.unwrapStreamProcessorSupplier = Suppliers.memorize(UnwrapStreamProcessor::new);
+    }
 
-    private final Map<String, String> publishedUriToStream = new ConcurrentHashMap<>();
-
-    private final Map<String, String> requestedUriToStream = new ConcurrentHashMap<>();
-
-    public DefaultCamelReactiveStreamsService() {
+    @Override
+    public String getId() {
+        return ReactiveStreamsConstants.DEFAULT_SERVICE_NAME;
     }
 
     @Override
     protected void doStart() throws Exception {
-        ReactiveStreamsComponent component = context.getComponent("reactive-streams", ReactiveStreamsComponent.class);
-        ReactiveStreamsEngineConfiguration config = component.getInternalEngineConfiguration();
-        this.workerPool = context.getExecutorServiceManager().newThreadPool(this, config.getThreadPoolName(), config.getThreadPoolMinSize(), config.getThreadPoolMaxSize());
+        this.workerPool = context.getExecutorServiceManager().newThreadPool(
+            this,
+            configuration.getThreadPoolName(),
+            configuration.getThreadPoolMinSize(),
+            configuration.getThreadPoolMaxSize()
+        );
     }
 
     @Override
@@ -90,7 +100,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
     @Override
     public Publisher<Exchange> fromStream(String name) {
-        return new UnwrappingPublisher<>(getPayloadPublisher(name));
+        return new UnwrappingPublisher(getPayloadPublisher(name));
     }
 
     @SuppressWarnings("unchecked")
@@ -104,8 +114,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
     @Override
     public CamelSubscriber streamSubscriber(String name) {
-        subscribers.computeIfAbsent(name, n -> new CamelSubscriber(name));
-        return subscribers.get(name);
+        return subscribers.computeIfAbsent(name, n -> new CamelSubscriber(name));
     }
 
     @SuppressWarnings("unchecked")
@@ -114,18 +123,17 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
             return (Subscriber<T>) streamSubscriber(name);
         }
 
-        return new ConvertingSubscriber<T>(streamSubscriber(name), getCamelContext());
+        return new ConvertingSubscriber<T>(streamSubscriber(name), context);
     }
 
     @Override
-    public void sendCamelExchange(String name, Exchange exchange, DispatchCallback<Exchange> callback) {
-        StreamPayload<Exchange> payload = new StreamPayload<>(exchange, callback);
-        getPayloadPublisher(name).publish(payload);
+    public void sendCamelExchange(String name, Exchange exchange) {
+        getPayloadPublisher(name).publish(exchange);
     }
 
     @Override
     public Publisher<Exchange> toStream(String name, Object data) {
-        Exchange exchange = convertToExchange(data);
+        Exchange exchange = ReactiveStreamsHelper.convertToExchange(context, data);
         return doRequest(name, exchange);
     }
 
@@ -188,7 +196,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                     @Override
                     public void configure() throws Exception {
                         from(u)
-                                .to("reactive-streams:" + uuid);
+                            .to("reactive-streams:" + uuid);
                     }
                 }.addRoutesToCamelContext(context);
 
@@ -213,7 +221,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                 @Override
                 public void configure() throws Exception {
                     from("reactive-streams:" + uuid)
-                            .to(uri);
+                        .to(uri);
                 }
             }.addRoutesToCamelContext(context);
 
@@ -237,7 +245,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                     @Override
                     public void configure() throws Exception {
                         from("reactive-streams:" + uuid)
-                                .to(u);
+                            .to(u);
                     }
                 }.addRoutesToCamelContext(context);
 
@@ -256,7 +264,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
     @Override
     public <T> Publisher<T> to(String uri, Object data, Class<T> type) {
-        return new ConvertingPublisher<T>(to(uri, data), type);
+        return new ConvertingPublisher<>(to(uri, data), type);
     }
 
     @Override
@@ -271,12 +279,12 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                 @Override
                 public void configure() throws Exception {
                     from(uri)
-                            .process(exchange -> {
-                                Exchange copy = exchange.copy();
-                                Object result = processor.apply(new MonoPublisher<>(copy));
-                                exchange.getIn().setBody(result);
-                            })
-                            .process(new UnwrapStreamProcessor());
+                        .process(exchange -> {
+                            Exchange copy = exchange.copy();
+                            Object result = processor.apply(new MonoPublisher<>(copy));
+                            exchange.getIn().setBody(result);
+                        })
+                        .process(unwrapStreamProcessorSupplier.get());
                 }
             }.addRoutesToCamelContext(context);
         } catch (Exception e) {
@@ -309,29 +317,6 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     @Override
     public void detachCamelProducer(String name) {
         getPayloadPublisher(name).detachProducer();
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.context = camelContext;
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return this.context;
-    }
-
-    private Exchange convertToExchange(Object data) {
-        Exchange exchange;
-        if (data instanceof Exchange) {
-            exchange = (Exchange) data;
-        } else {
-            exchange = new DefaultExchange(context);
-            exchange.setPattern(ExchangePattern.InOut);
-            exchange.getIn().setBody(data);
-        }
-
-        return exchange;
     }
 
     @ManagedOperation(description = "Information about Camel Reactive subscribers")

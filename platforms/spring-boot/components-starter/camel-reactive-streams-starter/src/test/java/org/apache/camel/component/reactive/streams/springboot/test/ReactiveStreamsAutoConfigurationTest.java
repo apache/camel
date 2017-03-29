@@ -21,7 +21,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
+import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsComponentAutoConfiguration;
 import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsServiceAutoConfiguration;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
@@ -35,32 +39,42 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Testing the servlet mapping
- */
 @RunWith(SpringRunner.class)
 @SpringBootApplication
 @DirtiesContext
-@ContextConfiguration(classes = {ReactiveStreamsServiceAutoConfiguration.class, ReactiveStreamsComponentAutoConfiguration.class, CamelAutoConfiguration.class})
-@SpringBootTest
+@SpringBootTest(
+    classes = {
+        ReactiveStreamsServiceAutoConfiguration.class,
+        ReactiveStreamsComponentAutoConfiguration.class,
+        CamelAutoConfiguration.class
+    },
+    properties = {
+        "camel.component.reactive-streams.internal-engine-configuration.thread-pool-name=rs-test"
+    }
+)
 public class ReactiveStreamsAutoConfigurationTest {
-
     @Autowired
     private CamelContext context;
 
     @Test
-    public void testStreamFlow() throws InterruptedException {
+    public void testAutoConfiguration() throws InterruptedException {
+        CamelReactiveStreamsService service = CamelReactiveStreams.get(context);
+        assertTrue(service instanceof DefaultCamelReactiveStreamsService);
+
+        ReactiveStreamsComponent component = context.getComponent(ReactiveStreamsConstants.SCHEME, ReactiveStreamsComponent.class);
+        assertEquals("rs-test", component.getInternalEngineConfiguration().getThreadPoolName());
+
         CountDownLatch latch = new CountDownLatch(1);
         String[] res = new String[1];
         Throwable[] error = new Throwable[1];
-        Publisher<String> string = CamelReactiveStreams.get(context).fromStream("stream", String.class);
+        Publisher<String> string = service.fromStream("stream", String.class);
+
         string.subscribe(new Subscriber<String>() {
             @Override
             public void onSubscribe(Subscription subscription) {
@@ -95,12 +109,9 @@ public class ReactiveStreamsAutoConfigurationTest {
     static class Routes extends RouteBuilder {
         @Override
         public void configure() throws Exception {
-
             from("direct:endpoint")
-                    .to("reactive-streams:stream");
-
+                .to("reactive-streams:stream");
         }
     }
-
 }
 
