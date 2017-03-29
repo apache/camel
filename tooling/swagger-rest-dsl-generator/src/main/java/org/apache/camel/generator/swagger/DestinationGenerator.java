@@ -16,25 +16,11 @@
  */
 package org.apache.camel.generator.swagger;
 
-import io.swagger.models.Path;
+import io.swagger.models.Operation;
 
-class PathVisitor<T> {
+@FunctionalInterface
+public interface DestinationGenerator {
 
-    private final DestinationGenerator destinationGenerator;
-
-    private final CodeEmitter<T> emitter;
-
-    PathVisitor(final CodeEmitter<T> emitter, final DestinationGenerator destinationGenerator) {
-        this.emitter = emitter;
-        this.destinationGenerator = destinationGenerator;
-
-        emitter.emit("rest");
-    }
-
-    void visit(final String path, final Path definition) {
-        final OperationVisitor<T> restDslOperation = new OperationVisitor<>(emitter, path, destinationGenerator);
-
-        definition.getOperationMap().forEach(restDslOperation::visit);
-    }
+    String generateDestinationFor(Operation operation);
 
 }
