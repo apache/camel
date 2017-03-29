@@ -36,7 +36,7 @@ final class HttpComponentVerifier extends DefaultComponentVerifier {
 
     HttpComponentVerifier(HttpComponent component) {
         super("http", component.getCamelContext());
-        
+
         this.component = component;
     }
 
@@ -111,8 +111,8 @@ final class HttpComponentVerifier extends DefaultComponentVerifier {
                     builder.error(
                         ResultErrorBuilder.withHttpCode(code)
                             .description(method.getStatusText())
-                            .parameter("authUsername")
-                            .parameter("authPassword")
+                            .parameterKey("authUsername")
+                            .parameterKey("authPassword")
                             .build()
                     );
                 } else if (code >= 300 && code < 400) {
@@ -120,9 +120,8 @@ final class HttpComponentVerifier extends DefaultComponentVerifier {
                     builder.error(
                         ResultErrorBuilder.withHttpCode(code)
                             .description(method.getStatusText())
-                            .parameter("httpUri")
-                            .attribute(ComponentVerifier.HTTP_REDIRECT, true)
-                            .attribute(ComponentVerifier.HTTP_REDIRECT_LOCATION, () -> HttpUtil.responseHeaderValue(method, "location"))
+                            .parameterKey("httpUri")
+                            .detail(VerificationError.HttpAttribute.HTTP_REDIRECT, () -> HttpUtil.responseHeaderValue(method, "location"))
                             .build()
                     );
                 } else if (code >= 400) {
@@ -137,7 +136,7 @@ final class HttpComponentVerifier extends DefaultComponentVerifier {
         } catch (UnknownHostException e) {
             builder.error(
                 ResultErrorBuilder.withException(e)
-                    .parameter("httpUri")
+                    .parameterKey("httpUri")
                     .build()
             );
         }

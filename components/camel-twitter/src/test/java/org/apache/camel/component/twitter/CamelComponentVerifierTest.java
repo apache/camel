@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.twitter;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.camel.ComponentVerifier;
+import org.apache.camel.ComponentVerifier.VerificationError;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.apache.camel.ComponentVerifier.VerificationError.asAttribute;
 
 public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
     @Override
@@ -54,9 +54,9 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifier.CODE_AUTHENTICATION, result.getErrors().get(0).getCode());
-        Assert.assertEquals(401, result.getErrors().get(0).getAttributes().get("twitter.status.code"));
-        Assert.assertEquals(32, result.getErrors().get(0).getAttributes().get("twitter.error.code"));
+        Assert.assertEquals(VerificationError.StandardCode.AUTHENTICATION, result.getErrors().get(0).getCode());
+        Assert.assertEquals(401, result.getErrors().get(0).getDetails().get(asAttribute("twitter_status_code")));
+        Assert.assertEquals(32, result.getErrors().get(0).getDetails().get(asAttribute("twitter_error_code")));
     }
 
     @Test
@@ -71,11 +71,11 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifier.CODE_AUTHENTICATION, result.getErrors().get(0).getCode());
-        Assert.assertEquals(401, result.getErrors().get(0).getAttributes().get("twitter.status.code"));
-        Assert.assertEquals(89, result.getErrors().get(0).getAttributes().get("twitter.error.code"));
-        Assert.assertEquals(1, result.getErrors().get(0).getParameters().size());
-        Assert.assertEquals("accessToken", result.getErrors().get(0).getParameters().iterator().next());
+        Assert.assertEquals(VerificationError.StandardCode.AUTHENTICATION, result.getErrors().get(0).getCode());
+        Assert.assertEquals(401, result.getErrors().get(0).getDetails().get(asAttribute("twitter_status_code")));
+        Assert.assertEquals(89, result.getErrors().get(0).getDetails().get(asAttribute("twitter_error_code")));
+        Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
+        Assert.assertEquals("accessToken", result.getErrors().get(0).getParameterKeys().iterator().next());
     }
 
     @Test
@@ -97,8 +97,8 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
             expected.add("accessToken");
             expected.add("accessTokenSecret");
 
-            for (ComponentVerifier.Error error : result.getErrors()) {
-                expected.removeAll(error.getParameters());
+            for(VerificationError error : result.getErrors()) {
+                expected.removeAll(error.getParameterKeys());
             }
 
             Assert.assertTrue("Missing expected params: " + expected.toString(), expected.isEmpty());
@@ -110,9 +110,9 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
 
             Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
             Assert.assertEquals(1, result.getErrors().size());
-            Assert.assertEquals(ComponentVerifier.CODE_EXCEPTION, result.getErrors().get(0).getCode());
-            Assert.assertNotNull(result.getErrors().get(0).getAttributes().get(ComponentVerifier.EXCEPTION_INSTANCE));
-            Assert.assertTrue(result.getErrors().get(0).getAttributes().get(ComponentVerifier.EXCEPTION_INSTANCE) instanceof IllegalArgumentException);
+            Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
+            Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+            Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof IllegalArgumentException);
         }
     }
 }

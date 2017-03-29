@@ -19,23 +19,23 @@ package org.apache.camel.impl.verifier;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.ComponentVerifier;
+import org.apache.camel.ComponentVerifier.VerificationError;
 
-public class DefaultResultError implements ComponentVerifier.Error {
-    private final String code;
+public class DefaultResultVerificationError implements VerificationError {
+    private final Code code;
     private final String description;
-    private final Set<String> parameters;
-    private final Map<String, Object> attributes;
+    private final Set<String> parameterKeys;
+    private final Map<Attribute, Object> details;
 
-    public DefaultResultError(String code, String description, Set<String> parameters, Map<String, Object> attributes) {
+    public DefaultResultVerificationError(Code code, String description, Set<String> parameterKeys, Map<Attribute, Object> details) {
         this.code = code;
         this.description = description;
-        this.parameters = parameters;
-        this.attributes = attributes;
+        this.parameterKeys = parameterKeys;
+        this.details = details;
     }
 
     @Override
-    public String getCode() {
+    public Code getCode() {
         return code;
     }
 
@@ -45,22 +45,22 @@ public class DefaultResultError implements ComponentVerifier.Error {
     }
 
     @Override
-    public Set<String> getParameters() {
-        return parameters;
+    public Set<String> getParameterKeys() {
+        return parameterKeys;
     }
 
     @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
+    public Map<Attribute, Object> getDetails() {
+        return details;
     }
 
     @Override
     public String toString() {
         return "DefaultResultError{"
-            + "code='" + code + '\''
-            + ", description='" + description + '\''
-            + ", parameters=" + parameters
-            + ", attributes=" + attributes
-            + '}';
+               + "code='" + code + '\''
+               + ", description='" + description + '\''
+               + ", parameterKeys=" + parameterKeys
+               + ", details=" + details
+               + '}';
     }
 }

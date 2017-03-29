@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ComponentVerifier;
+import org.apache.camel.ComponentVerifier.VerificationError;
 import org.apache.camel.component.http4.handler.AuthenticationValidationHandler;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.http.HttpException;
@@ -47,7 +48,7 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
     private static final String AUTH_PASSWORD = "password";
 
     private HttpServer localServer;
-    
+
     @Before
     @Override
     public void setUp() throws Exception {
@@ -145,10 +146,10 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
 
-        ComponentVerifier.Error error = result.getErrors().get(0);
+        VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals(ComponentVerifier.CODE_MISSING_OPTION, error.getCode());
-        Assert.assertTrue(error.getParameters().contains("httpUri"));
+        Assert.assertEquals(VerificationError.StandardCode.MISSING_PARAMETER, error.getCode());
+        Assert.assertTrue(error.getParameterKeys().contains("httpUri"));
     }
 
     @Test
@@ -177,11 +178,10 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
 
-        ComponentVerifier.Error error = result.getErrors().get(0);
+        VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals(ComponentVerifier.CODE_EXCEPTION, error.getCode());
-        Assert.assertEquals(ComponentVerifier.ERROR_TYPE_EXCEPTION, error.getAttributes().get(ComponentVerifier.ERROR_TYPE_ATTRIBUTE));
-        Assert.assertTrue(error.getParameters().contains("httpUri"));
+        Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, error.getCode());
+        Assert.assertTrue(error.getParameterKeys().contains("httpUri"));
     }
 
     @Test
@@ -214,13 +214,12 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
 
-        ComponentVerifier.Error error = result.getErrors().get(0);
+        VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals("401", error.getCode());
-        Assert.assertEquals(ComponentVerifier.ERROR_TYPE_HTTP, error.getAttributes().get(ComponentVerifier.ERROR_TYPE_ATTRIBUTE));
-        Assert.assertEquals(401, error.getAttributes().get(ComponentVerifier.HTTP_CODE));
-        Assert.assertTrue(error.getParameters().contains("authUsername"));
-        Assert.assertTrue(error.getParameters().contains("authPassword"));
+        Assert.assertEquals(VerificationError.StandardCode.AUTHENTICATION, error.getCode());
+        Assert.assertEquals(401, error.getDetails().get(VerificationError.HttpAttribute.HTTP_CODE));
+        Assert.assertTrue(error.getParameterKeys().contains("authUsername"));
+        Assert.assertTrue(error.getParameterKeys().contains("authPassword"));
     }
 
     @Test
@@ -250,12 +249,10 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
 
-        ComponentVerifier.Error error = result.getErrors().get(0);
+        VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals("301", error.getCode());
-        Assert.assertEquals(ComponentVerifier.ERROR_TYPE_HTTP, error.getAttributes().get(ComponentVerifier.ERROR_TYPE_ATTRIBUTE));
-        Assert.assertEquals(true, error.getAttributes().get("http.redirect"));
-        Assert.assertEquals(getLocalServerUri("/redirected"), error.getAttributes().get("http.redirect.location"));
-        Assert.assertTrue(error.getParameters().contains("httpUri"));
+        Assert.assertEquals(VerificationError.StandardCode.GENERIC, error.getCode());
+        Assert.assertEquals(getLocalServerUri("/redirected"), error.getDetails().get(VerificationError.HttpAttribute.HTTP_REDIRECT));
+        Assert.assertTrue(error.getParameterKeys().contains("httpUri"));
     }
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ComponentVerifier;
+import org.apache.camel.ComponentVerifier.VerificationError;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -119,9 +120,9 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(3, result.getErrors().size());
 
-        Assert.assertEquals(ComponentVerifier.CODE_INCOMPLETE_OPTION_GROUP, result.getErrors().get(0).getCode());
-        Assert.assertEquals(ComponentVerifier.CODE_INCOMPLETE_OPTION_GROUP, result.getErrors().get(1).getCode());
-        Assert.assertEquals(ComponentVerifier.CODE_INCOMPLETE_OPTION_GROUP, result.getErrors().get(2).getCode());
+        Assert.assertEquals(VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(0).getCode());
+        Assert.assertEquals(VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(1).getCode());
+        Assert.assertEquals(VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP, result.getErrors().get(2).getCode());
     }
 
     // *********************************
@@ -147,13 +148,12 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         Assert.assertEquals(2, result.getErrors().size());
 
         // Exception
-        Assert.assertEquals(ComponentVerifier.CODE_EXCEPTION, result.getErrors().get(0).getCode());
-        Assert.assertNotNull(result.getErrors().get(0).getAttributes().get(ComponentVerifier.EXCEPTION_INSTANCE));
-        Assert.assertTrue(result.getErrors().get(0).getAttributes().get(ComponentVerifier.EXCEPTION_INSTANCE) instanceof SalesforceException);
-        Assert.assertEquals(400, result.getErrors().get(0).getAttributes().get(ComponentVerifier.HTTP_CODE));
+        Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
+        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
+        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(VerificationError.HttpAttribute.HTTP_CODE));
 
         // Salesforce Error
-        Assert.assertEquals("salesforce", result.getErrors().get(1).getAttributes().get(ComponentVerifier.ERROR_TYPE_ATTRIBUTE));
         Assert.assertEquals("authentication failure", result.getErrors().get(1).getDescription());
     }
 
@@ -171,13 +171,12 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         Assert.assertEquals(2, result.getErrors().size());
 
         // Exception
-        Assert.assertEquals(ComponentVerifier.CODE_EXCEPTION, result.getErrors().get(0).getCode());
-        Assert.assertNotNull(result.getErrors().get(0).getAttributes().get(ComponentVerifier.EXCEPTION_INSTANCE));
-        Assert.assertTrue(result.getErrors().get(0).getAttributes().get(ComponentVerifier.EXCEPTION_INSTANCE) instanceof SalesforceException);
-        Assert.assertEquals(400, result.getErrors().get(0).getAttributes().get(ComponentVerifier.HTTP_CODE));
+        Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
+        Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
+        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.HttpAttribute.HTTP_CODE));
 
         // Salesforce Error
-        Assert.assertEquals("salesforce", result.getErrors().get(1).getAttributes().get(ComponentVerifier.ERROR_TYPE_ATTRIBUTE));
         Assert.assertEquals("client identifier invalid", result.getErrors().get(1).getDescription());
     }
 }
