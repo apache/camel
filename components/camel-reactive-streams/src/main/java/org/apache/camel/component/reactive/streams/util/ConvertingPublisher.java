@@ -37,11 +37,15 @@ public class ConvertingPublisher<R> implements Publisher<R> {
     private Publisher<Exchange> delegate;
 
     private Class<R> type;
+    private BodyConverter<R> converter;
 
     public ConvertingPublisher(Publisher<Exchange> delegate, Class<R> type) {
         Objects.requireNonNull(delegate, "delegate publisher cannot be null");
+        Objects.requireNonNull(type, "type cannot be null");
+
         this.delegate = delegate;
         this.type = type;
+        this.converter = BodyConverter.forType(type);
     }
 
     @Override
@@ -49,7 +53,6 @@ public class ConvertingPublisher<R> implements Publisher<R> {
         delegate.subscribe(new Subscriber<Exchange>() {
 
             private AtomicBoolean active = new AtomicBoolean(true);
-
             private Subscription subscription;
 
             @Override
@@ -76,11 +79,7 @@ public class ConvertingPublisher<R> implements Publisher<R> {
 
                 R r;
                 try {
-                    if (ex.hasOut()) {
-                        r = ex.getOut().getBody(type);
-                    } else {
-                        r = ex.getIn().getBody(type);
-                    }
+                    r = converter.apply(ex);
                 } catch (TypeConversionException e) {
                     LOG.warn("Unable to convert body to the specified type: " + type.getName(), e);
                     r = null;

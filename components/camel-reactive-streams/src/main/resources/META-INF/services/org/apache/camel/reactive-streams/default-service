@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveStreamsService
+class=org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveStreamsServiceFactory

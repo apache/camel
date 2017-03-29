@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.reactive.streams.support.ReactiveStreamsTestService
+class=org.apache.camel.component.reactive.streams.support.ReactiveStreamsTestServiceFactory

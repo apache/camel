@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsEndpoint;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.reactivestreams.Publisher;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Camel publisher. It forwards Camel exchanges to external reactive-streams subscribers.
  */
-public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoCloseable {
+public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelPublisher.class);
 
@@ -60,7 +61,7 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
     }
 
     @Override
-    public void subscribe(Subscriber<? super StreamPayload<Exchange>> subscriber) {
+    public void subscribe(Subscriber<? super Exchange> subscriber) {
         Objects.requireNonNull(subscriber, "subscriber must not be null");
         CamelSubscription sub = new CamelSubscription(workerPool, this, name, this.backpressureStrategy, subscriber);
         this.subscriptions.add(sub);
@@ -71,11 +72,12 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
         subscriptions.remove(subscription);
     }
 
-    public void publish(StreamPayload<Exchange> data) {
+    public void publish(Exchange data) {
         // freeze the subscriptions
         List<CamelSubscription> subs = new LinkedList<>(subscriptions);
 
-        DispatchCallback<Exchange> originalCallback = data.getCallback();
+        DispatchCallback<Exchange> originalCallback = ReactiveStreamsHelper.getCallback(data);
+        DispatchCallback<Exchange> callback = originalCallback;
         if (originalCallback != null && subs.size() > 0) {
             // When multiple subscribers have an active subscription,
             // we acknowledge the exchange once it has been delivered to every
@@ -83,24 +85,26 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
             AtomicInteger counter = new AtomicInteger(subs.size());
             // Use just the first exception in the callback when multiple exceptions are thrown
             AtomicReference<Throwable> thrown = new AtomicReference<>(null);
-            data = new StreamPayload<>(data.getItem(), (ex, error) -> {
+
+            callback = ReactiveStreamsHelper.attachCallback(data, (exchange, error) -> {
                 thrown.compareAndSet(null, error);
                 if (counter.decrementAndGet() == 0) {
-                    originalCallback.processed(ex, thrown.get());
+                    originalCallback.processed(exchange, thrown.get());
                 }
             });
         }
 
         if (subs.size() > 0) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange published to {} subscriptions for the stream {}: {}", subs.size(), name, data.getItem());
+                LOG.debug("Exchange published to {} subscriptions for the stream {}: {}", subs.size(), name, data);
             }
+
             // at least one subscriber
             for (CamelSubscription sub : subs) {
                 sub.publish(data);
             }
-        } else {
-            data.getCallback().processed(data.getItem(), new IllegalStateException("The stream has no active subscriptions"));
+        } else if (callback != null) {
+            callback.processed(data, new IllegalStateException("The stream has no active subscriptions"));
         }
     }
 

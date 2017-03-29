@@ -22,9 +22,7 @@ package org.apache.camel.component.reactive.streams.engine;
 public class ReactiveStreamsEngineConfiguration implements Cloneable {
 
     private String threadPoolName = "CamelReactiveStreamsWorker";
-
     private int threadPoolMinSize;
-
     private int threadPoolMaxSize = 10;
 
     public ReactiveStreamsEngineConfiguration() {
