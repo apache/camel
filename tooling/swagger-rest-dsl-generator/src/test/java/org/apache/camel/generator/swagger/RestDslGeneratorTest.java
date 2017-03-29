@@ -63,7 +63,7 @@ public class RestDslGeneratorTest {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(swagger).withClassName("MyRestRoute").withPackageName("com.example")
-            .withIndent("\t").withDirectRouteGenerator(o -> "direct:rest-" + o.getOperationId()).generate(code);
+            .withIndent("\t").withDestinationGenerator(o -> "direct:rest-" + o.getOperationId()).generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/MyRestRoute.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);

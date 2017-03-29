@@ -21,7 +21,7 @@ import io.swagger.models.Swagger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 
-class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDefinitionGenerator> {
+public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDefinitionGenerator> {
 
     RestDslDefinitionGenerator(final Swagger swagger) {
         super(swagger);
@@ -30,7 +30,7 @@ class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDefinitionGener
     public RestsDefinition generate(final CamelContext context) {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
 
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(emitter, directRouteGenerator());
+        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(emitter, destinationGenerator());
 
         swagger.getPaths().forEach(restDslStatement::visit);
 

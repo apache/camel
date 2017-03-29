@@ -40,15 +40,15 @@ public abstract class RestDslGenerator<G> {
 
     private final AtomicInteger directRouteCount = new AtomicInteger(0);
 
-    private Function<Operation, String> directRouteGenerator = this::generateDirectRouteName;
+    private Function<Operation, String> destinationGenerator = this::generateDirectRouteName;
 
     RestDslGenerator(final Swagger swagger) {
         this.swagger = notNull(swagger, "swagger");
     }
 
-    public G withDirectRouteGenerator(final Function<Operation, String> directRouteGenerator) {
+    public G withDestinationGenerator(final Function<Operation, String> directRouteGenerator) {
         notNull(directRouteGenerator, "directRouteGenerator");
-        this.directRouteGenerator = directRouteGenerator;
+        this.destinationGenerator = directRouteGenerator;
 
         @SuppressWarnings("unchecked")
         final G that = (G) this;
@@ -56,8 +56,8 @@ public abstract class RestDslGenerator<G> {
         return that;
     }
 
-    Function<Operation, String> directRouteGenerator() {
-        return directRouteGenerator;
+    Function<Operation, String> destinationGenerator() {
+        return destinationGenerator;
     }
 
     String generateDirectName() {
