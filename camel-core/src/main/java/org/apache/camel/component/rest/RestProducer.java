@@ -194,6 +194,14 @@ public class RestProducer extends DefaultAsyncProducer {
             }
             // the http uri for the rest call to be used
             inMessage.setHeader(Exchange.REST_HTTP_URI, overrideUri);
+
+            // when chaining RestConsumer with RestProducer, the
+            // HTTP_PATH header will be present, we remove it here
+            // as the REST_HTTP_URI contains the full URI for the
+            // request and every other HTTP producer will concatenate
+            // REST_HTTP_URI with HTTP_PATH resulting in incorrect
+            // URIs
+            inMessage.removeHeader(Exchange.HTTP_PATH);
         }
 
         final String produces = getEndpoint().getProduces();
