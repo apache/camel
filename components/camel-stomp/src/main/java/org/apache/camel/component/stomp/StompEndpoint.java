@@ -17,6 +17,7 @@
 package org.apache.camel.component.stomp;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.AsyncCallback;
@@ -137,6 +138,16 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     protected void send(final Exchange exchange, final AsyncCallback callback) {
         final StompFrame frame = new StompFrame(SEND);
+        Map<String,Object> headerMap = message.getHeaders();
+        for ( String key : headerMap.keySet() ) {
+            if ( ! key.toLowerCase().startsWith( "camel" ) ) {
+                Object val = headerMap.get( key );
+                if ( val!=null ) {
+                    frame.addHeader( new AsciiBuffer( key ), 
+                                     StompFrame.encodeHeader( val.toString() ) );
+                }
+            }
+        }
         frame.addHeader(DESTINATION, StompFrame.encodeHeader(destination));
         //Fix for CAMEL-9506 leveraging the camel converter to do the change
         frame.content(utf8(exchange.getIn().getBody(String.class)));
