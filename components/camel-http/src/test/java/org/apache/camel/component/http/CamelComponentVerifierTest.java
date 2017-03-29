@@ -83,6 +83,41 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
     // *************************************************
 
     @Test
+    public void testParameters() throws Exception {
+        HttpComponent component = context().getComponent("http", HttpComponent.class);
+        HttpComponentVerifier verifier = (HttpComponentVerifier)component.getVerifier();
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("httpUri", getLocalServerUri("/basic"));
+
+        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+
+        Assert.assertEquals(ComponentVerifier.Result.Status.OK, result.getStatus());
+    }
+
+    @Test
+    public void testMissingMandatoryParameters() throws Exception {
+        HttpComponent component = context().getComponent("http", HttpComponent.class);
+        HttpComponentVerifier verifier = (HttpComponentVerifier)component.getVerifier();
+
+        Map<String, Object> parameters = new HashMap<>();
+
+        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+
+        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(1, result.getErrors().size());
+
+        ComponentVerifier.Error error = result.getErrors().get(0);
+
+        Assert.assertEquals(ComponentVerifier.CODE_MISSING_OPTION, error.getCode());
+        Assert.assertTrue(error.getParameters().contains("httpUri"));
+    }
+
+    // *************************************************
+    // Tests
+    // *************************************************
+
+    @Test
     public void testConnectivity() throws Exception {
         HttpComponent component = context().getComponent("http", HttpComponent.class);
         HttpComponentVerifier verifier = (HttpComponentVerifier)component.getVerifier();
