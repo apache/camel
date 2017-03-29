@@ -17,13 +17,9 @@
 package org.apache.camel.generator.swagger;
 
 import java.nio.file.Path;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 
 import javax.annotation.processing.Filer;
 
-import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 
 import org.apache.camel.model.rest.RestsDefinition;
@@ -38,15 +34,13 @@ public abstract class RestDslGenerator<G> {
 
     final Swagger swagger;
 
-    private final AtomicInteger directRouteCount = new AtomicInteger(0);
-
-    private Function<Operation, String> destinationGenerator = this::generateDirectRouteName;
+    private DestinationGenerator destinationGenerator = new DirectToOperationId();
 
     RestDslGenerator(final Swagger swagger) {
         this.swagger = notNull(swagger, "swagger");
     }
 
-    public G withDestinationGenerator(final Function<Operation, String> directRouteGenerator) {
+    public G withDestinationGenerator(final DestinationGenerator directRouteGenerator) {
         notNull(directRouteGenerator, "directRouteGenerator");
         this.destinationGenerator = directRouteGenerator;
 
@@ -56,16 +50,8 @@ public abstract class RestDslGenerator<G> {
         return that;
     }
 
-    Function<Operation, String> destinationGenerator() {
+    DestinationGenerator destinationGenerator() {
         return destinationGenerator;
-    }
-
-    String generateDirectName() {
-        return "rest" + directRouteCount.incrementAndGet();
-    }
-
-    String generateDirectRouteName(final Operation operation) {
-        return "direct:" + Optional.ofNullable(operation.getOperationId()).orElseGet(this::generateDirectName);
     }
 
     public static RestDslSourceCodeGenerator<Appendable> toAppendable(final Swagger swagger) {

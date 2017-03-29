@@ -16,25 +16,22 @@
  */
 package org.apache.camel.generator.swagger;
 
-import io.swagger.models.Path;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
-class PathVisitor<T> {
+import io.swagger.models.Operation;
 
-    private final DestinationGenerator destinationGenerator;
+public final class DirectToOperationId implements DestinationGenerator {
 
-    private final CodeEmitter<T> emitter;
+    private final AtomicInteger directRouteCount = new AtomicInteger(0);
 
-    PathVisitor(final CodeEmitter<T> emitter, final DestinationGenerator destinationGenerator) {
-        this.emitter = emitter;
-        this.destinationGenerator = destinationGenerator;
-
-        emitter.emit("rest");
+    @Override
+    public String generateDestinationFor(final Operation operation) {
+        return "direct:" + Optional.ofNullable(operation.getOperationId()).orElseGet(this::generateDirectName);
     }
 
-    void visit(final String path, final Path definition) {
-        final OperationVisitor<T> restDslOperation = new OperationVisitor<>(emitter, path, destinationGenerator);
-
-        definition.getOperationMap().forEach(restDslOperation::visit);
+    String generateDirectName() {
+        return "rest" + directRouteCount.incrementAndGet();
     }
 
 }

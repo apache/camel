@@ -19,7 +19,6 @@ package org.apache.camel.generator.swagger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
@@ -33,17 +32,16 @@ import org.apache.camel.util.ObjectHelper;
 
 class OperationVisitor<T> {
 
-    private final Function<Operation, String> directRouteGenerator;
+    private final DestinationGenerator destinationGenerator;
 
     private final CodeEmitter<T> emitter;
 
     private final String path;
 
-    OperationVisitor(final CodeEmitter<T> emitter, final String path,
-        final Function<Operation, String> directRouteGenerator) {
+    OperationVisitor(final CodeEmitter<T> emitter, final String path, final DestinationGenerator destinationGenerator) {
         this.emitter = emitter;
         this.path = path;
-        this.directRouteGenerator = directRouteGenerator;
+        this.destinationGenerator = destinationGenerator;
     }
 
     List<String> asStringList(final List<?> values) {
@@ -117,6 +115,6 @@ class OperationVisitor<T> {
             emit(parameter);
         });
 
-        emitter.emit("to", directRouteGenerator.apply(operation));
+        emitter.emit("to", destinationGenerator.generateDestinationFor(operation));
     }
 }
