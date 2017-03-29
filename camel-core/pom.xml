@@ -159,7 +159,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- logging -->         
+    <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -194,6 +194,12 @@
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
       <version>${xml-resolver-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.consol.citrus</groupId>
+      <artifactId>citrus-core</artifactId>
+      <version>2.7.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -682,5 +688,5 @@
       </build>
     </profile>
   </profiles>
-  
+
 </project>

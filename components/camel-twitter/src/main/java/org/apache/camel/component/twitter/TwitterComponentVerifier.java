@@ -69,19 +69,19 @@ final class TwitterComponentVerifier extends DefaultComponentVerifier {
         } catch (TwitterException e) {
             // verifyCredentials throws TwitterException when Twitter service or
             // network is unavailable or if supplied credential is wrong
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(ComponentVerifier.CODE_AUTHENTICATION, e.getErrorMessage())
-                .attribute("twitter.error.code", e.getErrorCode())
-                .attribute("twitter.status.code", e.getStatusCode())
-                .attribute("twitter.exception.code", e.getExceptionCode())
-                .attribute("twitter.exception.message", e.getMessage())
-                .attribute("twitter.exception.caused-by-network-issue", e.isCausedByNetworkIssue())
-                .attribute(ComponentVerifier.EXCEPTION_CLASS, e.getClass().getName())
-                .attribute(ComponentVerifier.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getErrorMessage())
+                .detail("twitter_error_code", e.getErrorCode())
+                .detail("twitter_status_code", e.getStatusCode())
+                .detail("twitter_exception_code", e.getExceptionCode())
+                .detail("twitter_exception_message", e.getMessage())
+                .detail("twitter_exception_caused-by-network-issue", e.isCausedByNetworkIssue())
+                .detail(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                .detail(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             // For a complete list of error codes see:
             //   https://dev.twitter.com/overview/api/response-codes
             if (e.getErrorCode() == 89) {
-                errorBuilder.parameter("accessToken");
+                errorBuilder.parameterKey("accessToken");
             }
 
             builder.error(errorBuilder.build());

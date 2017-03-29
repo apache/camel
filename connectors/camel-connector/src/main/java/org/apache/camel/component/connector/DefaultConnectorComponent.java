@@ -61,7 +61,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         // clean-up parameters so that validation won't fail later on
         // in DefaultConnectorComponent.validateParameters()
         parameters.clear();
-        
+
         String scheme = model.getBaseScheme();
 
         // now create the endpoint instance which either happens with a new
@@ -147,9 +147,9 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
             return (scope, map) -> {
                 return ResultBuilder.withStatusAndScope(ComponentVerifier.Result.Status.UNSUPPORTED, scope)
                     .error(
-                        ResultErrorBuilder.withCode("unsupported")
-                            .attribute("camel.connector.name", getConnectorName())
-                            .attribute("camel.component.name", getComponentName())
+                        ResultErrorBuilder.withCode(ComponentVerifier.VerificationError.StandardCode.UNSUPPORTED)
+                            .detail("camel_connector_name", getConnectorName())
+                            .detail("camel_component_name", getComponentName())
                             .build())
                     .build();
             };

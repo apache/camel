@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.camel.ComponentVerifier;
+import org.apache.camel.ComponentVerifier.VerificationError;
 import org.apache.camel.util.ObjectHelper;
 
 public final class ResultErrorHelper {
@@ -44,7 +44,7 @@ public final class ResultErrorHelper {
      * @param parameters the
      * @return
      */
-    public static Optional<ComponentVerifier.Error> requiresOption(String parameterName, Map<String, Object> parameters) {
+    public static Optional<VerificationError> requiresOption(String parameterName, Map<String, Object> parameters) {
         if (ObjectHelper.isEmpty(parameters.get(parameterName))) {
             return Optional.of(
                 ResultErrorBuilder.withMissingOption(parameterName).build()
@@ -54,12 +54,12 @@ public final class ResultErrorHelper {
         return Optional.empty();
     }
 
-    public static List<ComponentVerifier.Error> requiresAny(Map<String, Object> parameters, OptionsGroup... groups) {
+    public static List<VerificationError> requiresAny(Map<String, Object> parameters, OptionsGroup... groups) {
         return requiresAny(parameters, Arrays.asList(groups));
     }
 
-    public static List<ComponentVerifier.Error> requiresAny(Map<String, Object> parameters, Collection<OptionsGroup> groups) {
-        final List<ComponentVerifier.Error> errors = new ArrayList<>();
+    public static List<VerificationError> requiresAny(Map<String, Object> parameters, Collection<OptionsGroup> groups) {
+        final List<VerificationError> verificationErrors = new ArrayList<>();
         final Set<String> keys = new HashSet<>(parameters.keySet());
 
         for (OptionsGroup group : groups) {
@@ -68,20 +68,20 @@ public final class ResultErrorHelper {
                 return Collections.emptyList();
             } else {
                 ResultErrorBuilder builder = new ResultErrorBuilder()
-                    .code(ComponentVerifier.CODE_INCOMPLETE_OPTION_GROUP)
-                    .attribute(ComponentVerifier.GROUP_NAME, group.getName())
-                    .attribute(ComponentVerifier.GROUP_OPTIONS, String.join(",", group.getOptions()));
+                    .code(VerificationError.StandardCode.INCOMPLETE_PARAMETER_GROUP)
+                    .detail(VerificationError.GroupAttribute.GROUP_NAME, group.getName())
+                    .detail(VerificationError.GroupAttribute.GROUP_OPTIONS, String.join(",", group.getOptions()));
 
                 for (String option : group.getOptions()) {
                     if (!parameters.containsKey(option)) {
-                        builder.parameter(option);
+                        builder.parameterKey(option);
                     }
                 }
 
-                errors.add(builder.build());
+                verificationErrors.add(builder.build());
             }
         }
 
-        return errors;
+        return verificationErrors;
     }
 }

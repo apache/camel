@@ -31,7 +31,7 @@ import org.apache.camel.util.function.ThrowingConsumer;
 public final class ResultBuilder {
     private Optional<ComponentVerifier.Scope> scope;
     private Optional<ComponentVerifier.Result.Status> status;
-    private List<ComponentVerifier.Error> errors;
+    private List<ComponentVerifier.VerificationError> verificationErrors;
 
     public ResultBuilder() {
         this.scope = Optional.empty();
@@ -52,23 +52,23 @@ public final class ResultBuilder {
         return this;
     }
 
-    public ResultBuilder error(ComponentVerifier.Error error) {
-        if (this.errors == null) {
-            this.errors = new ArrayList<>();
+    public ResultBuilder error(ComponentVerifier.VerificationError verificationError) {
+        if (this.verificationErrors == null) {
+            this.verificationErrors = new ArrayList<>();
         }
 
-        this.errors.add(error);
+        this.verificationErrors.add(verificationError);
         this.status = Optional.of(ComponentVerifier.Result.Status.ERROR);
 
         return this;
     }
 
-    public ResultBuilder error(Optional<ComponentVerifier.Error> error) {
+    public ResultBuilder error(Optional<ComponentVerifier.VerificationError> error) {
         error.ifPresent(e -> error(e));
         return this;
     }
 
-    public ResultBuilder error(Supplier<Optional<ComponentVerifier.Error>> supplier) {
+    public ResultBuilder error(Supplier<Optional<ComponentVerifier.VerificationError>> supplier) {
         return error(supplier.get());
     }
 
@@ -100,8 +100,8 @@ public final class ResultBuilder {
         return this;
     }
 
-    public ResultBuilder errors(List<ComponentVerifier.Error> errors) {
-        errors.forEach(this::error);
+    public ResultBuilder errors(List<ComponentVerifier.VerificationError> verificationErrors) {
+        verificationErrors.forEach(this::error);
         return this;
     }
 
@@ -111,9 +111,9 @@ public final class ResultBuilder {
 
     public ComponentVerifier.Result build() {
         return new DefaultResult(
-            scope.orElseGet(() -> ComponentVerifier.Scope.NONE),
+            scope.orElseGet(() -> ComponentVerifier.Scope.PARAMETERS),
             status.orElseGet(() -> ComponentVerifier.Result.Status.UNSUPPORTED),
-            errors != null ? Collections.unmodifiableList(errors) : Collections.emptyList()
+            verificationErrors != null ? Collections.unmodifiableList(verificationErrors) : Collections.emptyList()
         );
     }
 
@@ -134,6 +134,7 @@ public final class ResultBuilder {
     }
 
     public static ResultBuilder unsupported() {
-        return withStatusAndScope(ComponentVerifier.Result.Status.UNSUPPORTED, ComponentVerifier.Scope.NONE);
+        return withStatusAndScope(ComponentVerifier.Result.Status.UNSUPPORTED, ComponentVerifier.Scope.PARAMETERS);
     }
+
 }

@@ -88,17 +88,17 @@ public class ServiceNowComponentVerifier extends DefaultComponentVerifier {
             );
         } catch (ServiceNowException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withException(e)
-                .attribute(ComponentVerifier.HTTP_CODE, e.getCode())
-                .attribute("servicenow.error.message", e.getMessage())
-                .attribute("servicenow.error.status", e.getStatus())
-                .attribute("servicenow.error.detail", e.getDetail())
-                .attribute("servicenow.error.detail", e.getDetail());
+                .detail(VerificationError.HttpAttribute.HTTP_CODE, e.getCode())
+                .detail("servicenow_error_message", e.getMessage())
+                .detail("servicenow_error_status", e.getStatus())
+                .detail("servicenow_error_detail", e.getDetail());
 
             if (e.getCode() == 401) {
-                errorBuilder.parameter("userName");
-                errorBuilder.parameter("password");
-                errorBuilder.parameter("oauthClientId");
-                errorBuilder.parameter("oauthClientSecret");
+                errorBuilder.code(VerificationError.StandardCode.AUTHENTICATION);
+                errorBuilder.parameterKey("userName");
+                errorBuilder.parameterKey("password");
+                errorBuilder.parameterKey("oauthClientId");
+                errorBuilder.parameterKey("oauthClientSecret");
             }
 
             builder.error(errorBuilder.build());
