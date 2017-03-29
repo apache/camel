@@ -222,12 +222,12 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         Constructor<? extends Exception> constructor;
 
         try {
-            messageConstructor = exceptionClass.getConstructor(String.class);
             Object detail = JAXBIntrospector.getValue(detailEl);
             try {
                 constructor = exceptionClass.getConstructor(String.class, detail.getClass());
                 return constructor.newInstance(message, detail);
             } catch (NoSuchMethodException e) {
+                messageConstructor = exceptionClass.getConstructor(String.class);
                 return messageConstructor.newInstance(message);
             }
         } catch (Exception e) {
