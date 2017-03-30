@@ -57,11 +57,19 @@ must contain only single certificate-private key entry.
 
 ### URI format
 
-The URI scheme for a salesforce component is as follows
+When used as a consumer, receiving streaming events, the URI scheme is:
 
 [source,java]
 ------------------------
 salesforce:topic?options
+------------------------
+
+When used as a producer, invoking the Salesforce RSET APIs, the URI
+scheme is:
+
+[source,java]
+------------------------
+salesforce:operationName?options
 ------------------------
 
 You can append query options to the URI in the following format,
@@ -75,6 +83,8 @@ Producer endpoints can use the following APIs. Most of the APIs process
 one record at a time, the Query API can retrieve multiple Records.
 
 #### Rest API
+
+You can use the following for `operationName`:
 
 * getVersions - Gets supported Salesforce REST API versions
 * getResources - Gets available Salesforce REST Resource endpoints
@@ -112,7 +122,7 @@ list of errors while creating the new object.
 
 [source,java]
 -----------------------------------------------------------
-    ...to("salesforce:upsertSObject?sObjectIdName=Name")...
+...to("salesforce:upsertSObject?sObjectIdName=Name")...
 -----------------------------------------------------------
 
 #### Rest Bulk API
@@ -124,6 +134,8 @@ route. Usually the request will be some stream source like a CSV file,
  +
  and the response may also be saved to a file to be correlated with the
 request.
+
+You can use the following for `operationName`:
 
 * createJob - Creates a Salesforce Bulk Job
 * getJob - Gets a Job using its Salesforce Id
@@ -148,7 +160,7 @@ error.
 
 [source,java]
 ----------------------------------------
-    ...to("salesforce:createBatchJob")..
+...to("salesforce:createBatchJob")..
 ----------------------------------------
 
 #### Rest Streaming API
@@ -160,14 +172,14 @@ To create and subscribe to a topic
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
+from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 To subscribe to an existing topic
 
 [source,java]
 -------------------------------------------------------------------
-    from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
+from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
 -------------------------------------------------------------------
 
 ### Examples
@@ -206,10 +218,10 @@ Give the output from the processor to the Salesforce component:
 
 [source,java]
 -----------------------------------------------------------------------------------------------------
-    from("file:///home/camel/library")
-        .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject 
-                                        // for the salesforce component
-        .to("salesforce:createSObject"); 
+from("file:///home/camel/library")
+    .to(new ContentProcessor())     // convert bytes from the file into a ContentVersion SObject 
+                                    // for the salesforce component
+    .to("salesforce:createSObject"); 
 -----------------------------------------------------------------------------------------------------
 
 ### Using Salesforce Limits API
