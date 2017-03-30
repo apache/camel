@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -141,6 +142,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
@@ -231,6 +233,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private RestRegistry restRegistry = new DefaultRestRegistry();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<RoutePolicyFactory>();
+    private Set<LogListener> logListeners = new LinkedHashSet<>();
 
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
@@ -2682,6 +2685,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void addRoutePolicyFactory(RoutePolicyFactory routePolicyFactory) {
         getRoutePolicyFactories().add(routePolicyFactory);
+    }
+
+    public Set<LogListener> getLogListeners() {
+        return logListeners;
+    }
+
+    public void addlogListener(LogListener listener) {
+        logListeners.add(listener);
     }
 
     public void setStreamCaching(Boolean cache) {

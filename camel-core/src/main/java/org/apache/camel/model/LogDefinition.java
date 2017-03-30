@@ -29,6 +29,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DefaultMaskingFormatter;
 import org.apache.camel.processor.LogProcessor;
+import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -125,7 +126,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         LoggingLevel level = getLoggingLevel() != null ? getLoggingLevel() : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, getMarker());
 
-        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext));
+        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext), routeContext.getCamelContext().getLogListeners());
     }
 
     private MaskingFormatter getMaskingFormatter(RouteContext routeContext) {

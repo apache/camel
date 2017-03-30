@@ -102,7 +102,7 @@ public class Tracer implements InterceptStrategy, Service {
      */
     public synchronized CamelLogProcessor getLogger(ExchangeFormatter formatter) {
         if (logger == null) {
-            logger = new CamelLogProcessor(new CamelLogger(getLogName(), getLogLevel()), formatter, null);
+            logger = new CamelLogProcessor(new CamelLogger(getLogName(), getLogLevel()), formatter, null, null);
         }
         return logger;
     }

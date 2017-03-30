@@ -27,6 +27,7 @@ import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.processor.DefaultMaskingFormatter;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -141,7 +142,7 @@ public class LogEndpoint extends ProcessorEndpoint {
             Long groupDelay = getGroupDelay();
             answer = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
         } else {
-            answer = new CamelLogProcessor(camelLogger, localFormatter, getMaskingFormatter());
+            answer = new CamelLogProcessor(camelLogger, localFormatter, getMaskingFormatter(), getCamelContext().getLogListeners());
         }
         // the logger is the processor
         setProcessor(answer);
