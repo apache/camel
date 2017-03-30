@@ -398,6 +398,23 @@ public final class ObjectHelper {
         }
     }
 
+
+    /**
+     * Returns the first non null object <tt>null</tt>.
+     *
+     * @param values the values
+     * @return an Optional
+     */
+    public static Optional<Object> firstNotNull(Object... values) {
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                Optional.of(values[i]);
+            }
+        }
+
+        return Optional.empty();
+    }
+
     /**
      * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map
      *

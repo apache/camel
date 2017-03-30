@@ -240,9 +240,9 @@ public class StringHelperTest extends TestCase {
     }
 
     public void testTrimToNull() {
-        assertEquals(StringHelper.trimToNull("abc"),"abc");
-        assertEquals(StringHelper.trimToNull(" abc") , "abc");
-        assertEquals(StringHelper.trimToNull(" abc "),"abc");
+        assertEquals(StringHelper.trimToNull("abc"), "abc");
+        assertEquals(StringHelper.trimToNull(" abc"), "abc");
+        assertEquals(StringHelper.trimToNull(" abc "), "abc");
         assertNull(StringHelper.trimToNull(" "));
         assertNull(StringHelper.trimToNull("\t"));
         assertNull(StringHelper.trimToNull(" \t "));
