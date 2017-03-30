@@ -31,11 +31,11 @@ class ServiceNowTestSupport extends CamelTestSupport {
 
     private final boolean setUpComponent;
 
-    public ServiceNowTestSupport() {
+    ServiceNowTestSupport() {
         this(true);
     }
 
-    public ServiceNowTestSupport(boolean setUpComponent) {
+    ServiceNowTestSupport(boolean setUpComponent) {
         this.setUpComponent = setUpComponent;
     }
 

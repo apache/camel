@@ -97,7 +97,7 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
             expected.add("accessToken");
             expected.add("accessTokenSecret");
 
-            for(ComponentVerifier.Error error : result.getErrors()) {
+            for (ComponentVerifier.Error error : result.getErrors()) {
                 expected.removeAll(error.getParameters());
             }
 

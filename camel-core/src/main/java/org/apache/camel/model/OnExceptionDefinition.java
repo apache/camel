@@ -262,12 +262,19 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         // validate that at least some option is set as you cannot just have onException(Exception.class);
         if (outputs == null || getOutputs().isEmpty()) {
             // no outputs so there should be some sort of configuration
-            if (handledPolicy == null && continuedPolicy == null && retryWhilePolicy == null
-                    && redeliveryPolicyType == null && useOriginalMessagePolicy == null
-                    && redeliveryPolicy == null && onRedeliveryRef == null
-                    && onRedelivery == null && onExceptionOccurred == null) {
-                throw new IllegalArgumentException(this + " is not configured.");
-            }
+            ObjectHelper.firstNotNull(
+                    handledPolicy,
+                    continuedPolicy,
+                    retryWhilePolicy,
+                    redeliveryPolicyType,
+                    useOriginalMessagePolicy,
+                    redeliveryPolicy,
+                    onRedeliveryRef,
+                    onRedelivery,
+                    onExceptionOccurred
+                ).orElseThrow(
+                    () -> new IllegalArgumentException(this + " is not configured.")
+                );
         }
     }
 
