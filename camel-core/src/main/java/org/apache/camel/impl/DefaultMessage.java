@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.AttachmentMap;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The default implementation of {@link org.apache.camel.Message}
@@ -67,6 +68,8 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public Object getHeader(String name, Supplier<Object> defaultValueSupplier) {
+        ObjectHelper.notNull(name, "name");
+        ObjectHelper.notNull(defaultValueSupplier, "defaultValueSupplier");
         Object answer = getHeaders().get(name);
         return answer != null ? answer : defaultValueSupplier.get();
     }
@@ -123,6 +126,9 @@ public class DefaultMessage extends MessageSupport {
 
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Supplier<Object> defaultValueSupplier, Class<T> type) {
+        ObjectHelper.notNull(name, "name");
+        ObjectHelper.notNull(type, "type");
+        ObjectHelper.notNull(defaultValueSupplier, "defaultValueSupplier");
         Object value = getHeader(name, defaultValueSupplier);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values

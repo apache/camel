@@ -220,7 +220,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
             exchangeName = getEndpoint().getExchangeName();
         }
 
-        String key = in.getHeader(RabbitMQConstants.ROUTING_KEY, null, String.class);
+        String key = in.getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
         // we just need to make sure RoutingKey option take effect if it is not BridgeEndpoint
         if (key == null || getEndpoint().isBridgeEndpoint()) {
             key = getEndpoint().getRoutingKey() == null ? "" : getEndpoint().getRoutingKey();
@@ -245,7 +245,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
     private boolean processInOnly(Exchange exchange, AsyncCallback callback) throws Exception {
         String exchangeName = getEndpoint().getExchangeName(exchange.getIn());
 
-        String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, null, String.class);
+        String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
         // we just need to make sure RoutingKey option take effect if it is not BridgeEndpoint
         if (key == null || getEndpoint().isBridgeEndpoint()) {
             key = getEndpoint().getRoutingKey() == null ? "" : getEndpoint().getRoutingKey();
