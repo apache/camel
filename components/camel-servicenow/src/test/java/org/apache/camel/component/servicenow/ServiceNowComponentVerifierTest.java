@@ -125,7 +125,7 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
         Assert.assertEquals(1, result.getErrors().size());
         Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
         Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+        Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(VerificationError.HttpAttribute.HTTP_CODE));
         Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);
     }
 
@@ -140,7 +140,7 @@ public class ServiceNowComponentVerifierTest extends ServiceNowTestSupport {
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
+        Assert.assertEquals(VerificationError.StandardCode.AUTHENTICATION, result.getErrors().get(0).getCode());
         Assert.assertNotNull(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
         Assert.assertEquals(401, result.getErrors().get(0).getDetails().get(VerificationError.HttpAttribute.HTTP_CODE));
         Assert.assertTrue(result.getErrors().get(0).getDetails().get(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof ServiceNowException);

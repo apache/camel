@@ -154,7 +154,7 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(VerificationError.HttpAttribute.HTTP_CODE));
 
         // Salesforce Error
-        Assert.assertEquals("authentication failure", result.getErrors().get(1).getDescription());
+        Assert.assertEquals("invalid_grant", result.getErrors().get(1).getDetail("salesforce_code"));
     }
 
     @Test
@@ -177,6 +177,6 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         Assert.assertEquals(400, result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.HttpAttribute.HTTP_CODE));
 
         // Salesforce Error
-        Assert.assertEquals("client identifier invalid", result.getErrors().get(1).getDescription());
+        Assert.assertEquals("invalid_client_id", result.getErrors().get(1).getDetail("salesforce_code"));
     }
 }
