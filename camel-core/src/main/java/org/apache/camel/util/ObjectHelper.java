@@ -408,7 +408,7 @@ public final class ObjectHelper {
     public static Optional<Object> firstNotNull(Object... values) {
         for (int i = 0; i < values.length; i++) {
             if (values[i] != null) {
-                Optional.of(values[i]);
+                return Optional.of(values[i]);
             }
         }
 
