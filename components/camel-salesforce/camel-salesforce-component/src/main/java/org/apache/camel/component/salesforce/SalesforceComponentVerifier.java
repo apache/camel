@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.NoSuchOptionException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -153,7 +152,7 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
                     ResultErrorBuilder.withCode(VerificationError.StandardCode.GENERIC)
                         .description(error.getMessage())
                         .parameterKeys(error.getFields())
-                        .detail("salesforce_code",error.getErrorCode())
+                        .detail("salesforce_code", error.getErrorCode())
                         .build()
                 );
             }

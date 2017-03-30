@@ -46,8 +46,12 @@ class ComponentVerifierHelper {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Code)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Code)) {
+                return false;
+            }
 
             Code errorCode = (Code) o;
 
@@ -84,8 +88,12 @@ class ComponentVerifierHelper {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Attribute)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Attribute)) {
+                return false;
+            }
 
             Attribute that = (Attribute) o;
 
