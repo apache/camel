@@ -19,8 +19,6 @@ package org.apache.camel;
 import junit.framework.TestCase;
 import org.junit.Test;
 
-import org.junit.Test;
-
 public class LoggingLevelTest extends TestCase {
 
     @Test
