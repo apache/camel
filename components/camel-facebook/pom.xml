@@ -92,6 +92,7 @@
             <!-- Here we only run test of  -->
             <include>**/ReadingBuilderTest.java</include>
             <include>**/FacebookMethodsType*Test.java</include>
+            <include>**/FacebookEndpointConfigurationTest.java</include>
           </includes>
         </configuration>
       </plugin>
