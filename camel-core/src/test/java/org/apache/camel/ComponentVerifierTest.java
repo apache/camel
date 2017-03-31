@@ -36,24 +36,6 @@ public class ComponentVerifierTest extends TestCase {
         Assert.assertNull(error.getDetail(VerificationError.asAttribute("test_attr_non_existant")));
     }
 
-    public void testInvalidAttribute() {
-        try {
-            VerificationError.asAttribute("HTTP_CODE");
-            fail();
-        } catch (IllegalArgumentException exp) {
-            Assert.assertTrue(exp.getMessage().contains("HTTP_CODE"));
-        }
-    }
-
-    public void testInvalidCode() {
-        try {
-            VerificationError.asCode("Authentication");
-            fail();
-        } catch (IllegalArgumentException exp) {
-            Assert.assertTrue(exp.getMessage().contains("Authentication"));
-        }
-    }
-
     public void testNullCode() {
         try {
             VerificationError.asCode(null);

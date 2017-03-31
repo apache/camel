@@ -30,7 +30,7 @@ class ComponentVerifierHelper {
      */
     static class ErrorCode implements Code {
 
-        private String name;
+        private final String name;
 
         ErrorCode(String name) {
             if (name == null) {
@@ -71,7 +71,7 @@ class ComponentVerifierHelper {
 
     static class ErrorAttribute implements Attribute {
 
-        private String name;
+        private final String name;
 
         ErrorAttribute(String name) {
             if (name == null) {
