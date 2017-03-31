@@ -546,7 +546,7 @@ public final class MessageHelper {
         sb.append("\n");
         sb.append("Message History\n");
         sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
-        String goMessageHistoryHeaeder = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER);
+        String goMessageHistoryHeaeder = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
         sb.append(String.format(
                          goMessageHistoryHeaeder == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeaeder,
                          "RouteId", "ProcessorId", "Processor", "Elapsed (ms)"));
@@ -565,7 +565,7 @@ public final class MessageHelper {
             elapsed = new StopWatch(created).stop();
         }
 
-        String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT);
+        String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
         sb.append(String.format(
                         goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput,
                         routeId, id, label, elapsed));
