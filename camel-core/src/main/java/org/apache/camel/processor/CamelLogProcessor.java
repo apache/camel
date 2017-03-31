@@ -88,13 +88,21 @@ public class CamelLogProcessor implements AsyncProcessor, IdAware {
 
     public void process(Exchange exchange, Throwable exception) {
         if (log.shouldLog()) {
-            log.log(formatter.format(exchange), exception);
+            String output = formatter.format(exchange);
+            if (maskingFormatter != null) {
+                output = maskingFormatter.format(output);
+            }
+            log.log(output, exception);
         }
     }
 
     public void process(Exchange exchange, String message) {
         if (log.shouldLog()) {
-            log.log(formatter.format(exchange) + message);
+            String output = formatter.format(exchange) + message;
+            if (maskingFormatter != null) {
+                output = maskingFormatter.format(output);
+            }
+            log.log(output);
         }
     }
 
