@@ -95,7 +95,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "chainedServiceDiscovery", type = ChainedServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "aggregatingServiceDiscovery", type = AggregatingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
@@ -637,8 +637,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return this;
     }
 
-    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration(this);
+    public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.spring.cloud;
 
+import org.apache.camel.model.cloud.AggregatingServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
-import org.apache.camel.model.cloud.ChainedServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.ChainedServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.DefaultServiceCallLoadBalancerConfiguration;
 import org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration;
@@ -52,7 +52,7 @@ public class ServiceCallConfigurationTest {
         assertNotNull("No ServiceDiscoveryConfiguration (2)", conf2.getServiceDiscoveryConfiguration());
         assertNull(conf2.getLoadBalancerConfiguration());
 
-        ChainedServiceCallServiceDiscoveryConfiguration discovery2 = (ChainedServiceCallServiceDiscoveryConfiguration)conf2.getServiceDiscoveryConfiguration();
+        AggregatingServiceCallServiceDiscoveryConfiguration discovery2 = (AggregatingServiceCallServiceDiscoveryConfiguration)conf2.getServiceDiscoveryConfiguration();
         assertEquals(2, discovery2.getServiceDiscoveryConfigurations().size());
         assertTrue(discovery2.getServiceDiscoveryConfigurations().get(0) instanceof StaticServiceCallServiceDiscoveryConfiguration);
         assertTrue(discovery2.getServiceDiscoveryConfigurations().get(1) instanceof StaticServiceCallServiceDiscoveryConfiguration);

@@ -45,7 +45,7 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "multiServiceDiscovery", type = ChainedServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "aggregatingServiceDiscovery", type = AggregatingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)}
     )
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
@@ -163,8 +163,8 @@ public class CachingServiceCallServiceDiscoveryConfiguration extends ServiceCall
         return conf;
     }
 
-    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration();
+    public AggregatingServiceCallServiceDiscoveryConfiguration aggregatingServiceDiscovery() {
+        AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
 
         return conf;

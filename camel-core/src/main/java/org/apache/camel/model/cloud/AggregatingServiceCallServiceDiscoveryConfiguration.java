@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "multiServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChainedServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
+public class AggregatingServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlElements({
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
@@ -43,12 +43,12 @@ public class ChainedServiceCallServiceDiscoveryConfiguration extends ServiceCall
     )
     private List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations;
 
-    public ChainedServiceCallServiceDiscoveryConfiguration() {
+    public AggregatingServiceCallServiceDiscoveryConfiguration() {
         this(null);
     }
 
-    public ChainedServiceCallServiceDiscoveryConfiguration(ServiceCallDefinition parent) {
-        super(parent, "chained-service-discovery");
+    public AggregatingServiceCallServiceDiscoveryConfiguration(ServiceCallDefinition parent) {
+        super(parent, "aggregating-service-discovery");
     }
 
     // *************************************************************************
@@ -85,7 +85,7 @@ public class ChainedServiceCallServiceDiscoveryConfiguration extends ServiceCall
     /**
      *  List of ServiceDiscovery configuration to use
      */
-    public ChainedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfigurations(List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
+    public AggregatingServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfigurations(List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
         setServiceDiscoveryConfigurations(serviceDiscoveryConfigurations);
         return this;
     }
@@ -93,7 +93,7 @@ public class ChainedServiceCallServiceDiscoveryConfiguration extends ServiceCall
     /**
      *  Add a ServiceDiscovery configuration
      */
-    public ChainedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
+    public AggregatingServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         addServiceDiscoveryConfigurations(serviceDiscoveryConfiguration);
         return this;
     }
@@ -137,8 +137,8 @@ public class ChainedServiceCallServiceDiscoveryConfiguration extends ServiceCall
         return conf;
     }
 
-    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration();
+    public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration();
         addServiceDiscoveryConfigurations(conf);
 
         return conf;

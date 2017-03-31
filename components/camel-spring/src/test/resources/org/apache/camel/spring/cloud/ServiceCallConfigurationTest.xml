@@ -33,14 +33,14 @@
     </serviceCallConfiguration>
 
     <serviceCallConfiguration id="conf2">
-      <chainedServiceDiscovery>
+      <aggregatingServiceDiscovery>
         <staticServiceDiscovery>
           <servers>localhost:9092</servers>
         </staticServiceDiscovery>
         <staticServiceDiscovery>
           <servers>localhost:9093,localhost:9094,localhost:9095,localhost:9096</servers>
         </staticServiceDiscovery>
-      </chainedServiceDiscovery>
+      </aggregatingServiceDiscovery>
       <chainedServiceFilter>
         <healthyServiceFilter/>
         <blacklistServiceFilter>

@@ -69,7 +69,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     private Expression expression;
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "chainedServiceDiscovery", type = ChainedServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "aggregatingServiceDiscovery", type = AggregatingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
@@ -539,14 +539,14 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return this;
     }
 
-    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration();
+    public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
     }
 
-    public ServiceCallConfigurationDefinition multiServiceDiscovery(ChainedServiceCallServiceDiscoveryConfiguration conf) {
+    public ServiceCallConfigurationDefinition multiServiceDiscovery(AggregatingServiceCallServiceDiscoveryConfiguration conf) {
         setServiceDiscoveryConfiguration(conf);
 
         return this;
