@@ -23,10 +23,10 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.util.ObjectHelper;
 
-public class ChainedServiceDiscoveryFactory implements ServiceDiscoveryFactory {
+public class AggregatingServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private List<ServiceDiscovery> serviceDiscoveryList;
 
-    public ChainedServiceDiscoveryFactory() {
+    public AggregatingServiceDiscoveryFactory() {
     }
 
     // *************************************************************************
@@ -49,6 +49,6 @@ public class ChainedServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     public ServiceDiscovery newInstance(CamelContext camelContext) throws Exception {
         ObjectHelper.notNull(serviceDiscoveryList, "ServiceDiscovery list");
 
-        return new ChainedServiceDiscovery(serviceDiscoveryList);
+        return new AggregatingServiceDiscovery(serviceDiscoveryList);
     }
 }

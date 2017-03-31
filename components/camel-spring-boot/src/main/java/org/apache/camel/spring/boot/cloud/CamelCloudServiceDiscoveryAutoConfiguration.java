@@ -17,7 +17,6 @@
 
 package org.apache.camel.spring.boot.cloud;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -26,9 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.spring.boot.util.GroupCondition;
-import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -91,12 +88,7 @@ public class CamelCloudServiceDiscoveryAutoConfiguration implements BeanFactoryA
         final ConfigurableBeanFactory factory = (ConfigurableBeanFactory) beanFactory;
 
         configurationProperties.getServiceDiscovery().getConfigurations().entrySet().stream()
-            .forEach(
-                entry -> factory.registerSingleton(
-                    entry.getKey(),
-                    createStaticServiceDiscovery(entry.getValue())
-                )
-            );
+            .forEach(entry -> registerBean(factory, entry.getKey(), entry.getValue()));
     }
 
     // *******************************
@@ -115,6 +107,13 @@ public class CamelCloudServiceDiscoveryAutoConfiguration implements BeanFactoryA
     // *******************************
     // Helper
     // *******************************
+
+    private void registerBean(ConfigurableBeanFactory factory, String name, CamelCloudConfigurationProperties.ServiceDiscoveryConfiguration configuration) {
+        factory.registerSingleton(
+            name,
+            createStaticServiceDiscovery(configuration)
+        );
+    }
 
     private ServiceDiscovery createStaticServiceDiscovery(CamelCloudConfigurationProperties.ServiceDiscoveryConfiguration configuration) {
         StaticServiceDiscovery staticServiceDiscovery = new StaticServiceDiscovery();

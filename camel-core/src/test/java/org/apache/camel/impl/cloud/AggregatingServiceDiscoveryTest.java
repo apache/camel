@@ -19,12 +19,12 @@ package org.apache.camel.impl.cloud;
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.model.cloud.ChainedServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.AggregatingServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ChainedServiceDiscoveryTest extends ContextTestSupport {
+public class AggregatingServiceDiscoveryTest extends ContextTestSupport {
     @Test
     public void testMultiServiceDiscovery() throws Exception {
         StaticServiceDiscovery discovery1 = new StaticServiceDiscovery();
@@ -35,7 +35,7 @@ public class ChainedServiceDiscoveryTest extends ContextTestSupport {
         discovery2.addServer(new DefaultServiceDefinition("discovery1", "localhost", 1113));
         discovery2.addServer(new DefaultServiceDefinition("discovery2", "localhost", 1114));
 
-        ChainedServiceDiscovery discovery = ChainedServiceDiscovery.wrap(discovery1, discovery2);
+        AggregatingServiceDiscovery discovery = AggregatingServiceDiscovery.wrap(discovery1, discovery2);
         Assert.assertEquals(3, discovery.getServices("discovery1").size());
         Assert.assertEquals(1, discovery.getServices("discovery2").size());
     }
@@ -48,10 +48,10 @@ public class ChainedServiceDiscoveryTest extends ContextTestSupport {
         StaticServiceCallServiceDiscoveryConfiguration staticConf2 = new StaticServiceCallServiceDiscoveryConfiguration();
         staticConf2.setServers(Arrays.asList("discovery1@localhost:1113", "discovery2@localhost:1114"));
 
-        ChainedServiceCallServiceDiscoveryConfiguration multiConf = new ChainedServiceCallServiceDiscoveryConfiguration();
+        AggregatingServiceCallServiceDiscoveryConfiguration multiConf = new AggregatingServiceCallServiceDiscoveryConfiguration();
         multiConf.setServiceDiscoveryConfigurations(Arrays.asList(staticConf1, staticConf2));
 
-        ChainedServiceDiscovery discovery = (ChainedServiceDiscovery)multiConf.newInstance(context);
+        AggregatingServiceDiscovery discovery = (AggregatingServiceDiscovery)multiConf.newInstance(context);
         Assert.assertEquals(2, discovery.getDelegates().size());
         Assert.assertEquals(3, discovery.getServices("discovery1").size());
         Assert.assertEquals(1, discovery.getServices("discovery2").size());
@@ -59,11 +59,11 @@ public class ChainedServiceDiscoveryTest extends ContextTestSupport {
 
     @Test
     public void testMultiServiceDiscoveryConfigurationDsl() throws Exception {
-        ChainedServiceCallServiceDiscoveryConfiguration multiConf = new ChainedServiceCallServiceDiscoveryConfiguration();
+        AggregatingServiceCallServiceDiscoveryConfiguration multiConf = new AggregatingServiceCallServiceDiscoveryConfiguration();
         multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1111", "discovery1@localhost:1112"));
         multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1113", "discovery2@localhost:1114"));
 
-        ChainedServiceDiscovery discovery = (ChainedServiceDiscovery)multiConf.newInstance(context);
+        AggregatingServiceDiscovery discovery = (AggregatingServiceDiscovery)multiConf.newInstance(context);
         Assert.assertEquals(2, discovery.getDelegates().size());
         Assert.assertEquals(3, discovery.getServices("discovery1").size());
         Assert.assertEquals(1, discovery.getServices("discovery2").size());
