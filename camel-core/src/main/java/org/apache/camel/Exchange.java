@@ -169,6 +169,8 @@ public interface Exchange {
     String MAXIMUM_TRANSFORMER_CACHE_SIZE = "CamelMaximumTransformerCacheSize";
     String MAXIMUM_VALIDATOR_CACHE_SIZE = "CamelMaximumValidatorCacheSize";
     String MESSAGE_HISTORY             = "CamelMessageHistory";
+    String MESSAGE_HISTORY_HEADER_FORMAT      = "CamelMessageHistoryHeaderFormat";
+    String MESSAGE_HISTORY_OUTPUT_FORMAT      = "CamelMessageHistoryOutputFormat";
     String MULTICAST_INDEX             = "CamelMulticastIndex";
     String MULTICAST_COMPLETE          = "CamelMulticastComplete";
 
