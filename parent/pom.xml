@@ -47,7 +47,7 @@
     <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
     <apacheds-version>2.0.0-M23</apacheds-version>
     <apache-drill-version>1.10.0</apache-drill-version>
-    <apache-gora-version>0.6.1</apache-gora-version>
+    <apache-gora-version>0.7</apache-gora-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
     <aries-blueprint-cm-version>1.0.6</aries-blueprint-cm-version>
