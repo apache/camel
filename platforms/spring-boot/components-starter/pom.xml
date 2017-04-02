@@ -233,6 +233,7 @@
     <module>camel-pgevent-starter</module>
     <module>camel-printer-starter</module>
     <module>camel-protobuf-starter</module>
+    <module>camel-pubnub-starter</module>
     <module>camel-quartz2-starter</module>
     <module>camel-quickfix-starter</module>
     <module>camel-rabbitmq-starter</module>

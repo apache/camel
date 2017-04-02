@@ -24,32 +24,33 @@ public class PubNubConfigurationTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithIllegalArguments() throws Exception {
         PubNubComponent component = new PubNubComponent(context);
-        component.createEndpoint("pubnub:XXX:xxx");
+        component.createEndpoint("pubnub");
     }
 
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         PubNubComponent component = new PubNubComponent(context);
-        PubNubEndpoint endpoint = (PubNubEndpoint) component.createEndpoint("pubnub://pubsub:xxx?subscriberKey=mysubkey");
+        PubNubEndpoint endpoint = (PubNubEndpoint) component.createEndpoint("pubnub:xxx?subscriberKey=mysubkey");
 
-        assertEquals("xxx", endpoint.getChannel());
-        assertEquals("mysubkey", endpoint.getSubscriberKey());
-        assertTrue(endpoint.isSsl());
+        assertEquals("xxx", endpoint.getConfiguration().getChannel());
+        assertEquals("mysubkey", endpoint.getConfiguration().getSubscriberKey());
+        assertTrue(endpoint.getConfiguration().isSecure());
     }
 
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
         PubNubComponent component = new PubNubComponent(context);
         PubNubEndpoint endpoint = (PubNubEndpoint)component
-            .createEndpoint("pubnub://pubsub:xxx?subscriberKey=mysubkey&publisherKey=mypubkey&secretKey=secrets&uuid=myuuid&operation=PUBLISH&ssl=false");
+            .createEndpoint("pubnub:xxx?subscriberKey=mysubkey&publisherKey=mypubkey&secretKey=secrets&uuid=myuuid&operation=PUBLISH&secure=false&authKey=authKey");
 
-        assertEquals("xxx", endpoint.getChannel());
-        assertEquals("mysubkey", endpoint.getSubscriberKey());
-        assertEquals("mypubkey", endpoint.getPublisherKey());
-        assertEquals("secrets", endpoint.getSecretKey());
-        assertEquals("myuuid", endpoint.getUuid());
-        assertEquals("PUBLISH", endpoint.getOperation());
-        assertFalse(endpoint.isSsl());
+        assertEquals("xxx", endpoint.getConfiguration().getChannel());
+        assertEquals("mysubkey", endpoint.getConfiguration().getSubscriberKey());
+        assertEquals("mypubkey", endpoint.getConfiguration().getPublisherKey());
+        assertEquals("secrets", endpoint.getConfiguration().getSecretKey());
+        assertEquals("myuuid", endpoint.getConfiguration().getUuid());
+        assertEquals("PUBLISH", endpoint.getConfiguration().getOperation());
+        assertEquals("authKey", endpoint.getConfiguration().getAuthKey());
+        assertFalse(endpoint.getConfiguration().isSecure());
     }
 
 }

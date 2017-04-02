@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.pubnub;
 
-import com.pubnub.api.Pubnub;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -25,12 +24,6 @@ import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class PubNubConfiguration {
-    @UriParam
-    private Pubnub pubnub;
-
-    @UriPath(enums = "pubsub,presence")
-    @Metadata(required = "true", defaultValue = "pubsub")
-    private PubNubEndpointType endpointType = PubNubEndpointType.pubsub;
 
     @UriPath()
     @Metadata(required = "true")
@@ -45,24 +38,26 @@ public class PubNubConfiguration {
     @UriParam()
     private String secretKey;
 
+    @UriParam()
+    private String authKey;
+
     @UriParam(defaultValue = "true")
-    private boolean ssl = true;
+    private boolean secure = true;
 
     @UriParam()
     private String uuid;
 
-    @UriParam(label = "producer", enums = "HERE_NOW, WHERE_NOW, GET_STATE, SET_STATE, GET_HISTORY, PUBLISH")
+    @UriParam(label = "producer", enums = "HERE_NOW,WHERE_NOW,GET_STATE,SET_STATE,GET_HISTORY,PUBLISH,FIRE")
     private String operation;
 
-    public PubNubEndpointType getEndpointType() {
-        return endpointType;
-    }
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean withPresence;
 
     /**
      * The publish key obtained from your PubNub account. Required when publishing messages.
      */
     public String getPublisherKey() {
-        return publisherKey;
+        return this.publisherKey;
     }
 
     public void setPublisherKey(String publisherKey) {
@@ -73,7 +68,7 @@ public class PubNubConfiguration {
      * The subscribe key obtained from your PubNub account. Required when subscribing to channels or listening for presence events
      */
     public String getSubscriberKey() {
-        return subscriberKey;
+        return this.subscriberKey;
     }
 
     public void setSubscriberKey(String subscriberKey) {
@@ -84,7 +79,7 @@ public class PubNubConfiguration {
      * The secret key used for message signing.
      */
     public String getSecretKey() {
-        return secretKey;
+        return this.secretKey;
     }
 
     public void setSecretKey(String secretKey) {
@@ -92,21 +87,32 @@ public class PubNubConfiguration {
     }
 
     /**
-     * Use ssl
+     * If Access Manager is utilized, client will use this authKey in all restricted requests.
      */
-    public boolean isSsl() {
-        return ssl;
+    public String getAuthKey() {
+        return authKey;
     }
 
-    public void setSsl(boolean ssl) {
-        this.ssl = ssl;
+    public void setAuthKey(String authKey) {
+        this.authKey = authKey;
+    }
+
+    /**
+     * Use ssl
+     */
+    public boolean isSecure() {
+        return this.secure;
+    }
+
+    public void setSecure(boolean secure) {
+        this.secure = secure;
     }
 
     /**
      * The channel used for subscribing/publishing events
      */
     public String getChannel() {
-        return channel;
+        return this.channel;
     }
 
     public void setChannel(String channel) {
@@ -121,7 +127,7 @@ public class PubNubConfiguration {
     }
 
     public String getUuid() {
-        return uuid;
+        return this.uuid;
     }
 
     /**
@@ -132,15 +138,18 @@ public class PubNubConfiguration {
     }
 
     public String getOperation() {
-        return operation;
+        return this.operation;
     }
 
-    public Pubnub getPubnub() {
-        return pubnub;
+    /**
+     * Also subscribe to related presence information
+     */
+    public void setWithPresence(boolean withPresence) {
+        this.withPresence = withPresence;
     }
 
-    public void setPubnub(Pubnub pubnub) {
-        this.pubnub = pubnub;
+    public boolean withPresence() {
+        return withPresence;
     }
 
 }

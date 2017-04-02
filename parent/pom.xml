@@ -512,7 +512,7 @@
     <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>
     <powermock-version>1.6.6</powermock-version>
     <protobuf-version>3.1.0</protobuf-version>
-    <pubnub-version>3.7.4</pubnub-version>
+    <pubnub-version>4.6.0</pubnub-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
     <qpid-proton-j-version>0.16.0</qpid-proton-j-version>
     <qpid-proton-j-bundle-version>0.14.0</qpid-proton-j-bundle-version>

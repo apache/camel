@@ -37,7 +37,7 @@
     </dependency>
     <dependency>
       <groupId>com.pubnub</groupId>
-      <artifactId>pubnub</artifactId>
+      <artifactId>pubnub-gson</artifactId>
       <version>${pubnub-version}</version>
     </dependency>
     <dependency>
@@ -45,16 +45,24 @@
       <artifactId>gson</artifactId>
       <version>${gson-version}</version>
     </dependency>
+    
+    <!-- logging -->       
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${commons-lang3-version}</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20160810</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -72,8 +80,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-netty-http</artifactId>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock</artifactId>
+      <version>${wiremock-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

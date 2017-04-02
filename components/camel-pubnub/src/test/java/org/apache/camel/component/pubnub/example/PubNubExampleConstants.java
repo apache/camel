@@ -19,6 +19,6 @@ package org.apache.camel.component.pubnub.example;
 public interface PubNubExampleConstants {
     // replace subscriber+publisher key with one obtained from PubNub.
     // http://www.pubnub.com
-    String PUBNUB_SUBSCRIBER_KEY = "mysubkey";
-    String PUBNUB_PUBLISHER_KEY = "mypubkey";
+    String PUBNUB_SUBSCRIBER_KEY = "subkey";
+    String PUBNUB_PUBLISHER_KEY = "pubkey";
 }
