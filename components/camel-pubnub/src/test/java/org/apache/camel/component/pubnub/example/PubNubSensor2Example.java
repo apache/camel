@@ -21,14 +21,18 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.pubnub.PubNubConstants;
 import org.apache.camel.main.Main;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
+import static org.apache.camel.component.pubnub.PubNubConstants.OPERATION;
+import static org.apache.camel.component.pubnub.PubNubConstants.UUID;
+import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_PUBLISHER_KEY;
+import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_SUBSCRIBER_KEY;
 
 public final class PubNubSensor2Example {
 
@@ -43,37 +47,29 @@ public final class PubNubSensor2Example {
     }
 
     static class SimulatedDeviceEventGeneratorRoute extends RouteBuilder {
-        private final String deviceEP = "pubnub://pubsub:iot?uuid=device2&publisherKey=" + PubNubExampleConstants.PUBNUB_PUBLISHER_KEY + "&subscriberKey="
-                                        + PubNubExampleConstants.PUBNUB_SUBSCRIBER_KEY;
-        private final String devicePrivateEP = "pubnub://pubsub:device2private?uuid=device2&publisherKey=" + PubNubExampleConstants.PUBNUB_PUBLISHER_KEY + "&subscriberKey="
-                                               + PubNubExampleConstants.PUBNUB_SUBSCRIBER_KEY;
+        private final String deviceEP = "pubnub:iot?uuid=device2&publisherKey=" + PUBNUB_PUBLISHER_KEY + "&subscriberKey=" + PUBNUB_SUBSCRIBER_KEY;
+        private final String devicePrivateEP = "pubnub:device2private?uuid=device2&publisherKey=" + PUBNUB_PUBLISHER_KEY + "&subscriberKey=" + PUBNUB_SUBSCRIBER_KEY;
 
         @Override
         public void configure() throws Exception {
-            //@formatter:off
             from("timer:device2").routeId("device-event-route")
                 .bean(PubNubSensor2Example.EventGeneratorBean.class, "getRandomEvent('device2')")
-                .convertBodyTo(JSONObject.class)
                 .to(deviceEP);
             
             from(devicePrivateEP)
                 .routeId("device-unicast-route")
                 .log("Message from master to device2 : ${body}");
-            //@formatter:on
         }
     }
 
     static class PubsubRoute extends RouteBuilder {
-        private static String masterEP = "pubnub://pubsub:iot?uuid=master&subscriberKey=" + PubNubExampleConstants.PUBNUB_SUBSCRIBER_KEY + "&publisherKey="
-                                         + PubNubExampleConstants.PUBNUB_PUBLISHER_KEY;
+        private static String masterEP = "pubnub:iot?uuid=master&subscriberKey=" + PUBNUB_SUBSCRIBER_KEY + "&publisherKey=" + PUBNUB_PUBLISHER_KEY;
         private static Map<String, String> devices = new ConcurrentHashMap<String, String>();
 
         @Override
         public void configure() throws Exception {
-            //@formatter:off
             from(masterEP)
                 .routeId("master-route")
-                .convertBodyTo(JSONObject.class)
                 .bean(PubNubSensor2Example.PubsubRoute.DataProcessorBean.class, "doSomethingInteresting(${body})")
                 .log("${body} headers : ${headers}").to("mock:result");
             
@@ -82,11 +78,10 @@ public final class PubNubSensor2Example {
                 .setHeader(PubNubConstants.CHANNEL, method(PubNubSensor2Example.PubsubRoute.DataProcessorBean.class, "getUnicastChannelOfDevice()"))
                 .setBody(constant("Hello device"))
                 .to(masterEP);
-            //@formatter:on
         }
 
-        static class DataProcessorBean {
-            @EndpointInject(uri = "pubnub://pubsub:iot?uuid=master&subscriberKey=" + PubNubExampleConstants.PUBNUB_SUBSCRIBER_KEY)
+        public static class DataProcessorBean {
+            @EndpointInject(uri = "pubnub:iot?uuid=master&subscriberKey=" + PUBNUB_SUBSCRIBER_KEY)
             private static ProducerTemplate template;
 
             public static String getUnicastChannelOfDevice() {
@@ -94,29 +89,50 @@ public final class PubNubSensor2Example {
                 return devices.values().iterator().next();
             }
 
-            public static void doSomethingInteresting(JSONObject message) {
+            public static void doSomethingInteresting(PNMessageResult message) {
                 String deviceUUID;
-                try {
-                    deviceUUID = message.getString("uuid");
-                    if (devices.get(deviceUUID) == null) {
-                        Map<String, Object> headers = new HashMap<String, Object>();
-                        headers.put(PubNubConstants.OPERATION, "WHERE_NOW");
-                        headers.put(PubNubConstants.UUID, deviceUUID);
-                        JSONObject response = (JSONObject)template.requestBodyAndHeaders(null, headers);
-                        JSONArray listofDeviceChannels = response.getJSONArray("channels");
-                        devices.put(deviceUUID, listofDeviceChannels.getString(0));
-                    }
-                } catch (JSONException e) {
+                deviceUUID = message.getPublisher();
+                if (devices.get(deviceUUID) == null) {
+                    Map<String, Object> headers = new HashMap<String, Object>();
+                    headers.put(OPERATION, "WHERE_NOW");
+                    headers.put(UUID, deviceUUID);
+                    @SuppressWarnings("unchecked")
+                    java.util.List<String> channels = (java.util.List<String>) template.requestBodyAndHeaders(null, headers);
+                    devices.put(deviceUUID, channels.get(0));
                 }
             }
         }
     }
 
-    public static class EventGeneratorBean {
-        public static String getRandomEvent(String device) throws JSONException {
+    static class DeviceWeatherInfo {
+        private String device;
+        private int humidity;
+        private int temperature;
+
+        DeviceWeatherInfo(String device) {
             Random rand = new Random();
-            String s = "{uuid:" + device + ", humidity:" + rand.nextInt(100) + ", temperature:" + rand.nextInt(40) + "}";
-            return s;
+            this.device = device;
+            this.humidity = rand.nextInt(100);
+            this.temperature = rand.nextInt(40);
+        }
+
+        public String getDevice() {
+            return device;
+        }
+
+        public int getHumidity() {
+            return humidity;
+        }
+
+        public int getTemperature() {
+            return temperature;
+        }
+
+    }
+
+    public static class EventGeneratorBean {
+        public static DeviceWeatherInfo getRandomEvent(String device) {
+            return new DeviceWeatherInfo(device);
         }
     }
 }

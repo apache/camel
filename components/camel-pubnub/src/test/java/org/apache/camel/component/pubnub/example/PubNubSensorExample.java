@@ -33,7 +33,7 @@ public final class PubNubSensorExample {
     static class SensorRoute extends RouteBuilder {
         @Override
         public void configure() throws Exception {
-            from("pubnub://pubsub:pubnub-sensor-network?subscriberKey=sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe").log("${body}").to("mock:result");
+            from("pubnub:pubnub-sensor-network?subscriberKey=sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe").log("${body}").to("mock:result");
         }
     }
 

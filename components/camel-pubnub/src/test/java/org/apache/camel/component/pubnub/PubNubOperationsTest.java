@@ -16,75 +16,125 @@
  */
 package org.apache.camel.component.pubnub;
 
+
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.google.gson.JsonObject;
+import com.pubnub.api.models.consumer.history.PNHistoryItemResult;
+import com.pubnub.api.models.consumer.presence.PNHereNowResult;
+import com.pubnub.api.models.consumer.presence.PNSetStateResult;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Test;
 
-public class PubNubOperationsTest extends CamelTestSupport {
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+
+public class PubNubOperationsTest extends PubNubTestBase {
 
     @Test
     public void testWhereNow() throws Exception {
+        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/uuid/myUUID"))
+            .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"payload\": {\"channels\": [\"channel-a\",\"channel-b\"]}, \"service\": \"Presence\"}")));
+
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(PubNubConstants.OPERATION, "WHERE_NOW");
-        headers.put(PubNubConstants.UUID, "uuid");
-        JSONObject response = template.requestBodyAndHeaders("direct:publish", null, headers, JSONObject.class);
+        headers.put(PubNubConstants.UUID, "myUUID");
+        @SuppressWarnings("unchecked")
+        List<String> response = template.requestBodyAndHeaders("direct:publish", null, headers, List.class);
         assertNotNull(response);
-        assertEquals("hello_world", response.getJSONArray("channels").getString(0));
+        assertListSize(response, 2);
+        assertEquals("channel-a", response.get(0));
     }
 
     @Test
     public void testHereNow() throws Exception {
+        stubFor(get(urlPathEqualTo("/v2/presence/sub_key/mySubscribeKey/channel/myChannel")).willReturn(aResponse()
+            .withBody("{\"status\" : 200, \"message\" : \"OK\", \"service\" : \"Presence\", \"uuids\" : [{\"uuid\" : \"myUUID0\"}, {\"state\" : {\"abcd\" : {\"age\" : 15}}, "
+                      + "\"uuid\" : \"myUUID1\"}, {\"uuid\" : \"b9eb408c-bcec-4d34-b4c4-fabec057ad0d\"}, {\"state\" : {\"abcd\" : {\"age\" : 15}}, \"uuid\" : \"myUUID2\"},"
+                      + " {\"state\" : {\"abcd\" : {\"age\" : 24}}, \"uuid\" : \"myUUID9\"}], \"occupancy\" : 5} Return Occupancy O")));
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(PubNubConstants.OPERATION, "HERE_NOW");
-        JSONObject response = template.requestBodyAndHeaders("direct:publish", null, headers, JSONObject.class);
+        PNHereNowResult response = template.requestBodyAndHeaders("direct:publish", null, headers, PNHereNowResult.class);
         assertNotNull(response);
-        assertEquals(3, response.getInt("occupancy"));
+        assertEquals(5, response.getTotalOccupancy());
     }
 
     @Test
     public void testGetHistory() throws Exception {
+        List<Object> testArray = new ArrayList<>();
+        List<Object> historyItems = new ArrayList<>();
+
+        Map<String, Object> historyEnvelope1 = new HashMap<>();
+        Map<String, Object> historyItem1 = new HashMap<>();
+        historyItem1.put("a", 11);
+        historyItem1.put("b", 22);
+        historyEnvelope1.put("timetoken", 1111);
+        historyEnvelope1.put("message", historyItem1);
+
+        Map<String, Object> historyEnvelope2 = new HashMap<>();
+        Map<String, Object> historyItem2 = new HashMap<>();
+        historyItem2.put("a", 33);
+        historyItem2.put("b", 44);
+        historyEnvelope2.put("timetoken", 2222);
+        historyEnvelope2.put("message", historyItem2);
+
+        historyItems.add(historyEnvelope1);
+        historyItems.add(historyEnvelope2);
+
+        testArray.add(historyItems);
+        testArray.add(1234);
+        testArray.add(4321);
+
+        stubFor(get(urlPathEqualTo("/v2/history/sub-key/mySubscribeKey/channel/myChannel")).willReturn(aResponse().withBody(getPubnub().getMapper().toJson(testArray))));
+
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(PubNubConstants.OPERATION, "GET_HISTORY");
-        JSONArray response = template.requestBodyAndHeaders("direct:publish", null, headers, JSONArray.class);
+        @SuppressWarnings("unchecked")
+        List<PNHistoryItemResult> response = template.requestBodyAndHeaders("direct:publish", null, headers, List.class);
         assertNotNull(response);
-        assertEquals("message1", response.getJSONArray(0).getString(0));
+        assertListSize(response, 2);
     }
 
     @Test
-    public void testSetAndGetState() throws Exception {
+    public void testGetState() throws Exception {
+        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/myChannel/uuid/myuuid")).willReturn(aResponse()
+            .withBody("{ \"status\": 200, \"message\": \"OK\", \"payload\": "
+                      + "{ \"myChannel\": { \"age\" : 20, \"status\" : \"online\"}, \"ch2\": { \"age\": 100, \"status\": \"offline\" } }, \"service\": \"Presence\"}")));
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(PubNubConstants.OPERATION, "SET_STATE");
-        headers.put(PubNubConstants.UUID, "myuuid");
-        JSONObject state = new JSONObject("{\"state\":\"active\", \"lat\":\"55.645499\", \"lon\":\"12.370967\"}");
-        template.sendBodyAndHeaders("direct:publish", state, headers);
-        headers.replace(PubNubConstants.OPERATION, "GET_STATE");
-        JSONObject response = template.requestBodyAndHeaders("direct:publish", null, headers, JSONObject.class);
+        headers.put(PubNubConstants.OPERATION, "GET_STATE");
+        @SuppressWarnings("unchecked")
+        Map<String, JsonObject> response = template.requestBodyAndHeaders("direct:publish", null, headers, Map.class);
         assertNotNull(response);
-        assertEquals(state, response);
+        assertNotNull(response.get("myChannel"));
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("pubnub", new PubNubMock("dummy", "dummy"));
-        return registry;
+    @Test
+    public void testSetState() throws Exception {
+        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/myChannel/uuid/myuuid/data"))
+                .willReturn(aResponse().withBody("{ \"status\": 200, \"message\": \"OK\", \"payload\": { \"age\" : 20, \"status\" : \"online\" }, \"service\": \"Presence\"}")));
+        Map<String, Object> myState = new HashMap<>();
+        myState.put("age", 20);
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(PubNubConstants.OPERATION, "SET_STATE");
+        PNSetStateResult response = template.requestBodyAndHeaders("direct:publish", myState, headers, PNSetStateResult.class);
+        assertNotNull(response);
+        assertNotNull(response.getState());
+        assertEquals(20, response.getState().getAsJsonObject().get("age").getAsInt());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                //@formatter:off
-                from("direct:publish").to("pubnub://pubsub:mychannel?uuid=myuuid&pubnub=#pubnub")
-                .to("log:io.rhiot.component.pubnub?showAll=true&multiline=true")
-                .to("mock:result");
-                //@formatter:on
+                from("direct:publish").to("pubnub:myChannel?uuid=myuuid&pubnub=#pubnub")
+                    .to("mock:result");
             }
         };
     }

@@ -19,32 +19,31 @@ package org.apache.camel.component.pubnub;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.json.JSONObject;
 import org.junit.Test;
 
-public class PubNubComponentTest extends CamelTestSupport {
-    private String endpoint = "pubnub:pubsub:someChannel?pubnub=#pubnub";
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+
+
+public class PubNubSubscriberTest extends PubNubTestBase {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mockResult;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("pubnub", new PubNubMock("dummy", "dummy"));
-        return registry;
-    }
-
     @Test
-    public void testPubNub() throws Exception {
+    public void testPubSubMessageSubscribe() throws Exception {
+        stubFor(get(urlPathEqualTo("/v2/subscribe/mySubscribeKey/mychannel/0"))
+            .willReturn(aResponse()
+                .withBody("{\"t\":{\"t\":\"14607577960932487\",\"r\":1},\"m\":[{\"a\":\"4\",\"f\":0,\"i\":\"Publisher-A\",\"p\":{\"t\":\"14607577960925503\",\"r\":1},\"o\":"
+                          + "{\"t\":\"14737141991877032\",\"r\":2},\"k\":\"sub-c-4cec9f8e-01fa-11e6-8180-0619f8945a4f\",\"c\":\"mychannel\",\"d\":{\"text\":\"Message\"},\"b\":\"coolChannel\"}]}")));
+        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/mychannel/heartbeat"))
+            .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"service\": \"Presence\"}")));
+
+        context.startRoute("subroute");
         mockResult.expectedMessageCount(1);
-        mockResult.expectedHeaderReceived("CamelPubNubChannel", "someChannel");
-        mockResult.expectedBodiesReceived("{\"hi\":\"there\"}");
-        JSONObject jo = new JSONObject();
-        jo.put("hi", "there");
-        template.sendBody("direct:publish", jo);
+        mockResult.expectedHeaderReceived(PubNubConstants.CHANNEL, "mychannel");
         assertMockEndpointsSatisfied();
     }
 
@@ -52,8 +51,8 @@ public class PubNubComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(endpoint).to("mock:result");
-                from("direct:publish").to(endpoint);
+                from("pubnub:mychannel?pubnub=#pubnub").id("subroute").autoStartup(false)
+                    .to("mock:result");
             }
         };
     }

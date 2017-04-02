@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the component that manages {@link PubNubEndpoint}.
@@ -37,17 +38,12 @@ public class PubNubComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String[] uriParts = remaining.split(":");
-        if (uriParts.length != 2) {
-            throw new IllegalArgumentException("Invalid Endpoint URI: " + uri + ". It should contains a valid endpointType and channel");
-        }
-        PubNubEndpointType endpointType = PubNubEndpointType.valueOf(uriParts[0]);
-        String channel = uriParts[1];
-
-        PubNubEndpoint endpoint = new PubNubEndpoint(uri, this);
+        ObjectHelper.notNull(remaining, "channel");
+        PubNubConfiguration pubNubConfiguration = new PubNubConfiguration();
+        pubNubConfiguration.setChannel(remaining);
+        setProperties(pubNubConfiguration, parameters);
+        PubNubEndpoint endpoint = new PubNubEndpoint(uri, this, pubNubConfiguration);
         setProperties(endpoint, parameters);
-        endpoint.setEndpointType(endpointType);
-        endpoint.setChannel(channel);
         return endpoint;
     }
 
