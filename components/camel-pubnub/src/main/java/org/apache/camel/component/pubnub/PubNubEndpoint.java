@@ -16,64 +16,42 @@
  */
 package org.apache.camel.component.pubnub;
 
-import com.pubnub.api.Pubnub;
+
+import com.pubnub.api.PNConfiguration;
+import com.pubnub.api.PubNub;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(scheme = "pubnub", title = "PubNub", syntax = "pubnub:endpointType:channel", consumerClass = PubNubConsumer.class, label = "cloud,iot,messaging")
 public class PubNubEndpoint extends DefaultEndpoint {
 
     @UriParam
-    private Pubnub pubnub;
+    private PubNub pubnub;
 
-    @UriPath(enums = "pubsub,presence")
-    @Metadata(required = "true")
-    private PubNubEndpointType endpointType = PubNubEndpointType.pubsub;
+    @UriParam
+    private PubNubConfiguration configuration;
 
-    @UriPath()
-    @Metadata(required = "true")
-    private String channel;
-
-    @UriParam()
-    private String publisherKey;
-
-    @UriParam()
-    private String subscriberKey;
-
-    @UriParam()
-    private String secretKey;
-
-    @UriParam(defaultValue = "true")
-    private boolean ssl = true;
-
-    @UriParam()
-    private String uuid;
-
-    @UriParam(label = "producer", enums = "HERE_NOW, WHERE_NOW, GET_STATE, SET_STATE, GET_HISTORY, PUBLISH")
-    private String operation;
-
-    public PubNubEndpoint(String uri, PubNubComponent component) {
+    public PubNubEndpoint(String uri, PubNubComponent component, PubNubConfiguration configuration) {
         super(uri, component);
+        this.configuration = configuration;
     }
 
     
 
     @Override
     public Producer createProducer() throws Exception {
-        return new PubNubProducer(this);
+        return new PubNubProducer(this, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new PubNubConsumer(this, processor);
+        return new PubNubConsumer(this, processor, configuration);
     }
 
     @Override
@@ -81,106 +59,19 @@ public class PubNubEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    /**
-     * The type endpoint type. Either pubsub or presence
-     */
-
-    public PubNubEndpointType getEndpointType() {
-        return endpointType;
-    }
-
-    public void setEndpointType(PubNubEndpointType endpointType) {
-        this.endpointType = endpointType;
-    }
-
-    /**
-     * The pubnub publish key obtained from your pubnub account. Required when
-     * publishing messages.
-     */
-    public String getPublisherKey() {
-        return publisherKey;
-    }
-
-    public void setPublisherKey(String publisherKey) {
-        this.publisherKey = publisherKey;
-    }
-
-    /**
-     * The pubnub subscribe key obtained from your pubnub account. Required when
-     * subscribing to channels or listening for presence events
-     */
-    public String getSubscriberKey() {
-        return subscriberKey;
-    }
-
-    public void setSubscriberKey(String subscriberKey) {
-        this.subscriberKey = subscriberKey;
-    }
-
-    /**
-     * The pubnub secret key used for message signing.
-     */
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    /**
-     * Use ssl
-     */
-    public boolean isSsl() {
-        return ssl;
-    }
-
-    public void setSsl(boolean ssl) {
-        this.ssl = ssl;
-    }
-
-    /**
-     * The channel used for subscribing/publishing events
-     */
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
-
-    /**
-     * The uuid identifying the connection. Will be auto assigned if not set.
-     */
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    /**
-     * The operation to perform.
-     */
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public String getOperation() {
-        return operation;
+    public PubNubConfiguration getConfiguration() {
+        return configuration;
     }
 
     /**
      * Reference to a Pubnub client in the registry.
      */
 
-    public Pubnub getPubnub() {
+    public PubNub getPubnub() {
         return pubnub;
     }
 
-    public void setPubnub(Pubnub pubnub) {
+    public void setPubnub(PubNub pubnub) {
         this.pubnub = pubnub;
     }
 
@@ -188,7 +79,7 @@ public class PubNubEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         super.doStop();
         if (pubnub != null) {
-            pubnub.shutdown();
+            pubnub.destroy();
             pubnub = null;
         }
     }
@@ -199,20 +90,18 @@ public class PubNubEndpoint extends DefaultEndpoint {
         super.doStart();
     }
 
-    private Pubnub getInstance() {
-        Pubnub answer = null;
-        if (ObjectHelper.isNotEmpty(getSecretKey())) {
-            answer = new Pubnub(getPublisherKey(), getSubscriberKey(), getSecretKey(), isSsl());
-        } else {
-            answer = new Pubnub(getPublisherKey(), getSubscriberKey(), isSsl());
+    private PubNub getInstance() {
+        PubNub answer = null;
+        PNConfiguration pnConfiguration = new PNConfiguration();
+        pnConfiguration.setPublishKey(configuration.getPublisherKey());
+        pnConfiguration.setSubscribeKey(configuration.getSubscriberKey());
+        pnConfiguration.setSecretKey(configuration.getSecretKey());
+        pnConfiguration.setAuthKey(configuration.getAuthKey());
+        pnConfiguration.setSecure(configuration.isSecure());
+        if (ObjectHelper.isNotEmpty(configuration.getUuid())) {
+            pnConfiguration.setUuid(configuration.getUuid());
         }
-        if (ObjectHelper.isNotEmpty(getUuid())) {
-            answer.setUUID(getUuid());
-        } else {
-            String autoUUID = answer.uuid();
-            setUuid(autoUUID);
-            answer.setUUID(autoUUID);
-        }
+        answer = new PubNub(pnConfiguration);
         return answer;
     }
 }

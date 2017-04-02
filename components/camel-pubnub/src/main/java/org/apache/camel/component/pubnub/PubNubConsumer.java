@@ -16,8 +16,14 @@
  */
 package org.apache.camel.component.pubnub;
 
-import com.pubnub.api.Callback;
-import com.pubnub.api.PubnubError;
+
+import java.util.Arrays;
+
+import com.pubnub.api.PubNub;
+import com.pubnub.api.callbacks.SubscribeCallback;
+import com.pubnub.api.models.consumer.PNStatus;
+import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
+import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,31 +33,37 @@ import org.apache.camel.impl.DefaultExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The PubNub consumer.
- */
+import static com.pubnub.api.enums.PNStatusCategory.PNTimeoutCategory;
+import static com.pubnub.api.enums.PNStatusCategory.PNUnexpectedDisconnectCategory;
+
+import static org.apache.camel.component.pubnub.PubNubConstants.CHANNEL;
+import static org.apache.camel.component.pubnub.PubNubConstants.TIMETOKEN;
+
 public class PubNubConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(PubNubConsumer.class);
     private final PubNubEndpoint endpoint;
+    private final PubNubConfiguration pubNubConfiguration;
 
-    public PubNubConsumer(PubNubEndpoint endpoint, Processor processor) {
+    public PubNubConsumer(PubNubEndpoint endpoint, Processor processor, PubNubConfiguration pubNubConfiguration) {
         super(endpoint, processor);
         this.endpoint = endpoint;
+        this.pubNubConfiguration = pubNubConfiguration;
     }
 
     private void initCommunication() throws Exception {
-        if (endpoint.getEndpointType().equals(PubNubEndpointType.pubsub)) {
-            endpoint.getPubnub().subscribe(endpoint.getChannel(), new PubNubCallback());
+        endpoint.getPubnub().addListener(new PubNubCallback());
+        if (pubNubConfiguration.withPresence()) {
+            endpoint.getPubnub().subscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).withPresence().execute();
         } else {
-            endpoint.getPubnub().presence(endpoint.getChannel(), new PubNubCallback());
+            endpoint.getPubnub().subscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).execute();
         }
     }
 
-    private void terminateCommunication() throws Exception {
-        if (endpoint.getEndpointType().equals(PubNubEndpointType.pubsub)) {
-            endpoint.getPubnub().unsubscribe(endpoint.getChannel());
-        } else {
-            endpoint.getPubnub().unsubscribePresence(endpoint.getChannel());
+    private void terminateCommunication() {
+        try {
+            endpoint.getPubnub().unsubscribe().channels(Arrays.asList(pubNubConfiguration.getChannel())).execute();
+        } catch (Exception e) {
+            // ignore
         }
     }
 
@@ -79,15 +91,25 @@ public class PubNubConsumer extends DefaultConsumer {
         super.doSuspend();
     }
 
-    private class PubNubCallback extends Callback {
+    class PubNubCallback extends SubscribeCallback {
 
         @Override
-        public void successCallback(String channel, Object objectMessage, String timetoken) {
+        public void status(PubNub pubnub, PNStatus status) {
+            if (status.getCategory() == PNUnexpectedDisconnectCategory || status.getCategory() == PNTimeoutCategory) {
+                LOG.trace("Got status : {}. Reconnecting to PubNub", status);
+                pubnub.reconnect();
+            } else {
+                LOG.trace("Status message : {}", status);
+            }
+        }
+
+        @Override
+        public void message(PubNub pubnub, PNMessageResult message) {
             Exchange exchange = new DefaultExchange(endpoint, endpoint.getExchangePattern());
-            Message message = exchange.getIn();
-            message.setBody(objectMessage);
-            message.setHeader(PubNubConstants.TIMETOKEN, timetoken);
-            message.setHeader(PubNubConstants.CHANNEL, channel);
+            Message inmessage = exchange.getIn();
+            inmessage.setBody(message);
+            inmessage.setHeader(TIMETOKEN, message.getTimetoken());
+            inmessage.setHeader(CHANNEL, message.getChannel());
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
@@ -97,24 +119,21 @@ public class PubNubConsumer extends DefaultConsumer {
         }
 
         @Override
-        public void connectCallback(String channel, Object message) {
-            LOG.info("Subscriber : Successfully connected to PubNub channel {}", channel);
+        public void presence(PubNub pubnub, PNPresenceEventResult presence) {
+            Exchange exchange = new DefaultExchange(endpoint, endpoint.getExchangePattern());
+            Message inmessage = exchange.getIn();
+            inmessage.setBody(presence);
+            inmessage.setHeader(TIMETOKEN, presence.getTimetoken());
+            inmessage.setHeader(CHANNEL, presence.getChannel());
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+                getExceptionHandler().handleException("Error processing exchange", exchange, e);
+            }
+
         }
 
-        @Override
-        public void errorCallback(String channel, PubnubError error) {
-            LOG.error("Subscriber : Error [{}] received from PubNub on channel {}", error, channel);
-        }
-
-        @Override
-        public void reconnectCallback(String channel, Object message) {
-            LOG.info("Subscriber : Reconnected to PubNub channel {}", channel);
-        }
-
-        @Override
-        public void disconnectCallback(String channel, Object message) {
-            LOG.trace("Subscriber : Disconnected from PubNub channel {}", channel);
-        }
     }
 
 }
