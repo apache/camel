@@ -215,8 +215,18 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
                 throw new RuntimeCamelException(e);
             }
         }
-        
-        JAXBElement<?> detailEl = (JAXBElement<?>) faultDetail.getAny().get(0);
+
+        Object detailObj = faultDetail.getAny().get(0);
+
+        if (!(detailObj instanceof JAXBElement)) {
+            try {
+                return new SOAPFaultException(SOAPFactory.newInstance().createFault(message, fault.getCode().getValue()));
+            } catch (SOAPException e) {
+                throw new RuntimeCamelException(e);
+            }
+        }
+
+        JAXBElement<?> detailEl = (JAXBElement<?>) detailObj;
         Class<? extends Exception> exceptionClass = getDataFormat().getElementNameStrategy().findExceptionForFaultName(detailEl.getName());
         Constructor<? extends Exception> messageConstructor;
         Constructor<? extends Exception> constructor;
