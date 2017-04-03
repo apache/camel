@@ -25,6 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
+import org.apache.camel.model.language.SimpleExpression;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -313,6 +315,50 @@ public class ServiceCallConfigurationTest {
             // Cleanup system properties
             System.clearProperty("scall.name");
             System.clearProperty("scall.component");
+        }
+
+        context.stop();
+    }
+
+    // **********************************************
+    // test placeholders
+    // **********************************************
+
+    @Test
+    public void testExpression() throws Exception {
+        CamelContext context = null;
+
+        try {
+            ServiceCallConfigurationDefinition config = new ServiceCallConfigurationDefinition();
+            config.setServiceDiscovery(new StaticServiceDiscovery());
+            config.setExpressionConfiguration(
+                new ServiceCallExpressionConfiguration().expression(
+                    new SimpleExpression("file:${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}")
+                )
+            );
+
+            context = new DefaultCamelContext();
+            context.setServiceCallConfiguration(config);
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start")
+                        .routeId("default")
+                        .serviceCall("scall");
+                }
+            });
+
+            context.start();
+
+            DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
+
+            Assert.assertNotNull(proc);
+            Assert.assertTrue(proc.getExpression() instanceof SimpleExpression);
+
+        } finally {
+            if (context != null) {
+                context.stop();
+            }
         }
 
         context.stop();

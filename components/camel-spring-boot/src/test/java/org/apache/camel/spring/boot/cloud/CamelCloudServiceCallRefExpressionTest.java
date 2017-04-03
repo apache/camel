@@ -16,8 +16,10 @@
  */
 package org.apache.camel.spring.boot.cloud;
 
+import org.apache.camel.Expression;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,20 +38,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(
     classes = {
         CamelAutoConfiguration.class,
-        CamelCloudServiceCallExpressionTest.TestConfiguration.class
+        CamelCloudServiceCallRefExpressionTest.TestConfiguration.class
     },
     properties = {
         "service.name=custom-svc-list",
         "camel.cloud.load-balancer.enabled=false",
         "camel.cloud.service-call.component=jetty",
-        "camel.cloud.service-call.expression=${header.CamelServiceCallScheme}:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello",
+        "camel.cloud.service-call.expression=myExpression",
         "camel.cloud.service-discovery.services[custom-svc-list]=localhost:9090,localhost:9091,localhost:9092",
         "camel.cloud.service-filter.blacklist[custom-svc-list]=localhost:9091",
         "ribbon.enabled=false",
         "debug=true"
     }
 )
-public class CamelCloudServiceCallExpressionTest {
+public class CamelCloudServiceCallRefExpressionTest {
     @Autowired
     private ProducerTemplate template;
 
@@ -65,6 +67,13 @@ public class CamelCloudServiceCallExpressionTest {
 
     @Configuration
     public static class TestConfiguration {
+        @Bean
+        Expression myExpression() {
+            return new SimpleExpression(
+                "jetty:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello"
+            );
+        }
+
         @Bean
         public RouteBuilder myRouteBuilder() {
             return new RouteBuilder() {

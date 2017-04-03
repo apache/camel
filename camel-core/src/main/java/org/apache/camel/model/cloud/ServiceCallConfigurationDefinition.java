@@ -31,7 +31,6 @@ import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -246,13 +245,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         this.expression = expression;
     }
 
-    /**
-     * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
-     */
-    public void setSimpleExpression(String expression) {
-        setExpression(new SimpleExpression(expression));
-    }
-
     public ServiceCallServiceDiscoveryConfiguration getServiceDiscoveryConfiguration() {
         return serviceDiscoveryConfiguration;
     }
@@ -409,14 +401,6 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
      */
     public ServiceCallConfigurationDefinition expression(Expression expression) {
         setExpression(expression);
-        return this;
-    }
-
-    /**
-     * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
-     */
-    public ServiceCallConfigurationDefinition simpleExpression(String expression) {
-        setExpression(new SimpleExpression(expression));
         return this;
     }
 

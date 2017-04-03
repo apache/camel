@@ -98,9 +98,14 @@ public class CamelCloudConfigurationProperties {
         private String loadBalancer;
 
         /**
-         * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
+         * The {@link Expression} to use.
          */
         private String expression;
+
+        /**
+         * The {@link Expression} language to use, default is ref
+         */
+        private String expressionLanguage = "ref";
 
         public String getUri() {
             return uri;
@@ -156,6 +161,14 @@ public class CamelCloudConfigurationProperties {
 
         public void setExpression(String expression) {
             this.expression = expression;
+        }
+
+        public String getExpressionLanguage() {
+            return expressionLanguage;
+        }
+
+        public void setExpressionLanguage(String expressionLanguage) {
+            this.expressionLanguage = expressionLanguage;
         }
     }
 
