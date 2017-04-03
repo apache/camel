@@ -51,7 +51,7 @@ public class DefaultWebsocketTest {
 
     @Before
     public void setUp() throws Exception {
-        defaultWebsocket = new DefaultWebsocket(sync, consumer);
+        defaultWebsocket = new DefaultWebsocket(sync, null, consumer);
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
     }
 
@@ -88,7 +88,7 @@ public class DefaultWebsocketTest {
 
     @Test
     public void testOnMessageWithNullConsumer() {
-        defaultWebsocket = new DefaultWebsocket(sync, null);
+        defaultWebsocket = new DefaultWebsocket(sync, null, null);
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(session, consumer, sync);

@@ -26,6 +26,6 @@ import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
  */
 public interface WebSocketFactory {
 
-    DefaultWebsocket newInstance(ServletUpgradeRequest request, String protocol, NodeSynchronization sync, WebsocketConsumer consumer);
+    DefaultWebsocket newInstance(ServletUpgradeRequest request, String protocol, String pathSpec, NodeSynchronization sync, WebsocketConsumer consumer);
 
 }

@@ -38,10 +38,12 @@ public class DefaultWebsocket implements Serializable {
     private final NodeSynchronization sync;
     private Session session;
     private String connectionKey;
+    private String pathSpec;
 
-    public DefaultWebsocket(NodeSynchronization sync, WebsocketConsumer consumer) {
+    public DefaultWebsocket(NodeSynchronization sync, String pathSpec, WebsocketConsumer consumer) {
         this.sync = sync;
         this.consumer = consumer;
+        this.pathSpec = pathSpec;
     }
 
     @OnWebSocketClose
@@ -83,6 +85,10 @@ public class DefaultWebsocket implements Serializable {
 
     public Session getSession() {
         return session;
+    }
+    
+    public String getPathSpec() {
+        return pathSpec;
     }
 
     public void setSession(Session session) {
