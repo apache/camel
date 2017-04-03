@@ -176,7 +176,7 @@
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
     <ehcache-version>2.10.1</ehcache-version>
-    <ehcache3-version>3.3.0</ehcache3-version>
+    <ehcache3-version>3.3.1</ehcache3-version>
     <ekstazi-maven-plugin-version>4.6.3</ekstazi-maven-plugin-version>
     <elasticsearch-bundle-version>2.4.3_2</elasticsearch-bundle-version>
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
