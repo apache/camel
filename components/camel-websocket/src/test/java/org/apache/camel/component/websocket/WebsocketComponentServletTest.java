@@ -60,7 +60,7 @@ public class WebsocketComponentServletTest {
         socketFactory = new HashMap<String, WebSocketFactory>();
         socketFactory.put("default", new DefaultWebsocketFactory());
         
-        websocketComponentServlet = new WebsocketComponentServlet(sync, socketFactory);
+        websocketComponentServlet = new WebsocketComponentServlet(sync, null, socketFactory);
     }
 
     @Test
