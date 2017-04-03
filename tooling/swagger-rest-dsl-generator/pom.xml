@@ -30,16 +30,30 @@
   <name>Camel :: Tooling :: Swagger REST DSL Generator</name>
   <description>Generator of REST DSL route definitions from Swagger (OpenAPI) specification</description>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!-- seems to pick up the services definition and tries to run RestDslSwaggerAnnotationProcessor -->
+          <proc>none</proc>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
+
     <dependency>
       <groupId>com.squareup</groupId>
       <artifactId>javapoet</artifactId>
       <version>${javapoet-version}</version>
     </dependency>
+
     <dependency>
       <groupId>io.swagger</groupId>
       <artifactId>swagger-parser</artifactId>
@@ -65,6 +79,34 @@
       <version>${assertj-version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.google.testing.compile</groupId>
+      <artifactId>compile-testing</artifactId>
+      <version>0.10</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>tools</id>
+      <activation>
+        <file>
+          <exists>${java.home}/../lib/tools.jar</exists>
+        </file>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+          <version>1.4.2</version>
+          <scope>system</scope>
+          <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
 </project>
