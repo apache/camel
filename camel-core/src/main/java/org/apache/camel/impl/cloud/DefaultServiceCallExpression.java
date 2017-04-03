@@ -36,6 +36,13 @@ import org.slf4j.LoggerFactory;
 public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceCallExpression.class);
 
+    public DefaultServiceCallExpression() {
+    }
+
+    public DefaultServiceCallExpression(String hostHeader, String portHeader) {
+        super(hostHeader, portHeader);
+    }
+
     @Override
     protected String buildCamelEndpointUri(String name, String host, Integer port, String uri, String contextPath, String scheme) {
         // build basic uri if none provided

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.spring.cloud;
 
+import org.apache.camel.impl.cloud.ServiceCallConstants;
 import org.apache.camel.model.cloud.AggregatingServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.ChainedServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.DefaultServiceCallLoadBalancerConfiguration;
 import org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
 import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Test;
@@ -37,35 +39,56 @@ public class ServiceCallConfigurationTest {
     public void testServiceDiscoveryConfiguration() {
         SpringCamelContext context = createContext("org/apache/camel/spring/cloud/ServiceCallConfigurationTest.xml");
 
-        ServiceCallConfigurationDefinition conf1 = context.getServiceCallConfiguration("conf1");
-        assertNotNull("No ServiceCallConfiguration (1)", conf1);
-        assertNotNull("No ServiceDiscoveryConfiguration (1)", conf1.getServiceDiscoveryConfiguration());
-        assertNotNull("No ServiceCallLoadBalancerConfiguration (1)", conf1.getLoadBalancerConfiguration());
-        assertTrue(conf1.getLoadBalancerConfiguration() instanceof DefaultServiceCallLoadBalancerConfiguration);
+        testConfiguration1(context.getServiceCallConfiguration("conf1"));
+        testConfiguration2(context.getServiceCallConfiguration("conf2"));
+    }
 
-        StaticServiceCallServiceDiscoveryConfiguration discovery1 = (StaticServiceCallServiceDiscoveryConfiguration)conf1.getServiceDiscoveryConfiguration();
+    protected void testConfiguration1(ServiceCallConfigurationDefinition conf) {
+        assertNotNull("conf1", conf);
+
+        assertNotNull("No ServiceCallConfiguration (1)", conf);
+        assertNotNull("No ServiceDiscoveryConfiguration (1)", conf.getServiceDiscoveryConfiguration());
+        assertNotNull("No ServiceCallLoadBalancerConfiguration (1)", conf.getLoadBalancerConfiguration());
+        assertTrue(conf.getLoadBalancerConfiguration() instanceof DefaultServiceCallLoadBalancerConfiguration);
+
+        ServiceCallExpressionConfiguration expConf1 = conf.getExpressionConfiguration();
+        assertNull(expConf1.getExpression());
+        assertNotNull("No ServiceCallExpressionConfiguration (1)", expConf1.getExpressionType());
+        assertEquals(ServiceCallConstants.SERVICE_HOST, expConf1.getHostHeader());
+        assertEquals(ServiceCallConstants.SERVICE_PORT, expConf1.getPortHeader());
+
+        StaticServiceCallServiceDiscoveryConfiguration discovery1 = (StaticServiceCallServiceDiscoveryConfiguration)conf.getServiceDiscoveryConfiguration();
         assertEquals(1, discovery1.getServers().size());
         assertEquals("localhost:9091", discovery1.getServers().get(0));
+    }
 
-        ServiceCallConfigurationDefinition conf2 = context.getServiceCallConfiguration("conf2");
-        assertNotNull("No ServiceCallConfiguration (2)", conf2);
-        assertNotNull("No ServiceDiscoveryConfiguration (2)", conf2.getServiceDiscoveryConfiguration());
-        assertNull(conf2.getLoadBalancerConfiguration());
+    protected void testConfiguration2(ServiceCallConfigurationDefinition conf) {
+        assertNotNull("conf2", conf);
 
-        AggregatingServiceCallServiceDiscoveryConfiguration discovery2 = (AggregatingServiceCallServiceDiscoveryConfiguration)conf2.getServiceDiscoveryConfiguration();
+        assertNotNull("No ServiceCallConfiguration (2)", conf);
+        assertNotNull("No ServiceDiscoveryConfiguration (2)", conf.getServiceDiscoveryConfiguration());
+        assertNull(conf.getLoadBalancerConfiguration());
+
+        AggregatingServiceCallServiceDiscoveryConfiguration discovery2 = (AggregatingServiceCallServiceDiscoveryConfiguration)conf.getServiceDiscoveryConfiguration();
         assertEquals(2, discovery2.getServiceDiscoveryConfigurations().size());
         assertTrue(discovery2.getServiceDiscoveryConfigurations().get(0) instanceof StaticServiceCallServiceDiscoveryConfiguration);
         assertTrue(discovery2.getServiceDiscoveryConfigurations().get(1) instanceof StaticServiceCallServiceDiscoveryConfiguration);
+
+        ServiceCallExpressionConfiguration expconf = conf.getExpressionConfiguration();
+        assertNull(expconf.getExpression());
+        assertNull(expconf.getExpressionType());
+        assertEquals("MyHostHeader", expconf.getHostHeader());
+        assertEquals("MyPortHeader", expconf.getPortHeader());
 
         StaticServiceCallServiceDiscoveryConfiguration sconf1 = (StaticServiceCallServiceDiscoveryConfiguration)discovery2.getServiceDiscoveryConfigurations().get(0);
         assertEquals(1, sconf1.getServers().size());
         assertEquals("localhost:9092", sconf1.getServers().get(0));
 
-        StaticServiceCallServiceDiscoveryConfiguration sconf2 = (StaticServiceCallServiceDiscoveryConfiguration)discovery2.getServiceDiscoveryConfigurations().get(1);
-        assertEquals(1, sconf2.getServers().size());
-        assertEquals("localhost:9093,localhost:9094,localhost:9095,localhost:9096", sconf2.getServers().get(0));
+        StaticServiceCallServiceDiscoveryConfiguration sconf = (StaticServiceCallServiceDiscoveryConfiguration)discovery2.getServiceDiscoveryConfigurations().get(1);
+        assertEquals(1, sconf.getServers().size());
+        assertEquals("localhost:9093,localhost:9094,localhost:9095,localhost:9096", sconf.getServers().get(0));
 
-        ChainedServiceCallServiceFilterConfiguration filter = (ChainedServiceCallServiceFilterConfiguration)conf2.getServiceFilterConfiguration();
+        ChainedServiceCallServiceFilterConfiguration filter = (ChainedServiceCallServiceFilterConfiguration)conf.getServiceFilterConfiguration();
         assertEquals(2, filter.getServiceFilterConfigurations().size());
         assertTrue(filter.getServiceFilterConfigurations().get(0) instanceof HealthyServiceCallServiceFilterConfiguration);
         assertTrue(filter.getServiceFilterConfigurations().get(1) instanceof BlacklistServiceCallServiceFilterConfiguration);
