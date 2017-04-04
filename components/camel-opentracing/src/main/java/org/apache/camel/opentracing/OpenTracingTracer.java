@@ -19,14 +19,15 @@ package org.apache.camel.opentracing;
 import java.net.URI;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import io.opentracing.NoopTracerFactory;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
-import io.opentracing.contrib.global.GlobalTracer;
 import io.opentracing.contrib.spanmanager.SpanManager;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
@@ -151,8 +152,19 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         }
 
         if (tracer == null) {
-            // fallback to the global tracer if no tracers are configured
-            tracer = GlobalTracer.get();
+            // Attempt to load tracer using ServiceLoader
+            Iterator<Tracer> iter = ServiceLoader.load(Tracer.class).iterator();
+            if (iter.hasNext()) {
+                tracer = iter.next();
+                if (iter.hasNext()) {
+                    LOG.warn("Multiple Tracer implementations available - selected: " + tracer);
+                }
+            }
+        }
+
+        if (tracer == null) {
+            // No tracer is available, so setup NoopTracer
+            tracer = NoopTracerFactory.create();
         }
 
         ServiceHelper.startServices(eventNotifier);
