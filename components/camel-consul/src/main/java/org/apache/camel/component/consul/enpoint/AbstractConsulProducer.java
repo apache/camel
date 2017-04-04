@@ -14,17 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul;
+package org.apache.camel.component.consul.enpoint;
 
+import java.math.BigInteger;
+import java.util.List;
 import java.util.function.Function;
 
 import com.orbitz.consul.Consul;
+import com.orbitz.consul.model.ConsulResponse;
+import com.orbitz.consul.option.ConsistencyMode;
+import com.orbitz.consul.option.ImmutableQueryOptions;
+import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.Processor;
+import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulConstants;
+import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.impl.HeaderSelectorProducer;
+import org.apache.camel.util.ObjectHelper;
 
-public abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
+abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
     private final ConsulEndpoint endpoint;
     private final ConsulConfiguration configuration;
     private final Function<Consul, C> clientSupplier;
@@ -43,13 +53,9 @@ public abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
     //
     // *************************************************************************
 
-    protected Consul getConsul() throws Exception {
-        return endpoint.getConsul();
-    }
-
     protected C getClient() throws Exception {
         if (client == null) {
-            client = clientSupplier.apply(getConsul());
+            client = clientSupplier.apply(endpoint.getConsul());
         }
 
         return client;
@@ -59,16 +65,12 @@ public abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         return configuration;
     }
 
-    protected <D> D getHeader(Message message, String header, D defaultValue, Class<D> type) {
-        return message.getHeader(header, defaultValue, type);
-    }
-
     protected <D> D getMandatoryHeader(Message message, String header, Class<D> type) throws Exception {
-        return getMandatoryHeader(message, header, null, type);
+        return getMandatoryHeader(message, header, (D)null, type);
     }
 
     protected <D> D getMandatoryHeader(Message message, String header, D defaultValue, Class<D> type) throws Exception {
-        D value = getHeader(message, header, defaultValue, type);
+        D value = message.getHeader(header, defaultValue, type);
         if (value == null) {
             throw new NoSuchHeaderException(message.getExchange(), header, type);
         }
@@ -76,39 +78,40 @@ public abstract class AbstractConsulProducer<C> extends HeaderSelectorProducer {
         return value;
     }
 
-    protected String getKey(Message message) {
-        return message.getHeader(
-            ConsulConstants.CONSUL_KEY,
-            configuration.getKey(),
-            String.class);
+    protected QueryOptions buildQueryOptions(Message message, ConsulConfiguration conf) {
+        ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
+
+        ObjectHelper.ifNotEmpty(
+            message.getHeader(ConsulConstants.CONSUL_INDEX, BigInteger.class),
+            builder::index);
+        ObjectHelper.ifNotEmpty(
+            message.getHeader(ConsulConstants.CONSUL_WAIT, String.class),
+            builder::wait);
+        ObjectHelper.ifNotEmpty(
+            message.getHeader(ConsulConstants.CONSUL_DATACENTER, conf.getDatacenter(), String.class),
+            builder::datacenter);
+        ObjectHelper.ifNotEmpty(
+            message.getHeader(ConsulConstants.CONSUL_NEAR_NODE, conf.getNearNode(), String.class),
+            builder::near);
+        ObjectHelper.ifNotEmpty(
+            conf.getAclToken(),
+            builder::token);
+        ObjectHelper.ifNotEmpty(
+            message.getHeader(ConsulConstants.CONSUL_CONSISTENCY_MODE, conf.getConsistencyMode(), ConsistencyMode.class),
+            builder::consistencyMode);
+        ObjectHelper.ifNotEmpty(
+            message.getHeader(ConsulConstants.CONSUL_NODE_META, conf.getNodeMeta(), List.class),
+            builder::nodeMeta);
+
+        return builder.build();
     }
 
-    protected String getMandatoryKey(Message message) throws Exception {
-        return getMandatoryHeader(
-            message,
-            ConsulConstants.CONSUL_KEY,
-            configuration.getKey(),
-            String.class);
-    }
+    protected <T> void processConsulResponse(Message message, ConsulResponse<T> response) throws Exception {
+        message.setHeader(ConsulConstants.CONSUL_INDEX, response.getIndex());
+        message.setHeader(ConsulConstants.CONSUL_LAST_CONTACT, response.getLastContact());
+        message.setHeader(ConsulConstants.CONSUL_KNOWN_LEADER, response.isKnownLeader());
 
-    protected <T> T getOption(Message message, T defaultValue, Class<T> type) {
-        return message.getHeader(ConsulConstants.CONSUL_OPTIONS, defaultValue, type);
-    }
-
-    protected boolean isValueAsString(Message message) throws Exception {
-        return message.getHeader(
-            ConsulConstants.CONSUL_VALUE_AS_STRING,
-            configuration.isValueAsString(),
-            Boolean.class);
-    }
-
-    protected <T> T getBody(Message message, T defaultValue, Class<T> type) throws Exception {
-        T body = message.getBody(type);
-        if (body == null) {
-            body = defaultValue;
-        }
-
-        return  body;
+        setBodyAndResult(message, response.getResponse());
     }
 
     protected void setBodyAndResult(Message message, Object body) throws Exception {

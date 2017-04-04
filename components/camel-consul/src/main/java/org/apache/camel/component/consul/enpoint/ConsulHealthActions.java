@@ -16,19 +16,9 @@
  */
 package org.apache.camel.component.consul.enpoint;
 
-import com.orbitz.consul.AgentClient;
-import com.orbitz.consul.Consul;
-import org.apache.camel.component.consul.ConsulConfiguration;
-import org.apache.camel.component.consul.ConsulEndpoint;
-
-public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
-
-    public ConsulAgentProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
-        super(endpoint, configuration, Consul::agentClient);
-
-        bind(ConsulAgentActions.CHECKS, wrap(c -> c.getChecks()));
-        bind(ConsulAgentActions.SERVICES, wrap(c -> c.getServices()));
-        bind(ConsulAgentActions.MEMBERS, wrap(c -> c.getMembers()));
-        bind(ConsulAgentActions.AGENT, wrap(c -> c.getAgent()));
-    }
+public interface ConsulHealthActions {
+    String CHECKS = "CHECKS";
+    String NODE_CHECKS = "NODE_CHECKS";
+    String SERVICE_CHECKS = "SERVICE_CHECKS";
+    String SERVICE_INSTANCES = "SERVICE_INSTANCES";
 }

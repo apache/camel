@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.consul.springboot;
 
+import java.util.List;
 import java.util.Set;
+import com.orbitz.consul.option.ConsistencyMode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -155,6 +157,18 @@ public class ConsulComponentConfiguration {
          */
         private String datacenter;
         /**
+         * The near node to use for queries.
+         */
+        private String nearNode;
+        /**
+         * The note meta-data to use for queries.
+         */
+        private List nodeMeta;
+        /**
+         * The consistencyMode used for queries, default ConsistencyMode.DEFAULT
+         */
+        private ConsistencyMode consistencyMode;
+        /**
          * Set tags. You can separate multiple tags by comma.
          */
         private Set tags;
@@ -196,12 +210,12 @@ public class ConsulComponentConfiguration {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance
          */
-        private Boolean pingInstance = true;
+        private Boolean pingInstance;
         /**
          * Default to transform values retrieved from Consul i.e. on KV endpoint
          * to string.
          */
-        private Boolean valueAsString = false;
+        private Boolean valueAsString;
         /**
          * The default key. Can be overridden by CamelConsulKey
          */
@@ -209,15 +223,15 @@ public class ConsulComponentConfiguration {
         /**
          * The second to wait for a watch event, default 10 seconds
          */
-        private Integer blockSeconds = 10;
+        private Integer blockSeconds;
         /**
          * The first index for watch for, default 0
          */
-        private Long firstIndex = 0L;
+        private Long firstIndex;
         /**
          * Recursively watch, default false
          */
-        private Boolean recursive = false;
+        private Boolean recursive;
 
         public CamelContext getCamelContext() {
             return camelContext;
@@ -252,6 +266,30 @@ public class ConsulComponentConfiguration {
 
         public void setDatacenter(String datacenter) {
             this.datacenter = datacenter;
+        }
+
+        public String getNearNode() {
+            return nearNode;
+        }
+
+        public void setNearNode(String nearNode) {
+            this.nearNode = nearNode;
+        }
+
+        public List getNodeMeta() {
+            return nodeMeta;
+        }
+
+        public void setNodeMeta(List nodeMeta) {
+            this.nodeMeta = nodeMeta;
+        }
+
+        public ConsistencyMode getConsistencyMode() {
+            return consistencyMode;
+        }
+
+        public void setConsistencyMode(ConsistencyMode consistencyMode) {
+            this.consistencyMode = consistencyMode;
         }
 
         public Set getTags() {
