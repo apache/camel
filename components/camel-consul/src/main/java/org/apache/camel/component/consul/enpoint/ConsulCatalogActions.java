@@ -16,19 +16,12 @@
  */
 package org.apache.camel.component.consul.enpoint;
 
-import com.orbitz.consul.AgentClient;
-import com.orbitz.consul.Consul;
-import org.apache.camel.component.consul.ConsulConfiguration;
-import org.apache.camel.component.consul.ConsulEndpoint;
-
-public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
-
-    public ConsulAgentProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
-        super(endpoint, configuration, Consul::agentClient);
-
-        bind(ConsulAgentActions.CHECKS, wrap(c -> c.getChecks()));
-        bind(ConsulAgentActions.SERVICES, wrap(c -> c.getServices()));
-        bind(ConsulAgentActions.MEMBERS, wrap(c -> c.getMembers()));
-        bind(ConsulAgentActions.AGENT, wrap(c -> c.getAgent()));
-    }
+public interface ConsulCatalogActions {
+    String REGISTER = "REGISTER";
+    String DEREGISTER = "DEREGISTER";
+    String LIST_DATACENTERS = "LIST_DATACENTERS";
+    String LIST_NODES = "LIST_NODES";
+    String LIST_SERVICES = "LIST_SERVICES";
+    String GET_SERVICE = "GET_SERVICE";
+    String GET_NODE = "GET_NODE";
 }

@@ -25,7 +25,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
@@ -35,16 +34,16 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.18.0", scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint", label = "api,cloud")
 public class ConsulEndpoint extends DefaultEndpoint {
 
-    @UriParam(description = "The consul configuration")
-    @Metadata
+    //@UriParam(description = "The consul configuration")
+    //@Metadata
     private final ConsulConfiguration configuration;
 
     @UriPath(description = "The API endpoint")
     @Metadata(required = "true")
     private final String apiEndpoint;
 
-    private final Optional<ProducerFactory> producerFactory;
-    private final Optional<ConsumerFactory> consumerFactory;
+    private final Optional<ConsulFactories.ProducerFactory> producerFactory;
+    private final Optional<ConsulFactories.ConsumerFactory> consumerFactory;
 
     private Consul consul;
 
@@ -53,8 +52,8 @@ public class ConsulEndpoint extends DefaultEndpoint {
             String uri,
             ConsulComponent component,
             ConsulConfiguration configuration,
-            Optional<ProducerFactory> producerFactory,
-            Optional<ConsumerFactory> consumerFactory) {
+            Optional<ConsulFactories.ProducerFactory> producerFactory,
+            Optional<ConsulFactories.ConsumerFactory> consumerFactory) {
 
         super(uri, component);
 
@@ -71,7 +70,7 @@ public class ConsulEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        ProducerFactory factory = producerFactory.orElseThrow(
+        ConsulFactories.ProducerFactory factory = producerFactory.orElseThrow(
             () -> new IllegalArgumentException("No producer for " + apiEndpoint)
         );
 
@@ -80,7 +79,7 @@ public class ConsulEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        ConsumerFactory factory = consumerFactory.orElseThrow(
+        ConsulFactories.ConsumerFactory factory = consumerFactory.orElseThrow(
             () -> new IllegalArgumentException("No consumer for " + apiEndpoint)
         );
 
@@ -105,19 +104,5 @@ public class ConsulEndpoint extends DefaultEndpoint {
         }
 
         return consul;
-    }
-
-    // *************************************************************************
-    //
-    // *************************************************************************
-
-    @FunctionalInterface
-    public interface ProducerFactory {
-        Producer create(ConsulEndpoint endpoint, ConsulConfiguration configuration) throws Exception;
-    }
-
-    @FunctionalInterface
-    public interface ConsumerFactory {
-        Consumer create(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) throws Exception;
     }
 }

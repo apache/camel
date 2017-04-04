@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.consul;
+package org.apache.camel.component.consul.enpoint;
 
 import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,10 +22,13 @@ import java.util.function.Function;
 
 import com.orbitz.consul.Consul;
 import org.apache.camel.Processor;
+import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulConstants;
+import org.apache.camel.component.consul.ConsulEndpoint;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 
-public abstract class AbstractConsulConsumer<C> extends DefaultConsumer {
+abstract class AbstractConsulConsumer<C> extends DefaultConsumer {
     protected final ConsulEndpoint endpoint;
     protected final ConsulConfiguration configuration;
     protected final String key;

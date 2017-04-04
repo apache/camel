@@ -18,9 +18,11 @@ package org.apache.camel.component.consul;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.orbitz.consul.Consul;
+import com.orbitz.consul.option.ConsistencyMode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -35,6 +37,12 @@ public class ConsulConfiguration implements CamelContextAware, Cloneable {
     private String url;
     @UriParam(label = "advanced")
     private String datacenter;
+    @UriParam(label = "advanced")
+    private String nearNode;
+    @UriParam(label = "advanced")
+    private List<String> nodeMeta;
+    @UriParam(label = "advanced", defaultValue = "DEFAULT", enums = "DEFAULT,STALE,CONSISTENT")
+    private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
     @UriParam(javaType = "java.lang.String")
     private Set<String> tags;
 
@@ -128,6 +136,39 @@ public class ConsulConfiguration implements CamelContextAware, Cloneable {
      */
     public void setDatacenter(String datacenter) {
         this.datacenter = datacenter;
+    }
+
+    public String getNearNode() {
+        return nearNode;
+    }
+
+    /**
+     * The near node to use for queries.
+     */
+    public void setNearNode(String nearNode) {
+        this.nearNode = nearNode;
+    }
+
+    public List<String> getNodeMeta() {
+        return nodeMeta;
+    }
+
+    /**
+     * The note meta-data to use for queries.
+     */
+    public void setNodeMeta(List<String> nodeMeta) {
+        this.nodeMeta = nodeMeta;
+    }
+
+    public ConsistencyMode getConsistencyMode() {
+        return consistencyMode;
+    }
+
+    /**
+     * The consistencyMode used for queries, default ConsistencyMode.DEFAULT
+     */
+    public void setConsistencyMode(ConsistencyMode consistencyMode) {
+        this.consistencyMode = consistencyMode;
     }
 
     public Set<String> getTags() {

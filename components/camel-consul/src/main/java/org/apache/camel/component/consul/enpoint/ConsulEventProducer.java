@@ -16,19 +16,20 @@
  */
 package org.apache.camel.component.consul.enpoint;
 
+import com.orbitz.consul.Consul;
 import com.orbitz.consul.EventClient;
 import com.orbitz.consul.option.EventOptions;
 import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
-import org.apache.camel.component.consul.AbstractConsulProducer;
 import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
-public class ConsulEventProducer extends AbstractConsulProducer<EventClient> {
+public final class ConsulEventProducer extends AbstractConsulProducer<EventClient> {
 
     public ConsulEventProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
-        super(endpoint, configuration, c -> c.eventClient());
+        super(endpoint, configuration, Consul::eventClient);
     }
 
     @InvokeOnHeader(ConsulEventActions.FIRE)
@@ -36,8 +37,8 @@ public class ConsulEventProducer extends AbstractConsulProducer<EventClient> {
         setBodyAndResult(
             message,
             getClient().fireEvent(
-                getMandatoryKey(message),
-                getOption(message, EventOptions.BLANK, EventOptions.class),
+                getMandatoryHeader(message, ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
+                message.getHeader(ConsulConstants.CONSUL_OPTIONS, EventOptions.BLANK, EventOptions.class),
                 message.getBody(String.class)
             )
         );
@@ -48,8 +49,8 @@ public class ConsulEventProducer extends AbstractConsulProducer<EventClient> {
         setBodyAndResult(
             message,
             getClient().listEvents(
-                getKey(message),
-                getOption(message, QueryOptions.BLANK, QueryOptions.class)
+                message.getHeader(ConsulConstants.CONSUL_KEY, getConfiguration().getKey(), String.class),
+                message.getHeader(ConsulConstants.CONSUL_OPTIONS, QueryOptions.BLANK, QueryOptions.class)
             )
         );
     }

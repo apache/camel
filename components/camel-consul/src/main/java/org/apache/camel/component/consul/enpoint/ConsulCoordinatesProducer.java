@@ -16,19 +16,35 @@
  */
 package org.apache.camel.component.consul.enpoint;
 
-import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
+import com.orbitz.consul.CoordinateClient;
+import org.apache.camel.InvokeOnHeader;
+import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
-public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
+public final class ConsulCoordinatesProducer extends AbstractConsulProducer<CoordinateClient> {
 
-    public ConsulAgentProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
-        super(endpoint, configuration, Consul::agentClient);
+    public ConsulCoordinatesProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
+        super(endpoint, configuration, Consul::coordinateClient);
+    }
 
-        bind(ConsulAgentActions.CHECKS, wrap(c -> c.getChecks()));
-        bind(ConsulAgentActions.SERVICES, wrap(c -> c.getServices()));
-        bind(ConsulAgentActions.MEMBERS, wrap(c -> c.getMembers()));
-        bind(ConsulAgentActions.AGENT, wrap(c -> c.getAgent()));
+    @InvokeOnHeader(ConsulCoordinatesActions.DATACENTERS)
+    protected void datacenters(Message message) throws Exception {
+        setBodyAndResult(
+            message,
+            getClient().getDatacenters()
+        );
+    }
+
+    @InvokeOnHeader(ConsulCoordinatesActions.NODES)
+    protected void nodes(Message message) throws Exception {
+        setBodyAndResult(
+            message,
+            getClient().getNodes(
+                message.getHeader(ConsulConstants.CONSUL_DATACENTER, getConfiguration().getDatacenter(), String.class)
+            )
+        );
     }
 }

@@ -19,6 +19,7 @@ package org.apache.camel.component.consul.enpoint;
 import java.util.List;
 
 import com.google.common.base.Optional;
+import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.async.ConsulResponseCallback;
 import com.orbitz.consul.model.ConsulResponse;
@@ -27,15 +28,14 @@ import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.consul.AbstractConsulConsumer;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
-public class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValueClient> {
+public final class ConsulKeyValueConsumer extends AbstractConsulConsumer<KeyValueClient> {
 
     public ConsulKeyValueConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
-        super(endpoint, configuration, processor, c -> c.keyValueClient());
+        super(endpoint, configuration, processor, Consul::keyValueClient);
     }
 
     @Override

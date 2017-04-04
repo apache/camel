@@ -19,6 +19,7 @@ package org.apache.camel.component.consul.enpoint;
 import java.math.BigInteger;
 import java.util.List;
 
+import com.orbitz.consul.Consul;
 import com.orbitz.consul.EventClient;
 import com.orbitz.consul.async.EventResponseCallback;
 import com.orbitz.consul.model.EventResponse;
@@ -27,15 +28,14 @@ import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.consul.AbstractConsulConsumer;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
-public class ConsulEventConsumer extends AbstractConsulConsumer<EventClient> {
+public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClient> {
 
     public ConsulEventConsumer(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) {
-        super(endpoint, configuration, processor, c -> c.eventClient());
+        super(endpoint, configuration, processor, Consul::eventClient);
     }
 
     @Override

@@ -16,19 +16,17 @@
  */
 package org.apache.camel.component.consul.enpoint;
 
-import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
+import com.orbitz.consul.StatusClient;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulEndpoint;
 
-public final class ConsulAgentProducer extends AbstractConsulProducer<AgentClient> {
+public final class ConsulStatusProducer extends AbstractConsulProducer<StatusClient> {
 
-    public ConsulAgentProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
-        super(endpoint, configuration, Consul::agentClient);
+    public ConsulStatusProducer(ConsulEndpoint endpoint, ConsulConfiguration configuration) {
+        super(endpoint, configuration, Consul::statusClient);
 
-        bind(ConsulAgentActions.CHECKS, wrap(c -> c.getChecks()));
-        bind(ConsulAgentActions.SERVICES, wrap(c -> c.getServices()));
-        bind(ConsulAgentActions.MEMBERS, wrap(c -> c.getMembers()));
-        bind(ConsulAgentActions.AGENT, wrap(c -> c.getAgent()));
+        bind(ConsulStatusActions.LEADER, wrap(c -> c.getLeader()));
+        bind(ConsulStatusActions.PEERS, wrap(c -> c.getPeers()));
     }
 }

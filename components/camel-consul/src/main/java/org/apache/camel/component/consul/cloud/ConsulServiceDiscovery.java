@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.catalog.CatalogService;
 import com.orbitz.consul.model.health.ServiceHealth;
-import com.orbitz.consul.option.CatalogOptions;
-import com.orbitz.consul.option.ImmutableCatalogOptions;
+import com.orbitz.consul.option.ImmutableQueryOptions;
+import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.consul.ConsulConfiguration;
@@ -38,25 +38,25 @@ import org.apache.camel.util.function.Suppliers;
 
 public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     private final Supplier<Consul> client;
-    private final CatalogOptions catalogOptions;
+    private final QueryOptions queryOptions;
 
     public ConsulServiceDiscovery(ConsulConfiguration configuration) throws Exception {
         this.client = Suppliers.memorize(configuration::createConsulClient, this::rethrowAsRuntimeCamelException);
 
-        ImmutableCatalogOptions.Builder builder = ImmutableCatalogOptions.builder();
+        ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();
         ObjectHelper.ifNotEmpty(configuration.getDatacenter(), builder::datacenter);
-        ObjectHelper.ifNotEmpty(configuration.getTags(), tags -> tags.forEach(builder::tag));
+        ObjectHelper.ifNotEmpty(configuration.getTags(), builder::tag);
 
-        catalogOptions = builder.build();
+        queryOptions = builder.build();
     }
 
     @Override
     public List<ServiceDefinition> getServices(String name) {
         List<CatalogService> services = client.get().catalogClient()
-            .getService(name, catalogOptions)
+            .getService(name, queryOptions)
             .getResponse();
         List<ServiceHealth> healths = client.get().healthClient()
-            .getAllServiceInstances(name, catalogOptions)
+            .getAllServiceInstances(name, queryOptions)
             .getResponse();
 
         return services.stream()
