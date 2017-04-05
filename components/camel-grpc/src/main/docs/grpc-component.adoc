@@ -1,0 +1,144 @@
+## gRPC Component
+
+*Available as of Camel version 2.19*
+
+The gRPC component allows you to do Remote Procedure Call (RPC) 
+using https://developers.google.com/protocol-buffers/docs/overview[Protocol Buffers (protobuf)] format
+over HTTP/2 transport.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-grpc</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-------------------------------------
+grpc://service[?options]
+-------------------------------------
+
+### Endpoint Options
+
+// component options: START
+The gRPC component has no options.
+// component options: END
+
+// endpoint options: START
+The gRPC endpoint is configured using URI syntax:
+
+    grpc:service
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **service** | *Required* Fully qualified service name from the protocol buffer descriptor file (package dot service definition name) |  | String
+|=======================================================================
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **host** (producer) | The gRPC server host name |  | String
+| **method** (producer) | gRPC method name |  | String
+| **port** (producer) | The gRPC server port |  | int
+| **target** (producer) | The channel target name as alternative to host and port parameters |  | String
+| **usePlainText** (producer) | The plaintext connection to the server flag | true | Boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
+// endpoint options: END
+
+### gRPC Resource Type Mapping
+In case of synchronous invocation, component expects method request class in Body and returns response class as out Body.
+In case of asynchronous invocation, component expects method request class in Body and returns java.util.List of the response class as out Body.
+
+### Examples
+
+Below is a simple synchronous method invoke with host and port parameters
+
+[source,java]
+-------------------------------------------------------------------------------
+from("direct:grpc-sync")
+.to("grpc://org.apache.camel.component.grpc.PingPong?method=sendPing&host=localhost&port=1000");
+-------------------------------------------------------------------------------
+
+[source,java]
+---------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:grpc-async" />
+    <to uri="grpc://org.apache.camel.component.grpc.PingPong?method=pingAsyncResponse&host=localhost&port=1000"/>
+</route>
+---------------------------------------------------------------------------------------
+
+A asynchronous method invoke with target host and port parameter
+
+[source,java]
+-------------------------------------------------------------------------------
+from("direct:index")
+.to("grpc://org.apache.camel.component.grpc.PingPong?method=sendPing&invoke=ASYNC&target=dns:///hostname:8000");
+-------------------------------------------------------------------------------
+
+It's it is recommended to use Maven Protocol Buffers Plugin which calls Protocol Buffer Compiler (protoc) tool to generate Java source files from .proto (protocol buffer definition) files for the custom project. This plugin will generate procedures request and response classes, their builders and gRPC procedures stubs classes as well.
+
+Following steps are required:
+
+Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set ${os.detected.classifier} parameter manually 
+[source,xml]
+-------------------------------------------------------------------------
+<extensions>
+  <extension>
+    <groupId>kr.motd.maven</groupId>
+    <artifactId>os-maven-plugin</artifactId>
+    <version>1.4.1.Final</version>
+  </extension>
+</extensions>
+-------------------------------------------------------------------------
+
+Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the project pom.xml
+[source,xml]
+-------------------------------------------------------------------------
+<plugin>
+  <groupId>org.xolstice.maven.plugins</groupId>
+  <artifactId>protobuf-maven-plugin</artifactId>
+  <version>0.5.0</version>
+  <configuration>
+    <protocArtifact>com.google.protobuf:protoc:3.2.0:exe:${os.detected.classifier}</protocArtifact>
+    <pluginId>grpc-java</pluginId>
+    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.2.0:exe:${os.detected.classifier}</pluginArtifact>
+  </configuration>
+  <executions>
+    <execution>
+      <goals>
+        <goal>compile</goal>
+        <goal>compile-custom</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+-------------------------------------------------------------------------
+
+### For more information, see these resources
+
+http://www.grpc.io/[gRPC project site]
+
+https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
