@@ -32,6 +32,10 @@
   <description>An example showing how to work with Camel ServiceCall EIP and Spring Boot</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <category>Cloud</category>
+  </properties>
+
   <modules>
     <module>consumer</module>
     <module>services</module>
