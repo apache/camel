@@ -89,6 +89,17 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>atlassian-public</id>
+            <name>Atlassian Public</name>
+            <url>https://maven.atlassian.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
 </project>
