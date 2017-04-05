@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.grpc.enabled",
+      "description": "Enable grpc component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}
