@@ -35,25 +35,15 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
 
     private String policyRef;
 
-    /**
-     * indicates whether this is a global builder (not wrapped) or a
-     * specialization for a specific route which wraps a given error handler.
-     */
-    private boolean wrapped;
-
-    public JavaEETransactionErrorHandlerBuilder(final boolean wrapped) {
-        super();
-        this.wrapped = wrapped;
-    }
-
+    @Override
     public boolean supportTransacted() {
         return true;
     }
-
+    
     @Override
     public ErrorHandlerBuilder cloneBuilder() {
 
-        final JavaEETransactionErrorHandlerBuilder answer = new JavaEETransactionErrorHandlerBuilder(true);
+        final JavaEETransactionErrorHandlerBuilder answer = new JavaEETransactionErrorHandlerBuilder();
         cloneBuilder(answer);
         return answer;
 
@@ -98,7 +88,7 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
         if (transactionPolicy == null) {
 
             LOG.debug(
-                    "No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
+                    "No tranaction policiy configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
 
             Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
@@ -129,7 +119,7 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
             rollbackLoggingLevel = LoggingLevel.valueOf(properties.get(ROLLBACK_LOGGING_LEVEL_PROPERTY));
         }
 
-        RedeliveryErrorHandler answer = new RedeliveryErrorHandler(camelContext,
+        JavaEETransactionErrorHandler answer = new JavaEETransactionErrorHandler(camelContext,
                 processor,
                 getLogger(),
                 getOnRedelivery(),
@@ -157,17 +147,18 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
         return this;
     }
 
+    public JavaEETransactionErrorHandlerBuilder setRollbackLoggingLevel(final LoggingLevel rollbackLoggingLevel) {
+    	this.rollbackLoggingLevel = rollbackLoggingLevel;
+        return this;
+    }
+    
     protected CamelLogger createLogger() {
         return new CamelLogger(LoggerFactory.getLogger(TransactionErrorHandler.class), LoggingLevel.ERROR);
     }
 
     @Override
     public String toString() {
-        return "TransactionErrorHandlerBuilder";
-    }
-
-    public boolean isWrapped() {
-        return wrapped;
+        return "JavaEETransactionErrorHandlerBuilder";
     }
 
 }

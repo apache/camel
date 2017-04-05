@@ -47,7 +47,7 @@ public abstract class JavaEETransactionPolicy implements TransactedPolicy {
     @Override
     public Processor wrap(RouteContext routeContext, Processor processor) {
 
-        RedeliveryErrorHandler answer;
+        JavaEETransactionErrorHandler answer;
 
         // the goal is to configure the error handler builder on the route as a
         // transacted error handler,
@@ -92,7 +92,7 @@ public abstract class JavaEETransactionPolicy implements TransactedPolicy {
         } else {
             LOG.debug(
                     "No or no transactional ErrorHandlerBuilder configured, will use default JavaEETransactionErrorHandlerBuilder settings");
-            txBuilder = new JavaEETransactionErrorHandlerBuilder(true);
+            txBuilder = new JavaEETransactionErrorHandlerBuilder();
         }
 
         txBuilder.setTransactionPolicy(this);
@@ -115,12 +115,12 @@ public abstract class JavaEETransactionPolicy implements TransactedPolicy {
 
     }
 
-    protected RedeliveryErrorHandler createTransactionErrorHandler(RouteContext routeContext, Processor processor,
+    protected JavaEETransactionErrorHandler createTransactionErrorHandler(RouteContext routeContext, Processor processor,
             ErrorHandlerBuilder builder) {
 
-        RedeliveryErrorHandler answer;
+        JavaEETransactionErrorHandler answer;
         try {
-            answer = (RedeliveryErrorHandler) builder.createErrorHandler(routeContext, processor);
+            answer = (JavaEETransactionErrorHandler) builder.createErrorHandler(routeContext, processor);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }

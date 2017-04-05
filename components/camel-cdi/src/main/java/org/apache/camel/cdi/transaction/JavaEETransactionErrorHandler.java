@@ -16,9 +16,9 @@ import org.apache.camel.util.CamelLogger;
  * done within the transaction which is not appropriate in JavaEE since every
  * error breaks the current transaction.
  */
-public class RedeliveryErrorHandler extends org.apache.camel.processor.RedeliveryErrorHandler {
+public class JavaEETransactionErrorHandler extends org.apache.camel.processor.RedeliveryErrorHandler {
 
-    public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
+    public JavaEETransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
             ExceptionPolicyStrategy exceptionPolicyStrategy, JavaEETransactionPolicy transactionPolicy,
             Predicate retryWhile, ScheduledExecutorService executorService, LoggingLevel rollbackLoggingLevel,
