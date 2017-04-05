@@ -17,7 +17,9 @@
 package org.apache.camel.component.infinispan;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.spi.Metadata;
@@ -60,6 +62,8 @@ public class InfinispanConfiguration {
     private Flag[] flags;
     @UriParam(label = "advanced")
     private String configurationUri;
+    @UriParam(label = "advanced")
+    private Map<String, String> configurationProperties;
 
 
     public String getCommand() {
@@ -222,5 +226,27 @@ public class InfinispanConfiguration {
 
     public void setConfigurationUri(String configurationUri) {
         this.configurationUri = configurationUri;
+    }
+
+    public Map<String, String> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    /**
+     * Infinispan configuration properties.
+     */
+    public void setConfigurationProperties(Map<String, String> configurationProperties) {
+        this.configurationProperties = configurationProperties;
+    }
+
+    /**
+     * Add configuration
+     */
+    public void addConfigurationProperty(String key, String value) {
+        if (this.configurationProperties == null) {
+            this.configurationProperties = new HashMap<>();
+        }
+
+        this.configurationProperties.put(key, value);
     }
 }

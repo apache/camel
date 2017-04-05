@@ -106,7 +106,7 @@ public final class InfinispanUtil {
         return ObjectHelper.isEmpty(message.getHeader(header));
     }
 
-    public static BasicCache<Object, Object> getCache(BasicCacheContainer cacheContainer, String cacheName) {
+    public static <K, V> BasicCache<K, V> getCache(BasicCacheContainer cacheContainer, String cacheName) {
         return ObjectHelper.isEmpty(cacheName) ? cacheContainer.getCache() : cacheContainer.getCache(cacheName);
     }
 
