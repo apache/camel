@@ -296,6 +296,10 @@ public interface ComponentVerifier {
              */
             StandardCode UNSUPPORTED_SCOPE = new ComponentVerifierHelper.StandardErrorCode("UNSUPPORTED_SCOPE");
             /**
+             * The requested {@link Component} is not supported
+             */
+            StandardCode UNSUPPORTED_COMPONENT = new ComponentVerifierHelper.StandardErrorCode("UNSUPPORTED_COMPONENT");
+            /**
              * Generic error which is explained in more details with {@link VerificationError#getDetails()}
              */
             StandardCode GENERIC = new ComponentVerifierHelper.StandardErrorCode("GENERIC");
