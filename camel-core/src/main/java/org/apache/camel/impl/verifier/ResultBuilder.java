@@ -111,8 +111,8 @@ public final class ResultBuilder {
 
     public ComponentVerifier.Result build() {
         return new DefaultResult(
-            scope.orElseGet(() -> ComponentVerifier.Scope.PARAMETERS),
-            status.orElseGet(() -> ComponentVerifier.Result.Status.UNSUPPORTED),
+            scope.orElse(ComponentVerifier.Scope.PARAMETERS),
+            status.orElse(ComponentVerifier.Result.Status.UNSUPPORTED),
             verificationErrors != null ? Collections.unmodifiableList(verificationErrors) : Collections.emptyList()
         );
     }
@@ -136,5 +136,4 @@ public final class ResultBuilder {
     public static ResultBuilder unsupported() {
         return withStatusAndScope(ComponentVerifier.Result.Status.UNSUPPORTED, ComponentVerifier.Scope.PARAMETERS);
     }
-
 }
