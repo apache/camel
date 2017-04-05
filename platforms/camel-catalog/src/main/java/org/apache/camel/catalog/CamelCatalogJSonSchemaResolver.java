@@ -18,7 +18,6 @@ package org.apache.camel.catalog;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,78 +47,42 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
 
     @Override
     public String getComponentJSonSchema(String name) {
-        String file = camelCatalog.getRuntimeProvider().getComponentJSonSchemaDirectory() + "/" + name + ".json";
+        final String file = camelCatalog.getRuntimeProvider().getComponentJSonSchemaDirectory() + "/" + name + ".json";
 
-        String answer = null;
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                answer = CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-        if (answer == null) {
-            // its maybe a third party so try to see if we have the json schema already
-            answer = extraComponentsJSonSchema.get(name);
-            if (answer == null) {
-                // or if we can load it from the classpath
-                String className = extraComponents.get(name);
-                if (className != null) {
-                    String packageName = className.substring(0, className.lastIndexOf('.'));
-                    packageName = packageName.replace('.', '/');
-                    String path = packageName + "/" + name + ".json";
-                    is = camelCatalog.getVersionManager().getResourceAsStream(path);
-                    if (is != null) {
-                        try {
-                            answer = CatalogHelper.loadText(is);
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                }
-            }
+        final String fromVersionManager = loadResourceFromVersionManager(file);
+        if (fromVersionManager != null) {
+            return fromVersionManager;
         }
 
-        return answer;
+        // its maybe a third party so try to see if we have the json schema already
+        final String answer = extraComponentsJSonSchema.get(name);
+        if (answer != null) {
+            return answer;
+        }
+
+        // or if we can load it from the classpath
+        final String className = extraComponents.get(name);
+        return loadFromClasspath(className, name);
     }
 
     @Override
     public String getDataFormatJSonSchema(String name) {
-        String file = camelCatalog.getRuntimeProvider().getDataFormatJSonSchemaDirectory() + "/" + name + ".json";
+        final String file = camelCatalog.getRuntimeProvider().getDataFormatJSonSchemaDirectory() + "/" + name + ".json";
 
-        String answer = null;
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                answer = CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-        if (answer == null) {
-            // its maybe a third party so try to see if we have the json schema already
-            answer = extraDataFormatsJSonSchema.get(name);
-            if (answer == null) {
-                // or if we can load it from the classpath
-                String className = extraDataFormats.get(name);
-                if (className != null) {
-                    String packageName = className.substring(0, className.lastIndexOf('.'));
-                    packageName = packageName.replace('.', '/');
-                    String path = packageName + "/" + name + ".json";
-                    is = camelCatalog.getVersionManager().getResourceAsStream(path);
-                    if (is != null) {
-                        try {
-                            answer = CatalogHelper.loadText(is);
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                }
-            }
+        final String fromVersionManager = loadResourceFromVersionManager(file);
+        if (fromVersionManager != null) {
+            return fromVersionManager;
         }
 
-        return answer;
+        // its maybe a third party so try to see if we have the json schema already
+        final String schema = extraDataFormatsJSonSchema.get(name);
+        if (schema != null) {
+            return schema;
+        }
+
+        // or if we can load it from the classpath
+        final String className = extraDataFormats.get(name);
+        return loadFromClasspath(className, name);
     }
 
     @Override
@@ -129,53 +92,46 @@ public class CamelCatalogJSonSchemaResolver implements JSonSchemaResolver {
             name = "bean";
         }
 
-        String file = camelCatalog.getRuntimeProvider().getLanguageJSonSchemaDirectory() + "/" + name + ".json";
+        final String file = camelCatalog.getRuntimeProvider().getLanguageJSonSchemaDirectory() + "/" + name + ".json";
 
-        String answer = null;
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                answer = CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-
-        return answer;
-    }
-
-    @Override
-    public String getOtherJSonSchema(String name) {
-        String file = camelCatalog.getRuntimeProvider().getOtherJSonSchemaDirectory() + "/" + name + ".json";
-
-        String answer = null;
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                answer = CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-
-        return answer;
+        return loadResourceFromVersionManager(file);
     }
 
     @Override
     public String getModelJSonSchema(String name) {
-        String file = MODEL_DIR + "/" + name + ".json";
+        final String file = MODEL_DIR + "/" + name + ".json";
 
-        String answer = null;
+        return loadResourceFromVersionManager(file);
+    }
 
-        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(file);
-        if (is != null) {
-            try {
-                answer = CatalogHelper.loadText(is);
-            } catch (IOException e) {
-                // ignore
-            }
+    @Override
+    public String getOtherJSonSchema(String name) {
+        final String file = camelCatalog.getRuntimeProvider().getOtherJSonSchemaDirectory() + "/" + name + ".json";
+
+        return loadResourceFromVersionManager(file);
+    }
+
+    String loadFromClasspath(final String className, final String fileName) {
+        if (className != null) {
+            String packageName = className.substring(0, className.lastIndexOf('.'));
+            packageName = packageName.replace('.', '/');
+            final String path = packageName + "/" + fileName + ".json";
+
+            return loadResourceFromVersionManager(path);
         }
 
-        return answer;
+        return null;
+    }
+
+    String loadResourceFromVersionManager(final String file) {
+        try (final InputStream is = camelCatalog.getVersionManager().getResourceAsStream(file)) {
+            if (is != null) {
+                return CatalogHelper.loadText(is);
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+
+        return null;
     }
 }
