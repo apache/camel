@@ -872,7 +872,7 @@ public abstract class AbstractCamelCatalog {
         return doAsEndpointUri(scheme, properties, "&amp;", encode);
     }
 
-    private String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand, boolean encode) throws URISyntaxException {
+    String doAsEndpointUri(String scheme, Map<String, String> properties, String ampersand, boolean encode) throws URISyntaxException {
         String json = jsonSchemaResolver.getComponentJSonSchema(scheme);
         if (json == null) {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
