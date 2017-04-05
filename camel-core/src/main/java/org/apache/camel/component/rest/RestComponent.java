@@ -58,7 +58,7 @@ public class RestComponent extends DefaultComponent {
         mergeConfigurations(config, getCamelContext().getRestConfiguration(restConfigurationName, true));
 
         // if no explicit host was given, then fallback and use default configured host
-        String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
+        String h = getAndRemoveOrResolveReferenceParameter(parameters, "host", String.class, host);
         if (h == null && config != null) {
             h = config.getHost();
             int port = config.getPort();
