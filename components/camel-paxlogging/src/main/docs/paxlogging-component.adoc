@@ -1,16 +1,12 @@
-[[Pax-Logging-PaxLoggingcomponent]]
-PaxLogging component
-~~~~~~~~~~~~~~~~~~~~
+## OSGi PAX Logging Component
 
-*Available in Camel 2.6*
+*Available as of Camel version 2.6*
 
 The `paxlogging` component can be used in an OSGi environment to receive
 http://wiki.ops4j.org/display/paxlogging/Pax+Logging[PaxLogging] events
 and process them.
 
-[[Pax-Logging-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -26,9 +22,7 @@ Maven users need to add the following dependency to their `pom.xml`
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.6.0 or higher).
 
-[[Pax-Logging-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,xml]
 -----------------------------
@@ -38,55 +32,59 @@ paxlogging:appender[?options]
 where `appender` is the name of the pax appender that need to be
 configured in the PaxLogging service configuration.
 
-[[Pax-Logging-URIoptions]]
-URI options
-^^^^^^^^^^^
+### URI options
 
 
 
 // component options: START
-The OSGi PAX Logging component supports 1 options which are listed below.
+The OSGi PAX Logging component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| bundleContext | consumer |  | BundleContext | The OSGi BundleContext is automatic injected by Camel
+| Name | Description | Default | Type
+| **bundleContext** (consumer) | The OSGi BundleContext is automatic injected by Camel |  | BundleContext
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The OSGi PAX Logging component supports 5 endpoint options which are listed below:
+The OSGi PAX Logging endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    paxlogging:appender
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| appender | consumer |  | String | *Required* Appender is the name of the pax appender that need to be configured in the PaxLogging service configuration.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **appender** | *Required* Appender is the name of the pax appender that need to be configured in the PaxLogging service configuration. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Pax-Logging-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 The `in` message body will be set to the received PaxLoggingEvent.
 
-[[Pax-Logging-Exampleusage]]
-Example usage
-^^^^^^^^^^^^^
+### Example usage
 
 [source,xml]
 ----------------------------------

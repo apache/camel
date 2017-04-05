@@ -1,6 +1,6 @@
-[[XMPP-XMPPComponent]]
-XMPP Component
-~~~~~~~~~~~~~~
+## XMPP Component
+
+*Available as of Camel version 1.0*
 
 The *xmpp:* component implements an XMPP (Jabber) transport.
 
@@ -17,9 +17,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[XMPP-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,text]
 ------------------------------------------------------
@@ -35,9 +33,7 @@ starting.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[XMPP-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -47,41 +43,50 @@ The XMPP component has no options.
 
 
 // endpoint options: START
-The XMPP component supports 21 endpoint options which are listed below:
+The XMPP endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    xmpp:host:port/participant
+
+with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* Hostname for the chat server
-| port | common |  | int | *Required* Port number for the chat server
-| participant | common |  | String | JID (Jabber ID) of person to receive messages. room parameter has precedence over participant.
-| login | common | true | boolean | Whether to login the user.
-| nickname | common |  | String | Use nickname when joining room. If room is specified and nickname is not user will be used for the nickname.
-| pubsub | common | false | boolean | Accept pubsub packets on input default is false
-| room | common |  | String | If this option is specified the component will connect to MUC (Multi User Chat). Usually the domain name for MUC is different from the login domain. For example if you are supermanjabber.org and want to join the krypton room then the room URL is kryptonconference.jabber.org. Note the conference part. It is not a requirement to provide the full room JID. If the room parameter does not contain the symbol the domain part will be discovered and added by Camel
-| serviceName | common |  | String | The name of the service you are connecting to. For Google Talk this would be gmail.com.
-| testConnectionOnStartup | common | true | boolean | Specifies whether to test the connection on startup. This is used to ensure that the XMPP client has a valid connection to the XMPP server when the route starts. Camel throws an exception on startup if a connection cannot be established. When this option is set to false Camel will attempt to establish a lazy connection when needed by a producer and will poll for a consumer connection until the connection is established. Default is true.
-| createAccount | common (advanced) | false | boolean | If true an attempt to create an account will be made. Default is false.
-| resource | common (advanced) | Camel | String | XMPP resource. The default is Camel.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| connectionPollDelay | consumer | 10 | int | The amount of time in seconds between polls (in seconds) to verify the health of the XMPP connection or between attempts to establish an initial consumer connection. Camel will try to re-establish a connection if it has become inactive. Default is 10 seconds.
-| doc | consumer | false | boolean | Set a doc header on the IN message containing a Document form of the incoming packet; default is true if presence or pubsub are true otherwise false
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| connectionConfig | advanced |  | ConnectionConfiguration | To use an existing connection configuration
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-| password | security |  | String | Password for login
-| user | security |  | String | User name (without server name). If not specified anonymous login will be attempted.
+| Name | Description | Default | Type
+| **host** | *Required* Hostname for the chat server |  | String
+| **port** | *Required* Port number for the chat server |  | int
+| **participant** | JID (Jabber ID) of person to receive messages. room parameter has precedence over participant. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (18 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **login** (common) | Whether to login the user. | true | boolean
+| **nickname** (common) | Use nickname when joining room. If room is specified and nickname is not user will be used for the nickname. |  | String
+| **pubsub** (common) | Accept pubsub packets on input default is false | false | boolean
+| **room** (common) | If this option is specified the component will connect to MUC (Multi User Chat). Usually the domain name for MUC is different from the login domain. For example if you are supermanjabber.org and want to join the krypton room then the room URL is kryptonconference.jabber.org. Note the conference part. It is not a requirement to provide the full room JID. If the room parameter does not contain the symbol the domain part will be discovered and added by Camel |  | String
+| **serviceName** (common) | The name of the service you are connecting to. For Google Talk this would be gmail.com. |  | String
+| **testConnectionOnStartup** (common) | Specifies whether to test the connection on startup. This is used to ensure that the XMPP client has a valid connection to the XMPP server when the route starts. Camel throws an exception on startup if a connection cannot be established. When this option is set to false Camel will attempt to establish a lazy connection when needed by a producer and will poll for a consumer connection until the connection is established. Default is true. | true | boolean
+| **createAccount** (common) | If true an attempt to create an account will be made. Default is false. | false | boolean
+| **resource** (common) | XMPP resource. The default is Camel. | Camel | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **connectionPollDelay** (consumer) | The amount of time in seconds between polls (in seconds) to verify the health of the XMPP connection or between attempts to establish an initial consumer connection. Camel will try to re-establish a connection if it has become inactive. Default is 10 seconds. | 10 | int
+| **doc** (consumer) | Set a doc header on the IN message containing a Document form of the incoming packet; default is true if presence or pubsub are true otherwise false | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **connectionConfig** (advanced) | To use an existing connection configuration |  | ConnectionConfiguration
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **headerFilterStrategy** (filter) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| **password** (security) | Password for login |  | String
+| **user** (security) | User name (without server name). If not specified anonymous login will be attempted. |  | String
+|=======================================================================
 // endpoint options: END
 
 
-[[XMPP-HeadersandsettingSubjectorLanguage]]
-Headers and setting Subject or Language
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Headers and setting Subject or Language
 
 Camel sets the message IN headers as properties on the XMPP message. You
 can configure a `HeaderFilterStategy` if you need custom filtering of
@@ -89,9 +94,7 @@ headers.
 The *Subject* and *Language* of the XMPP message are also set if they
 are provided as IN headers.
 
-[[XMPP-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 User `superman` to join room `krypton` at `jabber` server with password,
 `secret`:
@@ -154,12 +157,9 @@ from("direct:start").
 
  
 
-[[XMPP-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

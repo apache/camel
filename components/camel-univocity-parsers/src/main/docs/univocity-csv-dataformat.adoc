@@ -1,8 +1,6 @@
-[[uniVocity-parsersformats-uniVocity-parsers]]
-Univocity-parsers Data-format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## uniVocity CSV DataFormat
 
-*Available as of Camel 2.15.0*
+*Available as of Camel version 2.15*
 
 This link:data-format.html[Data
 Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]
@@ -30,9 +28,7 @@ download page for the latest versions]).
 </dependency>
 ----------------------------------------------------
 
-[[uniVocity-parsersformats-Options]]
-Options
-^^^^^^^
+### Options
 
 Most configuration options of the uniVocity-parsers are available in the
 data formats. If you want more information about a particular option,
@@ -43,9 +39,7 @@ page].
 The 3 data formats share common options and have dedicated ones, this
 section presents them all.
 
-[[uniVocity-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // dataformat options: START
@@ -53,7 +47,6 @@ The uniVocity CSV dataformat supports 18 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -76,14 +69,11 @@ The uniVocity CSV dataformat supports 18 options which are listed below.
 | asMap | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 
 
-[[uniVocity-parsersformats-Marshallingusages]]
-Marshalling usages
-^^^^^^^^^^^^^^^^^^
+### Marshalling usages
 
 The marshalling accepts either:
 
@@ -92,9 +82,7 @@ The marshalling accepts either:
 
 Any other body will throws an exception.
 
-[[uniVocity-parsersformats-Usageexample:marshallingaMapintoCSVformat]]
-Usage example: marshalling a Map into CSV format
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: marshalling a Map into CSV format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -107,9 +95,7 @@ Usage example: marshalling a Map into CSV format
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[uniVocity-parsersformats-Usageexample:marshallingaMapintofixed-widthformat]]
-Usage example: marshalling a Map into fixed-width format
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: marshalling a Map into fixed-width format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -126,9 +112,7 @@ Usage example: marshalling a Map into fixed-width format
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[uniVocity-parsersformats-Usageexample:marshallingaMapintoTSVformat]]
-Usage example: marshalling a Map into TSV format
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: marshalling a Map into TSV format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -141,9 +125,7 @@ Usage example: marshalling a Map into TSV format
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[uniVocity-parsersformats-Unmarshallingusages]]
-Unmarshalling usages
-^^^^^^^^^^^^^^^^^^^^
+### Unmarshalling usages
 
 The unmarshalling uses an `InputStream` in order to read the data.
 
@@ -158,9 +140,7 @@ All the rows can either:
 * be collected at once into a list (`lazyLoad` option with `false`);
 * be read on the fly using an iterator (`lazyLoad` option with `true`).
 
-[[uniVocity-parsersformats-UsageexampleunmarshallingaCSVformatintomapswithautomaticheaders]]
-Usage example: unmarshalling a CSV format into maps with automatic headers
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: unmarshalling a CSV format into maps with automatic headers
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -173,9 +153,7 @@ Usage example: unmarshalling a CSV format into maps with automatic headers
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[uniVocity-parsersformats-Usageexampleunmarshallingafixed-widthformatintolists]]
-Usage example: unmarshalling a fixed-width format into lists
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: unmarshalling a fixed-width format into lists
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -191,4 +169,3 @@ Usage example: unmarshalling a fixed-width format into lists
     <to uri="mock:result"/>
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-

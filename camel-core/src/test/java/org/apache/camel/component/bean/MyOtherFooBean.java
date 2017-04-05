@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-/**
- * @version 
- */
 public class MyOtherFooBean {
 
     public String echo(String s) {
@@ -27,5 +24,13 @@ public class MyOtherFooBean {
 
     public Integer echo(Integer i) {
         return i.intValue() * i.intValue();
+    }
+
+    public String toString(Object input) {
+        return "toString(Object) was called";
+    }
+
+    public String toString(String input) {
+        return "toString(String) was called";
     }
 }

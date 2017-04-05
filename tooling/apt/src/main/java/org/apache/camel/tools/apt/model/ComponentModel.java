@@ -25,10 +25,12 @@ public final class ComponentModel {
     private String javaType;
     private String title;
     private String description;
+    private String firstVersion;
     private String groupId;
     private String artifactId;
     private String versionId;
     private String label;
+    private String verifiers;
     private boolean consumerOnly;
     private boolean producerOnly;
     private boolean deprecated;
@@ -91,6 +93,14 @@ public final class ComponentModel {
         this.description = description;
     }
 
+    public String getFirstVersion() {
+        return firstVersion;
+    }
+
+    public void setFirstVersion(String firstVersion) {
+        this.firstVersion = firstVersion;
+    }
+
     public String getGroupId() {
         return groupId;
     }
@@ -121,6 +131,14 @@ public final class ComponentModel {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getVerifiers() {
+        return verifiers;
+    }
+
+    public void setVerifiers(String verifiers) {
+        this.verifiers = verifiers;
     }
 
     public boolean isConsumerOnly() {

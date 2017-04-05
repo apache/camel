@@ -1,8 +1,6 @@
-[[SpringWebServices-SpringWebServicesComponent]]
-Spring Web Services Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Spring WebService Component
 
-*Available as of Camel 2.6*
+*Available as of Camel version 2.6*
 
 The *spring-ws:* component allows you to integrate with
 http://static.springsource.org/spring-ws/sites/1.5/[Spring Web
@@ -35,9 +33,7 @@ module is also included in Spring-WS 1.5.9 (see
 http://stackoverflow.com/questions/3313314/can-spring-ws-1-5-be-used-with-spring-3[this
 post])
 
-[[SpringWebServices-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The URI scheme for this component is as follows
 
@@ -81,9 +77,7 @@ calling upon.
 You can append query *options* to the URI in the following format,
 `?option=value&option=value&...`
 
-[[SpringWebServices-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -93,45 +87,54 @@ The Spring WebService component has no options.
 
 
 // endpoint options: START
-The Spring WebService component supports 25 endpoint options which are listed below:
+The Spring WebService endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    spring-ws:type:lookupKey:webServiceEndpointUri
+
+with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| type | consumer |  | EndpointMappingType | Endpoint mapping type if endpoint mapping is used. rootqname - Offers the option to map web service requests based on the qualified name of the root element contained in the message. soapaction - Used to map web service requests based on the SOAP action specified in the header of the message. uri - In order to map web service requests that target a specific URI. xpathresult - Used to map web service requests based on the evaluation of an XPath expression against the incoming message. The result of the evaluation should match the XPath result specified in the endpoint URI. beanname - Allows you to reference an org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object in order to integrate with existing (legacy) endpoint mappings like PayloadRootQNameEndpointMapping SoapActionEndpointMapping etc
-| lookupKey | consumer |  | String | Endpoint mapping key if endpoint mapping is used
-| webServiceEndpointUri | producer |  | String | The default Web Service endpoint uri to use for the producer.
-| messageFilter | common |  | MessageFilter | Option to provide a custom MessageFilter. For example when you want to process your headers or attachments by your own.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| endpointDispatcher | consumer |  | CamelEndpointDispatcher | Spring org.springframework.ws.server.endpoint.MessageEndpoint for dispatching messages received by Spring-WS to a Camel endpoint to integrate with existing (legacy) endpoint mappings like PayloadRootQNameEndpointMapping SoapActionEndpointMapping etc.
-| endpointMapping | consumer |  | CamelSpringWSEndpointMapping | Reference to an instance of org.apache.camel.component.spring.ws.bean.CamelEndpointMapping in the Registry/ApplicationContext. Only one bean is required in the registry to serve all Camel/Spring-WS endpoints. This bean is auto-discovered by the MessageDispatcher and used to map requests to Camel endpoints based on characteristics specified on the endpoint (like root QName SOAP action etc)
-| expression | consumer |  | String | The XPath expression to use when option type=xpathresult. Then this option is required to be configured.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| allowResponseAttachmentOverride | producer | false | boolean | Option to override soap response attachments in in/out exchange with attachments from the actual service layer. If the invoked service appends or rewrites the soap attachments this option when set to true allows the modified soap attachments to be overwritten in in/out message attachments
-| allowResponseHeaderOverride | producer | false | boolean | Option to override soap response header in in/out exchange with header info from the actual service layer. If the invoked service appends or rewrites the soap header this option when set to true allows the modified soap header to be overwritten in in/out message headers
-| faultAction | producer |  | URI | Signifies the value for the faultAction response WS-Addressing Fault Action header that is provided by the method.
-| faultTo | producer |  | URI | Signifies the value for the faultAction response WS-Addressing FaultTo header that is provided by the method.
-| messageFactory | producer |  | WebServiceMessageFactory | Option to provide a custom WebServiceMessageFactory. For example when you want Apache Axiom to handle web service messages instead of SAAJ.
-| messageIdStrategy | producer |  | MessageIdStrategy | Option to provide a custom MessageIdStrategy to control generation of unique message ids.
-| messageSender | producer |  | WebServiceMessageSender | Option to provide a custom WebServiceMessageSender. For example to perform authentication or use alternative transports
-| outputAction | producer |  | URI | Signifies the value for the response WS-Addressing Action header that is provided by the method.
-| replyTo | producer |  | URI | Signifies the value for the replyTo response WS-Addressing ReplyTo header that is provided by the method.
-| soapAction | producer |  | String | SOAP action to include inside a SOAP request when accessing remote web services
-| timeout | producer |  | int | Sets the socket read timeout (in milliseconds) while invoking a webservice using the producer see URLConnection.setReadTimeout() and CommonsHttpMessageSender.setReadTimeout(). This option works when using the built-in message sender implementations: CommonsHttpMessageSender and HttpUrlConnectionMessageSender. One of these implementations will be used by default for HTTP based services unless you customize the Spring WS configuration options supplied to the component. If you are using a non-standard sender it is assumed that you will handle your own timeout configuration. The built-in message sender HttpComponentsMessageSender is considered instead of CommonsHttpMessageSender which has been deprecated see HttpComponentsMessageSender.setReadTimeout().
-| webServiceTemplate | producer |  | WebServiceTemplate | Option to provide a custom WebServiceTemplate. This allows for full control over client-side web services handling; like adding a custom interceptor or specifying a fault resolver message sender or message factory.
-| wsAddressingAction | producer |  | URI | WS-Addressing 1.0 action header to include when accessing web services. The To header is set to the address of the web service as specified in the endpoint URI (default Spring-WS behavior).
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
+| Name | Description | Default | Type
+| **type** | Endpoint mapping type if endpoint mapping is used. rootqname - Offers the option to map web service requests based on the qualified name of the root element contained in the message. soapaction - Used to map web service requests based on the SOAP action specified in the header of the message. uri - In order to map web service requests that target a specific URI. xpathresult - Used to map web service requests based on the evaluation of an XPath expression against the incoming message. The result of the evaluation should match the XPath result specified in the endpoint URI. beanname - Allows you to reference an org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object in order to integrate with existing (legacy) endpoint mappings like PayloadRootQNameEndpointMapping SoapActionEndpointMapping etc |  | EndpointMappingType
+| **lookupKey** | Endpoint mapping key if endpoint mapping is used |  | String
+| **webServiceEndpointUri** | The default Web Service endpoint uri to use for the producer. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (22 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **messageFilter** (common) | Option to provide a custom MessageFilter. For example when you want to process your headers or attachments by your own. |  | MessageFilter
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **endpointDispatcher** (consumer) | Spring org.springframework.ws.server.endpoint.MessageEndpoint for dispatching messages received by Spring-WS to a Camel endpoint to integrate with existing (legacy) endpoint mappings like PayloadRootQNameEndpointMapping SoapActionEndpointMapping etc. |  | CamelEndpointDispatcher
+| **endpointMapping** (consumer) | Reference to an instance of org.apache.camel.component.spring.ws.bean.CamelEndpointMapping in the Registry/ApplicationContext. Only one bean is required in the registry to serve all Camel/Spring-WS endpoints. This bean is auto-discovered by the MessageDispatcher and used to map requests to Camel endpoints based on characteristics specified on the endpoint (like root QName SOAP action etc) |  | CamelSpringWSEndpoint Mapping
+| **expression** (consumer) | The XPath expression to use when option type=xpathresult. Then this option is required to be configured. |  | String
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **allowResponseAttachment Override** (producer) | Option to override soap response attachments in in/out exchange with attachments from the actual service layer. If the invoked service appends or rewrites the soap attachments this option when set to true allows the modified soap attachments to be overwritten in in/out message attachments | false | boolean
+| **allowResponseHeaderOverride** (producer) | Option to override soap response header in in/out exchange with header info from the actual service layer. If the invoked service appends or rewrites the soap header this option when set to true allows the modified soap header to be overwritten in in/out message headers | false | boolean
+| **faultAction** (producer) | Signifies the value for the faultAction response WS-Addressing Fault Action header that is provided by the method. |  | URI
+| **faultTo** (producer) | Signifies the value for the faultAction response WS-Addressing FaultTo header that is provided by the method. |  | URI
+| **messageFactory** (producer) | Option to provide a custom WebServiceMessageFactory. For example when you want Apache Axiom to handle web service messages instead of SAAJ. |  | WebServiceMessage Factory
+| **messageIdStrategy** (producer) | Option to provide a custom MessageIdStrategy to control generation of unique message ids. |  | MessageIdStrategy
+| **messageSender** (producer) | Option to provide a custom WebServiceMessageSender. For example to perform authentication or use alternative transports |  | WebServiceMessage Sender
+| **outputAction** (producer) | Signifies the value for the response WS-Addressing Action header that is provided by the method. |  | URI
+| **replyTo** (producer) | Signifies the value for the replyTo response WS-Addressing ReplyTo header that is provided by the method. |  | URI
+| **soapAction** (producer) | SOAP action to include inside a SOAP request when accessing remote web services |  | String
+| **timeout** (producer) | Sets the socket read timeout (in milliseconds) while invoking a webservice using the producer see URLConnection.setReadTimeout() and CommonsHttpMessageSender.setReadTimeout(). This option works when using the built-in message sender implementations: CommonsHttpMessageSender and HttpUrlConnectionMessageSender. One of these implementations will be used by default for HTTP based services unless you customize the Spring WS configuration options supplied to the component. If you are using a non-standard sender it is assumed that you will handle your own timeout configuration. The built-in message sender HttpComponentsMessageSender is considered instead of CommonsHttpMessageSender which has been deprecated see HttpComponentsMessageSender.setReadTimeout(). |  | int
+| **webServiceTemplate** (producer) | Option to provide a custom WebServiceTemplate. This allows for full control over client-side web services handling; like adding a custom interceptor or specifying a fault resolver message sender or message factory. |  | WebServiceTemplate
+| **wsAddressingAction** (producer) | WS-Addressing 1.0 action header to include when accessing web services. The To header is set to the address of the web service as specified in the endpoint URI (default Spring-WS behavior). |  | URI
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+|=======================================================================
 // endpoint options: END
 
 
-[[SpringWebServices-Messageheaders]]
-Message headers
-+++++++++++++++
+#### Message headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -162,9 +165,7 @@ outputAction option if present
 faultAction option if present
 |=======================================================================
 
-[[SpringWebServices-Accessingwebservices]]
-Accessing web services
-~~~~~~~~~~~~~~~~~~~~~~
+### Accessing web services
 
 To call a web service at `http://foo.com/bar` simply define a route:
 
@@ -183,9 +184,7 @@ template.requestBody("direct:example", "<foobar xmlns=\"http://foo.com\"><msg>te
 Remember if it's a SOAP service you're calling you don't have to include
 SOAP tags. Spring-WS will perform the XML-to-SOAP marshaling.
 
-[[SpringWebServices-SendingSOAPandWS-Addressingactionheaders]]
-Sending SOAP and WS-Addressing action headers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending SOAP and WS-Addressing action headers
 
 When a remote web service requires a SOAP action or use of the
 WS-Addressing standard you define your route as:
@@ -205,9 +204,7 @@ template.requestBodyAndHeader("direct:example",
 SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "http://baz.com");
 --------------------------------------------------------------------
 
-[[SpringWebServices-UsingSOAPheaders]]
-Using SOAP headers
-^^^^^^^^^^^^^^^^^^
+### Using SOAP headers
 
 *Available as of Camel 2.11.1*
 
@@ -239,9 +236,7 @@ For an example see this
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring-ws/src/test/java/org/apache/camel/component/spring/ws/SoapHeaderTest.java[unit
 test].
 
-[[SpringWebServices-Theheaderandattachmentpropagation]]
-The header and attachment propagation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### The header and attachment propagation
 
 Spring WS Camel supports propagation of the headers and attachments into
 Spring-WS WebServiceMessage response since version *2.10.3*. The
@@ -260,9 +255,7 @@ Note: If the exchange header in the pipeline contains text, it generates
 Qname(key)=value attribute in the soap header. Recommended is to create
 a QName class directly and put into any key into header.
 
-[[SpringWebServices-HowtouseMTOMattachments]]
-How to use MTOM attachments
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to use MTOM attachments
 
 The BasicMessageFilter provides all required information for Apache
 Axiom in order to produce MTOM message. If you want to use Apache Camel
@@ -320,9 +313,7 @@ from("direct:send")
 - Now, your producer will generate MTOM message with otpmized
 attachments.
 
-[[SpringWebServices-Thecustomheaderandattachmentfiltering]]
-The custom header and attachment filtering
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### The custom header and attachment filtering
 
 If you need to provide your custom processing of either headers or
 attachments, extend existing BasicMessageFilter and override the
@@ -365,9 +356,7 @@ protected void doProcessSoapAttachements(Message inOrOut, SoapMessage response)
 { your code /*no need to call super*/ }
 -------------------------------------------------------------------------------
 
-[[SpringWebServices-UsingacustomMessageSenderandMessageFactory]]
-Using a custom MessageSender and MessageFactory
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using a custom MessageSender and MessageFactory
 
 A custom message sender or factory in the registry can be referenced
 like this:
@@ -400,9 +389,7 @@ Spring configuration:
 </bean>
 ---------------------------------------------------------------------------------------------------------------------
 
-[[SpringWebServices-Exposingwebservices]]
-Exposing web services
-~~~~~~~~~~~~~~~~~~~~~
+### Exposing web services
 
 In order to expose a web service using this component you first need to
 set-up a
@@ -461,9 +448,7 @@ comes in). Also don't forget to check out the
 link:spring-ws-example.html[Spring Web Services Example] included in the
 Camel distribution.
 
-[[SpringWebServices-Endpointmappinginroutes]]
-Endpoint mapping in routes
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Endpoint mapping in routes
 
 With the XML configuration in-place you can now use Camel's DSL to
 define what web service requests are handled by your endpoint:
@@ -505,9 +490,7 @@ from("spring-ws:xpathresult:abc?expression=//foobar&endpointMapping=#endpointMap
 .convertBodyTo(String.class).to(mock:example)
 --------------------------------------------------------------------------------------
 
-[[SpringWebServices-Alternativeconfiguration,usingexistingendpointmappings]]
-Alternative configuration, using existing endpoint mappings
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Alternative configuration, using existing endpoint mappings
 
 For every endpoint with mapping-type `beanname` one bean of type
 `CamelEndpointDispatcher` with a corresponding name is required in the
@@ -550,9 +533,7 @@ An example of a route using `beanname`:
 <bean id="FutureEndpointDispatcher" class="org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher" />
 ------------------------------------------------------------------------------------------------------------------------
 
-[[SpringWebServices-POJO-unmarshalling]]
-POJO (un)marshalling
-~~~~~~~~~~~~~~~~~~~~
+### POJO (un)marshalling
 
 Camel's link:data-format.html[pluggable data formats] offer support for
 pojo/xml marshalling using libraries such as JAXB, XStream, JibX, Castor
@@ -579,12 +560,9 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 .to("mock:example").marshal(jaxb);
 --------------------------------------------------------------------------------------------------------
 
-[[SpringWebServices-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

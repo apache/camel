@@ -412,6 +412,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    /**
+     * @param classType the canonical class name for the array passed as input
+     *
+     * @deprecated as of 2.19.0. Replaced wtih {@link #type(Class)} with {@code []} appended to canonical class name
+     * , e.g. {@code type(MyClass[].class}
+     */
+    @Deprecated
     public RestDefinition typeList(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -435,6 +442,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    /**
+     * @param classType the canonical class name for the array passed as output
+     *
+     * @deprecated as of 2.19.0. Replaced wtih {@link #outType(Class)} with {@code []} appended to canonical class name
+     * , e.g. {@code outType(MyClass[].class}
+     */
+    @Deprecated
     public RestDefinition outTypeList(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -736,7 +750,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 }
             }
 
-            route.getOutputs().add(0, binding);
+            route.setRestBindingDefinition(binding);
 
             // create the from endpoint uri which is using the rest component
             String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
@@ -821,36 +835,38 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
 
             // each {} is a parameter (url templating)
-            String[] arr = allPath.split("\\/");
-            for (String a : arr) {
-                // need to resolve property placeholders first
-                try {
-                    a = camelContext.resolvePropertyPlaceholders(a);
-                } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
-                }
-                if (a.startsWith("{") && a.endsWith("}")) {
-                    String key = a.substring(1, a.length() - 1);
-                    //  merge if exists
-                    boolean found = false;
-                    for (RestOperationParamDefinition param : verb.getParams()) {
-                        // name is mandatory
-                        String name = param.getName();
-                        ObjectHelper.notEmpty(name, "parameter name");
-                        // need to resolve property placeholders first
-                        try {
-                            name = camelContext.resolvePropertyPlaceholders(name);
-                        } catch (Exception e) {
-                            throw ObjectHelper.wrapRuntimeCamelException(e);
-                        }
-                        if (name.equalsIgnoreCase(key)) {
-                            param.type(RestParamType.path);
-                            found = true;
-                            break;
-                        }
+            if (allPath != null) {
+                String[] arr = allPath.split("\\/");
+                for (String a : arr) {
+                    // need to resolve property placeholders first
+                    try {
+                        a = camelContext.resolvePropertyPlaceholders(a);
+                    } catch (Exception e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
                     }
-                    if (!found) {
-                        param(verb).name(key).type(RestParamType.path).endParam();
+                    if (a.startsWith("{") && a.endsWith("}")) {
+                        String key = a.substring(1, a.length() - 1);
+                        //  merge if exists
+                        boolean found = false;
+                        for (RestOperationParamDefinition param : verb.getParams()) {
+                            // name is mandatory
+                            String name = param.getName();
+                            ObjectHelper.notEmpty(name, "parameter name");
+                            // need to resolve property placeholders first
+                            try {
+                                name = camelContext.resolvePropertyPlaceholders(name);
+                            } catch (Exception e) {
+                                throw ObjectHelper.wrapRuntimeCamelException(e);
+                            }
+                            if (name.equalsIgnoreCase(key)) {
+                                param.type(RestParamType.path);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            param(verb).name(key).type(RestParamType.path).endParam();
+                        }
                     }
                 }
             }

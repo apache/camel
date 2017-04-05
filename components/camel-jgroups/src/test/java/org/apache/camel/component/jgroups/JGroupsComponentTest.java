@@ -31,11 +31,11 @@ public class JGroupsComponentTest extends CamelTestSupport {
 
     static final String MESSAGE = "MESSAGE";
 
-    static final String SAMPLE_CHANNEL_PROPERTY = "discard_incompatible_packets=true";
+    static final String SAMPLE_CHANNEL_PROPERTY = "enable_diagnostics=true";
 
     static final String SAMPLE_CHANNEL_PROPERTIES = String.format("UDP(%s)", SAMPLE_CHANNEL_PROPERTY);
 
-    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s?channelProperties=%s", CLUSTER_NAME, SAMPLE_CHANNEL_PROPERTIES);
+    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s", CLUSTER_NAME);
 
     // Fixtures
 
@@ -85,7 +85,9 @@ public class JGroupsComponentTest extends CamelTestSupport {
         mockEndpoint.expectedBodiesReceived(MESSAGE);
 
         // When
-        clientChannel.send(new Message(null, null, MESSAGE));
+        Message message = new Message(null, MESSAGE);
+        message.setSrc(null);
+        clientChannel.send(message);
 
         // Then
         mockEndpoint.assertIsSatisfied();

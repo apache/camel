@@ -1,14 +1,12 @@
-[[File2-FileComponent]]
-File Component
-~~~~~~~~~~~~~~
+## File Component
+
+*Available as of Camel version 1.0*
 
 The File component provides access to file systems, allowing files to be
 processed by any other Camel link:components.html[Components] or
 messages from other components to be saved to disk.
 
-[[File2-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------
@@ -49,13 +47,9 @@ your environment. To help with this Camel provides different `readLock`
 options and `doneFileName` option that you can use. See also the section
 _Consuming files from folders where others drop files directly_.
 
-[[File2-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
-[[File2-Options]]
-File2 Options
-+++++++++++++
+#### File2 Options
 
 
 // component options: START
@@ -66,109 +60,116 @@ The File component has no options.
 
 
 // endpoint options: START
-The File component supports 81 endpoint options which are listed below:
+The File endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    file:directoryName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| directoryName | common |  | File | *Required* The starting directory
-| charset | common |  | String | This option is used to specify the encoding of the file. You can use this on the consumer to specify the encodings of the files which allow Camel to know the charset it should load the file content in case the file content is being accessed. Likewise when writing a file you can use this option to specify which charset to write the file as well.
-| doneFileName | common |  | String | Producer: If provided then Camel will write a 2nd done file when the original file has been written. The done file will be empty. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders. The done file will always be written in the same folder as the original file. Consumer: If provided Camel will only consume files if a done file exists. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders.The done file is always expected in the same folder as the original file. Only $file.name and $file.name.noext is supported as dynamic placeholders.
-| fileName | common |  | String | Use Expression such as File Language to dynamically set the filename. For consumers it's used as a filename filter. For producers it's used to evaluate the filename to write. If an expression is set it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type it is always evaluated using the File Language. If the expression is an Expression type the specified Expression type is used - this allows you for instance to use OGNL expressions. For the consumer you can use it to filter filenames so you can for instance consume today's file using the File Language syntax: mydata-$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| delete | consumer | false | boolean | If true the file will be deleted after it is processed successfully.
-| moveFailed | consumer |  | String | Sets the move failure expression based on Simple language. For example to move files into a .error subdirectory use: .error. Note: When moving the files to the fail location Camel will handle the error and will not pick up the file again.
-| noop | consumer | false | boolean | If true the file is not moved or deleted in any way. This option is good for readonly data or for ETL type requirements. If noop=true Camel will set idempotent=true as well to avoid consuming the same files over and over again.
-| preMove | consumer |  | String | Expression (such as File Language) used to dynamically set the filename when moving it before processing. For example to move in-progress files into the order directory set this value to order.
-| recursive | consumer | false | boolean | If a directory will look for files in all the sub-directories as well.
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| directoryMustExist | consumer (advanced) | false | boolean | Similar to startingDirectoryMustExist but this applies during polling recursive sub directories.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
-| extendedAttributes | consumer (advanced) |  | String | To define which file attributes of interest. Like posix:permissionsposix:ownerbasic:lastAccessTime it supports basic wildcard like posix: basic:lastAccessTime
-| inProgressRepository | consumer (advanced) |  | String> | A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in progress files being consumed. By default a memory based repository is used.
-| localWorkDirectory | consumer (advanced) |  | String | When consuming a local work directory can be used to store the remote file content directly in local files to avoid loading the content into memory. This is beneficial if you consume a very big remote file and thus can conserve memory.
-| onCompletionExceptionHandler | consumer (advanced) |  | ExceptionHandler | To use a custom org.apache.camel.spi.ExceptionHandler to handle any thrown exceptions that happens during the file on completion process where the consumer does either a commit or rollback. The default implementation will log any exception at WARN level and ignore.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. In other words the error occurred while the polling was gathering information for instance access to a file network failed so Camel cannot access it to scan for files. The default implementation will log the caused exception at WARN level and ignore it.
-| probeContentType | consumer (advanced) | false | boolean | Whether to enable probing of the content type. If enable then the consumer uses link FilesprobeContentType(java.nio.file.Path) to determine the content-type of the file and store that as a header with key link ExchangeFILE_CONTENT_TYPE on the Message.
-| processStrategy | consumer (advanced) |  | GenericFileProcessStrategy<T> | A pluggable org.apache.camel.component.file.GenericFileProcessStrategy allowing you to implement your own readLock option or similar. Can also be used when special conditions must be met before a file can be consumed such as a special ready file exists. If this option is set then the readLock option does not apply.
-| startingDirectoryMustExist | consumer (advanced) | false | boolean | Whether the starting directory must exist. Mind that the autoCreate option is default enabled which means the starting directory is normally auto created if it doesn't exist. You can disable autoCreate and enable this to ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist.
-| fileExist | producer | Override | GenericFileExist | What to do if a file already exists with the same name. Override which is the default replaces the existing file. Append - adds content to the existing file. Fail - throws a GenericFileOperationException indicating that there is already an existing file. Ignore - silently ignores the problem and does not override the existing file but assumes everything is okay. Move - option requires to use the moveExisting option to be configured as well. The option eagerDeleteTargetFile can be used to control what to do if an moving the file and there exists already an existing file otherwise causing the move operation to fail. The Move option will move any existing files before writing the target file. TryRename Camel is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name without doing any exists check.This check may be faster on some file systems and especially FTP servers.
-| flatten | producer | false | boolean | Flatten is used to flatten the file name path to strip any leading paths so it's just the file name. This allows you to consume recursively into sub-directories but when you eg write the files to another directory they will be written in a single directory. Setting this to true on the producer enforces that any file name in CamelFileName header will be stripped for any leading paths.
-| moveExisting | producer |  | String | Expression (such as File Language) used to compute file name to use when fileExist=Move is configured. To move files into a backup subdirectory just enter backup. This option only supports the following File Language tokens: file:name file:name.ext file:name.noext file:onlyname file:onlyname.noext file:ext and file:parent. Notice the file:parent is not supported by the FTP component as the FTP component can only move any existing files to a relative directory based on current dir as base.
-| tempFileName | producer |  | String | The same as tempPrefix option but offering a more fine grained control on the naming of the temporary filename as it uses the File Language.
-| tempPrefix | producer |  | String | This option is used to write the file using a temporary name and then after the write is complete rename it to the real name. Can be used to identify files being written and also avoid consumers (not using exclusive read locks) reading in progress files. Is often used by FTP when uploading big files.
-| allowNullBody | producer (advanced) | false | boolean | Used to specify if a null body is allowed during file writing. If set to true then an empty file will be created when set to false and attempting to send a null body to the file component a GenericFileWriteException of 'Cannot write null body to file.' will be thrown. If the fileExist option is set to 'Override' then the file will be truncated and if set to append the file will remain unchanged.
-| chmod | producer (advanced) |  | String | Specify the file permissions which is sent by the producer the chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
-| chmodDirectory | producer (advanced) |  | String | Specify the directory permissions used when the producer creates missing directories the chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
-| eagerDeleteTargetFile | producer (advanced) | true | boolean | Whether or not to eagerly delete any existing target file. This option only applies when you use fileExists=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting the target file before the temp file is written. For example you may write big files and want the target file to exists during the temp file is being written. This ensure the target file is only deleted until the very last moment just before the temp file is being renamed to the target filename. This option is also used to control whether to delete any existing files when fileExist=Move is enabled and an existing file exists. If this option copyAndDeleteOnRenameFails false then an exception will be thrown if an existing file existed if its true then the existing file is deleted before the move operation.
-| forceWrites | producer (advanced) | true | boolean | Whether to force syncing writes to the file system. You can turn this off if you do not want this level of guarantee for example if writing to logs / audit logs etc; this would yield better performance.
-| keepLastModified | producer (advanced) | false | boolean | Will keep the last modified timestamp from the source file (if any). Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp. This header can contain either a java.util.Date or long with the timestamp. If the timestamp exists and the option is enabled it will set this timestamp on the written file. Note: This option only applies to the file producer. You cannot use this option with any of the ftp producers.
-| autoCreate | advanced | true | boolean | Automatically create missing directories in the file's pathname. For the file consumer that means creating the starting directory. For the file producer it means the directory the files should be written to.
-| bufferSize | advanced | 131072 | int | Write buffer sized in bytes.
-| copyAndDeleteOnRenameFail | advanced | true | boolean | Whether to fallback and do a copy and delete file in case the file could not be renamed directly. This option is not available for the FTP component.
-| renameUsingCopy | advanced | false | boolean | Perform rename operations using a copy and delete strategy. This is primarily used in environments where the regular rename operation is unreliable (e.g. across different file systems or networks). This option takes precedence over the copyAndDeleteOnRenameFail parameter that will automatically fall back to the copy and delete strategy but only after additional delays.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| antExclude | filter |  | String | Ant style filter exclusion. If both antInclude and antExclude are used antExclude takes precedence over antInclude. Multiple exclusions may be specified in comma-delimited format.
-| antFilterCaseSensitive | filter | true | boolean | Sets case sensitive flag on ant fiter
-| antInclude | filter |  | String | Ant style filter inclusion. Multiple inclusions may be specified in comma-delimited format.
-| eagerMaxMessagesPerPoll | filter | true | boolean | Allows for controlling whether the limit from maxMessagesPerPoll is eager or not. If eager then the limit is during the scanning of files. Where as false would scan all files and then perform sorting. Setting this option to false allows for sorting all files first and then limit the poll. Mind that this requires a higher memory usage as all file details are in memory to perform the sorting.
-| exclude | filter |  | String | Is used to exclude files if filename matches the regex pattern (matching is case in-senstive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris
-| filter | filter |  | GenericFileFilter<T> | Pluggable filter as a org.apache.camel.component.file.GenericFileFilter class. Will skip files if filter returns false in its accept() method.
-| filterDirectory | filter |  | String | Filters the directory based on Simple language. For example to filter on current date you can use a simple date pattern such as $date:now:yyyMMdd
-| filterFile | filter |  | String | Filters the file based on Simple language. For example to filter on file size you can use $file:size 5000
-| idempotent | filter | false | Boolean | Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files. Will by default use a memory based LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled as well to avoid consuming the same files over and over again.
-| idempotentKey | filter |  | String | To use a custom idempotent key. By default the absolute path of the file is used. You can use the File Language for example to use the file name and file size you can do: idempotentKey=$file:name-$file:size
-| idempotentRepository | filter |  | String> | A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryMessageIdRepository if none is specified and idempotent is true.
-| include | filter |  | String | Is used to include files if filename matches the regex pattern (matching is case in-sensitive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris
-| maxDepth | filter | 2147483647 | int | The maximum depth to traverse when recursively processing a directory.
-| maxMessagesPerPoll | filter |  | int | To define a maximum messages to gather per poll. By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files. Set a value of 0 or negative to disabled it. Notice: If this option is in use then the File and FTP components will limit before any sorting. For example if you have 100000 files and use maxMessagesPerPoll=500 then only the first 500 files will be picked up and then sorted. You can use the eagerMaxMessagesPerPoll option and set this to false to allow to scan all files first and then sort afterwards.
-| minDepth | filter |  | int | The minimum depth to start processing when recursively processing a directory. Using minDepth=1 means the base directory. Using minDepth=2 means the first sub directory.
-| move | filter |  | String | Expression (such as Simple Language) used to dynamically set the filename when moving it after processing. To move files into a .done subdirectory just enter .done.
-| exclusiveReadLockStrategy | lock |  | GenericFileExclusiveReadLockStrategy<T> | Pluggable read-lock as a org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy implementation.
-| readLock | lock |  | String | Used by consumer to only poll the files if it has exclusive read-lock on the file (i.e. the file is not in-progress or being written). Camel will wait until the file lock is granted. This option provides the build in strategies: none - No read lock is in use markerFile - Camel creates a marker file (fileName.camelLock) and then holds a lock on it. This option is not available for the FTP component changed - Changed is using file length/modification timestamp to detect whether the file is currently being copied or not. Will at least use 1 sec to determine this so this option cannot consume files as fast as the others but can be more reliable as the JDK IO API cannot always determine whether a file is currently being used by another process. The option readLockCheckInterval can be used to set the check frequency. fileLock - is for using java.nio.channels.FileLock. This option is not avail for the FTP component. This approach should be avoided when accessing a remote file system via a mount/share unless that file system supports distributed file locks. rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock. idempotent - (only for file component) idempotent is for using a idempotentRepository as the read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. idempotent-changed - (only for file component) idempotent-changed is for using a idempotentRepository and changed as the combined read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. idempotent-rename - (only for file component) idempotent-rename is for using a idempotentRepository and rename as the combined read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. Notice: The various read locks is not all suited to work in clustered mode where concurrent consumers on different nodes is competing for the same files on a shared file system. The markerFile using a close to atomic operation to create the empty marker file but its not guaranteed to work in a cluster. The fileLock may work better but then the file system need to support distributed file locks and so on. Using the idempotent read lock can support clustering if the idempotent repository supports clustering such as Hazelcast Component or Infinispan.
-| readLockCheckInterval | lock | 1000 | long | Interval in millis for the read-lock if supported by the read lock. This interval is used for sleeping between attempts to acquire the read lock. For example when using the changed read lock you can set a higher interval period to cater for slow writes. The default of 1 sec. may be too fast if the producer is very slow writing the file. Notice: For FTP the default readLockCheckInterval is 5000. The readLockTimeout value must be higher than readLockCheckInterval but a rule of thumb is to have a timeout that is at least 2 or more times higher than the readLockCheckInterval. This is needed to ensure that amble time is allowed for the read lock process to try to grab the lock before the timeout was hit.
-| readLockDeleteOrphanLockFiles | lock | true | boolean | Whether or not read lock with marker files should upon startup delete any orphan read lock files which may have been left on the file system if Camel was not properly shutdown (such as a JVM crash). If turning this option to false then any orphaned lock file will cause Camel to not attempt to pickup that file this could also be due another node is concurrently reading files from the same shared directory.
-| readLockLoggingLevel | lock | WARN | LoggingLevel | Logging level used when a read lock could not be acquired. By default a WARN is logged. You can change this level for example to OFF to not have any logging. This option is only applicable for readLock of types: changed fileLock rename.
-| readLockMarkerFile | lock | true | boolean | Whether to use marker file with the changed rename or exclusive read lock types. By default a marker file is used as well to guard against other processes picking up the same files. This behavior can be turned off by setting this option to false. For example if you do not want to write marker files to the file systems by the Camel application.
-| readLockMinAge | lock | 0 | long | This option applied only for readLock=change. This option allows to specify a minimum age the file must be before attempting to acquire the read lock. For example use readLockMinAge=300s to require the file is at last 5 minutes old. This can speedup the changed read lock as it will only attempt to acquire files which are at least that given age.
-| readLockMinLength | lock | 1 | long | This option applied only for readLock=changed. This option allows you to configure a minimum file length. By default Camel expects the file to contain data and thus the default value is 1. You can set this option to zero to allow consuming zero-length files.
-| readLockRemoveOnCommit | lock | false | boolean | This option applied only for readLock=idempotent. This option allows to specify whether to remove the file name entry from the idempotent repository when processing the file is succeeded and a commit happens. By default the file is not removed which ensures that any race-condition do not occur so another active node may attempt to grab the file. Instead the idempotent repository may support eviction strategies that you can configure to evict the file name entry after X minutes - this ensures no problems with race conditions.
-| readLockRemoveOnRollback | lock | true | boolean | This option applied only for readLock=idempotent. This option allows to specify whether to remove the file name entry from the idempotent repository when processing the file failed and a rollback happens. If this option is false then the file name entry is confirmed (as if the file did a commit).
-| readLockTimeout | lock | 10000 | long | Optional timeout in millis for the read-lock if supported by the read-lock. If the read-lock could not be granted and the timeout triggered then Camel will skip the file. At next poll Camel will try the file again and this time maybe the read-lock could be granted. Use a value of 0 or lower to indicate forever. Currently fileLock changed and rename support the timeout. Notice: For FTP the default readLockTimeout value is 20000 instead of 10000. The readLockTimeout value must be higher than readLockCheckInterval but a rule of thumb is to have a timeout that is at least 2 or more times higher than the readLockCheckInterval. This is needed to ensure that amble time is allowed for the read lock process to try to grab the lock before the timeout was hit.
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. The default value is 500. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. This option allows you to share a thread pool among multiple consumers.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | Allow to plugin a custom org.apache.camel.spi.ScheduledPollConsumerScheduler to use as the scheduler for firing when the polling consumer runs. The default implementation uses the ScheduledExecutorService and there is a Quartz2 and Spring based which supports CRON expressions. Notice: If using a custom scheduler then the options for initialDelay useFixedDelay timeUnit and scheduledExecutorService may not be in use. Use the text quartz2 to refer to use the Quartz2 scheduler; and use the text spring to use the Spring based; and use the text myScheduler to refer to a custom scheduler by its id in the Registry. See Quartz2 page for an example.
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
-| shuffle | sort | false | boolean | To shuffle the list of files (sort in random order)
-| sortBy | sort |  | String | Built-in sort by using the File Language. Supports nested sorts so you can have a sort by file name and as a 2nd group sort by modified date.
-| sorter | sort |  | GenericFile<T>> | Pluggable sorter as a java.util.Comparator class.
+| Name | Description | Default | Type
+| **directoryName** | *Required* The starting directory |  | File
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (80 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **charset** (common) | This option is used to specify the encoding of the file. You can use this on the consumer to specify the encodings of the files which allow Camel to know the charset it should load the file content in case the file content is being accessed. Likewise when writing a file you can use this option to specify which charset to write the file as well. Do mind that when writing the file Camel may have to read the message content into memory to be able to convert the data into the configured charset so do not use this if you have big messages. |  | String
+| **doneFileName** (common) | Producer: If provided then Camel will write a 2nd done file when the original file has been written. The done file will be empty. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders. The done file will always be written in the same folder as the original file. Consumer: If provided Camel will only consume files if a done file exists. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders.The done file is always expected in the same folder as the original file. Only $file.name and $file.name.noext is supported as dynamic placeholders. |  | String
+| **fileName** (common) | Use Expression such as File Language to dynamically set the filename. For consumers it's used as a filename filter. For producers it's used to evaluate the filename to write. If an expression is set it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type it is always evaluated using the File Language. If the expression is an Expression type the specified Expression type is used - this allows you for instance to use OGNL expressions. For the consumer you can use it to filter filenames so you can for instance consume today's file using the File Language syntax: mydata-$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards. |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
+| **delete** (consumer) | If true the file will be deleted after it is processed successfully. | false | boolean
+| **moveFailed** (consumer) | Sets the move failure expression based on Simple language. For example to move files into a .error subdirectory use: .error. Note: When moving the files to the fail location Camel will handle the error and will not pick up the file again. |  | String
+| **noop** (consumer) | If true the file is not moved or deleted in any way. This option is good for readonly data or for ETL type requirements. If noop=true Camel will set idempotent=true as well to avoid consuming the same files over and over again. | false | boolean
+| **preMove** (consumer) | Expression (such as File Language) used to dynamically set the filename when moving it before processing. For example to move in-progress files into the order directory set this value to order. |  | String
+| **recursive** (consumer) | If a directory will look for files in all the sub-directories as well. | false | boolean
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **directoryMustExist** (consumer) | Similar to startingDirectoryMustExist but this applies during polling recursive sub directories. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
+| **extendedAttributes** (consumer) | To define which file attributes of interest. Like posix:permissionsposix:ownerbasic:lastAccessTime it supports basic wildcard like posix: basic:lastAccessTime |  | String
+| **inProgressRepository** (consumer) | A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in progress files being consumed. By default a memory based repository is used. |  | String>
+| **localWorkDirectory** (consumer) | When consuming a local work directory can be used to store the remote file content directly in local files to avoid loading the content into memory. This is beneficial if you consume a very big remote file and thus can conserve memory. |  | String
+| **onCompletionException Handler** (consumer) | To use a custom org.apache.camel.spi.ExceptionHandler to handle any thrown exceptions that happens during the file on completion process where the consumer does either a commit or rollback. The default implementation will log any exception at WARN level and ignore. |  | ExceptionHandler
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. In other words the error occurred while the polling was gathering information for instance access to a file network failed so Camel cannot access it to scan for files. The default implementation will log the caused exception at WARN level and ignore it. |  | PollingConsumerPoll Strategy
+| **probeContentType** (consumer) | Whether to enable probing of the content type. If enable then the consumer uses link FilesprobeContentType(java.nio.file.Path) to determine the content-type of the file and store that as a header with key link ExchangeFILE_CONTENT_TYPE on the Message. | false | boolean
+| **processStrategy** (consumer) | A pluggable org.apache.camel.component.file.GenericFileProcessStrategy allowing you to implement your own readLock option or similar. Can also be used when special conditions must be met before a file can be consumed such as a special ready file exists. If this option is set then the readLock option does not apply. |  | GenericFileProcess Strategy<T>
+| **startingDirectoryMustExist** (consumer) | Whether the starting directory must exist. Mind that the autoCreate option is default enabled which means the starting directory is normally auto created if it doesn't exist. You can disable autoCreate and enable this to ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist. | false | boolean
+| **fileExist** (producer) | What to do if a file already exists with the same name. Override which is the default replaces the existing file. Append - adds content to the existing file. Fail - throws a GenericFileOperationException indicating that there is already an existing file. Ignore - silently ignores the problem and does not override the existing file but assumes everything is okay. Move - option requires to use the moveExisting option to be configured as well. The option eagerDeleteTargetFile can be used to control what to do if an moving the file and there exists already an existing file otherwise causing the move operation to fail. The Move option will move any existing files before writing the target file. TryRename Camel is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name without doing any exists check.This check may be faster on some file systems and especially FTP servers. | Override | GenericFileExist
+| **flatten** (producer) | Flatten is used to flatten the file name path to strip any leading paths so it's just the file name. This allows you to consume recursively into sub-directories but when you eg write the files to another directory they will be written in a single directory. Setting this to true on the producer enforces that any file name in CamelFileName header will be stripped for any leading paths. | false | boolean
+| **moveExisting** (producer) | Expression (such as File Language) used to compute file name to use when fileExist=Move is configured. To move files into a backup subdirectory just enter backup. This option only supports the following File Language tokens: file:name file:name.ext file:name.noext file:onlyname file:onlyname.noext file:ext and file:parent. Notice the file:parent is not supported by the FTP component as the FTP component can only move any existing files to a relative directory based on current dir as base. |  | String
+| **tempFileName** (producer) | The same as tempPrefix option but offering a more fine grained control on the naming of the temporary filename as it uses the File Language. |  | String
+| **tempPrefix** (producer) | This option is used to write the file using a temporary name and then after the write is complete rename it to the real name. Can be used to identify files being written and also avoid consumers (not using exclusive read locks) reading in progress files. Is often used by FTP when uploading big files. |  | String
+| **allowNullBody** (producer) | Used to specify if a null body is allowed during file writing. If set to true then an empty file will be created when set to false and attempting to send a null body to the file component a GenericFileWriteException of 'Cannot write null body to file.' will be thrown. If the fileExist option is set to 'Override' then the file will be truncated and if set to append the file will remain unchanged. | false | boolean
+| **chmod** (producer) | Specify the file permissions which is sent by the producer the chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it. |  | String
+| **chmodDirectory** (producer) | Specify the directory permissions used when the producer creates missing directories the chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it. |  | String
+| **eagerDeleteTargetFile** (producer) | Whether or not to eagerly delete any existing target file. This option only applies when you use fileExists=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting the target file before the temp file is written. For example you may write big files and want the target file to exists during the temp file is being written. This ensure the target file is only deleted until the very last moment just before the temp file is being renamed to the target filename. This option is also used to control whether to delete any existing files when fileExist=Move is enabled and an existing file exists. If this option copyAndDeleteOnRenameFails false then an exception will be thrown if an existing file existed if its true then the existing file is deleted before the move operation. | true | boolean
+| **forceWrites** (producer) | Whether to force syncing writes to the file system. You can turn this off if you do not want this level of guarantee for example if writing to logs / audit logs etc; this would yield better performance. | true | boolean
+| **keepLastModified** (producer) | Will keep the last modified timestamp from the source file (if any). Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp. This header can contain either a java.util.Date or long with the timestamp. If the timestamp exists and the option is enabled it will set this timestamp on the written file. Note: This option only applies to the file producer. You cannot use this option with any of the ftp producers. | false | boolean
+| **autoCreate** (advanced) | Automatically create missing directories in the file's pathname. For the file consumer that means creating the starting directory. For the file producer it means the directory the files should be written to. | true | boolean
+| **bufferSize** (advanced) | Write buffer sized in bytes. | 131072 | int
+| **copyAndDeleteOnRenameFail** (advanced) | Whether to fallback and do a copy and delete file in case the file could not be renamed directly. This option is not available for the FTP component. | true | boolean
+| **renameUsingCopy** (advanced) | Perform rename operations using a copy and delete strategy. This is primarily used in environments where the regular rename operation is unreliable (e.g. across different file systems or networks). This option takes precedence over the copyAndDeleteOnRenameFail parameter that will automatically fall back to the copy and delete strategy but only after additional delays. | false | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **antExclude** (filter) | Ant style filter exclusion. If both antInclude and antExclude are used antExclude takes precedence over antInclude. Multiple exclusions may be specified in comma-delimited format. |  | String
+| **antFilterCaseSensitive** (filter) | Sets case sensitive flag on ant fiter | true | boolean
+| **antInclude** (filter) | Ant style filter inclusion. Multiple inclusions may be specified in comma-delimited format. |  | String
+| **eagerMaxMessagesPerPoll** (filter) | Allows for controlling whether the limit from maxMessagesPerPoll is eager or not. If eager then the limit is during the scanning of files. Where as false would scan all files and then perform sorting. Setting this option to false allows for sorting all files first and then limit the poll. Mind that this requires a higher memory usage as all file details are in memory to perform the sorting. | true | boolean
+| **exclude** (filter) | Is used to exclude files if filename matches the regex pattern (matching is case in-senstive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris |  | String
+| **filter** (filter) | Pluggable filter as a org.apache.camel.component.file.GenericFileFilter class. Will skip files if filter returns false in its accept() method. |  | GenericFileFilter<T>
+| **filterDirectory** (filter) | Filters the directory based on Simple language. For example to filter on current date you can use a simple date pattern such as $date:now:yyyMMdd |  | String
+| **filterFile** (filter) | Filters the file based on Simple language. For example to filter on file size you can use $file:size 5000 |  | String
+| **idempotent** (filter) | Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files. Will by default use a memory based LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled as well to avoid consuming the same files over and over again. | false | Boolean
+| **idempotentKey** (filter) | To use a custom idempotent key. By default the absolute path of the file is used. You can use the File Language for example to use the file name and file size you can do: idempotentKey=$file:name-$file:size |  | String
+| **idempotentRepository** (filter) | A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryMessageIdRepository if none is specified and idempotent is true. |  | String>
+| **include** (filter) | Is used to include files if filename matches the regex pattern (matching is case in-sensitive). Notice if you use symbols such as plus sign and others you would need to configure this using the RAW() syntax if configuring this as an endpoint uri. See more details at configuring endpoint uris |  | String
+| **maxDepth** (filter) | The maximum depth to traverse when recursively processing a directory. | 2147483647 | int
+| **maxMessagesPerPoll** (filter) | To define a maximum messages to gather per poll. By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files. Set a value of 0 or negative to disabled it. Notice: If this option is in use then the File and FTP components will limit before any sorting. For example if you have 100000 files and use maxMessagesPerPoll=500 then only the first 500 files will be picked up and then sorted. You can use the eagerMaxMessagesPerPoll option and set this to false to allow to scan all files first and then sort afterwards. |  | int
+| **minDepth** (filter) | The minimum depth to start processing when recursively processing a directory. Using minDepth=1 means the base directory. Using minDepth=2 means the first sub directory. |  | int
+| **move** (filter) | Expression (such as Simple Language) used to dynamically set the filename when moving it after processing. To move files into a .done subdirectory just enter .done. |  | String
+| **exclusiveReadLockStrategy** (lock) | Pluggable read-lock as a org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy implementation. |  | GenericFileExclusive ReadLockStrategy<T>
+| **readLock** (lock) | Used by consumer to only poll the files if it has exclusive read-lock on the file (i.e. the file is not in-progress or being written). Camel will wait until the file lock is granted. This option provides the build in strategies: none - No read lock is in use markerFile - Camel creates a marker file (fileName.camelLock) and then holds a lock on it. This option is not available for the FTP component changed - Changed is using file length/modification timestamp to detect whether the file is currently being copied or not. Will at least use 1 sec to determine this so this option cannot consume files as fast as the others but can be more reliable as the JDK IO API cannot always determine whether a file is currently being used by another process. The option readLockCheckInterval can be used to set the check frequency. fileLock - is for using java.nio.channels.FileLock. This option is not avail for the FTP component. This approach should be avoided when accessing a remote file system via a mount/share unless that file system supports distributed file locks. rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock. idempotent - (only for file component) idempotent is for using a idempotentRepository as the read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. idempotent-changed - (only for file component) idempotent-changed is for using a idempotentRepository and changed as the combined read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. idempotent-rename - (only for file component) idempotent-rename is for using a idempotentRepository and rename as the combined read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. Notice: The various read locks is not all suited to work in clustered mode where concurrent consumers on different nodes is competing for the same files on a shared file system. The markerFile using a close to atomic operation to create the empty marker file but its not guaranteed to work in a cluster. The fileLock may work better but then the file system need to support distributed file locks and so on. Using the idempotent read lock can support clustering if the idempotent repository supports clustering such as Hazelcast Component or Infinispan. |  | String
+| **readLockCheckInterval** (lock) | Interval in millis for the read-lock if supported by the read lock. This interval is used for sleeping between attempts to acquire the read lock. For example when using the changed read lock you can set a higher interval period to cater for slow writes. The default of 1 sec. may be too fast if the producer is very slow writing the file. Notice: For FTP the default readLockCheckInterval is 5000. The readLockTimeout value must be higher than readLockCheckInterval but a rule of thumb is to have a timeout that is at least 2 or more times higher than the readLockCheckInterval. This is needed to ensure that amble time is allowed for the read lock process to try to grab the lock before the timeout was hit. | 1000 | long
+| **readLockDeleteOrphanLock Files** (lock) | Whether or not read lock with marker files should upon startup delete any orphan read lock files which may have been left on the file system if Camel was not properly shutdown (such as a JVM crash). If turning this option to false then any orphaned lock file will cause Camel to not attempt to pickup that file this could also be due another node is concurrently reading files from the same shared directory. | true | boolean
+| **readLockLoggingLevel** (lock) | Logging level used when a read lock could not be acquired. By default a WARN is logged. You can change this level for example to OFF to not have any logging. This option is only applicable for readLock of types: changed fileLock rename. | WARN | LoggingLevel
+| **readLockMarkerFile** (lock) | Whether to use marker file with the changed rename or exclusive read lock types. By default a marker file is used as well to guard against other processes picking up the same files. This behavior can be turned off by setting this option to false. For example if you do not want to write marker files to the file systems by the Camel application. | true | boolean
+| **readLockMinAge** (lock) | This option applied only for readLock=change. This option allows to specify a minimum age the file must be before attempting to acquire the read lock. For example use readLockMinAge=300s to require the file is at last 5 minutes old. This can speedup the changed read lock as it will only attempt to acquire files which are at least that given age. | 0 | long
+| **readLockMinLength** (lock) | This option applied only for readLock=changed. This option allows you to configure a minimum file length. By default Camel expects the file to contain data and thus the default value is 1. You can set this option to zero to allow consuming zero-length files. | 1 | long
+| **readLockRemoveOnCommit** (lock) | This option applied only for readLock=idempotent. This option allows to specify whether to remove the file name entry from the idempotent repository when processing the file is succeeded and a commit happens. By default the file is not removed which ensures that any race-condition do not occur so another active node may attempt to grab the file. Instead the idempotent repository may support eviction strategies that you can configure to evict the file name entry after X minutes - this ensures no problems with race conditions. | false | boolean
+| **readLockRemoveOnRollback** (lock) | This option applied only for readLock=idempotent. This option allows to specify whether to remove the file name entry from the idempotent repository when processing the file failed and a rollback happens. If this option is false then the file name entry is confirmed (as if the file did a commit). | true | boolean
+| **readLockTimeout** (lock) | Optional timeout in millis for the read-lock if supported by the read-lock. If the read-lock could not be granted and the timeout triggered then Camel will skip the file. At next poll Camel will try the file again and this time maybe the read-lock could be granted. Use a value of 0 or lower to indicate forever. Currently fileLock changed and rename support the timeout. Notice: For FTP the default readLockTimeout value is 20000 instead of 10000. The readLockTimeout value must be higher than readLockCheckInterval but a rule of thumb is to have a timeout that is at least 2 or more times higher than the readLockCheckInterval. This is needed to ensure that amble time is allowed for the read lock process to try to grab the lock before the timeout was hit. | 10000 | long
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. The default value is 500. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. This option allows you to share a thread pool among multiple consumers. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | Allow to plugin a custom org.apache.camel.spi.ScheduledPollConsumerScheduler to use as the scheduler for firing when the polling consumer runs. The default implementation uses the ScheduledExecutorService and there is a Quartz2 and Spring based which supports CRON expressions. Notice: If using a custom scheduler then the options for initialDelay useFixedDelay timeUnit and scheduledExecutorService may not be in use. Use the text quartz2 to refer to use the Quartz2 scheduler; and use the text spring to use the Spring based; and use the text myScheduler to refer to a custom scheduler by its id in the Registry. See Quartz2 page for an example. | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| **shuffle** (sort) | To shuffle the list of files (sort in random order) | false | boolean
+| **sortBy** (sort) | Built-in sort by using the File Language. Supports nested sorts so you can have a sort by file name and as a 2nd group sort by modified date. |  | String
+| **sorter** (sort) | Pluggable sorter as a java.util.Comparator class. |  | GenericFile<T>>
+|=======================================================================
 // endpoint options: END
 
 
 
-[[File2-Defaultbehaviorforfileproducer]]
-Default behavior for file producer
-++++++++++++++++++++++++++++++++++
+#### Default behavior for file producer
 
 * By default it will override any existing file, if one exist with the
 same name.
 
-[[File2-MoveandDeleteoperations]]
-Move and Delete operations
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Move and Delete operations
 
 Any move or delete operations is executed after (post command) the
 routing has completed; so during processing of the `Exchange` the file
@@ -232,9 +233,7 @@ You can combine the *pre* move and the regular move:
 So in this situation, the file is in the `inprogress` folder when being
 processed and after it's processed, it's moved to the `.done` folder.
 
-[[File2-FinegrainedcontroloverMoveandPreMoveoption]]
-Fine grained control over Move and PreMove option
-+++++++++++++++++++++++++++++++++++++++++++++++++
+#### Fine grained control over Move and PreMove option
 
 The *move* and *preMove* options
 are link:expression.html[Expression]-based, so we have the full power of
@@ -256,9 +255,7 @@ the pattern, we can do:
 move=backup/${date:now:yyyyMMdd}/${file:name}
 ---------------------------------------------
 
-[[File2-AboutmoveFailed]]
-About moveFailed
-++++++++++++++++
+#### About moveFailed
 
 The `moveFailed` option allows you to move files that *could not* be
 processed succesfully to another location such as a error folder of your
@@ -268,15 +265,11 @@ timestamp you can use
 
 See more examples at link:file-language.html[File Language]
 
-[[File2-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 The following headers are supported by this component:
 
-[[File2-Fileproduceronly]]
-File producer only
-++++++++++++++++++
+#### File producer only
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -300,9 +293,7 @@ if the option `fileName` has been configured, then this is still being
 evaluated.
 |=======================================================================
 
-[[File2-Fileconsumeronly]]
-File consumer only
-++++++++++++++++++
+#### File consumer only
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -335,15 +326,11 @@ relative filename. For absolute files this is the absolute path.
 *Camel 2.10.3 and older* the type is `Date`.
 |=======================================================================
 
-[[File2-BatchConsumer]]
-Batch Consumer
-^^^^^^^^^^^^^^
+### Batch Consumer
 
 This component implements the link:batch-consumer.html[Batch Consumer].
 
-[[File2-ExchangeProperties,fileconsumeronly]]
-Exchange Properties, file consumer only
-+++++++++++++++++++++++++++++++++++++++
+#### Exchange Properties, file consumer only
 
 As the file consumer implements the `BatchConsumer` it supports batching
 the files it polls. By batching we mean that Camel will add the
@@ -367,9 +354,7 @@ This allows you for instance to know how many files exist in this batch
 and for instance let the link:aggregator2.html[Aggregator2] aggregate
 this number of files.
 
-[[File2-Usingcharset]]
-Using charset
-^^^^^^^^^^^^^
+### Using charset
 
 *Available as of Camel 2.9.3* +
  The charset option allows for configuring an encoding of the files on
@@ -457,9 +442,7 @@ DEBUG GenericFileConverter           - Read file /Users/davsclaus/workspace/came
 DEBUG FileOperations                 - Using Reader to write file: target/charset/output.txt with charset: iso-8859-1
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-[[File2-Commongotchaswithfolderandfilenames]]
-Common gotchas with folder and filenames
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Common gotchas with folder and filenames
 
 When Camel is producing files (writing files) there are a few gotchas
 affecting how to set a filename of your choice. By default, Camel will
@@ -499,18 +482,14 @@ And a syntax where we set the filename on the endpoint with the
 from("direct:report").to("file:target/reports/?fileName=report.txt");
 ---------------------------------------------------------------------
 
-[[File2-FilenameExpression]]
-Filename Expression
-^^^^^^^^^^^^^^^^^^^
+### Filename Expression
 
 Filename can be set either using the *expression* option or as a
 string-based link:file-language.html[File Language] expression in the
 `CamelFileName` header. See the link:file-language.html[File Language]
 for syntax and samples.
 
-[[File2-Consumingfilesfromfolderswhereothersdropfilesdirectly]]
-Consuming files from folders where others drop files directly
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Consuming files from folders where others drop files directly
 
 Beware if you consume files from a folder where other applications write
 files to directly. Take a look at the different readLock options to see
@@ -525,9 +504,7 @@ good at detecting this. You may also want to look at the doneFileName
 option, which uses a marker file (done file) to signal when a file is
 done and ready to be consumed.
 
-[[File2-Usingdonefiles]]
-Using done files
-^^^^^^^^^^^^^^^^
+### Using done files
 
 *Available as of Camel 2.6*
 
@@ -575,9 +552,7 @@ from("file:bar?doneFileName=ready-${file:name}");
 * `hello.txt` - is the file to be consumed
 * `ready-hello.txt` - is the associated done file
 
-[[File2-Writingdonefiles]]
-Writing done files
-^^^^^^^^^^^^^^^^^^
+### Writing done files
 
 *Available as of Camel 2.6*
 
@@ -624,22 +599,16 @@ was `foo.txt` in the same directory as the target file.
 Will for example create a file named `foo.done` if the target file was
 `foo.txt` in the same directory as the target file.
 
-[[File2-Samples]]
-Samples
-^^^^^^^
+### Samples
 
-[[File2-Readfromadirectoryandwritetoanotherdirectory]]
-Read from a directory and write to another directory
-++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Read from a directory and write to another directory
 
 [source,java]
 -----------------------------------------------------------
 from("file://inputdir/?delete=true").to("file://outputdir")
 -----------------------------------------------------------
 
-[[File2-Readfromadirectoryandwritetoanotherdirectoryusingaoverruledynamicname]]
-Read from a directory and write to another directory using a overrule dynamic name
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Read from a directory and write to another directory using a overrule dynamic name
 
 [source,java]
 ---------------------------------------------------------------------------------------------
@@ -650,9 +619,7 @@ Listen on a directory and create a message for each file dropped there.
 Copy the contents to the `outputdir` and delete the file in the
 `inputdir`.
 
-[[File2-Readingrecursivelyfromadirectoryandwritingtoanother]]
-Reading recursively from a directory and writing to another
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Reading recursively from a directory and writing to another
 
 [source,java]
 --------------------------------------------------------------------------
@@ -700,9 +667,7 @@ outputdir/foo.txt
 outputdir/bar.txt
 -----------------
 
-[[File2-Readingfromadirectoryandthedefaultmoveoperation]]
-Reading from a directory and the default move operation
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Reading from a directory and the default move operation
 
 Camel will by default move any processed file into a `.camel`
 subdirectory in the directory the file was consumed from.
@@ -731,9 +696,7 @@ outputdir/foo.txt
 outputdir/sub/bar.txt
 ---------------------------
 
-[[File2-Readfromadirectoryandprocessthemessageinjava]]
-Read from a directory and process the message in java
-+++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Read from a directory and process the message in java
 
 [source,java]
 -----------------------------------------------------------
@@ -748,17 +711,13 @@ from("file://inputdir/").process(new Processor() {
 The body will be a `File` object that points to the file that was just
 dropped into the `inputdir` directory.
 
-[[File2-Writingtofiles]]
-Writing to files
-++++++++++++++++
+#### Writing to files
 
 Camel is of course also able to write files, i.e. produce files. In the
 sample below we receive some reports on the SEDA queue that we process
 before they are being written to a directory.
 
-[[File2-WritetosubdirectoryusingExchange.FILE_NAME]]
-Write to subdirectory using `Exchange.FILE_NAME`
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Write to subdirectory using `Exchange.FILE_NAME`
 
 Using a single route, it is possible to write a file to any number of
 subdirectories. If you have a route setup as such:
@@ -783,9 +742,7 @@ Exchange.FILE_NAME = foo/bye.txt => /rootDirectory/foo/bye.txt
 This allows you to have a single route to write files to multiple
 destinations.
 
-[[File2-Writingfilethroughthetemporarydirectoryrelativetothefinaldestination]]
-Writing file through the temporary directory relative to the final destination
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Writing file through the temporary directory relative to the final destination
 
 Sometime you need to temporarily write the files to some directory
 relative to the destination directory. Such situation usually happens
@@ -801,9 +758,7 @@ from("direct:start").
   to("file:///var/myapp/finalDirectory?tempPrefix=/../filesInProgress/");
 -------------------------------------------------------------------------
 
-[[File2-Usingexpressionforfilenames]]
-Using expression for filenames
-++++++++++++++++++++++++++++++
+#### Using expression for filenames
 
 In this sample we want to move consumed files to a backup folder using
 today's date as a sub-folder name:
@@ -815,9 +770,7 @@ from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
 
 See link:file-language.html[File Language] for more samples.
 
-[[File2-Avoidingreadingthesamefilemorethanonceidempotentconsumer]]
-Avoiding reading the same file more than once (idempotent consumer)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Avoiding reading the same file more than once (idempotent consumer)
 
 Camel supports link:idempotent-consumer.html[Idempotent Consumer]
 directly within the component so it will skip already processed files.
@@ -867,9 +820,7 @@ consumed before:
 DEBUG FileConsumer is idempotent and the file has been consumed before. Will skip this file: target\idempotent\report.txt
 -------------------------------------------------------------------------------------------------------------------------
 
-[[File2-Usingafilebasedidempotentrepository]]
-Using a file based idempotent repository
-++++++++++++++++++++++++++++++++++++++++
+#### Using a file based idempotent repository
 
 In this section we will use the file based idempotent repository
 `org.apache.camel.processor.idempotent.FileIdempotentRepository` instead
@@ -889,9 +840,7 @@ idempotent repository and define our file consumer to use our repository
 with the `idempotentRepository` using `#` sign to indicate
 link:registry.html[Registry] lookup:
 
-[[File2-UsingaJPAbasedidempotentrepository]]
-Using a JPA based idempotent repository
-+++++++++++++++++++++++++++++++++++++++
+#### Using a JPA based idempotent repository
 
 In this section we will use the JPA based idempotent repository instead
 of the in-memory based that is used as default.
@@ -942,9 +891,7 @@ option:
   </route>
 ---------------------------------------------------------------------------------
 
-[[File2-Filterusingorg.apache.camel.component.file.GenericFileFilter]]
-Filter using org.apache.camel.component.file.GenericFileFilter
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Filter using org.apache.camel.component.file.GenericFileFilter
 
 Camel supports pluggable filtering strategies. You can then configure
 the endpoint with such a filter to skip certain files being processed.
@@ -967,9 +914,7 @@ spring XML file:
   </route>
 ----------------------------------------------------------
 
-[[File2-FilteringusingANTpathmatcher]]
-Filtering using ANT path matcher
-++++++++++++++++++++++++++++++++
+#### Filtering using ANT path matcher
 
 TIP:*New options from Camel 2.10 onwards*
 There are now `antInclude` and `antExclude` options to make it easy to
@@ -990,9 +935,7 @@ The file paths is matched with the following rules:
 
 The sample below demonstrates how to use it:
 
-[[File2-SortingusingComparator]]
-Sorting using Comparator
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Sorting using Comparator
 
 Camel supports pluggable sorting strategies. This strategy it to use the
 build in `java.util.Comparator` in Java. You can then configure the
@@ -1023,9 +966,7 @@ link:registry.html[Registry] by prefixing the id with `#`. So writing
 `sorter=#mySorter`, will instruct Camel to go look in the
 link:registry.html[Registry] for a bean with the ID, `mySorter`.
 
-[[File2-SortingusingsortBy]]
-Sorting using sortBy
-^^^^^^^^^^^^^^^^^^^^
+### Sorting using sortBy
 
 Camel supports pluggable sorting strategies. This strategy it to use the
 link:file-language.html[File Language] to configure the sorting. The
@@ -1113,9 +1054,7 @@ per group, so we could reverse the file names:
 sortBy=date:file:yyyyMMdd;reverse:file:name
 -------------------------------------------
 
-[[File2-UsingGenericFileProcessStrategy]]
-Using GenericFileProcessStrategy
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using GenericFileProcessStrategy
 
 The option `processStrategy` can be used to use a custom
 `GenericFileProcessStrategy` that allows you to implement your own
@@ -1136,9 +1075,7 @@ resources etc.
 * in the `commit()` method we can move the actual file and also delete
 the _ready_ file.
 
-[[File2-Usingfilter]]
-Using filter
-^^^^^^^^^^^^
+### Using filter
 
 The `filter` option allows you to implement a custom filter in Java code
 by implementing the `org.apache.camel.component.file.GenericFileFilter`
@@ -1151,9 +1088,7 @@ directories, to avoid traversing down unwanted directories.
 For example to skip any directories which starts with `"skip"` in the
 name, can be implemented as follows:
 
-[[File2-HowtousetheCamelerrorhandlertodealwithexceptionstriggeredoutsidetheroutingengine]]
-How to use the Camel error handler to deal with exceptions triggered outside the routing engine
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to use the Camel error handler to deal with exceptions triggered outside the routing engine
 
 The file and ftp consumers, will by default try to pickup files. Only if
 that is successful then a Camel link:exchange.html[Exchange] can be
@@ -1205,9 +1140,7 @@ class="com.foo.MyExceptionHandler"/>:
 The source code for this example can be seen
 https://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/org/apache/camel/component/file/FileConsumerCustomExceptionHandlerTest.java[here]
 
-[[File2-Usingconsumer.bridgeErrorHandler]]
-Using consumer.bridgeErrorHandler
-+++++++++++++++++++++++++++++++++
+#### Using consumer.bridgeErrorHandler
 
 *Available as of Camel 2.10*
 
@@ -1229,16 +1162,12 @@ does *not* apply. The link:exchange.html[Exchange] is processed directly
 by the Camel link:error-handler.html[Error Handler], and does not allow
 prior actions such as interceptors, onCompletion to take action.
 
-[[File2-Debuglogging]]
-Debug logging
-^^^^^^^^^^^^^
+### Debug logging
 
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
-[[File2-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -1248,4 +1177,3 @@ See Also
 * link:file-language.html[File Language]
 * link:ftp2.html[FTP]
 * link:polling-consumer.html[Polling Consumer]
-

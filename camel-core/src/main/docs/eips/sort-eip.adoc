@@ -1,0 +1,97 @@
+## Sort EIP
+Sort can be used to sort a message. Imagine you consume text files and before processing each file you want to be sure the content is sorted.
+
+Sort will by default sort the body using a default comparator that handles numeric values or uses the string representation. You can provide your own comparator, and even an expression to return the value to be sorted. Sort requires the value returned from the expression evaluation is convertible to `java.util.List` as this is required by the JDK sort operation.
+
+### Options
+
+// eip options: START
+The Sort EIP supports 1 options which are listed below:
+
+
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| comparatorRef | String | Sets a reference to lookup for the comparator to use for sorting
+|=======================================================================
+// eip options: END
+
+
+### Using from Java DSL
+In the route below it will read the file content and tokenize by line breaks so each line can be sorted.
+[source,java]
+---------------------
+from("file://inbox").sort(body().tokenize("\n")).to("bean:MyServiceBean.processLine");
+---------------------
+
+You can pass in your own comparator as a 2nd argument:
+[source,java]
+---------------------
+from("file://inbox").sort(body().tokenize("\n"), new MyReverseComparator()).to("bean:MyServiceBean.processLine");
+---------------------
+
+### Using from Spring DSL
+In the route below it will read the file content and tokenize by line breaks so each line can be sorted.
+
+*Camel 2.7 or better*
+[source,xml]
+---------------------
+<route>
+  <from uri="file://inbox"/>
+  <sort>
+    <simple>body</simple>
+  </sort>
+  <beanRef ref="myServiceBean" method="processLine"/>
+</route>
+---------------------
+
+*Camel 2.6 or older*
+[source,xml]
+---------------------
+<route>
+  <from uri="file://inbox"/>
+  <sort>
+    <expression>
+      <simple>body</simple>
+    </expression>
+  </sort>
+  <beanRef ref="myServiceBean" method="processLine"/>
+</route>
+---------------------
+
+And to use our own comparator we can refer to it as a spring bean:
+
+*Camel 2.7 or better*
+[source,xml]
+---------------------
+<route>
+  <from uri="file://inbox"/>
+  <sort comparatorRef="myReverseComparator">
+    <simple>body</simple>
+  </sort>
+  <beanRef ref="MyServiceBean" method="processLine"/>
+</route>
+
+<bean id="myReverseComparator" class="com.mycompany.MyReverseComparator"/>
+---------------------
+
+*Camel 2.6 or older*
+[source,xml]
+---------------------
+<route>
+  <from uri="file://inbox"/>
+  <sort comparatorRef="myReverseComparator">
+    <expression>
+      <simple>body</simple>
+    </expression>
+  </sort>
+  <beanRef ref="MyServiceBean" method="processLine"/>
+</route>
+
+<bean id="myReverseComparator" class="com.mycompany.MyReverseComparator"/>
+---------------------
+
+Besides `<simple>`, you can supply an expression using any language you like, so long as it returns a list.
+
+### Using This Pattern
+If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.

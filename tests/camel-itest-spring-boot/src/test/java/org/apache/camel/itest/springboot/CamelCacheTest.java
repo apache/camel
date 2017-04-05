@@ -36,6 +36,7 @@ public class CamelCacheTest extends AbstractSpringBootTestSupport {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelCacheTest.class))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|XXXTest$|BaseCacheTest$)")
+                .resource("components/cache-ehcache.xml", "ehcache.xml")
                 .build();
     }
 

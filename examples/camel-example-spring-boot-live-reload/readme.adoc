@@ -8,7 +8,7 @@ LiveReload browser extensions are freely available for the most popular browsers
 
 The example should be launched with the following maven command:
 
- mvn clean install spring-boot:run
+   mvn spring-boot:run
 
 Once the application is started, you can visit http://localhost:8080/ with a browser and activate the LiveReload feature
 (usually, by clicking on the extension's icon).

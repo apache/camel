@@ -1,8 +1,6 @@
-[[JiBX-JiBX]]
-JiBX
-~~~~
+## JiBX DataFormat
 
-*Available as of Camel 2.6*
+*Available as of Camel version 2.6*
 
 JiBX is a link:data-format.html[Data Format] which uses the
 http://jibx.sourceforge.net[JiBX library] to marshal and unmarshal Java
@@ -28,16 +26,13 @@ from("mqseries:Another.Queue").
   to("activemq:My.Queue");
 -------------------------------------------
 
-[[JiBX-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The JiBX dataformat supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -45,13 +40,10 @@ The JiBX dataformat supports 3 options which are listed below.
 | bindingName |  | String | To use a custom binding factory
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 
-[[JiBX-JiBXSpringDSL]]
-JiBX Spring DSL
-^^^^^^^^^^^^^^^
+### JiBX Spring DSL
 
 JiBX data format is also supported by Camel Spring DSL.
 
@@ -81,9 +73,7 @@ JiBX data format is also supported by Camel Spring DSL.
 </camelContext>
 --------------------------------------------------------------------------------------
 
-[[JiBX-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use JiBX in your camel routes you need to add the a dependency on
 *camel-jibx* which implements this data format.

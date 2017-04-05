@@ -23,8 +23,8 @@ import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.ConfigMapList;
 import io.fabric8.kubernetes.api.model.DoneableConfigMap;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -93,7 +93,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
     protected void doListConfigMapsByLabels(Exchange exchange, String operation) throws Exception {
         ConfigMapList configMapsList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
-        ClientNonNamespaceOperation<ConfigMap, ConfigMapList, DoneableConfigMap, ClientResource<ConfigMap, DoneableConfigMap>> configMaps = getEndpoint().getKubernetesClient().configMaps();
+        NonNamespaceOperation<ConfigMap, ConfigMapList, DoneableConfigMap, Resource<ConfigMap, DoneableConfigMap>> configMaps = getEndpoint().getKubernetesClient().configMaps();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             configMaps.withLabel(entry.getKey(), entry.getValue());
         }

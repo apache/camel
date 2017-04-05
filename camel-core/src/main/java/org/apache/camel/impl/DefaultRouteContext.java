@@ -35,7 +35,9 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -61,6 +63,7 @@ public class DefaultRouteContext implements RouteContext {
     private boolean routeAdded;
     private Boolean trace;
     private Boolean messageHistory;
+    private Boolean logMask;
     private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
     private Boolean handleFault;
@@ -69,7 +72,6 @@ public class DefaultRouteContext implements RouteContext {
     private List<RoutePolicy> routePolicyList = new ArrayList<RoutePolicy>();
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
-    private Contract contract;
 
     public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.camelContext = camelContext;
@@ -193,9 +195,27 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in route lifecycle
             internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
 
+            // wrap in REST binding
+            if (route.getRestBindingDefinition() != null) {
+                try {
+                    internal.addAdvice(route.getRestBindingDefinition().createRestBindingAdvice(this));
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+            }
+
             // wrap in contract
-            if (contract != null) {
-                internal.addAdvice(new CamelInternalProcessor.ContractAdvice(contract));
+            if (route.getInputType() != null || route.getOutputType() != null) {
+                Contract contract = new Contract();
+                if (route.getInputType() != null) {
+                    contract.setInputType(route.getInputType().getUrn());
+                    contract.setValidateInput(route.getInputType().isValidate());
+                }
+                if (route.getOutputType() != null) {
+                    contract.setOutputType(route.getOutputType().getUrn());
+                    contract.setValidateOutput(route.getOutputType().isValidate());
+                }
+                internal.addAdvice(new ContractAdvice(contract));
             }
 
             // and create the route that wraps the UoW
@@ -288,6 +308,19 @@ public class DefaultRouteContext implements RouteContext {
         } else {
             // fallback to the option from camel context
             return getCamelContext().isMessageHistory();
+        }
+    }
+
+    public void setLogMask(Boolean logMask) {
+        this.logMask = logMask;
+    }
+
+    public Boolean isLogMask() {
+        if (logMask != null) {
+            return logMask;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isLogMask();
         }
     }
 
@@ -408,7 +441,4 @@ public class DefaultRouteContext implements RouteContext {
         return routePolicyList;
     }
 
-    public void setContract(Contract contract) {
-        this.contract = contract;
-    }
 }

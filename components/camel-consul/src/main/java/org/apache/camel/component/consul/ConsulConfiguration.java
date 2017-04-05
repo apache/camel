@@ -18,21 +18,31 @@ package org.apache.camel.component.consul;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.orbitz.consul.Consul;
+import com.orbitz.consul.option.ConsistencyMode;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
-public class ConsulConfiguration {
+public class ConsulConfiguration implements CamelContextAware, Cloneable {
     @UriParam
     private String url;
-    @UriParam
-    private String dc;
+    @UriParam(label = "advanced")
+    private String datacenter;
+    @UriParam(label = "advanced")
+    private String nearNode;
+    @UriParam(label = "advanced")
+    private List<String> nodeMeta;
+    @UriParam(label = "advanced", defaultValue = "DEFAULT", enums = "DEFAULT,STALE,CONSISTENT")
+    private ConsistencyMode consistencyMode = ConsistencyMode.DEFAULT;
     @UriParam(javaType = "java.lang.String")
     private Set<String> tags;
 
@@ -68,14 +78,24 @@ public class ConsulConfiguration {
     @UriParam(label = "consumer,watch", defaultValue = "false")
     private boolean recursive;
 
-    private final CamelContext context;
+    private CamelContext context;
+
+    public ConsulConfiguration() {
+        this.context = null;
+    }
 
     public ConsulConfiguration(CamelContext context) {
         this.context = context;
     }
 
-    public CamelContext getContext() {
-        return this.context;
+    @Override
+    public void setCamelContext(CamelContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return context;
     }
 
     public String getUrl() {
@@ -89,15 +109,66 @@ public class ConsulConfiguration {
         this.url = url;
     }
 
+    /**
+     * @deprecated replaced by {@link #getDatacenter()} ()}
+     */
+    @Deprecated
     public String getDc() {
-        return dc;
+        return datacenter;
+    }
+
+    /**
+     * The data center
+     *
+     * @deprecated replaced by {@link #setDatacenter(String)} ()}
+     */
+    @Deprecated
+    public void setDc(String dc) {
+        this.datacenter = dc;
+    }
+
+    public String getDatacenter() {
+        return datacenter;
     }
 
     /**
      * The data center
      */
-    public void setDc(String dc) {
-        this.dc = dc;
+    public void setDatacenter(String datacenter) {
+        this.datacenter = datacenter;
+    }
+
+    public String getNearNode() {
+        return nearNode;
+    }
+
+    /**
+     * The near node to use for queries.
+     */
+    public void setNearNode(String nearNode) {
+        this.nearNode = nearNode;
+    }
+
+    public List<String> getNodeMeta() {
+        return nodeMeta;
+    }
+
+    /**
+     * The note meta-data to use for queries.
+     */
+    public void setNodeMeta(List<String> nodeMeta) {
+        this.nodeMeta = nodeMeta;
+    }
+
+    public ConsistencyMode getConsistencyMode() {
+        return consistencyMode;
+    }
+
+    /**
+     * The consistencyMode used for queries, default ConsistencyMode.DEFAULT
+     */
+    public void setConsistencyMode(ConsistencyMode consistencyMode) {
+        this.consistencyMode = consistencyMode;
     }
 
     public Set<String> getTags() {
@@ -306,5 +377,13 @@ public class ConsulConfiguration {
         }
 
         return builder.build();
+    }
+
+    public ConsulConfiguration copy() {
+        try {
+            return (ConsulConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

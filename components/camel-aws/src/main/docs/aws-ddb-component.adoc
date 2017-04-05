@@ -1,8 +1,6 @@
-[[AWS-DDB-DDBComponent]]
-DDB Component
-~~~~~~~~~~~~~
+## AWS DynamoDB Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 The DynamoDB component supports storing and retrieving data from/to
 http://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.
@@ -13,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon DynamoDB. More information are available at
 http://aws.amazon.com/dynamodb[Amazon DynamoDB].
 
-[[AWS-DDB-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ------------------------------
@@ -25,9 +21,7 @@ aws-ddb://domainName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-DDB-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -38,28 +32,39 @@ The AWS DynamoDB component has no options.
 
 
 // endpoint options: START
-The AWS DynamoDB component supports 14 endpoint options which are listed below:
+The AWS DynamoDB endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    aws-ddb:tableName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| tableName | producer |  | String | *Required* The name of the table currently worked with.
-| accessKey | producer |  | String | Amazon AWS Access Key
-| amazonDDBClient | producer |  | AmazonDynamoDB | To use the AmazonDynamoDB as the client
-| amazonDdbEndpoint | producer |  | String | The region with which the AWS-DDB client wants to work with.
-| consistentRead | producer | false | boolean | Determines whether or not strong consistency should be enforced when data is read.
-| keyAttributeName | producer |  | String | Attribute name when creating table
-| keyAttributeType | producer |  | String | Attribute type when creating table
-| operation | producer | PutItem | DdbOperations | What operation to perform
-| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
-| readCapacity | producer |  | Long | The provisioned throughput to reserve for reading resources from your table
-| secretKey | producer |  | String | Amazon AWS Secret Key
-| writeCapacity | producer |  | Long | The provisioned throughput to reserved for writing resources to your table
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **tableName** | *Required* The name of the table currently worked with. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (13 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **accessKey** (producer) | Amazon AWS Access Key |  | String
+| **amazonDDBClient** (producer) | To use the AmazonDynamoDB as the client |  | AmazonDynamoDB
+| **amazonDdbEndpoint** (producer) | The region with which the AWS-DDB client wants to work with. |  | String
+| **consistentRead** (producer) | Determines whether or not strong consistency should be enforced when data is read. | false | boolean
+| **keyAttributeName** (producer) | Attribute name when creating table |  | String
+| **keyAttributeType** (producer) | Attribute type when creating table |  | String
+| **operation** (producer) | What operation to perform | PutItem | DdbOperations
+| **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
+| **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **readCapacity** (producer) | The provisioned throughput to reserve for reading resources from your table |  | Long
+| **secretKey** (producer) | Amazon AWS Secret Key |  | String
+| **writeCapacity** (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
@@ -70,13 +75,9 @@ You have to provide the amazonDDBClient in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the http://aws.amazon.com/dynamodb[Amazon's DynamoDB].
 
-[[AWS-DDB-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-DDB-MessageheadersevaluatedbytheDDBproducer]]
-Message headers evaluated by the DDB producer
-+++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the DDB producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -129,9 +130,7 @@ the query.*From Camel 2.16.0 this header doesn't exist anymore.*
 |`CamelAwsDdbUpdateValues` |`Map<String, AttributeValueUpdate>` |Map of attribute name to the new value and action for the update.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringBatchGetItemsoperation]]
-Message headers set during BatchGetItems operation
-++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during BatchGetItems operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -143,9 +142,7 @@ Message headers set during BatchGetItems operation
 processed with the current response.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringDeleteItemoperation]]
-Message headers set during DeleteItem operation
-+++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during DeleteItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -154,9 +151,7 @@ Message headers set during DeleteItem operation
 |`CamelAwsDdbAttributes` |`Map<String, AttributeValue>` |The list of attributes returned by the operation.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringDeleteTableoperation]]
-Message headers set during DeleteTable operation
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during DeleteTable operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -180,9 +175,7 @@ Message headers set during DeleteTable operation
 |`CamelAwsDdbTableStatus` |`String` |The status of the table: CREATING, UPDATING, DELETING, ACTIVE
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringDescribeTableoperation]]
-Message headers set during DescribeTable operation
-++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during DescribeTable operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -209,9 +202,7 @@ not KeySchema*
 |`CamelAwsDdbWriteCapacity` |`Long` |WriteCapacityUnits property of this table.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringGetItemoperation]]
-Message headers set during GetItem operation
-++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during GetItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -221,9 +212,7 @@ Message headers set during GetItem operation
 
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringPutItemoperation]]
-Message headers set during PutItem operation
-++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during PutItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -233,9 +222,7 @@ Message headers set during PutItem operation
 
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringQueryoperation]]
-Message headers set during Query operation
-++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during Query operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -252,9 +239,7 @@ consumed during the operation.
 |`CamelAwsDdbCount` |`Integer` |Number of items in the response.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringScanoperation]]
-Message headers set during Scan operation
-+++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during Scan operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -273,9 +258,7 @@ consumed during the operation.
 |`CamelAwsDdbScannedCount` |`Integer` |Number of items in the complete scan before any filters are applied.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringUpdateItemoperation]]
-Message headers set during UpdateItem operation
-+++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during UpdateItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -285,9 +268,7 @@ Message headers set during UpdateItem operation
 
 |=======================================================================
 
-[[AWS-DDB-AdvancedAmazonDynamoDBconfiguration]]
-Advanced AmazonDynamoDB configuration
-+++++++++++++++++++++++++++++++++++++
+#### Advanced AmazonDynamoDB configuration
 
 If you need more control over the `AmazonDynamoDB` instance
 configuration you can create your own instance and refer to it from the
@@ -316,9 +297,7 @@ AmazonDynamoDB client = new AmazonDynamoDBClient(awsCredentials, clientConfigura
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
-[[AWS-DDB-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -336,9 +315,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.10 or higher).
 
-[[AWS-DDB-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -346,4 +323,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

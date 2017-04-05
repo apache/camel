@@ -1,14 +1,10 @@
-[[OpenStack-glance-Component]]
-Openstack Glance Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+## OpenStack Glance Component
 
-*Available as of Camel 2.19*
+*Available as of Camel version 2.19*
 
 The openstack-glance component allows messages to be sent to an OpenStack image services.
 
-[[openstack-glance-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -26,9 +22,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-[[openstack-glance-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ----------------------------
@@ -38,38 +32,45 @@ openstack-glance://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-[[openstack-glance-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 // component options: START
 The OpenStack Glance component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack Glance component supports 9 endpoint options which are listed below:
+The OpenStack Glance endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    openstack-glance:host
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* OpenStack host url
-| apiVersion | producer | V3 | String | OpenStack API version
-| config | producer |  | Config | OpenStack configuration
-| domain | producer | default | String | Authentication domain
-| operation | producer |  | String | The operation to do
-| password | producer |  | String | *Required* OpenStack password
-| project | producer |  | String | *Required* The project ID
-| username | producer |  | String | *Required* OpenStack username
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **host** | *Required* OpenStack host url |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (8 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **apiVersion** (producer) | OpenStack API version | V3 | String
+| **config** (producer) | OpenStack configuration |  | Config
+| **domain** (producer) | Authentication domain | default | String
+| **operation** (producer) | The operation to do |  | String
+| **password** (producer) | *Required* OpenStack password |  | String
+| **project** (producer) | *Required* The project ID |  | String
+| **username** (producer) | *Required* OpenStack username |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[openstack-glance-Usage]]
-Usage
-^^^^^
+### Usage
 
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
@@ -90,9 +91,7 @@ Usage
 |`delete` | Delete the image.
 |=========================================================================
 
-[[openstack-glance-MessageheadersevaluatedbytheGlanceProducer]]
-Message headers evaluated by the Glance producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Glance producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -123,9 +122,7 @@ Message headers evaluated by the Glance producer
 |`properties` | `Map` | Image properties.
 |=========================================================================
 
-[[CamelOpenstack-glance-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -133,4 +130,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:openstack.html[openstack Component]
-

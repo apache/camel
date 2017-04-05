@@ -112,14 +112,6 @@ The following messages should be displayed:
 
 Hit <kbd>ctrl</kbd>+<kbd>c</kbd> to exit the log command.
 
-This example is documented at
-<http://camel.apache.org/netty-http-server-example.html>
-
-### Documentation
-
-This example is documented at
-<http://camel.apache.org/netty-http-server-example.htmll>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

@@ -1,15 +1,11 @@
-[[DataFormatComponent-DataFormatComponent]]
-Data Format Component
-~~~~~~~~~~~~~~~~~~~~~
+## Data Format Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 The *dataformat:* component allows to use link:data-format.html[Data
 Format] as a Camel link:component.html[Component].
 
-[[DataFormatComponent-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------
@@ -22,9 +18,7 @@ then followed by the operation which must either be `marshal` or
 Format] in use. See the link:data-format.html[Data Format] documentation
 for which options it support.
 
-[[DataFormatComponent-Options]]
-DataFormat Options
-^^^^^^^^^^^^^^^^^^
+### DataFormat Options
 
 
 // component options: START
@@ -34,23 +28,32 @@ The Data Format component has no options.
 
 
 // endpoint options: START
-The Data Format component supports 3 endpoint options which are listed below:
+The Data Format endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    dataformat:name:operation
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| name | producer |  | String | *Required* Name of data format
-| operation | producer |  | String | *Required* Operation to use either marshal or unmarshal
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **name** | *Required* Name of data format |  | String
+| **operation** | *Required* Operation to use either marshal or unmarshal |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[DataFormatComponent-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 For example to use the link:jaxb.html[JAXB] link:data-format.html[Data
 Format] we can do as follows:
@@ -75,13 +78,10 @@ And in XML DSL you do:
 </camelContext>
 -----------------------------------------------------------------------
 
-[[DataFormatComponent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 * link:data-format.html[Data Format]
-

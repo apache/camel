@@ -29,8 +29,9 @@ import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
 
@@ -87,13 +88,12 @@ public class TransformerContractTest extends ContextTestSupport {
 
     @Test
     public void testScheme() throws Exception {
-        DataFormatTransformerDefinition transformerDef = new DataFormatTransformerDefinition();
-        transformerDef.setScheme("xml");
-        transformerDef.setDataFormatType(new MyDataFormatDefinition());
-        context.getTransformers().add(transformerDef);
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                transformer()
+                    .scheme("xml")
+                    .withDataFormat(new MyDataFormatDefinition());
                 from("direct:a")
                     .inputType("xml")
                     .outputType("xml")
@@ -117,7 +117,10 @@ public class TransformerContractTest extends ContextTestSupport {
         mocka.setExpectedCount(1);
         mocka2.setExpectedCount(1);
         mockb.setExpectedCount(1);
-        Object answer = template.requestBody("direct:a", "<foo/>");
+        Exchange answer = template.send("direct:a", ex -> {
+            DataTypeAware message = (DataTypeAware)ex.getIn();
+            message.setBody("<foo/>", new DataType("xml"));
+        });
         mocka.assertIsSatisfied();
         mocka2.assertIsSatisfied();
         mockb.assertIsSatisfied();
@@ -127,7 +130,7 @@ public class TransformerContractTest extends ContextTestSupport {
         assertEquals("<foo/>", exa.getIn().getBody());
         assertEquals(A.class, exb.getIn().getBody().getClass());
         assertEquals(B.class, exa2.getIn().getBody().getClass());
-        assertEquals("<fooResponse/>", new String((byte[])answer));
+        assertEquals("<fooResponse/>", new String((byte[])answer.getIn().getBody()));
     }
 
     public static class MyTypeConverters implements TypeConverters {

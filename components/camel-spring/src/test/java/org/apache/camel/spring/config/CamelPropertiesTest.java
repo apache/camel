@@ -27,10 +27,10 @@ public class CamelPropertiesTest extends SpringTestSupport {
     }
 
     public void testProperties() throws Exception {
-        assertNotNull(context.getProperties());
-        assertEquals(2, context.getProperties().size());
-        assertEquals("123", context.getProperties().get("foo"));
-        assertEquals("cheese", context.getProperties().get("bar"));
+        assertNotNull(context.getGlobalOptions());
+        assertEquals(2, context.getGlobalOptions().size());
+        assertEquals("123", context.getGlobalOptions().get("foo"));
+        assertEquals("cheese", context.getGlobalOptions().get("bar"));
     }
 
 }

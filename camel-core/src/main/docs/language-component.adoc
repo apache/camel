@@ -1,8 +1,6 @@
-[[Language-Language]]
-Language
-~~~~~~~~
+## Language Component
 
-*Available as of Camel 2.5*
+*Available as of Camel version 2.5*
 
 The language component allows you to send link:exchange.html[Exchange]
 to an endpoint which executes a script by any of the supported
@@ -18,9 +16,7 @@ additional JARs is needed. You only have to include additional Camel
 components if the language of choice mandates it, such as using
 link:groovy.html[Groovy] or link:javascript.html[JavaScript] languages.
 
-[[Language-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------------------
@@ -36,9 +32,7 @@ link:language.html[Language]s in Camel
 language://languageName:resource:scheme:location][?options]
 -----------------------------------------------------------
 
-[[Language-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -48,28 +42,37 @@ The Language component has no options.
 
 
 // endpoint options: START
-The Language component supports 8 endpoint options which are listed below:
+The Language endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    language:languageName:resourceUri
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| languageName | producer |  | String | *Required* Sets the name of the language to use
-| resourceUri | producer |  | String | Path to the resource or a reference to lookup a bean in the Registry to use as the resource
-| binary | producer | false | boolean | Whether the script is binary content or text content. By default the script is read as text content (eg java.lang.String)
-| cacheScript | producer | false | boolean | Whether to cache the compiled script and reuse Notice reusing the script can cause side effects from processing one Camel org.apache.camel.Exchange to the next org.apache.camel.Exchange.
-| contentCache | producer | false | boolean | Sets whether to use resource content cache or not.
-| script | producer |  | String | Sets the script to execute
-| transform | producer | true | boolean | Whether or not the result of the script should be used as message body. This options is default true.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **languageName** | *Required* Sets the name of the language to use |  | String
+| **resourceUri** | Path to the resource or a reference to lookup a bean in the Registry to use as the resource |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **binary** (producer) | Whether the script is binary content or text content. By default the script is read as text content (eg java.lang.String) | false | boolean
+| **cacheScript** (producer) | Whether to cache the compiled script and reuse Notice reusing the script can cause side effects from processing one Camel org.apache.camel.Exchange to the next org.apache.camel.Exchange. | false | boolean
+| **contentCache** (producer) | Sets whether to use resource content cache or not. | false | boolean
+| **script** (producer) | Sets the script to execute |  | String
+| **transform** (producer) | Whether or not the result of the script should be used as message body. This options is default true. | true | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Language-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 The following message headers can be used to affect the behavior of the
 component
@@ -82,9 +85,7 @@ component
 script configured on the endpoint.
 |=======================================================================
 
-[[Language-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 For example you can use the link:simple.html[Simple] language to
 link:message-translator.html[Message Translator] a message:
@@ -105,9 +106,7 @@ Object out = producer.requestBodyAndHeader("language:xpath", "<foo>Hello World</
 assertEquals("Hello World", out);
 --------------------------------------------------------------------------------------------------------------------------------
 
-[[Language-Loadingscriptsfromresources]]
-Loading scripts from resources
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Loading scripts from resources
 
 *Available as of Camel 2.9*
 
@@ -128,9 +127,7 @@ From *Camel 2.11* onwards you can refer to the resource similar to the
 other link:language.html[Language]s in Camel by prefixing with
 `"resource:"` as shown below:
 
-[[Language-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -140,4 +137,3 @@ See Also
 * link:routing-slip.html[Routing Slip]
 * link:dynamic-router.html[Dynamic Router]
 * link:script.html[Script]
-

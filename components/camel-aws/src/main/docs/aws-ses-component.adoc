@@ -1,8 +1,6 @@
-[[AWS-SES-SESComponent]]
-SES Component
-~~~~~~~~~~~~~
+## AWS Simple Email Service Component
 
-*Available as of Camel 2.8.4*
+*Available as of Camel version 2.9*
 
 The ses component supports sending emails with
 http://aws.amazon.com/ses[Amazon's SES] service.
@@ -13,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SES. More information are available at
 http://aws.amazon.com/ses[Amazon SES].
 
-[[AWS-SES-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ------------------------
@@ -25,9 +21,7 @@ aws-ses://from[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-SES-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -38,26 +32,37 @@ The AWS Simple Email Service component has no options.
 
 
 // endpoint options: START
-The AWS Simple Email Service component supports 12 endpoint options which are listed below:
+The AWS Simple Email Service endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    aws-ses:from
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| from | producer |  | String | *Required* The sender's email address.
-| accessKey | producer |  | String | Amazon AWS Access Key
-| amazonSESClient | producer |  | AmazonSimpleEmailService | To use the AmazonSimpleEmailService as the client
-| amazonSESEndpoint | producer |  | String | The region with which the AWS-SES client wants to work with.
-| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
-| replyToAddresses | producer |  | List | List of reply-to email address(es) for the message override it using 'CamelAwsSesReplyToAddresses' header.
-| returnPath | producer |  | String | The email address to which bounce notifications are to be forwarded override it using 'CamelAwsSesReturnPath' header.
-| secretKey | producer |  | String | Amazon AWS Secret Key
-| subject | producer |  | String | The subject which is used if the message header 'CamelAwsSesSubject' is not present.
-| to | producer |  | List | List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **from** | *Required* The sender's email address. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (11 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **accessKey** (producer) | Amazon AWS Access Key |  | String
+| **amazonSESClient** (producer) | To use the AmazonSimpleEmailService as the client |  | AmazonSimpleEmail Service
+| **amazonSESEndpoint** (producer) | The region with which the AWS-SES client wants to work with. |  | String
+| **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
+| **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **replyToAddresses** (producer) | List of reply-to email address(es) for the message override it using 'CamelAwsSesReplyToAddresses' header. |  | List
+| **returnPath** (producer) | The email address to which bounce notifications are to be forwarded override it using 'CamelAwsSesReturnPath' header. |  | String
+| **secretKey** (producer) | Amazon AWS Secret Key |  | String
+| **subject** (producer) | The subject which is used if the message header 'CamelAwsSesSubject' is not present. |  | String
+| **to** (producer) | List of destination email address. Can be overriden with 'CamelAwsSesTo' header. |  | List
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
@@ -68,13 +73,9 @@ You have to provide the amazonSESClient in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the http://aws.amazon.com/ses[Amazon's SES].
 
-[[AWS-SES-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-SES-MessageheadersevaluatedbytheSESproducer]]
-Message headers evaluated by the SES producer
-+++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the SES producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -93,9 +94,7 @@ Message headers evaluated by the SES producer
 |`CamelAwsSesHtmlEmail` |`Boolean` |*Since Camel 2.12.3* The flag to show if email content is HTML.
 |=======================================================================
 
-[[AWS-SES-MessageheaderssetbytheSESproducer]]
-Message headers set by the SES producer
-+++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the SES producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -104,9 +103,7 @@ Message headers set by the SES producer
 |`CamelAwsSesMessageId` |`String` |The Amazon SES message ID.
 |=======================================================================
 
-[[AWS-SES-AdvancedAmazonSimpleEmailServiceconfiguration]]
-Advanced AmazonSimpleEmailService configuration
-+++++++++++++++++++++++++++++++++++++++++++++++
+#### Advanced AmazonSimpleEmailService configuration
 
 If you need more control over the `AmazonSimpleEmailService` instance
 configuration you can create your own instance and refer to it from the
@@ -134,9 +131,7 @@ AmazonSimpleEmailService client = new AmazonSimpleEmailServiceClient(awsCredenti
 registry.bind("client", client);
 ----------------------------------------------------------------------------------------------------------
 
-[[AWS-SES-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -154,9 +149,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.8.4 or higher).
 
-[[AWS-SES-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -164,4 +157,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

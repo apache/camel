@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.boot;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -129,6 +128,24 @@ public class CamelConfigurationProperties {
     private boolean mainRunController;
 
     /**
+     * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxSeconds;
+
+    /**
+     * To specify for how long time in seconds Camel can be idle before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxIdleSeconds;
+
+    /**
+     * To specify how many messages to process by Camel before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxMessages;
+
+    /**
      * Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances.
      * By default only singleton beans is included in the context scan.
      */
@@ -233,6 +250,13 @@ public class CamelConfigurationProperties {
      * Default is true.
      */
     private boolean messageHistory = true;
+
+    /**
+     * Sets whether log mask is enabled or not.
+     *
+     * Default is false.
+     */
+    private boolean logMask = false;
 
     /**
      * Sets whether to log exhausted message body with message history.
@@ -482,6 +506,30 @@ public class CamelConfigurationProperties {
         this.mainRunController = mainRunController;
     }
 
+    public int getDurationMaxSeconds() {
+        return durationMaxSeconds;
+    }
+
+    public void setDurationMaxSeconds(int durationMaxSeconds) {
+        this.durationMaxSeconds = durationMaxSeconds;
+    }
+
+    public int getDurationMaxIdleSeconds() {
+        return durationMaxIdleSeconds;
+    }
+
+    public void setDurationMaxIdleSeconds(int durationMaxIdleSeconds) {
+        this.durationMaxIdleSeconds = durationMaxIdleSeconds;
+    }
+
+    public int getDurationMaxMessages() {
+        return durationMaxMessages;
+    }
+
+    public void setDurationMaxMessages(int durationMaxMessages) {
+        this.durationMaxMessages = durationMaxMessages;
+    }
+
     public int getLogDebugMaxChars() {
         return logDebugMaxChars;
     }
@@ -594,6 +642,14 @@ public class CamelConfigurationProperties {
 
     public void setMessageHistory(boolean messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public boolean isLogMask() {
+        return logMask;
+    }
+
+    public void setLogMask(boolean logMask) {
+        this.logMask = logMask;
     }
 
     public boolean isLogExhaustedMessageBody() {

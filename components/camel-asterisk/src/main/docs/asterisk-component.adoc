@@ -1,8 +1,6 @@
-[[AsteriskComponent-AsteriskComponent]]
-Asterisk Component
-~~~~~~~~~~~~~~~~~~~
+## Asterisk Component
 
-*Available as of Camel 2.18*
+*Available as of Camel version 2.18*
 
 The *asterisk:* component allows you to work easily with an Asterisk PBX Server http://www.asterisk.org/ using https://asterisk-java.org/[asterisk-java]
 
@@ -21,46 +19,51 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[AsteriskComponent-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------
 asterisk:name[?options]
 -------------------------------------------------------------------------------------------------------------------------
 
-[[AsteriskComponent-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Asterisk component has no options.
 // component options: END
 
 // endpoint options: START
-The Asterisk component supports 9 endpoint options which are listed below:
+The Asterisk endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    asterisk:name
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Logical name
-| hostname | common |  | String | The hostname of the asterix server
-| password | common |  | String | Login password
-| username | common |  | String | Login username
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| action | producer |  | AsteriskActionEnum | What action to perform such as getting queue status sip peers or extension state.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **name** | *Required* Logical name |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (8 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **hostname** (common) | *Required* The hostname of the asterisk server |  | String
+| **password** (common) | *Required* Login password |  | String
+| **username** (common) | *Required* Login username |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **action** (producer) | What action to perform such as getting queue status sip peers or extension state. |  | AsteriskAction
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
-[[Asterisk-Actions]]
-Action
-^^^^^^
+### Action
 Supported actions are:
 
 * QUEUE_STATUS, Queue Status

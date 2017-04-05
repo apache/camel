@@ -1,8 +1,6 @@
-[[JIRA-JIRA]]
-JIRA
-~~~~
+## JIRA Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 The JIRA component interacts with the JIRA API by encapsulating
 Atlassian's https://marketplace.atlassian.com/plugins/com.atlassian.jira.jira-rest-java-client[REST
@@ -33,18 +31,14 @@ for this component:
 </dependency>
 ---------------------------------------
 
-[[JIRA-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,text]
 -------------------------
 jira://endpoint[?options]
 -------------------------
 
-[[JIRA-Options:]]
-JIRA Options
-^^^^^^^^^^^^^
+### JIRA Options
 
 
 // component options: START
@@ -55,31 +49,40 @@ The JIRA component has no options.
 
 
 // endpoint options: START
-The JIRA component supports 10 endpoint options which are listed below:
+The JIRA endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    jira:type
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| type | common |  | JIRAType | *Required* Operation to perform such as create a new issue or a new comment
-| password | common |  | String | Password for login
-| serverUrl | common |  | String | *Required* URL to the JIRA server
-| username | common |  | String | Username for login
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| delay | consumer | 6000 | int | Delay in seconds when querying JIRA using the consumer.
-| jql | consumer |  | String | JQL is the query language from JIRA which allows you to retrieve the data you want. For example jql=project=MyProject Where MyProject is the product key in Jira.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **type** | *Required* Operation to perform such as create a new issue or a new comment |  | JIRAType
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (9 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **password** (common) | Password for login |  | String
+| **serverUrl** (common) | *Required* URL to the JIRA server |  | String
+| **username** (common) | Username for login |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **delay** (consumer) | Delay in seconds when querying JIRA using the consumer. | 6000 | int
+| **jql** (consumer) | JQL is the query language from JIRA which allows you to retrieve the data you want. For example jql=project=MyProject Where MyProject is the product key in Jira. |  | String
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
-[[JIRA-JQL:]]
-JQL:
-^^^^
+### JQL:
 
 The JQL URI option is used by both consumer endpoints.  Theoretically,
 items like "project key", etc. could be URI options themselves.

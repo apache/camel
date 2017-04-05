@@ -37,25 +37,15 @@
   <feature name='camel-core' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
-    <!-- the camel commands requires the camel-catalog to be installed -->
-    <bundle>mvn:org.apache.camel/camel-catalog/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
     <conditional>
       <condition>shell</condition>
+      <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
       <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
     </conditional>
     <!-- allow camel to access its own mbeans for karaf commands and other needs -->
     <config name="jmx.acl.org.apache.camel">
       * = *
     </config>
-  </feature>
-  <feature name='camel-catalog' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>Install the camel catalog commands</details>
-    <feature version='${project.version}'>camel-core</feature>
-    <conditional>
-      <condition>shell</condition>
-      <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands-catalog/${project.version}</bundle>
-    </conditional>
   </feature>
   <feature name='camel-blueprint' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -295,7 +285,7 @@
     <bundle>mvn:org.apache.camel/camel-castor/${project.version}</bundle>
   </feature>
   <feature name='camel-cdi' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>camel-cdi requires that either pax-cdi-weld or pax-cdi-openwebbeans has been installed</details>
+    <details>camel-cdi in OSGi is deprecated. camel-cdi requires that either pax-cdi-weld or pax-cdi-openwebbeans has been installed</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${pax-cdi-version}'>pax-cdi</feature>
     <feature>eventadmin</feature>
@@ -399,6 +389,12 @@
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-couchdb/${project.version}</bundle>
   </feature>
+  <feature name='camel-couchbase' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:net.spy/spymemcached/${spymemcached-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.couchbase.client/couchbase-client/${couchbase-client-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-couchbase/${project.version}</bundle>
+  </feature>
   <feature name='camel-crypto' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
@@ -494,6 +490,21 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lucene-sandbox/${lucene-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch/${elasticsearch-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-elasticsearch/${project.version}</bundle>
+  </feature>
+  <feature name='camel-elasticsearch5' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature>http</feature>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${elasticsearch-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-smile/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.ning/compress-lzf/${compress-lzf-version}</bundle>
+    <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch/${elasticsearch5-bundle-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.elasticsearch.client/transport/${elasticsearch5-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-elasticsearch5/${project.version}</bundle>
   </feature>
   <feature name='camel-etcd' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -864,7 +875,7 @@
         Please refer to the component page (https://camel.apache.org/ignite.html) and to the Ignite docs (https://apacheignite.readme.io/docs/osgi-installation-in-karaf#preparatory-steps) for more information.]]>
     </details>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${ignite-version-range}'>ignite-core</feature>
+    <feature version='${ignite-version}'>ignite-core</feature>
     <bundle>mvn:org.apache.camel/camel-ignite/${project.version}</bundle>
   </feature>
   <feature name='camel-infinispan' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -876,7 +887,7 @@
     <bundle dependency='true'>mvn:org.infinispan/infinispan-commons/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-query-dsl/${infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.infinispan/infinispan-client-hotrod/${infinispan-version}</bundle>
-    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
+    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-infinispan-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-osgi/${jboss-marshalling-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${jboss-marshalling-version}</bundle>
@@ -1125,14 +1136,10 @@
   <feature name='camel-kubernetes' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.generex/${generex-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.automaton/${automaton-bundle-version}</bundle>
@@ -1421,7 +1428,7 @@
     <details>installing camel-pgevent may output an error in the log but it is installed correctly</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>transaction</feature>
-    <bundle dependency='true'>wrap:mvn:com.impossibl.pgjdbc-ng/pgjdbc-ng/${pgjdbc-ng-driver-version}$overwrite=merge&amp;Bundle-ManifestVersion=2</bundle>
+    <bundle dependency='true'>mvn:com.impossibl.pgjdbc-ng/pgjdbc-ng/${pgjdbc-ng-driver-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
@@ -1465,6 +1472,11 @@
     <bundle dependency='true'>mvn:com.rabbitmq/amqp-client/${rabbitmq-amqp-client-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rabbitmq/${project.version}</bundle>
+  </feature>
+  <feature name='camel-reactive-streams' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.reactivestreams/reactive-streams/${reactive-streams-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-reactive-streams/${project.version}</bundle>
   </feature>
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1623,6 +1635,15 @@
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-sjms/${project.version}</bundle>
   </feature>
+  <feature name='camel-sjms2' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <!-- JTA is not currently supported by SJMS but is a required dependency of the Geronimo JMS Bundle -->
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_2.0_spec/${geronimo-jms2-spec-version}</bundle>
+    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.camel/camel-sjms/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-sjms2/${project.version}</bundle>
+  </feature>
   <feature name='camel-slack' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.googlecode.json-simple/json-simple/${json-simple-version}</bundle>
@@ -1705,7 +1726,7 @@
     <bundle>mvn:org.apache.camel/camel-spring-ldap/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-redis' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>camel-spring-redis only works with Spring 4.2.x</details>
+    <details>Does not work with Karaf due KARAF-4921</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${spring42-version-range}'>spring</feature>
     <feature version='${spring42-version-range}'>spring-tx</feature>
@@ -1878,6 +1899,12 @@
     <bundle>mvn:org.apache.camel/camel-test/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-test-spring/${project.version}</bundle>
   </feature>
+  <feature name='camel-tika' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.apache.tika/tika-core/${tika-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.tika/tika-bundle/${tika-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-tika/${project.version}</bundle>
+  </feature>
   <feature name='camel-twitter' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.twitter4j/${twitter4j-bundle-version}</bundle>
@@ -2022,7 +2049,10 @@
   </feature>
   <feature name='camel-zipkin' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.brave-zipkin/${brave-zipkin-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.brave/brave-core/${brave-zipkin-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.brave/brave-spancollector-scribe/${brave-zipkin-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.java/zipkin/${zipkin-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.reporter/zipkin-reporter/${zipkin-reporter-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${libthrift-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zipkin/${project.version}</bundle>
   </feature>
@@ -2034,6 +2064,18 @@
     <bundle dependency='true'>mvn:org.apache.curator/curator-recipes/${curator-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${zookeeper-guava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zookeeper/${project.version}</bundle>
+  </feature>
+  <feature name='camel-zookeeper-master' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.curator/curator-framework/${curator-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.curator/curator-client/${curator-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.curator/curator-recipes/${curator-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${zookeeper-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-zookeeper-master/${project.version}</bundle>
   </feature>
 
 </features>

@@ -24,6 +24,8 @@ package org.apache.camel;
  * The {@link org.apache.camel.support.ServiceSupport} implementation that most Camel components / endpoints etc use
  * as base class is a {@link SuspendableService} but the actual implementation may not have special logic for suspend.
  * Therefore this marker interface is introduced to indicate when the implementation has special code for suspension.
+ * <p/>
+ * It is assumed that a service having a custom logic for suspension implements also a custom logic for resuming.
  *
  * @see SuspendableService
  */

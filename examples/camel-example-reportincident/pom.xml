@@ -27,11 +27,16 @@
   </parent>
 
   <artifactId>camel-example-reportincident</artifactId>
-  <name>Camel :: Example :: Report Incident</name>
+  <name>Camel :: Example :: Report Incident (deprecated)</name>
   <description>An example based on real life use case for reporting incidents using webservice that are transformed
     and send as emails to a backing system
   </description>
   <packaging>war</packaging>
+
+  <properties>
+    <category>Tutorial</category>
+    <title>Report Incident</title>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -158,6 +163,8 @@
             <id>generate-sources</id>
             <phase>generate-sources</phase>
             <configuration>
+              <fork>${cxf.codegenplugin.forkmode}</fork>
+              <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
               <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
               <wsdlOptions>
                 <wsdlOption>
@@ -189,4 +196,23 @@
 
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

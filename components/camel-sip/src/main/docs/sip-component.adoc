@@ -1,8 +1,6 @@
-[[Sip-SIPComponent]]
-SIP Component
-~~~~~~~~~~~~~
+## SIP Component
 
-*Available as of Camel 2.5*
+*Available as of Camel version 2.5*
 
 The *sip* component in Camel is a communication component, based on the
 Jain SIP implementation (available under the JCP license).
@@ -47,9 +45,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Sip-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The URI scheme for a sip endpoint is as follows:
 
@@ -65,9 +61,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Sip-Options]]
-Options
-^^^^^^^
+### Options
 
 The SIP Component offers an extensive set of configuration options &
 capability to create custom stateful headers needed to propagate state
@@ -81,68 +75,75 @@ The SIP component has no options.
 
 
 // endpoint options: START
-The SIP component supports 45 endpoint options which are listed below:
+The SIP endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    sip:uri
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| uri | common |  | URI | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999)
-| cacheConnections | common | false | boolean | Should connections be cached by the SipStack to reduce cost of connection creation. This is useful if the connection is used for long running conversations.
-| contentSubType | common | plain | String | Setting for contentSubType can be set to any valid MimeSubType.
-| contentType | common | text | String | Setting for contentType can be set to any valid MimeType.
-| eventHeaderName | common |  | String | Setting for a String based event type.
-| eventId | common |  | String | Setting for a String based event Id. Mandatory setting unless a registry based FromHeader is specified
-| fromHost | common |  | String | Hostname of the message originator. Mandatory setting unless a registry based FromHeader is specified
-| fromPort | common |  | int | Port of the message originator. Mandatory setting unless a registry based FromHeader is specified
-| fromUser | common |  | String | Username of the message originator. Mandatory setting unless a registry based custom FromHeader is specified.
-| msgExpiration | common | 3600 | int | The amount of time a message received at an endpoint is considered valid
-| receiveTimeoutMillis | common | 10000 | long | Setting for specifying amount of time to wait for a Response and/or Acknowledgement can be received from another SIP stack
-| stackName | common | NAME_NOT_SET | String | Name of the SIP Stack instance associated with an SIP Endpoint.
-| toHost | common |  | String | Hostname of the message receiver. Mandatory setting unless a registry based ToHeader is specified
-| toPort | common |  | int | Portname of the message receiver. Mandatory setting unless a registry based ToHeader is specified
-| toUser | common |  | String | Username of the message receiver. Mandatory setting unless a registry based custom ToHeader is specified.
-| transport | common | tcp | String | Setting for choice of transport protocol. Valid choices are tcp or udp.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| consumer | consumer | false | boolean | This setting is used to determine whether the kind of header (FromHeaderToHeader etc) that needs to be created for this endpoint
-| presenceAgent | consumer | false | boolean | This setting is used to distinguish between a Presence Agent & a consumer. This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to true.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| addressFactory | advanced |  | AddressFactory | To use a custom AddressFactory
-| callIdHeader | advanced |  | CallIdHeader | A custom Header object containing call details. Must implement the type javax.sip.header.CallIdHeader
-| contactHeader | advanced |  | ContactHeader | An optional custom Header object containing verbose contact details (email phone number etc). Must implement the type javax.sip.header.ContactHeader
-| contentTypeHeader | advanced |  | ContentTypeHeader | A custom Header object containing message content details. Must implement the type javax.sip.header.ContentTypeHeader
-| eventHeader | advanced |  | EventHeader | A custom Header object containing event details. Must implement the type javax.sip.header.EventHeader
-| expiresHeader | advanced |  | ExpiresHeader | A custom Header object containing message expiration details. Must implement the type javax.sip.header.ExpiresHeader
-| extensionHeader | advanced |  | ExtensionHeader | A custom Header object containing user/application specific details. Must implement the type javax.sip.header.ExtensionHeader
-| fromHeader | advanced |  | FromHeader | A custom Header object containing message originator settings. Must implement the type javax.sip.header.FromHeader
-| headerFactory | advanced |  | HeaderFactory | To use a custom HeaderFactory
-| listeningPoint | advanced |  | ListeningPoint | To use a custom ListeningPoint implementation
-| maxForwardsHeader | advanced |  | MaxForwardsHeader | A custom Header object containing details on maximum proxy forwards. This header places a limit on the viaHeaders possible. Must implement the type javax.sip.header.MaxForwardsHeader
-| maxMessageSize | advanced | 1048576 | int | Setting for maximum allowed Message size in bytes.
-| messageFactory | advanced |  | MessageFactory | To use a custom MessageFactory
-| sipFactory | advanced |  | SipFactory | To use a custom SipFactory to create the SipStack to be used
-| sipStack | advanced |  | SipStack | To use a custom SipStack
-| sipUri | advanced |  | SipURI | To use a custom SipURI. If none configured then the SipUri fallback to use the options toUser toHost:toPort
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| toHeader | advanced |  | ToHeader | A custom Header object containing message receiver settings. Must implement the type javax.sip.header.ToHeader
-| viaHeaders | advanced |  | List | List of custom Header objects of the type javax.sip.header.ViaHeader. Each ViaHeader containing a proxy address for request forwarding. (Note this header is automatically updated by each proxy when the request arrives at its listener)
-| implementationDebugLogFile | logging |  | String | Name of client debug log file to use for logging
-| implementationServerLogFile | logging |  | String | Name of server log file to use for logging
-| implementationTraceLevel | logging | 0 | String | Logging level for tracing
-| maxForwards | proxy |  | int | Number of maximum proxy forwards
-| useRouterForAllUris | proxy | false | boolean | This setting is used when requests are sent to the Presence Agent via a proxy.
+| Name | Description | Default | Type
+| **uri** | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999) |  | URI
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (44 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **cacheConnections** (common) | Should connections be cached by the SipStack to reduce cost of connection creation. This is useful if the connection is used for long running conversations. | false | boolean
+| **contentSubType** (common) | Setting for contentSubType can be set to any valid MimeSubType. | plain | String
+| **contentType** (common) | Setting for contentType can be set to any valid MimeType. | text | String
+| **eventHeaderName** (common) | Setting for a String based event type. |  | String
+| **eventId** (common) | Setting for a String based event Id. Mandatory setting unless a registry based FromHeader is specified |  | String
+| **fromHost** (common) | Hostname of the message originator. Mandatory setting unless a registry based FromHeader is specified |  | String
+| **fromPort** (common) | Port of the message originator. Mandatory setting unless a registry based FromHeader is specified |  | int
+| **fromUser** (common) | Username of the message originator. Mandatory setting unless a registry based custom FromHeader is specified. |  | String
+| **msgExpiration** (common) | The amount of time a message received at an endpoint is considered valid | 3600 | int
+| **receiveTimeoutMillis** (common) | Setting for specifying amount of time to wait for a Response and/or Acknowledgement can be received from another SIP stack | 10000 | long
+| **stackName** (common) | Name of the SIP Stack instance associated with an SIP Endpoint. | NAME_NOT_SET | String
+| **toHost** (common) | Hostname of the message receiver. Mandatory setting unless a registry based ToHeader is specified |  | String
+| **toPort** (common) | Portname of the message receiver. Mandatory setting unless a registry based ToHeader is specified |  | int
+| **toUser** (common) | Username of the message receiver. Mandatory setting unless a registry based custom ToHeader is specified. |  | String
+| **transport** (common) | Setting for choice of transport protocol. Valid choices are tcp or udp. | tcp | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **consumer** (consumer) | This setting is used to determine whether the kind of header (FromHeaderToHeader etc) that needs to be created for this endpoint | false | boolean
+| **presenceAgent** (consumer) | This setting is used to distinguish between a Presence Agent & a consumer. This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to true. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **addressFactory** (advanced) | To use a custom AddressFactory |  | AddressFactory
+| **callIdHeader** (advanced) | A custom Header object containing call details. Must implement the type javax.sip.header.CallIdHeader |  | CallIdHeader
+| **contactHeader** (advanced) | An optional custom Header object containing verbose contact details (email phone number etc). Must implement the type javax.sip.header.ContactHeader |  | ContactHeader
+| **contentTypeHeader** (advanced) | A custom Header object containing message content details. Must implement the type javax.sip.header.ContentTypeHeader |  | ContentTypeHeader
+| **eventHeader** (advanced) | A custom Header object containing event details. Must implement the type javax.sip.header.EventHeader |  | EventHeader
+| **expiresHeader** (advanced) | A custom Header object containing message expiration details. Must implement the type javax.sip.header.ExpiresHeader |  | ExpiresHeader
+| **extensionHeader** (advanced) | A custom Header object containing user/application specific details. Must implement the type javax.sip.header.ExtensionHeader |  | ExtensionHeader
+| **fromHeader** (advanced) | A custom Header object containing message originator settings. Must implement the type javax.sip.header.FromHeader |  | FromHeader
+| **headerFactory** (advanced) | To use a custom HeaderFactory |  | HeaderFactory
+| **listeningPoint** (advanced) | To use a custom ListeningPoint implementation |  | ListeningPoint
+| **maxForwardsHeader** (advanced) | A custom Header object containing details on maximum proxy forwards. This header places a limit on the viaHeaders possible. Must implement the type javax.sip.header.MaxForwardsHeader |  | MaxForwardsHeader
+| **maxMessageSize** (advanced) | Setting for maximum allowed Message size in bytes. | 1048576 | int
+| **messageFactory** (advanced) | To use a custom MessageFactory |  | MessageFactory
+| **sipFactory** (advanced) | To use a custom SipFactory to create the SipStack to be used |  | SipFactory
+| **sipStack** (advanced) | To use a custom SipStack |  | SipStack
+| **sipUri** (advanced) | To use a custom SipURI. If none configured then the SipUri fallback to use the options toUser toHost:toPort |  | SipURI
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **toHeader** (advanced) | A custom Header object containing message receiver settings. Must implement the type javax.sip.header.ToHeader |  | ToHeader
+| **viaHeaders** (advanced) | List of custom Header objects of the type javax.sip.header.ViaHeader. Each ViaHeader containing a proxy address for request forwarding. (Note this header is automatically updated by each proxy when the request arrives at its listener) |  | List
+| **implementationDebugLogFile** (logging) | Name of client debug log file to use for logging |  | String
+| **implementationServerLogFile** (logging) | Name of server log file to use for logging |  | String
+| **implementationTraceLevel** (logging) | Logging level for tracing | 0 | String
+| **maxForwards** (proxy) | Number of maximum proxy forwards |  | int
+| **useRouterForAllUris** (proxy) | This setting is used when requests are sent to the Presence Agent via a proxy. | false | boolean
+|=======================================================================
 // endpoint options: END
 
-[[Sip-SendingMessagestofromaSIPendpoint]]
-Sending Messages to/from a SIP endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending Messages to/from a SIP endpoint
 
-[[Sip-CreatingaCamelSIPPublisher]]
-Creating a Camel SIP Publisher
-++++++++++++++++++++++++++++++
+#### Creating a Camel SIP Publisher
 
 In the example below, a SIP Publisher is created to send SIP Event
 publications to  +
@@ -166,9 +167,7 @@ producerTemplate.sendBodyAndHeader(
     Request.PUBLISH);  
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Sip-CreatingaCamelSIPSubscriber]]
-Creating a Camel SIP Subscriber
-+++++++++++++++++++++++++++++++
+#### Creating a Camel SIP Subscriber
 
 In the example below, a SIP Subscriber is created to receive SIP Event
 publications sent to  +

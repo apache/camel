@@ -46,7 +46,7 @@ public final class SpringBootHelper {
     }
 
     public static File allStartersDir(File baseDir) {
-        File allStartersDir = new File(camelProjectRoot(baseDir, "components-starter"), "components-starter");
+        File allStartersDir = new File(camelProjectRoot(baseDir, "platforms"), "platforms/spring-boot/components-starter");
         return allStartersDir;
     }
 
@@ -71,6 +71,4 @@ public final class SpringBootHelper {
             throw new IllegalStateException("Error while getting directory", e);
         }
     }
-
-
 }

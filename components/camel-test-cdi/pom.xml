@@ -28,9 +28,14 @@
   <artifactId>camel-test-cdi</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Test :: CDI</name>
-  <description>Camel Testing Library using JUnit and CDI</description>
+  <description>Camel unit testing with CDI</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.17.0</firstVersion>
+    <label>testing,java</label>
+    <title>Test CDI</title>
+
     <camel.osgi.export.pkg>org.apache.camel.test.cdi.*</camel.osgi.export.pkg>
   </properties>
 

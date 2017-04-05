@@ -1,6 +1,4 @@
-[[Jasypt-Jasyptcomponent]]
-Jasypt component
-~~~~~~~~~~~~~~~~
+## Jasypt component
 
 *Available as of Camel 2.5*
 
@@ -25,9 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Jasypt-Tooling]]
-Tooling
-^^^^^^^
+### Tooling
 
 The link:jasypt.html[Jasypt] component provides a little command line
 tooling to encrypt or decrypt values.
@@ -90,45 +86,10 @@ The idea is then to use those encrypted values in your
 link:properties.html[Properties] files. Notice how the password value is
 encrypted and the value has the tokens surrounding `ENC(value here)`
 
-[[Jasypt-ToolingdependenciesforCamel2.5and2.6]]
-Tooling dependencies for Camel 2.5 and 2.6
-++++++++++++++++++++++++++++++++++++++++++
+TIP: When running jasypt tooling, if you come across `java.lang.NoClassDefFoundError: org/jasypt/encryption/pbe/StandardPBEStringEncryptor` this means you have to include jasypt{version}.jar in your classpath. Example of adding jar to classpath may be copying jasypt{version}.jar to $JAVA_HOME\jre\lib\ext if you are going to run as `java -jar ...`. The latter may be adding jasypt{version}.jar to classpath using `-cp`, in that case you should provide main class to execute as eg: `java -cp jasypt-1.9.2.jar:camel-jasypt-2.18.2.jar org.apache.camel.component.jasypt.Main -c encrypt -p secret -i tiger`
 
-The tooling requires the following JARs in the classpath, which has been
-enlisted in the `MANIFEST.MF` file of `camel-jasypt` with `optional/` as
-prefix. Hence why the java cmd above can pickup the needed JARs from the
-Apache Distribution in the `optional` directory.
 
-[source,java]
--------------------------------------------------------------------------
-jasypt-1.6.jar commons-lang-2.4.jar commons-codec-1.4.jar icu4j-4.0.1.jar
--------------------------------------------------------------------------
-
-[Info]
-====
- *Java 1.5 users*
-
-The `icu4j-4.0.1.jar` is only needed when running on JDK 1.5.
-
-This JAR is not distributed by Apache Camel and you have to download it
-manually and copy it to the `lib/optional` directory of the Camel
-distribution. +
- You can download it from
-http://repo2.maven.org/maven2/com/ibm/icu/icu4j/4.0.1/[Apache Central
-Maven repo].
-
-====
-
-[[Jasypt-ToolingdependenciesforCamel2.7orbetter]]
-Tooling dependencies for Camel 2.7 or better
-++++++++++++++++++++++++++++++++++++++++++++
-
-Jasypt 1.7 onwards is now fully standalone so no additional JARs is
-needed.
-
-[[Jasypt-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 The options below are exclusive for the link:jasypt.html[Jasypt]
 component.
@@ -143,9 +104,8 @@ mandatory. See below for more details.
 |`algorithm` |`null` |`String` |Name of an optional algorithm to use.
 |=======================================================================
 
-[[Jasypt-Protectingthemasterpassword]]
-Protecting the master password
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+### Protecting the master password
 
 The master password used by link:jasypt.html[Jasypt] must be provided,
 so that it's capable of decrypting the values. However having this
@@ -176,9 +136,7 @@ $ unset CAMEL_ENCRYPTION_PASSWORD
 The `password` option is then a matter of defining as follows:
 `password=sysenv:CAMEL_ENCRYPTION_PASSWORD`.
 
-[[Jasypt-ExamplewithJavaDSL]]
-Example with Java DSL
-^^^^^^^^^^^^^^^^^^^^^
+### Example with Java DSL
 
 In Java DSL you need to configure link:jasypt.html[Jasypt] as a
 `JasyptPropertiesParser` instance and set it on the
@@ -188,9 +146,7 @@ The properties file `myproperties.properties` then contain the encrypted
 value, such as shown below. Notice how the password value is encrypted
 and the value has the tokens surrounding `ENC(value here)`
 
-[[Jasypt-ExamplewithSpringXML]]
-Example with Spring XML
-^^^^^^^^^^^^^^^^^^^^^^^
+### Example with Spring XML
 
 In Spring XML you need to configure the `JasyptPropertiesParser` which
 is shown below. Then the Camel link:properties.html[Properties]
@@ -240,9 +196,7 @@ link:jasypt.html[Jasypt].
 </camelContext>
 --------------------------------------------------------------------------------------------------------------
 
-[[Jasypt-ExamplewithBlueprintXML]]
-Example with Blueprint XML
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Example with Blueprint XML
 
 In Blueprint XML you need to configure
 the `JasyptPropertiesParser` which is shown below. Then the
@@ -318,11 +272,7 @@ to link:jasypt.html[Jasypt].
 </blueprint>
 ----------------------------------------------------------------------------------------------------------------
 
- 
-
-[[Jasypt-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:security.html[Security]
 * link:properties.html[Properties]

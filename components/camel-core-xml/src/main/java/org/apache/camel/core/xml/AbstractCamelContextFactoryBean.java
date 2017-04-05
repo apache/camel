@@ -17,6 +17,7 @@
 package org.apache.camel.core.xml;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +51,8 @@ import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.GlobalOptionsDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -66,11 +69,13 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -165,9 +170,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
 
         // then set custom properties
+        Map<String, String> mergedOptions = new HashMap<>();
         if (getProperties() != null) {
-            getContext().setProperties(getProperties().asMap());
+            mergedOptions.putAll(getProperties().asMap());
         }
+        if (getGlobalOptions() != null) {
+            mergedOptions.putAll(getGlobalOptions().asMap());
+        }
+
+        getContext().setGlobalOptions(mergedOptions);
+
         // and enable lazy loading of type converters if applicable
         initLazyLoadTypeConverters();
 
@@ -695,7 +707,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<InterceptSendToEndpointDefinition> getInterceptSendToEndpoints();
 
+    @Deprecated
     public abstract PropertiesDefinition getProperties();
+    public abstract GlobalOptionsDefinition getGlobalOptions();
 
     public abstract String[] getPackages();
 
@@ -712,6 +726,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract String getTrace();
 
     public abstract String getMessageHistory();
+
+    public abstract String getLogMask();
 
     public abstract String getLogExhaustedMessageBody();
 
@@ -763,6 +779,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract TransformersDefinition getTransformers();
 
+    public abstract ValidatorsDefinition getValidators();
+
     public abstract List<OnExceptionDefinition> getOnExceptions();
 
     public abstract List<OnCompletionDefinition> getOnCompletions();
@@ -774,6 +792,18 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract List<ThreadPoolProfileDefinition> getThreadPoolProfiles();
 
     public abstract String getDependsOn();
+
+    public abstract List<AbstractCamelFactoryBean<?>> getBeansFactory();
+
+    public abstract List<?> getBeans();
+
+    public abstract ServiceCallConfigurationDefinition getDefaultServiceCallConfiguration();
+
+    public abstract List<ServiceCallConfigurationDefinition> getServiceCallConfigurations();
+
+    public abstract HystrixConfigurationDefinition getDefaultHystrixConfiguration();
+
+    public abstract List<HystrixConfigurationDefinition> getHystrixConfigurations();
 
     // Implementation methods
     // -------------------------------------------------------------------------
@@ -793,6 +823,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getMessageHistory() != null) {
             ctx.setMessageHistory(CamelContextHelper.parseBoolean(getContext(), getMessageHistory()));
+        }
+        if (getLogMask() != null) {
+            ctx.setLogMask(CamelContextHelper.parseBoolean(getContext(), getLogMask()));
         }
         if (getLogExhaustedMessageBody() != null) {
             ctx.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(getContext(), getLogExhaustedMessageBody()));
@@ -837,7 +870,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             ctx.setDataFormats(getDataFormats().asMap());
         }
         if (getTransformers() != null) {
-            ctx.setTransformers(getTransformers().getTransforms());
+            ctx.setTransformers(getTransformers().getTransformers());
+        }
+        if (getValidators() != null) {
+            ctx.setValidators(getValidators().getValidators());
         }
         if (getTypeConverterStatisticsEnabled() != null) {
             ctx.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
@@ -850,6 +886,22 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getRestConfiguration() != null) {
             ctx.setRestConfiguration(getRestConfiguration().asRestConfiguration(ctx));
+        }
+        if (getDefaultServiceCallConfiguration() != null) {
+            ctx.setServiceCallConfiguration(getDefaultServiceCallConfiguration());
+        }
+        if (getServiceCallConfigurations() != null) {
+            for (ServiceCallConfigurationDefinition bean : getServiceCallConfigurations()) {
+                ctx.addServiceCallConfiguration(bean.getId(), bean);
+            }
+        }
+        if (getDefaultHystrixConfiguration() != null) {
+            ctx.setHystrixConfiguration(getDefaultHystrixConfiguration());
+        }
+        if (getHystrixConfigurations() != null) {
+            for (HystrixConfigurationDefinition bean : getHystrixConfigurations()) {
+                ctx.addHystrixConfiguration(bean.getId(), bean);
+            }
         }
     }
 

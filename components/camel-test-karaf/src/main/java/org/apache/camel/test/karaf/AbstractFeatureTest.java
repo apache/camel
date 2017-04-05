@@ -17,6 +17,7 @@
 package org.apache.camel.test.karaf;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -30,6 +31,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.function.Consumer;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
@@ -57,6 +59,8 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,12 +107,18 @@ public abstract class AbstractFeatureTest {
     }
 
     protected Bundle installBlueprintAsBundle(String name, URL url, boolean start) throws BundleException {
+        return installBlueprintAsBundle(name, url, start, bundle -> {});
+    }
+
+    protected Bundle installBlueprintAsBundle(String name, URL url, boolean start, Consumer<Object> consumer) throws BundleException {
+        // TODO Type Consumer<TinyBundle> cannot be used for this method signature to avoid bundle dependency to pax tinybundles
         TinyBundle bundle = TinyBundles.bundle();
         bundle.add("OSGI-INF/blueprint/blueprint-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
         bundle.set("Manifest-Version", "2")
                 .set("Bundle-ManifestVersion", "2")
                 .set("Bundle-SymbolicName", name)
                 .set("Bundle-Version", "1.0.0");
+        consumer.accept(bundle);
         Bundle answer = bundleContext.installBundle(name, bundle.build());
 
         if (start) {
@@ -118,12 +128,18 @@ public abstract class AbstractFeatureTest {
     }
 
     protected Bundle installSpringAsBundle(String name, URL url, boolean start) throws BundleException {
+        return installSpringAsBundle(name, url, start, bundle -> {});
+    }
+
+    protected Bundle installSpringAsBundle(String name, URL url, boolean start, Consumer<Object> consumer) throws BundleException {
+        // TODO Type Consumer<TinyBundle> cannot be used for this method signature to avoid bundle dependency to pax tinybundles
         TinyBundle bundle = TinyBundles.bundle();
         bundle.add("META-INF/spring/spring-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
         bundle.set("Manifest-Version", "2")
                 .set("Bundle-ManifestVersion", "2")
                 .set("Bundle-SymbolicName", name)
                 .set("Bundle-Version", "1.0.0");
+        consumer.accept(bundle);
         Bundle answer = bundleContext.installBundle(name, bundle.build());
 
         if (start) {
@@ -140,6 +156,32 @@ public abstract class AbstractFeatureTest {
         // do not refresh bundles causing out bundle context to be invalid
         // TODO: see if we can find a way maybe to install camel.xml as bundle/feature instead of part of unit test (see src/test/resources/OSGI-INF/blueprint)
         featuresService.installFeature(mainFeature, EnumSet.of(FeaturesService.Option.NoAutoRefreshBundles));
+    }
+
+    protected void overridePropertiesWithConfigAdmin(String pid, Properties props) throws IOException {
+        ConfigurationAdmin configAdmin = getOsgiService(bundleContext, ConfigurationAdmin.class);
+        // passing null as second argument ties the configuration to correct bundle.
+        Configuration config = configAdmin.getConfiguration(pid, null);
+        if (config == null) {
+            throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
+        }
+
+        // let's merge configurations
+        Dictionary<String, Object> currentProperties = config.getProperties();
+        Dictionary newProps = new Properties();
+        if (currentProperties == null) {
+            currentProperties = newProps;
+        }
+        for (Enumeration<String> ek = currentProperties.keys(); ek.hasMoreElements(); ) {
+            String k = ek.nextElement();
+            newProps.put(k, currentProperties.get(k));
+        }
+        for (String p : props.stringPropertyNames()) {
+            newProps.put(p, props.getProperty(p));
+        }
+
+        LOG.info("Updating ConfigAdmin {} by overriding properties {}", config, newProps);
+        config.update(newProps);
     }
 
     protected void testComponent(String component) throws Exception {
@@ -256,7 +298,7 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "4.0.8";
+            karafVersion = "4.1.0";
         }
         return karafVersion;
     }

@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * UniVocity CSV data format
  */
-@Metadata(label = "dataformat,transformation,csv", title = "uniVocity CSV")
+@Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity CSV")
 @XmlRootElement(name = "univocity-csv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityCsvDataFormat extends UniVocityAbstractDataFormat {

@@ -31,7 +31,6 @@ import org.apache.camel.spi.UriPath;
  */
 @UriParams
 public class GoogleCalendarConfiguration {
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(CalendarScopes.CALENDAR);
 
     @UriPath
     @Metadata(required = "true")
@@ -42,7 +41,7 @@ public class GoogleCalendarConfiguration {
     private String methodName;
 
     @UriParam(defaultValue = CalendarScopes.CALENDAR)
-    private List<String> scopes = DEFAULT_SCOPES;
+    private String scopes = CalendarScopes.CALENDAR;
 
     @UriParam
     private String clientId;
@@ -156,14 +155,16 @@ public class GoogleCalendarConfiguration {
         this.applicationName = applicationName;
     }
 
-    public List<String> getScopes() {
+    public String getScopes() {
         return scopes;
     }
 
     /**
-     * Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/google-apps/calendar/auth for more info.
+     * Specifies the level of permissions you want a calendar application to have to a user account.
+     * You can separate multiple scopes by comma.
+     * See https://developers.google.com/google-apps/calendar/auth for more info.
      */
-    public void setScopes(List<String> scopes) {
+    public void setScopes(String scopes) {
         this.scopes = scopes;
     }
 

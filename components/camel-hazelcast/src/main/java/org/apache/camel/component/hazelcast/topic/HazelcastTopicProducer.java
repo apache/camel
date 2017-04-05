@@ -31,9 +31,13 @@ public class HazelcastTopicProducer extends HazelcastDefaultProducer {
 
     private ITopic<Object> topic;
 
-    public HazelcastTopicProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String topicName) {
+    public HazelcastTopicProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String topicName, boolean reliable) {
         super(endpoint);
-        this.topic = hazelcastInstance.getTopic(topicName);
+        if (!reliable) {
+            this.topic = hazelcastInstance.getTopic(topicName);
+        } else {
+            this.topic = hazelcastInstance.getReliableTopic(topicName);
+        }
     }
 
     public void process(Exchange exchange) throws Exception {

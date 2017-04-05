@@ -27,7 +27,7 @@
 
   <artifactId>camel-commands-jolokia</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Commands :: Jolokia</name>
+  <name>Camel :: Platforms :: Commands :: Jolokia (deprecated)</name>
   <description>Camel Commands using Jolokia</description>
 
   <properties>

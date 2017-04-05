@@ -113,7 +113,7 @@ public class CamelAutoConfiguration {
         camelContext.getShutdownStrategy().setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
 
         if (config.getLogDebugMaxChars() > 0) {
-            camelContext.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
+            camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
         }
 
         // stream caching
@@ -144,6 +144,7 @@ public class CamelAutoConfiguration {
         }
 
         camelContext.setMessageHistory(config.isMessageHistory());
+        camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
         camelContext.setHandleFault(config.isHandleFault());
         camelContext.setAutoStartup(config.isAutoStartup());
@@ -222,8 +223,10 @@ public class CamelAutoConfiguration {
     // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(ProducerTemplate.class)
     ProducerTemplate producerTemplate(CamelContext camelContext,
-                                      CamelConfigurationProperties config) {
-        return camelContext.createProducerTemplate(config.getProducerTemplateCacheSize());
+                                      CamelConfigurationProperties config) throws Exception {
+        final ProducerTemplate producerTemplate = camelContext.createProducerTemplate(config.getProducerTemplateCacheSize());
+        camelContext.addService(producerTemplate);
+        return producerTemplate;
     }
 
     /**
@@ -233,8 +236,10 @@ public class CamelAutoConfiguration {
     // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(ConsumerTemplate.class)
     ConsumerTemplate consumerTemplate(CamelContext camelContext,
-                                      CamelConfigurationProperties config) {
-        return camelContext.createConsumerTemplate(config.getConsumerTemplateCacheSize());
+                                      CamelConfigurationProperties config) throws Exception {
+        final ConsumerTemplate consumerTemplate = camelContext.createConsumerTemplate(config.getConsumerTemplateCacheSize());
+        camelContext.addService(consumerTemplate);
+        return consumerTemplate;
     }
 
     // SpringCamelContext integration

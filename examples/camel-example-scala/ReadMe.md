@@ -1,5 +1,10 @@
-Camel Router with Scala DSL Project
-===================================
+# Camel Router with Scala Project
+
+A simple example that uses Scala programming language to define a little Camel route.
+
+The Camel route triggers every 5th second and logs a message to the console
+
+### How to run
 
 To build this project use
 
@@ -9,7 +14,13 @@ To run this project
 
     mvn exec:java
     
-For more help see the Apache Camel documentation
+### Forum, Help, etc
 
-    http://camel.apache.org/
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
 
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
+
+
+The Camel riders!

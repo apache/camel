@@ -29,8 +29,13 @@
   <artifactId>camel-ribbon</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Ribbon</name>
+  <description>Using Netflix Ribbon for client side load balancing</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.18.0</firstVersion>
+    <label>microservice</label>
+
     <camel.osgi.export.pkg>org.apache.camel.component.ribbon.*</camel.osgi.export.pkg>
   </properties>
 
@@ -60,7 +65,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
+      <artifactId>camel-http4</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

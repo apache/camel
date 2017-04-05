@@ -29,11 +29,14 @@
   <artifactId>camel-test-karaf</artifactId>
   <name>Camel :: Test :: Karaf</name>
   <packaging>jar</packaging>
-  <description>Camel Testing Library using Pax Exam, Karaf and JUnit</description>
+  <description>Camel integration testing with Apache Karaf</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.18.0</firstVersion>
+    <label>testing,java,osgi</label>
+
     <karf-test-version>${karaf4-version}</karf-test-version>
-    <depends-maven-plugin-version>1.3.1</depends-maven-plugin-version>
     <camel.osgi.export.pkg>org.apache.camel.test.karaf</camel.osgi.export.pkg>
   </properties>
 

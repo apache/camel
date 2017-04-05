@@ -1,8 +1,6 @@
-[[camel-flink-CamelFlinkComponent]]
-Camel Flink Component
-~~~~~~~~~~~~~~~~~~~~~
+## Apache Flink Component
 
-*Available as of Camel 2.18*
+*Available as of Camel version 2.18*
 
 This documentation page covers the https://flink.apache.org[Apache Flink]
 component for the Apache Camel. The *camel-flink* component provides a
@@ -25,9 +23,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[camel-flink-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 Currently, the Flink Component supports only Producers. One can create DataSet, DataStream jobs.
 
@@ -43,55 +39,62 @@ FlinkEndpoint Options
 
 
 // endpoint options: START
-The Apache Flink component supports 7 endpoint options which are listed below:
+The Apache Flink endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    flink:endpointType
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| endpointType | producer |  | EndpointType | *Required* Type of the endpoint (dataset datastream).
-| collect | producer | true | boolean | Indicates if results should be collected or counted.
-| dataSet | producer |  | DataSet | DataSet to compute against.
-| dataSetCallback | producer |  | DataSetCallback | Function performing action against a DataSet.
-| dataStream | producer |  | DataStream | DataStream to compute against.
-| dataStreamCallback | producer |  | DataStreamCallback | Function performing action against a DataStream.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **endpointType** | *Required* Type of the endpoint (dataset datastream). |  | EndpointType
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **collect** (producer) | Indicates if results should be collected or counted. | true | boolean
+| **dataSet** (producer) | DataSet to compute against. |  | DataSet
+| **dataSetCallback** (producer) | Function performing action against a DataSet. |  | DataSetCallback
+| **dataStream** (producer) | DataStream to compute against. |  | DataStream
+| **dataStreamCallback** (producer) | Function performing action against a DataStream. |  | DataStreamCallback
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
-[[Flink-FlinkComponentOptions]]
-FlinkComponent Options
-^^^^^^^^^^^^^^^^^^^^
+### FlinkComponent Options
 
 
 
 
 // component options: START
-The Apache Flink component supports 4 options which are listed below.
+The Apache Flink component supports 5 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| dataSet | producer |  | DataSet | DataSet to compute against.
-| dataStream | producer |  | DataStream | DataStream to compute against.
-| dataSetCallback | producer |  | DataSetCallback | Function performing action against a DataSet.
-| dataStreamCallback | producer |  | DataStreamCallback | Function performing action against a DataStream.
+| Name | Description | Default | Type
+| **dataSet** (producer) | DataSet to compute against. |  | DataSet
+| **dataStream** (producer) | DataStream to compute against. |  | DataStream
+| **dataSetCallback** (producer) | Function performing action against a DataSet. |  | DataSetCallback
+| **dataStreamCallback** (producer) | Function performing action against a DataStream. |  | DataStreamCallback
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 
-Flink DataSet Callback
-^^^^^^^^^^^^^^^^^^^^^^
+### Flink DataSet Callback
 
 [source,java]
 -----------------------------------
@@ -110,8 +113,7 @@ public DataSetCallback<Long> dataSetCallback() {
 }
 -----------------------------------
 
-Flink DataStream Callback
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Flink DataStream Callback
 
 [source,java]
 ---------------------------
@@ -128,8 +130,7 @@ public VoidDataStreamCallback dataStreamCallback() {
 }
 ---------------------------
 
-Camel-Flink Producer call
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Camel-Flink Producer call
 
 [source,java]
 -----------------------------------
@@ -146,11 +147,9 @@ try {
     }
 -----------------------------------
 
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

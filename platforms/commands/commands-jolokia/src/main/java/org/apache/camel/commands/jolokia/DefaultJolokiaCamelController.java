@@ -820,6 +820,50 @@ public class DefaultJolokiaCamelController extends AbstractCamelController imple
         return answer;
     }
 
+    @Override
+    public List<Map<String, String>> getValidators(String camelContextName) throws Exception {
+        if (jolokia == null) {
+            throw new IllegalStateException("Need to connect to remote jolokia first");
+        }
+
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        ObjectName found = lookupCamelContext(camelContextName);
+        if (found != null) {
+            String pattern = String.format("%s:context=%s,type=services,name=DefaultValidatorRegistry", found.getDomain(), found.getKeyProperty("context"));
+            ObjectName on = ObjectName.getInstance(pattern);
+
+            J4pExecResponse response = jolokia.execute(new J4pExecRequest(on, "listValidators()"));
+            if (response != null) {
+                JSONObject data = response.getValue();
+                if (data != null) {
+                    for (Object obj : data.values()) {
+                        JSONObject data2 = (JSONObject) obj;
+                        JSONObject service = (JSONObject) data2.values().iterator().next();
+
+                        Map<String, String> row = new LinkedHashMap<String, String>();
+                        row.put("type", asString(service.get("type")));
+                        row.put("static", asString(service.get("static")));
+                        row.put("dynamic", asString(service.get("dynamic")));
+                        row.put("description", asString(service.get("description")));
+                        answer.add(row);
+                    }
+                }
+            }
+
+            // sort the list
+            Collections.sort(answer, new Comparator<Map<String, String>>() {
+                @Override
+                public int compare(Map<String, String> service1, Map<String, String> service2) {
+                    String type1 = service1.get("type");
+                    String type2 = service2.get("type");
+                    return type1.compareTo(type2);
+                }
+            });
+        }
+        return answer;
+    }
+
     private static String asKey(String attributeKey) {
         char ch = Character.toLowerCase(attributeKey.charAt(0));
         return ch + attributeKey.substring(1);

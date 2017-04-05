@@ -27,6 +27,11 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringLoopDoWhileTest extends LoopDoWhileTest {
 
     @Override
+    public void testLoopDoWhileFunctional() throws Exception {
+        // not applicable in XML
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringLoopDoWhileTest.xml");
     }

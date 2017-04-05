@@ -48,7 +48,7 @@ import org.xnio.Options;
 /**
  * The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
  */
-@UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
+@UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
         consumerClass = UndertowConsumer.class, label = "http", lenientProperties = true)
 public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 

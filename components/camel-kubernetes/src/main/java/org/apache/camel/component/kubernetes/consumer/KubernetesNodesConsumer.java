@@ -22,9 +22,10 @@ import io.fabric8.kubernetes.api.model.DoneableNode;
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.NodeList;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,6 +43,7 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
 
     private final Processor processor;
     private ExecutorService executor;
+    private NodesConsumerTask nodesWatcher;
 
     public KubernetesNodesConsumer(KubernetesEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -58,7 +60,8 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
         super.doStart();
         executor = getEndpoint().createExecutor();
 
-        executor.submit(new NodesConsumerTask());
+        nodesWatcher = new NodesConsumerTask();
+        executor.submit(nodesWatcher);
     }
 
     @Override
@@ -68,8 +71,14 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
         LOG.debug("Stopping Kubernetes Nodes Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                if (nodesWatcher != null) {
+                    nodesWatcher.getWatch().close();
+                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
+                if (nodesWatcher != null) {
+                    nodesWatcher.getWatch().close();
+                }
                 executor.shutdownNow();
             }
         }
@@ -78,9 +87,11 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
 
     class NodesConsumerTask implements Runnable {
         
+        private Watch watch;
+        
         @Override
         public void run() {
-            ClientNonNamespaceOperation<Node, NodeList, DoneableNode, ClientResource<Node, DoneableNode>> w = getEndpoint().getKubernetesClient().nodes();
+            NonNamespaceOperation<Node, NodeList, DoneableNode, Resource<Node, DoneableNode>> w = getEndpoint().getKubernetesClient().nodes();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey()) 
                 && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
                 w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(), getEndpoint().getKubernetesConfiguration().getLabelValue());
@@ -88,7 +99,7 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
                 w.withName(getEndpoint().getKubernetesConfiguration().getResourceName());
             }
-            w.watch(new Watcher<Node>() {
+            watch = w.watch(new Watcher<Node>() {
 
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
@@ -113,6 +124,14 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
 
                 }
             });
+        }
+       
+        public Watch getWatch() {
+            return watch;
+        }
+
+        public void setWatch(Watch watch) {
+            this.watch = watch;
         } 
     }
 }

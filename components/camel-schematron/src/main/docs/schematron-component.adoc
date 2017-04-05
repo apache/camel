@@ -1,8 +1,6 @@
-[[Schematron-SchematronComponent]]
-Schematron Component
-~~~~~~~~~~~~~~~~~~~~
+## Schematron Component
 
-*Available as of Camel 2.14*
+*Available as of Camel version 2.15*
 
 http://www.schematron.com/index.html[Schematron] is an XML-based
 language for validating XML instance documents. It is used to make
@@ -19,18 +17,14 @@ written in a way that Schematron rules are loaded at the start of the
 endpoint (only once) this is to minimise the overhead of instantiating a
 Java Templates object representing the rules.
 
-[[Schematron-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------
 schematron://path?[options]
 ---------------------------
 
-[[Schematron-URIoptions]]
-URI options
-^^^^^^^^^^^
+### URI options
 
 
 // component options: START
@@ -42,27 +36,36 @@ The Schematron component has no options.
 
 
 // endpoint options: START
-The Schematron component supports 5 endpoint options which are listed below:
+The Schematron endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    schematron:path
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| path | producer |  | String | *Required* The path to the schematron rules file. Can either be in class path or location in the file system.
-| abort | producer | false | boolean | Flag to abort the route and throw a schematron validation exception.
-| rules | producer |  | Templates | To use the given schematron rules instead of loading from the path
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| uriResolver | advanced |  | URIResolver | Set the URIResolver to be used for resolving schematron includes in the rules file.
+| Name | Description | Default | Type
+| **path** | *Required* The path to the schematron rules file. Can either be in class path or location in the file system. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **abort** (producer) | Flag to abort the route and throw a schematron validation exception. | false | boolean
+| **rules** (producer) | To use the given schematron rules instead of loading from the path |  | Templates
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **uriResolver** (advanced) | Set the URIResolver to be used for resolving schematron includes in the rules file. |  | URIResolver
+|=======================================================================
 // endpoint options: END
 
 
 
 
-[[Schematron-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -73,9 +76,7 @@ Headers
 |CamelSchematronValidationReport |The schematrion report body in XML format. See an example below |String |IN
 |=======================================================================
 
-[[Schematron-URIandpathsyntax]]
-URI and path syntax
-^^^^^^^^^^^^^^^^^^^
+### URI and path syntax
 
 The following example shows how to invoke the schematron processor in
 Java DSL. The schematron rules file is sourced from the class path:
@@ -126,9 +127,7 @@ an update, all you need is to restart the route or the component. No
 harm in storing these rules in the class path though, but you will have
 to build and deploy the component to pick up the changes.
 
-[[Schematron-Schematronrulesandreportsamples]]
-Schematron rules and report samples
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Schematron rules and report samples
 
 Here is an example of schematron rules
 
@@ -178,4 +177,3 @@ to Schematron] by Mulleberry technologies. An excellent document in PDF
 to get you started on Schematron.
 * http://www.schematron.com[Schematron official site]. This contains
 links to other resources
-

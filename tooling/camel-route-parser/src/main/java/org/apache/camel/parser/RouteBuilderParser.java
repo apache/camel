@@ -249,17 +249,22 @@ public final class RouteBuilderParser {
                         fileName = fileName.substring(baseDir.length() + 1);
                     }
 
-                    CamelSimpleExpressionDetails details = new CamelSimpleExpressionDetails();
-                    details.setFileName(fileName);
-                    details.setClassName(clazz.getQualifiedName());
-                    details.setMethodName("configure");
+                    CamelSimpleExpressionDetails detail = new CamelSimpleExpressionDetails();
+                    detail.setFileName(fileName);
+                    detail.setClassName(clazz.getQualifiedName());
+                    detail.setMethodName("configure");
                     int line = findLineNumber(fullyQualifiedFileName, result.getPosition());
                     if (line > -1) {
-                        details.setLineNumber("" + line);
+                        detail.setLineNumber("" + line);
                     }
-                    details.setSimple(result.getElement());
+                    detail.setSimple(result.getElement());
 
-                    simpleExpressions.add(details);
+                    boolean predicate = result.getPredicate() != null ? result.getPredicate() : false;
+                    boolean expression = !predicate;
+                    detail.setPredicate(predicate);
+                    detail.setExpression(expression);
+
+                    simpleExpressions.add(detail);
                 }
             }
         }

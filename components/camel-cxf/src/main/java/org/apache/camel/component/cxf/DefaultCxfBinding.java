@@ -21,6 +21,7 @@ import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -269,10 +270,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             && ((LoginSecurityContext)securityContext).getSubject() != null) {
             camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, 
                                                    ((LoginSecurityContext)securityContext).getSubject());
-        } else if (securityContext != null && securityContext.getUserPrincipal() != null) {
-            Subject subject = new Subject();
-            subject.getPrincipals().add(securityContext.getUserPrincipal());
-            camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
+        } else if (securityContext != null) {
+            Principal user = securityContext.getUserPrincipal();
+            if (user != null) {
+                Subject subject = new Subject();
+                subject.getPrincipals().add(user);
+                camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
+            }
         }
         
         // Propagating properties from CXF Exchange to Camel Exchange has an  

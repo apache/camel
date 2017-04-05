@@ -27,6 +27,7 @@ public final class TelegramConstants {
 
     public static final String TELEGRAM_MEDIA_TITLE_CAPTION = "CamelTelegramMediaTitleCaption";
 
+    public static final String TELEGRAM_PARSE_MODE = "CamelTelegramParseMode";
 
     private TelegramConstants() {
     }

@@ -17,13 +17,12 @@
 package org.apache.camel.impl.transformer;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.ValueHolder;
 
 /**
- * Key used in Transformer registry in {@link DefaultCamelContext},
+ * Key used in {@link org.apache.camel.spi.TransformerRegistry} in {@link DefaultCamelContext},
  * to ensure a consistent lookup.
  */
 public final class TransformerKey extends ValueHolder<String> {
@@ -34,8 +33,8 @@ public final class TransformerKey extends ValueHolder<String> {
 
     public TransformerKey(String scheme) {
         super(scheme);
+        StringHelper.notEmpty(scheme, "scheme");
         this.scheme = scheme;
-        ObjectHelper.notEmpty(scheme, "scheme");
     }
 
     public TransformerKey(DataType from, DataType to) {
@@ -48,22 +47,16 @@ public final class TransformerKey extends ValueHolder<String> {
         return from + "/" + to;
     }
 
-    /**
-     * Test if specified TransformerDefinition matches with data type represented by this key.
-     * @param def TransformerDefinition
-     * @return true if it matches, otherwise false
-     */
-    public boolean match(TransformerDefinition def) {
-        if (scheme != null) {
-            return scheme.equals(def.getScheme());
-        }
-        if (from == null) {
-            return to.toString().equals(def.getTo());
-        }
-        if (to == null) {
-            return from.toString().equals(def.getFrom());
-        }
-        return from.toString().equals(def.getFrom()) && to.toString().equals(def.getTo());
+    public String getScheme() {
+        return scheme;
+    }
+
+    public DataType getFrom() {
+        return from;
+    }
+
+    public DataType getTo() {
+        return to;
     }
 
     @Override

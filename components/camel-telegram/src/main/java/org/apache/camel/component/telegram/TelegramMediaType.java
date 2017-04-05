@@ -22,7 +22,7 @@ package org.apache.camel.component.telegram;
  */
 public enum TelegramMediaType {
 
-    TEXT("txt"), PHOTO_PNG("png"), PHOTO_JPG("jpg"), AUDIO("mp3"), VIDEO("mp4");
+    TEXT("txt"), PHOTO_PNG("png"), PHOTO_JPG("jpg"), AUDIO("mp3"), VIDEO("mp4"), DOCUMENT("-");
 
     private String fileExtension;
 

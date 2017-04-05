@@ -22,9 +22,10 @@ import io.fabric8.kubernetes.api.model.DoneableService;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -42,6 +43,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
 
     private final Processor processor;
     private ExecutorService executor;
+    private ServicesConsumerTask servicesWatcher;
 
     public KubernetesServicesConsumer(KubernetesEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -58,7 +60,8 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
         super.doStart();
         executor = getEndpoint().createExecutor();
 
-        executor.submit(new ServicesConsumerTask());       
+        servicesWatcher = new ServicesConsumerTask();
+        executor.submit(servicesWatcher);       
 
     }
 
@@ -68,8 +71,14 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
         LOG.debug("Stopping Kubernetes Services Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                if (servicesWatcher != null) {
+                    servicesWatcher.getWatch().close();
+                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
+                if (servicesWatcher != null) {
+                    servicesWatcher.getWatch().close();
+                }
                 executor.shutdownNow();
             }
         }
@@ -78,9 +87,11 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
     
     class ServicesConsumerTask implements Runnable {
         
+        private Watch watch;
+        
         @Override
         public void run() {
-            ClientMixedOperation<Service, ServiceList, DoneableService, ClientResource<Service, DoneableService>> w = getEndpoint().getKubernetesClient().services();
+            MixedOperation<Service, ServiceList, DoneableService, Resource<Service, DoneableService>> w = getEndpoint().getKubernetesClient().services();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 w.inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
             }
@@ -91,7 +102,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
                 w.withName(getEndpoint().getKubernetesConfiguration().getResourceName());
             }
-            w.watch(new Watcher<Service>() {
+            watch = w.watch(new Watcher<Service>() {
 
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
@@ -117,6 +128,14 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                 }
 
             });
+        } 
+        
+        public Watch getWatch() {
+            return watch;
+        }
+
+        public void setWatch(Watch watch) {
+            this.watch = watch;
         } 
     }
 }

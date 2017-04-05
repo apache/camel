@@ -1,8 +1,6 @@
-[[Slack-SlackComponent]]
-Slack Component
-~~~~~~~~~~~~~~~
+## Slack Component
 
-*Available as of Camel 2.16*
+*Available as of Camel version 2.16*
 
 The *slack* component allows you to connect to an instance
 of http://www.slack.com/[Slack] and delivers a message contained in the
@@ -23,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Slack-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 To send a message to a channel.
 
@@ -41,50 +37,56 @@ To send a direct message to a slackuser.
 slack:@username[?options]
 -------------------------
 
-[[Slack-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
 // component options: START
-The Slack component supports 1 options which are listed below.
+The Slack component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| webhookUrl | producer |  | String | The incoming webhook URL
+| Name | Description | Default | Type
+| **webhookUrl** (producer) | The incoming webhook URL |  | String
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Slack component supports 6 endpoint options which are listed below:
+The Slack endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    slack:channel
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| channel | producer |  | String | *Required* The channel name (syntax name) or slackuser (syntax userName) to send a message directly to an user.
-| iconEmoji | producer |  | String | Use a Slack emoji as an avatar
-| iconUrl | producer |  | String | The avatar that the component will use when sending message to a channel or user.
-| username | producer |  | String | This is the username that the bot will have when sending messages to a channel or user.
-| webhookUrl | producer |  | String | The incoming webhook URL
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **channel** | *Required* The channel name (syntax name) or slackuser (syntax userName) to send a message directly to an user. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **iconEmoji** (producer) | Use a Slack emoji as an avatar |  | String
+| **iconUrl** (producer) | The avatar that the component will use when sending message to a channel or user. |  | String
+| **username** (producer) | This is the username that the bot will have when sending messages to a channel or user. |  | String
+| **webhookUrl** (producer) | The incoming webhook URL |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Slack-SlackComponent.1]]
-SlackComponent
-^^^^^^^^^^^^^^
+### SlackComponent
 
 The SlackComponent with XML must be configured as a Spring or Blueprint
 bean that contains the incoming webhook url for the integration as a
@@ -99,9 +101,7 @@ parameter.
 
 For Java you can configure this using Java code.
 
-[[Slack-Example]]
-Example
-^^^^^^^
+### Example
 
 A CamelContext with Blueprint could be as:
 
@@ -124,12 +124,9 @@ A CamelContext with Blueprint could be as:
 </blueprint>
 ---------------------------------------------------------------------------------------------------------------------------
 
-[[Slack-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

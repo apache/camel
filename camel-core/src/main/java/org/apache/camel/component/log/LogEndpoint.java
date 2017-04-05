@@ -21,10 +21,13 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.model.Constants;
 import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.processor.DefaultMaskingFormatter;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -38,7 +41,7 @@ import org.slf4j.Logger;
  *
  * Camel uses sfl4j which allows you to configure logging to the actual logging system.
  */
-@UriEndpoint(scheme = "log", title = "Log", syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log", syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;
@@ -62,6 +65,8 @@ public class LogEndpoint extends ProcessorEndpoint {
     // we want to include the uri options of the DefaultExchangeFormatter
     @UriParam(label = "advanced")
     private DefaultExchangeFormatter exchangeFormatter;
+    @UriParam
+    private Boolean logMask;
 
     public LogEndpoint() {
     }
@@ -78,28 +83,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     @Override
     protected void doStart() throws Exception {
         if (logger == null) {
-            // setup a new logger here
-            CamelLogger camelLogger;
-            LoggingLevel loggingLevel = LoggingLevel.INFO;
-            if (level != null) {
-                loggingLevel = LoggingLevel.valueOf(level);
-            }
-            if (providedLogger == null) {
-                camelLogger = new CamelLogger(loggerName, loggingLevel, getMarker());
-            } else {
-                camelLogger = new CamelLogger(providedLogger, loggingLevel, getMarker());
-            }
-            if (getGroupSize() != null) {
-                logger = new ThroughputLogger(camelLogger, getGroupSize());
-            } else if (getGroupInterval() != null) {
-                Boolean groupActiveOnly = getGroupActiveOnly() != null ? getGroupActiveOnly() : Boolean.TRUE;
-                Long groupDelay = getGroupDelay();
-                logger = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
-            } else {
-                logger = new CamelLogProcessor(camelLogger, localFormatter);
-            }
-            // the logger is the processor
-            setProcessor(this.logger);
+            logger = createLogger();
         }
         ServiceHelper.startService(logger);
     }
@@ -121,12 +105,58 @@ public class LogEndpoint extends ProcessorEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new LogProducer(this, this.logger);
+        // ensure logger is created and started first
+        if (logger == null) {
+            logger = createLogger();
+        }
+        ServiceHelper.startService(logger);
+        return new LogProducer(this, logger);
     }
 
     @Override
     protected String createEndpointUri() {
         return "log:" + logger.toString();
+    }
+
+    /**
+     * Creates the logger {@link Processor} to be used.
+     */
+    protected Processor createLogger() throws Exception {
+        Processor answer;
+        // setup a new logger here
+        CamelLogger camelLogger;
+        LoggingLevel loggingLevel = LoggingLevel.INFO;
+        if (level != null) {
+            loggingLevel = LoggingLevel.valueOf(level);
+        }
+        if (providedLogger == null) {
+            camelLogger = new CamelLogger(loggerName, loggingLevel, getMarker());
+        } else {
+            camelLogger = new CamelLogger(providedLogger, loggingLevel, getMarker());
+        }
+        if (getGroupSize() != null) {
+            answer = new ThroughputLogger(camelLogger, getGroupSize());
+        } else if (getGroupInterval() != null) {
+            Boolean groupActiveOnly = getGroupActiveOnly() != null ? getGroupActiveOnly() : Boolean.TRUE;
+            Long groupDelay = getGroupDelay();
+            answer = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
+        } else {
+            answer = new CamelLogProcessor(camelLogger, localFormatter, getMaskingFormatter());
+        }
+        // the logger is the processor
+        setProcessor(answer);
+        return answer;
+    }
+
+    private MaskingFormatter getMaskingFormatter() {
+        if (logMask != null ? logMask : getCamelContext().isLogMask()) {
+            MaskingFormatter formatter = getCamelContext().getRegistry().lookupByNameAndType(Constants.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            if (formatter == null) {
+                formatter = new DefaultMaskingFormatter();
+            }
+            return formatter;
+        }
+        return null;
     }
 
     /**
@@ -246,4 +276,16 @@ public class LogEndpoint extends ProcessorEndpoint {
     public void setLoggerName(String loggerName) {
         this.loggerName = loggerName;
     }
+
+    public Boolean getLogMask() {
+        return logMask;
+    }
+
+    /**
+     * If true, mask sensitive information like password or passphrase in the log.
+     */
+    public void setLogMask(Boolean logMask) {
+        this.logMask = logMask;
+    }
+
 }

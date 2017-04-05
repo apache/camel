@@ -32,6 +32,8 @@
   <description>An example for showing Camel JMX management</description>
 
   <properties>
+    <category>Management and Monitoring</category>
+
     <camel.osgi.export.pkg>org.apache.camel.example.management.*</camel.osgi.export.pkg>
     <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
     </camel.osgi.import.additional>

@@ -16,16 +16,14 @@
  */
 package org.apache.camel.util;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -39,14 +37,12 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
+import org.apache.camel.catalog.DefaultRuntimeCamelCatalog;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.JsonSchemaHelper.getPropertyDefaultValue;
-import static org.apache.camel.util.JsonSchemaHelper.getPropertyPrefix;
-import static org.apache.camel.util.JsonSchemaHelper.isPropertyMultiValue;
-import static org.apache.camel.util.JsonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.util.ObjectHelper.after;
 
 /**
@@ -361,7 +357,9 @@ public final class EndpointHelper {
                 return (List) bean;
             } else {
                 // The bean is a list element
-                return Arrays.asList(elementType.cast(bean));
+                List<T> singleElementList = new ArrayList<T>();
+                singleElementList.add(elementType.cast(bean));
+                return singleElementList;
             }
         } else { // more than one list element
             List<T> result = new ArrayList<T>(elements.size());
@@ -525,286 +523,13 @@ public final class EndpointHelper {
      * @param uri          the endpoint uri
      * @return a map for each option in the uri with the corresponding information from the json
      * @throws Exception is thrown in case of error
+     * @deprecated use {@link org.apache.camel.catalog.RuntimeCamelCatalog#endpointProperties(String)}
      */
-    // CHECKSTYLE:OFF
+    @Deprecated
     public static Map<String, Object> endpointProperties(CamelContext camelContext, String uri) throws Exception {
-        // NOTICE: This logic is similar to org.apache.camel.util.EndpointHelper#endpointProperties
-        // as the catalog also offers similar functionality (without having camel-core on classpath)
-
-        // need to normalize uri first
-
-        // parse the uri
-        URI u = normalizeUri(uri);
-        String scheme = u.getScheme();
-
-        String json = camelContext.getComponentParameterJsonSchema(u.getScheme());
-        if (json == null) {
-            throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
-        }
-
-        // grab the syntax
-        String syntax = null;
-        String alternativeSyntax = null;
-        List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("syntax")) {
-                syntax = row.get("syntax");
-            }
-            if (row.containsKey("alternativeSyntax")) {
-                alternativeSyntax = row.get("alternativeSyntax");
-            }
-        }
-        if (syntax == null) {
-            throw new IllegalArgumentException("Endpoint with scheme " + scheme + " has no syntax defined in the json schema");
-        }
-
-        // only if we support alternative syntax, and the uri contains the username and password in the authority
-        // part of the uri, then we would need some special logic to capture that information and strip those
-        // details from the uri, so we can continue parsing the uri using the normal syntax
-        Map<String, String> userInfoOptions = new LinkedHashMap<String, String>();
-        if (alternativeSyntax != null && alternativeSyntax.contains("@")) {
-            // clip the scheme from the syntax
-            alternativeSyntax = after(alternativeSyntax, ":");
-            // trim so only userinfo
-            int idx = alternativeSyntax.indexOf("@");
-            String fields = alternativeSyntax.substring(0, idx);
-            String[] names = fields.split(":");
-
-            // grab authority part and grab username and/or password
-            String authority = u.getAuthority();
-            if (authority != null && authority.contains("@")) {
-                String username = null;
-                String password = null;
-
-                // grab unserinfo part before @
-                String userInfo = authority.substring(0, authority.indexOf("@"));
-                String[] parts = userInfo.split(":");
-                if (parts.length == 2) {
-                    username = parts[0];
-                    password = parts[1];
-                } else {
-                    // only username
-                    username = userInfo;
-                }
-
-                // remember the username and/or password which we add later to the options
-                if (names.length == 2) {
-                    userInfoOptions.put(names[0], username);
-                    if (password != null) {
-                        // password is optional
-                        userInfoOptions.put(names[1], password);
-                    }
-                }
-            }
-        }
-
-        // clip the scheme from the syntax
-        syntax = after(syntax, ":");
-        // clip the scheme from the uri
-        uri = after(uri, ":");
-        String uriPath = stripQuery(uri);
-
-        // strip user info from uri path
-        if (!userInfoOptions.isEmpty()) {
-            int idx = uriPath.indexOf('@');
-            if (idx > -1) {
-                uriPath = uriPath.substring(idx + 1);
-            }
-        }
-
-        // strip double slash in the start
-        if (uriPath != null && uriPath.startsWith("//")) {
-            uriPath = uriPath.substring(2);
-        }
-
-        // parse the syntax and find the names of each option
-        Matcher matcher = SYNTAX_PATTERN.matcher(syntax);
-        List<String> word = new ArrayList<String>();
-        while (matcher.find()) {
-            String s = matcher.group(1);
-            if (!scheme.equals(s)) {
-                word.add(s);
-            }
-        }
-        // parse the syntax and find each token between each option
-        String[] tokens = SYNTAX_PATTERN.split(syntax);
-
-        // find the position where each option start/end
-        List<String> word2 = new ArrayList<String>();
-        int prev = 0;
-        int prevPath = 0;
-
-        // special for activemq/jms where the enum for destinationType causes a token issue as it includes a colon
-        // for 'temp:queue' and 'temp:topic' values
-        if ("activemq".equals(scheme) || "jms".equals("scheme")) {
-            if (uriPath.startsWith("temp:")) {
-                prevPath = 5;
-            }
-        }
-
-        for (String token : tokens) {
-            if (token.isEmpty()) {
-                continue;
-            }
-
-            // special for some tokens where :// can be used also, eg http://foo
-            int idx = -1;
-            int len = 0;
-            if (":".equals(token)) {
-                idx = uriPath.indexOf("://", prevPath);
-                len = 3;
-            }
-            if (idx == -1) {
-                idx = uriPath.indexOf(token, prevPath);
-                len = token.length();
-            }
-
-            if (idx > 0) {
-                String option = uriPath.substring(prev, idx);
-                word2.add(option);
-                prev = idx + len;
-                prevPath = prev;
-            }
-        }
-        // special for last or if we did not add anyone
-        if (prev > 0 || word2.isEmpty()) {
-            String option = uriPath.substring(prev);
-            word2.add(option);
-        }
-
-        rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
-
-        boolean defaultValueAdded = false;
-
-        // now parse the uri to know which part isw what
-        Map<String, String> options = new LinkedHashMap<String, String>();
-
-        // include the username and password from the userinfo section
-        if (!userInfoOptions.isEmpty()) {
-            options.putAll(userInfoOptions);
-        }
-
-        // word contains the syntax path elements
-        Iterator<String> it = word2.iterator();
-        for (int i = 0; i < word.size(); i++) {
-            String key = word.get(i);
-
-            boolean allOptions = word.size() == word2.size();
-            boolean required = isPropertyRequired(rows, key);
-            String defaultValue = getPropertyDefaultValue(rows, key);
-
-            // we have all options so no problem
-            if (allOptions) {
-                String value = it.next();
-                options.put(key, value);
-            } else {
-                // we have a little problem as we do not not have all options
-                if (!required) {
-                    String value = null;
-
-                    boolean last = i == word.size() - 1;
-                    if (last) {
-                        // if its the last value then use it instead of the default value
-                        value = it.hasNext() ? it.next() : null;
-                        if (value != null) {
-                            options.put(key, value);
-                        } else {
-                            value = defaultValue;
-                        }
-                    }
-                    if (value != null) {
-                        options.put(key, value);
-                        defaultValueAdded = true;
-                    }
-                } else {
-                    String value = it.hasNext() ? it.next() : null;
-                    if (value != null) {
-                        options.put(key, value);
-                    }
-                }
-            }
-        }
-
-        Map<String, Object> answer = new LinkedHashMap<String, Object>();
-
-        // remove all options which are using default values and are not required
-        for (Map.Entry<String, String> entry : options.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-
-            if (defaultValueAdded) {
-                boolean required = isPropertyRequired(rows, key);
-                String defaultValue = getPropertyDefaultValue(rows, key);
-
-                if (!required && defaultValue != null) {
-                    if (defaultValue.equals(value)) {
-                        continue;
-                    }
-                }
-            }
-
-            // we should keep this in the answer
-            answer.put(key, value);
-        }
-
-        // now parse the uri parameters
-        Map<String, Object> parameters = URISupport.parseParameters(u);
-
-        // and covert the values to String so its JMX friendly
-        while (!parameters.isEmpty()) {
-            Map.Entry<String, Object> entry = parameters.entrySet().iterator().next();
-            String key = entry.getKey();
-            String value = entry.getValue() != null ? entry.getValue().toString() : "";
-
-            boolean multiValued = isPropertyMultiValue(rows, key);
-            if (multiValued) {
-                String prefix = getPropertyPrefix(rows, key);
-                // extra all the multi valued options
-                Map<String, Object> values = URISupport.extractProperties(parameters, prefix);
-                // build a string with the extra multi valued options with the prefix and & as separator
-                CollectionStringBuffer csb = new CollectionStringBuffer("&");
-                for (Map.Entry<String, Object> multi : values.entrySet()) {
-                    String line = prefix + multi.getKey() + "=" + (multi.getValue() != null ? multi.getValue().toString() : "");
-                    csb.append(line);
-                }
-                // append the extra multi-values to the existing (which contains the first multi value)
-                if (!csb.isEmpty()) {
-                    value = value + "&" + csb.toString();
-                }
-            }
-
-            answer.put(key, value);
-            // remove the parameter as we run in a while loop until no more parameters
-            parameters.remove(key);
-        }
-
-        return answer;
-    }
-    // CHECKSTYLE:ON
-
-    /**
-     * Normalizes the URI so unsafe characters is encoded
-     *
-     * @param uri the input uri
-     * @return as URI instance
-     * @throws URISyntaxException is thrown if syntax error in the input uri
-     */
-    private static URI normalizeUri(String uri) throws URISyntaxException {
-        return new URI(UnsafeUriCharactersEncoder.encode(uri, true));
-    }
-
-    /**
-     * Strips the query parameters from the uri
-     *
-     * @param uri the uri
-     * @return the uri without the query parameter
-     */
-    private static String stripQuery(String uri) {
-        int idx = uri.indexOf('?');
-        if (idx > -1) {
-            uri = uri.substring(0, idx);
-        }
-        return uri;
+        RuntimeCamelCatalog catalog = new DefaultRuntimeCamelCatalog(camelContext, false);
+        Map<String, String> options = catalog.endpointProperties(uri);
+        return new HashMap<>(options);
     }
 
 }

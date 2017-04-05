@@ -91,6 +91,9 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Boolean messageHistory = (Boolean) mbeanServer.getAttribute(on, "MessageHistory");
         assertEquals(Boolean.TRUE, messageHistory);
 
+        Boolean logMask = (Boolean) mbeanServer.getAttribute(on, "LogMask");
+        assertEquals(Boolean.FALSE, logMask);
+
         Integer total = (Integer) mbeanServer.getAttribute(on, "TotalRoutes");
         assertEquals(2, total.intValue());
 
@@ -304,8 +307,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         int pos2 = json.indexOf("groupDelay");
         assertTrue("LoggerName should come before groupDelay", pos < pos2);
 
-        assertEquals(29, StringHelper.countChar(json, '{'));
-        assertEquals(29, StringHelper.countChar(json, '}'));
+        assertEquals(30, StringHelper.countChar(json, '{'));
+        assertEquals(30, StringHelper.countChar(json, '}'));
 
         assertTrue(json.contains("\"scheme\": \"log\""));
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
@@ -372,8 +375,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertTrue(json.contains("\"description\": \"Aggregates many messages into a single message\""));
         assertTrue(json.contains("\"label\": \"eip,routing\""));
-        assertTrue(json.contains("\"correlationExpression\": { \"kind\": \"expression\", \"required\": \"true\", \"type\": \"object\""));
-        assertTrue(json.contains("\"discardOnCompletionTimeout\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"correlationExpression\": { \"kind\": \"expression\", \"displayName\": \"Correlation Expression\", \"required\": true, \"type\": \"object\""));
+        assertTrue(json.contains("\"discardOnCompletionTimeout\": { \"kind\": \"attribute\", \"displayName\": \"Discard On Completion Timeout\", \"required\": false, \"type\": \"boolean\""));
     }
 
     public void testManagedCamelContextExplainComponentModel() throws Exception {

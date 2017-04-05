@@ -80,9 +80,16 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
     protected File languagesOutDir;
 
     /**
+     * The output directory for others catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/springboot/others"
+     */
+    protected File othersOutDir;
+
+    /**
      * The directory where all spring-boot starters are
      *
-     * @parameter default-value="${project.build.directory}/../../../components-starter"
+     * @parameter default-value="${project.build.directory}/../../../platforms/spring-boot/components-starter"
      */
     protected File componentsStarterDir;
 
@@ -120,6 +127,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         executeComponents(starters);
         executeDataFormats(starters);
         executeLanguages(starters);
+        executeOthers(starters);
     }
 
     protected void executeComponents(Set<String> starters) throws MojoExecutionException, MojoFailureException {
@@ -237,7 +245,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                         if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
                             continue;
                         }
-                        // the directory must be in the list of known features
+                        // the directory must be in the list of known starters
                         if (!starters.contains(dir.getName())) {
                             continue;
                         }
@@ -322,7 +330,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                     if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
                         continue;
                     }
-                    // the directory must be in the list of known features
+                    // the directory must be in the list of known starters
                     if (!starters.contains(dir.getName())) {
                         continue;
                     }
@@ -392,6 +400,104 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         }
     }
 
+    protected void executeOthers(Set<String> starters) throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying all Camel other json descriptors");
+
+        // lets use sorted set/maps
+        Set<File> jsonFiles = new TreeSet<File>();
+        Set<File> otherFiles = new TreeSet<File>();
+
+        // find all other from the components directory
+        if (componentsDir != null && componentsDir.isDirectory()) {
+            File[] others = componentsDir.listFiles();
+            if (others != null) {
+                for (File dir : others) {
+                    // skip camel-spring-dm
+                    if (dir.isDirectory() && "camel-spring-dm".equals(dir.getName())) {
+                        continue;
+                    }
+                    // the directory must be in the list of known starters
+                    if (!starters.contains(dir.getName())) {
+                        continue;
+                    }
+
+                    // skip these special cases
+                    // (camel-jetty is a placeholder, as camel-jetty9 is the actual component)
+                    if ("camel-core-osgi".equals(dir.getName())
+                        || "camel-core-xml".equals(dir.getName())
+                        || "camel-box".equals(dir.getName())
+                        || "camel-http-common".equals(dir.getName())
+                        || "camel-jetty".equals(dir.getName())
+                        || "camel-jetty-common".equals(dir.getName())
+                        || "camel-linkedin".equals(dir.getName())
+                        || "camel-olingo2".equals(dir.getName())
+                        || "camel-olingo4".equals(dir.getName())
+                        || "camel-salesforce".equals(dir.getName())) {
+                        continue;
+                    }
+
+                    if (dir.isDirectory() && !"target".equals(dir.getName())) {
+                        File target = new File(dir, "target/classes");
+                        findOtherFilesRecursive(target, jsonFiles, otherFiles, new CamelOthersFileFilter());
+                    }
+                }
+            }
+        }
+
+        getLog().info("Found " + otherFiles.size() + " other.properties files");
+        getLog().info("Found " + jsonFiles.size() + " other json files");
+
+        // make sure to create out dir
+        othersOutDir.mkdirs();
+
+        for (File file : jsonFiles) {
+            // for spring-boot we need to amend the json file to use -starter as the artifact-id
+            try {
+                String text = loadText(new FileInputStream(file));
+
+                text = ARTIFACT_PATTERN.matcher(text).replaceFirst("\"artifactId\": \"camel-$1-starter\"");
+
+                // write new json file
+                File to = new File(othersOutDir, file.getName());
+                FileOutputStream fos = new FileOutputStream(to, false);
+
+                fos.write(text.getBytes());
+
+                fos.close();
+
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot write json file " + file, e);
+            }
+        }
+
+        File all = new File(othersOutDir, "../others.properties");
+        try {
+            FileOutputStream fos = new FileOutputStream(all, false);
+
+            String[] names = othersOutDir.list();
+            List<String> others = new ArrayList<String>();
+            // sort the names
+            for (String name : names) {
+                if (name.endsWith(".json")) {
+                    // strip out .json from the name
+                    String otherName = name.substring(0, name.length() - 5);
+                    others.add(otherName);
+                }
+            }
+
+            Collections.sort(others);
+            for (String name : others) {
+                fos.write(name.getBytes());
+                fos.write("\n".getBytes());
+            }
+
+            fos.close();
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error writing to file " + all);
+        }
+    }
+
     private void findComponentFilesRecursive(File dir, Set<File> found, Set<File> components, FileFilter filter) {
         File[] files = dir.listFiles(filter);
         if (files != null) {
@@ -444,6 +550,25 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                     languages.add(file);
                 } else if (file.isDirectory()) {
                     findLanguageFilesRecursive(file, found, languages, filter);
+                }
+            }
+        }
+    }
+
+    private void findOtherFilesRecursive(File dir, Set<File> found, Set<File> others, FileFilter filter) {
+        File[] files = dir.listFiles(filter);
+        if (files != null) {
+            for (File file : files) {
+                // skip files in root dirs as Camel does not store information there but others may do
+                boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
+                boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean otherFile = !rootDir && file.isFile() && file.getName().equals("other.properties");
+                if (jsonFile) {
+                    found.add(file);
+                } else if (otherFile) {
+                    others.add(file);
+                } else if (file.isDirectory()) {
+                    findOtherFilesRecursive(file, found, others, filter);
                 }
             }
         }
@@ -509,6 +634,23 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                 }
             }
             return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("language.properties"));
+        }
+    }
+
+    private class CamelOthersFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+                // must be a language json file
+                try {
+                    String json = loadText(new FileInputStream(pathname));
+                    return json != null && json.contains("\"kind\": \"other\"");
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("other.properties"));
         }
     }
 

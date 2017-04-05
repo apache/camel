@@ -37,6 +37,7 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.bean.MyOtherFooBean;
 import org.apache.camel.component.bean.MyStaticClass;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
@@ -618,7 +619,7 @@ public class ObjectHelperTest extends TestCase {
 
     public void testGetCamelContextPropertiesWithPrefix() {
         CamelContext context = new DefaultCamelContext();
-        Map<String, String> properties = context.getProperties();
+        Map<String, String> properties = context.getGlobalOptions();
         properties.put("camel.object.helper.test1", "test1");
         properties.put("camel.object.helper.test2", "test2");
         properties.put("camel.object.test", "test");
@@ -865,5 +866,28 @@ public class ObjectHelperTest extends TestCase {
         } catch (IllegalArgumentException iae) {
             assertEquals("expected2 must be specified on: holder", iae.getMessage());
         }
+    }
+
+    public void testSameMethodIsOverride() throws Exception {
+        Method m = MyOtherFooBean.class.getMethod("toString", Object.class);
+        assertTrue(ObjectHelper.isOverridingMethod(m, m, false));
+    }
+
+    public void testOverloadIsNotOverride() throws Exception {
+        Method m1 = MyOtherFooBean.class.getMethod("toString", Object.class);
+        Method m2 = MyOtherFooBean.class.getMethod("toString", String.class);
+        assertFalse(ObjectHelper.isOverridingMethod(m2, m1, false));
+    }
+
+    public void testOverrideEquivalentSignatureFromSiblingClassIsNotOverride() throws Exception {
+        Method m1 = Double.class.getMethod("intValue");
+        Method m2 = Float.class.getMethod("intValue");
+        assertFalse(ObjectHelper.isOverridingMethod(m2, m1, false));
+    }
+
+    public void testOverrideEquivalentSignatureFromUpperClassIsOverride() throws Exception {
+        Method m1 = Double.class.getMethod("intValue");
+        Method m2 = Number.class.getMethod("intValue");
+        assertTrue(ObjectHelper.isOverridingMethod(m2, m1, false));
     }
 }

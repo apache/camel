@@ -32,6 +32,9 @@
   <packaging>jar</packaging>
 
   <properties>
+    <category>OSGi</category>
+    <title>Servlet REST Blueprint</title>
+
     <camel.osgi.import.pkg>
       *
     </camel.osgi.import.pkg>

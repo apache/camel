@@ -28,17 +28,11 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.StringDataFormat;
-import org.apache.camel.model.transformer.CustomTransformerDefinition;
-import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
-import org.apache.camel.model.transformer.EndpointTransformerDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedTransformerRegistryTest.class);
 
@@ -105,8 +99,8 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
                 assertEquals("xml:test", to);
             } else if (description.startsWith("MyTransformer")) {
                 assertEquals("custom", scheme);
-                assertEquals("null:null", from);
-                assertEquals("null:null", to);
+                assertEquals(null, from);
+                assertEquals(null, to);
             } else {
                 fail("Unexpected transformer:" + description);
             }
@@ -119,25 +113,19 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:result");
+                transformer()
+                    .fromType("xml:foo")
+                    .toType("json:bar")
+                    .withUri("direct:transformer");
+                transformer()
+                    .fromType(ManagedTransformerRegistryTest.class)
+                    .toType("xml:test")
+                    .withDataFormat(new StringDataFormat());
+                transformer()
+                    .scheme("custom")
+                    .withJava(MyTransformer.class);
                 
-                EndpointTransformerDefinition etd = new EndpointTransformerDefinition();
-                etd.setFrom("xml:foo");
-                etd.setTo("json:bar");
-                etd.setUri("direct:transformer");
-                context.getTransformers().add(etd);
-                context.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
-                DataFormatTransformerDefinition dftd = new DataFormatTransformerDefinition();
-                dftd.setFrom(ManagedTransformerRegistryTest.class);
-                dftd.setTo("xml:test");
-                dftd.setDataFormatType(new StringDataFormat());
-                context.getTransformers().add(dftd);
-                context.resolveTransformer(new DataType(ManagedTransformerRegistryTest.class), new DataType("xml:test"));
-                CustomTransformerDefinition ctd = new CustomTransformerDefinition();
-                ctd.setScheme("custom");
-                ctd.setType(MyTransformer.class.getName());
-                context.getTransformers().add(ctd);
-                context.resolveTransformer("custom");
+                from("direct:start").to("mock:result");
             }
         };
     }
@@ -145,7 +133,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     public static class MyTransformer extends Transformer {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
-            return;
+            // empty
         }
     }
 }

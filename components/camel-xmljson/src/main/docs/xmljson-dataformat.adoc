@@ -1,8 +1,6 @@
-[[XmlJson-XMLJSONDataFormat]]
-XML JSON Data Format (`camel-xmljson`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## XML JSon DataFormat
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 Camel already supports a number of data formats to perform XML and
 JSON-related conversions, but all of them require a POJO either as an
@@ -19,16 +17,13 @@ semantics are assigned as follows:
 * marshalling => converting from XML to JSON
 * unmarshalling => converting from JSON to XML.
 
-[[XmlJson-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The XML JSon dataformat supports 13 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -46,16 +41,11 @@ The XML JSon dataformat supports 13 options which are listed below.
 | typeHints |  | String | Adds type hints to the resulting XML to aid conversion back to JSON. Used for unmarshalling (JSON to XML conversion).
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
-[[XmlJson-BasicUsagewithJavaDSL]]
-Basic Usage with Java DSL
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Basic Usage with Java DSL
 
-[[XmlJson-Explicitlyinstantiatingthedataformat]]
-Explicitly instantiating the data format
-++++++++++++++++++++++++++++++++++++++++
+#### Explicitly instantiating the data format
 
 Just instantiate the `XmlJsonDataFormat` from package
 `org.apache.camel.dataformat.xmljson`. Make sure you have installed the
@@ -94,9 +84,7 @@ from("direct:marshal").marshal(xmlJsonFormat).to("mock:json");
 from("direct:unmarshal").unmarshal(xmlJsonFormat).to("mock:xml");
 ----
 
-[[XmlJson-Definingthedataformatin-line]]
-Defining the data format in-line
-++++++++++++++++++++++++++++++++
+#### Defining the data format in-line
 
 Alternatively, you can define the data format inline by using the
 `xmljson()` DSL element:
@@ -127,9 +115,7 @@ from("direct:marshalInlineOptions").marshal().xmljson(xmlJsonOptions).to("mock:j
 from("direct:unmarshalInlineOptions").unmarshal().xmljson(xmlJsonOptions).to("mock:xmlInlineOptions");
 ----
 
-[[XmlJson-BasicusagewithSpringorBlueprintDSL]]
-Basic usage with Spring or Blueprint DSL
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Basic usage with Spring or Blueprint DSL
 
 Within the `<dataFormats>` block, simply configure an `xmljson` element
 with unique IDs:
@@ -174,9 +160,7 @@ The syntax with link:using-osgi-blueprint-with-camel.html[Blueprint] is
 identical to that of the Spring DSL. Just ensure the correct namespaces
 and schemaLocations are in use.
 
-[[XmlJson-Namespacemappings]]
-Namespace mappings
-^^^^^^^^^^^^^^^^^^
+### Namespace mappings
 
 XML has namespaces to fully qualify elements and attributes; JSON
 doesn't. You need to take this into account when performing XML-JSON
@@ -233,9 +217,7 @@ namespacesFormat.setRootElement("person");
 
 And you can achieve the same in Spring DSL.
 
-[[XmlJson-Example]]
-Example
-+++++++
+#### Example
 
 Using the namespace bindings in the Java snippet above on the following
 JSON string:
@@ -267,9 +249,7 @@ _________________________________________________________
 
 That's why the elements are in a different order in the output XML.
 
-[[XmlJson-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use the link:xmljson.html[XmlJson] dataformat in your camel routes
 you need to add the following dependency to your pom:
@@ -292,9 +272,7 @@ license with ASF; so add this manually -->
 </dependency>
 ----
 
-[[XmlJson-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:data-format.html[Data Format]
 * http://json-lib.sourceforge.net/[json-lib]

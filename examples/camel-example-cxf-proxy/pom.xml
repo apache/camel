@@ -32,6 +32,9 @@
   <packaging>jar</packaging>
 
   <properties>
+    <category>WebService</category>
+    <title>CXF Proxy</title>
+
     <camel.osgi.export.pkg>
       org.apache.camel.example.*
     </camel.osgi.export.pkg>
@@ -125,6 +128,8 @@
             <id>generate-sources</id>
             <phase>generate-sources</phase>
             <configuration>
+              <fork>${cxf.codegenplugin.forkmode}</fork>
+              <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
               <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
               <wsdlOptions>
                 <wsdlOption>

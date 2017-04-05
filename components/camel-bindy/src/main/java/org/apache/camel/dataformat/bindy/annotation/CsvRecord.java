@@ -84,5 +84,11 @@ public @interface CsvRecord {
      * Last record spans rest of line (optional)
      */
     boolean autospanLine() default false;
+    
+    /**
+     * The allowEmptyStream parameter will allow to prcoess 
+     * the unavaiable stream for CSV file.
+     */
+    boolean allowEmptyStream() default false;
 
 }

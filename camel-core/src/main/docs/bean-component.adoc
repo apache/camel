@@ -1,24 +1,20 @@
-[[Bean-BeanComponent]]
-Bean Component
-~~~~~~~~~~~~~~
+## Bean Component
+
+*Available as of Camel version 1.0*
 
 The *bean:* component binds beans to Camel message exchanges.
 
-[[Bean-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------
-bean:beanID[?options]
+bean:beanName[?options]
 ---------------------
 
 Where *beanID* can be any string which is used to look up the bean in
 the link:registry.html[Registry]
 
-[[Bean-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -28,29 +24,38 @@ The Bean component has no options.
 
 
 // endpoint options: START
-The Bean component supports 6 endpoint options which are listed below:
+The Bean endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    bean:beanName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| beanName | producer |  | String | *Required* Sets the name of the bean to invoke
-| method | producer |  | String | Sets the name of the method to invoke on the bean
-| cache | advanced | false | boolean | If enabled Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope.
-| multiParameterArray | advanced | false | boolean | How to treat the parameters which are passed from the message body; if it is true the message body should be an array of parameters. Note: This option is used internally by Camel and is not intended for end users to use.
-| parameters | advanced |  | Map | Used for configuring additional properties on the bean
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **beanName** | *Required* Sets the name of the bean to invoke |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **method** (producer) | Sets the name of the method to invoke on the bean |  | String
+| **cache** (advanced) | If enabled Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. | false | boolean
+| **multiParameterArray** (advanced) | How to treat the parameters which are passed from the message body; if it is true the message body should be an array of parameters. Note: This option is used internally by Camel and is not intended for end users to use. | false | boolean
+| **parameters** (advanced) | Used for configuring additional properties on the bean |  | Map
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Bean-Using]]
-Using
-^^^^^
+### Using
 
 The object instance that is used to consume messages must be explicitly
 registered with the link:registry.html[Registry]. For example, if you
@@ -84,9 +89,7 @@ And the same route using Spring DSL:
 </route>
 ----------------------------
 
-[[Bean-Beanasendpoint]]
-Bean as endpoint
-^^^^^^^^^^^^^^^^
+### Bean as endpoint
 
 Camel also supports invoking link:bean.html[Bean] as an Endpoint. In the
 route below:
@@ -99,9 +102,7 @@ Camel will use link:bean-binding.html[Bean Binding] to invoke the
 `sayHello` method, by converting the Exchange's In body to the `String`
 type and storing the output of the method on the Exchange Out body.
 
-[[Bean-JavaDSLbeansyntax]]
-Java DSL bean syntax
-^^^^^^^^^^^^^^^^^^^^
+### Java DSL bean syntax
 
 Java DSL comes with syntactic sugar for the link:bean.html[Bean]
 component. Instead of specifying the bean explicitly as the endpoint
@@ -133,9 +134,7 @@ from("direct:start").bean(new ExampleBean(), "methodName");
 from("direct:start").bean(ExampleBean.class);
 ---------------------------------------------------------------
 
-[[Bean-BeanBinding]]
-Bean Binding
-^^^^^^^^^^^^
+### Bean Binding
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
@@ -144,9 +143,7 @@ link:bean-binding.html[Bean Binding] mechanism which is used throughout
 all of the various link:bean-integration.html[Bean Integration]
 mechanisms in Camel.
 
-[[Bean-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -156,4 +153,3 @@ See Also
 * link:class.html[Class] component
 * link:bean-binding.html[Bean Binding]
 * link:bean-integration.html[Bean Integration]
-

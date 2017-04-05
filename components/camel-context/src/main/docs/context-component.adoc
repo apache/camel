@@ -1,8 +1,6 @@
-[[Context-ContextComponent]]
-Context Component
-~~~~~~~~~~~~~~~~~
+## Camel Context Component (deprecated)
 
-*Available as of Camel 2.7*
+*Available as of Camel version 2.7*
 
 The *context* component allows you to create new Camel Components from a
 CamelContext with a number of routes which is then treated as a black
@@ -27,9 +25,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Context-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------------------------------
@@ -52,36 +48,43 @@ The Camel Context component has no options.
 
 
 // endpoint options: START
-The Camel Context component supports 6 endpoint options which are listed below:
+The Camel Context endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    context:contextId:localEndpointUrl
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| contextId | common |  | String | *Required* Is the ID you used to register the CamelContext into the Registry.
-| localEndpointUrl | common |  | String | *Required* Can be a valid Camel URI evaluated within the black box CamelContext. Or it can be a logical name which is mapped to any local endpoints. For example if you locally have endpoints like direct:invoices and seda:purchaseOrders inside a CamelContext of id supplyChain then you can just use the URIs supplyChain:invoices or supplyChain:purchaseOrders to omit the physical endpoint kind and use pure logical URIs.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **contextId** | *Required* Is the ID you used to register the CamelContext into the Registry. |  | String
+| **localEndpointUrl** | *Required* Can be a valid Camel URI evaluated within the black box CamelContext. Or it can be a logical name which is mapped to any local endpoints. For example if you locally have endpoints like direct:invoices and seda:purchaseOrders inside a CamelContext of id supplyChain then you can just use the URIs supplyChain:invoices or supplyChain:purchaseOrders to omit the physical endpoint kind and use pure logical URIs. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Context-Example]]
-Example
-^^^^^^^
+### Example
 
 In this example we'll create a black box context, then we'll use it from
 another CamelContext.
 
-[[Context-Definingthecontextcomponent]]
-Defining the context component
-++++++++++++++++++++++++++++++
+#### Defining the context component
 
 First you need to create a CamelContext, add some routes in it, start it
 and then register the CamelContext into the link:registry.html[Registry]
@@ -127,9 +130,7 @@ ID. We can do the same thing in Spring via
 </camelContext>
 --------------------------------------------------------------------------
 
-[[Context-Usingthecontextcomponent]]
-Using the context component
-+++++++++++++++++++++++++++
+#### Using the context component
 
 Then in another CamelContext we can then refer to this "accounts black
 box" by just sending to *accounts:purchaseOrder* and consuming from
@@ -160,9 +161,7 @@ middleware (outside of the black box) we can do things like...
 </camelContext>
 --------------------------------------------------------------------------------
 
-[[Context-Namingendpoints]]
-Naming endpoints
-++++++++++++++++
+#### Naming endpoints
 
 A context component instance can have many public input and output
 endpoints that can be accessed from outside it's CamelContext. When

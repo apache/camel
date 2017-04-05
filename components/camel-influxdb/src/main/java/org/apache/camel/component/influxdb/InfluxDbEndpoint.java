@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.influxdb.InfluxDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The influxdb component allows you to interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, a time series database.
  */
-@UriEndpoint(scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean", label = "database,ticks", producerOnly = true)
+@UriEndpoint(firstVersion = "2.18.0", scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean", label = "database", producerOnly = true)
 public class InfluxDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbEndpoint.class);
@@ -47,18 +48,13 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private String retentionPolicy = "default";
     @UriParam(defaultValue = "false")
     private boolean batch;
-
-    public InfluxDbEndpoint(String uri, InfluxDbComponent influxDbComponent, InfluxDB dbConn) {
-        super(uri, influxDbComponent);
-
-        if (dbConn == null) {
-            throw new IllegalArgumentException("dbConn is null");
-        }
-
-        this.influxDB = dbConn;
-
-        LOG.debug("Prepairing influxdb enpoint with uri {}", uri);
-        LOG.debug("Creating influx db producer connectionBean:{}, databaseName:{}, retentionPolicy:{}", connectionBean, databaseName, retentionPolicy);
+    @UriParam(defaultValue = InfluxDbOperations.INSERT)
+    private String operation = InfluxDbOperations.INSERT;
+    @UriParam
+    private String query;
+    
+    public InfluxDbEndpoint(String uri, InfluxDbComponent component) {
+        super(uri, component);
     }
 
     @Override
@@ -69,6 +65,18 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+        influxDB = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, InfluxDB.class);
+        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, influxDB);
+        super.doStart();  
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
     }
 
     @Override
@@ -129,5 +137,27 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
      */
     public void setBatch(boolean batch) {
         this.batch = batch;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    /**
+     * Define if this operation is an insert or a query
+     */
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    /**
+     * Define the query in case of operation query
+     */
+    public void setQuery(String query) {
+        this.query = query;
     }
 }

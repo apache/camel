@@ -239,4 +239,13 @@ public class StringHelperTest extends TestCase {
         assertEquals(3, changed.get(1).intValue());
     }
 
+    public void testTrimToNull() {
+        assertEquals(StringHelper.trimToNull("abc"), "abc");
+        assertEquals(StringHelper.trimToNull(" abc"), "abc");
+        assertEquals(StringHelper.trimToNull(" abc "), "abc");
+        assertNull(StringHelper.trimToNull(" "));
+        assertNull(StringHelper.trimToNull("\t"));
+        assertNull(StringHelper.trimToNull(" \t "));
+        assertNull(StringHelper.trimToNull(""));
+    }
 }

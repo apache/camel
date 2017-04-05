@@ -1,6 +1,7 @@
-[[HL7-Terserlanguage]]
-Terser language
-^^^^^^^^^^^^^^^
+## HL7 Terser Language
+### Terser language
+*Available as of Camel version 2.11.0*
+
 
 http://hl7api.sourceforge.net[HAPI] provides a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
@@ -27,21 +28,16 @@ import static org.apache.camel.component.hl7.HL7.terser;
       .to("mock:test2");
 --------------------------------------------------------------------------------------------------
 
-[[HL7-Terserlanguage-options]]
-Terser Language options
-^^^^^^^^^^^^^^^^^^^^^^^
+### Terser Language options
 
 // language options: START
 The HL7 Terser language supports 1 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================
-{% endraw %}
 // language options: END
-

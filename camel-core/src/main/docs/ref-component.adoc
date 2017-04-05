@@ -1,13 +1,11 @@
-[[Ref-RefComponent]]
-Ref Component
-~~~~~~~~~~~~~
+## Ref Component
+
+*Available as of Camel version 1.2*
 
 The *ref:* component is used for lookup of existing endpoints bound in
 the link:registry.html[Registry].
 
-[[Ref-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------
@@ -19,9 +17,7 @@ link:registry.html[Registry] (usually, but not always, the Spring
 registry). If you are using the Spring registry, `someName` would be the
 bean ID of an endpoint in the Spring registry.
 
-[[Ref-Options]]
-Ref Options
-^^^^^^^^^^^
+### Ref Options
 
 // component options: START
 The Ref component has no options.
@@ -29,25 +25,34 @@ The Ref component has no options.
 
 
 // endpoint options: START
-The Ref component supports 5 endpoint options which are listed below:
+The Ref endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    ref:name
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Name of endpoint to lookup in the registry.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **name** | *Required* Name of endpoint to lookup in the registry. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Ref-Runtimelookup]]
-Runtime lookup
-^^^^^^^^^^^^^^
+### Runtime lookup
 
 This component can be used when you need dynamic discovery of endpoints
 in the link:registry.html[Registry] where you can compute the URI at
@@ -79,9 +84,7 @@ link:registry.html[Registry] such as:
   </camelContext>
 ----------------------------------------------------------------------------------
 
-[[Ref-Sample]]
-Sample
-^^^^^^
+### Sample
 
 In the sample below we use the `ref:` in the URI to reference the
 endpoint with the spring ID, `endpoint2`:
@@ -95,12 +98,9 @@ You could, of course, have used the `ref` attribute instead:
 
 Which is the more common way to write it.
 
-[[Ref-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

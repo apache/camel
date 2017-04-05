@@ -1,8 +1,6 @@
-[[XmlRpc-XmlRpcComponent]]
-XmlRpc Component
-~~~~~~~~~~~~~~~~
+## XML RPC Component
 
-*Available as of Camel 2.11*
+*Available as of Camel version 2.11*
 
 This component provides a dataformat for xml, which allows serialization
 and deserialization of request messages and response message using
@@ -22,9 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[XmlRpc-XmlRpcOverview]]
-XmlRpc Overview
-^^^^^^^^^^^^^^^
+### XmlRpc Overview
 
 It's a http://xmlrpc.scripting.com/spec[spec] and a set of
 implementations that allow software running on disparate operating
@@ -88,18 +84,14 @@ A typical XML-RPC fault would be:
 </methodResponse>
 --------------------------------------------------------------
 
-[[XmlRpc-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------
 xmlrpc://serverUri[?options]
 ----------------------------
 
-[[XmlRpc-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -109,39 +101,48 @@ The XML RPC component has no options.
 
 
 // endpoint options: START
-The XML RPC component supports 19 endpoint options which are listed below:
+The XML RPC endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    xmlrpc:address
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| address | producer |  | String | *Required* The server url
-| basicEncoding | producer |  | String | Sets the encoding for basic authentication null means UTF-8 is chosen.
-| connectionTimeout | producer |  | int | Set the connection timeout in milliseconds 0 is to disable it
-| contentLengthOptional | producer | false | boolean | Whether a Content-Length header may be omitted. The XML-RPC specification demands that such a header be present.
-| defaultMethodName | producer |  | String | The method name which would be used for the xmlrpc requests by default if the Message header CamelXmlRpcMethodName is not set.
-| enabledForExceptions | producer | false | boolean | Whether the response should contain a faultCause element in case of errors. The faultCause is an exception which the server has trapped and written into a byte stream as a serializable object.
-| enabledForExtensions | producer | false | boolean | Whether extensions are enabled. By default the client or server is strictly compliant to the XML-RPC specification and extensions are disabled.
-| encoding | producer |  | String | Sets the requests encoding null means UTF-8 is chosen.
-| gzipCompressing | producer | false | boolean | Whether gzip compression is being used for transmitting the request.
-| gzipRequesting | producer | false | boolean | Whether gzip compression is being used for transmitting the request.
-| replyTimeout | producer |  | int | Set the reply timeout in milliseconds 0 is to disable it.
-| clientConfig | advanced |  | XmlRpcClientConfigImpl | To use the given XmlRpcClientConfigImpl as configuration for the client.
-| clientConfigurer | advanced |  | XmlRpcClientConfigurer | To use a custom XmlRpcClientConfigurer to configure the client
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| timeZone | advanced |  | TimeZone | The timezone which is used to interpret date/time. Defaults to link TimeZonegetDefault().
-| userAgent | advanced |  | String | The http user agent header to set when doing xmlrpc requests
-| xmlRpcServer | advanced |  | XmlRpcRequestProcessor | To use a custom XmlRpcRequestProcessor as server.
-| basicPassword | security |  | String | The password for basic authentication.
-| basicUserName | security |  | String | The user name for basic authentication.
+| Name | Description | Default | Type
+| **address** | *Required* The server url |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (18 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **basicEncoding** (producer) | Sets the encoding for basic authentication null means UTF-8 is chosen. |  | String
+| **connectionTimeout** (producer) | Set the connection timeout in milliseconds 0 is to disable it |  | int
+| **contentLengthOptional** (producer) | Whether a Content-Length header may be omitted. The XML-RPC specification demands that such a header be present. | false | boolean
+| **defaultMethodName** (producer) | The method name which would be used for the xmlrpc requests by default if the Message header CamelXmlRpcMethodName is not set. |  | String
+| **enabledForExceptions** (producer) | Whether the response should contain a faultCause element in case of errors. The faultCause is an exception which the server has trapped and written into a byte stream as a serializable object. | false | boolean
+| **enabledForExtensions** (producer) | Whether extensions are enabled. By default the client or server is strictly compliant to the XML-RPC specification and extensions are disabled. | false | boolean
+| **encoding** (producer) | Sets the requests encoding null means UTF-8 is chosen. |  | String
+| **gzipCompressing** (producer) | Whether gzip compression is being used for transmitting the request. | false | boolean
+| **gzipRequesting** (producer) | Whether gzip compression is being used for transmitting the request. | false | boolean
+| **replyTimeout** (producer) | Set the reply timeout in milliseconds 0 is to disable it. |  | int
+| **clientConfig** (advanced) | To use the given XmlRpcClientConfigImpl as configuration for the client. |  | XmlRpcClientConfig Impl
+| **clientConfigurer** (advanced) | To use a custom XmlRpcClientConfigurer to configure the client |  | XmlRpcClientConfigurer
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **timeZone** (advanced) | The timezone which is used to interpret date/time. Defaults to link TimeZonegetDefault(). |  | TimeZone
+| **userAgent** (advanced) | The http user agent header to set when doing xmlrpc requests |  | String
+| **xmlRpcServer** (advanced) | To use a custom XmlRpcRequestProcessor as server. |  | XmlRpcRequestProcessor
+| **basicPassword** (security) | The password for basic authentication. |  | String
+| **basicUserName** (security) | The user name for basic authentication. |  | String
+|=======================================================================
 // endpoint options: END
 
 
-[[XmlRpc-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel XmlRpc uses these headers.
 
@@ -152,17 +153,13 @@ Camel XmlRpc uses these headers.
 |`CamelXmlRpcMethodName` |The XmlRpc method name which will be use for invoking the XmlRpc server.
 |=======================================================================
 
-[[XmlRpc-UsingtheXmlRpcdataformat]]
-Using the XmlRpc data format
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using the XmlRpc data format
 
 As the XmlRpc message could be request or response, when you use the
 XmlRpcDataFormat, you need to specify the dataformat is for request or
 not.
 
-[[XmlRpc-InvokeXmlRpcServicefromClient]]
-Invoke XmlRpc Service from Client
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Invoke XmlRpc Service from Client
 
 To invoke the XmlRpc service, you need to specify the methodName on the
 message header and put the parameters into the message body like below
@@ -175,9 +172,7 @@ XmlRpcException.
    String response = template.requestBodyAndHeader(xmlRpcServiceAddress, new Object[]{"me"}, XmlRpcConstants.METHOD_NAME, "hello", String.class);
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[XmlRpc-HowtoconfiguretheXmlRpcClientwithJavacode]]
-How to configure the XmlRpcClient with Java code
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to configure the XmlRpcClient with Java code
 
 camel-xmlrpc provides a pluggable strategy for configuring the
 XmlRpcClient used by the component, user just to implement the

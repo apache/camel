@@ -35,7 +35,7 @@ public class EtcdStatsEndpoint extends AbstractEtcdPollingEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        EtcdStatsConsumer consumer = new EtcdStatsConsumer(this, processor, getConfiguration(), getNamespace(), getPath());
+        EtcdStatsConsumer consumer = new EtcdStatsConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }

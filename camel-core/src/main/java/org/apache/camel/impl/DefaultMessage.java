@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import javax.activation.DataHandler;
 
 import org.apache.camel.Attachment;
@@ -27,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.AttachmentMap;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The default implementation of {@link org.apache.camel.Message}
@@ -65,6 +67,13 @@ public class DefaultMessage extends MessageSupport {
         return answer != null ? answer : defaultValue;
     }
 
+    public Object getHeader(String name, Supplier<Object> defaultValueSupplier) {
+        ObjectHelper.notNull(name, "name");
+        ObjectHelper.notNull(defaultValueSupplier, "defaultValueSupplier");
+        Object answer = getHeaders().get(name);
+        return answer != null ? answer : defaultValueSupplier.get();
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Class<T> type) {
         Object value = getHeader(name);
@@ -93,6 +102,34 @@ public class DefaultMessage extends MessageSupport {
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Object defaultValue, Class<T> type) {
         Object value = getHeader(name, defaultValue);
+        if (value == null) {
+            // lets avoid NullPointerException when converting to boolean for null values
+            if (boolean.class.isAssignableFrom(type)) {
+                return (T) Boolean.FALSE;
+            }
+            return null;
+        }
+
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+
+        Exchange e = getExchange();
+        if (e != null) {
+            return e.getContext().getTypeConverter().convertTo(type, e, value);
+        } else {
+            return type.cast(value);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getHeader(String name, Supplier<Object> defaultValueSupplier, Class<T> type) {
+        ObjectHelper.notNull(name, "name");
+        ObjectHelper.notNull(type, "type");
+        ObjectHelper.notNull(defaultValueSupplier, "defaultValueSupplier");
+        Object value = getHeader(name, defaultValueSupplier);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class.isAssignableFrom(type)) {

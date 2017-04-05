@@ -1,8 +1,6 @@
-[[GitHub-GitHub]]
-GitHub
-~~~~~~
+## GitHub Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 The GitHub component interacts with the GitHub API by
 encapsulating http://org.eclipse.egit.github.core[egit-github]. It
@@ -34,18 +32,14 @@ for this component:
 </dependency>
 -----------------------------------------
 
-[[GitHub-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,text]
 ---------------------------
 github://endpoint[?options]
 ---------------------------
 
-[[GitHub-MandatoryOptions:]]
-Mandatory Options:
-^^^^^^^^^^^^^^^^^^
+### Mandatory Options:
 
 Note that these can be configured directly through the endpoint.
 
@@ -57,35 +51,44 @@ The GitHub component has no options.
 
 
 // endpoint options: START
-The GitHub component supports 14 endpoint options which are listed below:
+The GitHub endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    github:type/branchName
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| type | common |  | GitHubType | *Required* What git operation to execute
-| branchName | consumer |  | String | Name of branch
-| oauthToken | common |  | String | GitHub OAuth token required unless username & password are provided
-| password | common |  | String | GitHub password required unless oauthToken is provided
-| repoName | common |  | String | *Required* GitHub repository name
-| repoOwner | common |  | String | *Required* GitHub repository owner (organization)
-| username | common |  | String | GitHub username required unless oauthToken is provided
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| encoding | producer |  | String | To use the given encoding when getting a git commit file
-| state | producer |  | String | To set git commit status state
-| targetUrl | producer |  | String | To set git commit status target url
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **type** | *Required* What git operation to execute |  | GitHubType
+| **branchName** | Name of branch |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (12 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **oauthToken** (common) | GitHub OAuth token required unless username & password are provided |  | String
+| **password** (common) | GitHub password required unless oauthToken is provided |  | String
+| **repoName** (common) | *Required* GitHub repository name |  | String
+| **repoOwner** (common) | *Required* GitHub repository owner (organization) |  | String
+| **username** (common) | GitHub username required unless oauthToken is provided |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **encoding** (producer) | To use the given encoding when getting a git commit file |  | String
+| **state** (producer) | To set git commit status state |  | String
+| **targetUrl** (producer) | To set git commit status target url |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
-[[GitHub-ConsumerEndpoints:]]
-Consumer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -102,9 +105,7 @@ request discussion) or org.eclipse.egit.github.core.CommitComment
 |commit |polling |org.eclipse.egit.github.core.RepositoryCommit
 |=======================================================================
 
-[[GitHub-ProducerEndpoints:]]
-Producer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Producer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================

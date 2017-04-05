@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -138,6 +139,19 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Look up a bean of the give type in the {@link org.apache.camel.spi.Registry} on the
+     * {@link CamelContext} returning an instance if only one bean is present,
+     */
+    public static <T> T findByType(CamelContext camelContext, Class<T> type) {
+        Set<T> set = camelContext.getRegistry().findByType(type);
+        if (set.size() == 1) {
+            return set.iterator().next();
+        }
+
+        return null;
+    }
+
+    /**
      * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext} or throws {@link NoSuchBeanException} if not found.
      */
@@ -203,7 +217,7 @@ public final class CamelContextHelper {
      */
     public static int getMaximumCachePoolSize(CamelContext camelContext) throws IllegalArgumentException {
         if (camelContext != null) {
-            String s = camelContext.getProperty(Exchange.MAXIMUM_CACHE_POOL_SIZE);
+            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_CACHE_POOL_SIZE);
             if (s != null) {
                 try {
                     // we cannot use Camel type converters as they may not be ready this early
@@ -234,7 +248,7 @@ public final class CamelContextHelper {
      */
     public static int getMaximumEndpointCacheSize(CamelContext camelContext) throws IllegalArgumentException {
         if (camelContext != null) {
-            String s = camelContext.getProperty(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE);
+            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE);
             if (s != null) {
                 // we cannot use Camel type converters as they may not be ready this early
                 try {
@@ -245,6 +259,68 @@ public final class CamelContextHelper {
                     return size;
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE + " must be a positive number, was: " + s, e);
+                }
+            }
+        }
+
+        // 1000 is the default fallback
+        return 1000;
+    }
+
+    /**
+     * Gets the maximum transformer cache size.
+     * <p/>
+     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_TRANSFORMER_CACHE_SIZE}.
+     * If no property has been set, then it will fallback to return a size of 1000.
+     *
+     * @param camelContext the camel context
+     * @return the maximum cache size
+     * @throws IllegalArgumentException is thrown if the property is illegal
+     */
+    public static int getMaximumTransformerCacheSize(CamelContext camelContext) throws IllegalArgumentException {
+        if (camelContext != null) {
+            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE);
+            if (s != null) {
+                // we cannot use Camel type converters as they may not be ready this early
+                try {
+                    Integer size = Integer.valueOf(s);
+                    if (size == null || size <= 0) {
+                        throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE + " must be a positive number, was: " + s);
+                    }
+                    return size;
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_TRANSFORMER_CACHE_SIZE + " must be a positive number, was: " + s, e);
+                }
+            }
+        }
+
+        // 1000 is the default fallback
+        return 1000;
+    }
+
+    /**
+     * Gets the maximum validator cache size.
+     * <p/>
+     * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_VALIDATOR_CACHE_SIZE}.
+     * If no property has been set, then it will fallback to return a size of 1000.
+     *
+     * @param camelContext the camel context
+     * @return the maximum cache size
+     * @throws IllegalArgumentException is thrown if the property is illegal
+     */
+    public static int getMaximumValidatorCacheSize(CamelContext camelContext) throws IllegalArgumentException {
+        if (camelContext != null) {
+            String s = camelContext.getGlobalOption(Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE);
+            if (s != null) {
+                // we cannot use Camel type converters as they may not be ready this early
+                try {
+                    Integer size = Integer.valueOf(s);
+                    if (size == null || size <= 0) {
+                        throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE + " must be a positive number, was: " + s);
+                    }
+                    return size;
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Property " + Exchange.MAXIMUM_VALIDATOR_CACHE_SIZE + " must be a positive number, was: " + s, e);
                 }
             }
         }
@@ -611,6 +687,53 @@ public final class CamelContextHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Inspects the given object and resolves any property placeholders from its properties.
+     * <p/>
+     * This implementation will check all the getter/setter pairs on this instance and for all the values
+     * (which is a String type) will be property placeholder resolved.
+     *
+     * @param camelContext the Camel context
+     * @param target       the object that should have the properties (eg getter/setter) resolved
+     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
+     * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
+     * @see org.apache.camel.component.properties.PropertiesComponent
+     */
+    public static void resolvePropertyPlaceholders(CamelContext camelContext, Object target) throws Exception {
+        LOG.trace("Resolving property placeholders for: {}", target);
+
+        // find all getter/setter which we can use for property placeholders
+        Map<String, Object> properties = new HashMap<String, Object>();
+        IntrospectionSupport.getProperties(target, properties, null);
+
+        Map<String, Object> changedProperties = new HashMap<String, Object>();
+        if (!properties.isEmpty()) {
+            LOG.trace("There are {} properties on: {}", properties.size(), target);
+            // lookup and resolve properties for String based properties
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                // the name is always a String
+                String name = entry.getKey();
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    // value must be a String, as a String is the key for a property placeholder
+                    String text = (String) value;
+                    text = camelContext.resolvePropertyPlaceholders(text);
+                    if (text != value) {
+                        // invoke setter as the text has changed
+                        boolean changed = IntrospectionSupport.setProperty(camelContext.getTypeConverter(), target, name, text);
+                        if (!changed) {
+                            throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + target);
+                        }
+                        changedProperties.put(name, value);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -1,6 +1,6 @@
-[[MSV-MSVComponent]]
-MSV Component
-~~~~~~~~~~~~~
+## MSV Component
+
+*Available as of Camel version 1.1*
 
 The MSV component performs XML validation of the message body using the
 https://msv.dev.java.net/[MSV Library] and any of the supported XML
@@ -24,9 +24,7 @@ Note that the link:jing.html[Jing] component also supports
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax]
 
-[[MSV-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
@@ -47,26 +45,23 @@ msv:http://acme.com/cheese.rng
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[MSV-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
 
 // component options: START
-The MSV component supports 2 options which are listed below.
+The MSV component supports 3 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| schemaFactory | advanced |  | SchemaFactory | To use the javax.xml.validation.SchemaFactory.
-| resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
+| Name | Description | Default | Type
+| **schemaFactory** (advanced) | To use the javax.xml.validation.SchemaFactory. |  | SchemaFactory
+| **resourceResolverFactory** (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResource ResolverFactory
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -75,33 +70,42 @@ The MSV component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The MSV component supports 12 endpoint options which are listed below:
+The MSV endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    msv:resourceUri
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* URL to a local resource on the classpath or a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
-| failOnNullBody | producer | true | boolean | Whether to fail if no body exists.
-| failOnNullHeader | producer | true | boolean | Whether to fail if no header exists when validating against a header.
-| headerName | producer |  | String | To validate against a header instead of the message body.
-| errorHandler | advanced |  | ValidatorErrorHandler | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.
-| resourceResolver | advanced |  | LSResourceResolver | To use a custom LSResourceResolver. Do not use together with resourceResolverFactory
-| resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The default resource resolver factory resturns a resource resolver which can read files from the class path and file system. Do not use together with resourceResolver.
-| schemaFactory | advanced |  | SchemaFactory | To use a custom javax.xml.validation.SchemaFactory
-| schemaLanguage | advanced | http://www.w3.org/2001/XMLSchema | String | Configures the W3C XML Schema Namespace URI.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| useDom | advanced | false | boolean | Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.
-| useSharedSchema | advanced | true | boolean | Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.
+| Name | Description | Default | Type
+| **resourceUri** | *Required* URL to a local resource on the classpath or a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the XSD to validate against. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (11 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **failOnNullBody** (producer) | Whether to fail if no body exists. | true | boolean
+| **failOnNullHeader** (producer) | Whether to fail if no header exists when validating against a header. | true | boolean
+| **headerName** (producer) | To validate against a header instead of the message body. |  | String
+| **errorHandler** (advanced) | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | ValidatorErrorHandler
+| **resourceResolver** (advanced) | To use a custom LSResourceResolver. Do not use together with resourceResolverFactory |  | LSResourceResolver
+| **resourceResolverFactory** (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The default resource resolver factory resturns a resource resolver which can read files from the class path and file system. Do not use together with resourceResolver. |  | ValidatorResource ResolverFactory
+| **schemaFactory** (advanced) | To use a custom javax.xml.validation.SchemaFactory |  | SchemaFactory
+| **schemaLanguage** (advanced) | Configures the W3C XML Schema Namespace URI. | http://www.w3.org/2001/XMLSchema | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **useDom** (advanced) | Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator. | false | boolean
+| **useSharedSchema** (advanced) | Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue. | true | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
-[[MSV-Example]]
-Example
-^^^^^^^
+### Example
 
 The following
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-msv/src/test/resources/org/apache/camel/component/validator/msv/camelContext.xml[example]
@@ -111,12 +115,9 @@ based on whether or not the XML matches the given
 http://relaxng.org/[RelaxNG XML Schema] (which is supplied on the
 classpath).
 
-[[MSV-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

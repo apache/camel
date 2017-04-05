@@ -1,6 +1,6 @@
-[[PGEvent-PGEventComponentPostgresSQLEvent]]
-PGEvent Component (PostgresSQL Event)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## PostgresSQL Event Component
+
+*Available as of Camel version 2.15*
 
 This is a component for Apache Camel which allows for
 Producing/Consuming PostgreSQL events related to the LISTEN/NOTIFY
@@ -33,9 +33,7 @@ pgevent://host:port/database/channel[?parameters]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[PGEvent-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -45,34 +43,42 @@ The PostgresSQL Event component has no options.
 
 
 // endpoint options: START
-The PostgresSQL Event component supports 11 endpoint options which are listed below:
+The PostgresSQL Event endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    pgevent:host:port/database/channel
+
+with the following path and query parameters:
+
+#### Path Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| host | common | localhost | String | To connect using hostname and port to the database.
-| port | common | 5432 | Integer | To connect using hostname and port to the database.
-| database | common |  | String | *Required* The database name
-| channel | common |  | String | *Required* The channel name
-| datasource | common |  | DataSource | To connect using the given javax.sql.DataSource instead of using hostname and port.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| pass | security |  | String | Password for login
-| user | security | postgres | String | Username for login
+| Name | Description | Default | Type
+| **host** | To connect using hostname and port to the database. | localhost | String
+| **port** | To connect using hostname and port to the database. | 5432 | Integer
+| **database** | *Required* The database name |  | String
+| **channel** | *Required* The channel name |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (7 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **datasource** (common) | To connect using the given javax.sql.DataSource instead of using hostname and port. |  | DataSource
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **pass** (security) | Password for login |  | String
+| **user** (security) | Username for login | postgres | String
+|=======================================================================
 // endpoint options: END
 
 
-[[PGEvent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

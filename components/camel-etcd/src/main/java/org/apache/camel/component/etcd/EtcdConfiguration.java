@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.etcd;
 
-import java.net.URI;
-
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.EtcdSecurityContext;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
-public class EtcdConfiguration {
+public class EtcdConfiguration implements CamelContextAware, Cloneable {
 
     @UriParam(defaultValue = EtcdConstants.ETCD_DEFAULT_URIS)
     private String uris = EtcdConstants.ETCD_DEFAULT_URIS;
@@ -49,14 +49,24 @@ public class EtcdConfiguration {
     @UriParam(defaultValue = "/services/")
     private String servicePath = "/services/";
 
-    private final CamelContext camelContext;
+    private CamelContext context;
 
-    public EtcdConfiguration(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    public EtcdConfiguration() {
+        this.context = null;
     }
 
+    public EtcdConfiguration(CamelContext camelContext) {
+        this.context = camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext context) {
+        this.context = context;
+    }
+
+    @Override
     public CamelContext getCamelContext() {
-        return this.camelContext;
+        return context;
     }
 
     public String getUris() {
@@ -174,29 +184,22 @@ public class EtcdConfiguration {
     }
 
     public EtcdClient createClient() throws Exception {
-        String[] uris;
-        if (getUris() != null) {
-            uris = getUris().split(",");
-        } else {
-            uris = EtcdConstants.ETCD_DEFAULT_URIS.split(",");
-        }
-
-        URI[] etcdUriList = new URI[uris.length];
-
-        for (int i = 0; i < uris.length; i++) {
-            etcdUriList[i] = camelContext != null
-                ? URI.create(camelContext.resolvePropertyPlaceholders(uris[i]))
-                : URI.create(uris[i]);
-        }
-
         return new EtcdClient(
             new EtcdSecurityContext(
                 sslContextParameters != null
-                    ? sslContextParameters.createSSLContext(camelContext)
+                    ? sslContextParameters.createSSLContext(context)
                     : null,
                 userName,
                 password),
-            etcdUriList
+            EtcdHelper.resolveURIs(context, getUris())
         );
+    }
+
+    public EtcdConfiguration copy() {
+        try {
+            return (EtcdConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

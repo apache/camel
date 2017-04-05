@@ -27,8 +27,13 @@
 
   <artifactId>camel-example-transformer-demo</artifactId>
   <name>Camel :: Example :: Transformer :: Demo</name>
-  <description>An example demonstrating declarative transformation along data type declaration using Spring DSL</description>
+  <description>An example demonstrating declarative transformation and validation along data type declaration using Spring DSL</description>
   <packaging>jar</packaging>
+
+  <properties>
+    <category>Input/Output Type Contract</category>
+    <title>Transformer and Validator Spring XML</title>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -95,7 +100,24 @@
         </configuration>
       </plugin>
     </plugins>
-
   </build>
 
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-modules java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

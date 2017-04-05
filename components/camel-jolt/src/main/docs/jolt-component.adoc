@@ -1,8 +1,6 @@
-[[JOLT-JOLTComponent]]
-JOLT Component
-~~~~~~~~~~~~~~
+## JOLT Component
 
-*Available as of Camel 2.16*
+*Available as of Camel version 2.16*
 
 The *jolt:* component allows you to process a JSON messages using an
 http://bazaarvoice.github.io/jolt/[JOLT] specification. This can be
@@ -23,9 +21,7 @@ their `pom.xml` for this component:
 
  
 
-[[JOLT-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------
@@ -39,25 +35,22 @@ invoke; or the complete URL of the remote specification
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-[[JOLT-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
 
 // component options: START
-The JOLT component supports 1 options which are listed below.
+The JOLT component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| transform | advanced |  | Transform | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created
+| Name | Description | Default | Type
+| **transform** (advanced) | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created |  | Transform
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -66,27 +59,36 @@ The JOLT component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The JOLT component supports 6 endpoint options which are listed below:
+The JOLT endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    jolt:resourceUri
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* Path to the resource or a reference to lookup a bean in the Registry to use as the resource
-| contentCache | producer | false | boolean | Sets whether to use resource content cache or not
-| inputType | producer | Hydrated | JoltInputOutputType | Specifies if the input is hydrated JSON or a JSON String.
-| outputType | producer | Hydrated | JoltInputOutputType | Specifies if the output should be hydrated JSON or a JSON String.
-| transformDsl | producer | Chainr | JoltTransformType | Specifies the Transform DSL of the endpoint resource. If none is specified Chainr will be used.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **resourceUri** | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **contentCache** (producer) | Sets whether to use resource content cache or not | false | boolean
+| **inputType** (producer) | Specifies if the input is hydrated JSON or a JSON String. | Hydrated | JoltInputOutputType
+| **outputType** (producer) | Specifies if the output should be hydrated JSON or a JSON String. | Hydrated | JoltInputOutputType
+| **transformDsl** (producer) | Specifies the Transform DSL of the endpoint resource. If none is specified Chainr will be used. | Chainr | JoltTransformType
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
-[[JOLT-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 For example you could use something like
 
@@ -117,12 +119,9 @@ from("direct:in").
 
  
 
-[[JOLT-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

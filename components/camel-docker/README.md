@@ -38,6 +38,7 @@ The following are the the primary options for communicating with the Docker serv
 |serverAddress | CamelDockerServerAddress | Address of the Docker registry server (If not specified, *host* will be used) | https://index.docker.io/v1/ |
 |maxTotalConnections | CamelDockerMaxTotalConnections | Maximum number of total connections | 100 |
 |maxPerRouteConnections | CamelDockerMaxPerRouteConnections | Maximum number of connections per route | 100 |
+| cmdExecFactory | CamelDockerCmdExecFactory | The fully qualified class name of the DockerCmdExecFactory implementation to use |  com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory |
 
 
 ## Consumer Operations

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 
+// TODO: Document me
 public class ProcessClause<T> implements Processor {
     private final T parent;
     private Processor processor;

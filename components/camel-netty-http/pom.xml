@@ -53,6 +53,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-http4</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
@@ -88,4 +93,36 @@
 
 	</dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+    
+  <profiles>
+    <profile>
+        <id>jdk9-build</id>
+        <activation>
+            <jdk>9</jdk>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
+                        <argLine>--add-modules java.xml.bind,java.xml.ws.annotation --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.xml.ws.annotation/javax.annotation=ALL-UNNAMED</argLine>
+                        <reuseForks>true</reuseForks>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+   </profiles>
 </project>

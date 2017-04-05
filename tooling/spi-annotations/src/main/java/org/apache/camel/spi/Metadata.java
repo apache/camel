@@ -33,6 +33,13 @@ import java.lang.annotation.Target;
 public @interface Metadata {
 
     /**
+     * A human display name of the parameter.
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String displayName() default "";
+
+    /**
      * To define one or more labels.
      * <p/>
      * Multiple labels can be defined as a comma separated value.
@@ -75,5 +82,10 @@ public @interface Metadata {
      * Whether the option is secret/sensitive information such as a password.
      */
     boolean secret() default false;
+
+    /**
+     * The first version this functionality was added to Apache Camel.
+     */
+    String firstVersion() default "";
 
 }

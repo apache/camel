@@ -31,6 +31,11 @@
   <description>An example using REST DSL in XML and Swagger API</description>
   <packaging>jar</packaging>
 
+  <properties>
+    <category>OSGi</category>
+    <title>Swagger OSGi</title>
+  </properties>
+
   <dependencies>
 
     <!-- camel -->

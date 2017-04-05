@@ -1,8 +1,6 @@
-[[AWS-SDB-SDBComponent]]
-SDB Component
-~~~~~~~~~~~~~
+## AWS SimpleDB Component
 
-*Available as of Camel 2.8.4*
+*Available as of Camel version 2.9*
 
 The sdb component supports storing and retrieving data from/to
 http://aws.amazon.com/sdb[Amazon's SDB] service.
@@ -13,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SDB. More information are available at
 http://aws.amazon.com/sdb[Amazon SDB].
 
-[[AWS-SDB-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ------------------------------
@@ -25,9 +21,7 @@ aws-sdb://domainName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-SDB-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -38,25 +32,36 @@ The AWS SimpleDB component has no options.
 
 
 // endpoint options: START
-The AWS SimpleDB component supports 11 endpoint options which are listed below:
+The AWS SimpleDB endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    aws-sdb:domainName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| domainName | producer |  | String | *Required* The name of the domain currently worked with.
-| accessKey | producer |  | String | Amazon AWS Access Key
-| amazonSDBClient | producer |  | AmazonSimpleDB | To use the AmazonSimpleDB as the client
-| amazonSdbEndpoint | producer |  | String | The region with which the AWS-SDB client wants to work with.
-| consistentRead | producer | false | boolean | Determines whether or not strong consistency should be enforced when data is read.
-| maxNumberOfDomains | producer |  | Integer | The maximum number of domain names you want returned. The range is 1 to 100.
-| operation | producer | PutAttributes | SdbOperations | Operation to perform
-| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
-| secretKey | producer |  | String | Amazon AWS Secret Key
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **domainName** | *Required* The name of the domain currently worked with. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (10 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **accessKey** (producer) | Amazon AWS Access Key |  | String
+| **amazonSDBClient** (producer) | To use the AmazonSimpleDB as the client |  | AmazonSimpleDB
+| **amazonSdbEndpoint** (producer) | The region with which the AWS-SDB client wants to work with. |  | String
+| **consistentRead** (producer) | Determines whether or not strong consistency should be enforced when data is read. | false | boolean
+| **maxNumberOfDomains** (producer) | The maximum number of domain names you want returned. The range is 1 to 100. |  | Integer
+| **operation** (producer) | Operation to perform | PutAttributes | SdbOperations
+| **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
+| **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **secretKey** (producer) | Amazon AWS Secret Key |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
@@ -67,13 +72,9 @@ You have to provide the amazonSDBClient in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the http://aws.amazon.com/sdb[Amazon's SDB].
 
-[[AWS-SDB-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-SDB-MessageheadersevaluatedbytheSDBproducer]]
-Message headers evaluated by the SDB producer
-+++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the SDB producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -109,9 +110,7 @@ to 100.
 specified attributes will be updated/deleted or not.
 |=======================================================================
 
-[[AWS-SDB-MessageheaderssetduringDomainMetadataoperation]]
-Message headers set during DomainMetadata operation
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during DomainMetadata operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -132,9 +131,7 @@ Message headers set during DomainMetadata operation
 |`CamelAwsSdbItemNameSize` |`Long` |The total size of all item names in the domain, in bytes.
 |=======================================================================
 
-[[AWS-SDB-MessageheaderssetduringGetAttributesoperation]]
-Message headers set during GetAttributes operation
-++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during GetAttributes operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -143,9 +140,7 @@ Message headers set during GetAttributes operation
 |`CamelAwsSdbAttributes` |`List<Attribute>` |The list of attributes returned by the operation.
 |=======================================================================
 
-[[AWS-SDB-MessageheaderssetduringListDomainsoperation]]
-Message headers set during ListDomains operation
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during ListDomains operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -157,9 +152,7 @@ Message headers set during ListDomains operation
 specified MaxNumberOfDomains still available.
 |=======================================================================
 
-[[AWS-SDB-MessageheaderssetduringSelectoperation]]
-Message headers set during Select operation
-+++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during Select operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -172,9 +165,7 @@ matched, the response size exceeded 1 megabyte, or the execution time
 exceeded 5 seconds.
 |=======================================================================
 
-[[AWS-SDB-AdvancedAmazonSimpleDBconfiguration]]
-Advanced AmazonSimpleDB configuration
-+++++++++++++++++++++++++++++++++++++
+#### Advanced AmazonSimpleDB configuration
 
 If you need more control over the `AmazonSimpleDB` instance
 configuration you can create your own instance and refer to it from the
@@ -203,9 +194,7 @@ AmazonSimpleDB client = new AmazonSimpleDBClient(awsCredentials, clientConfigura
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
-[[AWS-SDB-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -223,9 +212,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.8.4 or higher).
 
-[[AWS-SDB-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -233,4 +220,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

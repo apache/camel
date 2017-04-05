@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.api.services.calendar.Calendar;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -49,8 +53,15 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
 
     public Calendar getClient(GoogleCalendarConfiguration config) {
         if (client == null) {
+
+            List<String> list = null;
+            if (config.getScopes() != null) {
+                String[] arr = config.getScopes().split(",");
+                list = Arrays.asList(arr);
+            }
+
             client = getClientFactory().makeClient(config.getClientId(),
-                    config.getClientSecret(), config.getScopes(),
+                    config.getClientSecret(), list,
                     config.getApplicationName(), config.getRefreshToken(),
                     config.getAccessToken(), config.getEmailAddress(),
                     config.getP12FileName(), config.getUser());

@@ -1,8 +1,6 @@
-[[SpEL-SpringExpressionLanguageSpEL]]
-Spring Expression Language (SpEL)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## SpEL Language
 
-*Available as of Camel 2.7*
+*Available as of Camel version 2.7*
 
 Camel allows
 http://static.springsource.org/spring/docs/current/spring-framework-reference/htmlsingle/spring-framework-reference.html#expressions[SpEL]
@@ -10,9 +8,7 @@ to be used as an link:expression.html[Expression] or
 link:predicate.html[Predicate] in the link:dsl.html[DSL] or
 link:xml-configuration.html[Xml Configuration].
 
-[[SpEL-Variables]]
-Variables
-^^^^^^^^^
+### Variables
 
 The following variables are available in expressions and predicates
 written in SpEL:
@@ -44,31 +40,23 @@ written in SpEL:
 |property(name, type) |Type |the property by the given name as the given type
 |=======================================================================
 
-[[SpEL-Options]]
-Options
-^^^^^^^
+### Options
 
 // language options: START
 The SpEL language supports 1 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================
-{% endraw %}
 // language options: END
 
-[[SpEL-Samples]]
-Samples
-^^^^^^^
+### Samples
 
-[[SpEL-Expressiontemplating]]
-Expression templating
-+++++++++++++++++++++
+#### Expression templating
 
 SpEL expressions need to be surrounded by `#{` `}` delimiters since
 expression templating is enabled. This allows you to combine SpEL
@@ -108,9 +96,7 @@ template.sendBodyAndHeader("direct:example", "World", "dayOrNight", "day");
 The output on `mock:result` will be _"Hello World! What a beautiful
 day"_
 
-[[SpEL-Beanintegration]]
-Bean integration
-++++++++++++++++
+#### Bean integration
 
 You can reference beans defined in the link:registry.html[Registry]
 (most likely an `ApplicationContext`) in your SpEL expressions. For
@@ -122,9 +108,7 @@ can invoke the "bar" method on this bean like this:
 #{@foo.bar == 'xyz'}
 --------------------
 
-[[SpEL-SpELinenterpriseintegrationpatterns]]
-SpEL in enterprise integration patterns
-+++++++++++++++++++++++++++++++++++++++
+#### SpEL in enterprise integration patterns
 
 You can use SpEL as an expression for link:recipient-list.html[Recipient
 List] or as a predicate inside a link:message-filter.html[Message
@@ -148,9 +132,7 @@ And the equivalent in Java DSL:
    from("direct:foo").filter().spel("#{request.headers['foo'] == 'bar'}").to("direct:bar");
 -------------------------------------------------------------------------------------------
 
-[[SpEL-Loadingscriptfromexternalresource]]
-Loading script from external resource
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Loading script from external resource
 
 *Available as of Camel 2.11*
 
@@ -164,9 +146,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").spel("resource:classpath:myspel.txt")
 ------------------------------------------------------------
 
-[[SpEL-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 You need Spring 3.0 or higher to use Spring Expression Language. If you
 use Maven you could just add the following to your `pom.xml`:

@@ -1,6 +1,6 @@
-[[XQuery-XQuery]]
-XQuery
-~~~~~~
+## XQuery Component
+
+*Available as of Camel version 1.0*
 
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
 link:expression.html[Expression] or link:predicate.html[Predicate] to be
@@ -10,75 +10,84 @@ link:predicate.html[Predicate] in a link:message-filter.html[Message
 Filter] or as an link:expression.html[Expression] for a
 link:recipient-list.html[Recipient List].
 
-[[XQuery-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
 // component options: START
-The XQuery component supports 1 options which are listed below.
+The XQuery component supports 4 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| moduleURIResolver | advanced |  | ModuleURIResolver | To use the custom ModuleURIResolver
+| Name | Description | Default | Type
+| **moduleURIResolver** (advanced) | To use the custom ModuleURIResolver |  | ModuleURIResolver
+| **configuration** (advanced) | To use a custom Saxon configuration |  | Configuration
+| **configurationProperties** (advanced) | To set custom Saxon configuration properties |  | Map
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The XQuery component supports 31 endpoint options which are listed below:
+The XQuery endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    xquery:resourceUri
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| resourceUri | common |  | String | *Required* The name of the template to load from classpath or file system
-| allowStAX | common | false | boolean | Whether to allow using StAX mode
-| headerName | common |  | String | To use a Camel Message header as the input source instead of Message body.
-| namespacePrefixes | common |  | Map | Allows to control which namespace prefixes to use for a set of namespace mappings
-| resultsFormat | common | DOM | ResultFormat | What output result to use
-| resultType | common |  | Class<?> | What output result to use defined as a class
-| stripsAllWhiteSpace | common | true | boolean | Whether to strip all whitespaces
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| configuration | advanced |  | Configuration | To use a custom Saxon configuration
-| moduleURIResolver | advanced |  | ModuleURIResolver | To use the custom ModuleURIResolver
-| parameters | advanced |  | Map | Additional parameters
-| properties | advanced |  | Properties | Properties to configure the serialization parameters
-| staticQueryContext | advanced |  | StaticQueryContext | To use a custom Saxon StaticQueryContext
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| Name | Description | Default | Type
+| **resourceUri** | *Required* The name of the template to load from classpath or file system |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (31 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **allowStAX** (common) | Whether to allow using StAX mode | false | boolean
+| **headerName** (common) | To use a Camel Message header as the input source instead of Message body. |  | String
+| **namespacePrefixes** (common) | Allows to control which namespace prefixes to use for a set of namespace mappings |  | Map
+| **resultsFormat** (common) | What output result to use | DOM | ResultFormat
+| **resultType** (common) | What output result to use defined as a class |  | Class<?>
+| **stripsAllWhiteSpace** (common) | Whether to strip all whitespaces | true | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **configuration** (advanced) | To use a custom Saxon configuration |  | Configuration
+| **configurationProperties** (advanced) | To set custom Saxon configuration properties |  | Map
+| **moduleURIResolver** (advanced) | To use the custom ModuleURIResolver |  | ModuleURIResolver
+| **parameters** (advanced) | Additional parameters |  | Map
+| **properties** (advanced) | Properties to configure the serialization parameters |  | Properties
+| **staticQueryContext** (advanced) | To use a custom Saxon StaticQueryContext |  | StaticQueryContext
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[XQuery-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 [source,java]
 ---------------------------
@@ -98,9 +107,7 @@ from("direct:start").
   recipientList().xquery("concat('mock:foo.', /person/@city)", String.class);
 -----------------------------------------------------------------------------
 
-[[XQuery-Variables]]
-Variables
-^^^^^^^^^
+### Variables
 
 The IN message body will be set as the `contextItem`. Besides this these
 Variables is also added as parameters:
@@ -127,9 +134,7 @@ with they own key name, for instance if there is an IN header with the
 key name *foo* then its added as *foo*.
 |=======================================================================
 
-[[XQuery-UsingXMLconfiguration]]
-Using XML configuration
-^^^^^^^^^^^^^^^^^^^^^^^
+### Using XML configuration
 
 If you prefer to configure your routes in your link:spring.html[Spring]
 XML file then you can use XPath expressions as follows
@@ -167,9 +172,7 @@ attribute:
     <xquery type="java.lang.String">concat('mock:foo.', /person/@city)</xquery>
 -------------------------------------------------------------------------------
 
-[[XQuery-UsingXQueryastransformation]]
-Using XQuery as transformation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using XQuery as transformation
 
 We can do a message translation using transform or setBody in the route,
 as shown below:
@@ -192,9 +195,7 @@ from("direct:start").
 
  
 
-[[XQuery-UsingXQueryasanendpoint]]
-Using XQuery as an endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using XQuery as an endpoint
 
 Sometimes an XQuery expression can be quite large; it can essentally be
 used for link:templating.html[Templating]. So you may want to use an
@@ -215,9 +216,7 @@ The following example shows how to take a message of an ActiveMQ queue
   </camelContext>
 -------------------------------------------------------------------------
 
-[[XQuery-Examples.1]]
-Examples
-^^^^^^^^
+### Examples
 
 Here is a simple
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
@@ -229,9 +228,7 @@ http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java
 uses XQuery with namespaces as a predicate in a
 link:message-filter.html[Message Filter]
 
-[[XQuery-LearningXQuery]]
-Learning XQuery
-^^^^^^^^^^^^^^^
+### Learning XQuery
 
 XQuery is a very powerful language for querying, searching, sorting and
 returning XML. For help learning XQuery try these tutorials
@@ -244,9 +241,7 @@ Tutorial]
 You might also find the http://www.w3.org/TR/xpath-functions/[XQuery
 function reference] useful
 
-[[XQuery-Loadingscriptfromexternalresource]]
-Loading script from external resource
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Loading script from external resource
 
 *Available as of Camel 2.11*
 
@@ -260,9 +255,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").xquery("resource:classpath:myxquery.txt", String.class)
 ------------------------------------------------------------------------------
 
-[[XQuery-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use XQuery in your camel routes you need to add the a dependency on
 *camel-saxon* which implements the XQuery language.

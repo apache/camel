@@ -29,9 +29,13 @@
   <artifactId>camel-zipkin</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Zipkin</name>
-  <description>Camel Zipkin Support</description>
+  <description>Distributed message tracing using Zipkin</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.18.0</firstVersion>
+    <label>monitoring,microservice</label>
+
     <camel.osgi.export.pkg>org.apache.camel.zipkin.*</camel.osgi.export.pkg>
   </properties>
 
@@ -44,13 +48,13 @@
 
     <!-- brave/zkpkin -->
     <dependency>
-      <groupId>com.github.kristofa</groupId>
+      <groupId>io.zipkin.brave</groupId>
       <artifactId>brave-core</artifactId>
       <version>${brave-zipkin-version}</version>
     </dependency>
     <!-- to send to zipkin server -->
     <dependency>
-      <groupId>com.github.kristofa</groupId>
+      <groupId>io.zipkin.brave</groupId>
       <artifactId>brave-spancollector-scribe</artifactId>
       <version>${brave-zipkin-version}</version>
     </dependency>

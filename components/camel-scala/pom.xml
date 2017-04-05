@@ -26,10 +26,15 @@
 
     <artifactId>camel-scala</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Scala</name>
+    <name>Camel :: Scala (deprecated)</name>
     <description>Camel Scala DSL</description>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>1.4.0</firstVersion>
+        <label>dsl</label>
+        <title>Scala DSL</title>
+
         <camel.osgi.import.before.defaults>
             scala.xml.*;version="[1.0,2)",
             scala.*;version="[2.11,2.12)"
@@ -202,4 +207,27 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>jdk9-build</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!--Skip compile on Java 9 https://issues.apache.org/jira/browse/CAMEL-10904 -->
+                        <groupId>net.alchim31.maven</groupId>
+                        <artifactId>scala-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

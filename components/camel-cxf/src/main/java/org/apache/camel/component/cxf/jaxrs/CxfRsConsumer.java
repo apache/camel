@@ -33,26 +33,38 @@ public class CxfRsConsumer extends DefaultConsumer {
 
     public CxfRsConsumer(CxfRsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        server = createServer();
+    }
+
+    protected Server createServer() {
+        CxfRsEndpoint endpoint = (CxfRsEndpoint) getEndpoint();
         CxfRsInvoker cxfRsInvoker = new CxfRsInvoker(endpoint, this);
         JAXRSServerFactoryBean svrBean = endpoint.createJAXRSServerFactoryBean();
-        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
-        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        Bus bus = endpoint.getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which does not use the default bus
         if (bus != null) {
             svrBean.setBus(bus);
         }
         svrBean.setInvoker(cxfRsInvoker);
-        server = svrBean.create();
+        return svrBean.create();
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (server == null) {
+            server = createServer();
+        }
         server.start();
     }
 
     @Override
     protected void doStop() throws Exception {
-        server.stop();
+        if (server != null) {
+            server.stop();
+            server.destroy();
+            server = null;
+        }
         super.doStop();
     }
     

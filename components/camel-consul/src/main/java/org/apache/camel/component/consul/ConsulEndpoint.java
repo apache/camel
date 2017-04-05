@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.consul;
 
+import java.util.Optional;
+
 import com.orbitz.consul.Consul;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -23,26 +25,25 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * The camel consul component allows you to work with <a href="https://www.consul.io/">Consul</a>, a distributed, highly available, datacenter-aware, service discovery and configuration system.
  */
-@UriEndpoint(scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint", label = "api,cloud")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint", label = "api,cloud")
 public class ConsulEndpoint extends DefaultEndpoint {
 
-    @UriParam(description = "The consul configuration")
-    @Metadata
+    //@UriParam(description = "The consul configuration")
+    //@Metadata
     private final ConsulConfiguration configuration;
 
     @UriPath(description = "The API endpoint")
     @Metadata(required = "true")
     private final String apiEndpoint;
 
-    private final ProducerFactory producerFactory;
-    private final ConsumerFactory consumerFactory;
+    private final Optional<ConsulFactories.ProducerFactory> producerFactory;
+    private final Optional<ConsulFactories.ConsumerFactory> consumerFactory;
 
     private Consul consul;
 
@@ -51,8 +52,8 @@ public class ConsulEndpoint extends DefaultEndpoint {
             String uri,
             ConsulComponent component,
             ConsulConfiguration configuration,
-            ProducerFactory producerFactory,
-            ConsumerFactory consumerFactory) {
+            Optional<ConsulFactories.ProducerFactory> producerFactory,
+            Optional<ConsulFactories.ConsumerFactory> consumerFactory) {
 
         super(uri, component);
 
@@ -69,20 +70,20 @@ public class ConsulEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        if (producerFactory == null) {
-            throw new IllegalArgumentException("No producer for " + apiEndpoint);
-        }
+        ConsulFactories.ProducerFactory factory = producerFactory.orElseThrow(
+            () -> new IllegalArgumentException("No producer for " + apiEndpoint)
+        );
 
-        return producerFactory.create(this, configuration);
+        return factory.create(this, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        if (consumerFactory == null) {
-            throw new IllegalArgumentException("No consumer for " + apiEndpoint);
-        }
+        ConsulFactories.ConsumerFactory factory = consumerFactory.orElseThrow(
+            () -> new IllegalArgumentException("No consumer for " + apiEndpoint)
+        );
 
-        return consumerFactory.create(this, configuration, processor);
+        return factory.create(this, configuration, processor);
     }
 
     // *************************************************************************
@@ -103,19 +104,5 @@ public class ConsulEndpoint extends DefaultEndpoint {
         }
 
         return consul;
-    }
-
-    // *************************************************************************
-    //
-    // *************************************************************************
-
-    @FunctionalInterface
-    public interface ProducerFactory {
-        Producer create(ConsulEndpoint endpoint, ConsulConfiguration configuration) throws Exception;
-    }
-
-    @FunctionalInterface
-    public interface ConsumerFactory {
-        Consumer create(ConsulEndpoint endpoint, ConsulConfiguration configuration, Processor processor) throws Exception;
     }
 }

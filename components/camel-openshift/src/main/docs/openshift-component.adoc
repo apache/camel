@@ -1,8 +1,6 @@
-[[Openshift-OpenshiftComponent]]
-Openshift Component
-~~~~~~~~~~~~~~~~~~~
+## OpenShift Component (deprecated)
 
-*Available as of Camel 2.14*
+*Available as of Camel version 2.14*
 
 The *openshift* component is a component for managing your
 https://www.openshift.com/[OpenShift] applications. 
@@ -20,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Openshift-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------
@@ -32,78 +28,82 @@ openshift:clientId[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Openshift-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
 // component options: START
-The OpenShift component supports 4 options which are listed below.
+The OpenShift component supports 5 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| username | security |  | String | The username to login to openshift server.
-| password | security |  | String | The password for login to openshift server.
-| domain | common |  | String | Domain name. If not specified then the default domain is used.
-| server | common |  | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
+| Name | Description | Default | Type
+| **username** (security) | The username to login to openshift server. |  | String
+| **password** (security) | The password for login to openshift server. |  | String
+| **domain** (common) | Domain name. If not specified then the default domain is used. |  | String
+| **server** (common) | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used. |  | String
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The OpenShift component supports 27 endpoint options which are listed below:
+The OpenShift endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    openshift:clientId
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| clientId | common |  | String | *Required* The client id
-| domain | common |  | String | Domain name. If not specified then the default domain is used.
-| password | common |  | String | *Required* The password for login to openshift server.
-| server | common |  | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
-| username | common |  | String | *Required* The username to login to openshift server.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| application | producer |  | String | The application name to start stop restart or get the state.
-| mode | producer |  | String | Whether to output the message body as a pojo or json. For pojo the message is a List type.
-| operation | producer |  | String | The operation to perform which can be: list start stop restart and state. The list operation returns information about all the applications in json format. The state operation returns the state such as: started stopped etc. The other operations does not return any value.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| Name | Description | Default | Type
+| **clientId** | *Required* The client id |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (26 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **domain** (common) | Domain name. If not specified then the default domain is used. |  | String
+| **password** (common) | *Required* The password for login to openshift server. |  | String
+| **server** (common) | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used. |  | String
+| **username** (common) | *Required* The username to login to openshift server. |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **application** (producer) | The application name to start stop restart or get the state. |  | String
+| **mode** (producer) | Whether to output the message body as a pojo or json. For pojo the message is a List type. |  | String
+| **operation** (producer) | The operation to perform which can be: list start stop restart and state. The list operation returns information about all the applications in json format. The state operation returns the state such as: started stopped etc. The other operations does not return any value. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Openshift-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
-[[Openshift-Listingallapplications]]
-Listing all applications
-++++++++++++++++++++++++
+#### Listing all applications
 
 [source,java]
 --------------------------------------------------------------------------
@@ -116,9 +116,7 @@ from("direct:apps")
 In this case the information about all the applications is returned as
 pojo. If you want a json response, then set mode=json.
 
-[[Openshift-Stoppinganapplication]]
-Stopping an application
-+++++++++++++++++++++++
+#### Stopping an application
 
 [source,java]
 ---------------------------------------------------------------------------------------------
@@ -162,12 +160,9 @@ following headers is included.
 |CamelOpenShiftEventNewState |No |The new state, for any of the event types
 |=======================================================================
 
-[[Openshift-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

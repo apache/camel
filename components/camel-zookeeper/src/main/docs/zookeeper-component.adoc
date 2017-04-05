@@ -1,16 +1,6 @@
-ifdef::env-github[]
-:caution-caption: :boom:
-:important-caption: :exclamation:
-:note-caption: :information_source:
-:tip-caption: :bulb:
-:warning-caption: :warning:
-endif::[]
+## ZooKeeper Component
 
-[[Zookeeper-ZooKeeper]]
-ZooKeeper
-~~~~~~~~~
-
-*Available as of Camel 2.9*
+*Available as of Camel version 2.9*
 
 The ZooKeeper component allows interaction with a
 http://hadoop.apache.org/zookeeper/[ZooKeeper] cluster and exposes the
@@ -38,9 +28,7 @@ for this component:
 </dependency>
 ----
 
-[[Zookeeper-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source]
 ----
@@ -50,57 +38,61 @@ zookeeper://zookeeper-server[:port][/path][?options]
 The path from the URI specifies the node in the ZooKeeper server (a.k.a.
 _znode_) that will be the target of the endpoint:
 
-[[Zookeeper-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
-The ZooKeeper component supports 1 options which are listed below.
+The ZooKeeper component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | ZooKeeperConfiguration | To use a shared ZooKeeperConfiguration
+| Name | Description | Default | Type
+| **configuration** (advanced) | To use a shared ZooKeeperConfiguration |  | ZooKeeperConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
-The ZooKeeper component supports 14 endpoint options which are listed below:
+The ZooKeeper endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    zookeeper:serverUrls/path
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| serverUrls | common |  | String | *Required* The zookeeper server hosts (multiple servers can be separated by comma)
-| path | common |  | String | *Required* The node in the ZooKeeper server (aka znode)
-| awaitExistence | common | true | boolean | Not in use
-| listChildren | common | false | boolean | Whether the children of the node should be listed
-| timeout | common | 5000 | int | The time interval to wait on connection before timing out.
-| backoff | consumer | 5000 | long | The time interval to backoff for after an error before retrying.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| repeat | consumer | false | boolean | Should changes to the znode be 'watched' and repeatedly processed.
-| sendEmptyMessageOnDelete | consumer | true | boolean | Upon the delete of a znode should an empty message be send to the consumer
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| create | producer | false | boolean | Should the endpoint create the node if it does not currently exist.
-| createMode | producer | EPHEMERAL | String | The create mode that should be used for the newly created node
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **serverUrls** | *Required* The zookeeper server hosts (multiple servers can be separated by comma) |  | String
+| **path** | *Required* The node in the ZooKeeper server (aka znode) |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (12 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **awaitExistence** (common) | Not in use | true | boolean
+| **listChildren** (common) | Whether the children of the node should be listed | false | boolean
+| **timeout** (common) | The time interval to wait on connection before timing out. | 5000 | int
+| **backoff** (consumer) | The time interval to backoff for after an error before retrying. | 5000 | long
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **repeat** (consumer) | Should changes to the znode be 'watched' and repeatedly processed. | false | boolean
+| **sendEmptyMessageOnDelete** (consumer) | Upon the delete of a znode should an empty message be send to the consumer | true | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **create** (producer) | Should the endpoint create the node if it does not currently exist. | false | boolean
+| **createMode** (producer) | The create mode that should be used for the newly created node | EPHEMERAL | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Zookeeper-Usecases]]
-Use cases
-^^^^^^^^^
+### Use cases
 
-[[Zookeeper-Readingfromaznode]]
-Reading from a _znode_
-+++++++++++++++++++++
+#### Reading from a _znode_
 
 The following snippet will read the data from the _znode_
 `/somepath/somenode/` provided that it already exists. The data
@@ -120,9 +112,7 @@ endpoint await its creation:
 from("zookeeper://localhost:39913/somepath/somenode?awaitCreation=true").to("mock:result");
 ----
 
-[[Zookeeper-ReadingfromaznodeAdditionalCamel210onwards]]
-Reading from a _znode_ (additional Camel 2.10 onwards)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Reading from a _znode_ (additional Camel 2.10 onwards)
 
 When data is read due to a `WatchedEvent` received from the ZooKeeper
 ensemble, the `CamelZookeeperEventType` header holds ZooKeeper's
@@ -131,9 +121,7 @@ value from that `WatchedEvent`. If the data is read initially (not
 triggered by a `WatchedEvent`) the `CamelZookeeperEventType` header will not
 be set.
 
-[[Zookeeper-Writingtoaznode]]
-Writing to a _znode_
-++++++++++++++++++++
+#### Writing to a _znode_
 
 The following snippet will write the payload of the exchange into the
 znode at `/somepath/somenode/` provided that it already exists:
@@ -226,9 +214,7 @@ Object testPayload = ...
 template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZooKeeperCreateMode", "PERSISTENT");
 ----
 
-[[Zookeeper-ZooKeeperenabledRoutepolicy]]
-ZooKeeper enabled Route policies
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### ZooKeeper enabled Route policies
 
 ZooKeeper allows for very simple and effective leader election out of
 the box. This component exploits this election capability in a
@@ -286,9 +272,7 @@ There are currently 3 policies defined in the component, with different SLAs:
  thus you can be sure that no even is processed before the Policy takes its decision.
 
 
-[[Zookeeper-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

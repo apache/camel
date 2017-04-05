@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import io.swagger.jaxrs.config.BeanConfig;
@@ -197,9 +198,13 @@ public class RestSwaggerReader {
                 op.addTag(pathAsTag);
             }
 
+            final String routeId = verb.getRouteId();
+            final String operationId = Optional.ofNullable(rest.getId()).orElse(routeId);
+            op.operationId(operationId);
+
             // add id as vendor extensions
             op.getVendorExtensions().put("x-camelContextId", camelContextId);
-            op.getVendorExtensions().put("x-routeId", verb.getRouteId());
+            op.getVendorExtensions().put("x-routeId", routeId);
 
             Path path = swagger.getPath(opPath);
             if (path == null) {

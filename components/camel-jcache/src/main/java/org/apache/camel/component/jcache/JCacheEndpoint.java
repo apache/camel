@@ -28,22 +28,22 @@ import org.apache.camel.spi.UriPath;
 /**
  * The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
  */
-@UriEndpoint(scheme = "jcache", title = "JCache", syntax = "jcache:cacheName", consumerClass = JCacheConsumer.class, label = "cache,datagrid,clustering")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "jcache", title = "JCache", syntax = "jcache:cacheName", consumerClass = JCacheConsumer.class, label = "cache,datagrid,clustering")
 public class JCacheEndpoint extends DefaultEndpoint {
-    @UriPath(description = "the cache name")
+
+    @UriPath(description = "The name of the cache")
     @Metadata(required = "true")
     private final String cacheName;
-    
     @UriParam
     private final JCacheConfiguration cacheConfiguration;
-    private final JCacheManager<Object, Object> cacheManager;
+
+    private volatile JCacheManager<Object, Object> cacheManager;
 
     public JCacheEndpoint(String uri, JCacheComponent component, JCacheConfiguration configuration) {
         super(uri, component);
 
         this.cacheName = configuration.getCacheName();
         this.cacheConfiguration = configuration;
-        this.cacheManager = JCacheHelper.createManager(configuration);
     }
 
     @Override
@@ -62,8 +62,15 @@ public class JCacheEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        cacheManager = JCacheHelper.createManager(cacheConfiguration);
+    }
+
+    @Override
     protected void doStop() throws Exception {
-        cacheManager.close();
+        if (cacheManager != null) {
+            cacheManager.close();
+        }
     }
 
     JCacheManager getManager() {

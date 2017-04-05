@@ -1,6 +1,6 @@
-[[RMI-RMIComponent]]
-RMI Component
-~~~~~~~~~~~~~
+## RMI Component
+
+*Available as of Camel version 1.0*
 
 The *rmi:* component binds link:exchange.html[Exchange]s to the RMI
 protocol (JRMP).
@@ -26,9 +26,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[RMI-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------------------------------------------
@@ -45,9 +43,7 @@ rmi://localhost:1099/path/to/service
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[RMI-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -57,29 +53,38 @@ The RMI component has no options.
 
 
 // endpoint options: START
-The RMI component supports 9 endpoint options which are listed below:
+The RMI endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    rmi:hostname:port/name
+
+with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| hostname | common | localhost | String | Hostname of RMI server
-| name | common |  | String | *Required* Name to use when binding to RMI server
-| port | common | 1099 | int | Port number of RMI server
-| method | common |  | String | You can set the name of the method to invoke.
-| remoteInterfaces | common |  | List | To specific the remote interfaces.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **hostname** | Hostname of RMI server | localhost | String
+| **name** | *Required* Name to use when binding to RMI server |  | String
+| **port** | Port number of RMI server | 1099 | int
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **method** (common) | You can set the name of the method to invoke. |  | String
+| **remoteInterfaces** (common) | To specific the remote interfaces. |  | List
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[RMI-Using]]
-Using
-^^^^^
+### Using
 
 To call out to an existing RMI service registered in an RMI registry,
 create a route similar to the following:
@@ -112,12 +117,9 @@ In XML DSL you can do as follows from *Camel 2.7* onwards:
     </camel:route>
 ------------------------------------------------------------------------------------------------------------------------
 
-[[RMI-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

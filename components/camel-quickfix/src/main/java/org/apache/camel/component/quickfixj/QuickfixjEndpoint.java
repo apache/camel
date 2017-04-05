@@ -41,7 +41,7 @@ import quickfix.SessionID;
 /**
  * The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
  */
-@UriEndpoint(scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", consumerClass = QuickfixjConsumer.class, label = "engine,messaging")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "quickfix", title = "QuickFix", syntax = "quickfix:configurationName", consumerClass = QuickfixjConsumer.class, label = "engine,messaging")
 public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEventListener, MultipleConsumersSupport {
     public static final String EVENT_CATEGORY_KEY = "EventCategory";
     public static final String SESSION_ID_KEY = "SessionID";

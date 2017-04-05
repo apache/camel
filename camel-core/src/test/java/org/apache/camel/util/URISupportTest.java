@@ -330,4 +330,12 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals("stub://foo?foo=456&bar=yes", newUri);
     }
 
+    public void testPathAndQueryOf() {
+        assertEquals("/", URISupport.pathAndQueryOf(URI.create("http://localhost")));
+        assertEquals("/", URISupport.pathAndQueryOf(URI.create("http://localhost:80")));
+        assertEquals("/", URISupport.pathAndQueryOf(URI.create("http://localhost:80/")));
+        assertEquals("/path", URISupport.pathAndQueryOf(URI.create("http://localhost:80/path")));
+        assertEquals("/path/", URISupport.pathAndQueryOf(URI.create("http://localhost:80/path/")));
+        assertEquals("/path?query=value", URISupport.pathAndQueryOf(URI.create("http://localhost:80/path?query=value")));
+    }
 }

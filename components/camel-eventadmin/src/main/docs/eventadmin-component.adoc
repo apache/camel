@@ -1,15 +1,11 @@
-[[EventAdmin-EventAdmincomponent]]
-EventAdmin component
-~~~~~~~~~~~~~~~~~~~~
+## OSGi EventAdmin Component
 
-*Available in Camel 2.6*
+*Available as of Camel version 2.6*
 
 The `eventadmin` component can be used in an OSGi environment to receive
 OSGi EventAdmin events and process them.
 
-[[EventAdmin-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -25,9 +21,7 @@ Maven users need to add the following dependency to their `pom.xml`
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.6.0 or higher).
 
-[[EventAdmin-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,xml]
 --------------------------
@@ -36,59 +30,61 @@ eventadmin:topic[?options]
 
 where `topic` is the name of the topic to listen too.
 
-[[EventAdmin-URIoptions]]
-URI options
-^^^^^^^^^^^
+### URI options
 
 // component options: START
-The OSGi EventAdmin component supports 1 options which are listed below.
+The OSGi EventAdmin component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| bundleContext | common |  | BundleContext | The OSGi BundleContext is automatic injected by Camel
+| Name | Description | Default | Type
+| **bundleContext** (common) | The OSGi BundleContext is automatic injected by Camel |  | BundleContext
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
-The OSGi EventAdmin component supports 6 endpoint options which are listed below:
+The OSGi EventAdmin endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    eventadmin:topic
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| topic | common |  | String | Name of topic to listen or send to
-| send | common | false | boolean | Whether to use 'send' or 'synchronous' deliver. Default false (async delivery)
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **topic** | Name of topic to listen or send to |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **send** (common) | Whether to use 'send' or 'synchronous' deliver. Default false (async delivery) | false | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
-[[EventAdmin-Messageheaders]]
-Message headers
-^^^^^^^^^^^^^^^
+### Message headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Name |Type |Message |Description
 |=======================================================================
 
-[[EventAdmin-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 The `in` message body will be set to the received Event.
 
-[[EventAdmin-Exampleusage]]
-Example usage
-^^^^^^^^^^^^^
+### Example usage
 
 [source,xml]
 ------------------------------

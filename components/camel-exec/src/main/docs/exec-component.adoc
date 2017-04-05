@@ -1,14 +1,10 @@
-[[Exec-Execcomponent]]
-Exec component
-~~~~~~~~~~~~~~
+## Exec Component
 
-*Available in Camel 2.3*
+*Available as of Camel version 2.3*
 
 The `exec` component can be used to execute system commands.
 
-[[Exec-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -24,9 +20,7 @@ Maven users need to add the following dependency to their `pom.xml`
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.3.0 or higher).
 
-[[Exec-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,xml]
 ---------------------------
@@ -37,37 +31,44 @@ where `executable` is the name, or file path, of the system command that
 will be executed. If executable name is used (e.g. `exec:java`), the
 executable must in the system path.
 
-[[Exec-URIoptions]]
-URI options
-^^^^^^^^^^^
+### URI options
 
 // component options: START
 The Exec component has no options.
 // component options: END
 
 // endpoint options: START
-The Exec component supports 9 endpoint options which are listed below:
+The Exec endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    exec:executable
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| executable | producer |  | String | *Required* Sets the executable to be executed. The executable must not be empty or null.
-| args | producer |  | String | The arguments may be one or many whitespace-separated tokens.
-| binding | producer |  | ExecBinding | A reference to a org.apache.commons.exec.ExecBinding in the Registry.
-| commandExecutor | producer |  | ExecCommandExecutor | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library which adds a shutdown hook for every executed command.
-| outFile | producer |  | String | The name of a file created by the executable that should be considered as its output. If no outFile is set the standard output (stdout) of the executable will be used instead.
-| timeout | producer |  | long | The timeout in milliseconds after which the executable should be terminated. If execution has not completed within the timeout the component will send a termination request.
-| useStderrOnEmptyStdout | producer | false | boolean | A boolean indicating that when stdout is empty this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default.
-| workingDir | producer |  | String | The directory in which the command should be executed. If null the working directory of the current process will be used.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **executable** | *Required* Sets the executable to be executed. The executable must not be empty or null. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (8 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **args** (producer) | The arguments may be one or many whitespace-separated tokens. |  | String
+| **binding** (producer) | A reference to a org.apache.commons.exec.ExecBinding in the Registry. |  | ExecBinding
+| **commandExecutor** (producer) | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library which adds a shutdown hook for every executed command. |  | ExecCommandExecutor
+| **outFile** (producer) | The name of a file created by the executable that should be considered as its output. If no outFile is set the standard output (stdout) of the executable will be used instead. |  | String
+| **timeout** (producer) | The timeout in milliseconds after which the executable should be terminated. If execution has not completed within the timeout the component will send a termination request. |  | long
+| **useStderrOnEmptyStdout** (producer) | A boolean indicating that when stdout is empty this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default. | false | boolean
+| **workingDir** (producer) | The directory in which the command should be executed. If null the working directory of the current process will be used. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
-[[Exec-Messageheaders]]
-Message headers
-^^^^^^^^^^^^^^^
+### Message headers
 
 The supported headers are defined in
 `org.apache.camel.component.exec.ExecBinding`.
@@ -109,9 +110,7 @@ Camel Message Body with `stderr`. This behavior is disabled (`false`) by
 default.
 |=======================================================================
 
-[[Exec-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 If the `Exec` component receives an `in` message body that is
 convertible to `java.io.InputStream`, it is used to feed input to the
@@ -143,13 +142,9 @@ this component will convert the stdout of the process to the target
 type. For more details, please refer to the link:exec.html[usage
 examples] below.
 
-[[Exec-Usageexamples]]
-Usage examples
-^^^^^^^^^^^^^^
+### Usage examples
 
-[[Exec-Executingwordcount]]
-Executing word count (Linux)
-++++++++++++++++++++++++++++
+#### Executing word count (Linux)
 
 The example below executes `wc` (word count, Linux) to count the words
 in file `/usr/share/dict/words`. The word count (output) is written to
@@ -171,9 +166,7 @@ from("direct:exec")
 });
 --------------------------------------------------------------------------------------
 
-[[Exec-Executingjava]]
-Executing `java`
-++++++++++++++++
+#### Executing `java`
 
 The example below executes `java` with 2 arguments: `-server` and
 `-version`, provided that `java` is in the system path.
@@ -193,9 +186,7 @@ from("direct:exec")
 .to("exec:c:/program files/jdk/bin/java?args=-server -version -Duser.name=Camel&workingDir=c:/temp")
 ----------------------------------------------------------------------------------------------------
 
-[[Exec-ExecutingAntscripts]]
-Executing Ant scripts
-+++++++++++++++++++++
+#### Executing Ant scripts
 
 The following example executes http://ant.apache.org/[Apache Ant]
 (Windows only) with the build file `CamelExecBuildFile.xml`, provided
@@ -227,9 +218,7 @@ from("direct:exec")
   });
 -------------------------------------------------------------------------------------------------------
 
-[[Exec-Executingecho]]
-Executing `echo` (Windows)
-++++++++++++++++++++++++++
+#### Executing `echo` (Windows)
 
 Commands such as `echo` and `dir` can be executed only with the command
 interpreter of the operating system. This example shows how to execute
@@ -240,12 +229,9 @@ such a command - `echo` - in Windows.
 from("direct:exec").to("exec:cmd?args=/C echo echoString")
 ----------------------------------------------------------
 
-[[Exec-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,8 +1,6 @@
-[[ApacheSpark-ApacheSparkcomponent]]
-Apache Spark component
-~~~~~~~~~~~~~~~~~~~~~~
+## Apache Spark Component
 
-INFO: Apache Spark component is available starting from Camel *2.17*.
+*Available as of Camel version 2.17*
 
 This documentation page covers the http://spark.apache.org/[Apache
 Spark] component for the Apache Camel. The main purpose of the Spark
@@ -12,9 +10,7 @@ message from various transports, dynamically choose a task to execute,
 use incoming message as input data for that task and finally deliver the
 results of the execution back to the Camel pipeline.
 
-[[ApacheSpark-Supportedarchitecturalstyles]]
-Supported architectural styles
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Supported architectural styles
 
 Spark component can be used as a driver application deployed into an
 application server (or executed as a fat jar).
@@ -30,18 +26,14 @@ While Spark component is primary designed to work as a _long running
 job_ serving as an bridge between Spark cluster and the other endpoints,
 you can also use it as a _fire-once_ short job.   
 
-[[ApacheSpark-RunningSparkinOSGiservers]]
-Running Spark in OSGi servers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Running Spark in OSGi servers
 
 Currently the Spark component doesn't support execution in the OSGi
 container. Spark has been designed to be executed as a fat jar, usually
 submitted as a job to a cluster. For those reasons running Spark in an
 OSGi server is at least challenging and is not support by Camel as well.
 
-[[ApacheSpark-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 Currently the Spark component supports only producers - it it intended
 to invoke a Spark job and return results. You can call RDD, data frame
@@ -54,52 +46,58 @@ or Hive SQL job.
 spark:{rdd|dataframe|hive}
 --------------------------
 
-[[ApacheSpark-options]]
-Spark options
-+++++++++++++
+#### Spark options
 
 
 
 // component options: START
-The Apache Spark component supports 2 options which are listed below.
+The Apache Spark component supports 3 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| rdd | producer |  | JavaRDDLike | RDD to compute against.
-| rddCallback | producer |  | RddCallback | Function performing action against an RDD.
+| Name | Description | Default | Type
+| **rdd** (producer) | RDD to compute against. |  | JavaRDDLike
+| **rddCallback** (producer) | Function performing action against an RDD. |  | RddCallback
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Apache Spark component supports 7 endpoint options which are listed below:
+The Apache Spark endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    spark:endpointType
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| endpointType | producer |  | EndpointType | *Required* Type of the endpoint (rdd dataframe hive).
-| collect | producer | true | boolean | Indicates if results should be collected or counted.
-| dataFrame | producer |  | DataFrame | DataFrame to compute against.
-| dataFrameCallback | producer |  | DataFrameCallback | Function performing action against an DataFrame.
-| rdd | producer |  | JavaRDDLike | RDD to compute against.
-| rddCallback | producer |  | RddCallback | Function performing action against an RDD.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **endpointType** | *Required* Type of the endpoint (rdd dataframe hive). |  | EndpointType
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **collect** (producer) | Indicates if results should be collected or counted. | true | boolean
+| **dataFrame** (producer) | DataFrame to compute against. |  | DataFrame
+| **dataFrameCallback** (producer) | Function performing action against an DataFrame. |  | DataFrameCallback
+| **rdd** (producer) | RDD to compute against. |  | JavaRDDLike
+| **rddCallback** (producer) | Function performing action against an RDD. |  | RddCallback
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
  
-[[ApacheSpark-RDDjobs]]
-RDD jobs 
-^^^^^^^^^
+### RDD jobs 
 
 To invoke an RDD job, use the following URI:
 
@@ -168,9 +166,7 @@ JavaRDDLike myRdd(JavaSparkContext sparkContext) {
 }
 --------------------------------------------------
 
-[[ApacheSpark-VoidRDDcallbacks]]
-Void RDD callbacks
-++++++++++++++++++
+#### Void RDD callbacks
 
 If your RDD callback doesn't return any value back to a Camel pipeline,
 you can either return `null` value or use `VoidRddCallback` base class:
@@ -190,9 +186,7 @@ RddCallback<Void> rddCallback() {
 }
 ------------------------------------------------------------------
 
-[[ApacheSpark-ConvertingRDDcallbacks]]
-Converting RDD callbacks
-++++++++++++++++++++++++
+#### Converting RDD callbacks
 
 If you know what type of the input data will be sent to the RDD
 callback, you can use `ConvertingRddCallback` and let Camel to
@@ -215,9 +209,7 @@ RddCallback<Long> rddCallback(CamelContext context) {
 }
 ---------------------------------------------------------------------------
 
-[[ApacheSpark-AnnotatedRDDcallbacks]]
-Annotated RDD callbacks
-+++++++++++++++++++++++
+#### Annotated RDD callbacks
 
 Probably the easiest way to work with the RDD callbacks is to provide
 class with method marked with `@RddCallback` annotation:
@@ -284,9 +276,7 @@ long result = producerTemplate.requestBody("spark:rdd?rdd=#rdd&rddCallback=#rddC
 
  
 
-[[ApacheSpark-DataFramejobs]]
-DataFrame jobs
-^^^^^^^^^^^^^^
+### DataFrame jobs
 
 Instead of working with RDDs Spark component can work with DataFrames as
 well. 
@@ -361,9 +351,7 @@ DataFrame cars(HiveContext hiveContext) {
 }
 ------------------------------------------------------------------------
 
-[[ApacheSpark-Hivejobs]]
-Hive jobs
-^^^^^^^^^
+### Hive jobs
 
  Instead of working with RDDs or DataFrame Spark component can also
 receive Hive SQL queries as payloads. To send Hive query to Spark
@@ -403,12 +391,9 @@ DataFrame cars(HiveContext hiveContext) {
 }
 ------------------------------------------------------------------------
 
-[[ApacheSpark-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,8 +1,6 @@
-[[ElasticSearch-ElasticSearchComponent]]
-ElasticSearch Component
-~~~~~~~~~~~~~~~~~~~~~~~
+## Elasticsearch Component
 
-*Available as of Camel 2.11*
+*Available as of Camel version 2.11*
 
 The ElasticSearch component allows you to interface with an
 http://elasticsearch.org[ElasticSearch] server.
@@ -20,44 +18,29 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[ElasticSearch-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------
 elasticsearch://clusterName[?options]
 -------------------------------------
 
-[Tip]
-====
 
-
-if you want to run against a local (in JVM/classloader) ElasticSearch
-server, just set the clusterName value in the URI to "local". See the
-http://www.elasticsearch.org/guide/reference/java-api/client.html[client
-guide] for more details.
-
-====
-
-[[ElasticSearch-EndpointOptions]]
-Endpoint Options
-^^^^^^^^^^^^^^^^
+### Endpoint Options
 
 
 
 // component options: START
-The Elasticsearch component supports 1 options which are listed below.
+The Elasticsearch component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| client | advanced |  | Client | To use an existing configured Elasticsearch client instead of creating a client per endpoint.
+| Name | Description | Default | Type
+| **client** (advanced) | To use an existing configured Elasticsearch client instead of creating a client per endpoint. |  | Client
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -65,33 +48,48 @@ The Elasticsearch component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Elasticsearch component supports 12 endpoint options which are listed below:
+The Elasticsearch endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    elasticsearch:clusterName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| clusterName | producer |  | String | *Required* Name of cluster or use local for local mode
-| clientTransportSniff | producer | true | Boolean | Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the client.transport.sniff setting.
-| consistencyLevel | producer | DEFAULT | WriteConsistencyLevel | The write consistency level to use with INDEX and BULK operations (can be any of ONE QUORUM ALL or DEFAULT)
-| data | producer |  | Boolean | Is the node going to be allowed to allocate data (shards) to it or not. This setting map to the node.data setting.
-| indexName | producer |  | String | The name of the index to act against
-| indexType | producer |  | String | The type of the index to act against
-| ip | producer |  | String | The TransportClient remote host ip to use
-| operation | producer |  | String | What operation to perform
-| pathHome | producer | ${user.home}/.elasticsearch | String | The path.home property of ElasticSearch configuration. You need to provide a valid path otherwise the default $user.home/.elasticsearch will be used.
-| port | producer | 9300 | int | The TransportClient remote port to use (defaults to 9300)
-| transportAddresses | producer |  | String | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for transportAddresses to be considered instead.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **clusterName** | *Required* Name of cluster or use local for local mode |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (11 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **clientTransportSniff** (producer) | Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the client.transport.sniff setting. | true | Boolean
+| **consistencyLevel** (producer) | The write consistency level to use with INDEX and BULK operations (can be any of ONE QUORUM ALL or DEFAULT) | DEFAULT | WriteConsistencyLevel
+| **data** (producer) | Is the node going to be allowed to allocate data (shards) to it or not. This setting map to the node.data setting. |  | Boolean
+| **indexName** (producer) | The name of the index to act against |  | String
+| **indexType** (producer) | The type of the index to act against |  | String
+| **ip** (producer) | The TransportClient remote host ip to use |  | String
+| **operation** (producer) | What operation to perform |  | String
+| **pathHome** (producer) | The path.home property of ElasticSearch configuration. You need to provide a valid path otherwise the default $user.home/.elasticsearch will be used. | ${user.home}/.elasticsearch | String
+| **port** (producer) | The TransportClient remote port to use (defaults to 9300) | 9300 | int
+| **transportAddresses** (producer) | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for transportAddresses to be considered instead. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
+### Local testing
+
+If you want to run against a local (in JVM/classloader) ElasticSearch
+server, just set the clusterName value in the URI to "local". See the
+http://www.elasticsearch.org/guide/reference/java-api/client.html[client
+guide] for more details.
 
 
-[[ElasticSearch-MessageOperations]]
-Message Operations
-^^^^^^^^^^^^^^^^^^
+### Message Operations
 
 The following ElasticSearch operations are currently supported. Simply
 set an endpoint URI option or exchange header with a key of "operation"
@@ -133,9 +131,7 @@ returns a MultiSearchResponse object in the body
 indexId in the body.
 |=======================================================================
 
-[[ElasticSearch-IndexExample]]
-Index Example
-^^^^^^^^^^^^^
+### Index Example
 
 Below is a simple INDEX example
 
@@ -163,21 +159,16 @@ map.put("content", "test");
 String indexId = template.requestBody("direct:index", map, String.class);
 -------------------------------------------------------------------------
 
-[[ElasticSearch-Formoreinformation,seetheseresources]]
-For more information, see these resources
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### For more information, see these resources
 
 http://elasticsearch.org[ElasticSearch Main Site]
 
 http://www.elasticsearch.org/guide/reference/java-api/[ElasticSearch
 Java API]
 
-[[ElasticSearch-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

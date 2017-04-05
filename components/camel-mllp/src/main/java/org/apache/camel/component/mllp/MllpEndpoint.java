@@ -30,15 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The MLLP component is designed to handle the MLLP protocol and provide the functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
- *
+ * Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
  * <p/>
- * NOTE: MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI
- * into the log files.  Logging of PHI can be globally disabled by setting the org.apache.camel.mllp.logPHI system
+ * MLLP payloads are not logged unless the logging level is set to DEBUG or TRACE to avoid introducing PHI
+ * into the log files. Logging of PHI can be globally disabled by setting the org.apache.camel.mllp.logPHI system
  * property to false.
- * <p/>
  */
-@UriEndpoint(scheme = "mllp", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "mllp", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "hl7")
 public class MllpEndpoint extends DefaultEndpoint {
     public static final char START_OF_BLOCK = 0x0b;      // VT (vertical tab)        - decimal 11, octal 013
     public static final char END_OF_BLOCK = 0x1c;        // FS (file separator)      - decimal 28, octal 034

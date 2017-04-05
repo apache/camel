@@ -1,8 +1,6 @@
-[[BeanValidator-BeanValidatorComponent]]
-Bean Validator Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+## Bean Validator Component
 
-*Available as of Camel 2.3*
+*Available as of Camel version 2.3*
 
 The Validator component performs bean validation of the message body
 using the Java Bean Validation API
@@ -24,9 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[BeanValidator-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------
@@ -44,9 +40,7 @@ Where *label* is an arbitrary text value describing the endpoint. +
  You can append query options to the URI in the following format,
 ?option=value&option=value&...
 
-[[BeanValidator-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -56,27 +50,36 @@ The Bean Validator component has no options.
 
 
 // endpoint options: START
-The Bean Validator component supports 7 endpoint options which are listed below:
+The Bean Validator endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    bean-validator:label
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| label | producer |  | String | *Required* Where label is an arbitrary text value describing the endpoint
-| constraintValidatorFactory | producer |  | ConstraintValidatorFactory | To use a custom ConstraintValidatorFactory
-| group | producer | javax.validation.groups.Default | String | To use a custom validation group
-| messageInterpolator | producer |  | MessageInterpolator | To use a custom MessageInterpolator
-| traversableResolver | producer |  | TraversableResolver | To use a custom TraversableResolver
-| validationProviderResolver | producer |  | ValidationProviderResolver | To use a a custom ValidationProviderResolver
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **label** | *Required* Where label is an arbitrary text value describing the endpoint |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **constraintValidatorFactory** (producer) | To use a custom ConstraintValidatorFactory |  | ConstraintValidator Factory
+| **group** (producer) | To use a custom validation group | javax.validation.groups.Default | String
+| **messageInterpolator** (producer) | To use a custom MessageInterpolator |  | MessageInterpolator
+| **traversableResolver** (producer) | To use a custom TraversableResolver |  | TraversableResolver
+| **validationProviderResolver** (producer) | To use a a custom ValidationProviderResolver |  | ValidationProvider Resolver
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[BeanValidator-OSGideployment]]
-OSGi deployment
-^^^^^^^^^^^^^^^
+### OSGi deployment
 
 To use Hibernate Validator in the OSGi environment use dedicated
 `ValidationProviderResolver` implementation, just as
@@ -101,9 +104,7 @@ If no custom `ValidationProviderResolver` is defined and the validator
 component has been deployed into the OSGi environment,
 the `HibernateValidationProviderResolver` will be automatically used.
 
-[[BeanValidator-Example]]
-Example
-^^^^^^^
+### Example
 
 Assumed we have a java bean with the following annotations
 
@@ -246,12 +247,9 @@ and the `constraints-car.xml` file
 </constraint-mappings>
 ----------------------------------------------------------------------------------------------------
 
-[[BeanValidator-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

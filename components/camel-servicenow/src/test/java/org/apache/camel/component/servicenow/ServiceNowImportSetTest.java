@@ -60,7 +60,7 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
         template().sendBodyAndHeaders(
             "direct:servicenow",
             incident,
-            new KVBuilder()
+            kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_IMPORT)
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
                 .put(ServiceNowConstants.REQUEST_MODEL, IncidentImportRequest.class)
@@ -96,9 +96,7 @@ public class ServiceNowImportSetTest extends ServiceNowTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")
-                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
-                        + "?userName={{env:SERVICENOW_USERNAME}}"
-                        + "&password={{env:SERVICENOW_PASSWORD}}")
+                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
                     .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
                     .to("mock:servicenow");
             }

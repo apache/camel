@@ -74,22 +74,19 @@ public class TransformerListCommandTest {
     private String doTest(boolean verbose) throws Exception {
         CamelContext context = new DefaultCamelContext();
         EndpointTransformerDefinition etd = new EndpointTransformerDefinition();
-        etd.setFrom("xml:foo");
-        etd.setTo("json:bar");
+        etd.setFromType("xml:foo");
+        etd.setToType("json:bar");
         etd.setUri("direct:transformer");
         context.getTransformers().add(etd);
-        context.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
         DataFormatTransformerDefinition dftd = new DataFormatTransformerDefinition();
-        dftd.setFrom(this.getClass());
-        dftd.setTo("xml:test");
+        dftd.setFromType(this.getClass());
+        dftd.setToType("xml:test");
         dftd.setDataFormatType(new StringDataFormat());
         context.getTransformers().add(dftd);
-        context.resolveTransformer(new DataType(this.getClass()), new DataType("xml:test"));
         CustomTransformerDefinition ctd = new CustomTransformerDefinition();
         ctd.setScheme("custom");
-        ctd.setType(MyTransformer.class.getName());
+        ctd.setClassName(MyTransformer.class.getName());
         context.getTransformers().add(ctd);
-        context.resolveTransformer("custom");
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("foobar"));
         context.start();
 

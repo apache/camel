@@ -1,8 +1,6 @@
-[[Chunk-Chunk]]
-Chunk
-~~~~~
+## Chunk Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 The *chunk:* component allows for processing a message using a
 http://www.x5software.com/chunk/examples/ChunkExample?loc=en_US[Chunk] template.
@@ -21,9 +19,7 @@ their `pom.xml` for this component:
 </dependency>
 ---------------------------------------------------------------------------------
 
-[[Chunk-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------
@@ -36,9 +32,7 @@ invoke.
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-[[Chunk-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -48,22 +42,33 @@ The Chunk component has no options.
 
 
 // endpoint options: START
-The Chunk component supports 8 endpoint options which are listed below:
+The Chunk endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    chunk:resourceUri
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* Path to the resource or a reference to lookup a bean in the Registry to use as the resource
-| contentCache | producer | false | boolean | Sets whether to use resource content cache or not
-| encoding | producer |  | String | Define the encoding of the body
-| extension | producer |  | String | Define the file extension of the template
-| themeFolder | producer |  | String | Define the themes folder to scan
-| themeLayer | producer |  | String | Define the theme layer to elaborate
-| themeSubfolder | producer |  | String | Define the themes subfolder to scan
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **resourceUri** | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (7 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **contentCache** (producer) | Sets whether to use resource content cache or not | false | boolean
+| **encoding** (producer) | Define the encoding of the body |  | String
+| **extension** (producer) | Define the file extension of the template |  | String
+| **themeFolder** (producer) | Define the themes folder to scan |  | String
+| **themeLayer** (producer) | Define the theme layer to elaborate |  | String
+| **themeSubfolder** (producer) | Define the themes subfolder to scan |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
@@ -72,9 +77,7 @@ with extensions _.chtml_ or _.cxml. _If you need to specify a different
 folder or extensions, you will need to use the specific options listed
 above.
 
-[[Chunk-ChunkContext]]
-Chunk Context
-^^^^^^^^^^^^^
+### Chunk Context
 
 Camel will provide exchange information in the Chunk context (just
 a `Map`). The `Exchange` is transferred as:
@@ -99,9 +102,7 @@ a `Map`). The `Exchange` is transferred as:
 |`response` |The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
-[[Chunk-Dynamictemplates]]
-Dynamic templates
-^^^^^^^^^^^^^^^^^
+### Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -118,9 +119,7 @@ configured. |
 |ChunkConstants.CHUNK_TEMPLATE |String |The template to use instead of the endpoint configured. |
 |=======================================================================
 
-[[Chunk-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 For example you could use something like:
 
@@ -164,9 +163,7 @@ to("chunk:file_example?themeFolder=template&themeSubfolder=subfolder&extension=c
 In this example Chunk component will look for the file
 _file_example.chunk_ in the folder _template/subfolder._
 
-[[Chunk-TheEmailSample]]
-The Email Sample
-^^^^^^^^^^^^^^^^
+### The Email Sample
 
 In this sample we want to use Chunk templating for an order confirmation
 email. The email template is laid out in Chunk as:
@@ -182,12 +179,9 @@ Regards Camel Riders Bookstore
 {$body}
 ----------------------------------------------
 
-[[Chunk-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

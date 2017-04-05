@@ -1110,6 +1110,23 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         getConfiguration().setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(sleepingTime);
     }
 
+    /**
+     * Use this JMS property to correlate messages in InOut exchange pattern (request-reply)
+     * instead of JMSCorrelationID property. This allows you to exchange messages with 
+     * systems that do not correlate messages using JMSCorrelationID JMS property. If used
+     * JMSCorrelationID will not be used or set by Camel. The value of here named property
+     * will be generated if not supplied in the header of the message under the same name.
+     */
+    @Metadata(label = "producer,advanced",
+            description = "Use this JMS property to correlate messages in InOut exchange pattern (request-reply)"
+                    + " instead of JMSCorrelationID property. This allows you to exchange messages with"
+                    + " systems that do not correlate messages using JMSCorrelationID JMS property. If used"
+                    + " JMSCorrelationID will not be used or set by Camel. The value of here named property"
+                    + " will be generated if not supplied in the header of the message under the same name.")
+    public void setCorrelationProperty(final String correlationProperty) {
+        getConfiguration().setCorrelationProperty(correlationProperty);
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -1144,20 +1161,23 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
 
         boolean pubSubDomain = false;
         boolean tempDestination = false;
-        if (remaining.startsWith(JmsConfiguration.QUEUE_PREFIX)) {
-            pubSubDomain = false;
-            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.QUEUE_PREFIX.length()), '/');
-        } else if (remaining.startsWith(JmsConfiguration.TOPIC_PREFIX)) {
-            pubSubDomain = true;
-            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TOPIC_PREFIX.length()), '/');
-        } else if (remaining.startsWith(JmsConfiguration.TEMP_QUEUE_PREFIX)) {
-            pubSubDomain = false;
-            tempDestination = true;
-            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_QUEUE_PREFIX.length()), '/');
-        } else if (remaining.startsWith(JmsConfiguration.TEMP_TOPIC_PREFIX)) {
-            pubSubDomain = true;
-            tempDestination = true;
-            remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_TOPIC_PREFIX.length()), '/');
+
+        if (ObjectHelper.isNotEmpty(remaining)) {
+            if (remaining.startsWith(JmsConfiguration.QUEUE_PREFIX)) {
+                pubSubDomain = false;
+                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.QUEUE_PREFIX.length()), '/');
+            } else if (remaining.startsWith(JmsConfiguration.TOPIC_PREFIX)) {
+                pubSubDomain = true;
+                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TOPIC_PREFIX.length()), '/');
+            } else if (remaining.startsWith(JmsConfiguration.TEMP_QUEUE_PREFIX)) {
+                pubSubDomain = false;
+                tempDestination = true;
+                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_QUEUE_PREFIX.length()), '/');
+            } else if (remaining.startsWith(JmsConfiguration.TEMP_TOPIC_PREFIX)) {
+                pubSubDomain = true;
+                tempDestination = true;
+                remaining = removeStartingCharacters(remaining.substring(JmsConfiguration.TEMP_TOPIC_PREFIX.length()), '/');
+            }
         }
 
         final String subject = convertPathToActualDestination(remaining, parameters);

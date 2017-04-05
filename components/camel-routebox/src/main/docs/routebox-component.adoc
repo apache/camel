@@ -1,8 +1,6 @@
-[[Routebox-RouteboxComponent]]
-Routebox Component
-~~~~~~~~~~~~~~~~~~
+## RouteBox Component (deprecated)
 
-*Available as of Camel 2.6*
+*Available as of Camel version 2.6*
 
 *Routebox subject for change*
 
@@ -51,9 +49,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Routebox-TheneedforaCamelRouteboxendpoint]]
-The need for a Camel Routebox endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### The need for a Camel Routebox endpoint
 
 The routebox component is designed to ease integration in complex
 environments needing
@@ -89,9 +85,7 @@ delegate requests to inner fine grained routes to achieve a specific
 integration objective, collect the final inner result, and continue to
 progress to the next step along the coarse-grained route.
 
-[[Routebox-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------
@@ -101,9 +95,7 @@ routebox:routeboxname[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Routebox-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -113,47 +105,54 @@ The RouteBox component has no options.
 
 
 // endpoint options: START
-The RouteBox component supports 18 endpoint options which are listed below:
+The RouteBox endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    routebox:routeboxName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| routeboxName | common |  | String | *Required* Logical name for the routebox (eg like a queue name)
-| dispatchMap | common |  | Map | A string representing a key in the Camel Registry matching an object value of the type HashMap. The HashMap key should contain strings that can be matched against the value set for the exchange header ROUTE_DISPATCH_KEY. The HashMap value should contain inner route consumer URI's to which requests should be directed.
-| dispatchStrategy | common |  | RouteboxDispatchStrategy | To use a custom RouteboxDispatchStrategy which allows to use custom dispatching instead of the default.
-| forkContext | common | true | boolean | Whether to fork and create a new inner CamelContext instead of reusing the same CamelContext.
-| innerProtocol | common | direct | String | The Protocol used internally by the Routebox component. Can be Direct or SEDA. The Routebox component currently offers protocols that are JVM bound.
-| queueSize | common |  | int | Create a fixed size queue to receive requests.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| pollInterval | consumer | 1000 | long | The timeout used when polling from seda. When a timeout occurs the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.
-| threads | consumer | 20 | int | Number of threads to be used by the routebox to receive requests.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| connectionTimeout | producer | 20000 | long | Timeout in millis used by the producer when sending a message.
-| sendToConsumer | producer | true | boolean | Dictates whether a Producer endpoint sends a request to an external routebox consumer. If the setting is false the Producer creates an embedded inner context and processes requests internally.
-| innerContext | advanced |  | CamelContext | A string representing a key in the Camel Registry matching an object value of the type org.apache.camel.CamelContext. If a CamelContext is not provided by the user a CamelContext is automatically created for deployment of inner routes.
-| innerProducerTemplate | advanced |  | ProducerTemplate | The ProducerTemplate to use by the internal embeded CamelContext
-| innerRegistry | advanced |  | Registry | To use a custom registry for the internal embedded CamelContext.
-| routeBuilders | advanced |  | String | A string representing a key in the Camel Registry matching an object value of the type List. If the user does not supply an innerContext pre-primed with inner routes the routeBuilders option must be provided as a non-empty list of RouteBuilders containing inner routes
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **routeboxName** | *Required* Logical name for the routebox (eg like a queue name) |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (17 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **dispatchMap** (common) | A string representing a key in the Camel Registry matching an object value of the type HashMap. The HashMap key should contain strings that can be matched against the value set for the exchange header ROUTE_DISPATCH_KEY. The HashMap value should contain inner route consumer URI's to which requests should be directed. |  | Map
+| **dispatchStrategy** (common) | To use a custom RouteboxDispatchStrategy which allows to use custom dispatching instead of the default. |  | RouteboxDispatch Strategy
+| **forkContext** (common) | Whether to fork and create a new inner CamelContext instead of reusing the same CamelContext. | true | boolean
+| **innerProtocol** (common) | The Protocol used internally by the Routebox component. Can be Direct or SEDA. The Routebox component currently offers protocols that are JVM bound. | direct | String
+| **queueSize** (common) | Create a fixed size queue to receive requests. |  | int
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **pollInterval** (consumer) | The timeout used when polling from seda. When a timeout occurs the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown. | 1000 | long
+| **threads** (consumer) | Number of threads to be used by the routebox to receive requests. | 20 | int
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **connectionTimeout** (producer) | Timeout in millis used by the producer when sending a message. | 20000 | long
+| **sendToConsumer** (producer) | Dictates whether a Producer endpoint sends a request to an external routebox consumer. If the setting is false the Producer creates an embedded inner context and processes requests internally. | true | boolean
+| **innerContext** (advanced) | A string representing a key in the Camel Registry matching an object value of the type org.apache.camel.CamelContext. If a CamelContext is not provided by the user a CamelContext is automatically created for deployment of inner routes. |  | CamelContext
+| **innerProducerTemplate** (advanced) | The ProducerTemplate to use by the internal embeded CamelContext |  | ProducerTemplate
+| **innerRegistry** (advanced) | To use a custom registry for the internal embedded CamelContext. |  | Registry
+| **routeBuilders** (advanced) | A string representing a key in the Camel Registry matching an object value of the type List. If the user does not supply an innerContext pre-primed with inner routes the routeBuilders option must be provided as a non-empty list of RouteBuilders containing inner routes |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Routebox-SendingReceivingMessagestofromtheroutebox]]
-Sending/Receiving Messages to/from the routebox
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending/Receiving Messages to/from the routebox
 
 Before sending requests it is necessary to properly configure the
 routebox by loading the required URI parameters into the Registry as
 shown below. In the case of Spring, if the necessary beans are declared
 correctly, the registry is automatically populated by Camel.
 
-[[Routebox-Step1:LoadinginnerroutedetailsintotheRegistry]]
-Step 1: Loading inner route details into the Registry
-+++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Step 1: Loading inner route details into the Registry
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------
@@ -190,9 +189,7 @@ private JndiRegistry createInnerRegistry() throws Exception {
 CamelContext context = new DefaultCamelContext(createRegistry());
 ------------------------------------------------------------------------------------------------------------
 
-[[Routebox-Step2:OptionalyusingaDispatchStrategyinsteadofaDispatchMap]]
-Step 2: Optionaly using a Dispatch Strategy instead of a Dispatch Map
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Step 2: Optionaly using a Dispatch Strategy instead of a Dispatch Map
 
 Using a dispatch Strategy involves implementing the interface
 _org.apache.camel.component.routebox.strategy.RouteboxDispatchStrategy_
@@ -222,9 +219,7 @@ public class SimpleRouteDispatchStrategy implements RouteboxDispatchStrategy {
 }
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Routebox-Step2:Launchingarouteboxconsumer]]
-Step 2: Launching a routebox consumer
-+++++++++++++++++++++++++++++++++++++
+#### Step 2: Launching a routebox consumer
 
 When creating a route consumer, note that the # entries in the
 routeboxUri are matched to the created inner registry, routebuilder list
@@ -254,9 +249,7 @@ public void testRouteboxRequests() throws Exception {
 }
 ----------------------------------------------------------------------------------------------------------------------
 
-[[Routebox-Step3:Usingarouteboxproducer]]
-Step 3: Using a routebox producer
-+++++++++++++++++++++++++++++++++
+#### Step 3: Using a routebox producer
 
 When sending requests to the routebox, it is not necessary for producers
 do not need to know the inner route endpoint URI and they can simply

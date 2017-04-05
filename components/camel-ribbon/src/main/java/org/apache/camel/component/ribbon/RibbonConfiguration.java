@@ -16,16 +16,20 @@
  */
 package org.apache.camel.component.ribbon;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import com.netflix.loadbalancer.IPing;
 import com.netflix.loadbalancer.IRule;
 
 public class RibbonConfiguration {
-
     private String namespace;
     private String username;
     private String password;
     private IRule rule;
     private IPing ping;
+    private String clientName;
+    private Map<String, String> clientConfig;
 
     public String getNamespace() {
         return namespace;
@@ -55,6 +59,10 @@ public class RibbonConfiguration {
         return rule;
     }
 
+    public IRule getRuleOrDefault(Supplier<IRule> supplier) {
+        return rule != null ? rule : supplier.get();
+    }
+
     public void setRule(IRule rule) {
         this.rule = rule;
     }
@@ -63,7 +71,27 @@ public class RibbonConfiguration {
         return ping;
     }
 
+    public IPing getPingOrDefault(Supplier<IPing> supplier) {
+        return ping != null ? ping : supplier.get();
+    }
+
     public void setPing(IPing ping) {
         this.ping = ping;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public Map<String, String> getClientConfig() {
+        return clientConfig;
+    }
+
+    public void setClientConfig(Map<String, String> clientConfig) {
+        this.clientConfig = clientConfig;
     }
 }

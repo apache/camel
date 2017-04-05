@@ -25,10 +25,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 
+import org.apache.camel.component.salesforce.NotFoundBehaviour;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
@@ -59,8 +63,8 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     private ObjectMapper objectMapper;
     private XStream xStream;
 
-    public DefaultRestClient(SalesforceHttpClient httpClient, String version, PayloadFormat format, SalesforceSession session)
-            throws SalesforceException {
+    public DefaultRestClient(final SalesforceHttpClient httpClient, final String version, final PayloadFormat format,
+        final SalesforceSession session) throws SalesforceException {
         super(version, session, httpClient);
 
         this.format = format;
@@ -109,14 +113,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                     }
                     return new SalesforceMultipleChoicesException(reason, statusCode, choices);
                 } else {
-                    final List<RestError> restErrors;
-                    if (PayloadFormat.JSON.equals(format)) {
-                        restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
-                    } else {
-                        RestErrors errors = new RestErrors();
-                        xStream.fromXML(responseContent, errors);
-                        restErrors = errors.getErrors();
+                    final List<RestError> restErrors = readErrorsFrom(responseContent, format, objectMapper, xStream);
+                    if (statusCode == HttpStatus.NOT_FOUND_404) {
+                        return new NoSuchSObjectException(restErrors);
                     }
+
                     return new SalesforceException(restErrors, statusCode);
                 }
             }

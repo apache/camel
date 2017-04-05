@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 
 public class DateTimeDeserializer extends JsonDeserializer<ZonedDateTime> {
@@ -37,7 +38,7 @@ public class DateTimeDeserializer extends JsonDeserializer<ZonedDateTime> {
         if (currentToken == JsonToken.VALUE_STRING) {
             return DateTimeUtils.parseDateTime(jsonParser.getText().trim());
         }
-        throw deserializationContext.mappingException(getClass());
+        throw JsonMappingException.from(deserializationContext, "Expected String value, got: " + currentToken);
     }
 
 }

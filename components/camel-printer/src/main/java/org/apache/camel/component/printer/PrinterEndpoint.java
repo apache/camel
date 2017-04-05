@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriParam;
  * The functionality allows for the payload to be printed on a default printer, named local, remote or wirelessly
  * linked printer using the javax printing API under the covers.
  */
-@UriEndpoint(scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername", producerOnly = true, label = "printing")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "lpr", title = "Printer", syntax = "lpr:hostname:port/printername", producerOnly = true, label = "printing")
 public class PrinterEndpoint extends DefaultEndpoint {
     
     public static final String JOB_NAME = "PrinterJobName";

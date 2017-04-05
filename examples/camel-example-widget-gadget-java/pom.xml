@@ -31,6 +31,11 @@
   <description>The widget and gadget example from the EIP book</description>
   <packaging>jar</packaging>
 
+  <properties>
+    <category>Beginner</category>
+    <title>Widget Gadget Java</title>
+  </properties>
+
   <dependencies>
 
     <!-- camel -->

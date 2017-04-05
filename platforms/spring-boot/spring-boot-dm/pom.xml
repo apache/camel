@@ -39,7 +39,7 @@
 
   <properties>
     <!-- Spring-Boot target version -->
-    <spring-boot-version>1.4.2.RELEASE</spring-boot-version>
+    <spring-boot-version>1.5.2.RELEASE</spring-boot-version>
 
     <!-- The following dependencies should be aligned with the ones in standard camel parent -->
     <avro-version>1.8.1</avro-version>
@@ -63,19 +63,19 @@
     <cassandra-netty-version-testing>4.0.37.Final</cassandra-netty-version-testing>
 
     <!-- The following versions should be aligned with the ones in spring-boot-repo/spring-boot-dependencies/pom.xml (for the targeted version of spring-boot) -->
-    <jackson2-version>2.8.3</jackson2-version>
-    <scala-jackson2-version>2.8.2</scala-jackson2-version>
-    <jetty9-version>9.3.11.v20160721</jetty9-version>
+    <jackson2-version>2.8.7</jackson2-version>
+    <scala-jackson2-version>2.8.7</scala-jackson2-version>
+    <jetty9-version>9.4.2.v20170220</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jna-version>4.2.2</jna-version>
-    <hazelcast-version>3.6.5</hazelcast-version>
+    <hazelcast-version>3.7.5</hazelcast-version>
     <htmlunit-version>2.21</htmlunit-version>
-    <log4j2-version>2.6.2</log4j2-version>
-    <slf4j-version>1.7.21</slf4j-version>
-    <spring-version>4.3.3.RELEASE</spring-version>
-    <spring-data-releasetrain-version>Hopper-SR3</spring-data-releasetrain-version>
-    <spring-integration-version>4.3.2.RELEASE</spring-integration-version>
-    <spring-security-version>4.1.3.RELEASE</spring-security-version>
+    <log4j2-version>2.7</log4j2-version>
+    <slf4j-version>1.7.22</slf4j-version>
+    <spring-version>4.3.7.RELEASE</spring-version>
+    <spring-data-releasetrain-version>Ingalls-SR1</spring-data-releasetrain-version>
+    <spring-integration-version>4.3.8.RELEASE</spring-integration-version>
+    <spring-security-version>4.2.2.RELEASE</spring-security-version>
   </properties>
 
   <build>

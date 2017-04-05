@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.jms.Connection;
-import javax.jms.Destination;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
@@ -28,7 +27,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -164,8 +162,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     protected MessageProducerResources doCreateProducerModel(Session session) throws Exception {
         MessageProducerResources answer;
         try {
-            Destination destination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getDestinationName(), isTopic());
-            MessageProducer messageProducer = JmsObjectFactory.createMessageProducer(session, destination, isPersistent(), getTtl());
+            MessageProducer messageProducer = getEndpoint().getJmsObjectFactory().createMessageProducer(session, getEndpoint());
 
             answer = new MessageProducerResources(session, messageProducer, getCommitStrategy());
 

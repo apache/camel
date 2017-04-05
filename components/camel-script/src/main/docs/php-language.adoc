@@ -1,6 +1,6 @@
-[[PHP-PHP]]
-PHP
-~~~
+## PHP Language (deprecated)
+
+*Available as of Camel version 1.0*
 
 Camel supports http://www.php.net/[PHP] among other
 link:scripting-languages.html[Scripting Languages] to allow an
@@ -20,27 +20,21 @@ link:predicate.html[Predicate] in a link:message-filter.html[Message
 Filter] or as an link:expression.html[Expression] for a
 link:recipient-list.html[Recipient List]
 
-[[PHP-Language-options]]
-PHP Language Options
-^^^^^^^^^^^^^^^^^^^^
+### PHP Language Options
 
 // language options: START
 The PHP language supports 1 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================
-{% endraw %}
 // language options: END
 
-[[PHP-ScriptContext]]
-ScriptContext
-^^^^^^^^^^^^^
+### ScriptContext
 
 The JSR-223 scripting languages ScriptContext is pre configured with the
 following attributes all set at `ENGINE_SCOPE`:
@@ -68,9 +62,7 @@ further below for example.
 See link:scripting-languages.html[Scripting Languages] for the list of
 languages with explicit DSL support.
 
-[[PHP-AdditionalargumentstoScriptingEngine]]
-Additional arguments to ScriptingEngine
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Additional arguments to ScriptingEngine
 
 *Available as of Camel 2.8*
 
@@ -78,9 +70,7 @@ You can provide additional arguments to the `ScriptingEngine` using a
 header on the Camel message with the key `CamelScriptArguments`. +
  See this example:
 
-[[PHP-Usingpropertiesfunction]]
-Using properties function
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using properties function
 
 *Available as of Camel 2.9*
 
@@ -105,9 +95,7 @@ same example is simpler:
 .setHeader("myHeader").groovy("properties.resolve(request.headers.get('foo'))")
 -------------------------------------------------------------------------------
 
-[[PHP-Loadingscriptfromexternalresource]]
-Loading script from external resource
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Loading script from external resource
 
 *Available as of Camel 2.11*
 
@@ -121,9 +109,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").groovy("resource:classpath:mygroovy.groovy")
 -------------------------------------------------------------------
 
-[[PHP-Howtogettheresultfrommultiplestatementsscript]]
-How to get the result from multiple statements script
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to get the result from multiple statements script
 
 *Available as of Camel 2.14*
 
@@ -143,9 +129,7 @@ result = body * 2 + 1
 
  
 
-[[PHP-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use scripting languages in your camel routes you need to add the a
 dependency on *camel-script* which integrates the JSR-223 scripting

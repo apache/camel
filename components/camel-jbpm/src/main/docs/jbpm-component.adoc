@@ -1,8 +1,6 @@
-[[jBPM-jBPMComponent]]
-jBPM Component
-~~~~~~~~~~~~~~
+## JBPM Component
 
-*Available as of Camel 2.16*
+*Available as of Camel version 2.6*
 
 The *jbpm* component provides integration with Business Process
 Management (BPM) Suit http://www.jbpm.org/[jBPM]. It uses
@@ -21,18 +19,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------------------------------
 
-[[jBPM-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------
 jbpm::hostName[:port][/resourceUri][?options]
 ---------------------------------------------
 
-[[jBPM-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -44,48 +38,57 @@ The JBPM component has no options.
 
 
 // endpoint options: START
-The JBPM component supports 26 endpoint options which are listed below:
+The JBPM endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    jbpm:connectionURL
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| connectionURL | producer |  | URL | *Required* The URL to the jBPM server.
-| attachmentId | producer |  | Long | attachId to use when retrieving attachments
-| contentId | producer |  | Long | contentId to use when retrieving attachments
-| deploymentId | producer |  | String | *Required* The id of the deployment
-| event | producer |  | Object | the data associated with this event when signalEvent operation is performed
-| eventType | producer |  | String | the type of event to use when signalEvent operation is performed
-| identifier | producer |  | String | identifier the global identifier
-| language | producer |  | String | The language to use when filtering user tasks
-| maxNumber | producer |  | Integer | the maximum number of rules that should be fired
-| operation | producer | startProcess | String | The operation to perform
-| processId | producer |  | String | the id of the process that should be acted upon
-| processInstanceId | producer |  | Long | the id of the process instance
-| targetUserId | producer |  | String | The targetUserId used when delegating a task
-| task | producer |  | Task | The task instance to use with task operations
-| taskId | producer |  | Long | the id of the task
-| timeout | producer |  | Integer | A timeout value
-| userId | producer |  | String | userId to use with task operations
-| value | producer |  | Object | the value to assign to the global identifier
-| workItemId | producer |  | Long | the id of the work item
-| entities | advanced |  | List | The potentialOwners when nominateTask operation is performed
-| extraJaxbClasses | advanced |  | Class[] | To load additional classes when working with XML
-| parameters | advanced |  | Map | the variables that should be set for various operations
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| statuses | filter |  | List | The list of status to use when filtering tasks
-| password | security |  | String | Password for authentication
-| userName | security |  | String | Username for authentication
+| Name | Description | Default | Type
+| **connectionURL** | *Required* The URL to the jBPM server. |  | URL
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (25 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **attachmentId** (producer) | attachId to use when retrieving attachments |  | Long
+| **contentId** (producer) | contentId to use when retrieving attachments |  | Long
+| **deploymentId** (producer) | *Required* The id of the deployment |  | String
+| **event** (producer) | the data associated with this event when signalEvent operation is performed |  | Object
+| **eventType** (producer) | the type of event to use when signalEvent operation is performed |  | String
+| **identifier** (producer) | identifier the global identifier |  | String
+| **language** (producer) | The language to use when filtering user tasks |  | String
+| **maxNumber** (producer) | the maximum number of rules that should be fired |  | Integer
+| **operation** (producer) | The operation to perform | startProcess | String
+| **processId** (producer) | the id of the process that should be acted upon |  | String
+| **processInstanceId** (producer) | the id of the process instance |  | Long
+| **targetUserId** (producer) | The targetUserId used when delegating a task |  | String
+| **task** (producer) | The task instance to use with task operations |  | Task
+| **taskId** (producer) | the id of the task |  | Long
+| **timeout** (producer) | A timeout value |  | Integer
+| **userId** (producer) | userId to use with task operations |  | String
+| **value** (producer) | the value to assign to the global identifier |  | Object
+| **workItemId** (producer) | the id of the work item |  | Long
+| **entities** (advanced) | The potentialOwners when nominateTask operation is performed |  | List
+| **extraJaxbClasses** (advanced) | To load additional classes when working with XML |  | Class[]
+| **parameters** (advanced) | the variables that should be set for various operations |  | Map
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **statuses** (filter) | The list of status to use when filtering tasks |  | List
+| **password** (security) | Password for authentication |  | String
+| **userName** (security) | Username for authentication |  | String
+|=======================================================================
 // endpoint options: END
 
 
 
 
-[[jBPM-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -133,9 +136,7 @@ org.infinispan.notifications.cachelistener.event.Event.Type
 |CamelJBPMStatusList |null |List<Status> |The list of status to use when filtering tasks
 |=======================================================================
 
-[[jBPM-Example]]
-Example
-^^^^^^^
+### Example
 
 Below is an example route that starts a business process with id
 project1.integration-test and deploymentId
@@ -149,9 +150,7 @@ from("direct:start")
  + "&deploymentId=org.kie.example:project1:1.0.0-SNAPSHOT");
 ----------------------------------------------------------------------------------------------
 
-[[jBPM-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

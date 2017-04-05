@@ -42,7 +42,7 @@ import org.apache.camel.spi.UriPath;
  * Validates the payload of a message using XML Schema and JAXP Validation.
  */
 @ManagedResource(description = "Managed ValidatorEndpoint")
-@UriEndpoint(scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, label = "core,validation")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "validator", title = "Validator", syntax = "validator:resourceUri", producerOnly = true, label = "core,validation")
 public class ValidatorEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to a local resource on the classpath, or a reference to lookup a bean in the Registry,"

@@ -1,10 +1,8 @@
-[[AWS-KINESIS-KinesisComponent]]
-Kinesis Component
-~~~~~~~~~~~~~~~~~
+## AWS Kinesis Component
 
-*Available as of Camel 2.17*
+*Available as of Camel version 2.17*
 
-The Kinesis component supports receiving messages from Amazon Kinesis
+The Kinesis component supports receiving messages from and sending messages to Amazon Kinesis
 service.
 
 Prerequisites
@@ -13,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon Kinesis. More information are available
 at http://aws.amazon.com/kinesis/[AWS Kinesis]
 
-[[AWS-KINESIS-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 -----------------------------------
@@ -26,9 +22,7 @@ The stream needs to be created prior to it being used. +
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-KINESIS-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -42,39 +36,50 @@ The AWS Kinesis component has no options.
 
 
 // endpoint options: START
-The AWS Kinesis component supports 25 endpoint options which are listed below:
+The AWS Kinesis endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    aws-kinesis:streamName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| streamName | common |  | String | *Required* Name of the stream
-| amazonKinesisClient | common |  | AmazonKinesis | *Required* Amazon Kinesis client to use for all requests for this endpoint
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| iteratorType | consumer |  | ShardIteratorType | Defines where in the Kinesis stream to start getting records
-| maxResultsPerRequest | consumer | 1 | int | Maximum number of records that will be fetched in each poll
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| sequenceNumber | consumer |  | String | The sequence number to start polling from
-| shardId | consumer |  | String | Defines which shardId in the Kinesis stream to get records from
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| Name | Description | Default | Type
+| **streamName** | *Required* Name of the stream |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (24 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **amazonKinesisClient** (common) | *Required* Amazon Kinesis client to use for all requests for this endpoint |  | AmazonKinesis
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **iteratorType** (consumer) | Defines where in the Kinesis stream to start getting records | TRIM_HORIZON | ShardIteratorType
+| **maxResultsPerRequest** (consumer) | Maximum number of records that will be fetched in each poll | 1 | int
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **sequenceNumber** (consumer) | The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER |  | String
+| **shardId** (consumer) | Defines which shardId in the Kinesis stream to get records from |  | String
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|=======================================================================
 // endpoint options: END
 
 
@@ -88,9 +93,7 @@ You have to provide the amazonKinesisClient in the
 link:registry.html[Registry] with proxies and relevant credentials
 configured.
 
-[[AWS-KINESIS-BatchConsumer]]
-Batch Consumer
-^^^^^^^^^^^^^^
+### Batch Consumer
 
 This component implements the link:batch-consumer.html[Batch Consumer].
 
@@ -98,13 +101,9 @@ This allows you for instance to know how many messages exists in this
 batch and for instance let the link:aggregator.html[Aggregator]
 aggregate this number of messages.
 
-[[AWS-KINESIS-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-KINESIS-MessageheaderssetbytheKinesisconsumer]]
-Message headers set by the Kinesis consumer
-+++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the Kinesis consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -118,11 +117,9 @@ size is not defined by the API. If it is to be used as a numerical type then use
 |`CamelAwsKinesisPartitionKey` |`String` |Identifies which shard in the stream the data record is assigned to.
 |=======================================================================
 
-[[AWS-KINESIS-AmazonKinesisconfiguration]]
-AmazonKinesis configuration
-+++++++++++++++++++++++++++
+#### AmazonKinesis configuration
 
-You will need to create an instance of AmazonDynamoDBStreamsClient and
+You will need to create an instance of AmazonKinesisClient and
 bind it to the registry
 
 [source,java]
@@ -132,15 +129,21 @@ clientConfiguration.setProxyHost("http://myProxyHost");
 clientConfiguration.setProxyPort(8080);
 
 Region region = Region.getRegion(Regions.fromName(region));
-region.createClient(AmazonDynamoDBStreamsClient.class, null, clientConfiguration);
+region.createClient(AmazonKinesisClient.class, null, clientConfiguration);
 // the 'null' here is the AWSCredentialsProvider which defaults to an instance of DefaultAWSCredentialsProviderChain
 
 registry.bind("kinesisClient", client);
 --------------------------------------------------------------------------------------------------------------------
 
-[[AWS-KINESIS-ProvidingAWSCredentials]]
-Providing AWS Credentials
-+++++++++++++++++++++++++
+You then have to reference the AmazonKinesisClient in the `amazonKinesisClient` URI option.
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------
+from("aws-kinesis://mykinesisstream?amazonKinesisClient=#kinesisClient")
+  .to("log:out?showAll=true");
+--------------------------------------------------------------------------------------------------------------------
+
+#### Providing AWS Credentials
 
 It is recommended that the credentials are obtained by using the
 http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html[DefaultAWSCredentialsProviderChain]
@@ -149,9 +152,7 @@ however, a
 different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
-[[AWS-Kinesis-MessageheaderssetbytheKinesisproducer]]
-Message headers used by the Kinesis producer to write to Kinesis.  The producer expects that the message body is a `ByteBuffer`.
-+++++++++++++++++++++++++++++++++++++++
+#### Message headers used by the Kinesis producer to write to Kinesis.  The producer expects that the message body is a `ByteBuffer`.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -163,8 +164,7 @@ Message headers used by the Kinesis producer to write to Kinesis.  The producer 
 
 |=======================================================================
 
-Message headers set by the Kinesis producer on successful storage of a Record
-+++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the Kinesis producer on successful storage of a Record
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -178,9 +178,7 @@ http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_Pu
 
 |=======================================================================
 
-[[AWS-KINESIS-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -198,9 +196,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.17 or higher).
 
-[[AWS-KINESIS-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -208,4 +204,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

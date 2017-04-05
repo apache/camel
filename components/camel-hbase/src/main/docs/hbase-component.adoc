@@ -1,8 +1,6 @@
-[[hbase-HBaseComponent]]
-HBase Component
-~~~~~~~~~~~~~~~
+## HBase Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 This component provides an idemptotent repository, producers and
 consumers for http://hbase.apache.org/[Apache HBase].
@@ -20,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[hbase-ApacheHBaseOverview]]
-Apache HBase Overview
-^^^^^^^^^^^^^^^^^^^^^
+### Apache HBase Overview
 
 HBase is an open-source, distributed, versioned, column-oriented store
 modeled after Google's Bigtable: A Distributed Storage System for
@@ -30,9 +26,7 @@ Structured Data. You can use HBase when you need random, realtime
 read/write access to your Big Data. More information at
 http://hbase.apache.org[Apache HBase].
 
-[[hbase-CamelandHBase]]
-Camel and HBase
-^^^^^^^^^^^^^^^
+### Camel and HBase
 
 When using a datasotre inside a camel route, there is always the
 chalenge of specifying how the camel message will stored to the
@@ -61,9 +55,7 @@ Regardless of the mapping strategy camel-hbase will convert a message
 into an org.apache.camel.component.hbase.model.HBaseData object and use
 that object for its internal operations.
 
-[[hbase-Configuringthecomponent]]
-Configuring the component
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring the component
 
 The HBase component can be provided a custom HBaseConfiguration object
 as a property or it can create an HBase configuration object on its own
@@ -83,9 +75,7 @@ You can find more information about how to configure HBase clients at:
 http://archive.apache.org/dist/hbase/docs/client_dependencies.html[HBase
 client configuration and dependencies]
 
-[[hbase-HBaseProducer]]
-HBase Producer
-^^^^^^^^^^^^^^
+### HBase Producer
 
 As mentioned above camel provides produers endpoints for HBase. This
 allows you to store, delete, retrieve or query data from HBase using
@@ -105,26 +95,23 @@ The supported operations are:
 * Delete
 * Scan
 
-[[hbase-SupportedURIoptions]]
-Supported URI options
-+++++++++++++++++++++
+#### Supported URI options
 
 
 
 
 // component options: START
-The HBase component supports 2 options which are listed below.
+The HBase component supports 3 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | Configuration | To use the shared configuration
-| poolMaxSize | common | 10 | int | Maximum number of references to keep for each table in the HTable pool. The default value is 10.
+| Name | Description | Default | Type
+| **configuration** (advanced) | To use the shared configuration |  | Configuration
+| **poolMaxSize** (common) | Maximum number of references to keep for each table in the HTable pool. The default value is 10. | 10 | int
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -133,38 +120,47 @@ The HBase component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The HBase component supports 17 endpoint options which are listed below:
+The HBase endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    hbase:tableName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| tableName | common |  | String | *Required* The name of the table
-| cellMappingStrategyFactory | common |  | CellMappingStrategyFactory | To use a custom CellMappingStrategyFactory that is responsible for mapping cells.
-| filters | common |  | List | A list of filters to use.
-| mappingStrategyClassName | common |  | String | The class name of a custom mapping strategy implementation.
-| mappingStrategyName | common |  | String | The strategy to use for mapping Camel messages to HBase columns. Supported values: header or body.
-| rowMapping | common |  | Map | To map the key/values from the Map to a HBaseRow. The following keys is supported: rowId - The id of the row. This has limited use as the row usually changes per Exchange. rowType - The type to covert row id to. Supported operations: CamelHBaseScan. family - The column family. Supports a number suffix for referring to more than one columns. qualifier - The column qualifier. Supports a number suffix for referring to more than one columns. value - The value. Supports a number suffix for referring to more than one columns valueType - The value type. Supports a number suffix for referring to more than one columns. Supported operations: CamelHBaseGet and CamelHBaseScan.
-| rowModel | common |  | HBaseRow | An instance of org.apache.camel.component.hbase.model.HBaseRow which describes how each row should be modeled
-| userGroupInformation | common |  | UserGroupInformation | Defines privileges to communicate with HBase such as using kerberos.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| maxMessagesPerPoll | consumer |  | int | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited.
-| operation | consumer |  | String | The HBase operation to perform
-| remove | consumer | true | boolean | If the option is true Camel HBase Consumer will remove the rows which it processes.
-| removeHandler | consumer |  | HBaseRemoveHandler | To use a custom HBaseRemoveHandler that is executed when a row is to be removed.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| maxResults | producer | 100 | int | The maximum number of rows to scan.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **tableName** | *Required* The name of the table |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (16 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **cellMappingStrategyFactory** (common) | To use a custom CellMappingStrategyFactory that is responsible for mapping cells. |  | CellMappingStrategy Factory
+| **filters** (common) | A list of filters to use. |  | List
+| **mappingStrategyClassName** (common) | The class name of a custom mapping strategy implementation. |  | String
+| **mappingStrategyName** (common) | The strategy to use for mapping Camel messages to HBase columns. Supported values: header or body. |  | String
+| **rowMapping** (common) | To map the key/values from the Map to a HBaseRow. The following keys is supported: rowId - The id of the row. This has limited use as the row usually changes per Exchange. rowType - The type to covert row id to. Supported operations: CamelHBaseScan. family - The column family. Supports a number suffix for referring to more than one columns. qualifier - The column qualifier. Supports a number suffix for referring to more than one columns. value - The value. Supports a number suffix for referring to more than one columns valueType - The value type. Supports a number suffix for referring to more than one columns. Supported operations: CamelHBaseGet and CamelHBaseScan. |  | Map
+| **rowModel** (common) | An instance of org.apache.camel.component.hbase.model.HBaseRow which describes how each row should be modeled |  | HBaseRow
+| **userGroupInformation** (common) | Defines privileges to communicate with HBase such as using kerberos. |  | UserGroupInformation
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **maxMessagesPerPoll** (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited. |  | int
+| **operation** (consumer) | The HBase operation to perform |  | String
+| **remove** (consumer) | If the option is true Camel HBase Consumer will remove the rows which it processes. | true | boolean
+| **removeHandler** (consumer) | To use a custom HBaseRemoveHandler that is executed when a row is to be removed. |  | HBaseRemoveHandler
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **maxResults** (producer) | The maximum number of rows to scan. | 100 | int
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
-[[hbase-PutOperations.]]
-Put Operations.
-+++++++++++++++
+#### Put Operations.
 
 HBase is a column based store, which allows you to store data into a
 specific column of a specific row. Columns are grouped into families, so
@@ -228,9 +224,7 @@ headers or a combination of both. It is recommended to specify constants
 as part of the uri and dynamic values as headers. If something is
 defined both as header and as part of the uri, the header will be used.
 
-[[hbase-GetOperations.]]
-Get Operations.
-+++++++++++++++
+#### Get Operations.
 
 A Get Operation is an operation that is used to retrieve one or more
 values from a specified HBase row. To specify what are the values that
@@ -253,9 +247,7 @@ message headers.
 In the example above the result of the get operation will be stored as a
 header with name CamelHBaseValue.
 
-[[hbase-DeleteOperations.]]
-Delete Operations.
-++++++++++++++++++
+#### Delete Operations.
 
 You can also you camel-hbase to perform HBase delete operation. The
 delete operation will remove an entire row. All that needs to be
@@ -273,9 +265,7 @@ specified is one or more rows as part of the message headers.
         </route>
 ----------------------------------------------------------------
 
-[[hbase-ScanOperations.]]
-Scan Operations.
-++++++++++++++++
+#### Scan Operations.
 
 A scan operation is the equivalent of a query in HBase. You can use the
 scan operation to retrieve multiple rows. To specify what columns should
@@ -356,9 +346,7 @@ and will pass that model the the ModelAwareColumnMatchingFilter. The
 filter will filter out any rows, that do not contain columns that match
 the model. It is like query by example.
 
-[[hbase-HBaseConsumer]]
-HBase Consumer
-^^^^^^^^^^^^^^
+### HBase Consumer
 
 The Camel HBase Consumer, will perform repeated scan on the specified
 HBase table and will return the scan results as part of the message. You
@@ -384,9 +372,7 @@ specified fields and the scan results will populate the model object
 with values. Finally the mapping strategy will be used to map this model
 to the camel message.
 
-[[hbase-HBaseIdempotentrepository]]
-HBase Idempotent repository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### HBase Idempotent repository
 
 The camel-hbase component also provides an idempotent repository which
 can be used when you want to make sure that each message is processed
@@ -404,18 +390,14 @@ from("direct:in")
   .to("log:out);
 ------------------------------------------------------------------------------------------------------------------
 
-[[hbase-HBaseMapping]]
-HBase Mapping
-^^^^^^^^^^^^^
+### HBase Mapping
 
 It was mentioned above that you the default mapping strategies are
 *header* and *body* mapping. +
  Below you can find some detailed examples of how each mapping strategy
 works.
 
-[[hbase-HBaseHeadermappingExamples]]
-HBase Header mapping Examples
-+++++++++++++++++++++++++++++
+#### HBase Header mapping Examples
 
 The header mapping is the default mapping. 
  To put the value "myvalue" into HBase row "myrow" and column
@@ -477,9 +459,7 @@ Please note that in order to avoid boilerplate headers that are
 considered constant for all messages, you can also specify them as part
 of the endpoint uri, as you will see below.
 
-[[hbase-BodymappingExamples]]
-Body mapping Examples
-+++++++++++++++++++++
+#### Body mapping Examples
 
 In order to use the body mapping strategy you will have to specify the
 option mappingStrategy as part of the uri, for example:
@@ -512,10 +492,7 @@ myvalue to the column myfamily:myqualifier. +
 advantage it has over the header mapping strategy is that the HBaseData
 object can be easily converted to or from xml/json.
 
-[[hbase-Seealso]]
-See also
-^^^^^^^^
+### See also
 
 * link:polling-consumer.html[Polling Consumer]
 * http://hbase.apache.org[Apache HBase]
-

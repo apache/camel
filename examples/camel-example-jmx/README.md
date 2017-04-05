@@ -26,9 +26,6 @@ You can see the routing rules by looking at the java code in the
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
-### Documentation
-
-This example is documented at [http://camel.apache.org/jmx-component-example.html](http://camel.apache.org/jmx-component-example.html)
 
 ### Forum, Help, etc
 

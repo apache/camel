@@ -1,6 +1,6 @@
-[[Binding-Binding]]
-Binding
--------
+## Binding Component (deprecated)
+
+*Available as of Camel version 2.11*
 
 In Camel terms a _binding_ is a way of wrapping an
 link:endpoint.html[Endpoint] in a contract; such as a
@@ -16,9 +16,7 @@ provide a way of wrapping Camel endpoints with contracts inside the
 Camel framework itself; so you can use them easily inside any Camel
 route.
 
-[[Binding-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -28,26 +26,35 @@ The Binding component has no options.
 
 
 // endpoint options: START
-The Binding component supports 6 endpoint options which are listed below:
+The Binding endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    binding:bindingName:delegateUri
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| bindingName | common |  | String | *Required* Name of the binding to lookup in the Camel registry.
-| delegateUri | common |  | String | *Required* Uri of the delegate endpoint.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **bindingName** | *Required* Name of the binding to lookup in the Camel registry. |  | String
+| **delegateUri** | *Required* Uri of the delegate endpoint. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (4 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Binding-UsingBindings]]
-Using Bindings
-~~~~~~~~~~~~~~
+### Using Bindings
 
 A Binding is currently a bean which defines the contract (though we'll
 hopefully add bindings to the Camel DSL).
@@ -55,9 +62,7 @@ hopefully add bindings to the Camel DSL).
 There are a few approaches to defining a bound endpoint (i.e. an
 endpoint bound with a Binding).
 
-[[Binding-UsingthebindingURI]]
-Using the binding URI
-^^^^^^^^^^^^^^^^^^^^^
+### Using the binding URI
 
 You can prefix any endpoint URI with *binding:nameOfBinding:* where
 _nameOfBinding_ is the name of the Binding bean in your registry.
@@ -71,9 +76,7 @@ Here we are using the "jaxb" binding which may, for example, use the
 JAXB link:data-format.html[Data Format] to marshal and unmarshal
 messages.
 
-[[Binding-UsingaBindingComponent]]
-Using a BindingComponent
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Using a BindingComponent
 
 There is a link:component.html[Component] called BindingComponent which
 can be configured in your link:registry.html[Registry] by dependency
@@ -100,9 +103,7 @@ which would be using the queueus "foo.myQueue" and "foo.anotherQueue"
 and would use the given Jackson link:data-format.html[Data Format] to
 marshal on and off the queue.
 
-[[Binding-WhentouseBindings]]
-When to use Bindings
-~~~~~~~~~~~~~~~~~~~~
+### When to use Bindings
 
 If you only use an endpoint once in a single route; a binding may
 actually be more complex and more work than just using the 'raw'

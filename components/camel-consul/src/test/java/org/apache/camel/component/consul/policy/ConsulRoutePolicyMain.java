@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.consul.policy;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.main.Main;
 
 public final class ConsulRoutePolicyMain {
@@ -30,15 +30,16 @@ public final class ConsulRoutePolicyMain {
         main.addRouteBuilder(new RouteBuilder() {
             public void configure() {
                 ConsulRoutePolicy policy = new ConsulRoutePolicy();
+                policy.setConsulUrl(ConsulConstants.CONSUL_DEFAULT_URL);
                 policy.setServiceName(args[0]);
                 policy.setTtl(15);
 
-                fromF("file:///tmp/camel?delete=true")
+                from("file:///tmp/camel?delete=true")
                     .routeId(args[1])
                     .routePolicy(policy)
                     .setHeader("ConsulRouteID", simple("${routeId}"))
                     .setHeader("ConsulServiceName", constant(args[0]))
-                    .to("log:org.apache.camel.component.etcd?level=INFO&showAll=true");
+                    .to("log:org.apache.camel.component.consul?level=INFO&showAll=true");
             }
         });
 

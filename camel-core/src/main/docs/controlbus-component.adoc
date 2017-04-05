@@ -1,6 +1,7 @@
-[[ControlBus-ControlBus]]
-ControlBus
-^^^^^^^^^^
+## Control Bus Component
+### ControlBus
+*Available as of Camel version 2.11.0*
+
 
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
 link:enterprise-integration-patterns.html[EIP patterns] allows for the
@@ -25,9 +26,7 @@ link:controlbus-component.html[ControlBus Component] that allows you to
 send messages to a control bus link:endpoint.html[Endpoint] that reacts
 accordingly.
 
-[[ControlBus-ControlBusComponent]]
-ControlBus Component
-~~~~~~~~~~~~~~~~~~~~
+### ControlBus Component
 
 *Available as of Camel 2.11*
 
@@ -46,9 +45,7 @@ controlbus:command[?options]
 Where *command* can be any string to identify which type of command to
 use.
 
-[[ControlBus-Commands]]
-Commands
-^^^^^^^^
+### Commands
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -61,9 +58,7 @@ evaluating the message body. If there is any result from the evaluation,
 then the result is put in the message body.
 |=======================================================================
 
-[[ControlBus-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -73,34 +68,41 @@ The Control Bus component has no options.
 
 
 // endpoint options: START
-The Control Bus component supports 7 endpoint options which are listed below:
+The Control Bus endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    controlbus:command:language
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| command | producer |  | String | *Required* Command can be either route or language
-| language | producer |  | Language | Allows you to specify the name of a Language to use for evaluating the message body. If there is any result from the evaluation then the result is put in the message body.
-| action | producer |  | String | To denote an action that can be either: start stop or status. To either start or stop a route or to get the status of the route as output in the message body. You can use suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route. And from Camel 2.11.1 onwards you can use stats to get performance statics returned in XML format; the routeId option can be used to define which route to get the performance stats for if routeId is not defined then you get statistics for the entire CamelContext.
-| async | producer | false | boolean | Whether to execute the control bus task asynchronously. Important: If this option is enabled then any result from the task is not set on the Exchange. This is only possible if executing tasks synchronously.
-| loggingLevel | producer | INFO | LoggingLevel | Logging level used for logging when task is done or if any exceptions occurred during processing the task.
-| routeId | producer |  | String | To specify a route by its id. The special keyword current indicates the current route.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **command** | *Required* Command can be either route or language |  | String
+| **language** | Allows you to specify the name of a Language to use for evaluating the message body. If there is any result from the evaluation then the result is put in the message body. |  | Language
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **action** (producer) | To denote an action that can be either: start stop or status. To either start or stop a route or to get the status of the route as output in the message body. You can use suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route. And from Camel 2.11.1 onwards you can use stats to get performance statics returned in XML format; the routeId option can be used to define which route to get the performance stats for if routeId is not defined then you get statistics for the entire CamelContext. |  | String
+| **async** (producer) | Whether to execute the control bus task asynchronously. Important: If this option is enabled then any result from the task is not set on the Exchange. This is only possible if executing tasks synchronously. | false | boolean
+| **loggingLevel** (producer) | Logging level used for logging when task is done or if any exceptions occurred during processing the task. | INFO | LoggingLevel
+| **routeId** (producer) | To specify a route by its id. The special keyword current indicates the current route. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[ControlBus-Samples]]
-Samples
-^^^^^^^
+### Samples
 
-[[ControlBus-Usingroutecommand]]
-Using route command
-+++++++++++++++++++
+#### Using route command
 
 The route command allows you to do common tasks on a given route very
 easily, for example to start a route, you can send an empty message to
@@ -145,9 +147,7 @@ just omit the routeId parameter as shown below:
 String xml = template.requestBody("controlbus:route?action=stats", null, String.class);
 ---------------------------------------------------------------------------------------
 
-[[ControlBus-Usinglanguage]]
-Using link:simple.html[Simple] language
-+++++++++++++++++++++++++++++++++++++++
+#### Using link:simple.html[Simple] language
 
 You can use the link:simple.html[Simple] language with the control bus,
 for example to stop a specific route, you can send a message to the
@@ -185,9 +185,7 @@ message we sent to the control bus component.
 
 TIP:You can also use other languages such as link:groovy.html[Groovy], etc.
 
-[[ControlBus-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -198,9 +196,7 @@ See Also
 * link:jmx.html[JMX] Component
 * Using link:camel-jmx.html[JMX] with Camel
 
-[[ControlBus-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
+#### Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
 link:getting-started.html[Getting Started], you may also find the

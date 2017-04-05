@@ -1,8 +1,6 @@
-[[Grape-GrapeComponent]]
-Grape Component
-~~~~~~~~~~~~~~~
+## Grape Component
 
-Available as of Camel 2.16 
+*Available as of Camel version 2.16*
 
 http://docs.groovy-lang.org/latest/html/documentation/grape.html[Grape]
 component allows you to fetch, load and manage additional jars when
@@ -11,9 +9,7 @@ can add new components, data formats and beans to your `CamelContext`
 without the restart of the router.
 
 
-[[Grape-Options]]
-Grape options
-^^^^^^^^^^^^^
+### Grape options
 
 // component options: START
 The Grape component has no options.
@@ -21,24 +17,33 @@ The Grape component has no options.
 
 
 // endpoint options: START
-The Grape component supports 3 endpoint options which are listed below:
+The Grape endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    grape:defaultCoordinates
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| defaultCoordinates |  |  | String | *Required* Maven coordinates to use as default to grab if the message body is empty.
-| exchangePattern |  | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
-| synchronous |  | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **defaultCoordinates** | *Required* Maven coordinates to use as default to grab if the message body is empty. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **exchangePattern** () | Sets the default exchange pattern when creating an exchange. | InOnly | ExchangePattern
+| **synchronous** () | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
-[[Grape-Settingupclassloader]]
-Setting up class loader
-^^^^^^^^^^^^^^^^^^^^^^^
+### Setting up class loader
 
 Grape requires using Groovy class loader with the `CamelContext`. You
 can enable Groovy class loading on the existing Camel Context using the
@@ -59,9 +64,7 @@ yourself:
 camelContext.setApplicationContextClassLoader(new GroovyClassLoader(myClassLoader));
 ------------------------------------------------------------------------------------
 
-[[Grape-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 Grape component supports only producer endpoints.
 
@@ -88,9 +91,7 @@ from("direct:loadCamelFTP").
   to("grape:defaultMavenCoordinates");
 ----------------------------------------------------------
 
-[[Grape-AddingtheGrapecomponenttotheproject]]
-Adding the Grape component to the project
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Adding the Grape component to the project
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -105,9 +106,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Grape-Defaultpayloadtype]]
-Default payload type
-^^^^^^^^^^^^^^^^^^^^
+### Default payload type
 
 By default Camel Grape component operates on the String payloads:
 
@@ -128,9 +127,7 @@ String:
 producerTemplate.sendBody("grape:defaultMavenCoordinates", "org.apache.camel/camel-ftp/2.15.2".getBytes());
 -----------------------------------------------------------------------------------------------------------
 
-[[Grape-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 The following headers are recognized by the Grape component:
 
@@ -141,9 +138,7 @@ The following headers are recognized by the Grape component:
 |`CamelGrapeCommand` |`GrapeConstants.GRAPE_COMMAND` |Producer |`org.apache.camel.component.grape.GrapeCommand` |The command to be performed by the Grape endpoint. Default to `grab`.
 |=======================================================================
 
-[[Grape-Loadingcomponentsatruntime]]
-Loading components at runtime
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Loading components at runtime
 
 In order to load the new component at the router runtime, just grab the
 jar containing the given component:
@@ -155,9 +150,7 @@ template.sendBody("grape:grape", "org.apache.camel/camel-stream/2.15.2");
 template.sendBody("stream:out", "msg");
 -------------------------------------------------------------------------
 
-[[Grape-Loadingprocessorsbeanatruntime]]
-Loading processors bean at runtime
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Loading processors bean at runtime
 
 In order to load the new processor bean  with your custom business login
 at the router runtime, just grab the jar containing the required bean:
@@ -172,9 +165,7 @@ int price = template.requestBody("bean:com.example.PricingBean?method=currentPro
 
  
 
-[[Grape-LoadingdeployedjarsafterCamelcontextrestart]]
-Loading deployed jars after Camel context restart
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Loading deployed jars after Camel context restart
 
 After you download new jar, you usually would like to have it loaded by
 the Camel again after the restart of the `CamelContext`. It is certainly
@@ -203,9 +194,7 @@ camelContext.addRoutes(
 
  
 
-[[Grape-Managingtheinstalledjars]]
-Managing the installed jars
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Managing the installed jars
 
 If you would like to check what jars have been installed into the given
 `CamelContext`, send message to the grape endpoint with
@@ -239,12 +228,9 @@ command:
         setBody().constant("Installed patches have been deleted."); 
 -----------------------------------------------------------------------------------------
 
-[[Grape-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -27,9 +27,13 @@
 
   <name>Camel :: Spring Cloud</name>
   <artifactId>camel-spring-cloud</artifactId>
-  <description>Camel :: Spring Cloud</description>
+  <description>Camel Cloud integration with Spring Cloud</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.19.0</firstVersion>
+    <label>spring,microservice</label>
+
     <camel.osgi.export.pkg/>
   </properties>
 
@@ -69,7 +73,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
+      <artifactId>camel-http4</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -121,4 +125,24 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-modules java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+              <!--https://issues.apache.org/jira/browse/SUREFIRE-1265 -->
+              <reuseForks>true</reuseForks>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

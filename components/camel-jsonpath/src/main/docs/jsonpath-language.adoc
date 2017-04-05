@@ -1,8 +1,6 @@
-[[JSonPath-JSonPath]]
-JSonPath
-~~~~~~~~
+## JSonPath Language
 
-*Available as of Camel 2.13*
+*Available as of Camel version 2.13*
 
 Camel supports https://code.google.com/p/json-path/[JSonPath] to allow
 using link:expression.html[Expression] or link:predicate.html[Predicate]
@@ -20,33 +18,28 @@ from("queue:books.new")
       .to("jms:queue:book.expensive")
 -----------------------------------------------------
 
-[[JSonPath-Options]]
-JSonPath Options
-^^^^^^^^^^^^^^^^
+### JSonPath Options
 
 
 // language options: START
-The JSonPath language supports 4 options which are listed below.
+The JSonPath language supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | resultType |  | String | Sets the class name of the result type (type from output)
 | suppressExceptions | false | Boolean | Whether to suppress exceptions such as PathNotFoundException.
 | allowSimple | true | Boolean | Whether to allow in inlined simple exceptions in the json path expression
+| allowEasyPredicate | true | Boolean | Whether to allow using the easy predicate parser to pre-parse predicates.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================
-{% endraw %}
 // language options: END
 
 
 
-[[JSonPath-UsingXMLconfiguration]]
-Using XML configuration
-^^^^^^^^^^^^^^^^^^^^^^^
+### Using XML configuration
 
 If you prefer to configure your routes in your link:spring.html[Spring]
 XML file then you can use link:jsonpath.html[JSonPath] expressions as
@@ -74,16 +67,43 @@ follows
   </camelContext>
 -------------------------------------------------------------------------
 
-[[JSonPath-Syntax]]
-Syntax
-^^^^^^
+### Syntax
 
 See the https://code.google.com/p/json-path/[JSonPath] project page for
 further examples.
 
-[[JSonPath-SupportedType]]
-Supported message body types
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Easy Syntax
+
+*Available as of Camel 2.19*
+
+When you just want to define a basic predicate using jsonpath syntax it can be a bit hard to remember the syntax.
+ So for example to find out all the cheap books you have to do
+
+    $.store.book[?(@.price < 20)]
+
+However what if you could just write it as
+
+    store.book.price < 20
+
+And you can omit the path if you just want to look at nodes with a price key
+
+    price < 20
+
+To support this there is a `EasyPredicateParser` which kicks-in if you have define the predicate
+  using a basic style. That means the predicate must not start with the `$` sign, and only include one operator.
+
+The easy syntax is:
+
+   left OP right
+
+You can use Camel simple language in the right operator, eg
+
+    store.book.price < ${header.limit}
+
+
+
+
+### Supported message body types
 
 Camel JSonPath supports message body using the following types:
 
@@ -106,9 +126,7 @@ If a message body is of unsupported type then an exception is thrown by default,
 can configure JSonPath to suppress exceptions (see below)
 
 
-[[JSonPath-Suppressexceptions]]
-Suppress exceptions
-~~~~~~~~~~~~~~~~~~~
+### Suppress exceptions
 
 *Available as of Camel 2.16*
 
@@ -151,9 +169,7 @@ And in XML DSL:
 
 This option is also available on the `@JsonPath` annotation.
 
-[[JSonPath-InlineSimple]]
-Inline Simple exceptions
-~~~~~~~~~~~~~~~~~~~~~~~~
+### Inline Simple exceptions
 
 *Available as of Camel 2.18*
 
@@ -209,9 +225,7 @@ And in XML DSL:
 --------------------------------------------------------------------------
 
 
-[[JSonPath-JSonPathinjection]]
-JSonPath injection
-~~~~~~~~~~~~~~~~~~
+### JSonPath injection
 
 You can use link:bean-integration.html[Bean Integration] to invoke a
 method on a bean and use various languages such as JSonPath to extract a
@@ -230,9 +244,7 @@ public class Foo {
 }
 ---------------------------------------------------------------------------------------------------
 
-[[JSonPath-EncodingDetection]]
-Encoding Detection
-~~~~~~~~~~~~~~~~~~
+### Encoding Detection
 
 *Since Camel version 2.16*, the encoding of the JSON document is
 detected automatically, if the document is encoded in unicode  (UTF-8,
@@ -242,9 +254,7 @@ you enter the document in String format to the JSONPath component or you
 can specify the encoding in the header "*CamelJsonPathJsonEncoding*"
 (JsonpathConstants.HEADER_JSON_ENCODING).
 
-[[JSonPath-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use JSonPath in your camel routes you need to add the a dependency on
 *camel-jsonpath* which implements the JSonPath language.

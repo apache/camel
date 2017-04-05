@@ -1,8 +1,6 @@
-[[Geocoder-GeocoderComponent]]
-Geocoder Component
-~~~~~~~~~~~~~~~~~~
+## Geocoder Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 The *geocoder:* component is used for looking up geocodes (latitude and
 longitude) for a given address, or reverse lookup. The component uses
@@ -22,9 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Geocoder-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------------------------
@@ -32,9 +28,7 @@ geocoder:address:name[?options]
 geocoder:latlng:latitude,longitude[?options]
 --------------------------------------------
 
-[[Geocoder-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -45,37 +39,46 @@ The Geocoder component has no options.
 
 
 // endpoint options: START
-The Geocoder component supports 16 endpoint options which are listed below:
+The Geocoder endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    geocoder:address:latlng
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| address | producer |  | String | The geo address which should be prefixed with address:
-| latlng | producer |  | String | The geo latitude and longitude which should be prefixed with latlng:
-| clientId | producer |  | String | To use google premium with this client id
-| clientKey | producer |  | String | To use google premium with this client key
-| headersOnly | producer | false | boolean | Whether to only enrich the Exchange with headers and leave the body as-is.
-| language | producer | en | String | The language to use.
-| httpClientConfigurer | advanced |  | HttpClientConfigurer | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc
-| httpConnectionManager | advanced |  | HttpConnectionManager | To use a custom HttpConnectionManager to manage connections
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| proxyAuthDomain | proxy |  | String | Domain for proxy NTML authentication
-| proxyAuthHost | proxy |  | String | Optional host for proxy NTML authentication
-| proxyAuthMethod | proxy |  | String | Authentication method for proxy either as Basic Digest or NTLM.
-| proxyAuthPassword | proxy |  | String | Password for proxy authentication
-| proxyAuthUsername | proxy |  | String | Username for proxy authentication
-| proxyHost | proxy |  | String | The proxy host name
-| proxyPort | proxy |  | Integer | The proxy port number
+| Name | Description | Default | Type
+| **address** | The geo address which should be prefixed with address: |  | String
+| **latlng** | The geo latitude and longitude which should be prefixed with latlng: |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (14 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **clientId** (producer) | To use google premium with this client id |  | String
+| **clientKey** (producer) | To use google premium with this client key |  | String
+| **headersOnly** (producer) | Whether to only enrich the Exchange with headers and leave the body as-is. | false | boolean
+| **language** (producer) | The language to use. | en | String
+| **httpClientConfigurer** (advanced) | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc |  | HttpClientConfigurer
+| **httpConnectionManager** (advanced) | To use a custom HttpConnectionManager to manage connections |  | HttpConnectionManager
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **proxyAuthDomain** (proxy) | Domain for proxy NTML authentication |  | String
+| **proxyAuthHost** (proxy) | Optional host for proxy NTML authentication |  | String
+| **proxyAuthMethod** (proxy) | Authentication method for proxy either as Basic Digest or NTLM. |  | String
+| **proxyAuthPassword** (proxy) | Password for proxy authentication |  | String
+| **proxyAuthUsername** (proxy) | Username for proxy authentication |  | String
+| **proxyHost** (proxy) | The proxy host name |  | String
+| **proxyPort** (proxy) | The proxy port number |  | Integer
+|=======================================================================
 // endpoint options: END
 
 
 
-[[Geocoder-Exchangedataformat]]
-Exchange data format
-^^^^^^^^^^^^^^^^^^^^
+### Exchange data format
 
 Camel will deliver the body as a
 `com.google.code.geocoder.model.GeocodeResponse` type. +
@@ -86,9 +89,7 @@ If the option `headersOnly` is set to `true` then the message body is
 left as-is, and only headers will be added to the
 link:exchange.html[Exchange].
 
-[[Geocoder-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -119,9 +120,7 @@ Message Headers
 Notice not all headers may be provided depending on available data and
 mode in use (address vs latlng).
 
-[[Geocoder-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the example below we get the latitude and longitude for Paris, France
 

@@ -1,8 +1,6 @@
-[[PDF-PDF]]
-PDF
-~~~
+## PDF Component
 
-**Available as of Camel 2.16.0**
+*Available as of Camel version 2.16*
 
 The *PDF*: components provides the ability to create, modify or extract
 content from PDF documents. This component uses
@@ -24,9 +22,7 @@ following dependency to their `pom.xml`:
 </dependency>
 ------------------------------------------------------------
 
-[[PDF-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The PDF component only supports producer endpoints.
 
@@ -35,9 +31,7 @@ The PDF component only supports producer endpoints.
 pdf:operation[?options]
 -----------------------
 
-[[PDF-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The PDF component has no options.
@@ -46,30 +40,39 @@ The PDF component has no options.
 
 
 // endpoint options: START
-The PDF component supports 10 endpoint options which are listed below:
+The PDF endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    pdf:operation
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| operation | producer |  | PdfOperation | *Required* Operation type
-| font | producer | Helvetica | PDFont | Font
-| fontSize | producer | 14 | float | Font size in pixels
-| marginBottom | producer | 20 | int | Margin bottom in pixels
-| marginLeft | producer | 20 | int | Margin left in pixels
-| marginRight | producer | 40 | int | Margin right in pixels
-| marginTop | producer | 20 | int | Margin top in pixels
-| pageSize | producer | PAGE_SIZE_A4 | PDRectangle | Page size
-| textProcessingFactory | producer | lineTermination | TextProcessingFactory | Text processing to use. autoFormatting: Text is getting sliced by words then max amount of words that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line. lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol and then it will be written regardless it fits in the line or not.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **operation** | *Required* Operation type |  | PdfOperation
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (9 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **font** (producer) | Font | Helvetica | PDFont
+| **fontSize** (producer) | Font size in pixels | 14 | float
+| **marginBottom** (producer) | Margin bottom in pixels | 20 | int
+| **marginLeft** (producer) | Margin left in pixels | 20 | int
+| **marginRight** (producer) | Margin right in pixels | 40 | int
+| **marginTop** (producer) | Margin top in pixels | 20 | int
+| **pageSize** (producer) | Page size | PAGE_SIZE_A4 | PDRectangle
+| **textProcessingFactory** (producer) | Text processing to use. autoFormatting: Text is getting sliced by words then max amount of words that fits in the line will be written into pdf document. With this strategy all words that doesn't fit in the line will be moved to the new line. lineTermination: Builds set of classes for line-termination writing strategy. Text getting sliced by line termination symbol and then it will be written regardless it fits in the line or not. | lineTermination | TextProcessingFactory
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[PDF-Headers]]
-Headers
-^^^^^^^
+### Headers
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
 |Header |Description
@@ -88,9 +91,7 @@ ishttps://pdfbox.apache.org/docs/1.8.9/javadocs/org/apache/pdfbox/pdmodel/encryp
 *Mandatory* header if PDF document is encrypted.
 |=======================================================================
 
-[[PDF-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

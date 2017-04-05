@@ -25,7 +25,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <!-- START SNIPPET: ex1 -->
     <route>
-      <from uri="direct:start"/>
+      <from uri="direct:simple"/>
       <!-- while loop as long the message body length is <= 5 -->
       <loop doWhile="true">
         <simple>${body.length} &lt;= 5</simple>

@@ -1,0 +1,15 @@
+[[Azure-CamelComponentsforWindowsAzureServices]]
+Camel Components for Windows Azure Services
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Camel Components for https://azure.microsoft.com/[Windows Azure Services]
+provide connectivity to Azure services from Camel.
+
+ 
+[width="100%",cols="30%,10%,10%,50%",options="header",]
+|=======================================================================
+|Azure Service |Camel Component |Camel Version | Component Description
+
+|https://azure.microsoft.com/services/storage/blobs[Storage Blob Service] |link:azure-blob.html[Azure-Blob] |2.9.0 |Supports storing and retrieving of blobs
+|https://azure.microsoft.com/services/storage/queues[Storage Queue Service] |link:azure-queue.html[Azure-Queue] |2.9.0 |Supports storing and retrieving of messages in the queues
+|=======================================================================

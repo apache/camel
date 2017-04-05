@@ -38,11 +38,9 @@ import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SessionManager;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
-import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -391,8 +389,7 @@ public class WebsocketComponent extends UriEndpointComponent {
 
         context.setContextPath("/");
 
-        SessionManager sm = new HashSessionManager();
-        SessionHandler sh = new SessionHandler(sm);
+        SessionHandler sh = new SessionHandler();
         context.setSessionHandler(sh);
 
         if (home != null) {
@@ -457,7 +454,7 @@ public class WebsocketComponent extends UriEndpointComponent {
     }
 
     protected WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
-        WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync, socketFactory);
+        WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync, pathSpec, socketFactory);
         servlets.put(pathSpec, servlet);
         ServletHolder servletHolder = new ServletHolder(servlet);
         servletHolder.getInitParameters().putAll(handler.getInitParams());
@@ -551,7 +548,7 @@ public class WebsocketComponent extends UriEndpointComponent {
         return false;
     }
 
-    private static String createPathSpec(String remaining) {
+    public static String createPathSpec(String remaining) {
         // Is not correct as it does not support to add port in the URI
         //return String.format("/%s/*", remaining);
 

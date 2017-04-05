@@ -27,13 +27,15 @@ public class SqsConfiguration {
     private String queueName;
     @UriParam
     private AmazonSQS amazonSQSClient;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam(defaultValue = "amazonaws.com")
+    private String amazonAWSHost = "amazonaws.com";
     @UriParam
     private String amazonSQSEndpoint;
-    @UriParam
+    @UriParam(secret = true)
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
@@ -91,6 +93,17 @@ public class SqsConfiguration {
 
     public String getAmazonSQSEndpoint() {
         return amazonSQSEndpoint;
+    }
+
+    public String getAmazonAWSHost() {
+        return amazonAWSHost;
+    }
+
+    /**
+     * The hostname of the Amazon AWS cloud.
+     */
+    public void setAmazonAWSHost(String amazonAWSHost) {
+        this.amazonAWSHost = amazonAWSHost;
     }
 
     public String getQueueName() {
@@ -355,6 +368,7 @@ public class SqsConfiguration {
     @Override
     public String toString() {
         return "SqsConfiguration[queueName=" + queueName
+            + ", amazonAWSHost=" + amazonAWSHost
             + ", amazonSQSClient=" + amazonSQSClient
             + ", accessKey=" + accessKey
             + ", secretKey=xxxxxxxxxxxxxxx"

@@ -1,13 +1,11 @@
-[[Timer-TimerComponent]]
-Timer Component
-~~~~~~~~~~~~~~~
+## Timer Component
+
+*Available as of Camel version 1.0*
 
 The *timer:* component is used to generate message exchanges when a
 timer fires You can only consume events from this endpoint.
 
-[[Timer-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------
@@ -34,9 +32,7 @@ link:how-do-i-specify-time-period-in-a-human-friendly-syntax.html[human
 friendly syntax].
 
 
-[[Timer-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Timer component has no options.
@@ -44,33 +40,42 @@ The Timer component has no options.
 
 
 // endpoint options: START
-The Timer component supports 13 endpoint options which are listed below:
+The Timer endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    timer:timerName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| timerName | consumer |  | String | *Required* The name of the timer
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| delay | consumer | 1000 | long | The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| fixedRate | consumer | false | boolean | Events take place at approximately regular intervals separated by the specified period.
-| period | consumer | 1000 | long | If greater than 0 generate periodic events every period milliseconds. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| repeatCount | consumer | 0 | long | Specifies a maximum limit of number of fires. So if you set it to 1 the timer will only fire once. If you set it to 5 it will only fire five times. A value of zero or negative means fire forever.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
-| daemon | advanced | true | boolean | Specifies whether or not the thread associated with the timer endpoint runs as a daemon. The default value is true.
-| pattern | advanced |  | String | Allows you to specify a custom Date pattern to use for setting the time option using URI syntax.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| time | advanced |  | Date | A java.util.Date the first event should be generated. If using the URI the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.
-| timer | advanced |  | Timer | To use a custom Timer
+| Name | Description | Default | Type
+| **timerName** | *Required* The name of the timer |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (12 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
+| **delay** (consumer) | The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **fixedRate** (consumer) | Events take place at approximately regular intervals separated by the specified period. | false | boolean
+| **period** (consumer) | If greater than 0 generate periodic events every period milliseconds. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **repeatCount** (consumer) | Specifies a maximum limit of number of fires. So if you set it to 1 the timer will only fire once. If you set it to 5 it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
+| **daemon** (advanced) | Specifies whether or not the thread associated with the timer endpoint runs as a daemon. The default value is true. | true | boolean
+| **pattern** (advanced) | Allows you to specify a custom Date pattern to use for setting the time option using URI syntax. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **time** (advanced) | A java.util.Date the first event should be generated. If using the URI the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss. |  | Date
+| **timer** (advanced) | To use a custom Timer |  | Timer
+|=======================================================================
 // endpoint options: END
 
 
-[[Timer-ExchangeProperties]]
-Exchange Properties
-^^^^^^^^^^^^^^^^^^^
+### Exchange Properties
 
 When the timer is fired, it adds the following information as properties
 to the `Exchange`:
@@ -90,9 +95,7 @@ to the `Exchange`:
 |`Exchange.TIMER_COUNTER` |`Long` |*Camel 2.8:* The current fire counter. Starts from 1.
 |=======================================================================
 
-[[Timer-Sample]]
-Sample
-^^^^^^
+### Sample
 
 To set up a route that generates an event every 60 seconds:
 
@@ -117,13 +120,9 @@ And the route in Spring DSL:
   </route>
 -------------------------------------------------------------
 
-[[Timer-Firingassoonaspossible]]
-Firing as soon as possible
-++++++++++++++++++++++++++
+#### Firing as soon as possible
 
-[[Timer-AvailableasofCamel2.17]]
-Available as of Camel 2.17
-++++++++++++++++++++++++++
+#### Available as of Camel 2.17
 
 You may want to fire messages in a Camel route as soon as possible you
 can use a negative delay:
@@ -145,9 +144,7 @@ reached.
 If you don't specify a repeatCount then the timer will continue firing
 messages until the route will be stopped. 
 
-[[Timer-Firingonlyonce]]
-Firing only once
-++++++++++++++++
+#### Firing only once
 
 *Available as of Camel 2.8*
 
@@ -162,9 +159,7 @@ starting the route. To do that you use the repeatCount option as shown:
   </route>
 -------------------------------------------------
 
-[[Timer-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -172,4 +167,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:quartz.html[Quartz]
-

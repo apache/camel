@@ -1,6 +1,6 @@
-[[XmlBeans-XmlBeans]]
-XmlBeans
-~~~~~~~~
+## XML Beans DataFormat
+
+*Available as of Camel version 1.2*
 
 XmlBeans is a link:data-format.html[Data Format] which uses the
 http://xmlbeans.apache.org/[XmlBeans library] to unmarshal an XML
@@ -14,28 +14,22 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-[[XmlBeans-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The XML Beans dataformat supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
-[[XmlBeans-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use XmlBeans in your camel routes you need to add the dependency on
 *camel-xmlbeans* which implements this data format.

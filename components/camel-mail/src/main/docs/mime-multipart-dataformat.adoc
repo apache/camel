@@ -1,8 +1,6 @@
-[[Mime-Multipart-RSSDataformat]]
-MIME-Multipart Dataformat
-~~~~~~~~~~~~~~~~~~~~~~~~~
+## MIME Multipart DataFormat
 
-*Available as of Camel 2.17*
+*Available as of Camel version 2.17*
 
 This data format that can convert a Camel message with attachments into
 a Camel message having a MIME-Multipart message as message body (and no
@@ -42,16 +40,13 @@ empty message. Up to Camel version 2.17.1 this will happen all message
 bodies that do not contain a MIME multipart message regardless of body
 type and stream cache setting.
 
-[[MIME-Multipart-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The MIME Multipart dataformat supports 6 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -62,12 +57,9 @@ The MIME Multipart dataformat supports 6 options which are listed below.
 | binaryContent | false | Boolean | Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is false.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
-[[MIME-Multipart-MessageHeadersmarshal]]
-Message Headers (marshal)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Message Headers (marshal)
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -91,9 +83,7 @@ body part. Furthermore the given charset is applied for text to binary
 conversions.
 |=======================================================================
 
-[[MIME-Multipart-MessageHeadersunmarshal]]
-Message Headers (unmarshal)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Message Headers (unmarshal)
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -113,9 +103,7 @@ from MIME endoding descriptor to Java encoding descriptor)
 MIME multipart. The header is removed afterwards
 |=======================================================================
 
-[[MIME-Multipart-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 [source,java]
 -----------------------------------
@@ -193,9 +181,7 @@ Content-Disposition: attachment; filename="Attachment File Name"
 ------=_Part_0_1134128170.1447659361365
 ----------------------------------------------------------------
 
-[[MIME-Multipart-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use MIME-Multipart in your Camel routes you need to add a dependency
 on *camel-mail* which implements this data format.

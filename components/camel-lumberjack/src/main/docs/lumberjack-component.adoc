@@ -1,8 +1,6 @@
-[[Lumberjack-LumberjackComponent]]
-Lumberjack Component
-~~~~~~~~~~~~~~~~~~~~
+## Lumberjack Component
 
-*Available as of Camel 2.18*
+*Available as of Camel version 2.18*
 
 The *Lumberjack* component retrieves logs sent over the network using the Lumberjack protocol,
 from https://www.elastic.co/fr/products/beats/filebeat[Filebeat] for instance.
@@ -22,9 +20,7 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 </dependency>
 ------------------------------------------------------------
 
-[[Lumberjack-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------------
@@ -35,25 +31,22 @@ lumberjack:host:port
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Lumberjack-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
 
 // component options: START
-The Lumberjack component supports 1 options which are listed below.
+The Lumberjack component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| sslContextParameters | security |  | SSLContextParameters | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level.
+| Name | Description | Default | Type
+| **sslContextParameters** (security) | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level. |  | SSLContextParameters
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -63,40 +56,45 @@ The Lumberjack component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Lumberjack component supports 7 endpoint options which are listed below:
+The Lumberjack endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    lumberjack:host:port
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| host | consumer |  | String | *Required* Network interface on which to listen for Lumberjack
-| port | consumer | 5044 | int | Network port on which to listen for Lumberjack
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| sslContextParameters | consumer |  | SSLContextParameters | SSL configuration
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **host** | *Required* Network interface on which to listen for Lumberjack |  | String
+| **port** | Network port on which to listen for Lumberjack | 5044 | int
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **sslContextParameters** (consumer) | SSL configuration |  | SSLContextParameters
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
 
 
-[[Lumberjack-Result]]
-Result
-^^^^^^
+### Result
 
 The result body is a `Map<String, Object>` object.
 
-[[Lumberjack-LumberjackUsageSamples]]
-Lumberjack Usage Samples
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Lumberjack Usage Samples
 
-[[Lumberjack-Example1:]]
-Example 1: Streaming the log messages
-+++++++++++++++++++++++++++++++++++++
+#### Example 1: Streaming the log messages
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -108,4 +106,3 @@ RouteBuilder builder = new RouteBuilder() {
     }
 };
 ------------------------------------------------------------------------------------
-

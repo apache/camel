@@ -1,6 +1,6 @@
-[[LDAP-LDAPComponent]]
-LDAP Component
-~~~~~~~~~~~~~~
+## LDAP Component
+
+*Available as of Camel version 1.5*
 
 The *ldap* component allows you to perform searches in LDAP servers
 using filters as the message payload. +
@@ -20,9 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[LDAP-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -38,9 +36,7 @@ the start of a route.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[LDAP-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -51,34 +47,41 @@ The LDAP component has no options.
 
 
 // endpoint options: START
-The LDAP component supports 6 endpoint options which are listed below:
+The LDAP endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    ldap:dirContextName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| dirContextName | producer |  | String | *Required* Name of javax.naming.directory.DirContext bean to lookup in the registry.
-| base | producer | ou=system | String | The base DN for searches.
-| pageSize | producer |  | Integer | When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query). To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown)
-| returnedAttributes | producer |  | String | Comma-separated list of attributes that should be set in each entry of the result
-| scope | producer | subtree | String | Specifies how deeply to search the tree of entries starting at the base DN.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **dirContextName** | *Required* Name of javax.naming.directory.DirContext bean to lookup in the registry. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **base** (producer) | The base DN for searches. | ou=system | String
+| **pageSize** (producer) | When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query). To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown) |  | Integer
+| **returnedAttributes** (producer) | Comma-separated list of attributes that should be set in each entry of the result |  | String
+| **scope** (producer) | Specifies how deeply to search the tree of entries starting at the base DN. | subtree | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
-[[LDAP-Result]]
-Result
-^^^^^^
+### Result
 
 The result is returned in the Out body as a
 `ArrayList<javax.naming.directory.SearchResult>` object.
 
-[[LDAP-DirContext]]
-DirContext
-^^^^^^^^^^
+### DirContext
 
 The URI, `ldap:ldapserver`, references a Spring bean with the ID,
 `ldapserver`. The `ldapserver` bean may be defined as follows:
@@ -106,9 +109,7 @@ or that the context supports concurrency. In the Spring framework,
 `prototype` scoped objects are instantiated each time they are looked
 up.
 
-[[LDAP-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 Following on from the Spring configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common
@@ -147,9 +148,7 @@ if the LDAP entry has a Common Name, use a filter expression like:
 (cn=*)
 ------
 
-[[LDAP-Bindingusingcredentials]]
-Binding using credentials
-+++++++++++++++++++++++++
+#### Binding using credentials
 
 A Camel end user donated this sample code he used to bind to the ldap
 server using credentials.
@@ -194,9 +193,7 @@ System.out.println(out.getOut().getBody());
 context.stop();
 ---------------------------------------------------------------------------------------
 
-[[LDAP-ConfiguringSSL]]
-Configuring SSL
-^^^^^^^^^^^^^^^
+### Configuring SSL
 
 All required is to create a custom socket factory and reference it in
 the InitialDirContext bean - see below sample.
@@ -337,12 +334,9 @@ public class CustomSocketFactory extends SSLSocketFactory {
 
  
 
-[[LDAP-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

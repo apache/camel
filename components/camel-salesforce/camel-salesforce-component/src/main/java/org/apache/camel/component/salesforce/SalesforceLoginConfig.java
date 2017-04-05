@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.salesforce;
 
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+
 /**
  * Configuration object for Salesforce login properties
  */
@@ -23,29 +26,49 @@ public class SalesforceLoginConfig {
 
     public static final String DEFAULT_LOGIN_URL = "https://login.salesforce.com";
 
+    private AuthenticationType type;
     private String loginUrl;
     private String clientId;
     private String clientSecret;
+    private String refreshToken;
     private String userName;
     private String password;
     // allow lazy login into Salesforce
     // note that login issues may not surface until a message needs to be processed
     private boolean lazyLogin;
 
+    private KeyStoreParameters keystore;
+
     public SalesforceLoginConfig() {
         loginUrl = DEFAULT_LOGIN_URL;
         lazyLogin = false;
     }
 
-    public SalesforceLoginConfig(String loginUrl,
-                                 String clientId, String clientSecret,
-                                 String userName, String password, boolean lazyLogin) {
+    private SalesforceLoginConfig(AuthenticationType type, String loginUrl, String clientId, String clientSecret, String refreshToken,
+        String userName, String password, boolean lazyLogin, KeyStoreParameters keystore) {
+        this.type = type;
         this.loginUrl = loginUrl;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
+        this.refreshToken = refreshToken;
         this.userName = userName;
         this.password = password;
         this.lazyLogin = lazyLogin;
+        this.keystore = keystore;
+    }
+
+    public SalesforceLoginConfig(String loginUrl, String clientId, String clientSecret, String userName,
+        String password, boolean lazyLogin) {
+        this(AuthenticationType.USERNAME_PASSWORD, loginUrl, clientId, clientSecret, null, userName, password, lazyLogin, null);
+    }
+
+    public SalesforceLoginConfig(String loginUrl, String clientId, String clientSecret, String refreshToken,
+        boolean lazyLogin) {
+        this(AuthenticationType.REFRESH_TOKEN, loginUrl, clientId, clientSecret, refreshToken, null, null, lazyLogin, null);
+    }
+
+    public SalesforceLoginConfig(String loginUrl, String clientId, String userName, KeyStoreParameters keystore, boolean lazyLogin) {
+        this(AuthenticationType.JWT, loginUrl, clientId, null, null, userName, null, lazyLogin, keystore);
     }
 
     public String getLoginUrl() {
@@ -81,6 +104,69 @@ public class SalesforceLoginConfig {
         this.clientSecret = clientSecret;
     }
 
+    /**
+     * Keystore parameters for keystore containing certificate and private key needed for OAuth 2.0 JWT Bearer Token
+     * Flow.
+     */
+    public void setKeystore(final KeyStoreParameters keystore) {
+        this.keystore = keystore;
+    }
+
+    public KeyStoreParameters getKeystore() {
+        return keystore;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    /**
+     * Salesforce connected application Consumer token
+     */
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public AuthenticationType getType() {
+        if (type != null) {
+            // use the user provided type
+            return type;
+        }
+
+        final boolean hasPassword = ObjectHelper.isNotEmpty(password);
+        final boolean hasRefreshToken = ObjectHelper.isNotEmpty(refreshToken);
+        final boolean hasKeystore = keystore != null && ObjectHelper.isNotEmpty(keystore.getResource());
+
+        if (hasPassword && !hasRefreshToken && !hasKeystore) {
+            return AuthenticationType.USERNAME_PASSWORD;
+        }
+
+        if (!hasPassword && hasRefreshToken && !hasKeystore) {
+            return AuthenticationType.REFRESH_TOKEN;
+        }
+
+        if (!hasPassword && hasRefreshToken && hasKeystore) {
+            return AuthenticationType.JWT;
+        }
+
+        if (hasPassword && hasRefreshToken || hasPassword && hasKeystore || hasRefreshToken && hasKeystore) {
+            throw new IllegalArgumentException("The provided authentication configuration can be used in multiple ways"
+                + " for instance both with username/password and refresh_token. Either remove some of the configuration"
+                + " options, so that authentication method can be auto-determined or explicitly set the authentication"
+                + " type.");
+        }
+
+        throw new IllegalArgumentException(
+            "You must specify parameters aligned with one of the supported authentication methods:"
+                + " for username and password authentication: userName, password, clientSecret;"
+                + " for refresh token authentication: refreshToken, clientSecret;"
+                + " for JWT: userName, keystore. And for every one of those loginUrl and clientId must be specified also.");
+    }
+
+    public void setType(AuthenticationType type) {
+        this.type = type;
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -108,10 +194,43 @@ public class SalesforceLoginConfig {
     }
 
     /**
-     * Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not done until the first API call
+     * Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not
+     * done until the first API call
      */
     public void setLazyLogin(boolean lazyLogin) {
         this.lazyLogin = lazyLogin;
     }
 
+    public void validate() {
+        ObjectHelper.notNull(loginUrl, "loginUrl");
+        ObjectHelper.notNull(clientId, "clientId");
+
+        final AuthenticationType type = getType(); 
+
+        switch (type) {
+        case USERNAME_PASSWORD:
+            ObjectHelper.notNull(userName, "userName (username/password authentication)");
+            ObjectHelper.notNull(password, "password (username/password authentication)");
+            ObjectHelper.notNull(clientSecret, "clientSecret (username/password authentication)");
+            break;
+        case REFRESH_TOKEN:
+            ObjectHelper.notNull(refreshToken, "refreshToken (authentication with refresh token)");
+            ObjectHelper.notNull(clientSecret, "clientSecret (authentication with refresh token)");
+            break;
+        case JWT:
+            ObjectHelper.notNull(userName, "userName (JWT authentication)");
+            ObjectHelper.notNull(keystore, "keystore (JWT authentication)");
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown authentication type: " + type);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "SalesforceLoginConfig[" + "loginUrl='" + loginUrl + '\'' + ", clientId='" + clientId + '\''
+            + ", clientSecret='********'" + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\''
+            + ", password=********'" + password + '\'' + ", keystore=********'" + keystore + '\'' + ", lazyLogin="
+            + lazyLogin + ']';
+    }
 }

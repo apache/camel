@@ -25,7 +25,7 @@ import org.apache.ignite.Ignite;
 /**
  * Base class for all Ignite endpoints. 
  */
-@UriEndpoint(scheme = "ignite:...", title = "Ignite endpoints", syntax = "ignite:...", label = "nosql,cache,compute", producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite:...", title = "Ignite endpoints", syntax = "ignite:...", label = "nosql,cache,compute", producerOnly = true)
 public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
 
     protected IgniteComponent component;

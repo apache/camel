@@ -1,6 +1,6 @@
-[[Direct-DirectComponent]]
-Direct Component
-~~~~~~~~~~~~~~~~
+## Direct Component
+
+*Available as of Camel version 1.0*
 
 The *direct:* component provides direct, synchronous invocation of any
 consumers when a producer sends a message exchange. +
@@ -15,9 +15,7 @@ TIP:*Connection to other camel contexts*
 The link:vm.html[VM] component provides connections between Camel
 contexts as long they run in the same *JVM*.
 
-[[Direct-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,text]
 -------------------------
@@ -26,53 +24,59 @@ direct:someName[?options]
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-[[Direct-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
 // component options: START
-The Direct component supports 2 options which are listed below.
+The Direct component supports 3 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| block | producer | false | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
-| timeout | producer | 30000 | long | The timeout value to use if block is enabled.
+| Name | Description | Default | Type
+| **block** (producer) | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active. | false | boolean
+| **timeout** (producer) | The timeout value to use if block is enabled. | 30000 | long
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Direct component supports 8 endpoint options which are listed below:
+The Direct endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    direct:name
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Name of direct endpoint
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
-| block | producer | false | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
-| failIfNoConsumers | producer | false | boolean | Whether the producer should fail by throwing an exception when sending to a DIRECT endpoint with no active consumers.
-| timeout | producer | 30000 | long | The timeout value to use if block is enabled.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **name** | *Required* Name of direct endpoint |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (7 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
+| **block** (producer) | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active. | false | boolean
+| **failIfNoConsumers** (producer) | Whether the producer should fail by throwing an exception when sending to a DIRECT endpoint with no active consumers. | false | boolean
+| **timeout** (producer) | The timeout value to use if block is enabled. | 30000 | long
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Direct-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the route below we use the direct component to link the two routes
 together:
@@ -108,9 +112,7 @@ And the sample using spring DSL:
 See also samples from the link:seda.html[SEDA] component, how they can
 be used together.
 
-[[Direct-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -118,4 +120,3 @@ See Also
 * link:getting-started.html[Getting Started]
 * link:seda.html[SEDA]
 * link:vm.html[VM]
-

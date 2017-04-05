@@ -32,5 +32,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface InvokeOnHeader {
+
+    /**
+     * Name of header
+     */
     String value();
 }

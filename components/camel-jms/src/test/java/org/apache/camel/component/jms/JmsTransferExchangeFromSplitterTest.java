@@ -42,7 +42,6 @@ public class JmsTransferExchangeFromSplitterTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A", "B", "C");
         mock.allMessages().header("foo").isEqualTo("cheese");
-        mock.allMessages().exchangeProperty("bar").isEqualTo(123);
 
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {

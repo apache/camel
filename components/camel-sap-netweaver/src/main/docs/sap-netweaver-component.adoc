@@ -1,8 +1,6 @@
-[[SAPNetWeaver-SAPNetWeaverGatewaycomponent]]
-SAP NetWeaver Gateway component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## SAP NetWeaver Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 The *sap-netweaver* integrates with the
 http://scn.sap.com/community/developer-center/netweaver-gateway[SAP
@@ -23,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[SAPNetWeaver-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The URI scheme for a sap netweaver gateway component is as follows
 
@@ -37,9 +33,7 @@ sap-netweaver:https://host:8080/path?username=foo&password=secret
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[SAPNetWeaver-Prerequisites]]
-Prerequisites
-^^^^^^^^^^^^^
+### Prerequisites
 
 You would need to have an account to the SAP NetWeaver system to be able
 to leverage this component. SAP provides a
@@ -49,9 +43,7 @@ requires for an account.
 This component uses the basic authentication scheme for logging into SAP
 NetWeaver.
 
-[[SAPNetWeaver-Componentandendpointoptions]]
-SAPNetWeaver options
-^^^^^^^^^^^^^^^^^^^^
+### SAPNetWeaver options
 
 
 // component options: START
@@ -61,27 +53,36 @@ The SAP NetWeaver component has no options.
 
 
 // endpoint options: START
-The SAP NetWeaver component supports 7 endpoint options which are listed below:
+The SAP NetWeaver endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    sap-netweaver:url
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| url | producer |  | String | *Required* Url to the SAP net-weaver gateway server.
-| flatternMap | producer | true | boolean | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body.
-| json | producer | true | boolean | Whether to return data in JSON format. If this option is false then XML is returned in Atom format.
-| jsonAsMap | producer | true | boolean | To transform the JSON from a String to a Map in the message body.
-| password | producer |  | String | *Required* Password for account.
-| username | producer |  | String | *Required* Username for account.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **url** | *Required* Url to the SAP net-weaver gateway server. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (6 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **flatternMap** (producer) | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body. | true | boolean
+| **json** (producer) | Whether to return data in JSON format. If this option is false then XML is returned in Atom format. | true | boolean
+| **jsonAsMap** (producer) | To transform the JSON from a String to a Map in the message body. | true | boolean
+| **password** (producer) | *Required* Password for account. |  | String
+| **username** (producer) | *Required* Username for account. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[SAPNetWeaver-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 The following headers can be used by the producer.
 
@@ -94,9 +95,7 @@ http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data
 Service] format.
 |=======================================================================
 
-[[SAPNetWeaver-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 This example is using the flight demo example from SAP, which is
 available online over the internet
@@ -178,9 +177,7 @@ Destination city: SAN FRANCISCO
 Destination airport: SFO
 -------------------------------
 
-[[SAPNetWeaver-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -188,4 +185,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:http.html[HTTP]
-

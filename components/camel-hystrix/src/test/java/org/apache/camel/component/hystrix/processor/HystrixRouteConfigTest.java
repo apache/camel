@@ -61,6 +61,7 @@ public class HystrixRouteConfigTest extends CamelTestSupport {
         assertEquals("test2", config.getGroupKey());
         assertEquals(99999, config.getMetricsHealthSnapshotIntervalInMilliseconds().intValue());
     }
+
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

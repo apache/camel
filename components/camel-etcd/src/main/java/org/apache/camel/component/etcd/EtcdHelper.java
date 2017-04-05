@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.etcd;
 
+import java.net.URI;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
+import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +50,6 @@ public final class EtcdHelper  {
             .setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
-
-
     public static void setIndex(AtomicLong index, EtcdKeysResponse response) {
         if (response != null && response.node != null) {
             index.set(response.node.modifiedIndex + 1);
@@ -58,5 +58,24 @@ public final class EtcdHelper  {
             index.set(response.etcdIndex + 1);
             LOGGER.debug("Index received={}, next={}", response.node.modifiedIndex, index.get());
         }
+    }
+
+    public static URI[] resolveURIs(CamelContext camelContext, String uriList) throws Exception {
+        String[] uris;
+        if (uriList != null) {
+            uris = uriList.split(",");
+        } else {
+            uris = EtcdConstants.ETCD_DEFAULT_URIS.split(",");
+        }
+
+        URI[] etcdUriList = new URI[uris.length];
+
+        for (int i = 0; i < uris.length; i++) {
+            etcdUriList[i] = camelContext != null
+                ? URI.create(camelContext.resolvePropertyPlaceholders(uris[i]))
+                : URI.create(uris[i]);
+        }
+
+        return etcdUriList;
     }
 }

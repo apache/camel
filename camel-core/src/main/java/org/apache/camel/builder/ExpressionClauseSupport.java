@@ -200,9 +200,19 @@ public class ExpressionClauseSupport<T> {
 
     /**
      * An expression of the exchange properties
+     *
+     * @deprecated use {@link #exchangeProperties()} instead
      */
+    @Deprecated
     public T properties() {
-        return expression(ExpressionBuilder.propertiesExpression());
+        return exchangeProperties();
+    }
+
+    /**
+     * An expression of the exchange properties
+     */
+    public T exchangeProperties() {
+        return expression(ExpressionBuilder.exchangePropertiesExpression());
     }
 
     // Languages
@@ -297,6 +307,7 @@ public class ExpressionClauseSupport<T> {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T el(String text) {
         return expression(new ELExpression(text));
     }
@@ -422,6 +433,7 @@ public class ExpressionClauseSupport<T> {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T jxpath(String text) {
         return jxpath(text, false);
     }
@@ -433,6 +445,7 @@ public class ExpressionClauseSupport<T> {
      * @param lenient to configure whether lenient is in use or not
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T jxpath(String text, boolean lenient) {
         JXPathExpression answer = new JXPathExpression(text);
         answer.setLenient(lenient);
@@ -468,6 +481,7 @@ public class ExpressionClauseSupport<T> {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T php(String text) {
         return expression(new PhpExpression(text));
     }
@@ -479,6 +493,7 @@ public class ExpressionClauseSupport<T> {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T python(String text) {
         return expression(new PythonExpression(text));
     }
@@ -501,6 +516,7 @@ public class ExpressionClauseSupport<T> {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T ruby(String text) {
         return expression(new RubyExpression(text));
     }
@@ -523,6 +539,7 @@ public class ExpressionClauseSupport<T> {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T sql(String text) {
         return expression(new SqlExpression(text));
     }

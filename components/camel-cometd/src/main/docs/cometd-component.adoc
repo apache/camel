@@ -1,6 +1,6 @@
-[[Cometd-CometdComponent]]
-Cometd Component
-~~~~~~~~~~~~~~~~
+## CometD Component
+
+*Available as of Camel version 2.0*
 
 The *cometd:* component is a transport for working with the
 http://www.mortbay.org/jetty[jetty] implementation of the
@@ -23,9 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Cometd-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------------------
@@ -35,9 +33,7 @@ cometd://host:port/channelName[?options]
 The *channelName* represents a topic that can be subscribed to by the
 Camel endpoints.
 
-[[Cometd-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 ------------------------------------------
 cometd://localhost:8080/service/mychannel
@@ -46,30 +42,27 @@ cometds://localhost:8443/service/mychannel
 
 where `cometds:` represents an SSL configured endpoint.
 
-[[Cometd-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
 
 // component options: START
-The CometD component supports 6 options which are listed below.
+The CometD component supports 7 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| sslKeyPassword | security |  | String | The password for the keystore when using SSL.
-| sslPassword | security |  | String | The password when using SSL.
-| sslKeystore | security |  | String | The path to the keystore.
-| securityPolicy | security |  | SecurityPolicy | To use a custom configured SecurityPolicy to control authorization
-| extensions | common |  | List | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests.
-| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
+| Name | Description | Default | Type
+| **sslKeyPassword** (security) | The password for the keystore when using SSL. |  | String
+| **sslPassword** (security) | The password when using SSL. |  | String
+| **sslKeystore** (security) | The path to the keystore. |  | String
+| **securityPolicy** (security) | To use a custom configured SecurityPolicy to control authorization |  | SecurityPolicy
+| **extensions** (common) | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests. |  | List
+| **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -78,33 +71,44 @@ The CometD component supports 6 options which are listed below.
 
 
 // endpoint options: START
-The CometD component supports 19 endpoint options which are listed below:
+The CometD endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    cometd:host:port/channelName
+
+with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* Hostname
-| port | common |  | int | *Required* Host port number
-| channelName | common |  | String | *Required* The channelName represents a topic that can be subscribed to by the Camel endpoints.
-| allowedOrigins | common | * | String | The origins domain that support to cross if the crosssOriginFilterOn is true
-| baseResource | common |  | String | The root directory for the web resources or classpath. Use the protocol file: or classpath: depending if you want that the component loads the resource from file system or classpath. Classpath is required for OSGI deployment where the resources are packaged in the jar
-| crossOriginFilterOn | common | false | boolean | If true the server will support for cross-domain filtering
-| filterPath | common |  | String | The filterPath will be used by the CrossOriginFilter if the crosssOriginFilterOn is true
-| interval | common |  | int | The client side poll timeout in milliseconds. How long a client will wait between reconnects
-| jsonCommented | common | true | boolean | If true the server will accept JSON wrapped in a comment and will generate JSON wrapped in a comment. This is a defence against Ajax Hijacking.
-| logLevel | common | 1 | int | Logging level. 0=none 1=info 2=debug.
-| maxInterval | common | 30000 | int | The max client side poll timeout in milliseconds. A client will be removed if a connection is not received in this time.
-| multiFrameInterval | common | 1500 | int | The client side poll timeout if multiple connections are detected from the same browser.
-| timeout | common | 240000 | int | The server side poll timeout in milliseconds. This is how long the server will hold a reconnect request before responding.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| sessionHeadersEnabled | consumer | false | boolean | Whether to include the server session headers in the Camel message when creating a Camel Message for incoming requests.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| disconnectLocalSession | producer | false | boolean | Whether to disconnect local sessions after publishing a message to its channel. Disconnecting local session is needed as they are not swept by default by CometD and therefore you can run out of memory.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **host** | *Required* Hostname |  | String
+| **port** | *Required* Host port number |  | int
+| **channelName** | *Required* The channelName represents a topic that can be subscribed to by the Camel endpoints. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (16 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **allowedOrigins** (common) | The origins domain that support to cross if the crosssOriginFilterOn is true | * | String
+| **baseResource** (common) | The root directory for the web resources or classpath. Use the protocol file: or classpath: depending if you want that the component loads the resource from file system or classpath. Classpath is required for OSGI deployment where the resources are packaged in the jar |  | String
+| **crossOriginFilterOn** (common) | If true the server will support for cross-domain filtering | false | boolean
+| **filterPath** (common) | The filterPath will be used by the CrossOriginFilter if the crosssOriginFilterOn is true |  | String
+| **interval** (common) | The client side poll timeout in milliseconds. How long a client will wait between reconnects |  | int
+| **jsonCommented** (common) | If true the server will accept JSON wrapped in a comment and will generate JSON wrapped in a comment. This is a defence against Ajax Hijacking. | true | boolean
+| **logLevel** (common) | Logging level. 0=none 1=info 2=debug. | 1 | int
+| **maxInterval** (common) | The max client side poll timeout in milliseconds. A client will be removed if a connection is not received in this time. | 30000 | int
+| **multiFrameInterval** (common) | The client side poll timeout if multiple connections are detected from the same browser. | 1500 | int
+| **timeout** (common) | The server side poll timeout in milliseconds. This is how long the server will hold a reconnect request before responding. | 240000 | int
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **sessionHeadersEnabled** (consumer) | Whether to include the server session headers in the Camel message when creating a Camel Message for incoming requests. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **disconnectLocalSession** (producer) | Whether to disconnect local sessions after publishing a message to its channel. Disconnecting local session is needed as they are not swept by default by CometD and therefore you can run out of memory. | false | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
@@ -120,9 +124,7 @@ For file (for webapp resources located in the Web Application directory
 the webapp folder -->
 cometd://localhost:8080?resourceBase=classpath:webapp
 
-[[Cometd-Authentication]]
-Authentication
-^^^^^^^^^^^^^^
+### Authentication
 
 *Available as of Camel 2.8*
 
@@ -130,13 +132,9 @@ You can configure custom `SecurityPolicy` and `Extension`'s to the
 `CometdComponent` which allows you to use authentication as
 http://cometd.org/documentation/howtos/authentication[documented here]
 
-[[Cometd-SettingupSSLforCometdComponent]]
-Setting up SSL for Cometd Component
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Setting up SSL for Cometd Component
 
-[[Cometd-UsingtheJSSEConfigurationUtility]]
-Using the JSSE Configuration Utility
-++++++++++++++++++++++++++++++++++++
+#### Using the JSSE Configuration Utility
 
 As of Camel 2.9, the Cometd component supports SSL/TLS configuration
 through the link:camel-configuration-utilities.html[Camel JSSE
@@ -198,12 +196,9 @@ Spring DSL based configuration of endpoint
   <to uri="cometds://127.0.0.1:443/service/test?baseResource=file:./target/test-classes/webapp&timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2"/>...
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Cometd-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

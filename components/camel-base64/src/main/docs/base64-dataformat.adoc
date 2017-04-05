@@ -1,21 +1,17 @@
-[[Base64-Base64DataFormat]]
-Base64 Data Format
-~~~~~~~~~~~~~~~~~~
+## Base64 DataFormat
 
-*Available as of Camel 2.11* +
+*Available as of Camel version 2.11*
+
  The Base64 link:data-format.html[Data Format] is a data format for
 http://en.wikipedia.org/wiki/Base64[base64 encoding and decoding].
 
-[[Base64-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The Base64 dataformat supports 4 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -24,7 +20,6 @@ The Base64 dataformat supports 4 options which are listed below.
 | urlSafe | false | Boolean | Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes. Is by default false.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 In Spring DSL, you configure the data format using this tag:
@@ -56,9 +51,7 @@ Most of the time, you won't need to declare the data format if you use
 the default options. In that case, you can declare the data format
 inline as shown below.
 
-[[Base64-Marshal]]
-Marshal
-^^^^^^^
+### Marshal
 
 In this example we marshal the file content to base64 object.
 
@@ -78,9 +71,7 @@ In Spring DSL:
  <to uri="jms://myqueue"/> 
 -----------------------------
 
-[[Base64-Unmarshal]]
-Unmarshal
-^^^^^^^^^
+### Unmarshal
 
 In this example we unmarshal the payload from the JMS queue to a byte[]
 object, before its processed by the newOrder processor.
@@ -101,9 +92,7 @@ In Spring DSL:
  <to uri="bean:newOrder"/> 
 -------------------------------
 
-[[Base64-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Base64 in your Camel routes you need to add a dependency on
 *camel-base64* which implements this data format.

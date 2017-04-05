@@ -1,8 +1,6 @@
-[[Syslog-SyslogDataFormat]]
-Syslog DataFormat
-~~~~~~~~~~~~~~~~~
+## Syslog DataFormat
 
-*Available as of Camel 2.6*
+*Available as of Camel version 2.6*
 
 The *syslog* dataformat is used for working with
 http://www.ietf.org/rfc/rfc3164.txt[RFC3164] and RFC5424 messages.
@@ -33,9 +31,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Syslog-RFC3164Syslogprotocol]]
-RFC3164 Syslog protocol
-^^^^^^^^^^^^^^^^^^^^^^^
+### RFC3164 Syslog protocol
 
 Syslog uses the user datagram protocol (UDP)
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=1&linkCreation=true&fromPageId=24185759[1]
@@ -48,27 +44,21 @@ where we just use the `Rfc3164SyslogDataFormat` to marshal and unmarshal
 messages. Notice that from *Camel 2.14* onwards the syslog dataformat is
 renamed to `SyslogDataFormat`.
 
-[[Syslog-Dataformat-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The Syslog dataformat supports 1 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
-[[Syslog-RFC5424Syslogprotocol]]
-RFC5424 Syslog protocol
-^^^^^^^^^^^^^^^^^^^^^^^
+### RFC5424 Syslog protocol
 
 *Available as of Camel 2.14*
 
@@ -77,9 +67,7 @@ existing link:mina.html[camel-mina] component
 or link:netty.html[camel-netty] where we just use
 the `SyslogDataFormat` to marshal and unmarshal messages
 
-[[Syslog-ExposingaSysloglistener]]
-Exposing a Syslog listener
-++++++++++++++++++++++++++
+#### Exposing a Syslog listener
 
 In our Spring XML file, we configure an endpoint to listen for udp
 messages on port 10514, note that in netty we disable the defaultCodec,
@@ -123,9 +111,7 @@ The same route using link:mina.html[camel-mina]
 </camelContext>
 -------------------------------------------------------------------------
 
-[[Syslog-Sendingsyslogmessagestoaremotedestination]]
-Sending syslog messages to a remote destination
-+++++++++++++++++++++++++++++++++++++++++++++++
+#### Sending syslog messages to a remote destination
 
 [source,xml]
 -------------------------------------------------------------------------
@@ -144,12 +130,9 @@ Sending syslog messages to a remote destination
 </camelContext>
 -------------------------------------------------------------------------
 
-[[Syslog-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,8 +1,6 @@
-[[Netty-NettyComponent]]
-Netty Component
-~~~~~~~~~~~~~~~
+## Netty Component (deprecated)
 
-*Available as of Camel 2.3*
+*Available as of Camel version 2.3*
 
 WARNING: This component is deprecated. You should use link:netty4.html[Netty4].
 
@@ -35,9 +33,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Netty-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The URI scheme for a netty component is as follows
 
@@ -53,27 +49,24 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Netty-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
 
 
 // component options: START
-The Netty component supports 2 options which are listed below.
+The Netty component supports 3 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | NettyConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
-| maximumPoolSize | advanced | 16 | int | The core pool size for the ordered thread pool if its in use. The default value is 16.
+| Name | Description | Default | Type
+| **configuration** (advanced) | To use the NettyConfiguration as configuration when creating endpoints. |  | NettyConfiguration
+| **maximumPoolSize** (advanced) | The core pool size for the ordered thread pool if its in use. The default value is 16. | 16 | int
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -84,92 +77,101 @@ The Netty component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Netty component supports 70 endpoint options which are listed below:
+The Netty endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    netty:protocol:host:port
+
+with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* The protocol to use which can be tcp or udp.
-| host | common |  | String | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0 For the producer the hostname is the remote host to connect to
-| port | common |  | int | *Required* The host port number
-| disconnect | common | false | boolean | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer.
-| keepAlive | common | true | boolean | Setting to ensure socket is not closed due to inactivity
-| reuseAddress | common | true | boolean | Setting to facilitate socket multiplexing
-| sync | common | true | boolean | Setting to set endpoint as one-way or request-response
-| tcpNoDelay | common | true | boolean | Setting to improve TCP protocol performance
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| broadcast | consumer | false | boolean | Setting to choose Multicast over UDP
-| clientMode | consumer | false | boolean | If the clientMode is true netty consumer will connect the address as a TCP client.
-| backlog | consumer (advanced) |  | int | Allows to configure a backlog for netty consumer (server). Note the backlog is just a best effort depending on the OS. Setting this option to a value such as 200 500 or 1000 tells the TCP stack how long the accept queue can be If this option is not configured then the backlog depends on OS setting.
-| bossCount | consumer (advanced) | 1 | int | When netty works on nio mode it uses default bossCount parameter from Netty which is 1. User can use this operation to override the default bossCount from Netty
-| bossPool | consumer (advanced) |  | BossPool | To use a explicit org.jboss.netty.channel.socket.nio.BossPool as the boss thread pool. For example to share a thread pool with multiple consumers. By default each consumer has their own boss pool with 1 core thread.
-| channelGroup | consumer (advanced) |  | ChannelGroup | To use a explicit ChannelGroup.
-| disconnectOnNoReply | consumer (advanced) | true | boolean | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| maxChannelMemorySize | consumer (advanced) | 10485760 | long | The maximum total size of the queued events per channel when using orderedThreadPoolExecutor. Specify 0 to disable.
-| maxTotalMemorySize | consumer (advanced) | 209715200 | long | The maximum total size of the queued events for this pool when using orderedThreadPoolExecutor. Specify 0 to disable.
-| nettyServerBootstrapFactory | consumer (advanced) |  | NettyServerBootstrapFactory | To use a custom NettyServerBootstrapFactory
-| networkInterface | consumer (advanced) |  | String | When using UDP then this option can be used to specify a network interface by its name such as eth0 to join a multicast group.
-| noReplyLogLevel | consumer (advanced) | WARN | LoggingLevel | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back.
-| orderedThreadPoolExecutor | consumer (advanced) | true | boolean | Whether to use ordered thread pool to ensure events are processed orderly on the same channel. See details at the netty javadoc of org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor for more details.
-| serverClosedChannelExceptionCaughtLogLevel | consumer (advanced) | DEBUG | LoggingLevel | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server.
-| serverExceptionCaughtLogLevel | consumer (advanced) | WARN | LoggingLevel | If the server (NettyConsumer) catches an exception then its logged using this logging level.
-| serverPipelineFactory | consumer (advanced) |  | ServerPipelineFactory | To use a custom ServerPipelineFactory
-| workerCount | consumer (advanced) |  | int | When netty works on nio mode it uses default workerCount parameter from Netty which is cpu_core_threads2. User can use this operation to override the default workerCount from Netty
-| workerPool | consumer (advanced) |  | WorkerPool | To use a explicit org.jboss.netty.channel.socket.nio.WorkerPool as the worker thread pool. For example to share a thread pool with multiple consumers. By default each consumer has their own worker pool with 2 x cpu count core threads.
-| connectTimeout | producer | 10000 | long | Time to wait for a socket connection to be available. Value is in millis.
-| requestTimeout | producer |  | long | Allows to use a timeout for the Netty producer when calling a remote server. By default no timeout is in use. The value is in milli seconds so eg 30000 is 30 seconds. The requestTimeout is using Netty's ReadTimeoutHandler to trigger the timeout.
-| clientPipelineFactory | producer (advanced) |  | ClientPipelineFactory | To use a custom ClientPipelineFactory
-| lazyChannelCreation | producer (advanced) | true | boolean | Channels can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started.
-| producerPoolEnabled | producer (advanced) | true | boolean | Whether producer pool is enabled or not. Important: Do not turn this off as the pooling is needed for handling concurrency and reliable request/reply.
-| producerPoolMaxActive | producer (advanced) | -1 | int | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients or idle awaiting checkout) at a given time. Use a negative value for no limit.
-| producerPoolMaxIdle | producer (advanced) | 100 | int | Sets the cap on the number of idle instances in the pool.
-| producerPoolMinEvictableIdle | producer (advanced) | 300000 | long | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor.
-| producerPoolMinIdle | producer (advanced) |  | int | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects.
-| udpConnectionlessSending | producer (advanced) | false | boolean | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port.
-| useChannelBuffer | producer (advanced) | false | boolean | If the useChannelBuffer is true netty producer will turn the message body into ChannelBuffer before sending it out.
-| bootstrapConfiguration | advanced |  | NettyServerBootstrapConfiguration | To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.
-| options | advanced |  | Map | Allows to configure additional netty options using option. as prefix. For example option.child.keepAlive=false to set the netty option child.keepAlive=false. See the Netty documentation for possible options that can be used.
-| receiveBufferSize | advanced | 65536 | long | The TCP/UDP buffer sizes to be used during inbound communication. Size is bytes.
-| receiveBufferSizePredictor | advanced |  | int | Configures the buffer size predictor. See details at Jetty documentation and this mail thread.
-| sendBufferSize | advanced | 65536 | long | The TCP/UDP buffer sizes to be used during outbound communication. Size is bytes.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| transferExchange | advanced | false | boolean | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body Out body fault body In headers Out headers fault headers exchange properties exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
-| allowDefaultCodec | codec | true | boolean | The netty component installs a default codec if both encoder/deocder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain.
-| autoAppendDelimiter | codec | true | boolean | Whether or not to auto append missing end delimiter when sending using the textline codec.
-| decoder | codec |  | ChannelHandler | A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. Must override org.jboss.netty.channel.ChannelUpStreamHandler.
-| decoderMaxLineLength | codec | 1024 | int | The max line length to use for the textline codec.
-| decoders | codec |  | String | A list of decoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
-| delimiter | codec | LINE | TextLineDelimiter | The delimiter to use for the textline codec. Possible values are LINE and NULL.
-| encoder | codec |  | ChannelHandler | A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. Must override org.jboss.netty.channel.ChannelDownStreamHandler.
-| encoders | codec |  | String | A list of encoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup.
-| encoding | codec |  | String | The encoding (a charset name) to use for the textline codec. If not provided Camel will use the JVM default Charset.
-| textline | codec | false | boolean | Only used for TCP. If no codec is specified you can use this flag to indicate a text line based codec; if not specified or the value is false then Object Serialization is assumed over TCP.
-| enabledProtocols | security | TLSv1,TLSv1.1,TLSv1.2 | String | Which protocols to enable when using SSL
-| keyStoreFile | security |  | File | Client side certificate keystore to be used for encryption
-| keyStoreFormat | security | JKS | String | Keystore format to be used for payload encryption. Defaults to JKS if not set
-| keyStoreResource | security |  | String | Client side certificate keystore to be used for encryption. Is loaded by default from classpath but you can prefix with classpath: file: or http: to load the resource from different systems.
-| needClientAuth | security | false | boolean | Configures whether the server needs client authentication when using SSL.
-| passphrase | security |  | String | Password setting to use in order to encrypt/decrypt payloads sent using SSH
-| securityProvider | security | SunX509 | String | Security provider to be used for payload encryption. Defaults to SunX509 if not set.
-| ssl | security | false | boolean | Setting to specify whether SSL encryption is applied to this endpoint
-| sslClientCertHeaders | security | false | boolean | When enabled and in SSL mode then the Netty consumer will enrich the Camel Message with headers having information about the client certificate such as subject name issuer name serial number and the valid date range.
-| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
-| sslHandler | security |  | SslHandler | Reference to a class that could be used to return an SSL Handler
-| trustStoreFile | security |  | File | Server side certificate keystore to be used for encryption
-| trustStoreResource | security |  | String | Server side certificate keystore to be used for encryption. Is loaded by default from classpath but you can prefix with classpath: file: or http: to load the resource from different systems.
+| Name | Description | Default | Type
+| **protocol** | *Required* The protocol to use which can be tcp or udp. |  | String
+| **host** | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0 For the producer the hostname is the remote host to connect to |  | String
+| **port** | *Required* The host port number |  | int
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (67 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **disconnect** (common) | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer. | false | boolean
+| **keepAlive** (common) | Setting to ensure socket is not closed due to inactivity | true | boolean
+| **reuseAddress** (common) | Setting to facilitate socket multiplexing | true | boolean
+| **sync** (common) | Setting to set endpoint as one-way or request-response | true | boolean
+| **tcpNoDelay** (common) | Setting to improve TCP protocol performance | true | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **broadcast** (consumer) | Setting to choose Multicast over UDP | false | boolean
+| **clientMode** (consumer) | If the clientMode is true netty consumer will connect the address as a TCP client. | false | boolean
+| **backlog** (consumer) | Allows to configure a backlog for netty consumer (server). Note the backlog is just a best effort depending on the OS. Setting this option to a value such as 200 500 or 1000 tells the TCP stack how long the accept queue can be If this option is not configured then the backlog depends on OS setting. |  | int
+| **bossCount** (consumer) | When netty works on nio mode it uses default bossCount parameter from Netty which is 1. User can use this operation to override the default bossCount from Netty | 1 | int
+| **bossPool** (consumer) | To use a explicit org.jboss.netty.channel.socket.nio.BossPool as the boss thread pool. For example to share a thread pool with multiple consumers. By default each consumer has their own boss pool with 1 core thread. |  | BossPool
+| **channelGroup** (consumer) | To use a explicit ChannelGroup. |  | ChannelGroup
+| **disconnectOnNoReply** (consumer) | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **maxChannelMemorySize** (consumer) | The maximum total size of the queued events per channel when using orderedThreadPoolExecutor. Specify 0 to disable. | 10485760 | long
+| **maxTotalMemorySize** (consumer) | The maximum total size of the queued events for this pool when using orderedThreadPoolExecutor. Specify 0 to disable. | 209715200 | long
+| **nettyServerBootstrapFactory** (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrap Factory
+| **networkInterface** (consumer) | When using UDP then this option can be used to specify a network interface by its name such as eth0 to join a multicast group. |  | String
+| **noReplyLogLevel** (consumer) | If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back. | WARN | LoggingLevel
+| **orderedThreadPoolExecutor** (consumer) | Whether to use ordered thread pool to ensure events are processed orderly on the same channel. See details at the netty javadoc of org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor for more details. | true | boolean
+| **serverClosedChannel ExceptionCaughtLogLevel** (consumer) | If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this logging level. This is used to avoid logging the closed channel exceptions as clients can disconnect abruptly and then cause a flood of closed exceptions in the Netty server. | DEBUG | LoggingLevel
+| **serverExceptionCaughtLog Level** (consumer) | If the server (NettyConsumer) catches an exception then its logged using this logging level. | WARN | LoggingLevel
+| **serverPipelineFactory** (consumer) | To use a custom ServerPipelineFactory |  | ServerPipelineFactory
+| **workerCount** (consumer) | When netty works on nio mode it uses default workerCount parameter from Netty which is cpu_core_threads2. User can use this operation to override the default workerCount from Netty |  | int
+| **workerPool** (consumer) | To use a explicit org.jboss.netty.channel.socket.nio.WorkerPool as the worker thread pool. For example to share a thread pool with multiple consumers. By default each consumer has their own worker pool with 2 x cpu count core threads. |  | WorkerPool
+| **connectTimeout** (producer) | Time to wait for a socket connection to be available. Value is in millis. | 10000 | long
+| **requestTimeout** (producer) | Allows to use a timeout for the Netty producer when calling a remote server. By default no timeout is in use. The value is in milli seconds so eg 30000 is 30 seconds. The requestTimeout is using Netty's ReadTimeoutHandler to trigger the timeout. |  | long
+| **clientPipelineFactory** (producer) | To use a custom ClientPipelineFactory |  | ClientPipelineFactory
+| **lazyChannelCreation** (producer) | Channels can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started. | true | boolean
+| **producerPoolEnabled** (producer) | Whether producer pool is enabled or not. Important: Do not turn this off as the pooling is needed for handling concurrency and reliable request/reply. | true | boolean
+| **producerPoolMaxActive** (producer) | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients or idle awaiting checkout) at a given time. Use a negative value for no limit. | -1 | int
+| **producerPoolMaxIdle** (producer) | Sets the cap on the number of idle instances in the pool. | 100 | int
+| **producerPoolMinEvictable Idle** (producer) | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor. | 300000 | long
+| **producerPoolMinIdle** (producer) | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects. |  | int
+| **udpConnectionlessSending** (producer) | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port. | false | boolean
+| **useChannelBuffer** (producer) | If the useChannelBuffer is true netty producer will turn the message body into ChannelBuffer before sending it out. | false | boolean
+| **bootstrapConfiguration** (advanced) | To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint. |  | NettyServerBootstrap Configuration
+| **options** (advanced) | Allows to configure additional netty options using option. as prefix. For example option.child.keepAlive=false to set the netty option child.keepAlive=false. See the Netty documentation for possible options that can be used. |  | Map
+| **receiveBufferSize** (advanced) | The TCP/UDP buffer sizes to be used during inbound communication. Size is bytes. | 65536 | long
+| **receiveBufferSizePredictor** (advanced) | Configures the buffer size predictor. See details at Jetty documentation and this mail thread. |  | int
+| **sendBufferSize** (advanced) | The TCP/UDP buffer sizes to be used during outbound communication. Size is bytes. | 65536 | long
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **transferExchange** (advanced) | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body Out body fault body In headers Out headers fault headers exchange properties exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
+| **allowDefaultCodec** (codec) | The netty component installs a default codec if both encoder/deocder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain. | true | boolean
+| **autoAppendDelimiter** (codec) | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | boolean
+| **decoder** (codec) | A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. Must override org.jboss.netty.channel.ChannelUpStreamHandler. |  | ChannelHandler
+| **decoderMaxLineLength** (codec) | The max line length to use for the textline codec. | 1024 | int
+| **decoders** (codec) | A list of decoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup. |  | String
+| **delimiter** (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. | LINE | TextLineDelimiter
+| **encoder** (codec) | A custom ChannelHandler class that can be used to perform special marshalling of outbound payloads. Must override org.jboss.netty.channel.ChannelDownStreamHandler. |  | ChannelHandler
+| **encoders** (codec) | A list of encoders to be used. You can use a String which have values separated by comma and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup. |  | String
+| **encoding** (codec) | The encoding (a charset name) to use for the textline codec. If not provided Camel will use the JVM default Charset. |  | String
+| **textline** (codec) | Only used for TCP. If no codec is specified you can use this flag to indicate a text line based codec; if not specified or the value is false then Object Serialization is assumed over TCP. | false | boolean
+| **enabledProtocols** (security) | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
+| **keyStoreFile** (security) | Client side certificate keystore to be used for encryption |  | File
+| **keyStoreFormat** (security) | Keystore format to be used for payload encryption. Defaults to JKS if not set | JKS | String
+| **keyStoreResource** (security) | Client side certificate keystore to be used for encryption. Is loaded by default from classpath but you can prefix with classpath: file: or http: to load the resource from different systems. |  | String
+| **needClientAuth** (security) | Configures whether the server needs client authentication when using SSL. | false | boolean
+| **passphrase** (security) | Password setting to use in order to encrypt/decrypt payloads sent using SSH |  | String
+| **securityProvider** (security) | Security provider to be used for payload encryption. Defaults to SunX509 if not set. | SunX509 | String
+| **ssl** (security) | Setting to specify whether SSL encryption is applied to this endpoint | false | boolean
+| **sslClientCertHeaders** (security) | When enabled and in SSL mode then the Netty consumer will enrich the Camel Message with headers having information about the client certificate such as subject name issuer name serial number and the valid date range. | false | boolean
+| **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **sslHandler** (security) | Reference to a class that could be used to return an SSL Handler |  | SslHandler
+| **trustStoreFile** (security) | Server side certificate keystore to be used for encryption |  | File
+| **trustStoreResource** (security) | Server side certificate keystore to be used for encryption. Is loaded by default from classpath but you can prefix with classpath: file: or http: to load the resource from different systems. |  | String
+|=======================================================================
 // endpoint options: END
 
 
 
 
-[[Netty-RegistrybasedOptions]]
-Registry based Options
-^^^^^^^^^^^^^^^^^^^^^^
+### Registry based Options
 
 Codec Handlers and SSL Keystores can be enlisted in the
 link:registry.html[Registry], such as in the Spring XML file. 
@@ -225,9 +227,7 @@ so Camel knows it should lookup.
 
 *Important:* Read below about using non shareable encoders/decoders.
 
-[[Netty-Usingnonshareableencodersordecoders]]
-Using non shareable encoders or decoders
-++++++++++++++++++++++++++++++++++++++++
+#### Using non shareable encoders or decoders
 
 If your encoders or decoders is not shareable (eg they have the
 @Shareable class annotation), then your encoder/decoder must implement
@@ -241,13 +241,9 @@ The Netty component offers a
 `org.apache.camel.component.netty.ChannelHandlerFactories` factory
 class, that has a number of commonly used methods.
 
-[[Netty-SendingMessagestoandfromaNettyendpoint]]
-Sending Messages to/from a Netty endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending Messages to/from a Netty endpoint
 
-[[Netty-NettyProducer]]
-Netty Producer
-++++++++++++++
+#### Netty Producer
 
 In Producer mode, the component provides the ability to send payloads to
 a socket endpoint +
@@ -256,9 +252,7 @@ a socket endpoint +
 The producer mode supports both one-way and request-response based
 operations.
 
-[[Netty-NettyConsumer]]
-Netty Consumer
-++++++++++++++
+#### Netty Consumer
 
 In Consumer mode, the component provides the ability to:
 
@@ -271,9 +265,7 @@ object based payloads and
 The consumer mode supports both one-way and request-response based
 operations.
 
-[[Netty-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 The following headers are filled for the exchanges created by the Netty
 consumer:
@@ -294,13 +286,9 @@ netty.
 |`NettyConstants.NETTY_LOCAL_ADDRESS` / `CamelNettyLocalAddress` |`java.net.SocketAddress` |Local address of the incoming socket connection.
 |=======================================================================
 
-[[Netty-UsageSamples]]
-Usage Samples
-^^^^^^^^^^^^^
+### Usage Samples
 
-[[Netty-AUDPNettyendpointusingRequest-Replyandserializedobjectpayload]]
-A UDP Netty endpoint using Request-Reply and serialized object payload
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### A UDP Netty endpoint using Request-Reply and serialized object payload
 
 [source,java]
 ------------------------------------------------------------------
@@ -318,9 +306,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------------------
 
-[[Netty-ATCPbasedNettyconsumerendpointusingOne-waycommunication]]
-A TCP based Netty consumer endpoint using One-way communication
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### A TCP based Netty consumer endpoint using One-way communication
 
 [source,java]
 -------------------------------------------
@@ -332,9 +318,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 -------------------------------------------
 
-[[Netty-AnSSLTCPbasedNettyconsumerendpointusingRequest-Replycommunication]]
-An SSL/TCP based Netty consumer endpoint using Request-Reply communication
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### An SSL/TCP based Netty consumer endpoint using Request-Reply communication
 
 [[Netty-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
@@ -446,9 +430,7 @@ enriches the Camel link:message.html[Message] with headers having
 details about the client certificate. For example the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
 
-[[Netty-UsingMultipleCodecs]]
-Using Multiple Codecs
-+++++++++++++++++++++
+#### Using Multiple Codecs
 
 In certain cases it may be necessary to add chains of encoders and
 decoders to the netty pipeline. To add multpile codecs to a camel netty
@@ -472,9 +454,7 @@ a comma separated list or contained in a List e.g.
 
 or via spring.
 
-[[Netty-ClosingChannelWhenComplete]]
-Closing Channel When Complete
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Closing Channel When Complete
 
 When acting as a server you sometimes want to close the channel when,
 for example, a client conversion is finished. +
@@ -502,9 +482,7 @@ written the bye message back to the client:
         });
 --------------------------------------------------------------------------------------------------------
 
-[[Netty-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
-Adding custom channel pipeline factories to gain complete control over a created pipeline
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Adding custom channel pipeline factories to gain complete control over a created pipeline
 
 *Available as of Camel 2.5*
 
@@ -578,9 +556,7 @@ context.addRoutes(new RouteBuilder() {
 });
 -------------------------------------------------------------------
 
-[[Netty-ReusingNettybossandworkerthreadpools]]
-Reusing Netty boss and worker thread pools
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Reusing Netty boss and worker thread pools
 
 *Available as of Camel 2.12*
 
@@ -639,9 +615,7 @@ And if we have another route we can refer to the shared worker pool:
 
 ... and so forth.
 
-[[Netty-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -650,4 +624,3 @@ See Also
 
 * link:netty-http.html[Netty HTTP]
 * link:mina.html[MINA]
-

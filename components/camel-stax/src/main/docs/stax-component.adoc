@@ -1,8 +1,6 @@
-[[StAX-StAXComponent]]
-StAX Component
-~~~~~~~~~~~~~~
+## StAX Component
 
-*Available as of Camel 2.9*
+*Available as of Camel version 2.9*
 
 The StAX component allows messages to be process through a SAX
 http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
@@ -23,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[StAX-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------
@@ -48,9 +44,7 @@ using the # syntax as shown:
 stax:#myHandler
 ---------------
 
-[[Stax-Options]]
-Options
-~~~~~~~
+### Options
 
 
 // component options: START
@@ -60,22 +54,31 @@ The StAX component has no options.
 
 
 // endpoint options: START
-The StAX component supports 2 endpoint options which are listed below:
+The StAX endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    stax:contentHandlerClass
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| contentHandlerClass | producer |  | String | *Required* The FQN class name for the ContentHandler implementation to use.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **contentHandlerClass** | *Required* The FQN class name for the ContentHandler implementation to use. |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[StAX-UsageofacontenthandlerasStAXparser]]
-Usage of a content handler as StAX parser
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Usage of a content handler as StAX parser
 
 The message body after the handling is the handler itself.
 
@@ -95,9 +98,7 @@ from("file:target/in")
   });
 --------------------------------------------------------------------------------------------------------
 
-[[StAX-IterateoveracollectionusingJAXBandStAX]]
-Iterate over a collection using JAXB and StAX
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Iterate over a collection using JAXB and StAX
 
 First we suppose you have JAXB objects.
 
@@ -201,18 +202,13 @@ from("file:target/in")
         .to("mock:records");
 -------------------------------------------------
 
-[[StAX-ThepreviousexamplewithXMLDSL]]
-The previous example with XML DSL
-+++++++++++++++++++++++++++++++++
+#### The previous example with XML DSL
 
 The example above could be implemented as follows in XML DSL
 
-[[StAX-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

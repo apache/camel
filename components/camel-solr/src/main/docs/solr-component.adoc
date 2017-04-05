@@ -1,8 +1,6 @@
-[[Solr-SolrComponent]]
-Solr Component
-~~~~~~~~~~~~~~
+## Solr Component
 
-*Available as of Camel 2.9*
+*Available as of Camel version 2.9*
 
 The Solr component allows you to interface with an
 http://lucene.apache.org/solr/[Apache Lucene Solr] server (based on
@@ -21,9 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Solr-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 *NOTE:* solrs and solrCloud are new added since *Camel 2.14*.
 
@@ -34,9 +30,7 @@ solrs://host[:port]/solr?[options]
 solrCloud://host[:port]/solr?[options]
 --------------------------------------
 
-[[Solr-Options]]
-Solr Options
-^^^^^^^^^^^^
+### Solr Options
 
 
 // component options: START
@@ -46,34 +40,43 @@ The Solr component has no options.
 
 
 // endpoint options: START
-The Solr component supports 14 endpoint options which are listed below:
+The Solr endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    solr:url
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| url | producer |  | String | *Required* Hostname and port for the solr server
-| allowCompression | producer |  | Boolean | Server side must support gzip or deflate for this to have any effect
-| connectionTimeout | producer |  | Integer | connectionTimeout on the underlying HttpConnectionManager
-| defaultMaxConnectionsPerHost | producer |  | Integer | maxConnectionsPerHost on the underlying HttpConnectionManager
-| followRedirects | producer |  | Boolean | indicates whether redirects are used to get to the Solr server
-| maxRetries | producer |  | Integer | Maximum number of retries to attempt in the event of transient errors
-| maxTotalConnections | producer |  | Integer | maxTotalConnection on the underlying HttpConnectionManager
-| requestHandler | producer |  | String | Set the request handler to be used
-| soTimeout | producer |  | Integer | Read timeout on the underlying HttpConnectionManager. This is desirable for queries but probably not for indexing
-| streamingQueueSize | producer | 10 | int | Set the queue size for the StreamingUpdateSolrServer
-| streamingThreadCount | producer | 2 | int | Set the number of threads for the StreamingUpdateSolrServer
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| collection | solrCloud |  | String | Set the collection name which the solrCloud server could use
-| zkHost | solrCloud |  | String | Set the ZooKeeper host information which the solrCloud could use such as zkhost=localhost:8123.
+| Name | Description | Default | Type
+| **url** | *Required* Hostname and port for the solr server |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (13 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **allowCompression** (producer) | Server side must support gzip or deflate for this to have any effect |  | Boolean
+| **connectionTimeout** (producer) | connectionTimeout on the underlying HttpConnectionManager |  | Integer
+| **defaultMaxConnectionsPer Host** (producer) | maxConnectionsPerHost on the underlying HttpConnectionManager |  | Integer
+| **followRedirects** (producer) | indicates whether redirects are used to get to the Solr server |  | Boolean
+| **maxRetries** (producer) | Maximum number of retries to attempt in the event of transient errors |  | Integer
+| **maxTotalConnections** (producer) | maxTotalConnection on the underlying HttpConnectionManager |  | Integer
+| **requestHandler** (producer) | Set the request handler to be used |  | String
+| **soTimeout** (producer) | Read timeout on the underlying HttpConnectionManager. This is desirable for queries but probably not for indexing |  | Integer
+| **streamingQueueSize** (producer) | Set the queue size for the StreamingUpdateSolrServer | 10 | int
+| **streamingThreadCount** (producer) | Set the number of threads for the StreamingUpdateSolrServer | 2 | int
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **collection** (solrCloud) | Set the collection name which the solrCloud server could use |  | String
+| **zkHost** (solrCloud) | Set the ZooKeeper host information which the solrCloud could use such as zkhost=localhost:8123. |  | String
+|=======================================================================
 // endpoint options: END
 
 
-[[Solr-MessageOperations]]
-Message Operations
-^^^^^^^^^^^^^^^^^^
+### Message Operations
 
 The following Solr operations are currently supported. Simply set an
 exchange header with a key of "SolrOperation" and a value set to one of
@@ -118,9 +121,7 @@ bean]
 optimize command
 |=======================================================================
 
-[[Solr-Example]]
-Example
-^^^^^^^
+### Example
 
 Below is a simple INSERT, DELETE and COMMIT example
 
@@ -179,9 +180,7 @@ delete routes and then call the commit route.
     template.sendBody("direct:commit", null);
 -----------------------------------------------
 
-[[Solr-QueryingSolr]]
-Querying Solr
-^^^^^^^^^^^^^
+### Querying Solr
 
 Currently, this component doesn't support querying data natively (may be
 added later). For now, you can query Solr using link:http.html[HTTP] as
@@ -205,12 +204,9 @@ Tutorial]
 
 http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
 
-[[Solr-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

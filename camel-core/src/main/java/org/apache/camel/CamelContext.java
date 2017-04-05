@@ -29,14 +29,17 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -77,6 +80,8 @@ import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.Validator;
+import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.util.LoadPropertiesException;
 
 /**
@@ -570,14 +575,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Collection<RestConfiguration> getRestConfigurations();
 
     /**
-     * Gets the service call configuration by the given name. If no name is given and there is only one configuration
-     * which matches the type then this configuration is returned.
+     * Gets the service call configuration by the given name. If no name is given
+     * the default configuration is returned, see <tt>setServiceCallConfiguration</tt>
      *
      * @param serviceName name of service, or <tt>null</tt> to return the default configuration
-     * @param type implementation of the configuration such as kubernetes, ribbon etc.
      * @return the configuration, or <tt>null</tt> if no configuration has been registered
      */
-    <T extends ServiceCallConfigurationDefinition> T getServiceCallConfiguration(String serviceName, Class<T> type);
+    ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName);
 
     /**
      * Sets the default service call configuration
@@ -587,12 +591,50 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration);
 
     /**
+     * Sets the service call configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations);
+
+    /**
      * Adds the service call configuration
      *
      * @param serviceName name of the service
      * @param configuration the configuration
      */
     void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
+
+    /**
+     * Gets the Hystrix configuration by the given name. If no name is given
+     * the default configuration is returned, see <tt>setHystrixConfiguration</tt>
+     *
+     * @param id id of the configuration, or <tt>null</tt> to return the default configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been registered
+     */
+    HystrixConfigurationDefinition getHystrixConfiguration(String id);
+
+    /**
+     * Sets the default Hystrix configuration
+     *
+     * @param configuration the configuration
+     */
+    void setHystrixConfiguration(HystrixConfigurationDefinition configuration);
+
+    /**
+     * Sets the Hystrix configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations);
+
+    /**
+     * Adds the Hystrix configuration
+     *
+     * @param id name of the configuration
+     * @param configuration the configuration
+     */
+    void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration);
 
     /**
      * Returns the order in which the route inputs was started.
@@ -1079,7 +1121,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a>
      * <p/>
-     * <b>Important:</b> Make sure to call {@link org.apache.camel.ProducerTemplate#stop()} when you are done using the template,
+     * <b>Important:</b> Make sure to call {@link org.apache.camel.FluentProducerTemplate#stop()} when you are done using the template,
      * to clean up any resources.
      * <p/>
      * Will use cache size defined in Camel property with key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.
@@ -1200,6 +1242,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     DataFormat resolveDataFormat(String name);
 
     /**
+     * Creates the given data format given its name.
+     *
+     * @param name the data format name or a reference to a data format factory in the {@link Registry}
+     * @return the resolved data format, or <tt>null</tt> if not found
+     */
+    DataFormat createDataFormat(String name);
+
+    /**
      * Resolve a data format definition given its name
      *
      * @param name the data format definition name or a reference to it in the {@link Registry}
@@ -1248,7 +1298,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param from from data type
      * @param to to data type
-     * @return the resolved data format, or <tt>null</tt> if not found
+     * @return the resolved transformer, or <tt>null</tt> if not found
      */
     Transformer resolveTransformer(DataType from, DataType to);
 
@@ -1259,41 +1309,86 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     TransformerRegistry getTransformerRegistry();
 
     /**
-     * Sets the properties that can be referenced in the camel context
-     * <p/>
-     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
-     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
-     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
-     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
+     * Sets the validators that can be referenced in the routes.
      *
-     * @param properties properties
+     * @param validators the validators
      */
+    void setValidators(List<ValidatorDefinition> validators);
+
+    /**
+     * Gets the validators that can be referenced in the routes.
+     *
+     * @return the validators available
+     */
+    List<ValidatorDefinition> getValidators();
+
+    /**
+     * Resolve a validator given from/to data type.
+     *
+     * @param type the data type
+     * @return the resolved validator, or <tt>null</tt> if not found
+     */
+    Validator resolveValidator(DataType type);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.ValidatorRegistry}
+     * @return the ValidatorRegistry
+     */
+    ValidatorRegistry getValidatorRegistry();
+
+    /**
+     * @deprecated use {@link #setGlobalOptions(Map) setGlobalOptions(Map<String,String>) instead}.
+     */
+    @Deprecated
     void setProperties(Map<String, String> properties);
 
     /**
-     * Gets the properties that can be referenced in the camel context.
+     * Sets global options that can be referenced in the camel context
      * <p/>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
-     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
      * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
-     * @return the properties
+     * @param globalOptions global options that can be referenced in the camel context
      */
+    void setGlobalOptions(Map<String, String> globalOptions);
+
+    /**
+     * @deprecated use {@link #getGlobalOptions()} instead.
+     */
+    @Deprecated
     Map<String, String> getProperties();
 
     /**
-     * Gets the property value that can be referenced in the camel context
+     * Gets global options that can be referenced in the camel context.
      * <p/>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
-     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
      * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
-     * @return the string value of property
+     * @return global options for this context
      */
-    String getProperty(String name);
-    
+    Map<String, String> getGlobalOptions();
+
+    /**
+     * @deprecated use {@link #getGlobalOption(String)} instead.
+     */
+    String getProperty(String key);
+
+    /**
+     * Gets the global option value that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
+     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
+     *
+     * @return the string value of the global option
+     */
+    String getGlobalOption(String key);
+
     /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
      *
@@ -1699,7 +1794,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Returns the HTML documentation for the given Camel component
      *
      * @return the HTML or <tt>null</tt> if the component is <b>not</b> built with HTML document included.
+     * @deprecated use camel-catalog instead
      */
+    @Deprecated
     String getComponentDocumentation(String componentName) throws IOException;
 
     /**
@@ -1862,5 +1959,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link ReloadStrategy} to be used
      */
     void setReloadStrategy(ReloadStrategy reloadStrategy);
+
+    /**
+     * Gets the associated {@link RuntimeCamelCatalog} for this CamelContext.
+     */
+    RuntimeCamelCatalog getRuntimeCamelCatalog();
 
 }

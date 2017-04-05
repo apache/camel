@@ -22,7 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.vertx.core.AsyncResult;
-import io.vertx.core.AsyncResultHandler;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.impl.VertxFactoryImpl;
@@ -172,7 +172,7 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
             if (vertxOptions.isClustered()) {
                 LOG.info("Creating Clustered Vertx {}:{}", vertxOptions.getClusterHost(), vertxOptions.getClusterPort());
                 // use the async api as we want to wait for the eventbus to be ready before we are in started state
-                vertxFactory.clusteredVertx(vertxOptions, new AsyncResultHandler<Vertx>() {
+                vertxFactory.clusteredVertx(vertxOptions, new Handler<AsyncResult<Vertx>>() {
                     @Override
                     public void handle(AsyncResult<Vertx> event) {
                         if (event.cause() != null) {

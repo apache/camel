@@ -1,8 +1,6 @@
-[[AWS-EC2-EC2Component]]
-EC2 Component
-~~~~~~~~~~~~~
+## AWS EC2 Component
 
-*Available as of Camel 2.16*
+*Available as of Camel version 2.16*
 
 The EC2 component supports create, run, start, stop and terminate
 https://aws.amazon.com/it/ec2/[AWS EC2] instances.
@@ -13,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon EC2. More information are available at
 https://aws.amazon.com/it/ec2/[Amazon EC2].
 
-[[AWS-EC2-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 -------------------------
@@ -25,9 +21,7 @@ aws-ec2://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-EC2-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -38,23 +32,34 @@ The AWS EC2 component has no options.
 
 
 // endpoint options: START
-The AWS EC2 component supports 9 endpoint options which are listed below:
+The AWS EC2 endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    aws-ec2:label
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| label | producer |  | String | *Required* Logical name
-| accessKey | producer |  | String | Amazon AWS Access Key
-| amazonEc2Client | producer |  | AmazonEC2Client | To use a existing configured AmazonEC2Client as client
-| amazonEc2Endpoint | producer |  | String | The region with which the AWS-EC2 client wants to work with.
-| operation | producer |  | EC2Operations | *Required* The operation to perform. It can be createAndRunInstances startInstances stopInstances terminateInstances describeInstances describeInstancesStatus rebootInstances monitorInstances unmonitorInstances createTags or deleteTags
-| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
-| secretKey | producer |  | String | Amazon AWS Secret Key
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **label** | *Required* Logical name |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (8 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **accessKey** (producer) | Amazon AWS Access Key |  | String
+| **amazonEc2Client** (producer) | To use a existing configured AmazonEC2Client as client |  | AmazonEC2Client
+| **amazonEc2Endpoint** (producer) | The region with which the AWS-EC2 client wants to work with. |  | String
+| **operation** (producer) | *Required* The operation to perform. It can be createAndRunInstances startInstances stopInstances terminateInstances describeInstances describeInstancesStatus rebootInstances monitorInstances unmonitorInstances createTags or deleteTags |  | EC2Operations
+| **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
+| **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **secretKey** (producer) | Amazon AWS Secret Key |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
@@ -65,13 +70,9 @@ You have to provide the amazonEc2Client in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the https://aws.amazon.com/it/ec2/[Amazon EC2] service.
 
-[[AWS-EC2-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-EC2-MessageheadersevaluatedbytheEC2producer]]
-Message headers evaluated by the EC2 producer
-+++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the EC2 producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -117,9 +118,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.16 or higher).
 
-[[AWS-EC2-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -127,4 +126,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

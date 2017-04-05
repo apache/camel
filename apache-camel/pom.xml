@@ -91,6 +91,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-azure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-avro</artifactId>
     </dependency>
     <dependency>
@@ -128,6 +132,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-box</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-box-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -183,11 +191,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-connector</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-consul</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-couchbase</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -248,6 +264,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-elasticsearch</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-elasticsearch5</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -328,6 +348,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-groovy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-groovy-dsl</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -682,6 +706,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-opentracing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-optaplanner</artifactId>
     </dependency>
     <dependency>
@@ -723,6 +751,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-rabbitmq</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-reactive-streams</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -806,6 +838,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-sjms2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-slack</artifactId>
     </dependency>
     <dependency>
@@ -855,6 +891,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-cloud</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-cloud-netflix</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -958,6 +998,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-tika</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-twitter</artifactId>
     </dependency>
     <dependency>
@@ -1018,6 +1062,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-zendesk</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-zipfile</artifactId>
     </dependency>
     <dependency>
@@ -1027,6 +1075,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-zookeeper</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-zookeeper-master</artifactId>
     </dependency>
 
     <!-- camel starters -->
@@ -1198,6 +1250,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-couchdb-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-couchbase-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1772,6 +1829,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-opentracing-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-optaplanner-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1847,6 +1909,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-reactive-streams-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-rx-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1863,11 +1930,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-saxon-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-scala-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1968,6 +2030,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-cloud-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-cloud-netflix-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2142,6 +2209,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-zendesk-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-zipfile-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2163,11 +2235,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-connector</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog-lucene</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog-maven</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-nexus</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

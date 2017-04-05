@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlType;
 public enum ExchangePattern {
     InOnly, RobustInOnly, InOut, InOptionalOut, OutOnly, RobustOutOnly, OutIn, OutOptionalIn;
 
+    // TODO: We should deprecate and only support InOnly, InOut, and InOptionalOut
+
     protected static final Map<String, ExchangePattern> MAP = new HashMap<String, ExchangePattern>();
 
     /**

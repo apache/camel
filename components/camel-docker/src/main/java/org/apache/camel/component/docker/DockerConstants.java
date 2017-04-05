@@ -29,6 +29,11 @@ public final class DockerConstants {
     public static final Map<String, Class<?>> DOCKER_DEFAULT_PARAMETERS = new HashMap<String, Class<?>>();
 
     /**
+     * Endpoint configuration defaults
+     */
+    public static final String DEFAULT_CMD_EXEC_FACTORY = "com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory";
+
+    /**
      * Connectivity *
      */
     public static final String DOCKER_CLIENT_PROFILE = "CamelDockerClientProfile";
@@ -47,6 +52,7 @@ public final class DockerConstants {
     public static final String DOCKER_LOGGING_FILTER = "CamelDockerLoggingFilter";
     public static final String DOCKER_TLSVERIFY = "CamelDockerTlsVerify";
     public static final String DOCKER_SOCKET_ENABLED = "CamelDockerSocketEnabled";
+    public static final String DOCKER_CMD_EXEC_FACTORY = "CamelDockerCmdExecFactory";
 
     /**
      * List Images *
@@ -222,7 +228,6 @@ public final class DockerConstants {
     public static final String DOCKER_DETACH = "CamelDockerDetach";
     public static final String DOCKER_EXEC_ID = "CamelDockerExecId";
 
-
     static {
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_CERT_PATH, String.class);
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_CLIENT_PROFILE, String.class);
@@ -233,6 +238,7 @@ public final class DockerConstants {
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_SECURE, Boolean.class);
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_SERVER_ADDRESS, String.class);
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_USERNAME, String.class);
+        DOCKER_DEFAULT_PARAMETERS.put(DOCKER_CMD_EXEC_FACTORY, String.class);
     }
 
     private DockerConstants() {

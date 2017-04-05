@@ -1,8 +1,6 @@
-[[Castor-Castor]]
-Castor
-~~~~~~
+## Castor DataFormat
 
-*Available as of Camel 2.1*
+*Available as of Camel version 2.1*
 
 Castor is a link:data-format.html[Data Format] which uses the
 http://www.castor.org/[Castor XML library] to unmarshal an XML payload
@@ -11,9 +9,7 @@ into Java objects or to marshal Java objects into an XML payload.
 As usually you can use either Java DSL or Spring XML to work with Castor
 Data Format.
 
-[[Castor-UsingtheJavaDSL]]
-Using the Java DSL
-^^^^^^^^^^^^^^^^^^
+### Using the Java DSL
 
 [source,java]
 -----------------------------
@@ -62,9 +58,7 @@ castor.getMarshaller();
 castor.getUnmarshaller();
 -------------------------
 
-[[Castor-UsingSpringXML]]
-Using Spring XML
-^^^^^^^^^^^^^^^^
+### Using Spring XML
 
 The following example shows how to use Castor to unmarshal using Spring
 configuring the castor data type
@@ -108,16 +102,13 @@ on multiple routes. You have to set the <castor> element directly in
 </camelContext>
 -----------------------------------------------------------------------
 
-[[Castor-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The Castor dataformat supports 6 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -128,12 +119,9 @@ The Castor dataformat supports 6 options which are listed below.
 | classes |  | String[] | Add additional class names to Castor XmlContext
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
-[[Castor-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Castor in your camel routes you need to add the a dependency on
 *camel-castor* which implements this data format.

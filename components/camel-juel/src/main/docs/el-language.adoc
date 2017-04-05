@@ -1,4 +1,7 @@
+## EL Language (deprecated)
 [[EL-EL]]
+*Available as of Camel version 1.1.0*
+
 EL
 ~~
 
@@ -41,9 +44,7 @@ link:message-filter.html[Message Filter] or as an
 link:expression.html[Expression] for a
 link:recipient-list.html[Recipient List]
 
-[[EL-Options]]
-EL Options
-^^^^^^^^^^
+### EL Options
 
 
 
@@ -52,20 +53,16 @@ The EL language supports 1 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================
-{% endraw %}
 // language options: END
 
 
 
-[[EL-Variables]]
-Variables
-^^^^^^^^^
+### Variables
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -78,9 +75,7 @@ Variables
 |out |Message |the exchange.out message
 |=======================================================================
 
-[[EL-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 You can use EL dot notation to invoke operations. If you for instance
 have a body that contains a POJO that has a `getFamiliyName` method then
@@ -91,9 +86,7 @@ you can construct the syntax as follows:
 "${in.body.familyName}"
 -----------------------
 
-[[EL-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use EL in your camel routes you need to add the a dependency on
 *camel-juel* which implements the EL language.

@@ -1,8 +1,6 @@
-[[Printer-PrinterComponent]]
-Printer Component
-~~~~~~~~~~~~~~~~~
+## Printer Component
 
-*Available as of Camel 2.1*
+*Available as of Camel version 2.1*
 
 The *printer* component provides a way to direct payloads on a route to
 a printer. Obviously the payload has to be a formatted piece of payload
@@ -29,9 +27,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Printer-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 Since the URI scheme for a printer has not been standardized (the
 nearest thing to a standard being the IETF print standard) and therefore
@@ -46,9 +42,7 @@ lpr://remotehost:port/path/to/printer[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Printer-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -58,50 +52,53 @@ The Printer component has no options.
 
 
 // endpoint options: START
-The Printer component supports 14 endpoint options which are listed below:
+The Printer endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    lpr:hostname:port/printername
+
+with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| hostname | producer |  | String | *Required* Hostname of the printer
-| port | producer |  | int | Port number of the printer
-| printername | producer |  | String | Name of the printer
-| copies | producer | 1 | int | Number of copies to print
-| docFlavor | producer |  | DocFlavor | Sets DocFlavor to use.
-| flavor | producer |  | String | Sets DocFlavor to use.
-| mediaSize | producer | na-letter | String | Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API. The default setting is to use North American Letter sized stationary. The value's case is ignored e.g. values of iso_a4 and ISO_A4 may be used.
-| mediaTray | producer |  | String | Sets MediaTray supported by the javax.print.DocFlavor API for example uppermiddle etc.
-| mimeType | producer |  | String | Sets mimeTypes supported by the javax.print.DocFlavor API
-| orientation | producer | portrait | String | Sets the page orientation.
-| printerPrefix | producer |  | String | Sets the prefix name of the printer it is useful when the printer name does not start with //hostname/printer
-| sendToPrinter | producer | true | boolean | etting this option to false prevents sending of the print data to the printer
-| sides | producer | one-sided | String | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **hostname** | *Required* Hostname of the printer |  | String
+| **port** | Port number of the printer |  | int
+| **printername** | Name of the printer |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (11 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **copies** (producer) | Number of copies to print | 1 | int
+| **docFlavor** (producer) | Sets DocFlavor to use. |  | DocFlavor
+| **flavor** (producer) | Sets DocFlavor to use. |  | String
+| **mediaSize** (producer) | Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API. The default setting is to use North American Letter sized stationary. The value's case is ignored e.g. values of iso_a4 and ISO_A4 may be used. | na-letter | String
+| **mediaTray** (producer) | Sets MediaTray supported by the javax.print.DocFlavor API for example uppermiddle etc. |  | String
+| **mimeType** (producer) | Sets mimeTypes supported by the javax.print.DocFlavor API |  | String
+| **orientation** (producer) | Sets the page orientation. | portrait | String
+| **printerPrefix** (producer) | Sets the prefix name of the printer it is useful when the printer name does not start with //hostname/printer |  | String
+| **sendToPrinter** (producer) | etting this option to false prevents sending of the print data to the printer | true | boolean
+| **sides** (producer) | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API | one-sided | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
-[[Printer-SendingMessagestoaPrinter]]
-Sending Messages to a Printer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending Messages to a Printer
 
-[[Printer-PrinterProducer]]
-Printer Producer
-++++++++++++++++
+#### Printer Producer
 
 Sending data to the printer is very straightforward and involves
 creating a producer endpoint that can be sent message exchanges on in
 route.
 
-[[Printer-UsageSamples]]
-Usage Samples
-^^^^^^^^^^^^^
+### Usage Samples
 
-[[Printer-Example1:PrintingtextbasedpayloadsonaDefaultprinterusingletterstationaryandone-sidedmode]]
-Example 1: Printing text based payloads on a Default printer using letter stationary and one-sided mode
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Example 1: Printing text based payloads on a Default printer using letter stationary and one-sided mode
 
 [source,java]
 -----------------------------------------------
@@ -116,9 +113,7 @@ RouteBuilder builder = new RouteBuilder() {
     }};
 -----------------------------------------------
 
-[[Printer-Example2:PrintingGIFbasedpayloadsonaRemoteprinterusingA4stationaryandone-sidedmode]]
-Example 2: Printing GIF based payloads on a Remote printer using A4 stationary and one-sided mode
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Example 2: Printing GIF based payloads on a Remote printer using A4 stationary and one-sided mode
 
 [source,java]
 --------------------------------------------------
@@ -132,9 +127,7 @@ RouteBuilder builder = new RouteBuilder() {
    }};
 --------------------------------------------------
 
-[[Printer-Example3:PrintingJPEGbasedpayloadsonaRemoteprinterusingJapanesePostcardstationaryandone-sidedmode]]
-Example 3: Printing JPEG based payloads on a Remote printer using Japanese Postcard stationary and one-sided mode
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Example 3: Printing JPEG based payloads on a Remote printer using Japanese Postcard stationary and one-sided mode
 
 [source,java]
 --------------------------------------------------

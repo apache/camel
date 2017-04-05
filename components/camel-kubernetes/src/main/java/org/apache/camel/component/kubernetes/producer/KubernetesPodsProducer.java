@@ -23,8 +23,8 @@ import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.PodSpec;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientPodResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.PodResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -105,8 +105,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "Get pods by labels require specify a labels set");
         }
-        ClientMixedOperation<Pod, PodList, DoneablePod, ClientPodResource<Pod, DoneablePod>> pods;
-        pods = getEndpoint().getKubernetesClient().pods();
+        
+        MixedOperation<Pod, PodList, DoneablePod, PodResource<Pod, DoneablePod>> pods = getEndpoint().getKubernetesClient().pods();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             pods.withLabel(entry.getKey(), entry.getValue());
         }

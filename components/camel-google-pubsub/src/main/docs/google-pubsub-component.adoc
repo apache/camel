@@ -1,12 +1,8 @@
-[[GooglePubsub-GooglePubsubComponent]]
-GooglePubsub Component
-~~~~~~~~~~~~~~~~~~
+## Google Pubsub Component
 
-*Available as of Camel 2.19*
+*Available as of Camel version 2.19*
 
-[[GooglePubsub-ComponentDescription]]
-Component Description
-^^^^^^^^^^^^^^^^^^^^^
+### Component Description
 
 The Google Pubsub component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Infrastructure] via
@@ -46,9 +42,7 @@ https://developers.google.com/identity/protocols/application-default-credentials
 
 Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
 
-[[GooglePubsub-URIFormat]]
-URI Format
-^^^^^^^^^
+### URI Format
 
 The GoogleMail Component uses the following URI format:
 
@@ -58,49 +52,55 @@ The GoogleMail Component uses the following URI format:
 
 Destination Name can be either a topic or a subscription name.
 
-[[GooglePubsub-GooglePubsubComponent]]
-GooglePubsubComponent
-^^^^^^^^^^^^^^^^^^
+### GooglePubsubComponent
 
 // component options: START
-The Google Pubsub component supports 1 options which are listed below.
+The Google Pubsub component supports 2 options which are listed below.
 
 
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| connectionFactory | common |  | GooglePubsubConnectionFactory | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair
+| Name | Description | Default | Type
+| **connectionFactory** (common) | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair |  | GooglePubsubConnection Factory
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
-The Google Pubsub component supports 11 endpoint options which are listed below:
+The Google Pubsub endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    google-pubsub:projectId:destinationName
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| projectId | common |  | String | *Required* Project Id
-| destinationName | common |  | String | *Required* Destination Name
-| ackMode | common | AUTO | AckMode | AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly
-| concurrentConsumers | common | 1 | Integer | The number of parallel streams consuming from the subscription
-| connectionFactory | common |  | GooglePubsubConnectionFactory | ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used.
-| loggerId | common |  | String | Logger ID to use when a match to the parent route required
-| maxMessagesPerPoll | common | 1 | Integer | The max number of messages to receive from the server in a single API call
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **projectId** | *Required* Project Id |  | String
+| **destinationName** | *Required* Destination Name |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (9 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **ackMode** (common) | AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly | AUTO | AckMode
+| **concurrentConsumers** (common) | The number of parallel streams consuming from the subscription | 1 | Integer
+| **connectionFactory** (common) | ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used. |  | GooglePubsubConnection Factory
+| **loggerId** (common) | Logger ID to use when a match to the parent route required |  | String
+| **maxMessagesPerPoll** (common) | The max number of messages to receive from the server in a single API call | 1 | Integer
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
-[[GooglePubsub-ProducerEndpoints]]
-Producer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Producer Endpoints
 
 Producer endpoints can accept and deliver to PubSub individual and grouped
 exchanges alike. Grouped exchanges have `Exchange.GROUPED_EXCHANGE` property set.
@@ -115,9 +115,7 @@ A Map set as message header `GooglePubsubConstants.ATTRIBUTES` will be sent as P
 Once exchange has been delivered to PubSub the PubSub Message ID will be assigned to
 the header `GooglePubsubConstants.MESSAGE_ID`.
 
-[[GooglePubsub-ConsumerEndpoints]]
-Consumer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints
 Google PubSub will redeliver the message if it has not been acknowledged within the time period set
 as a configuration option on the subscription.
 
@@ -130,9 +128,7 @@ To ack/nack the message the component uses Acknowledgement ID stored as header `
 If the header is removed or tampered with, the ack will fail and the message will be redelivered
 again after the ack deadline.
 
-[[GooglePubsub-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^
+### Message Headers
 Headers set by the consumer endpoints:
 
 * GooglePubsubConstants.MESSAGE_ID
@@ -140,16 +136,12 @@ Headers set by the consumer endpoints:
 * GooglePubsubConstants.PUBLISH_TIME
 * GooglePubsubConstants.ACK_ID
 
-[[GooglePubsub-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 The consumer endpoint returns the content of the message as byte[] - exactly as the underlying system sends it.
 It is up for the route to convert/unmarshall the contents.
 
-[[GooglePubsub-RollbackRedelivery]]
-Rollback and Redelivery
-^^^^^^^^^^^^
+### Rollback and Redelivery
 
 The rollback for Google PubSub relies on the idea of the Acknowledgement Deadline - the time period where Google PubSub expects to receive the acknowledgement.
 If the acknowledgement has not been received, the message is redelivered.

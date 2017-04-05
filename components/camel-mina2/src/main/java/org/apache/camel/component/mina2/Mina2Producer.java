@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.Charset;
@@ -111,6 +112,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         return false;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         try {
             doProcess(exchange);
@@ -511,13 +513,14 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             this.message = null;
             this.messageReceived = false;
             this.cause = cause;
-            if (ioSession != null) {
-                try {
-                    closeSessionIfNeededAndAwaitCloseInHandler(ioSession);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+            if (ioSession != null && !closedByMina(cause)) {
+                CloseFuture closeFuture = ioSession.closeNow();
+                closeFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);
             }
+        }
+
+        private boolean closedByMina(Throwable cause) {
+            return cause instanceof IOException;
         }
 
         public Throwable getCause() {

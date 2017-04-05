@@ -295,7 +295,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             formatter.setShowHeaders(true);
             formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
             try {
-                Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
                 if (maxChars != null) {
                     formatter.setMaxChars(maxChars);
                 }

@@ -38,7 +38,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
     }
 
     public void testLogBodyStreamStringSourceDisabled() throws Exception {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
 
         StringSource body = new StringSource("<?xml version=\"1.0\"?><person><name>Claus</name></person>");
 
@@ -56,7 +56,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
     }
 
     public void testLogBodyStreamStringSourceDisabledByDefault() throws Exception {
-        context.getProperties().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
+        context.getGlobalOptions().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
 
         StringSource body = new StringSource("<?xml version=\"1.0\"?><person><name>Claus</name></person>");
 
@@ -74,7 +74,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
     }
 
     public void testLogBodyStreamStringSourceEnabled() throws Exception {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
 
         StringSource body = new StringSource("<?xml version=\"1.0\"?><person><name>Claus</name></person>");
 
@@ -92,7 +92,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
     }
 
     public void testLogBodyStreamDisabled() throws Exception {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
         
         InputStream body = new ByteArrayInputStream("Hello World".getBytes());
 
@@ -110,7 +110,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
     }
 
     public void testLogBodyStreamDisabledByDefault() throws Exception {
-        context.getProperties().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
+        context.getGlobalOptions().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
 
         InputStream body = new ByteArrayInputStream("Hello World".getBytes());
 
@@ -128,7 +128,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
     }
 
     public void testLogBodyStreamEnabled() throws Exception {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
 
         InputStream body = new ByteArrayInputStream("Hello World".getBytes());
 

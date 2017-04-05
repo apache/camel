@@ -1,12 +1,10 @@
-[[Gora-GoraComponent]]
-Gora Component
-~~~~~~~~~~~~~~
+## Gora Component
+
+*Available as of Camel version 2.14*
 
 *Camel-Gora* is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with NoSQL databases using the
 http://gora.apache.org/[Apache Gora] framework.
-
-*Available as of Camel 2.14*
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -21,9 +19,7 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-[[Gora-ApacheGoraOverview]]
-Apache Gora Overview
-~~~~~~~~~~~~~~~~~~~~
+### Apache Gora Overview
 
 The http://gora.apache.org/[Apache Gora] open source framework provides
 an in-memory data model and persistence for big data. Gora supports
@@ -41,9 +37,7 @@ http://accumulo.apache.org/[Apache Accumulo],
 http://aws.amazon.com/dynamodb/[Amazon DynamoDB] and SQL databases such
 as http://hsqldb.org/[hsqldb], http://www.mysql.com/[MySQL] and more.
 
-[[Gora-URIformat]]
-URI format
-~~~~~~~~~~
+### URI format
 
 [source,text]
 ---------------------------
@@ -66,9 +60,7 @@ _Java DSL_
 to("gora:foobar?keyClass=java.lang.Long&valueClass=org.apache.camel.component.gora.generated.Pageview&dataStoreClass=org.apache.gora.hbase.store.HBaseStore")
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Gora-Configuratiion]]
-Configuratiion
-~~~~~~~~~~~~~~
+### Configuratiion
 
 Using camel-gora needs some configuration. This mainly involve to
 configure the _AvroStore_ through the _gora.properties_ file and to
@@ -79,9 +71,7 @@ Extensive information for this configuration can be found in the apache
 http://gora.apache.org/current/index.html[gora documentation] and the
 http://gora.apache.org/current/gora-conf.html[gora-conf] page.
 
-[[Gora-Options]]
-Options
-~~~~~~~
+### Options
 
 
 // component options: START
@@ -93,44 +83,53 @@ The Gora component has no options.
 
 
 // endpoint options: START
-The Gora component supports 22 endpoint options which are listed below:
+The Gora endpoint is configured using URI syntax:
 
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+    gora:name
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Instance name
-| dataStoreClass | common |  | String | The type of the dataStore
-| keyClass | common |  | String | The type class of the key
-| valueClass | common |  | String | The type of the value
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| concurrentConsumers | consumer | 1 | int | Number of concurrent consumers
-| endKey | consumer |  | Object | The End Key
-| endTime | consumer |  | long | The End Time
-| fields | consumer |  | Strings | The Fields
-| keyRangeFrom | consumer |  | Object | The Key Range From
-| keyRangeTo | consumer |  | Object | The Key Range To
-| limit | consumer |  | long | The Limit
-| startKey | consumer |  | Object | The Start Key
-| startTime | consumer |  | long | The Start Time
-| timeRangeFrom | consumer |  | long | The Time Range From
-| timeRangeTo | consumer |  | long | The Time Range To
-| timestamp | consumer |  | long | The Timestamp
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| flushOnEveryOperation | producer | true | boolean | Flush on every operation
-| hadoopConfiguration | advanced |  | Configuration | Hadoop Configuration
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **name** | *Required* Instance name |  | String
 |=======================================================================
-{% endraw %}
+
+#### Query Parameters (21 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **dataStoreClass** (common) | The type of the dataStore |  | String
+| **keyClass** (common) | The type class of the key |  | String
+| **valueClass** (common) | The type of the value |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **concurrentConsumers** (consumer) | Number of concurrent consumers | 1 | int
+| **endKey** (consumer) | The End Key |  | Object
+| **endTime** (consumer) | The End Time |  | long
+| **fields** (consumer) | The Fields |  | Strings
+| **keyRangeFrom** (consumer) | The Key Range From |  | Object
+| **keyRangeTo** (consumer) | The Key Range To |  | Object
+| **limit** (consumer) | The Limit |  | long
+| **startKey** (consumer) | The Start Key |  | Object
+| **startTime** (consumer) | The Start Time |  | long
+| **timeRangeFrom** (consumer) | The Time Range From |  | long
+| **timeRangeTo** (consumer) | The Time Range To |  | long
+| **timestamp** (consumer) | The Timestamp |  | long
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **flushOnEveryOperation** (producer) | Flush on every operation | true | boolean
+| **hadoopConfiguration** (advanced) | Hadoop Configuration |  | Configuration
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
 // endpoint options: END
 
 
 
 
-[[Gora-SupportedGoraOperations]]
-Supported Gora Operations
-~~~~~~~~~~~~~~~~~~~~~~~~~
+### Supported Gora Operations
 
 Supported operations include : *put*, *get*, *delete*, *getSchemaName*,
 *deleteSchema*, *createSchema*, *query*, *deleteByQuery*,
@@ -168,9 +167,7 @@ hold the objects._
 datastore._
 |=======================================================================
 
-[[Gora-GoraHeaders]]
-Gora Headers
-^^^^^^^^^^^^
+### Gora Headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -181,9 +178,7 @@ Gora Headers
 |GoraKey | _Used in order to define the datum key for the operations need it._
 |=======================================================================
 
-[[Gora-Usageexamples]]
-Usage examples
-^^^^^^^^^^^^^^
+### Usage examples
 
 *Create Schema* _(XML DSL)_:
 
@@ -255,9 +250,7 @@ The full usage examples in the form of integration tests can be found at
 https://github.com/ipolyzos/camel-gora-examples/[camel-gora-examples]
 repository.
 
-[[Gora-Moreresources]]
-More resources
-^^^^^^^^^^^^^^
+### More resources
 
 For more please information and in depth configuration refer to the
 http://gora.apache.org/current/overview.html[Apache Gora Documentation]
