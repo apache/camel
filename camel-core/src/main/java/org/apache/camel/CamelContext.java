@@ -1975,6 +1975,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Adds a {@link LogListener}.
      */
-    void addlogListener(LogListener listener);
+    void addLogListener(LogListener listener);
 
 }
