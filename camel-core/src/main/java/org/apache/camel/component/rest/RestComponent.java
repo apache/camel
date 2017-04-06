@@ -24,7 +24,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.Metadata;
@@ -33,13 +35,13 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
  * Rest component.
  */
-public class RestComponent extends DefaultComponent {
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
+public class RestComponent extends DefaultComponent implements VerifiableComponent {
 
     @Metadata(label = "common")
     private String componentName;
@@ -230,4 +232,13 @@ public class RestComponent extends DefaultComponent {
         }
     }
 
+    /**
+     * Get the {@link ComponentVerifier}
+     *
+     * @return the Component Verifier
+     */
+    @Override
+    public ComponentVerifier getVerifier() {
+        return new RestComponentVerifier(this);
+    }
 }

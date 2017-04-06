@@ -17,15 +17,16 @@
 package org.apache.camel.component.http4;
 
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.impl.verifier.DefaultComponentVerifier;
 import org.apache.camel.impl.verifier.ResultBuilder;
 import org.apache.camel.impl.verifier.ResultErrorBuilder;
-import org.apache.camel.impl.verifier.ResultErrorHelper;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -48,11 +49,23 @@ final class HttpComponentVerifier extends DefaultComponentVerifier {
 
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
-        // The default is success
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS);
+        // Default is success
+        final ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS);
+        // Make a copy to avoid clashing with parent validation
+        final HashMap<String, Object> verifyParams = new HashMap<>(parameters);
+        // Check if validation is rest-related
+        final boolean isRest = verifyParams.entrySet().stream().anyMatch(e -> e.getKey().startsWith("rest."));
+
+        if (isRest) {
+            // Build the httpUri from rest configuration
+            verifyParams.put("httpUri", buildHttpUriFromRestParameters(parameters));
+
+            // Cleanup parameters map from rest related stuffs
+            verifyParams.entrySet().removeIf(e -> e.getKey().startsWith("rest."));
+        }
 
         // Validate using the catalog
-        super.verifyParametersAgainstCatalog(builder, parameters);
+        super.verifyParametersAgainstCatalog(builder, verifyParams);
 
         return builder.build();
     }
@@ -64,70 +77,97 @@ final class HttpComponentVerifier extends DefaultComponentVerifier {
     @Override
     protected Result verifyConnectivity(Map<String, Object> parameters) {
         // Default is success
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
+        final ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
+        // Make a copy to avoid clashing with parent validation
+        final HashMap<String, Object> verifyParams = new HashMap<>(parameters);
+        // Check if validation is rest-related
+        final boolean isRest = verifyParams.entrySet().stream().anyMatch(e -> e.getKey().startsWith("rest."));
 
-        Optional<String> uri = getOption(parameters, "httpUri", String.class);
-        if (!uri.isPresent()) {
-            // lack of httpUri is a blocking issue
-            builder.error(ResultErrorHelper.requiresOption("httpUri", parameters));
-        } else {
-            builder.error(parameters, this::verifyHttpConnectivity);
+        if (isRest) {
+            // Build the httpUri from rest configuration
+            verifyParams.put("httpUri", buildHttpUriFromRestParameters(parameters));
+
+            // Cleanup parameters from rest related stuffs
+            verifyParams.entrySet().removeIf(e -> e.getKey().startsWith("rest."));
+        }
+
+        String httpUri = getOption(verifyParams, "httpUri", String.class).orElse(null);
+        if (ObjectHelper.isEmpty(httpUri)) {
+            builder.error(
+                ResultErrorBuilder.withMissingOption("httpUri")
+                    .detail("rest", isRest)
+                    .build()
+            );
+        }
+
+        try {
+            CloseableHttpClient httpclient = createHttpClient(verifyParams);
+            HttpUriRequest request = new HttpGet(httpUri);
+
+            try (CloseableHttpResponse response = httpclient.execute(request)) {
+                int code = response.getStatusLine().getStatusCode();
+                String okCodes = getOption(verifyParams, "okStatusCodeRange", String.class).orElse("200-299");
+
+                if (!HttpHelper.isStatusCodeOk(code, okCodes)) {
+                    if (code == 401) {
+                        // Unauthorized, add authUsername and authPassword to the list
+                        // of parameters in error
+                        builder.error(
+                            ResultErrorBuilder.withHttpCode(code)
+                                .description(response.getStatusLine().getReasonPhrase())
+                                .parameterKey("authUsername")
+                                .parameterKey("authPassword")
+                                .build()
+                        );
+                    } else if (code >= 300 && code < 400) {
+                        // redirect
+                        builder.error(
+                            ResultErrorBuilder.withHttpCode(code)
+                                .description(response.getStatusLine().getReasonPhrase())
+                                .parameterKey("httpUri")
+                                .detail(VerificationError.HttpAttribute.HTTP_REDIRECT, () -> HttpUtil.responseHeaderValue(response, "location"))
+                                .build()
+                        );
+                    } else if (code >= 400) {
+                        // generic http error
+                        builder.error(
+                            ResultErrorBuilder.withHttpCode(code)
+                                .description(response.getStatusLine().getReasonPhrase())
+                                .build()
+                        );
+                    }
+                }
+            } catch (UnknownHostException e) {
+                builder.error(
+                    ResultErrorBuilder.withException(e)
+                        .parameterKey("httpUri")
+                        .build()
+                );
+            }
+        } catch (Exception e) {
+            builder.error(ResultErrorBuilder.withException(e).build());
         }
 
         return builder.build();
     }
 
-    private void verifyHttpConnectivity(ResultBuilder builder, Map<String, Object> parameters) throws Exception {
-        Optional<String> uri = getOption(parameters, "httpUri", String.class);
-
-        CloseableHttpClient httpclient = createHttpClient(parameters);
-        HttpUriRequest request = new HttpGet(uri.get());
-
-        try (CloseableHttpResponse response = httpclient.execute(request)) {
-            int code = response.getStatusLine().getStatusCode();
-            String okCodes = getOption(parameters, "okStatusCodeRange", String.class).orElse("200-299");
-
-            if (!HttpHelper.isStatusCodeOk(code, okCodes)) {
-                if (code == 401) {
-                    // Unauthorized, add authUsername and authPassword to the list
-                    // of parameters in error
-                    builder.error(
-                        ResultErrorBuilder.withHttpCode(code)
-                            .description(response.getStatusLine().getReasonPhrase())
-                            .parameterKey("authUsername")
-                            .parameterKey("authPassword")
-                            .build()
-                    );
-                } else if (code >= 300 && code < 400) {
-                    // redirect
-                    builder.error(
-                        ResultErrorBuilder.withHttpCode(code)
-                            .description(response.getStatusLine().getReasonPhrase())
-                            .parameterKey("httpUri")
-                            .detail(VerificationError.HttpAttribute.HTTP_REDIRECT, () -> HttpUtil.responseHeaderValue(response, "location"))
-                            .build()
-                    );
-                } else if (code >= 400) {
-                    // generic http error
-                    builder.error(
-                        ResultErrorBuilder.withHttpCode(code)
-                            .description(response.getStatusLine().getReasonPhrase())
-                            .build()
-                    );
-                }
-            }
-        } catch (UnknownHostException e) {
-            builder.error(
-                ResultErrorBuilder.withException(e)
-                    .parameterKey("httpUri")
-                    .build()
-            );
-        }
-    }
-
     // *********************************
     // Helpers
     // *********************************
+
+    private String buildHttpUriFromRestParameters(Map<String, Object> parameters) {
+        // We are doing rest endpoint validation but as today the endpoint
+        // can't do any param substitution so the validation is performed
+        // against the http uri
+        String httpUri = getOption(parameters, "rest.host", String.class).orElse(null);
+        String path = getOption(parameters, "rest.path", String.class).map(FileUtil::stripLeadingSeparator).orElse(null);
+
+        if (ObjectHelper.isNotEmpty(httpUri) && ObjectHelper.isNotEmpty(path)) {
+            httpUri = httpUri + "/" + path;
+        }
+
+        return httpUri;
+    }
 
     private Optional<HttpClientConfigurer> configureAuthentication(Map<String, Object> parameters) {
         Optional<String> authUsername = getOption(parameters, "authUsername", String.class);

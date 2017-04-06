@@ -62,7 +62,7 @@ public class DefaultComponentVerifier implements ComponentVerifier {
             return verifyConnectivity(parameters);
         }
 
-        throw new IllegalArgumentException("Unsupported Verifier scope: " + scope);
+        return ResultBuilder.unsupportedScope(scope).build();
     }
 
     protected Result verifyConnectivity(Map<String, Object> parameters) {
@@ -83,6 +83,10 @@ public class DefaultComponentVerifier implements ComponentVerifier {
     // *************************************
 
     protected void verifyParametersAgainstCatalog(ResultBuilder builder, Map<String, Object> parameters) {
+        verifyParametersAgainstCatalog(builder, parameters, new CatalogVerifierCustomizer());
+    }
+
+    protected void verifyParametersAgainstCatalog(ResultBuilder builder, Map<String, Object> parameters, CatalogVerifierCustomizer customizer) {
         String scheme = defaultScheme;
         if (parameters.containsKey("scheme")) {
             scheme = parameters.get("scheme").toString();
@@ -105,27 +109,39 @@ public class DefaultComponentVerifier implements ComponentVerifier {
         );
 
         if (!result.isSuccess()) {
-            stream(result.getUnknown())
-                .map(option -> ResultErrorBuilder.withUnknownOption(option).build())
-                .forEach(builder::error);
-            stream(result.getRequired())
-                .map(option -> ResultErrorBuilder.withMissingOption(option).build())
-                .forEach(builder::error);
-            stream(result.getInvalidBoolean())
-                .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
-                .forEach(builder::error);
-            stream(result.getInvalidInteger())
-                .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
-                .forEach(builder::error);
-            stream(result.getInvalidNumber())
-                .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
-                .forEach(builder::error);
-            stream(result.getInvalidEnum())
-                .map(entry ->
-                    ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue())
-                        .detail("enum.values", result.getEnumChoices(entry.getKey()))
-                        .build())
-                .forEach(builder::error);
+            if (customizer.isIncludeUnknown()) {
+                stream(result.getUnknown())
+                    .map(option -> ResultErrorBuilder.withUnknownOption(option).build())
+                    .forEach(builder::error);
+            }
+            if (customizer.isIncludeRequired()) {
+                stream(result.getRequired())
+                    .map(option -> ResultErrorBuilder.withMissingOption(option).build())
+                    .forEach(builder::error);
+            }
+            if (customizer.isIncludeInvalidBoolean()) {
+                stream(result.getInvalidBoolean())
+                    .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
+                    .forEach(builder::error);
+            }
+            if (customizer.isIncludeInvalidInteger()) {
+                stream(result.getInvalidInteger())
+                    .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
+                    .forEach(builder::error);
+            }
+            if (customizer.isIncludeInvalidNumber()) {
+                stream(result.getInvalidNumber())
+                    .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
+                    .forEach(builder::error);
+            }
+            if (customizer.isIncludeInvalidEnum()) {
+                stream(result.getInvalidEnum())
+                    .map(entry ->
+                        ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue())
+                            .detail("enum.values", result.getEnumChoices(entry.getKey()))
+                            .build())
+                    .forEach(builder::error);
+            }
         }
     }
 
