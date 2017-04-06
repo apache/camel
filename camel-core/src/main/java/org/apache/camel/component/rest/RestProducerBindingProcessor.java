@@ -39,6 +39,8 @@ import org.apache.camel.util.ServiceHelper;
  * <p/>
  * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform
  * from xml/json to Java Objects and reverse again.
+ * <p/>
+ * The rest-dsl consumer side is implemented in {@link org.apache.camel.processor.RestBindingAdvice}
  */
 public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
 
