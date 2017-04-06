@@ -976,39 +976,39 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer");
+                    .to("infinispan?cacheContainer=#cacheContainer");
                 from("direct:put")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=PUT");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=PUT");
                 from("direct:putifabsent")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=PUTIFABSENT");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=PUTIFABSENT");
                 from("direct:get")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=GET");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=GET");
                 from("direct:remove")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REMOVE");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=REMOVE");
                 from("direct:clear")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CLEAR");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=CLEAR");
                 from("direct:replace")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REPLACE");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=REPLACE");
                 from("direct:containskey")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CONTAINSKEY");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=CONTAINSKEY");
                 from("direct:containsvalue")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CONTAINSVALUE");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=CONTAINSVALUE");
                 from("direct:size")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=SIZE");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=SIZE");
                 from("direct:putasync")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=PUTASYNC");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=PUTASYNC");
                 from("direct:putallasync")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=PUTALLASYNC");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=PUTALLASYNC");
                 from("direct:putifabsentasync")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=PUTIFABSENTASYNC");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=PUTIFABSENTASYNC");
                 from("direct:replaceasync")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REPLACEASYNC");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=REPLACEASYNC");
                 from("direct:removeasync")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=REMOVEASYNC");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=REMOVEASYNC");
                 from("direct:clearasync")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=CLEARASYNC");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=CLEARASYNC");
                 from("direct:stats")
-                        .to("infinispan://localhost?cacheContainer=#cacheContainer&command=STATS");
+                    .to("infinispan?cacheContainer=#cacheContainer&command=STATS");
             }
         };
     }

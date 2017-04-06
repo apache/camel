@@ -86,11 +86,11 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query");
+                    .to("infinispan:remote_query?cacheContainer=#myCustomContainer");
                 from("direct:noQueryResults")
-                    .to("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#noResultQueryBuilder");
+                    .to("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#noResultQueryBuilder");
                 from("direct:queryWithResults")
-                    .to("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#withResultQueryBuilder");
+                    .to("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#withResultQueryBuilder");
             }
         };
     }
@@ -105,19 +105,15 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
         manager = new RemoteCacheManager(builder.build());
 
-        RemoteCache<String, String> metadataCache = manager
-                .getCache(ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
-        metadataCache
-                .put("sample_bank_account/bank.proto",
-                        Util.read(InfinispanRemoteQueryProducerIT.class
-                                .getResourceAsStream("/sample_bank_account/bank.proto")));
-        MarshallerRegistration.registerMarshallers(ProtoStreamMarshaller
-                .getSerializationContext(manager));
+        RemoteCache<String, String> metadataCache = manager.getCache(ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
+        metadataCache.put(
+            "sample_bank_account/bank.proto",
+            Util.read(InfinispanRemoteQueryProducerIT.class.getResourceAsStream("/sample_bank_account/bank.proto"))
+        );
 
-        SerializationContext serCtx = ProtoStreamMarshaller
-                .getSerializationContext(manager);
-        serCtx.registerProtoFiles(FileDescriptorSource
-                .fromResources("/sample_bank_account/bank.proto"));
+        MarshallerRegistration.registerMarshallers(ProtoStreamMarshaller.getSerializationContext(manager));
+        SerializationContext serCtx = ProtoStreamMarshaller.getSerializationContext(manager);
+        serCtx.registerProtoFiles(FileDescriptorSource.fromResources("/sample_bank_account/bank.proto"));
         serCtx.registerMarshaller(new UserMarshaller());
         serCtx.registerMarshaller(new GenderMarshaller());
     }
