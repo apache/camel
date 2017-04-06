@@ -15,10 +15,10 @@ Testing
 Testing is a crucial activity in any piece of software development or
 integration. Typically Camel Riders use various different
 link:components.html[technologies] wired together in a variety of
-link:enterprise-integration-patterns.html[patterns] with different
+link:enterprise-integration-patterns.adoc[patterns] with different
 link:languages.html[expression languages] together with different forms
-of link:bean-integration.html[Bean Integration] and
-link:dependency-injection.html[Dependency Injection] so its very easy
+of link:bean-integration.adoc[Bean Integration] and
+link:dependency-injection.adoc[Dependency Injection] so its very easy
 for things to go wrong! {icon-frown}. Testing is the crucial weapon to ensure
 that things work as you would expect {icon-smile}.
 
@@ -40,7 +40,7 @@ The following mechanisms are supported
 library letting you easily create Camel test cases using a single Java
 class for all your configuration and routing without using link:cdi.html[CDI],
 link:spring.html[Spring] or link:guice.html[Guice] for
-link:dependency-injection.html[Dependency Injection] which does not
+link:dependency-injection.adoc[Dependency Injection] which does not
 require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
 Supports JUnit 3.x (deprecated) and JUnit 4.x based tests.
 
@@ -53,7 +53,7 @@ or https://ops4j1.jira.com/wiki/display/PAXEXAM4[PAX Exam], can be used
 for more advanced test cases, where you need to configure your system under
 test in a very fine-grained way or target specific CDI containers.
 
-|link:spring-testing.html[Spring Testing] |camel-test-spring |Supports
+|link:spring-testing.adoc[Spring Testing] |camel-test-spring |Supports
 JUnit 3.x (deprecated) or JUnit 4.x based tests that bootstrap a test
 environment using Spring without needing to be familiar with Spring
 Test. The  plain JUnit 3.x/4.x based tests work very similar to the
@@ -63,7 +63,7 @@ common in Spring Test. The Spring Test based tests provide feature
 parity with the plain JUnit 3.x/4.x based testing approach. Notice
 `camel-test-spring` is a new component in *Camel 2.10* onwards. For
 older Camel release use `camel-test` which has built-in
-link:spring-testing.html[Spring Testing].
+link:spring-testing.adoc[Spring Testing].
 
 |link:test-blueprint.html[Blueprint Testing] |camel-test-blueprint
 |*Camel 2.10:* Provides the ability to do unit testing on blueprint
@@ -74,16 +74,16 @@ dependency inject your test classes
 
 |Camel TestNG |camel-testng |Supports plain TestNG based tests with or
 without link:cdi.html[CDI], link:spring.html[Spring] or link:guice.html[Guice]
-for link:dependency-injection.html[Dependency Injection] which does not
+for link:dependency-injection.adoc[Dependency Injection] which does not
 require an in-depth knowledge of CDI, Spring + Spring Test or Guice.
 Also from *Camel 2.10* onwards, this component supports Spring Test based tests
 that use the declarative style of test configuration and injection common
 in Spring Test and described in more detail under
-link:spring-testing.html[Spring Testing].
+link:spring-testing.adoc[Spring Testing].
 |=======================================================================
 
 In all approaches the test classes look pretty much the same in that
-they all reuse the link:bean-integration.html[Camel binding and
+they all reuse the link:bean-integration.adoc[Camel binding and
 injection annotations].
 
 [[Testing-CamelTestExample]]
@@ -121,7 +121,7 @@ and the test classes that come with it.
 Spring Test with XML Config Example
 +++++++++++++++++++++++++++++++++++
 
-Here is the link:spring-testing.html[Spring Testing]
+Here is the link:spring-testing.adoc[Spring Testing]
 link:../../../components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
 using XML Config]:
 
@@ -131,8 +131,8 @@ include::../../../components/camel-spring/src/test/java/org/apache/camel/spring/
 ----
 
 Notice that we use @`DirtiesContext` on the test methods to force
-link:spring-testing.html[Spring Testing] to automatically reload the
-link:camelcontext.html[`CamelContext`] after each test method - this
+link:spring-testing.adoc[Spring Testing] to automatically reload the
+link:camelcontext.adoc[`CamelContext`] after each test method - this
 ensures that the tests don't clash with each other (e.g. one test method
 sending to an endpoint that is then reused in another test method).
 
@@ -150,7 +150,7 @@ include::../../../components/camel-spring/src/test/resources/org/apache/camel/sp
 Spring Test with Java Config Example
 ++++++++++++++++++++++++++++++++++++
 
-Here is the link:spring-testing.html[Spring Testing]
+Here is the link:spring-testing.adoc[Spring Testing]
 link:../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
 using Java Config]:
 
@@ -180,6 +180,8 @@ Since *Camel 2.11.0* you can use the `CamelSpringJUnit4ClassRunner` with
 link:../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[example
 using Java Config with `CamelSpringJUnit4ClassRunner`]:
 
+Since *Camel 2.18.0* `CamelSpringJUnit4ClassRunner` is deprecated. you can use the `CamelSpringRunner`
+
 [source,java]
 ----
 include::../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[tags=example]
@@ -189,19 +191,19 @@ include::../../../components/camel-spring-javaconfig/src/test/java/org/apache/ca
 Spring Test with XML Config and Declarative Configuration Example
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Here is a Camel test support enhanced link:spring-testing.html[Spring
-Testing] link:../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringJUnit4ClassRunnerPlainTest.java[example
+Here is a Camel test support enhanced link:spring-testing.adoc[Spring
+Testing] link:../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
 using XML Config and pure Spring Test based configuration of the Camel
 Context]:
 
 [source,java]
 ----
-include::../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringJUnit4ClassRunnerPlainTest.java[tags=example]
+include::../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[tags=example]
 ----
 
 Notice how a custom test runner is used with the `@RunWith` annotation
 to support the features of `CamelTestSupport` through annotations on
-the test class.  See link:spring-testing.html[Spring Testing] for a list
+the test class.  See link:spring-testing.adoc[Spring Testing] for a list
 of annotations you can use in your tests.
 
 [[Testing-BlueprintTest]]
