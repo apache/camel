@@ -18,6 +18,7 @@ package org.apache.camel.component.consul;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -34,7 +35,9 @@ import org.apache.camel.component.consul.enpoint.ConsulSessionProducer;
 import org.apache.camel.component.consul.enpoint.ConsulStatusProducer;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 /**
  * Represents the component that manages {@link ConsulEndpoint}.
@@ -145,6 +148,11 @@ public class ConsulComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ConsulConfiguration configuration = Optional.ofNullable(this.configuration).orElseGet(ConsulConfiguration::new).copy();
         configuration.setCamelContext(getCamelContext());
+
+        // using global ssl context parameters if set
+        if (configuration.isUseGlobalSslContextParameters() && configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
 
         setProperties(configuration, parameters);
 

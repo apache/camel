@@ -18,13 +18,17 @@ package org.apache.camel.component.mina2;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.mina.core.filterchain.IoFilter;
 
 /**
@@ -66,6 +70,10 @@ public class Mina2Component extends UriEndpointComponent {
         config.setProtocol(u.getScheme());
         config.setFilters(resolveAndRemoveReferenceListParameter(parameters, "filters", IoFilter.class));
         setProperties(config, parameters);
+
+        if (config.isUseGlobalSslContextParameters() && config.getSslContextParameters() == null) {
+            config.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
 
         return createEndpoint(uri, config);
     }

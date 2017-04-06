@@ -35,6 +35,8 @@ public class StompConfiguration implements Cloneable {
     private String host;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     /**
      * Returns a copy of this configuration
@@ -103,4 +105,14 @@ public class StompConfiguration implements Cloneable {
         this.sslContextParameters = sslContextParameters;
     }
 
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of Camel global SSL configuration
+     */
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
 }

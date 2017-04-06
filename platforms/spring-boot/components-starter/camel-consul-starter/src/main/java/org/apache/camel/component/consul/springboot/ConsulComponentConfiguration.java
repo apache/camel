@@ -179,6 +179,10 @@ public class ConsulComponentConfiguration {
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
+         * Enable usage of Camel global SSL configuration
+         */
+        private Boolean useGlobalSslContextParameters;
+        /**
          * Sets the ACL token to be used with Consul
          */
         private String aclToken;
@@ -307,6 +311,15 @@ public class ConsulComponentConfiguration {
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
+        }
+
+        public Boolean getUseGlobalSslContextParameters() {
+            return useGlobalSslContextParameters;
+        }
+
+        public void setUseGlobalSslContextParameters(
+                Boolean useGlobalSslContextParameters) {
+            this.useGlobalSslContextParameters = useGlobalSslContextParameters;
         }
 
         public String getAclToken() {

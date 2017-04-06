@@ -19,15 +19,19 @@ package org.apache.camel.component.ahc;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -65,6 +69,11 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String addressUri = createAddressUri(uri, remaining);
 
+        SSLContextParameters ssl = getSslContextParameters();
+        if (ssl == null) {
+            ssl = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+        }
+
         // Do not set the HTTP URI because we still have all of the Camel internal
         // parameters in the URI at this point.
         AhcEndpoint endpoint = createAhcEndpoint(uri, this, null);
@@ -72,7 +81,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         endpoint.setClient(getClient());
         endpoint.setClientConfig(getClientConfig());
         endpoint.setBinding(getBinding());
-        endpoint.setSslContextParameters(getSslContextParameters());
+        endpoint.setSslContextParameters(ssl);
         
         setProperties(endpoint, parameters);
 

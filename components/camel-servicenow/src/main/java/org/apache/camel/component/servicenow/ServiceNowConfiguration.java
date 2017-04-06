@@ -110,6 +110,8 @@ public class ServiceNowConfiguration implements Cloneable {
     private ServiceNowRelease release = ServiceNowRelease.HELSINKI;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
     @UriParam(label = "advanced")
     private HTTPClientPolicy httpClientPolicy;
     @UriParam(label = "advanced")
@@ -502,6 +504,17 @@ public class ServiceNowConfiguration implements Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of Camel global SSL configuration.
+     */
+    public void setUseGlobalSslContextParameters(boolean useSslContextParameters) {
+        this.useGlobalSslContextParameters = useSslContextParameters;
     }
 
     public HTTPClientPolicy getHttpClientPolicy() {

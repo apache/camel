@@ -202,6 +202,8 @@ public class KafkaConfiguration implements Cloneable {
     // SSL
     @UriParam(label = "common,security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "common,security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
     // SSL
     // ssl.key.password
     @UriParam(label = "producer,security", secret = true)
@@ -414,6 +416,7 @@ public class KafkaConfiguration implements Cloneable {
      * @param sslContextParameters SSL configuration
      */
     private void applySslConfiguration(Properties props, SSLContextParameters sslContextParameters) {
+
         if (sslContextParameters != null) {
             addPropertyIfNotNull(props, SslConfigs.SSL_PROTOCOL_CONFIG, sslContextParameters.getSecureSocketProtocol());
             addPropertyIfNotNull(props, SslConfigs.SSL_PROVIDER_CONFIG, sslContextParameters.getProvider());
@@ -953,6 +956,17 @@ public class KafkaConfiguration implements Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of Camel global SSL config
+     */
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public String getSslKeyPassword() {

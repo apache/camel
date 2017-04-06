@@ -64,7 +64,7 @@ with the following path and query parameters:
 | **instanceName** | *Required* The ServiceNow instance name |  | String
 |=======================================================================
 
-#### Query Parameters (40 parameters):
+#### Query Parameters (41 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -108,6 +108,7 @@ with the following path and query parameters:
 | **proxyPassword** (security) | Password for proxy authentication |  | String
 | **proxyUserName** (security) | Username for proxy authentication |  | String
 | **sslContextParameters** (security) | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of Camel global SSL configuration. | false | boolean
 | **userName** (security) | *Required* ServiceNow user account name MUST be provided |  | String
 |=======================================================================
 // endpoint options: END

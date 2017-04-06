@@ -17,6 +17,8 @@
 package org.apache.camel.component.servicenow;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
@@ -24,8 +26,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 /**
  * Represents the component that manages {@link ServiceNowEndpoint}.
@@ -76,6 +80,10 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
         }
         if (!configuration.hasOauthTokenUrl()) {
             configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
+        }
+
+        if (configuration.isUseGlobalSslContextParameters() && configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
         }
 
         return new ServiceNowEndpoint(uri, this, configuration, instanceName);

@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
+import java.util.function.Supplier;
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
@@ -40,6 +40,7 @@ import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -47,6 +48,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -184,6 +186,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         if (sslContextParameters == null) {
             sslContextParameters = getSslContextParameters();
+        }
+        if (sslContextParameters == null) {
+            sslContextParameters = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
         }
         
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);

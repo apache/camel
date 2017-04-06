@@ -17,10 +17,14 @@
 package org.apache.camel.component.stomp;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 public class StompComponent extends UriEndpointComponent {
 
@@ -48,6 +52,11 @@ public class StompComponent extends UriEndpointComponent {
 
         StompEndpoint endpoint = new StompEndpoint(uri, this, config, destination);
         setProperties(endpoint, parameters);
+
+        if (config.isUseGlobalSslContextParameters() && config.getSslContextParameters() == null) {
+            config.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
+
         return endpoint;
     }
 
@@ -89,4 +98,5 @@ public class StompComponent extends UriEndpointComponent {
     public void setHost(String host) {
         configuration.setHost(host);
     }
+
 }

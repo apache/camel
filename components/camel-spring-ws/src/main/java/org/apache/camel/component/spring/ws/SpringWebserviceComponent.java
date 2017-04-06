@@ -19,6 +19,8 @@ package org.apache.camel.component.spring.ws;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.camel.CamelContext;
@@ -35,6 +37,7 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -69,6 +72,11 @@ public class SpringWebserviceComponent extends UriEndpointComponent {
         setProperties(configuration, parameters);
         configureProducerConfiguration(remaining, configuration);
         configureMessageFilter(configuration);
+
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
+
         return new SpringWebserviceEndpoint(this, uri, configuration);
     }
 

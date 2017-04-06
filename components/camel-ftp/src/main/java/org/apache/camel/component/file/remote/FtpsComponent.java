@@ -18,10 +18,14 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -57,7 +61,11 @@ public class FtpsComponent extends FtpComponent {
         extractAndSetFtpClientTrustStoreParameters(parameters, endpoint);
         extractAndSetFtpClientConfigParameters(parameters, endpoint);
         extractAndSetFtpClientParameters(parameters, endpoint);
-        
+
+        if (endpoint.getSslContextParameters() == null) {
+            endpoint.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
+
         return endpoint;
     }
 

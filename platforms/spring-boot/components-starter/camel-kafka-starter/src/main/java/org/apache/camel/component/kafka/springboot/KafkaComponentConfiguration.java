@@ -325,6 +325,10 @@ public class KafkaComponentConfiguration {
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
+         * Enable usage of Camel global SSL config
+         */
+        private Boolean useGlobalSslContextParameters = false;
+        /**
          * The password of the private key in the key store file. This is
          * optional for client.
          */
@@ -931,6 +935,15 @@ public class KafkaComponentConfiguration {
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
+        }
+
+        public Boolean getUseGlobalSslContextParameters() {
+            return useGlobalSslContextParameters;
+        }
+
+        public void setUseGlobalSslContextParameters(
+                Boolean useGlobalSslContextParameters) {
+            this.useGlobalSslContextParameters = useGlobalSslContextParameters;
         }
 
         public String getSslKeyPassword() {

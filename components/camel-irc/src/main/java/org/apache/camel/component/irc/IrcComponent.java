@@ -18,9 +18,14 @@ package org.apache.camel.component.irc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
@@ -30,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
  *
- * @version 
+ * @version
  */
 public class IrcComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
@@ -69,16 +74,21 @@ public class IrcComponent extends UriEndpointComponent {
         IRCEventListener ircLogger;
 
         if (configuration.getUsingSSL()) {
-            
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
                     new Object[]{configuration.getHostname(), configuration.getListOfChannels(), configuration.getNickname(), configuration.getUsername()});
             }
-            
-            if (configuration.getSslContextParameters() != null) {
+
+            SSLContextParameters sslParams = configuration.getSslContextParameters();
+            if (sslParams == null) {
+                sslParams = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+            }
+
+            if (sslParams != null) {
                 conn = new CamelSSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                                                  configuration.getNickname(), configuration.getUsername(), configuration.getRealname(),
-                                                 configuration.getSslContextParameters(), getCamelContext());
+                                                 sslParams, getCamelContext());
             } else {
                 SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                         configuration.getNickname(), configuration.getUsername(), configuration.getRealname());

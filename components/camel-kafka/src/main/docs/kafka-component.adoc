@@ -65,7 +65,7 @@ with the following path and query parameters:
 | **topic** | *Required* Name of the topic to use. On the consumer you can use comma to separate multiple topics. A producer can only send a message to a single topic. |  | String
 |=======================================================================
 
-#### Query Parameters (82 parameters):
+#### Query Parameters (83 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -152,6 +152,7 @@ with the following path and query parameters:
 | **sslTruststoreLocation** (security) | The location of the trust store file. |  | String
 | **sslTruststorePassword** (security) | The password for the trust store file. |  | String
 | **sslTruststoreType** (security) | The file format of the trust store file. Default value is JKS. | JKS | String
+| **useGlobalSslContext Parameters** (security) | Enable usage of Camel global SSL config | false | boolean
 |=======================================================================
 // endpoint options: END
 

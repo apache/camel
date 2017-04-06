@@ -173,6 +173,10 @@ public class Mina2ComponentConfiguration {
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
+         * Enable usage of Camel global sslContextParameters.
+         */
+        private Boolean useGlobalSslContextParameters = true;
+        /**
          * Whether to auto start SSL handshake.
          */
         private Boolean autoStartTls = true;
@@ -356,6 +360,15 @@ public class Mina2ComponentConfiguration {
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
+        }
+
+        public Boolean getUseGlobalSslContextParameters() {
+            return useGlobalSslContextParameters;
+        }
+
+        public void setUseGlobalSslContextParameters(
+                Boolean useGlobalSslContextParameters) {
+            this.useGlobalSslContextParameters = useGlobalSslContextParameters;
         }
 
         public Boolean getAutoStartTls() {

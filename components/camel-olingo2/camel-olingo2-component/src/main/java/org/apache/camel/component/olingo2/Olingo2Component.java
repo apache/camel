@@ -19,15 +19,19 @@ package org.apache.camel.component.olingo2;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -143,6 +147,10 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
             asyncClientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
 
             SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
+            if (sslContextParameters == null) {
+                // use global ssl config
+                sslContextParameters = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+            }
             if (sslContextParameters == null) {
                 // use defaults if not specified
                 sslContextParameters = new SSLContextParameters();

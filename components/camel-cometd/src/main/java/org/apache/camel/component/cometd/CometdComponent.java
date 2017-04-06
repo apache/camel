@@ -22,13 +22,17 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import javax.net.ssl.SSLContext;
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.SecurityPolicy;
 import org.cometd.server.BayeuxServerImpl;
@@ -224,9 +228,13 @@ public class CometdComponent extends UriEndpointComponent {
 
     protected ServerConnector getSslSocketConnector(Server server) throws Exception {
         ServerConnector sslSocketConnector = null;
-        if (sslContextParameters != null) {
+        SSLContextParameters sslParams = this.sslContextParameters;
+        if (sslParams == null) {
+            sslParams = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+        }
+        if (sslParams != null) {
             SslContextFactory sslContextFactory = new CometdComponentSslContextFactory();
-            sslContextFactory.setSslContext(sslContextParameters.createSSLContext(getCamelContext()));
+            sslContextFactory.setSslContext(sslParams.createSSLContext(getCamelContext()));
             sslSocketConnector = new ServerConnector(server, sslContextFactory);
         } else {
             SslContextFactory sslContextFactory = new SslContextFactory();

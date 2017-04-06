@@ -20,7 +20,9 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
@@ -34,11 +36,13 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.eclipse.jetty.client.HttpProxy;
 import org.eclipse.jetty.client.Origin;
 import org.eclipse.jetty.client.ProxyConfiguration;
@@ -294,8 +298,13 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
                 httpClient = config.getHttpClient();
             } else {
                 // set ssl context parameters if set
-                final SSLContextParameters contextParameters = sslContextParameters != null
-                    ? sslContextParameters : new SSLContextParameters();
+                SSLContextParameters contextParameters = sslContextParameters;
+                if (contextParameters == null) {
+                    contextParameters = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+                }
+                if (contextParameters == null) {
+                    contextParameters = new SSLContextParameters();
+                }
                 final SslContextFactory sslContextFactory = new SslContextFactory();
                 sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 

@@ -23,14 +23,18 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -65,6 +69,8 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     @Metadata(label = "security")
     protected SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "true")
+    protected boolean useGlobalSslContextParameters = true;
     @Metadata(label = "advanced")
     protected ThreadPool threadPool;
     @Metadata(defaultValue = "9292")
@@ -277,7 +283,10 @@ public class WebsocketComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
-
+        Boolean useGlobalSslContextParameters = getAndRemoveParameter(parameters, "useGlobalSslContextParameters", Boolean.class);
+        if (useGlobalSslContextParameters == null) {
+            useGlobalSslContextParameters = this.useGlobalSslContextParameters;
+        }
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         String staticResources = getAndRemoveParameter(parameters, "staticResources", String.class);
         int port = extractPortNumber(remaining);
@@ -296,9 +305,8 @@ public class WebsocketComponent extends UriEndpointComponent {
             // fallback to component configured
             sslContextParameters = getSslContextParameters();
         }
-
-        if (sslContextParameters != null) {
-            endpoint.setSslContextParameters(sslContextParameters);
+        if (useGlobalSslContextParameters && sslContextParameters == null) {
+            sslContextParameters = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
         }
 
         // prefer to use endpoint configured over component configured
@@ -314,6 +322,7 @@ public class WebsocketComponent extends UriEndpointComponent {
         endpoint.setSslContextParameters(sslContextParameters);
         endpoint.setPort(port);
         endpoint.setHost(host);
+        endpoint.setUseGlobalSslContextParameters(useGlobalSslContextParameters);
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -730,6 +739,17 @@ public class WebsocketComponent extends UriEndpointComponent {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of Camel global SSL context parameters
+     */
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Map<String, WebSocketFactory> getSocketFactory() {
