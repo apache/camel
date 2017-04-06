@@ -106,7 +106,35 @@ public class MavenVersionManagerTest extends TestCase {
         assertTrue(names.contains("jms"));
         // camel-ejb does not work in spring-boot
         assertFalse(names.contains("ejb"));
-        // camel-pac-logging does not work in spring-boot
+        // camel-pax-logging does not work in spring-boot
+        assertFalse(names.contains("paxlogging"));
+    }
+
+    @Test
+    public void testRuntimeProviderLoadVersionWithCaching() throws Exception {
+        CamelCatalog catalog = new DefaultCamelCatalog(true);
+        catalog.setVersionManager(new MavenVersionManager());
+        catalog.setRuntimeProvider(new SpringBootRuntimeProvider());
+
+        String version = "2.18.2";
+
+        boolean loaded = catalog.loadVersion(version);
+        assertTrue(loaded);
+
+        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(), catalog.getRuntimeProvider().getProviderArtifactId(), version);
+        assertTrue(loaded);
+
+        assertEquals(version, catalog.getLoadedVersion());
+        assertEquals(version, catalog.getRuntimeProviderLoadedVersion());
+
+        List<String> names = catalog.findComponentNames();
+
+        assertTrue(names.contains("file"));
+        assertTrue(names.contains("ftp"));
+        assertTrue(names.contains("jms"));
+        // camel-ejb does not work in spring-boot
+        assertFalse(names.contains("ejb"));
+        // camel-pax-logging does not work in spring-boot
         assertFalse(names.contains("paxlogging"));
     }
 
