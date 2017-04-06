@@ -20,18 +20,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
 public class InfinispanProducer extends DefaultProducer {
+    private final String cacheName;
     private final InfinispanConfiguration configuration;
     private final InfinispanManager manager;
 
-    public InfinispanProducer(InfinispanEndpoint endpoint, InfinispanConfiguration configuration) {
+    public InfinispanProducer(InfinispanEndpoint endpoint, String cacheName, InfinispanConfiguration configuration) {
         super(endpoint);
+        this.cacheName = cacheName;
         this.configuration = configuration;
         this.manager = new InfinispanManager(endpoint.getCamelContext(), configuration);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        InfinispanOperation.process(exchange, configuration, manager.getCache(exchange));
+        InfinispanOperation.process(exchange, configuration, manager.getCache(exchange, this.cacheName));
     }
 
     @Override

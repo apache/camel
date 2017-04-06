@@ -35,13 +35,15 @@ public class InfinispanConsumer extends DefaultConsumer {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanProducer.class);
     private final InfinispanConfiguration configuration;
     private final InfinispanManager manager;
+    private final String cacheName;
     private InfinispanEventListener listener;
     private InfinispanConsumerHandler consumerHandler;
     private BasicCache<Object, Object> cache;
     private ContinuousQuery<Object, Object> continuousQuery;
 
-    public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, InfinispanConfiguration configuration) {
+    public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, String cacheName, InfinispanConfiguration configuration) {
         super(endpoint, processor);
+        this.cacheName = cacheName;
         this.configuration = configuration;
         this.manager = new InfinispanManager(endpoint.getCamelContext(), configuration);
     }
@@ -72,7 +74,7 @@ public class InfinispanConsumer extends DefaultConsumer {
         super.doStart();
         manager.start();
 
-        cache = manager.getCache();
+        cache = manager.getCache(cacheName);
         if (configuration.hasQueryBuilder()) {
             if (InfinispanUtil.isRemote(cache)) {
                 RemoteCache<Object, Object> remoteCache = InfinispanUtil.asRemote(cache);

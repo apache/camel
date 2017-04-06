@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -31,13 +31,9 @@ import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.context.Flag;
 
 @UriParams
-public class InfinispanConfiguration {
-    @UriPath @Metadata(required = "true")
-    private String host;
-    @UriParam
-    private BasicCacheContainer cacheContainer;
-    @UriParam
-    private String cacheName;
+public class InfinispanConfiguration implements Cloneable {
+    @UriPath
+    private String hosts;
     @UriParam(label = "producer", defaultValue = "put", enums =
              "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,"
            + "get,"
@@ -64,6 +60,10 @@ public class InfinispanConfiguration {
     private String configurationUri;
     @UriParam(label = "advanced")
     private Map<String, String> configurationProperties;
+    @UriParam(label = "advanced")
+    private BasicCacheContainer cacheContainer;
+    @UriParam(label = "advanced")
+    private Object cacheContainerConfiguration;
 
 
     public String getCommand() {
@@ -84,12 +84,12 @@ public class InfinispanConfiguration {
     /**
      * Specifies the host of the cache on Infinispan instance
      */
-    public String getHost() {
-        return host;
+    public String getHosts() {
+        return hosts;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setHosts(String hosts) {
+        this.hosts = hosts;
     }
 
     /**
@@ -101,17 +101,6 @@ public class InfinispanConfiguration {
 
     public void setCacheContainer(BasicCacheContainer cacheContainer) {
         this.cacheContainer = cacheContainer;
-    }
-
-    /**
-     * Specifies the cache name
-     */
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public void setCacheName(String cacheName) {
-        this.cacheName = cacheName;
     }
 
     /**
@@ -233,14 +222,14 @@ public class InfinispanConfiguration {
     }
 
     /**
-     * Infinispan configuration properties.
+     * Implementation specific properties for the CacheManager
      */
     public void setConfigurationProperties(Map<String, String> configurationProperties) {
         this.configurationProperties = configurationProperties;
     }
 
     /**
-     * Add configuration
+     * Adds an implementation specific property for the CacheManager
      */
     public void addConfigurationProperty(String key, String value) {
         if (this.configurationProperties == null) {
@@ -248,5 +237,24 @@ public class InfinispanConfiguration {
         }
 
         this.configurationProperties.put(key, value);
+    }
+
+    public Object getCacheContainerConfiguration() {
+        return cacheContainerConfiguration;
+    }
+
+    /**
+     * The CacheContainer configuration
+     */
+    public void setCacheContainerConfiguration(Object cacheContainerConfiguration) {
+        this.cacheContainerConfiguration = cacheContainerConfiguration;
+    }
+
+    public InfinispanConfiguration copy() {
+        try {
+            return (InfinispanConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

@@ -20,33 +20,38 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
  * For reading/writing from/to Infinispan distributed key/value store and data grid.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:host", consumerClass = InfinispanConsumer.class, label = "cache,datagrid,clustering")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName", consumerClass = InfinispanConsumer.class, label = "cache,datagrid,clustering")
 public class InfinispanEndpoint extends DefaultEndpoint {
+
+    @UriPath(description = "The cache to use")
+    @Metadata(required = "true")
+    private final String cacheName;
+
     @UriParam
-    private InfinispanConfiguration configuration;
+    private final InfinispanConfiguration configuration;
 
-    public InfinispanEndpoint() {
-    }
-
-    public InfinispanEndpoint(String uri, InfinispanComponent component, InfinispanConfiguration configuration) {
+    public InfinispanEndpoint(String uri, String cacheName, InfinispanComponent component, InfinispanConfiguration configuration) {
         super(uri, component);
+        this.cacheName = cacheName;
         this.configuration = configuration;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new InfinispanProducer(this, configuration);
+        return new InfinispanProducer(this, cacheName, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new InfinispanConsumer(this, processor, configuration);
+        return new InfinispanConsumer(this, processor, cacheName, configuration);
     }
 
     @Override
@@ -54,4 +59,11 @@ public class InfinispanEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    public InfinispanConfiguration getConfiguration() {
+        return configuration;
+    }
 }

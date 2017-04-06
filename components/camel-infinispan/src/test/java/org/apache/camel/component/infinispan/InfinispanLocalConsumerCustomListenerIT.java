@@ -23,7 +23,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class InfinispanLocalConsumerCustomListenerIT extends InfinispanTestSupport {
-
     private static final String CUSTOM_CACHE_NAME = "customCacheName";
 
     @EndpointInject(uri = "mock:result")
@@ -41,8 +40,8 @@ public class InfinispanLocalConsumerCustomListenerIT extends InfinispanTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan://?cacheContainer=#cacheContainer&cacheName=" + CUSTOM_CACHE_NAME + "&customListener=#myCustomListener")
-                        .to("mock:result");
+                fromF("infinispan:%s?cacheContainer=#cacheContainer&customListener=#myCustomListener", CUSTOM_CACHE_NAME)
+                    .to("mock:result");
             }
         };
     }

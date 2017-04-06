@@ -16,7 +16,14 @@
  */
 package org.apache.camel.component.infinispan.springboot;
 
+import java.util.Map;
+import java.util.Set;
+import org.apache.camel.component.infinispan.InfinispanCustomListener;
+import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
+import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.context.Flag;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For reading/writing from/to Infinispan distributed key/value store and data
@@ -28,11 +35,37 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class InfinispanComponentConfiguration {
 
     /**
+     * The default configuration shared among endpoints.
+     */
+    private InfinispanConfigurationNestedConfiguration configuration;
+    /**
+     * The default cache container.
+     */
+    @NestedConfigurationProperty
+    private BasicCacheContainer cacheContainer;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public InfinispanConfigurationNestedConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(
+            InfinispanConfigurationNestedConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public BasicCacheContainer getCacheContainer() {
+        return cacheContainer;
+    }
+
+    public void setCacheContainer(BasicCacheContainer cacheContainer) {
+        this.cacheContainer = cacheContainer;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
@@ -41,5 +74,141 @@ public class InfinispanComponentConfiguration {
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class InfinispanConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.infinispan.InfinispanConfiguration.class;
+        /**
+         * The operation to perform.
+         */
+        private String command = "put";
+        private String hosts;
+        private BasicCacheContainer cacheContainer;
+        private Boolean sync = true;
+        private Boolean clusteredListener = false;
+        /**
+         * Specifies the set of event types to register by the consumer.
+         * Multiple event can be separated by comma.
+         * <p/>
+         * The possible event types are: CACHE_ENTRY_ACTIVATED,
+         * CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
+         * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED,
+         * CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
+         * CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED,
+         * PARTITION_STATUS_CHANGED
+         */
+        private Set eventTypes;
+        private InfinispanCustomListener customListener;
+        /**
+         * Specifies the query builder.
+         */
+        private InfinispanQueryBuilder queryBuilder;
+        private Flag[] flags;
+        private String configurationUri;
+        /**
+         * Implementation specific properties for the CacheManager
+         */
+        private Map configurationProperties;
+        /**
+         * The CacheContainer configuration
+         */
+        private Object cacheContainerConfiguration;
+
+        public String getCommand() {
+            return command;
+        }
+
+        public void setCommand(String command) {
+            this.command = command;
+        }
+
+        public String getHosts() {
+            return hosts;
+        }
+
+        public void setHosts(String hosts) {
+            this.hosts = hosts;
+        }
+
+        public BasicCacheContainer getCacheContainer() {
+            return cacheContainer;
+        }
+
+        public void setCacheContainer(BasicCacheContainer cacheContainer) {
+            this.cacheContainer = cacheContainer;
+        }
+
+        public Boolean getSync() {
+            return sync;
+        }
+
+        public void setSync(Boolean sync) {
+            this.sync = sync;
+        }
+
+        public Boolean getClusteredListener() {
+            return clusteredListener;
+        }
+
+        public void setClusteredListener(Boolean clusteredListener) {
+            this.clusteredListener = clusteredListener;
+        }
+
+        public Set getEventTypes() {
+            return eventTypes;
+        }
+
+        public void setEventTypes(Set eventTypes) {
+            this.eventTypes = eventTypes;
+        }
+
+        public InfinispanCustomListener getCustomListener() {
+            return customListener;
+        }
+
+        public void setCustomListener(InfinispanCustomListener customListener) {
+            this.customListener = customListener;
+        }
+
+        public InfinispanQueryBuilder getQueryBuilder() {
+            return queryBuilder;
+        }
+
+        public void setQueryBuilder(InfinispanQueryBuilder queryBuilder) {
+            this.queryBuilder = queryBuilder;
+        }
+
+        public Flag[] getFlags() {
+            return flags;
+        }
+
+        public void setFlags(Flag[] flags) {
+            this.flags = flags;
+        }
+
+        public String getConfigurationUri() {
+            return configurationUri;
+        }
+
+        public void setConfigurationUri(String configurationUri) {
+            this.configurationUri = configurationUri;
+        }
+
+        public Map getConfigurationProperties() {
+            return configurationProperties;
+        }
+
+        public void setConfigurationProperties(Map configurationProperties) {
+            this.configurationProperties = configurationProperties;
+        }
+
+        public Object getCacheContainerConfiguration() {
+            return cacheContainerConfiguration;
+        }
+
+        public void setCacheContainerConfiguration(
+                Object cacheContainerConfiguration) {
+            this.cacheContainerConfiguration = cacheContainerConfiguration;
+        }
     }
 }

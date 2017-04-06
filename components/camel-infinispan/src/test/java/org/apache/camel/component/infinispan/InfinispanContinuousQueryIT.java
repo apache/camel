@@ -159,11 +159,11 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#continuousQueryBuilder")
+                from("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#continuousQueryBuilder")
                     .to("mock:continuousQuery");
-                from("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#continuousQueryBuilderNoMatch")
+                from("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#continuousQueryBuilderNoMatch")
                     .to("mock:continuousQueryNoMatch");
-                from("infinispan://?cacheContainer=#myCustomContainer&cacheName=remote_query&queryBuilder=#continuousQueryBuilderAll")
+                from("infinispan:remote_query?cacheContainer=#myCustomContainer&queryBuilder=#continuousQueryBuilderAll")
                     .to("mock:continuousQueryAll");
             }
         };
