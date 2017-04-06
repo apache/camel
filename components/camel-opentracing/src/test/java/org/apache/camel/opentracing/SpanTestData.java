@@ -16,6 +16,9 @@
  */
 package org.apache.camel.opentracing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SpanTestData {
 
     private String label;
@@ -23,6 +26,7 @@ public class SpanTestData {
     private String operation;
     private String kind;
     private int parentId = -1;
+    private List<String> logMessages = new ArrayList<>();
 
     public String getLabel() {
         return label;
@@ -69,4 +73,12 @@ public class SpanTestData {
         return this;
     }
 
+    public SpanTestData addLogMessage(String mesg) {
+        logMessages.add(mesg);
+        return this;
+    }
+
+    public List<String> getLogMessages() {
+        return logMessages;
+    }
 }
