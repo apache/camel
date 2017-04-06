@@ -51,14 +51,13 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
     private final AsyncProcessor xmlMarshal;
     private final String bindingMode;
     private final boolean skipBindingOnErrorCode;
-    private final String type;
     private final String outType;
 
     public RestProducerBindingProcessor(AsyncProcessor processor, CamelContext camelContext,
                                         DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                                         DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
                                         String bindingMode, boolean skipBindingOnErrorCode,
-                                        String type, String outType) {
+                                        String outType) {
 
         super(processor);
 
@@ -88,7 +87,6 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
 
         this.bindingMode = bindingMode;
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
-        this.type = type;
         this.outType = outType;
     }
 

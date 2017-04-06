@@ -33,6 +33,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -56,7 +57,7 @@ public class RestProducer extends DefaultAsyncProducer {
     private final CamelContext camelContext;
     private final RestConfiguration configuration;
     private boolean prepareUriTemplate = true;
-    private String bindingMode;
+    private RestBindingMode bindingMode;
     private Boolean skipBindingOnErrorCode;
     private String type;
     private String outType;
@@ -107,11 +108,11 @@ public class RestProducer extends DefaultAsyncProducer {
         this.prepareUriTemplate = prepareUriTemplate;
     }
 
-    public String getBindingMode() {
+    public RestBindingMode getBindingMode() {
         return bindingMode;
     }
 
-    public void setBindingMode(String bindingMode) {
+    public void setBindingMode(final RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
     }
 
@@ -236,7 +237,7 @@ public class RestProducer extends DefaultAsyncProducer {
         // these options can be overridden per endpoint
         String mode = configuration.getBindingMode().name();
         if (bindingMode != null) {
-            mode = bindingMode;
+            mode = bindingMode.name();
         }
         boolean skip = configuration.isSkipBindingOnErrorCode();
         if (skipBindingOnErrorCode != null) {
@@ -340,7 +341,7 @@ public class RestProducer extends DefaultAsyncProducer {
             setAdditionalConfiguration(configuration, camelContext, outJaxb, "xml.out.");
         }
 
-        return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, type, outType);
+        return new RestProducerBindingProcessor(producer, camelContext, json, jaxb, outJson, outJaxb, mode, skip, outType);
     }
 
     private void setAdditionalConfiguration(RestConfiguration config, CamelContext context,
