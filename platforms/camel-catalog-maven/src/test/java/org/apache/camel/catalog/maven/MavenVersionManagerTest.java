@@ -138,4 +138,29 @@ public class MavenVersionManagerTest extends TestCase {
         assertFalse(names.contains("paxlogging"));
     }
 
+    @Test
+    public void testCatalogVersionSwitch() throws Exception {
+        CamelCatalog catalog = new DefaultCamelCatalog(true);
+        MavenVersionManager mvm = new MavenVersionManager();
+        mvm.addMavenRepository("asf-ga", "https://repo.maven.apache.org/maven2");
+        mvm.addMavenRepository("asf-snapshots", "https://repository.apache.org/content/groups/snapshots");
+        catalog.setVersionManager(mvm);
+        boolean loaded = catalog.loadVersion("2.18.1");
+        assertTrue("Unable to load Camel Catalog 2.18.1", loaded);
+        loaded = catalog.loadRuntimeProviderVersion("org.apache.camel", "camel-catalog-provider-karaf", "2.18.1");
+        assertTrue("Unable to load Karaf Provider Camel Catalog 2.18.1", loaded);
+        int components = catalog.findComponentNames().size();
+        loaded = catalog.loadVersion("2.19.0-SNAPSHOT");
+        assertTrue("Unable to switch to Camel Catalog 2.19.0-SNAPSHOT", loaded);
+        loaded = catalog.loadRuntimeProviderVersion("org.apache.camel", "camel-catalog-provider-karaf", "2.19.0-SNAPSHOT");
+        assertTrue("Unable to load Karaf Provider Camel Catalog 2.19.0-SNAPSHOT", loaded);
+        int componentsNewer = catalog.findComponentNames().size();
+        assertTrue("Both catalog versions shouldn't have the same count of components.", components != componentsNewer);
+        loaded = catalog.loadVersion("2.18.1");
+        assertTrue("Unable to load Camel Catalog 2.18.1", loaded);
+        loaded = catalog.loadRuntimeProviderVersion("org.apache.camel", "camel-catalog-provider-karaf", "2.18.1");
+        assertTrue("Unable to load Karaf Provider Camel Catalog 2.18.1", loaded);
+        int components3 = catalog.findComponentNames().size();
+        assertTrue("Newer load does not match older one", components == components3);
+    }
 }
