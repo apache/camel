@@ -95,9 +95,9 @@ public class InfinispanClusteredConsumerTest extends InfinispanClusterTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan://localhost?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_CREATED")
                         .to("mock:resultCreated");
-                from("infinispan://localhost?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_EXPIRED")
+                from("infinispan?cacheContainer=#cacheContainer&clusteredListener=true&eventTypes=CACHE_ENTRY_EXPIRED")
                         .to("mock:resultExpired");
             }
         };

@@ -32,8 +32,7 @@ public class InfinispanConfigurationTestIT {
     @Test
     public void embeddedCacheWithFlagsTest() throws Exception {
         InfinispanConfiguration configuration = new InfinispanConfiguration();
-        configuration.setHost("localhost");
-        configuration.setCacheName("misc_cache");
+        configuration.setHosts("localhost");
         configuration.setCacheContainer(new DefaultCacheManager(true));
         configuration.setFlags(
             org.infinispan.context.Flag.SKIP_CACHE_LOAD,
@@ -43,7 +42,7 @@ public class InfinispanConfigurationTestIT {
         InfinispanManager manager = new InfinispanManager(configuration);
         manager.start();
 
-        BasicCache<Object, Object> cache = manager.getCache();
+        BasicCache<Object, Object> cache = manager.getCache("misc_cache");
         assertNotNull(cache);
         assertTrue(cache instanceof DecoratedCache);
 
@@ -58,13 +57,12 @@ public class InfinispanConfigurationTestIT {
     @Test
     public void remoteCacheWithoutProperties() throws Exception {
         InfinispanConfiguration configuration = new InfinispanConfiguration();
-        configuration.setHost("localhost");
-        configuration.setCacheName("misc_cache");
+        configuration.setHosts("localhost");
 
         InfinispanManager manager = new InfinispanManager(configuration);
         manager.start();
 
-        BasicCache<Object, Object> cache = manager.getCache();
+        BasicCache<Object, Object> cache = manager.getCache("misc_cache");
         assertNotNull(cache);
         assertTrue(cache instanceof RemoteCache);
 
@@ -80,14 +78,13 @@ public class InfinispanConfigurationTestIT {
     @Test
     public void remoteCacheWithPropertiesTest() throws Exception {
         InfinispanConfiguration configuration = new InfinispanConfiguration();
-        configuration.setHost("localhost");
-        configuration.setCacheName("misc_cache");
+        configuration.setHosts("localhost");
         configuration.setConfigurationUri("infinispan/client.properties");
 
         InfinispanManager manager = new InfinispanManager(configuration);
         manager.start();
 
-        BasicCache<Object, Object> cache = manager.getCache();
+        BasicCache<Object, Object> cache = manager.getCache("misc_cache");
         assertNotNull(cache);
         assertTrue(cache instanceof RemoteCache);
 
