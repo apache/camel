@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.karaf.KarafRuntimeProvider;
 import org.apache.camel.catalog.springboot.SpringBootRuntimeProvider;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -139,28 +140,39 @@ public class MavenVersionManagerTest extends TestCase {
     }
 
     @Test
-    public void testCatalogVersionSwitch() throws Exception {
+    public void testCatalogKarafRuntimeProviderVersionSwitch() throws Exception {
         CamelCatalog catalog = new DefaultCamelCatalog(true);
         MavenVersionManager mvm = new MavenVersionManager();
         mvm.addMavenRepository("asf-ga", "https://repo.maven.apache.org/maven2");
         mvm.addMavenRepository("asf-snapshots", "https://repository.apache.org/content/groups/snapshots");
         catalog.setVersionManager(mvm);
+        catalog.setRuntimeProvider(new KarafRuntimeProvider());
+
         boolean loaded = catalog.loadVersion("2.18.1");
         assertTrue("Unable to load Camel Catalog 2.18.1", loaded);
         loaded = catalog.loadRuntimeProviderVersion("org.apache.camel", "camel-catalog-provider-karaf", "2.18.1");
         assertTrue("Unable to load Karaf Provider Camel Catalog 2.18.1", loaded);
         int components = catalog.findComponentNames().size();
+        System.out.println("2.18.1 has " + components + " components");
+        assertFalse("Should not have ejb component", catalog.findComponentNames().contains("ejb"));
+
         loaded = catalog.loadVersion("2.19.0-SNAPSHOT");
         assertTrue("Unable to switch to Camel Catalog 2.19.0-SNAPSHOT", loaded);
         loaded = catalog.loadRuntimeProviderVersion("org.apache.camel", "camel-catalog-provider-karaf", "2.19.0-SNAPSHOT");
         assertTrue("Unable to load Karaf Provider Camel Catalog 2.19.0-SNAPSHOT", loaded);
         int componentsNewer = catalog.findComponentNames().size();
         assertTrue("Both catalog versions shouldn't have the same count of components.", components != componentsNewer);
+        System.out.println("2.19.0-SNAPSHOT has " + componentsNewer + " components");
+        assertFalse("Should not have ejb component", catalog.findComponentNames().contains("ejb"));
+
         loaded = catalog.loadVersion("2.18.1");
         assertTrue("Unable to load Camel Catalog 2.18.1", loaded);
         loaded = catalog.loadRuntimeProviderVersion("org.apache.camel", "camel-catalog-provider-karaf", "2.18.1");
         assertTrue("Unable to load Karaf Provider Camel Catalog 2.18.1", loaded);
         int components3 = catalog.findComponentNames().size();
         assertTrue("Newer load does not match older one", components == components3);
+        assertFalse("Should not have ejb component", catalog.findComponentNames().contains("ejb"));
+
+        System.out.println("2.18.1 has " + components3 + " components");
     }
 }
