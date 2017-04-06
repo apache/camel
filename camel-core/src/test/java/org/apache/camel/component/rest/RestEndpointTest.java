@@ -29,31 +29,39 @@ import org.apache.camel.spi.RestProducerFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class RestEndpointTest {
 
     public static class MockRest extends DefaultComponent implements RestProducerFactory {
         @Override
-        public Producer createProducer(CamelContext camelContext, String host, String verb, String basePath,
-            String uriTemplate, String queryParameters, String consumes, String produces,
-            Map<String, Object> parameters) throws Exception {
+        public Producer createProducer(final CamelContext camelContext, final String host, final String verb,
+            final String basePath, final String uriTemplate, final String queryParameters, final String consumes,
+            final String produces, final Map<String, Object> parameters) throws Exception {
             return null;
         }
 
         @Override
-        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
+        protected Endpoint createEndpoint(final String uri, final String remaining,
+            final Map<String, Object> parameters) throws Exception {
             return null;
         }
     }
 
-    @Test
-    public void shouldConfigureBindingMode() throws Exception {
-        final CamelContext context = new DefaultCamelContext();
+    RestComponent restComponent;
+
+    CamelContext context;
+
+    public RestEndpointTest() {
+        context = new DefaultCamelContext();
         context.addComponent("mock-rest", new MockRest());
 
-        final RestComponent restComponent = new RestComponent();
+        restComponent = new RestComponent();
         restComponent.setCamelContext(context);
+    }
 
+    @Test
+    public void shouldConfigureBindingMode() throws Exception {
         final RestEndpoint restEndpoint = new RestEndpoint("rest:GET:/path", restComponent);
         restEndpoint.setComponentName("mock-rest");
         restEndpoint.setParameters(new HashMap<>());
@@ -63,5 +71,34 @@ public class RestEndpointTest {
         final RestProducer producer = (RestProducer) restEndpoint.createProducer();
 
         Assert.assertEquals(producer.getBindingMode(), RestBindingMode.json);
+    }
+
+    @Test
+    public void shouldCreateQueryParametersFromUnusedEndpointParameters() throws Exception {
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put("host", "http://localhost");
+        parameters.put("bindingMode", "json");
+        parameters.put("foo", "bar");
+
+        final RestEndpoint endpoint = (RestEndpoint) restComponent
+            .createEndpoint("rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar", "GET:/path", parameters);
+
+        assertEquals("http://localhost", endpoint.getHost());
+        assertEquals(RestBindingMode.json, endpoint.getBindingMode());
+        assertEquals("GET", endpoint.getMethod());
+        assertEquals("/path", endpoint.getPath());
+        assertEquals("foo=bar", endpoint.getQueryParameters());
+    }
+
+    @Test
+    public void shouldSupportQueryParametersSetViaEndpointUri() throws Exception {
+        RestEndpoint endpoint = (RestEndpoint) context.getComponent("rest").createEndpoint(
+            "rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar&queryParameters=RAW(a%3Db%26c%3Dd)");
+
+        assertEquals("http://localhost", endpoint.getHost());
+        assertEquals(RestBindingMode.json, endpoint.getBindingMode());
+        assertEquals("GET", endpoint.getMethod());
+        assertEquals("/path", endpoint.getPath());
+        assertEquals("foo=bar&a=b&c=d", endpoint.getQueryParameters());
     }
 }
