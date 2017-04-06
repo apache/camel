@@ -72,7 +72,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         // create the uri of the base component
         String delegateUri = createEndpointUri(scheme, options);
         Endpoint delegate = getCamelContext().getEndpoint(delegateUri);
-        log.debug("Connector resolved: {} -> {}", uri, delegateUri);
+        log.info("Connector resolved: {} -> {}", uri, delegateUri);
 
         return new DefaultConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
     }
