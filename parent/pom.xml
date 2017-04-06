@@ -181,10 +181,10 @@
     <elasticsearch-bundle-version>2.4.4_1</elasticsearch-bundle-version>
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
     <elasticsearch-version>2.4.4</elasticsearch-version>
-    <elasticsearch5-version>5.1.2</elasticsearch5-version>
-    <elasticsearch5-bundle-version>5.1.2_1</elasticsearch5-bundle-version>
+    <elasticsearch5-version>5.2.2</elasticsearch5-version>
+    <elasticsearch5-bundle-version>5.2.2_1</elasticsearch5-bundle-version>
     <elasticsearch-cluster-runner-version>2.4.0.0</elasticsearch-cluster-runner-version>
-    <elasticsearch5-cluster-runner-version>5.1.2.0</elasticsearch5-cluster-runner-version>
+    <elasticsearch5-cluster-runner-version>5.2.2.0</elasticsearch5-cluster-runner-version>
     <elsql-version>1.2</elsql-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <!-- embedmongo 1.50.2 do not work -->
