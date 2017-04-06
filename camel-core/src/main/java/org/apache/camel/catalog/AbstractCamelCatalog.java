@@ -913,8 +913,11 @@ public abstract class AbstractCamelCatalog {
             }
         }
 
+        
+
         // the tokens between the options in the path
-        String[] tokens = syntax.split("\\w+");
+        String[] oldTokens = syntax.split("\\w+");
+        String[] tokens = syntaxTokens(syntax);
 
         // parse the syntax into each options
         Matcher matcher = SYNTAX_PATTERN.matcher(originalSyntax);
@@ -999,6 +1002,33 @@ public abstract class AbstractCamelCatalog {
         }
 
         return sb.toString();
+    }
+
+    private static String[] syntaxTokens(String syntax) {
+        // build tokens between the words
+        List<String> tokens = new ArrayList<>();
+        // preserve backwards behavior which had an empty token first
+        tokens.add("");
+
+        String current = "";
+        for (int i = 0; i < syntax.length(); i++) {
+            char ch = syntax.charAt(i);
+            if (Character.isLetterOrDigit(ch)) {
+                // reset for new current tokens
+                if (current.length() > 0) {
+                    tokens.add(current);
+                    current = "";
+                }
+            } else {
+                current += ch;
+            }
+        }
+        // anything left over?
+        if (current.length() > 0) {
+            tokens.add(current);
+        }
+
+        return tokens.toArray(new String[tokens.size()]);
     }
 
     public SimpleValidationResult validateSimpleExpression(String simple) {
