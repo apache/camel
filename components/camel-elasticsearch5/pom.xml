@@ -31,7 +31,7 @@
   <description>Camel ElasticSearch 5.x support</description>
 
   <properties>
-    <elasticsearch.version>5.1.2</elasticsearch.version>
+    <elasticsearch.version>${elasticsearch5-version}</elasticsearch.version>
     <camel.osgi.export.pkg>org.apache.camel.component.elasticsearch5.*;${camel.osgi.version}</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=elasticsearch5</camel.osgi.export.service>
   </properties>
