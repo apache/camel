@@ -75,6 +75,11 @@
       <artifactId>camel-catalog-provider-springboot</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-provider-karaf</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <!-- logging -->
     <dependency>
