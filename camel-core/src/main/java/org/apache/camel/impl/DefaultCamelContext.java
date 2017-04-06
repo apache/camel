@@ -2691,7 +2691,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return logListeners;
     }
 
-    public void addlogListener(LogListener listener) {
+    public void addLogListener(LogListener listener) {
         logListeners.add(listener);
     }
 

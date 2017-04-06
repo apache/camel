@@ -35,7 +35,7 @@ public class LogListenerTest {
         CamelContext context = createCamelContext();
         MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
         mock.expectedMessageCount(1);
-        context.addlogListener((exchange, camelLogger, message) -> {
+        context.addLogListener((exchange, camelLogger, message) -> {
             Assert.assertEquals("Exchange[ExchangePattern: InOnly, BodyType: String, Body: hello]", message);
             listenerFired = true;
             return message + " - modified by listener";
