@@ -35,6 +35,8 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.URISupport.sanitizeUri;
+
 /**
  * Base class for Camel Connector components.
  */
@@ -72,7 +74,10 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         // create the uri of the base component
         String delegateUri = createEndpointUri(scheme, options);
         Endpoint delegate = getCamelContext().getEndpoint(delegateUri);
-        log.info("Connector resolved: {} -> {}", uri, delegateUri);
+        if (log.isInfoEnabled()) {
+            // the uris can have sensitive information so sanitize
+            log.info("Connector resolved: {} -> {}", sanitizeUri(uri), sanitizeUri(delegateUri));
+        }
 
         return new DefaultConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
     }
