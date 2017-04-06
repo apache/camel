@@ -136,4 +136,8 @@ public final class ResultBuilder {
     public static ResultBuilder unsupported() {
         return withStatusAndScope(ComponentVerifier.Result.Status.UNSUPPORTED, ComponentVerifier.Scope.PARAMETERS);
     }
+
+    public static ResultBuilder unsupportedScope(ComponentVerifier.Scope scope) {
+        return withStatusAndScope(ComponentVerifier.Result.Status.UNSUPPORTED, scope);
+    }
 }

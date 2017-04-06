@@ -101,6 +101,14 @@ public final class ResultErrorBuilder {
         return this;
     }
 
+    public ResultErrorBuilder details(Map<VerificationError.Attribute, Object> details) {
+        for (Map.Entry<VerificationError.Attribute, Object> entry : details.entrySet()) {
+            detail(entry.getKey(), entry.getValue());
+        }
+
+        return this;
+    }
+
     // **********************************
     // Build
     // **********************************
@@ -117,6 +125,14 @@ public final class ResultErrorBuilder {
     // **********************************
     // Helpers
     // **********************************
+
+    public static ResultErrorBuilder fromError(VerificationError error) {
+        return new ResultErrorBuilder()
+            .code(error.getCode())
+            .description(error.getDescription())
+            .parameterKeys(error.getParameterKeys())
+            .details(error.getDetails());
+    }
 
     public static ResultErrorBuilder withCode(VerificationError.Code code) {
         return new ResultErrorBuilder().code(code);

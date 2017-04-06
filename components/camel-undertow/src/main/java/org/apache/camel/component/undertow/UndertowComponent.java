@@ -24,11 +24,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.VerifiableComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
@@ -48,7 +50,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
  */
-public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
+public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, VerifiableComponent {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<UndertowHostKey, UndertowHost>();
@@ -61,7 +64,10 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     private UndertowHostOptions hostOptions;
 
     public UndertowComponent() {
-        super(UndertowEndpoint.class);
+    }
+
+    public UndertowComponent(CamelContext context) {
+        super(context);
     }
 
     @Override
@@ -324,6 +330,13 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
      */
     public void setHostOptions(UndertowHostOptions hostOptions) {
         this.hostOptions = hostOptions;
+    }
+
+    /**
+     *
+     */
+    public ComponentVerifier getVerifier() {
+        return new UndertowComponentVerifier(this);
     }
 
 }
