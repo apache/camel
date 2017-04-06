@@ -122,6 +122,10 @@ public class EtcdComponentConfiguration {
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
+         * Enable usage of Camel global SSL parameters.
+         */
+        private Boolean useGlobalSslContextParameters = false;
+        /**
          * The user name to use for basic authentication.
          */
         private String userName;
@@ -177,6 +181,15 @@ public class EtcdComponentConfiguration {
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
+        }
+
+        public Boolean getUseGlobalSslContextParameters() {
+            return useGlobalSslContextParameters;
+        }
+
+        public void setUseGlobalSslContextParameters(
+                Boolean useGlobalSslContextParameters) {
+            this.useGlobalSslContextParameters = useGlobalSslContextParameters;
         }
 
         public String getUserName() {

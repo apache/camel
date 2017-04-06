@@ -61,6 +61,10 @@ public class BaseMina2Test extends CamelTestSupport {
     }
     
     protected void addSslContextParametersToRegistry(JndiRegistry registry) {
+        registry.bind("sslContextParameters", createSslContextParameters());
+    }
+
+    protected SSLContextParameters createSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
         ksp.setPassword(KEY_STORE_PASSWORD);
@@ -76,12 +80,11 @@ public class BaseMina2Test extends CamelTestSupport {
         // is provided.  We turn on WANT client-auth to prefer using authentication
         SSLContextServerParameters scsp = new SSLContextServerParameters();
         scsp.setClientAuthentication(ClientAuthentication.WANT.name());
-        
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
-
-        registry.bind("sslContextParameters", sslContextParameters);
+        return sslContextParameters;
     }
 }

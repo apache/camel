@@ -21,7 +21,9 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
@@ -36,6 +38,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -44,6 +47,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,10 +82,16 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         // any additional channel options
         Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "option.");
 
+        // determine sslContextParameters
+        SSLContextParameters sslParams = this.sslContextParameters;
+        if (sslParams == null) {
+            sslParams = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+        }
+
         // create the endpoint first
         UndertowEndpoint endpoint = createEndpointInstance(endpointUri, this);
         // set options from component
-        endpoint.setSslContextParameters(sslContextParameters);
+        endpoint.setSslContextParameters(sslParams);
         // Prefer endpoint configured over component configured
         if (undertowHttpBinding == null) {
             // fallback to component configured

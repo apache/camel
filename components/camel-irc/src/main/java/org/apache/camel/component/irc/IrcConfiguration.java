@@ -448,7 +448,7 @@ public class IrcConfiguration implements Cloneable {
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
-    
+
     /**
      * Your IRC server nickname password.
      */

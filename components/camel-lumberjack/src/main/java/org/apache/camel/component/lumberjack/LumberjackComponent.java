@@ -17,11 +17,15 @@
 package org.apache.camel.component.lumberjack;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 /**
  * The class is the Camel component for the Lumberjack server
@@ -31,6 +35,9 @@ public class LumberjackComponent extends UriEndpointComponent {
 
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public LumberjackComponent() {
         this(LumberjackEndpoint.class);
@@ -55,8 +62,13 @@ public class LumberjackComponent extends UriEndpointComponent {
         }
 
         // Create the endpoint
-        Endpoint answer = new LumberjackEndpoint(uri, this, host, port);
+        LumberjackEndpoint answer = new LumberjackEndpoint(uri, this, host, port);
         setProperties(answer, parameters);
+
+        if (isUseGlobalSslContextParameters() && answer.getSslContextParameters() == null) {
+            answer.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
+
         return answer;
     }
 
@@ -71,4 +83,16 @@ public class LumberjackComponent extends UriEndpointComponent {
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
+
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of Camel global SSL parameters
+     */
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
 }

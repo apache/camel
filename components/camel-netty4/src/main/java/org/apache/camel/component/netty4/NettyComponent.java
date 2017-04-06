@@ -19,7 +19,9 @@ package org.apache.camel.component.netty4;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ThreadFactory;
+import java.util.function.Supplier;
 
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
@@ -28,8 +30,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 public class NettyComponent extends UriEndpointComponent {
 
@@ -82,6 +86,10 @@ public class NettyComponent extends UriEndpointComponent {
             if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
                 IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
             }
+        }
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
         }
 
         // validate config

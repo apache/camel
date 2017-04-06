@@ -19,6 +19,8 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -28,6 +30,7 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,6 +114,12 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
         Map<String, String> params = CastUtils.cast(parameters);
         answer.setParameters(params);
         setEndpointHeaderFilterStrategy(answer);
+
+        // use global ssl config if set
+        if (answer.getSslContextParameters() == null) {
+            answer.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
+
         return answer;
     }
     

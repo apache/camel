@@ -293,6 +293,10 @@ public class ServiceNowComponentConfiguration {
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
+         * Enable usage of Camel global SSL configuration.
+         */
+        private Boolean useGlobalSslContextParameters = false;
+        /**
          * To configure http-client
          */
         @NestedConfigurationProperty
@@ -573,6 +577,15 @@ public class ServiceNowComponentConfiguration {
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
+        }
+
+        public Boolean getUseGlobalSslContextParameters() {
+            return useGlobalSslContextParameters;
+        }
+
+        public void setUseGlobalSslContextParameters(
+                Boolean useGlobalSslContextParameters) {
+            this.useGlobalSslContextParameters = useGlobalSslContextParameters;
         }
 
         public HTTPClientPolicy getHttpClientPolicy() {

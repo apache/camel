@@ -46,7 +46,7 @@ with the following path and query parameters:
 | **path** | The path the endpoint refers to |  | String
 |=======================================================================
 
-#### Query Parameters (29 parameters):
+#### Query Parameters (30 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -79,6 +79,7 @@ with the following path and query parameters:
 | **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 | **password** (security) | The password to use for basic authentication. |  | String
 | **sslContextParameters** (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of Camel global SSL parameters. | false | boolean
 | **userName** (security) | The user name to use for basic authentication. |  | String
 |=======================================================================
 // endpoint options: END

@@ -99,7 +99,7 @@ with the following path and query parameters:
 | **port** | *Required* Port number |  | int
 |=======================================================================
 
-#### Query Parameters (26 parameters):
+#### Query Parameters (27 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -130,6 +130,7 @@ with the following path and query parameters:
 | **textlineDelimiter** (codec) | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided Camel will use DEFAULT. This delimiter is used to mark the end of text. |  | Mina2TextLineDelimiter
 | **autoStartTls** (security) | Whether to auto start SSL handshake. | true | boolean
 | **sslContextParameters** (security) | To configure SSL security. |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of Camel global sslContextParameters. | true | boolean
 |=======================================================================
 // endpoint options: END
 

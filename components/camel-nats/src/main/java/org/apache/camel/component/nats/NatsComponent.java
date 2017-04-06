@@ -17,9 +17,13 @@
 package org.apache.camel.component.nats;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 public class NatsComponent extends DefaultComponent {
 
@@ -28,6 +32,11 @@ public class NatsComponent extends DefaultComponent {
         NatsConfiguration config = new NatsConfiguration();
         setProperties(config, parameters);
         config.setServers(remaining);
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
+
         NatsEndpoint endpoint = new NatsEndpoint(uri, this, config);
         return endpoint;
     }

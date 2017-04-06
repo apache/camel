@@ -18,13 +18,16 @@ package org.apache.camel.component.etcd;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 /**
  * Represents the component that manages {@link AbstractEtcdEndpoint}.
@@ -146,6 +149,10 @@ public class EtcdComponent extends DefaultComponent {
         configuration.setCamelContext(getCamelContext());
 
         setProperties(configuration, parameters);
+
+        if (configuration.isUseGlobalSslContextParameters() && configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
 
         return configuration;
     }

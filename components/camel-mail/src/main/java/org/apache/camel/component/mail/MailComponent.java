@@ -19,15 +19,19 @@ package org.apache.camel.component.mail;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import javax.mail.search.SearchTerm;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 /**
  * Component for JavaMail.
@@ -97,6 +101,11 @@ public class MailComponent extends UriEndpointComponent {
         // sanity check that we know the mail server
         ObjectHelper.notEmpty(config.getHost(), "host");
         ObjectHelper.notEmpty(config.getProtocol(), "protocol");
+
+        // Use global ssl if present
+        if (endpoint.getConfiguration().getSslContextParameters() == null) {
+            endpoint.getConfiguration().setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+        }
 
         return endpoint;
     }

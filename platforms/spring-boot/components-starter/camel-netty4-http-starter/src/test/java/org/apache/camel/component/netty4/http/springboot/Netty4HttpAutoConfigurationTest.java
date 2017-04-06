@@ -51,13 +51,13 @@ public class Netty4HttpAutoConfigurationTest {
 
     @Test
     public void testEndpoint() throws Exception {
-        String result = producerTemplate.requestBody("http://localhost:" + getPort(), null, String.class);
+        String result = producerTemplate.requestBody("netty4-http:http://localhost:" + getPort(), null, String.class);
         assertEquals("Hello", result);
     }
 
     @Test
     public void testConfigOverride() throws Exception {
-        Exchange exchange = producerTemplate.request("http://localhost:" + getPort(), x -> x.getIn().setHeader("Accept-Encoding", "gzip"));
+        Exchange exchange = producerTemplate.request("netty4-http:http://localhost:" + getPort(), x -> x.getIn().setHeader("Accept-Encoding", "gzip"));
         Assert.assertEquals("gzip", exchange.getOut().getHeader("Content-Encoding"));
     }
 

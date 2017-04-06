@@ -64,6 +64,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private boolean crossOriginFilterOn;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", defaultValue = "true")
+    private boolean useGlobalSslContextParameters = true;
     @UriParam(label = "cors")
     private String allowedOrigins;
     @UriParam(label = "cors")
@@ -293,6 +295,17 @@ public class WebsocketEndpoint extends DefaultEndpoint {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of Camel global SSL context parameters
+     */
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public boolean isEnableJmx() {
