@@ -178,9 +178,9 @@
     <ehcache-version>2.10.1</ehcache-version>
     <ehcache3-version>3.3.1</ehcache3-version>
     <ekstazi-maven-plugin-version>4.6.3</ekstazi-maven-plugin-version>
-    <elasticsearch-bundle-version>2.4.3_2</elasticsearch-bundle-version>
+    <elasticsearch-bundle-version>2.4.4_1</elasticsearch-bundle-version>
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
-    <elasticsearch-version>2.4.3</elasticsearch-version>
+    <elasticsearch-version>2.4.4</elasticsearch-version>
     <elasticsearch5-version>5.1.2</elasticsearch5-version>
     <elasticsearch5-bundle-version>5.1.2_1</elasticsearch5-bundle-version>
     <elasticsearch-cluster-runner-version>2.4.0.0</elasticsearch-cluster-runner-version>
