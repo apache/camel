@@ -286,8 +286,8 @@
     <influx-guava-version>20.0</influx-guava-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
-    <ironmq-version>3.0.4</ironmq-version>
-    <ironmq-bundle-version>3.0.4_1</ironmq-bundle-version>
+    <ironmq-version>3.0.5</ironmq-version>
+    <ironmq-bundle-version>3.0.5_1</ironmq-bundle-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
     <isorelax-version>20090621</isorelax-version>
     <isorelax-jaxp-bridge-version>1.1</isorelax-jaxp-bridge-version>
