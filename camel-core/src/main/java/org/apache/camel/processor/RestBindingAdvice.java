@@ -26,18 +26,13 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.processor.binding.BindingException;
-import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.spi.Transformer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.processor.CamelInternalProcessorAdvice} that binds the REST DSL incoming
@@ -45,8 +40,10 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform
  * from xml/json to Java Objects and reverse again.
- * 
- * @see CamelInternalProcessor, CamelInternalProcessorAdvice
+ * <p/>
+ * The rest producer side is implemented in {@link org.apache.camel.component.rest.RestProducerBindingProcessor}
+ *
+ * @see CamelInternalProcessor
  */
 public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<String, Object>> {
     private static final String STATE_KEY_DO_MARSHAL = "doMarshal";
