@@ -28,11 +28,11 @@ public class AhcComponentClientConfigSslContextParametersTest extends AhcCompone
     }
 
     protected String getTestServerEndpointUri() {
-        return super.getTestServerEndpointUri() + "?sslContextParameters=sslContextParameters";
+        return super.getTestServerEndpointUri() + "?sslContextParameters=#sslContextParameters";
     }
     
     protected String getTestServerEndpointTwoUri() {
-        return super.getTestServerEndpointTwoUri() + "?sslContextParameters=sslContextParameters";
+        return super.getTestServerEndpointTwoUri() + "?sslContextParameters=#sslContextParameters";
     }
 
     @Override
