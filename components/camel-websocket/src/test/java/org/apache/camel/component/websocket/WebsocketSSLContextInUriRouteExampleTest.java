@@ -67,7 +67,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
 
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
-        uri = "websocket://" + server + ":" + port + "/test?sslContextParametersRef=#sslContextParameters";
+        uri = "websocket://" + server + ":" + port + "/test?sslContextParameters=#sslContextParameters";
 
         super.setUp();
     }
