@@ -25,6 +25,10 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ServiceHelper;
 
+/**
+ * Connector {@link Producer} which is capable of performing before and after custom processing
+ * while processing (ie sending the message).
+ */
 public class ConnectorProducer extends DefaultProducer {
 
     private final Producer producer;
