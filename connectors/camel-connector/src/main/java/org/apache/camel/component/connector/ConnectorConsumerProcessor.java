@@ -19,9 +19,7 @@ package org.apache.camel.component.connector;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.processor.DelegateAsyncProcessor;
-import org.apache.camel.support.SynchronizationAdapter;
 
 /**
  * Connector {@link Processor} which is capable of performing before and after custom processing
@@ -39,20 +37,20 @@ public class ConnectorConsumerProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (afterConsumer != null) {
-            exchange.getUnitOfWork().addSynchronization(new SynchronizationAdapter() {
-                @Override
-                public void onAfterRoute(Route route, Exchange exchange) {
-                    try {
-                        afterConsumer.process(exchange);
-                    } catch (Exception e) {
-                        // ignore
-                    }
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
+        // setup callback for after consumer
+        AsyncCallback delegate = doneSync -> {
+            if (afterConsumer != null) {
+                try {
+                    afterConsumer.process(exchange);
+                } catch (Throwable e) {
+                    exchange.setException(e);
                 }
-            });
-        }
+            }
+            callback.done(doneSync);
+        };
 
+        // perform any before consumer
         if (beforeConsumer != null) {
             try {
                 beforeConsumer.process(exchange);
@@ -63,7 +61,8 @@ public class ConnectorConsumerProcessor extends DelegateAsyncProcessor {
             }
         }
 
-        return super.process(exchange, callback);
+        // process the consumer
+        return super.process(exchange, delegate);
     }
 
 }

@@ -50,7 +50,9 @@ public class DefaultConnectorEndpoint extends DefaultEndpoint implements Delegat
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         ConnectorConsumerProcessor delegate = new ConnectorConsumerProcessor(processor, getComponent().getBeforeConsumer(), getComponent().getAfterConsumer());
-        return endpoint.createConsumer(delegate);
+        Consumer consumer = endpoint.createConsumer(delegate);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
