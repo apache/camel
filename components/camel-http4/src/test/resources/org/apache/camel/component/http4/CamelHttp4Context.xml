@@ -60,15 +60,15 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route errorHandlerRef="noErrorHandler">
       <from uri="direct:goodSNI"/>
-      <to uri="https4://www.mnot.net?sslContextParameters=correctSniSslContextParameters"/>
+      <to uri="https4://www.mnot.net?sslContextParameters=#correctSniSslContextParameters"/>
     </route>
     <route errorHandlerRef="noErrorHandler">
       <from uri="direct:wrongSNI"/>
-      <to uri="https4-wrong://www.mnot.net?sslContextParameters=wrongSniSslContextParameters"/>
+      <to uri="https4-wrong://www.mnot.net?sslContextParameters=#wrongSniSslContextParameters"/>
     </route>
     <route errorHandlerRef="noErrorHandler">
       <from uri="direct:noSNI"/>
-      <to uri="https4-no://www.mnot.net?sslContextParameters=noSniSslContextParameters"/>
+      <to uri="https4-no://www.mnot.net?sslContextParameters=#noSniSslContextParameters"/>
     </route>
   </camelContext>
 
