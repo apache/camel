@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.Component;
+import org.apache.camel.Processor;
 import org.apache.camel.catalog.CamelCatalog;
 
 /**
@@ -76,4 +77,31 @@ public interface ConnectorComponent extends Component {
      */
     void setComponentOptions(Map<String, Object> baseComponentOptions);
 
+    /**
+     * To perform custom processing before the producer is sending the message.
+     */
+    void setBeforeProducer(Processor processor);
+
+    Processor getBeforeProducer();
+
+    /**
+     * To perform custom processing after the producer has sent the message and received any reply (if InOut).
+     */
+    void setAfterProducer(Processor processor);
+
+    Processor getAfterProducer();
+
+    /**
+     * To perform custom processing when the consumer has just received a new incoming message.
+     */
+    void setBeforeConsumer(Processor processor);
+
+    Processor getBeforeConsumer();
+
+    /**
+     * To perform custom processing when the consumer is about to send back a reply message to the caller (if InOut).
+     */
+    void setAfterConsumer(Processor processor);
+
+    Processor getAfterConsumer();
 }

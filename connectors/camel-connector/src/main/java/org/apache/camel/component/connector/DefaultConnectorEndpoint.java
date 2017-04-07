@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.connector;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -44,12 +43,19 @@ public class DefaultConnectorEndpoint extends DefaultEndpoint implements Delegat
 
     @Override
     public Producer createProducer() throws Exception {
-        return endpoint.createProducer();
+        Producer producer = endpoint.createProducer();
+        return new ConnectorProducer(endpoint, producer, getComponent().getBeforeProducer(), getComponent().getAfterProducer());
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return endpoint.createConsumer(processor);
+        Consumer answer = endpoint.createConsumer(processor);
+        return answer;
+    }
+
+    @Override
+    public ConnectorComponent getComponent() {
+        return (ConnectorComponent) super.getComponent();
     }
 
     @Override
