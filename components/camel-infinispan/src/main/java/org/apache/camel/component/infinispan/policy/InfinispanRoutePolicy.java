@@ -356,7 +356,7 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         private Cache<String, String> cache;
         private ScheduledFuture<?> future;
 
-        public EmbeddedCacheService(Cache<String, String> cache) {
+        EmbeddedCacheService(Cache<String, String> cache) {
             this.cache = cache;
             this.future = null;
         }
@@ -427,7 +427,7 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         private ScheduledFuture<?> future;
         private Long version;
 
-        public RemoteCacheService(RemoteCache<String, String> cache) {
+        RemoteCacheService(RemoteCache<String, String> cache) {
             this.cache = cache;
             this.future = null;
             this.version = null;

@@ -59,7 +59,7 @@ with the following path and query parameters:
 | **host** | *Required* Specifies the host of the cache on Infinispan instance |  | String
 |=======================================================================
 
-#### Query Parameters (14 parameters):
+#### Query Parameters (15 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -75,6 +75,7 @@ with the following path and query parameters:
 | **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | **command** (producer) | The operation to perform. | put | String
+| **configurationProperties** (advanced) | Infinispan configuration properties. |  | Map
 | **configurationUri** (advanced) | An implementation specific URI for the CacheManager |  | String
 | **flags** (advanced) | A comma separated list of Flag to be applied by default on each cache invocation not applicable to remote caches. |  | String
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
