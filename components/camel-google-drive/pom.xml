@@ -193,14 +193,14 @@
                   <fromJavadoc />
                 </api>
               </apis>
-                  <substitutions>
-                    <substitution>
-                      <method>^.+$</method>
-                      <argName>content</argName>
-                      <argType>com.google.api.services.drive.model.Channel</argType>
-                      <replacement>contentChannel</replacement>
-                    </substitution>
-                  </substitutions>
+              <substitutions>
+                <substitution>
+                  <method>^.+$</method>
+                  <argName>content</argName>
+                  <argType>com.google.api.services.drive.model.Channel</argType>
+                  <replacement>contentChannel</replacement>
+                </substitution>
+              </substitutions>
             </configuration>
           </execution>
         </executions>
