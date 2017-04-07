@@ -199,7 +199,13 @@
                   <argName>content</argName>
                   <argType>com.google.api.services.gmail.model.ModifyMessageRequest</argType>
                   <replacement>modifyMessageRequest</replacement>
-                </substitution>                    
+                </substitution>                   
+                <substitution>
+                  <method>^.+$</method>
+                  <argName>content</argName>
+                  <argType>com.google.api.services.gmail.model.BatchModifyMessagesRequest</argType>
+                  <replacement>batchModifyMessagesRequest</replacement>
+                </substitution>
                 <substitution>
                   <method>^.+$</method>
                   <argName>content</argName>
