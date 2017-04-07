@@ -176,7 +176,6 @@ with the following path and query parameters:
 | **proxyPort** (proxy) | Proxy port to use |  | int
 | **authHost** (security) | Authentication host to use with NTML |  | String
 | **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| **sslContextParametersRef** (security) | To configure security using SSLContextParameters |  | String
 |=======================================================================
 // endpoint options: END
 
@@ -354,7 +353,7 @@ Spring DSL based configuration of endpoint
     </camel:keyManagers>
   </camel:sslContextParameters>...
 ...
-  <to uri="jetty:https://127.0.0.1/mail/?sslContextParametersRef=sslContextParameters"/>
+  <to uri="jetty:https://127.0.0.1/mail/?sslContextParameters=sslContextParameters"/>
 ...
 ----------------------------------------------------------------------------------------
 
