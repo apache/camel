@@ -60,7 +60,7 @@ abstract class InfinispanRoutePolicyTestBase extends CamelTestSupport {
     @Test
     public void testLeadership()throws Exception {
         context.startRoute("route1");
-        while(!policy1.isLeader()) {
+        while (!policy1.isLeader()) {
             Thread.sleep(250);
         }
 
@@ -71,7 +71,7 @@ abstract class InfinispanRoutePolicyTestBase extends CamelTestSupport {
         Assert.assertFalse(policy2.isLeader());
 
         context.stopRoute("route1");
-        while(!policy2.isLeader()) {
+        while (!policy2.isLeader()) {
             Thread.sleep(250);
         }
 
@@ -85,7 +85,7 @@ abstract class InfinispanRoutePolicyTestBase extends CamelTestSupport {
         Assert.assertTrue(policy2.isLeader());
 
         context.stopRoute("route2");
-        while(!policy1.isLeader()) {
+        while (!policy1.isLeader()) {
             Thread.sleep(250);
         }
 
