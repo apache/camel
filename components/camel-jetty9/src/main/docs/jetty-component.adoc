@@ -117,7 +117,7 @@ with the following path and query parameters:
 | **httpUri** | *Required* The url of the HTTP endpoint to call. |  | URI
 |=======================================================================
 
-#### Query Parameters (55 parameters):
+#### Query Parameters (54 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
