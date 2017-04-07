@@ -38,6 +38,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.model.RouteDefinition;
@@ -45,6 +46,7 @@ import org.apache.camel.opentracing.concurrent.CamelSpanManager;
 import org.apache.camel.opentracing.concurrent.OpenTracingExecutorServiceManager;
 import org.apache.camel.opentracing.propagation.CamelHeadersExtractAdapter;
 import org.apache.camel.opentracing.propagation.CamelHeadersInjectAdapter;
+import org.apache.camel.opentracing.registry.OpenTracingRegistryProxy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
@@ -111,6 +113,10 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 // Wrap the ExecutorServiceManager with a SpanManager aware version
                 camelContext.setExecutorServiceManager(
                         new OpenTracingExecutorServiceManager(camelContext.getExecutorServiceManager(), spanManager));
+
+                if (camelContext instanceof DefaultCamelContext) {
+                    ((DefaultCamelContext)camelContext).setRegistry(new OpenTracingRegistryProxy(camelContext.getRegistry()));
+                }
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }

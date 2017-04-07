@@ -95,28 +95,38 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
     }
 
     protected void verifySpan(int index, SpanTestData[] testdata, List<MockSpan> spans) {
-        String component = (String) spans.get(index).tags().get(Tags.COMPONENT.getKey());
+        MockSpan span = spans.get(index);
+        SpanTestData td = testdata[index];
+
+        String component = (String) span.tags().get(Tags.COMPONENT.getKey());
         assertNotNull(component);
-        assertEquals(testdata[index].getLabel(),
-            SpanDecorator.CAMEL_COMPONENT + URI.create((String) testdata[index].getUri()).getScheme(),
+        assertEquals(td.getLabel(),
+            SpanDecorator.CAMEL_COMPONENT + URI.create((String) td.getUri()).getScheme(),
             component);
-        assertEquals(testdata[index].getLabel(), testdata[index].getUri(), spans.get(index).tags().get("camel.uri"));
+        assertEquals(td.getLabel(), td.getUri(), span.tags().get("camel.uri"));
 
         // If span associated with TestSEDASpanDecorator, check that pre/post tags have been defined
         if ("camel-seda".equals(component)) {
-            assertTrue(spans.get(index).tags().containsKey("pre"));
-            assertTrue(spans.get(index).tags().containsKey("post"));
+            assertTrue(span.tags().containsKey("pre"));
+            assertTrue(span.tags().containsKey("post"));
         }
 
-        assertEquals(testdata[index].getLabel(), testdata[index].getOperation(), spans.get(index).operationName());
+        assertEquals(td.getLabel(), td.getOperation(), span.operationName());
 
-        assertEquals(testdata[index].getLabel(), testdata[index].getKind(),
-                spans.get(index).tags().get(Tags.SPAN_KIND.getKey()));
+        assertEquals(td.getLabel(), td.getKind(),
+                span.tags().get(Tags.SPAN_KIND.getKey()));
 
-        if (testdata[index].getParentId() != -1) {
-            assertEquals(testdata[index].getLabel(),
-                spans.get(testdata[index].getParentId()).context().spanId(),
-                spans.get(index).parentId());
+        if (td.getParentId() != -1) {
+            assertEquals(td.getLabel(),
+                spans.get(td.getParentId()).context().spanId(),
+                span.parentId());
+        }
+
+        if (!td.getLogMessages().isEmpty()) {
+            assertEquals(td.getLogMessages().size(), span.logEntries().size());
+            for (int i = 0; i < td.getLogMessages().size(); i++) {
+                assertEquals(td.getLogMessages().get(i), span.logEntries().get(i).fields().get("message"));
+            }
         }
     }
 

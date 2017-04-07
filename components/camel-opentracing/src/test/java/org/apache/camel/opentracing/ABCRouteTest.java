@@ -25,15 +25,15 @@ public class ABCRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
         new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(1),
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(1).addLogMessage("routing at b"),
         new SpanTestData().setLabel("seda:b client").setUri("seda://b").setOperation("b")
             .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
         new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(3),
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(3).addLogMessage("routing at c"),
         new SpanTestData().setLabel("seda:c client").setUri("seda://c").setOperation("c")
             .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
         new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(5),
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(5).addLogMessage("routing at a").addLogMessage("End of routing"),
         new SpanTestData().setLabel("seda:a client").setUri("seda://a").setOperation("a")
             .setKind(Tags.SPAN_KIND_CLIENT).setParentId(6),
         new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
