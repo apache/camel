@@ -33,7 +33,7 @@ import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferencesByType;
-import static org.apache.camel.util.ObjectHelper.notEmpty;
+import static org.apache.camel.util.StringHelper.notEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
