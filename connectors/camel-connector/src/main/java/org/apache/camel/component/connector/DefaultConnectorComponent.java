@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -47,6 +48,10 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     private final String componentName;
     private final ConnectorModel model;
     private Map<String, Object> componentOptions;
+    private Processor beforeProducer;
+    private Processor afterProducer;
+    private Processor beforeConsumer;
+    private Processor afterConsumer;
 
     protected DefaultConnectorComponent(String componentName, String className) {
         this.componentName = componentName;
@@ -195,6 +200,46 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     protected void doStop() throws Exception {
         log.debug("Stopping connector: {}", componentName);
         super.doStop();
+    }
+
+    @Override
+    public Processor getBeforeProducer() {
+        return beforeProducer;
+    }
+
+    @Override
+    public void setBeforeProducer(Processor beforeProducer) {
+        this.beforeProducer = beforeProducer;
+    }
+
+    @Override
+    public Processor getAfterProducer() {
+        return afterProducer;
+    }
+
+    @Override
+    public void setAfterProducer(Processor afterProducer) {
+        this.afterProducer = afterProducer;
+    }
+
+    @Override
+    public Processor getBeforeConsumer() {
+        return beforeConsumer;
+    }
+
+    @Override
+    public void setBeforeConsumer(Processor beforeConsumer) {
+        this.beforeConsumer = beforeConsumer;
+    }
+
+    @Override
+    public Processor getAfterConsumer() {
+        return afterConsumer;
+    }
+
+    @Override
+    public void setAfterConsumer(Processor afterConsumer) {
+        this.afterConsumer = afterConsumer;
     }
 
     // ***************************************
