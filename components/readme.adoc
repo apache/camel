@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 227 in 181 JAR artifacts (14 deprecated)
+Number of Components: 228 in 182 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -262,6 +262,9 @@ Number of Components: 227 in 181 JAR artifacts (14 deprecated)
 
 | link:camel-grape/src/main/docs/grape-component.adoc[Grape] (camel-grape) +
 `grape:defaultCoordinates` | 2.16 | Grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+
+| link:camel-grpc/src/main/docs/grpc-component.adoc[gRPC] (camel-grpc) +
+`grpc:service` | 2.19 | The gRPC component is using for calling remote procedures via HTTP/2
 
 | link:camel-guava-eventbus/src/main/docs/guava-eventbus-component.adoc[Guava EventBus] (camel-guava-eventbus) +
 `guava-eventbus:eventBusRef` | 2.10 | The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
