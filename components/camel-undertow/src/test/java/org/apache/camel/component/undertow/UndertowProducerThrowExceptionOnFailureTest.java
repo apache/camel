@@ -18,10 +18,12 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
+@Ignore("CAMEL-11111")
 public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTest {
 
     @Test
