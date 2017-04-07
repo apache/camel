@@ -16,47 +16,59 @@
  */
 package org.apache.camel.component.connector;
 
-import java.util.concurrent.RejectedExecutionException;
-
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
  * Connector {@link Producer} which is capable of performing before and after custom processing
  * while processing (ie sending the message).
  */
-public class ConnectorProducer extends DefaultProducer {
+public class ConnectorProducer extends DefaultAsyncProducer {
 
-    private final Producer producer;
+    private final AsyncProcessor producer;
     private final Processor beforeProducer;
     private final Processor afterProducer;
 
     public ConnectorProducer(Endpoint endpoint, Producer producer, Processor beforeProducer, Processor afterProducer) {
         super(endpoint);
-        this.producer = producer;
+        this.producer = AsyncProcessorConverterHelper.convert(producer);
         this.beforeProducer = beforeProducer;
         this.afterProducer = afterProducer;
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        if (!isRunAllowed()) {
-            throw new RejectedExecutionException();
-        }
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
+        // setup callback for after producer
+        AsyncCallback delegate = doneSync -> {
+            if (afterProducer != null) {
+                try {
+                    afterProducer.process(exchange);
+                } catch (Throwable e) {
+                    exchange.setException(e);
+                }
+            }
+            callback.done(doneSync);
+        };
 
+        // perform any before producer
         if (beforeProducer != null) {
-            beforeProducer.process(exchange);
+            try {
+                beforeProducer.process(exchange);
+            } catch (Throwable e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
         }
 
-        producer.process(exchange);
-
-        if (afterProducer != null) {
-            afterProducer.process(exchange);
-        }
+        return producer.process(exchange, delegate);
     }
 
     @Override
