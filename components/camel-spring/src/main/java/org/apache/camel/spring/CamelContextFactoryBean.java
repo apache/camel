@@ -974,6 +974,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return defaultServiceCallConfiguration;
     }
 
+    /**
+     * ServiceCall EIP default configuration
+     */
     public void setDefaultServiceCallConfiguration(ServiceCallConfigurationDefinition defaultServiceCallConfiguration) {
         this.defaultServiceCallConfiguration = defaultServiceCallConfiguration;
     }
@@ -984,7 +987,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     /**
-     * ServiceCall configurations
+     * ServiceCall EIP configurations
      */
     public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> serviceCallConfigurations) {
         this.serviceCallConfigurations = serviceCallConfigurations;
@@ -1000,12 +1003,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return defaultHystrixConfiguration;
     }
 
+    /**
+     * Hystrix EIP default configuration
+     */
     public void setDefaultHystrixConfiguration(HystrixConfigurationDefinition defaultHystrixConfiguration) {
         this.defaultHystrixConfiguration = defaultHystrixConfiguration;
     }
 
     /**
-     * hystrix configurations
+     * Hystrix EIP configurations
      */
     public void setHystrixConfigurations(List<HystrixConfigurationDefinition> hystrixConfigurations) {
         this.hystrixConfigurations = hystrixConfigurations;
