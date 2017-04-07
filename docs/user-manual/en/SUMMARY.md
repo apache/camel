@@ -199,6 +199,7 @@
 	* [Google Pubsub](google-pubsub-component.adoc)
 	* [Gora](gora-component.adoc)
 	* [Grape](grape-component.adoc)
+	* [gRPC](grpc-component.adoc)
 	* [Guava EventBus](guava-eventbus-component.adoc)
 	* [Hazelcast](hazelcast-component.adoc)
 	* [HBase](hbase-component.adoc)
