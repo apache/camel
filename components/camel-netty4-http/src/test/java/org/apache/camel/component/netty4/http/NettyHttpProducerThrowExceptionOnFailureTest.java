@@ -39,8 +39,8 @@ public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTest 
             String out = template().requestBody("netty4-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null, String.class);
             fail("Should throw an exception");
         } catch (Throwable t) {
-            //t.printStackTrace();
-            assertNotNull(t);
+            NettyHttpOperationFailedException cause = (NettyHttpOperationFailedException) t.getCause();
+            assertEquals(404, cause.getStatusCode());
         }
     }
 
