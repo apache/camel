@@ -78,7 +78,7 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
         DispatchCallback<Exchange> originalCallback = data.getCallback();
         if (originalCallback != null && subs.size() > 0) {
             // When multiple subscribers have an active subscription,
-            // we aknowledge the exchange once it has been delivered to every
+            // we acknowledge the exchange once it has been delivered to every
             // subscriber (or their subscription is cancelled)
             AtomicInteger counter = new AtomicInteger(subs.size());
             // Use just the first exception in the callback when multiple exceptions are thrown
@@ -130,5 +130,9 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
             sub.signalCompletion();
         }
         subscriptions.clear();
+    }
+
+    public int getSubscriptionSize() {
+        return subscriptions.size();
     }
 }
