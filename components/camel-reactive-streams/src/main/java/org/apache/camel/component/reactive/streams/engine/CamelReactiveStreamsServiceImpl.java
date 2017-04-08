@@ -276,8 +276,10 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
-    public void attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
-        streamSubscriber(name).attachConsumer(consumer);
+    public CamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
+        CamelSubscriber subscriber = streamSubscriber(name);
+        subscriber.attachConsumer(consumer);
+        return subscriber;
     }
 
     @Override

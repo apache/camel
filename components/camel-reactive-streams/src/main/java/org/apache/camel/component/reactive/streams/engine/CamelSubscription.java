@@ -244,4 +244,8 @@ public class CamelSubscription implements Subscription {
         this.backpressureStrategy = backpressureStrategy;
         mutex.unlock();
     }
+
+    public long getBufferSize() {
+        return buffer.size();
+    }
 }
