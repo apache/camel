@@ -19,6 +19,8 @@ package org.apache.camel.component.reactive.streams;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -29,6 +31,7 @@ import org.apache.camel.spi.UriPath;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams", syntax = "reactive-streams:stream",
         consumerClass = ReactiveStreamsConsumer.class, label = "reactive,streams")
+@ManagedResource(description = "Managed ReactiveStreamsEndpoint")
 public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -71,6 +74,7 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         return new ReactiveStreamsConsumer(this, processor);
     }
 
+    @ManagedAttribute(description = "Name of the stream channel used by the endpoint to exchange messages")
     public String getStream() {
         return stream;
     }
@@ -82,6 +86,7 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.stream = stream;
     }
 
+    @ManagedAttribute(description = "Maximum number of exchanges concurrently being processed by Camel")
     public Integer getMaxInflightExchanges() {
         return maxInflightExchanges;
     }
@@ -102,6 +107,7 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     /**
      * Number of threads used to process exchanges in the Camel route.
      */
+    @ManagedAttribute(description = "Number of threads used to process exchanges in the Camel route")
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
@@ -128,6 +134,7 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.backpressureStrategy = backpressureStrategy;
     }
 
+    @ManagedAttribute(description = "Determines if onComplete events should be pushed to the Camel route")
     public boolean isForwardOnComplete() {
         return forwardOnComplete;
     }
@@ -139,6 +146,7 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.forwardOnComplete = forwardOnComplete;
     }
 
+    @ManagedAttribute(description = "Determines if onError events should be pushed to the Camel route")
     public boolean isForwardOnError() {
         return forwardOnError;
     }
