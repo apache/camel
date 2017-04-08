@@ -19,10 +19,8 @@ package org.apache.camel.component.reactive.streams.engine;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
-import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -194,4 +192,19 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
         }
     }
 
+    public long getRequested() {
+        return requested;
+    }
+
+    public long getInflightCount() {
+        return inflightCount;
+    }
+
+    public long getBufferSize() {
+        if (subscription != null && subscription instanceof CamelSubscription) {
+            return ((CamelSubscription) subscription).getBufferSize();
+        } else {
+            return 0;
+        }
+    }
 }

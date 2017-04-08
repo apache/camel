@@ -21,8 +21,11 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.component.reactive.streams.engine.CamelSubscriber;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Camel reactive-streams consumer.
  */
+@ManagedResource(description = "Managed ReactiveStreamsConsumer")
 public class ReactiveStreamsConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReactiveStreamsConsumer.class);
@@ -39,6 +43,8 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
     private ExecutorService executor;
 
     private CamelReactiveStreamsService service;
+
+    private volatile CamelSubscriber subscriber;
 
     public ReactiveStreamsConsumer(ReactiveStreamsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -56,13 +62,14 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
             executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, getEndpoint().getEndpointUri(), poolSize);
         }
 
-        this.service.attachCamelConsumer(endpoint.getStream(), this);
+        this.subscriber = this.service.attachCamelConsumer(endpoint.getStream(), this);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
         this.service.detachCamelConsumer(endpoint.getStream());
+        this.subscriber = null;
 
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
@@ -120,4 +127,20 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
     public ReactiveStreamsEndpoint getEndpoint() {
         return endpoint;
     }
+
+    @ManagedAttribute(description = "Number of inflight messages")
+    public long getInflightCount() {
+        return subscriber != null ? subscriber.getInflightCount() : 0;
+    }
+
+    @ManagedAttribute(description = "Number of messages to be requested on next request")
+    public long getToBeRequested() {
+        return subscriber != null ? subscriber.getRequested() : 0;
+    }
+
+    @ManagedAttribute(description = "Number of pending messages in the buffer")
+    public long getBufferSize() {
+        return subscriber != null ? subscriber.getBufferSize() : 0;
+    }
+
 }
