@@ -248,4 +248,8 @@ public class CamelSubscription implements Subscription {
     public long getBufferSize() {
         return buffer.size();
     }
+
+    public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
+        return backpressureStrategy;
+    }
 }

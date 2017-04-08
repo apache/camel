@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -205,6 +206,14 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
             return ((CamelSubscription) subscription).getBufferSize();
         } else {
             return 0;
+        }
+    }
+
+    public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
+        if (subscription != null && subscription instanceof CamelSubscription) {
+            return ((CamelSubscription) subscription).getBackpressureStrategy();
+        } else {
+            return null;
         }
     }
 }
