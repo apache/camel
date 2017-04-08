@@ -40,6 +40,8 @@ import io.undertow.util.HttpString;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -198,7 +200,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
     }
 
     void setupResponseListner(final ClientExchange clientExchange) {
-        clientExchange.setResponseListener(on(response -> {
+        clientExchange.setResponseListener(on((ClientExchange response) -> {
             LOG.trace("completed: {}", clientExchange);
 
             try {
@@ -207,8 +209,38 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                 final UndertowHttpBinding binding = endpoint.getUndertowHttpBinding();
                 final Message result = binding.toCamelMessage(clientExchange, exchange);
 
-                // we end Camel exchange here
-                finish(result);
+                // if there was a http error code then check if we should throw an exception
+                final int code = clientExchange.getResponse().getResponseCode();
+                LOG.debug("Http responseCode: {}", code);
+
+                final boolean ok = HttpHelper.isStatusCodeOk(code, "200-299");
+                if (!ok && throwExceptionOnFailure) {
+                    // operation failed so populate exception to throw
+                    final String uri = endpoint.getHttpURI().toString();
+                    final String statusText = clientExchange.getResponse().getStatus();
+                    HeaderMap headerMap = clientExchange.getResponse().getResponseHeaders();
+                    Map<String, String> headers = new HashMap<>();
+                    for (HttpString headerName : headerMap.getHeaderNames()) {
+                        headers.put(headerName.toString(), headerMap.get(headerName).toString());
+                    }
+                    final Exception cause = new HttpOperationFailedException(uri, code, statusText, null, headers, result.getBody(String.class));
+
+                    hasFailedWith(cause);
+
+                    if (result != null) {
+                        if (ExchangeHelper.isOutCapable(exchange)) {
+                            exchange.setOut(result);
+                        } else {
+                            exchange.setIn(result);
+                        }
+                    }
+
+                    // true failure exception may get overwritten with connection close failure, so re-set cause
+                    exchange.setException(cause);
+                } else {
+                    // we end Camel exchange here
+                    finish(result);
+                }
             } catch (final Exception e) {
                 hasFailedWith(e);
             }

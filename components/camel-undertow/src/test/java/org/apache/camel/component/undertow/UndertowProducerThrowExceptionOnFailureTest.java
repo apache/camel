@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.undertow;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
-@Ignore("CAMEL-11111")
 public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTest {
 
     @Test
@@ -41,11 +39,11 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
     public void testFailWithException() throws Exception {
         try {
             String out = template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null, String.class);
-        } catch (Throwable t) {
-            //t.printStackTrace();
-            assertNotNull(t);
+            fail("Should throw an exception");
+        } catch (CamelExecutionException e) {
+            HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
+            assertEquals(404, cause.getStatusCode());
         }
-        fail("Should throw an exception");
     }
 
     @Override
