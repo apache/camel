@@ -62,7 +62,7 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
     @Override
     public void subscribe(Subscriber<? super StreamPayload<Exchange>> subscriber) {
         Objects.requireNonNull(subscriber, "subscriber must not be null");
-        CamelSubscription sub = new CamelSubscription(workerPool, this, this.backpressureStrategy, subscriber);
+        CamelSubscription sub = new CamelSubscription(workerPool, this, name, this.backpressureStrategy, subscriber);
         this.subscriptions.add(sub);
         subscriber.onSubscribe(sub);
     }
