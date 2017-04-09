@@ -28,13 +28,8 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
 
     @Test
     public void testFailWithoutException() throws Exception {
-        try {
-            String out = template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null, String.class);
-            assertEquals("Fail", out);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            fail("Should not throw an exception");
-        }
+        String out = template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null, String.class);
+        assertEquals("Fail", out);
     }
 
     @Test
@@ -43,7 +38,7 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
             String out = template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null, String.class);
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
+            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(404, cause.getStatusCode());
         }
     }
@@ -55,11 +50,9 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
                     .withHeader(Exchange.HTTP_METHOD, "PUT")
                     .withBody("This is not JSON format")
                     .request(String.class);
-
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
-            HttpOperationFailedException httpException = (HttpOperationFailedException) e.getCause();
-
+            HttpOperationFailedException httpException = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(400, httpException.getStatusCode());
             assertEquals("text/plain", httpException.getResponseHeaders().get(Exchange.CONTENT_TYPE));
             assertEquals("Invalid json data", httpException.getResponseBody());
