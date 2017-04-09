@@ -18,7 +18,7 @@ package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.component.reactive.streams.engine.CamelReactiveStreamsServiceImpl;
+import org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.support.ReactiveStreamsTestService;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -30,14 +30,14 @@ public class CamelReactiveStreamsTest extends CamelTestSupport {
     @Test
     public void testDefaultService() {
         CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context, "default-service");
-        assertTrue(service1 instanceof CamelReactiveStreamsServiceImpl);
+        assertTrue(service1 instanceof DefaultCamelReactiveStreamsService);
     }
 
     @Test
     public void testSameDefaultServiceReturned() {
         CamelReactiveStreamsService service1 = CamelReactiveStreams.get(context, "default-service");
         CamelReactiveStreamsService service2 = CamelReactiveStreams.get(context, "default-service");
-        assertTrue(service1 instanceof CamelReactiveStreamsServiceImpl);
+        assertTrue(service1 instanceof DefaultCamelReactiveStreamsService);
         assertEquals(service1, service2);
     }
 
