@@ -56,7 +56,7 @@ import org.xnio.channels.StreamSinkChannel;
  * connection is ready or when the client failed to connect. It will also handle
  * writing the request and reading the response in
  * {@link #writeRequest(ClientExchange, ByteBuffer)} and
- * {@link #setupResponseListner(ClientExchange)}. The main entry point is
+ * {@link #setupResponseListener(ClientExchange)}. The main entry point is
  * {@link #completed(ClientConnection)} or {@link #failed(IOException)} in case
  * of errors, every error condition that should terminate Camel {@link Exchange}
  * should go to {@link #hasFailedWith(Exception)} and successful execution of
@@ -177,7 +177,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         callback.done(false);
     }
 
-    void hasFailedWith(final Exception e) {
+    void hasFailedWith(final Throwable e) {
         LOG.trace("Exchange has failed with", e);
         if (Boolean.TRUE.equals(throwExceptionOnFailure)) {
             exchange.setException(e);
@@ -193,13 +193,13 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
     void performClientExchange(final ClientExchange clientExchange) {
         // add response listener to the exchange, we could receive the response
         // at any time (async)
-        setupResponseListner(clientExchange);
+        setupResponseListener(clientExchange);
 
         // write the request
         writeRequest(clientExchange, body);
     }
 
-    void setupResponseListner(final ClientExchange clientExchange) {
+    void setupResponseListener(final ClientExchange clientExchange) {
         clientExchange.setResponseListener(on((ClientExchange response) -> {
             LOG.trace("completed: {}", clientExchange);
 
@@ -221,27 +221,27 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                     HeaderMap headerMap = clientExchange.getResponse().getResponseHeaders();
                     Map<String, String> headers = new HashMap<>();
                     for (HttpString headerName : headerMap.getHeaderNames()) {
-                        headers.put(headerName.toString(), headerMap.get(headerName).toString());
+                        Object value = headerMap.get(headerName);
+                        if (value != null) {
+                            headers.put(headerName.toString(), value.toString());
+                        }
                     }
                     final Exception cause = new HttpOperationFailedException(uri, code, statusText, null, headers, result.getBody(String.class));
 
-                    hasFailedWith(cause);
-
-                    if (result != null) {
-                        if (ExchangeHelper.isOutCapable(exchange)) {
-                            exchange.setOut(result);
-                        } else {
-                            exchange.setIn(result);
-                        }
+                    if (ExchangeHelper.isOutCapable(exchange)) {
+                        exchange.setOut(result);
+                    } else {
+                        exchange.setIn(result);
                     }
 
-                    // true failure exception may get overwritten with connection close failure, so re-set cause
-                    exchange.setException(cause);
+                    // make sure to fail with HttpOperationFailedException
+                    hasFailedWith(cause);
+
                 } else {
                     // we end Camel exchange here
                     finish(result);
                 }
-            } catch (final Exception e) {
+            } catch (Throwable e) {
                 hasFailedWith(e);
             }
         }));
