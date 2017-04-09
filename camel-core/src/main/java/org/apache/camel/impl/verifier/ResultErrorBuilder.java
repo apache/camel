@@ -153,7 +153,7 @@ public final class ResultErrorBuilder {
 
     public static ResultErrorBuilder withUnsupportedComponent(String component) {
         return new ResultErrorBuilder()
-            .code(VerificationError.StandardCode.UNSUPPORTED_SCOPE)
+            .code(VerificationError.StandardCode.UNSUPPORTED_COMPONENT)
             .description("Unsupported component: " + component);
     }
 
