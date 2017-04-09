@@ -56,7 +56,7 @@ import org.reactivestreams.Subscriber;
  * The default implementation of the reactive streams service.
  */
 @ManagedResource(description = "Managed CamelReactiveStreamsService")
-public class CamelReactiveStreamsServiceImpl extends ServiceSupport implements CamelReactiveStreamsService {
+public class DefaultCamelReactiveStreamsService extends ServiceSupport implements CamelReactiveStreamsService {
 
     private CamelContext context;
 
@@ -70,7 +70,7 @@ public class CamelReactiveStreamsServiceImpl extends ServiceSupport implements C
 
     private final Map<String, String> requestedUriToStream = new ConcurrentHashMap<>();
 
-    public CamelReactiveStreamsServiceImpl() {
+    public DefaultCamelReactiveStreamsService() {
     }
 
     @Override
