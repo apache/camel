@@ -43,7 +43,6 @@ public class BindyRecordFieldStartingWithSeperatorCharTest extends CamelTestSupp
         template.sendBody("direct:start", "',','val2,',3");
         template.sendBody("direct:start", "'',',val2,',4");
 
-
         mockEndPoint.assertIsSatisfied();
 
         BindyCsvRowFormat row = mockEndPoint.getExchanges().get(0).getIn().getBody(BindyCsvRowFormat.class);
@@ -65,9 +64,6 @@ public class BindyRecordFieldStartingWithSeperatorCharTest extends CamelTestSupp
         assertEquals(null, row.getFirstField());
         assertEquals(",val2,", row.getSecondField());
         assertEquals(BigDecimal.valueOf(4), row.getNumber());
-
-
-
     }
 
     @Override
