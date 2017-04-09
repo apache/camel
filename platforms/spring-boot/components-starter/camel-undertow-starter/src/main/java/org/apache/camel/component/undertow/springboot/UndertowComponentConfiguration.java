@@ -17,6 +17,9 @@
 package org.apache.camel.component.undertow.springboot;
 
 import org.apache.camel.component.undertow.UndertowHttpBinding;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpConfiguration;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -45,6 +48,31 @@ public class UndertowComponentConfiguration {
      * To configure common options such as thread pools
      */
     private UndertowHostOptionsNestedConfiguration hostOptions;
+    /**
+     * To use a custom HttpBinding to control the mapping between Camel message
+     * and HttpClient.
+     */
+    @NestedConfigurationProperty
+    private HttpBinding httpBinding;
+    /**
+     * To use the shared HttpConfiguration as base configuration.
+     */
+    @NestedConfigurationProperty
+    private HttpConfiguration httpConfiguration;
+    /**
+     * Whether to allow java serialization when a request uses
+     * context-type=application/x-java-serialized-object. This is by default
+     * turned off. If you enable this then be aware that Java will deserialize
+     * the incoming data from the request to Java and that can be a potential
+     * security risk.
+     */
+    private Boolean allowJavaSerializedObject = false;
+    /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
+     */
+    @NestedConfigurationProperty
+    private HeaderFilterStrategy headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -76,6 +104,39 @@ public class UndertowComponentConfiguration {
     public void setHostOptions(
             UndertowHostOptionsNestedConfiguration hostOptions) {
         this.hostOptions = hostOptions;
+    }
+
+    public HttpBinding getHttpBinding() {
+        return httpBinding;
+    }
+
+    public void setHttpBinding(HttpBinding httpBinding) {
+        this.httpBinding = httpBinding;
+    }
+
+    public HttpConfiguration getHttpConfiguration() {
+        return httpConfiguration;
+    }
+
+    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
+        this.httpConfiguration = httpConfiguration;
+    }
+
+    public Boolean getAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    public void setAllowJavaSerializedObject(Boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(
+            HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

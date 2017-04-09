@@ -162,9 +162,9 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
         String path = httpExchange.getRequestPath();
         UndertowEndpoint endpoint = (UndertowEndpoint) exchange.getFromEndpoint();
-        if (endpoint.getHttpURI() != null) {
+        if (ObjectHelper.isNotEmpty(endpoint.getHttpUri())) {
             // need to match by lower case as we want to ignore case on context-path
-            String endpointPath = endpoint.getHttpURI().getPath();
+            String endpointPath = endpoint.getHttpUri().getPath();
             String matchPath = path.toLowerCase(Locale.US);
             String match = endpointPath.toLowerCase(Locale.US);
             if (match != null && matchPath.startsWith(match)) {
@@ -285,7 +285,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
         int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
 
-        httpExchange.setResponseCode(code);
+        httpExchange.setStatusCode(code);
 
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 

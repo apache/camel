@@ -36,7 +36,7 @@ public class RestUndertowHttpBinding extends DefaultUndertowHttpBinding {
         // so we need to map those placeholders with data from the incoming request context path
 
         UndertowEndpoint endpoint = (UndertowEndpoint) exchange.getFromEndpoint();
-        String consumerPath = endpoint.getHttpURI().getPath();
+        String consumerPath = endpoint.getHttpUri().getPath();
 
         if (useRestMatching(consumerPath)) {
 

@@ -18,13 +18,17 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class UndertowHttpProducerTest extends BaseUndertowTest {
 
     @Test
     public void testHttpSimple() throws Exception {
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+        final MockEndpoint mock = getMockEndpoint("mock:input");
+
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+        mock.expectedHeaderReceived("Host", "localhost:" + getPort());
 
         String out = template.requestBody("http://localhost:{{port}}/foo", null, String.class);
         assertEquals("Bye World", out);
@@ -34,7 +38,10 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
 
     @Test
     public void testHttpSimpleHeader() throws Exception {
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
+        final MockEndpoint mock = getMockEndpoint("mock:input");
+
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
+        mock.expectedHeaderReceived("Host", "localhost:" + getPort());
 
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
@@ -44,9 +51,11 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
 
     @Test
     public void testHttpSimpleHeaderAndBody() throws Exception {
+        final MockEndpoint mock = getMockEndpoint("mock:input");
 
-        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
+        mock.expectedBodiesReceived("Hello World");
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
+        mock.expectedHeaderReceived("Host", "localhost:" + getPort());
 
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);

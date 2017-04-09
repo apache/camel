@@ -28,7 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
@@ -42,15 +42,11 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link UndertowEndpoint}.
  */
-public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
-
+public class UndertowComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
     private Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<UndertowHostKey, UndertowHost>();
 
     @Metadata(label = "advanced")
@@ -100,13 +96,15 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
                         uriHttpUriAddress.getQuery(),
                         uriHttpUriAddress.getFragment()),
                 parameters);
-        endpoint.setHttpURI(httpUri);
+
+        // the one set via createEndpointInstance is null, we need to set the value now
+        endpoint.setHttpUri(httpUri);
 
         return endpoint;
     }
 
     protected UndertowEndpoint createEndpointInstance(URI endpointUri, UndertowComponent component) throws URISyntaxException {
-        return new UndertowEndpoint(endpointUri.toString(), component);
+        return new UndertowEndpoint(endpointUri.toString(), component, null);
     }
 
     @Override
@@ -270,7 +268,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     }
 
     public void registerConsumer(UndertowConsumer consumer) {
-        URI uri = consumer.getEndpoint().getHttpURI();
+        URI uri = consumer.getEndpoint().getHttpUri();
         UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), consumer.getEndpoint().getSslContext());
         UndertowHost host = undertowRegistry.get(key);
         if (host == null) {
@@ -282,7 +280,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     }
 
     public void unregisterConsumer(UndertowConsumer consumer) {
-        URI uri = consumer.getEndpoint().getHttpURI();
+        URI uri = consumer.getEndpoint().getHttpUri();
         UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), consumer.getEndpoint().getSslContext());
         UndertowHost host = undertowRegistry.get(key);
         host.unregisterHandler(consumer.getHttpHandlerRegistrationInfo());
