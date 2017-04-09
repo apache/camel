@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import io.undertow.client.ClientCallback;
 import io.undertow.client.ClientConnection;
@@ -218,15 +219,17 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                     // operation failed so populate exception to throw
                     final String uri = endpoint.getHttpURI().toString();
                     final String statusText = clientExchange.getResponse().getStatus();
-                    HeaderMap headerMap = clientExchange.getResponse().getResponseHeaders();
-                    Map<String, String> headers = new HashMap<>();
-                    for (HttpString headerName : headerMap.getHeaderNames()) {
-                        Object value = headerMap.get(headerName);
-                        if (value != null) {
-                            headers.put(headerName.toString(), value.toString());
-                        }
-                    }
-                    final Exception cause = new HttpOperationFailedException(uri, code, statusText, null, headers, result.getBody(String.class));
+
+                    // Convert Message headers (Map<String, Object>) to Map<String, String> as expected by HttpOperationsFailedException
+                    // using Message versus clientExchange as its header values have extra formatting
+                    final Map<String, String> headers = result.getHeaders().entrySet()
+                            .stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey, (entry) -> entry.getValue().toString()));
+
+                    // Since result (Message) isn't associated with an Exchange yet, you can not use result.getBody(String.class)
+                    final String bodyText = ExchangeHelper.convertToType(exchange, String.class, result.getBody());
+
+                    final Exception cause = new HttpOperationFailedException(uri, code, statusText, null, headers, bodyText);
 
                     if (ExchangeHelper.isOutCapable(exchange)) {
                         exchange.setOut(result);
@@ -236,7 +239,6 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
 
                     // make sure to fail with HttpOperationFailedException
                     hasFailedWith(cause);
-
                 } else {
                     // we end Camel exchange here
                     finish(result);

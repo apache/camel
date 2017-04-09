@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.undertow;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
 public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTest {
@@ -46,11 +48,42 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
         }
     }
 
+    @Test
+    public void testFailWithException2() throws Exception {
+        try {
+            String out = fluentTemplate().to("undertow:http://localhost:{{port2}}/test/fail?throwExceptionOnFailure=true")
+                    .withHeader(Exchange.HTTP_METHOD, "PUT")
+                    .withBody("This is not JSON format")
+                    .request(String.class);
+
+            fail("Should throw an exception");
+        } catch (CamelExecutionException e) {
+            HttpOperationFailedException httpException = (HttpOperationFailedException) e.getCause();
+
+            assertEquals(400, httpException.getStatusCode());
+            assertEquals("text/plain", httpException.getResponseHeaders().get(Exchange.CONTENT_TYPE));
+            assertEquals("Invalid json data", httpException.getResponseBody());
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                restConfiguration()
+                        .component("undertow").port(getPort2())
+                        .bindingMode(RestBindingMode.json);
+
+                onException(JsonParseException.class)
+                        .handled(true)
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
+                        .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
+                        .setBody().constant("Invalid json data");
+
+                rest("/test")
+                        .put("/fail").to("mock:test");
+
                 from("undertow:http://localhost:{{port}}/fail")
                         .setHeader(Exchange.HTTP_RESPONSE_CODE).constant(404)
                         .transform(constant("Fail"));
