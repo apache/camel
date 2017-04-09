@@ -373,6 +373,8 @@ public class CamelReactiveStreamsServiceImpl extends ServiceSupport implements C
                     String name = k;
                     int subscribers = v.getSubscriptionSize();
 
+                    // TODO: include more subscriber information, either as a nested table or flattern
+
                     CompositeType ct = publishersCompositeType();
                     CompositeData data = new CompositeDataSupport(ct,
                         new String[] {"name", "subscribers"},
