@@ -92,7 +92,9 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
         }
 
         if (subs.size() > 0) {
-            LOG.debug("Exchange published to {} subscriptions for the stream {}: {}", subs.size(), name, data.getItem());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exchange published to {} subscriptions for the stream {}: {}", subs.size(), name, data.getItem());
+            }
             // at least one subscriber
             for (CamelSubscription sub : subs) {
                 sub.publish(data);
