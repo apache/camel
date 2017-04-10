@@ -94,9 +94,9 @@ public class NettyHttpGlobalSSLTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:https://localhost:" + port +"?ssl=true")
-                .to("mock:input")
-                .transform().simple("Bye World");
+                from("netty-http:https://localhost:" + port + "?ssl=true")
+                        .to("mock:input")
+                        .transform().simple("Bye World");
             }
         };
     }
