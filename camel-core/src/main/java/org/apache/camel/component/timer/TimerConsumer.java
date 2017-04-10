@@ -55,7 +55,9 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
 
     @Override
     protected void doStart() throws Exception {
-        if (endpoint.getDelay() >= 0) { 
+        super.doStart();
+
+        if (endpoint.getDelay() >= 0) {
             task = new TimerTask() {
                 // counter
                 private final AtomicLong counter = new AtomicLong();
@@ -128,6 +130,8 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executorService);
             executorService = null;
         }
+
+        super.doStop();
     }
 
     @Override
