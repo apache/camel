@@ -1,0 +1,22 @@
+{
+  "baseScheme": "rest-swagger",
+  "baseGroupId": "org.apache.camel",
+  "baseArtifactId": "camel-rest-swagger",
+  "baseVersion": "2.19.0-SNAPSHOT",
+  "baseJavaType": "org.apache.camel.component.rest.swagger.RestSwaggerComponent",
+  "name": "PetStore",
+  "scheme": "petstore",
+  "javaType": "org.foo.connector.PetStoreComponent",
+  "groupId": "org.foo",
+  "artifactId": "petstore-connector",
+  "version": "2.19.0-SNAPSHOT",
+  "description": "Pets in the store",
+  "labels": [ "api", "rest" ],
+  "pattern": "To",
+  "inputDataType": "none",
+  "outputDataType": "json",
+  "endpointOptions": [ "specificationUri", "operationId" ],
+  "endpointValues": {
+    "specificationUri": "http://petstore.swagger.io/v2/swagger.json"
+  }
+}
