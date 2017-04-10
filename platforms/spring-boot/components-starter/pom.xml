@@ -207,6 +207,7 @@
     <module>camel-lzf-starter</module>
     <module>camel-mail-starter</module>
     <module>camel-metrics-starter</module>
+    <module>camel-milo-starter</module>
     <module>camel-mina2-starter</module>
     <module>camel-mllp-starter</module>
     <module>camel-mongodb-gridfs-starter</module>
