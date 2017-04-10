@@ -41,6 +41,7 @@
     <module>twitter-salesforce-example</module>
     <module>salesforce-upsert-contact-connector</module>
     <module>petstore-connector</module>
+    <module>petstore-example</module>
   </modules>
 
 </project>

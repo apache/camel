@@ -68,6 +68,11 @@
       <artifactId>camel-rest-swagger</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-undertow</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- camel and spring boot compiler plugins -->
     <dependency>

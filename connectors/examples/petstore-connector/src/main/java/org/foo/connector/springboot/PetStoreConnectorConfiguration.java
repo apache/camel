@@ -16,6 +16,7 @@
  */
 package org.foo.connector.springboot;
 
+import java.net.URI;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -25,4 +26,24 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "camel.connector.petstore")
 public class PetStoreConnectorConfiguration {
+
+    /**
+     * Path to the Swagger specification file. The scheme host base path are
+     * taken from this specification but these can be overriden with properties
+     * on the component or endpoint level. If not given the component tries to
+     * load swagger.json resource. Note that the host defined on the component
+     * and endpoint of this Component should contain the scheme hostname and
+     * optionally the port in the URI syntax (i.e.
+     * https://api.example.com:8080). Can be overriden in endpoint
+     * configuration.
+     */
+    private URI specificationUri;
+
+    public URI getSpecificationUri() {
+        return specificationUri;
+    }
+
+    public void setSpecificationUri(URI specificationUri) {
+        this.specificationUri = specificationUri;
+    }
 }
