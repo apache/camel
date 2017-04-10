@@ -19,18 +19,16 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.blueprint.BlueprintSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a> 
  */
-public class CxfRsComponent extends HeaderFilterStrategyComponent {
+public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsComponent.class);
 
@@ -117,7 +115,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
 
         // use global ssl config if set
         if (answer.getSslContextParameters() == null) {
-            answer.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            answer.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         return answer;

@@ -68,9 +68,6 @@
                       password="changeit"/>
         </trustManagers>
     </sslContextParameters>
-    <bean id="sslContextParametersSupplier" class="org.apache.camel.component.cxf.util.CxfSSLContextParameterSupplier">
-        <property name="sslContextParameters" ref="mySslContext" />
-    </bean>
 
     <bean id="defaultHostnameVerifier"
           class="org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier"/>

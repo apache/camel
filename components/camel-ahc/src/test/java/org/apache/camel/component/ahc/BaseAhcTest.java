@@ -65,6 +65,10 @@ public abstract class BaseAhcTest extends CamelTestSupport {
     }
     
     protected void addSslContextParametersToRegistry(JndiRegistry registry) {
+        registry.bind("sslContextParameters", createSSLContextParameters());
+    }
+
+    protected SSLContextParameters createSSLContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
         ksp.setPassword(KEY_STORE_PASSWORD);
@@ -89,7 +93,7 @@ public abstract class BaseAhcTest extends CamelTestSupport {
         // Caused by: javax.net.ssl.SSLException: bad record MAC
         sslContextParameters.setSecureSocketProtocol("SSLv3");
 
-        registry.bind("sslContextParameters", sslContextParameters);
+        return sslContextParameters;
     }
     
     /**

@@ -18,10 +18,10 @@ package org.apache.camel.component.consul;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.consul.enpoint.ConsulAgentProducer;
 import org.apache.camel.component.consul.enpoint.ConsulCatalogProducer;
 import org.apache.camel.component.consul.enpoint.ConsulCoordinatesProducer;
@@ -35,14 +35,12 @@ import org.apache.camel.component.consul.enpoint.ConsulSessionProducer;
 import org.apache.camel.component.consul.enpoint.ConsulStatusProducer;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 /**
  * Represents the component that manages {@link ConsulEndpoint}.
  */
-public class ConsulComponent extends DefaultComponent {
+public class ConsulComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private ConsulConfiguration configuration = new ConsulConfiguration();
@@ -151,7 +149,7 @@ public class ConsulComponent extends DefaultComponent {
 
         // using global ssl context parameters if set
         if (configuration.isUseGlobalSslContextParameters() && configuration.getSslContextParameters() == null) {
-            configuration.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            configuration.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         setProperties(configuration, parameters);

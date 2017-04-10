@@ -18,14 +18,13 @@ package org.apache.camel.component.restlet;
 
 import java.net.URL;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -38,9 +37,10 @@ public class RestletHttpsWithGlobalSSLContextParametersTest extends RestletTestS
     
     private static final String REQUEST_MESSAGE = 
         "<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>";
-    
+
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").getPath().toString());
         ksp.setPassword("changeit");
@@ -52,12 +52,9 @@ public class RestletHttpsWithGlobalSSLContextParametersTest extends RestletTestS
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
 
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("mySSLContextParametersSupplier", (GlobalSSLContextParametersSupplier) () -> sslContextParameters);
-
-        return registry;
+        context.setSSLContextParameters(sslContextParameters);
+        return context;
     }
-
     
 
     @Override

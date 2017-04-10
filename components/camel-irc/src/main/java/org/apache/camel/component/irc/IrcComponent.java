@@ -18,14 +18,11 @@ package org.apache.camel.component.irc;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
@@ -37,7 +34,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class IrcComponent extends UriEndpointComponent {
+public class IrcComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
     private final transient Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
 
@@ -82,7 +79,7 @@ public class IrcComponent extends UriEndpointComponent {
 
             SSLContextParameters sslParams = configuration.getSslContextParameters();
             if (sslParams == null) {
-                sslParams = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+                sslParams = getGlobalSSLContextParameters();
             }
 
             if (sslParams != null) {

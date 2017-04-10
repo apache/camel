@@ -17,15 +17,12 @@
 package org.apache.camel.component.nats;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
-public class NatsComponent extends DefaultComponent {
+public class NatsComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -34,7 +31,7 @@ public class NatsComponent extends DefaultComponent {
         config.setServers(remaining);
 
         if (config.getSslContextParameters() == null) {
-            config.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            config.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         NatsEndpoint endpoint = new NatsEndpoint(uri, this, config);

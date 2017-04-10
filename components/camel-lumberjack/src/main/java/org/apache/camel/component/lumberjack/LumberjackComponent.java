@@ -17,20 +17,17 @@
 package org.apache.camel.component.lumberjack;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 /**
  * The class is the Camel component for the Lumberjack server
  */
-public class LumberjackComponent extends UriEndpointComponent {
+public class LumberjackComponent extends UriEndpointComponent implements SSLContextParametersAware {
     static final int DEFAULT_PORT = 5044;
 
     @Metadata(label = "security")
@@ -66,7 +63,7 @@ public class LumberjackComponent extends UriEndpointComponent {
         setProperties(answer, parameters);
 
         if (isUseGlobalSslContextParameters() && answer.getSslContextParameters() == null) {
-            answer.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            answer.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         return answer;

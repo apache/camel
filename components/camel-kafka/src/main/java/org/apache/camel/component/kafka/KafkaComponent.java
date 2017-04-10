@@ -17,19 +17,16 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
-public class KafkaComponent extends UriEndpointComponent {
+public class KafkaComponent extends UriEndpointComponent implements SSLContextParametersAware {
 
     private KafkaConfiguration configuration;
 
@@ -67,7 +64,7 @@ public class KafkaComponent extends UriEndpointComponent {
         setProperties(endpoint, params);
 
         if (endpoint.getConfiguration().isUseGlobalSslContextParameters() && endpoint.getConfiguration().getSslContextParameters() == null) {
-            endpoint.getConfiguration().setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            endpoint.getConfiguration().setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         return endpoint;

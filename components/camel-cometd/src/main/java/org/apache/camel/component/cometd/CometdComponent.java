@@ -22,17 +22,14 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 import javax.net.ssl.SSLContext;
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.SecurityPolicy;
 import org.cometd.server.BayeuxServerImpl;
@@ -54,7 +51,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for Jetty Cometd
  */
-public class CometdComponent extends UriEndpointComponent {
+public class CometdComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
 
     private final Map<String, ConnectorRef> connectors = new LinkedHashMap<String, ConnectorRef>();
@@ -230,7 +227,7 @@ public class CometdComponent extends UriEndpointComponent {
         ServerConnector sslSocketConnector = null;
         SSLContextParameters sslParams = this.sslContextParameters;
         if (sslParams == null) {
-            sslParams = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+            sslParams = getGlobalSSLContextParameters();
         }
         if (sslParams != null) {
             SslContextFactory sslContextFactory = new CometdComponentSslContextFactory();

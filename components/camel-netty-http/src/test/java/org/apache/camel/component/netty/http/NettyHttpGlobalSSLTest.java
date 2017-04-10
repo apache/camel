@@ -17,24 +17,25 @@
 package org.apache.camel.component.netty.http;
 
 import java.net.URL;
-import javax.annotation.Resource;
 
-import junit.framework.TestCase;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.KeyManagersParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/org/apache/camel/component/netty/http/SpringNettyHttpGlobalSSLTest.xml"})
-public class SpringNettyHttpGlobalSSLTest extends TestCase {
+public class NettyHttpGlobalSSLTest extends CamelTestSupport {
 
     @Produce
     private ProducerTemplate template;
@@ -43,15 +44,6 @@ public class SpringNettyHttpGlobalSSLTest extends TestCase {
     private MockEndpoint mockEndpoint;
 
     private Integer port;
-
-    public Integer getPort() {
-        return port;
-    }
-
-    @Resource(name = "dynaPort")
-    public void setPort(Integer port) {
-        this.port = port;
-    }
 
     @BeforeClass
     public static void setUpJaas() throws Exception {
@@ -64,17 +56,49 @@ public class SpringNettyHttpGlobalSSLTest extends TestCase {
     @AfterClass
     public static void tearDownJaas() throws Exception {
         System.clearProperty("java.security.auth.login.config");
+        System.clearProperty("javax.net.ssl.trustStore");
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(9000);
+
+        CamelContext context = super.createCamelContext();
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        KeyManagersParameters keyManagers = new KeyManagersParameters();
+        keyManagers.setKeyPassword("changeit");
+        KeyStoreParameters keyStore = new KeyStoreParameters();
+        keyStore.setResource("jsse/localhost.ks");
+        keyStore.setPassword("changeit");
+        keyManagers.setKeyStore(keyStore);
+        sslContextParameters.setKeyManagers(keyManagers);
+        TrustManagersParameters trustManagers = new TrustManagersParameters();
+        trustManagers.setKeyStore(keyStore);
+        sslContextParameters.setTrustManagers(trustManagers);
+        context.setSSLContextParameters(sslContextParameters);
+        return context;
     }
 
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
         mockEndpoint.expectedBodiesReceived("Hello World");
 
-        String out = template.requestBody("https://localhost:" + getPort(), "Hello World", String.class);
+        String out = template.requestBody("https://localhost:" + port, "Hello World", String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();
     }
 
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("netty-http:https://localhost:" + port +"?ssl=true")
+                .to("mock:input")
+                .transform().simple("Bye World");
+            }
+        };
+    }
 }
 

@@ -54,6 +54,7 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -401,6 +402,11 @@ public class CamelAutoConfiguration {
                 LOG.info("Using custom RoutePolicyFactory with id: {} and implementation: {}", entry.getKey(), factory);
                 camelContext.addRoutePolicyFactory(factory);
             }
+        }
+        // add SSL context parameters
+        GlobalSSLContextParametersSupplier sslContextParametersSupplier = getSingleBeanOfType(applicationContext, GlobalSSLContextParametersSupplier.class);
+        if (sslContextParametersSupplier != null) {
+            camelContext.setSSLContextParameters(sslContextParametersSupplier.get());
         }
 
         // set the default thread pool profile if defined

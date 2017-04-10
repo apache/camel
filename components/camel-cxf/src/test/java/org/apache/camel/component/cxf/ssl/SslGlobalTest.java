@@ -19,13 +19,13 @@ package org.apache.camel.component.cxf.ssl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -44,16 +44,12 @@ public class SslGlobalTest extends CamelSpringTestSupport {
         return true;
     }
 
-    @AfterClass
-    public static void cleanUp() {
-        //System.clearProperty("cxf.config.file");
-    }
-
-    @BeforeClass
-    public static void startService() {
-        //System.getProperties().put("cxf.config.file", "/org/apache/camel/component/cxf/CxfSslContext.xml");
-        //Greeter implementor = new GreeterImpl();
-        //Endpoint.publish(JAXWS_SERVER_ADDRESS, implementor);
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        SSLContextParameters parameters = context.getRegistry().lookupByNameAndType("mySslContext", SSLContextParameters.class);
+        context.setSSLContextParameters(parameters);
+        return context;
     }
 
     @Test

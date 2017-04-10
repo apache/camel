@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 import javax.management.MBeanServer;
 import javax.servlet.Filter;
 import javax.servlet.RequestDispatcher;
@@ -43,6 +41,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
@@ -60,7 +59,6 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -69,7 +67,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
@@ -102,13 +99,13 @@ import org.slf4j.LoggerFactory;
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
  * the http endpoints.
  *
- * @version 
+ * @version
  */
-public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
+public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
     public static final String TMP_DIR = "CamelJettyTempDir";
-    
+
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
-   
+
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent.class);
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
     private static final String JETTY_SSL_KEYPASSWORD = "org.eclipse.jetty.ssl.keypassword";
@@ -166,7 +163,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         public int decrement() {
             return --refCount;
         }
-        
+
         public int getRefCount() {
             return refCount;
         }
@@ -189,7 +186,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
-        ssl = ssl != null ? ssl : Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+        ssl = ssl != null ? ssl : getGlobalSSLContextParameters();
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class, getProxyHost());
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class, getProxyPort());
         Integer httpClientMinThreads = getAndRemoveParameter(parameters, "httpClientMinThreads", Integer.class, this.httpClientMinThreads);
@@ -238,7 +235,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             endpoint.setUrlRewrite(urlRewrite);
         }
         // setup the proxy host and proxy port
-        
+
         if (httpClientParameters != null && !httpClientParameters.isEmpty()) {
             endpoint.setHttpClientParameters(httpClientParameters);
         }
@@ -266,7 +263,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         }
         if (enableJmx != null) {
             endpoint.setEnableJmx(enableJmx);
-        } else { 
+        } else {
             // set this option based on setting of JettyHttpComponent
             endpoint.setEnableJmx(isEnableJmx());
         }
@@ -344,11 +341,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     enableSessionSupport(connectorRef.server, connectorKey);
                 }
                 connectorRef.server.start();
-                
+
                 CONNECTORS.put(connectorKey, connectorRef);
-                
+
             } else {
-                
+
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
                     // As the server is started, we need to stop the server for a while to add the new handler
                     connectorRef.server.stop();
@@ -362,11 +359,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             if (endpoint.isSessionSupport()) {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
-            
+
             if (endpoint.isEnableMultipartFilter()) {
                 enableMultipartFilter(endpoint, connectorRef.server, connectorKey);
             }
-            
+
             if (endpoint.getFilters() != null && endpoint.getFilters().size() > 0) {
                 setFilters(endpoint, connectorRef.server, connectorKey);
             }
@@ -396,7 +393,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             }
         }
     }
-    
+
     private void setFilters(JettyHttpEndpoint endpoint, Server server, String connectorKey) {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         List<Filter> filters = endpoint.getFilters();
@@ -416,7 +413,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             addFilter(context, filterHolder, pathSpec);
         }
     }
-    
+
     private void addFilter(ServletContextHandler context, FilterHolder filterHolder, String pathSpec) {
         context.getServletHandler().addFilterWithMapping(filterHolder, pathSpec, 0);
     }
@@ -461,7 +458,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // If the connector is not needed anymore then stop it
         HttpCommonEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
-        
+
         synchronized (CONNECTORS) {
             ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef != null) {
@@ -481,14 +478,14 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             }
         }
     }
-    
+
     private String getConnectorKey(HttpCommonEndpoint endpoint) {
         return endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
     }
 
     // Properties
     // -------------------------------------------------------------------------
-       
+
     public String getSslKeyPassword() {
         return sslKeyPassword;
     }
@@ -549,7 +546,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             connector = getSocketConnector(server, endpoint);
         }
         return connector;
-    }   
+    }
     protected Connector getSocketConnector(Server server, JettyHttpEndpoint endpoint) {
         Connector answer = null;
         if (socketConnectors != null) {
@@ -571,18 +568,18 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         }
         return answer;
     }
-        
+
     protected Connector createConnector(Server server, JettyHttpEndpoint endpoint) {
 
         // now we just use the SelectChannelConnector as the default connector
         SslContextFactory sslcf = null;
-        
+
         // Note that this was set on the endpoint when it was constructed.  It was
         // either explicitly set at the component or on the endpoint, but either way,
         // the value is already set.  We therefore do not need to look at the component
         // level SSLContextParameters again in this method.
-        SSLContextParameters endpointSslContextParameters = endpoint.getSslContextParameters();        
-        
+        SSLContextParameters endpointSslContextParameters = endpoint.getSslContextParameters();
+
         if (endpointSslContextParameters != null) {
             try {
                 sslcf = createSslContextFactory(endpointSslContextParameters);
@@ -590,21 +587,21 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 throw new RuntimeCamelException(e);
             }
         } else if ("https".equals(endpoint.getProtocol())) {
-            sslcf = new SslContextFactory();  
+            sslcf = new SslContextFactory();
             String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
             if (keystoreProperty != null) {
                 sslcf.setKeyStorePath(keystoreProperty);
             } else if (sslKeystore != null) {
                 sslcf.setKeyStorePath(sslKeystore);
             }
-    
+
             String keystorePassword = System.getProperty(JETTY_SSL_KEYPASSWORD);
             if (keystorePassword != null) {
                 sslcf.setKeyManagerPassword(keystorePassword);
             } else if (sslKeyPassword != null) {
                 sslcf.setKeyManagerPassword(sslKeyPassword);
             }
-    
+
             String password = System.getProperty(JETTY_SSL_PASSWORD);
             if (password != null) {
                 sslcf.setKeyStorePassword(password);
@@ -615,9 +612,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         return createConnectorJettyInternal(server, endpoint, sslcf);
     }
-    
+
     protected abstract AbstractConnector createConnectorJettyInternal(Server server, JettyHttpEndpoint endpoint, SslContextFactory sslcf);
-    
+
     private SslContextFactory createSslContextFactory(SSLContextParameters ssl) throws GeneralSecurityException, IOException {
         SslContextFactory answer = new SslContextFactory();
         if (ssl != null) {
@@ -625,7 +622,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         }
         return answer;
     }
-    
+
     protected boolean checkSSLContextFactoryConfig(Object instance) {
         try {
             Method method = instance.getClass().getMethod("checkConfig");
@@ -675,10 +672,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         SslContextFactory sslContextFactory = createSslContextFactory(ssl);
         HttpClientTransport transport = createHttpClientTransport(maxThreads);
         CamelHttpClient httpClient = createCamelHttpClient(transport, sslContextFactory);
-        
+
         CamelContext context = endpoint.getCamelContext();
 
-        if (context != null 
+        if (context != null
             && ObjectHelper.isNotEmpty(context.getProperty("http.proxyHost"))
             && ObjectHelper.isNotEmpty(context.getProperty("http.proxyPort"))) {
             String host = context.getProperty("http.proxyHost");
@@ -693,7 +690,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             LOG.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
             httpClient.setProxy(host, port);
         }
-        
+
         // must have both min and max
         if (minThreads != null || maxThreads != null) {
 
@@ -712,7 +709,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
             httpClient.setThreadPoolOrExecutor(qtp);
         }
-        
+
         if (LOG.isDebugEnabled()) {
             if (minThreads != null) {
                 LOG.debug("Created HttpClient with thread pool {}-{} -> {}", new Object[]{minThreads, maxThreads, httpClient});
@@ -720,7 +717,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 LOG.debug("Created HttpClient with default thread pool size -> {}", httpClient);
             }
         }
-        
+
         return httpClient;
     }
 
@@ -846,13 +843,13 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // If null, provide the default implementation.
         if (mbContainer == null) {
             MBeanServer mbs = null;
-            
+
             final ManagementStrategy mStrategy = this.getCamelContext().getManagementStrategy();
             final ManagementAgent mAgent = mStrategy.getManagementAgent();
             if (mAgent != null) {
                 mbs = mAgent.getMBeanServer();
             }
-            
+
             if (mbs != null) {
                 mbContainer = new MBeanContainer(mbs);
                 startMbContainer();
@@ -860,7 +857,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
             }
         }
-        
+
         return this.mbContainer;
     }
 
@@ -939,7 +936,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     public void setUseContinuation(boolean useContinuation) {
         this.useContinuation = useContinuation;
     }
-    
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
@@ -1157,7 +1154,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (!query.isEmpty()) {
             url = url + "&" + query;
         }
-        
+
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
 
@@ -1230,7 +1227,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         return camelServlet;
     }
-    
+
     protected void addJettyHandlers(Server server, List<Handler> handlers) {
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
@@ -1251,7 +1248,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     }
 
     protected boolean isHandlerInChain(Handler current, Handler handler) {
-  
+
         if (handler.equals(current)) {
             //Found a match in the chain
             return true;
@@ -1263,7 +1260,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             return false;
         }
     }
-    
+
     protected Server createServer() {
         Server s = null;
         ThreadPool tp = threadPool;
@@ -1286,7 +1283,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             try {
                 if (!Server.getVersion().startsWith("8")) {
                     s = Server.class.getConstructor(ThreadPool.class).newInstance(tp);
-                    
+
                 } else {
                     s = new Server();
                     if (isEnableJmx()) {
@@ -1319,8 +1316,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             //need an error handler that won't leak information about the exception 
             //back to the client.
             ErrorHandler eh = new ErrorHandler() {
-                public void handle(String target, Request baseRequest, 
-                                   HttpServletRequest request, HttpServletResponse response) 
+                public void handle(String target, Request baseRequest,
+                                   HttpServletRequest request, HttpServletResponse response)
                     throws IOException {
                     String msg = HttpStatus.getMessage(response.getStatus());
                     request.setAttribute(RequestDispatcher.ERROR_MESSAGE, msg);
@@ -1340,8 +1337,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         }
         return s;
     }
-    
-    
+
+
     /**
      * Starts {@link #mbContainer} and registers the container with itself as a managed bean
      * logging an error if there is a problem starting the container.
@@ -1407,12 +1404,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             mbContainer = null;
         }
     }
-    
+
     private void addServerMBean(Server server) {
         if (mbContainer == null) {
             return;
-        }        
-        
+        }
+
         try {
             Object o = getContainer(server);
             o.getClass().getMethod("addEventListener", Container.Listener.class).invoke(o, mbContainer);
@@ -1456,5 +1453,5 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             throw new RuntimeException(t);
         }
     }
-    
+
 }

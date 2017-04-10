@@ -17,25 +17,22 @@
 package org.apache.camel.component.servicenow;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 /**
  * Represents the component that manages {@link ServiceNowEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class ServiceNowComponent extends UriEndpointComponent implements VerifiableComponent {
+public class ServiceNowComponent extends UriEndpointComponent implements VerifiableComponent, SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private ServiceNowConfiguration configuration;
@@ -83,7 +80,7 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
         }
 
         if (configuration.isUseGlobalSslContextParameters() && configuration.getSslContextParameters() == null) {
-            configuration.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            configuration.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         return new ServiceNowEndpoint(uri, this, configuration, instanceName);
