@@ -47,8 +47,6 @@ public class BoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
     private static final String CAMEL_TEST_FILE = "/CamelTestFile.txt";
     private static final String CAMEL_TEST_FILE_NAME = "CamelTestFile.txt";
 
-    private BoxFile testFile;
-
     @Test
     public void testSearchFolder() throws Exception {
         final Map<String, Object> headers = new HashMap<String, Object>();
@@ -95,13 +93,5 @@ public class BoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         InputStream stream = getClass().getResourceAsStream(CAMEL_TEST_FILE);
         testFile = rootFolder.uploadFile(stream, CAMEL_TEST_FILE_NAME).getResource();
-    }
-
-    private void deleteTestFile() {
-        try {
-            testFile.delete();
-        } catch (Throwable t) {
-        }
-        testFile = null;
     }
 }

@@ -56,7 +56,6 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
     private static final String CAMEL_TEST_MESSAGE = "Camel Test Message";
     private static final long TEN_MINUTES_IN_MILLIS = 600000;
 
-    private BoxFile testFile;
     private BoxTask testTask;
 
     @Test
@@ -269,14 +268,6 @@ public class BoxTasksManagerIntegrationTest extends AbstractBoxTestSupport {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         InputStream stream = getClass().getResourceAsStream(CAMEL_TEST_FILE);
         testFile = rootFolder.uploadFile(stream, CAMEL_TEST_FILE_NAME).getResource();
-    }
-
-    private void deleteTestFile() {
-        try {
-            testFile.delete();
-        } catch (Throwable t) {
-        }
-        testFile = null;
     }
 
     private BoxUser getCurrentUser() {

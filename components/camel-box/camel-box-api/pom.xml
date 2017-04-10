@@ -28,17 +28,19 @@
   <artifactId>camel-box-api</artifactId>
   <name>Camel :: Box :: API</name>
   <description>Camel Box API</description>
+  <packaging>jar</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <camel.osgi.export.pkg>org.apache.camel.component.box.api*</camel.osgi.export.pkg>
   </properties>
 
   <build>
     <defaultGoal>install</defaultGoal>
 
     <plugins>
-      
+
       <!-- to generate API Javadoc -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -86,10 +88,10 @@
   </profiles>
 
   <dependencies>
-  	<dependency>
-  		<groupId>com.box</groupId>
-  		<artifactId>box-java-sdk</artifactId>
-  		<version>2.1.1</version>
-  	</dependency>
+    <dependency>
+      <groupId>com.box</groupId>
+      <artifactId>box-java-sdk</artifactId>
+      <version>${box-java-sdk-version}</version>
+    </dependency>
   </dependencies>
 </project>
