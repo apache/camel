@@ -189,6 +189,7 @@
     <module>camel-lzf</module>
     <module>camel-mail</module>
     <module>camel-metrics</module>
+    <module>camel-milo</module>
     <module>camel-mina</module>
     <module>camel-mina2</module>
     <module>camel-mllp</module>
