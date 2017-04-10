@@ -1,0 +1,111 @@
+[[MiloServer-OpcUaServerComponent]]
+
+Eclipse Milo Server Component
+~~~~~~~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.18*
+
+The *Milo Server* component provides an OPC UA server using the
+http://eclipse.org/milo[Eclipse Milo™] implementation.
+
+*Java 8*: This component requires Java 8 at runtime. 
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>de.dentrassi.camel</groupId>
+    <artifactId>de.dentrassi.camel.milo</artifactId>
+    <version><!-- your Apache Camel version--></version>
+</dependency>
+------------------------------------------------------------
+
+Messages sent to the endpoint from Camel will be available from the OPC UA server to OPC UA Clients.
+Value write requests from OPC UA Client will trigger messages which are sent into Apache Camel.
+
+
+
+
+// component options: START
+The OPC UA Server component supports 19 options which are listed below.
+
+
+
+[width="100%",cols="2s,1m,8",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| namespaceUri | String | The URI of the namespace defaults to urn:org:apache:camel
+| applicationName | String | The application name
+| applicationUri | String | The application URI
+| productUri | String | The product URI
+| bindPort | int | The TCP port the server binds to
+| strictEndpointUrlsEnabled | boolean | Set whether strict endpoint URLs are enforced
+| serverName | String | Server name
+| hostname | String | Server hostname
+| securityPolicies | Set | Security policies
+| securityPoliciesById | String> | Security policies by URI or name
+| userAuthenticationCredentials | String | Set user password combinations in the form of user1:pwd1user2:pwd2 Usernames and passwords will be URL decoded
+| enableAnonymousAuthentication | boolean | Enable anonymous authentication disabled by default
+| bindAddresses | String | Set the addresses of the local addresses the server should bind to
+| buildInfo | BuildInfo | Server build info
+| serverCertificate | Result | Server certificate
+| certificateManager | CertificateManager | Server certificate manager
+| certificateValidator | CertificateValidator> | Validator for client certificates
+| defaultCertificateValidator | File | Validator for client certificates using default file based approach
+| defaultCertificateExistingValidator | File | Validator for client certificates using default file based approach
+|=======================================================================
+// component options: END
+
+
+
+
+
+
+
+
+
+[[MiloServer-URIformat]]
+URI format
+^^^^^^^^^^
+
+[source,java]
+------------------------
+milo-server:itemId[?options]
+------------------------
+
+[[Milo-URIOptions]]
+URI options
+^^^^^^^^^^^
+
+
+
+// endpoint options: START
+The OPC UA Server component supports 5 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| itemId | common |  | String | *Required* ID of the item
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+// endpoint options: END
+
+
+
+
+
+
+[[MiloServer-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+

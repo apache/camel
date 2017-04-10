@@ -1,0 +1,168 @@
+[[MiloClient-MiloClientComponent]]
+
+Milo Client Component
+~~~~~~~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.18*
+
+The *Milo Client* component provides access to OPC UA servers using the
+http://eclipse.org/milo[Eclipse Milo™] implementation.
+
+*Java 8*: This component requires Java 8 at runtime. 
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>de.dentrassi.camel</groupId>
+    <artifactId>de.dentrassi.camel.milo</artifactId>
+    <version><!-- your Apache Camel version--></version>
+</dependency>
+------------------------------------------------------------
+
+
+
+// component options: START
+The Milo based OPC UA Client component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2s,1m,8",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| defaultConfiguration | MiloClientConfiguration | All default options for client
+| applicationName | String | Default application name
+| applicationUri | String | Default application URI
+| productUri | String | Default product URI
+| reconnectTimeout | Long | Default reconnect timeout
+|=======================================================================
+// component options: END
+
+
+
+[[MiloClient-URIformat]]
+URI format
+^^^^^^^^^^
+
+The URI syntax of the endpoint is: 
+
+[source]
+------------------------
+milo-client:tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn:foo:bar;s=item-1)
+------------------------
+
+If the server does not use a path, then it is possible to simply omit it:
+
+------------------------
+milo-client:tcp://[user:password@]host:port?node=RAW(nsu=urn:foo:bar;s=item-1)
+------------------------
+
+If no user credentials are provided the client will switch to anonymous mode.
+
+[[MiloClient-URIOptions]]
+URI options
+^^^^^^^^^^^
+
+All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
+will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
+made, the options of the +client+ group are applied. All further instances will be ignored.
+
+If you need alternate options for the same endpoint URI it is possible though to set the +clientId+ option
+which will by added internally to the endpoint URI in order to select a different shared connection instance.
+In other words, shared connections located by the combination of endpoint URI and client id.
+
+
+
+
+
+
+
+
+
+
+
+
+// endpoint options: START
+The Milo based OPC UA Client component supports 27 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| endpointUri | common |  | String | *Required* The OPC UA server endpoint
+| clientId | common |  | String | A virtual client id to force the creation of a new connection instance
+| defaultAwaitWrites | common | false | boolean | Default await setting for writes
+| namespaceIndex | common |  | Integer | The namespace as numeric index deprecated
+| namespaceUri | common |  | String | The namespace as URI deprecated
+| node | common |  | ExpandedNodeId | The node definition (see Node ID)
+| nodeId | common |  | String | The node ID as string ID deprecated
+| samplingInterval | common |  | Double | The sampling interval in milliseconds
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| applicationName | client | Apache Camel adapter for Eclipse Milo | String | The application name
+| applicationUri | client | http://camel.apache.org/EclipseMilo/Client | String | The application URI
+| channelLifetime | client |  | Long | Channel lifetime in milliseconds
+| keyAlias | client |  | String | The name of the key in the keystore file
+| keyPassword | client |  | String | The key password
+| keyStorePassword | client |  | String | The keystore password
+| keyStoreType | client |  | String | The key store type
+| keyStoreUrl | client |  | URL | The URL where the key should be loaded from
+| maxPendingPublishRequests | client |  | Long | The maximum number of pending publish requests
+| maxResponseMessageSize | client |  | Long | The maximum number of bytes a response message may have
+| productUri | client | http://camel.apache.org/EclipseMilo | String | The product URI
+| requestTimeout | client |  | Long | Request timeout in milliseconds
+| secureChannelReauthenticationEnabled | client |  | Boolean | Whether secure channel re-authentication is enabled
+| sessionName | client |  | String | Session name
+| sessionTimeout | client |  | Long | Session timeout in milliseconds
+|=======================================================================
+// endpoint options: END
+
+
+
+
+
+
+Node ID
++++++++
+
+
+In order to define a target node a namespace and node id is required. In previous versions this was possible by
+specifying `nodeId` and either `namespaceUri` or `namespaceIndex`. However this only allowed for using
+string based node IDs. And while this configuration is still possible, the newer one is preferred.
+
+The new approach is to specify a full namespace+node ID in the format `ns=1;i=1` which also allows to use the other
+node ID formats (like numeric, GUID/UUID or opaque). If the `node` parameter is used the older ones must not be used.
+The syntax of this node format is a set of `key=value` pairs delimited by a semi-colon (`;`). 
+
+Exactly one namespace and one node id key must be used. See the following table for possible keys:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Key | Type | Description
+| ns  | namespace | Numeric namespace index
+| nsu | namespace | Namespace URI
+| s   | node | String node ID
+| i   | node | Numeric node ID
+| g   | node | GUID/UUID node ID
+| b   | node | Base64 encoded string for opaque node ID
+|=======================================================================
+
+As the values generated by the syntax cannot be transparently encoded into a URI parameter value, it is necessary to escape
+them. However Camel allows to wrap the actual value inside `RAW(…)`, which makes escaping unnecessary. For example:
+
+------------------------
+milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
+------------------------
+
+[[MiloClient-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
