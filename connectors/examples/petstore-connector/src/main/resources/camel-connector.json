@@ -15,8 +15,10 @@
   "pattern": "To",
   "inputDataType": "none",
   "outputDataType": "json",
-  "endpointOptions": [ "specificationUri", "operationId" ],
-  "endpointValues": {
+  "componentOptions": [ "specificationUri" ],
+  "globalOptions": [ "specificationUri" ],
+  "endpointOptions": [ "operationId" ],
+  "componentValues": {
     "specificationUri": "http://petstore.swagger.io/v2/swagger.json"
   }
 }
