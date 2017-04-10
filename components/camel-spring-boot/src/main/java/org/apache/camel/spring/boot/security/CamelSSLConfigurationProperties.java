@@ -26,7 +26,7 @@ public class CamelSSLConfigurationProperties {
     /**
      * Enable the global ssl configuration in Camel.
      */
-    private boolean enabled = false;
+    private boolean enabled;
 
     /**
      * The Camel global SSL configuration

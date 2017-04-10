@@ -49,7 +49,7 @@ public class ConsulConfiguration implements CamelContextAware, Cloneable {
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "security", defaultValue = "false")
-    private boolean useGlobalSslContextParameters = false;
+    private boolean useGlobalSslContextParameters;
     @UriParam(label = "security", secret = true)
     private String aclToken;
     @UriParam(label = "security", secret = true)
