@@ -3,7 +3,7 @@
 Eclipse Milo Server Component
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-*Available as of Camel 2.18*
+*Available as of Camel 2.19*
 
 The *Milo Server* component provides an OPC UA server using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
