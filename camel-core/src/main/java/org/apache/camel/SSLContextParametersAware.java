@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ahc;
+package org.apache.camel;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
- * Lookup from the registry should work when only one set of context parameters is present.
+ * Indicates that an object is able to use the global {@link SSLContextParameters} if configured.
  */
-public class AhcComponentClientConfigGlobalSslContextParametersTest extends AhcComponentClientConfigTest {
+public interface SSLContextParametersAware extends CamelContextAware {
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.setSSLContextParameters(createSSLContextParameters());
-        return context;
-    }
-
-    @Override
-    protected boolean isHttps() {
-        return true;
+    /**
+     * Returns the global {@link SSLContextParameters} if configured.
+     */
+    default SSLContextParameters getGlobalSSLContextParameters() {
+        return getCamelContext().getSSLContextParameters();
     }
 
 }

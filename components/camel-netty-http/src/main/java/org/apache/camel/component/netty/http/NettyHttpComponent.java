@@ -20,13 +20,12 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
@@ -37,7 +36,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -45,14 +43,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Netty HTTP based component.
  */
-public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory, RestApiConsumerFactory {
+public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory, RestApiConsumerFactory, SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
@@ -145,7 +142,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         setProperties(config, parameters);
 
         if (config.getSslContextParameters() == null) {
-            config.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            config.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         // validate config

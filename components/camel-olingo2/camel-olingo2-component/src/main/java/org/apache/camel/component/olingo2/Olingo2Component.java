@@ -19,19 +19,16 @@ package org.apache.camel.component.olingo2;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -40,7 +37,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 /**
  * Represents the component that manages {@link Olingo2Endpoint}.
  */
-public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Olingo2Configuration, Olingo2ApiCollection> {
+public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Olingo2Configuration, Olingo2ApiCollection> implements SSLContextParametersAware {
 
     // component level shared proxy
     private Olingo2AppWrapper apiProxy;
@@ -149,7 +146,7 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
             SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
             if (sslContextParameters == null) {
                 // use global ssl config
-                sslContextParameters = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+                sslContextParameters = getGlobalSSLContextParameters();
             }
             if (sslContextParameters == null) {
                 // use defaults if not specified

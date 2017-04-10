@@ -29,14 +29,13 @@ import javax.net.ssl.SSLContext;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.JdkSslContext;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.jsse.SSLContextServerParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.asynchttpclient.AsyncHttpClient;
@@ -73,7 +72,8 @@ public class WebsocketSSLContextGlobalRouteExampleTest extends CamelTestSupport 
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("jsse/localhost.ks");
         ksp.setPassword(pwd);
@@ -93,10 +93,8 @@ public class WebsocketSSLContextGlobalRouteExampleTest extends CamelTestSupport 
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
-
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParametersSupplier", (GlobalSSLContextParametersSupplier) () -> sslContextParameters);
-        return registry;
+        context.setSSLContextParameters(sslContextParameters);
+        return context;
     }
 
     protected void setSystemProp(String key, String value) {

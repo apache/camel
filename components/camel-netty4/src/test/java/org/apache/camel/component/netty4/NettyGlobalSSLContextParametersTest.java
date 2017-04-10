@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.netty4;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.jsse.ClientAuthentication;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.jsse.SSLContextServerParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.Test;
@@ -32,16 +31,16 @@ import org.junit.Test;
 public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("keystore.jks").toString());
         ksp.setPassword("changeit");
-        
+
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyPassword("changeit");
         kmp.setKeyStore(ksp);
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
 
@@ -54,10 +53,8 @@ public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
-
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParametersSupplier", (GlobalSSLContextParametersSupplier) () -> sslContextParameters);
-        return registry;
+        context.setSSLContextParameters(sslContextParameters);
+        return context;
     }
     
     @Override

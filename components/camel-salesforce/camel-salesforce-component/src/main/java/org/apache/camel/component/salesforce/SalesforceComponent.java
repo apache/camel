@@ -20,14 +20,13 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -36,13 +35,11 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.eclipse.jetty.client.HttpProxy;
 import org.eclipse.jetty.client.Origin;
 import org.eclipse.jetty.client.ProxyConfiguration;
@@ -60,7 +57,7 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class SalesforceComponent extends DefaultComponent implements VerifiableComponent {
+public class SalesforceComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
 
     static final int CONNECTION_TIMEOUT = 60000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
@@ -300,7 +297,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
                 // set ssl context parameters if set
                 SSLContextParameters contextParameters = sslContextParameters;
                 if (contextParameters == null) {
-                    contextParameters = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+                    contextParameters = getGlobalSSLContextParameters();
                 }
                 if (contextParameters == null) {
                     contextParameters = new SSLContextParameters();

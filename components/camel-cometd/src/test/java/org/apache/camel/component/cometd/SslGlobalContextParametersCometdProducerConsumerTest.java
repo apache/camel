@@ -18,16 +18,15 @@ package org.apache.camel.component.cometd;
 
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,8 +76,8 @@ public class SslGlobalContextParametersCometdProducerConsumerTest extends CamelT
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("jsse/localhost.ks");
         ksp.setPassword("changeit");
@@ -93,8 +92,8 @@ public class SslGlobalContextParametersCometdProducerConsumerTest extends CamelT
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
-        registry.bind("sslContextParametersSupplier", (GlobalSSLContextParametersSupplier) () -> sslContextParameters);
-        return registry;
+        context.setSSLContextParameters(sslContextParameters);
+        return context;
     }
 
     public static class Person {

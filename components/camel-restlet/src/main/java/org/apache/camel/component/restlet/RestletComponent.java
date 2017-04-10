@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -36,13 +34,13 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -50,7 +48,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.restlet.Component;
 import org.restlet.Restlet;
 import org.restlet.Server;
@@ -70,7 +67,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
+public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
     private static final Object LOCK = new Object();
 
@@ -167,7 +164,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
 
         if (result.getSslContextParameters() == null) {
-            result.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            result.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         return result;

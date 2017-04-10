@@ -17,17 +17,15 @@
 package org.apache.camel.component.cxf;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>
  */
-public class CxfComponent extends HeaderFilterStrategyComponent {
+public class CxfComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
 
@@ -121,7 +119,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
 
         // use global ssl config if set
         if (result.getSslContextParameters() == null) {
-            result.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            result.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         return result;

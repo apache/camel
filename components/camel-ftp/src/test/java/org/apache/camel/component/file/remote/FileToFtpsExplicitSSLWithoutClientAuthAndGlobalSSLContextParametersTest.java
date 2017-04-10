@@ -16,30 +16,28 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 
 public class FileToFtpsExplicitSSLWithoutClientAuthAndGlobalSSLContextParametersTest extends FileToFtpsExplicitSSLWithoutClientAuthTest {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("server.jks");
         ksp.setPassword("password");
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
-        
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setSecureSocketProtocol("SSL");
         sslContextParameters.setTrustManagers(tmp);
-        
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParametersSupplier", (GlobalSSLContextParametersSupplier) () -> sslContextParameters);
-        return registry;
+        context.setSSLContextParameters(sslContextParameters);
+        return context;
     }
     
     protected String getFtpUrl() {

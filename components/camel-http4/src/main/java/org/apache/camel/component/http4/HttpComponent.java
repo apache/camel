@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
@@ -31,6 +30,7 @@ import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
@@ -40,7 +40,6 @@ import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -48,7 +47,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -72,7 +70,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent {
+public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
@@ -188,7 +186,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             sslContextParameters = getSslContextParameters();
         }
         if (sslContextParameters == null) {
-            sslContextParameters = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+            sslContextParameters = getGlobalSSLContextParameters();
         }
         
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);

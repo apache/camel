@@ -19,13 +19,12 @@ package org.apache.camel.component.spring.ws;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
@@ -37,7 +36,6 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -47,7 +45,7 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
 /**
  * Apache Camel component for working with Spring Web Services (a.k.a Spring-WS).
  */
-public class SpringWebserviceComponent extends UriEndpointComponent {
+public class SpringWebserviceComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
 
     public SpringWebserviceComponent() {
@@ -74,7 +72,7 @@ public class SpringWebserviceComponent extends UriEndpointComponent {
         configureMessageFilter(configuration);
 
         if (configuration.getSslContextParameters() == null) {
-            configuration.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            configuration.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         return new SpringWebserviceEndpoint(this, uri, configuration);

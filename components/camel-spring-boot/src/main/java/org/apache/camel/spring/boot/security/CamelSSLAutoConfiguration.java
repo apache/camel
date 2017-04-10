@@ -17,18 +17,16 @@
 package org.apache.camel.spring.boot.security;
 
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnBean(CamelAutoConfiguration.class)
-@AutoConfigureAfter(CamelAutoConfiguration.class)
+@AutoConfigureBefore(CamelAutoConfiguration.class)
 @EnableConfigurationProperties(CamelSSLConfigurationProperties.class)
 @ConditionalOnProperty(value = "camel.ssl.enabled")
 public class CamelSSLAutoConfiguration {

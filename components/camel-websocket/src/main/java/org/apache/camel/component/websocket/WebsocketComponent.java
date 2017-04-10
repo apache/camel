@@ -23,18 +23,15 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -58,7 +55,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebsocketComponent extends UriEndpointComponent {
+public class WebsocketComponent extends UriEndpointComponent implements SSLContextParametersAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(WebsocketComponent.class);
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
@@ -306,7 +303,7 @@ public class WebsocketComponent extends UriEndpointComponent {
             sslContextParameters = getSslContextParameters();
         }
         if (useGlobalSslContextParameters && sslContextParameters == null) {
-            sslContextParameters = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+            sslContextParameters = getGlobalSSLContextParameters();
         }
 
         // prefer to use endpoint configured over component configured

@@ -16,17 +16,16 @@
  */
 package org.apache.camel.component.stomp;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 
 public class StompGlobalSslConsumerTest extends StompConsumerTest {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslSupplier", (GlobalSSLContextParametersSupplier) this::getClientSSLContextParameters);
-        return registry;
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.setSSLContextParameters(getClientSSLContextParameters());
+        return context;
     }
 
     @Override

@@ -19,24 +19,21 @@ package org.apache.camel.component.netty;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timer;
 
-public class NettyComponent extends UriEndpointComponent {
+public class NettyComponent extends UriEndpointComponent implements SSLContextParametersAware {
     // use a shared timer for Netty (see javadoc for HashedWheelTimer)
     private Timer timer;
     private volatile OrderedMemoryAwareThreadPoolExecutor executorService;
@@ -78,7 +75,7 @@ public class NettyComponent extends UriEndpointComponent {
         }
 
         if (config.getSslContextParameters() == null) {
-            config.setSslContextParameters(Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null));
+            config.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
         // validate config

@@ -54,10 +54,10 @@ import static org.junit.Assert.assertEquals;
 })
 public class UndertowSSLTest {
 
+    private static int port;
+
     @Autowired
     private ProducerTemplate producerTemplate;
-
-    private static int port;
 
     @BeforeClass
     public static void init() {

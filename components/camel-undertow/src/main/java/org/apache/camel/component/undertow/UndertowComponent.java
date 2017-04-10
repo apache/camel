@@ -31,6 +31,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
@@ -55,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * Represents the component that manages {@link UndertowEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, VerifiableComponent {
+public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<UndertowHostKey, UndertowHost>();
@@ -85,7 +86,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         // determine sslContextParameters
         SSLContextParameters sslParams = this.sslContextParameters;
         if (sslParams == null) {
-            sslParams = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+            sslParams = getGlobalSSLContextParameters();
         }
 
         // create the endpoint first

@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.junit.Test;
 
 /**
@@ -29,14 +27,10 @@ import org.junit.Test;
 public class Mina2SslGlobalContextParametersTcpTest extends BaseMina2Test {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-
-        if (isUseSslContext()) {
-            SSLContextParameters parameters = createSslContextParameters();
-            reg.bind("sslContextParametersSupplier", (GlobalSSLContextParametersSupplier) () -> parameters);
-        }
-        return reg;
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.setSSLContextParameters(createSslContextParameters());
+        return context;
     }
 
     @Test

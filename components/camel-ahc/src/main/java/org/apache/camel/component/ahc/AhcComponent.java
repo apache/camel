@@ -19,19 +19,16 @@ package org.apache.camel.component.ahc;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -43,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
-public class AhcComponent extends HeaderFilterStrategyComponent {
+public class AhcComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
     
     private static final Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
     
@@ -71,7 +68,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
 
         SSLContextParameters ssl = getSslContextParameters();
         if (ssl == null) {
-            ssl = Optional.ofNullable(CamelContextHelper.findByType(getCamelContext(), GlobalSSLContextParametersSupplier.class)).map(Supplier::get).orElse(null);
+            ssl = getGlobalSSLContextParameters();
         }
 
         // Do not set the HTTP URI because we still have all of the Camel internal
