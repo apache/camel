@@ -52,8 +52,6 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
     private static final String CAMEL_TEST_FILE_CHANGED_COMMENT = "CamelTestFile changed comment.";
     private static final String CAMEL_TEST_FILE_REPLY_COMMENT = "CamelTestFile changed comment.";
 
-    private BoxFile testFile;
-
     @Test
     public void testAddFileComment() throws Exception {
         final Map<String, Object> headers = new HashMap<String, Object>();
@@ -192,11 +190,6 @@ public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         InputStream stream = getClass().getResourceAsStream(CAMEL_TEST_FILE);
         testFile = rootFolder.uploadFile(stream, CAMEL_TEST_FILE_NAME).getResource();
-    }
-
-    private void deleteTestFile() {
-        testFile.delete();
-        testFile = null;
     }
 
 }

@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.box.sdk.BoxFile;
+import com.box.sdk.BoxFolder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -32,6 +34,9 @@ import org.apache.camel.util.IntrospectionSupport;
 public class AbstractBoxTestSupport extends CamelTestSupport {
 
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
+
+    protected BoxFolder testFolder;
+    protected BoxFile testFile;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -78,5 +83,21 @@ public class AbstractBoxTestSupport extends CamelTestSupport {
     @SuppressWarnings("unchecked")
     protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
         return (T) template().requestBody(endpoint, body);
+    }
+
+    protected void deleteTestFolder() {
+        try {
+            testFolder.delete(true);
+        } catch (Throwable t) {
+        }
+        testFolder = null;
+    }
+
+    protected void deleteTestFile() {
+        try {
+            testFile.delete();
+        } catch (Throwable t) {
+        }
+        testFile = null;
     }
 }
