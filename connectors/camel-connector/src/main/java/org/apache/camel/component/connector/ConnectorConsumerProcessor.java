@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Connector {@link Processor} which is capable of performing before and after custom processing
@@ -63,6 +64,31 @@ public class ConnectorConsumerProcessor extends DelegateAsyncProcessor {
 
         // process the consumer
         return super.process(exchange, delegate);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(beforeConsumer, processor, afterConsumer);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(beforeConsumer, processor, afterConsumer);
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        ServiceHelper.suspendService(processor);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        ServiceHelper.resumeService(processor);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(beforeConsumer, processor, afterConsumer);
     }
 
 }
