@@ -31,6 +31,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceChooserAware;
@@ -472,6 +473,18 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     public ServiceCallDefinition expression(Expression expression) {
         setExpression(expression);
         return this;
+    }
+
+    /**
+     * Sets a custom {@link Expression} to use through an expression builder clause.
+     *
+     * @return a expression builder clause to set the body
+     */
+    public ExpressionClause<ServiceCallDefinition> expression() {
+        ExpressionClause<ServiceCallDefinition> clause = new ExpressionClause<>(this);
+        setExpression(clause);
+
+        return clause;
     }
 
     /**
