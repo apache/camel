@@ -18,7 +18,7 @@ package org.apache.camel.dataformat.protobuf;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ProtobufMarshalAndUnmarshalSpringTest extends ProtobufMarshalAndUnmarshallTest {
+public class ProtobufMarshalAndUnmarshalSpringTest extends ProtobufMarshalAndUnmarshalTest {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/protobuf/springDataFormat.xml");
