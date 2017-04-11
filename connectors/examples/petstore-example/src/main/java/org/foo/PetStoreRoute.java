@@ -27,8 +27,7 @@ public class PetStoreRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("timer:store?period=5000")
-            .to("petstore?operationId=getInventory")
+        from("petstore?operationId=getInventory&schedulerPeriod=2000")
             .log("Pets in the store ${body}");
     }
 }

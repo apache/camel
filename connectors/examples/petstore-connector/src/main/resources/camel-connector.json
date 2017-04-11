@@ -12,13 +12,17 @@
   "version": "2.19.0-SNAPSHOT",
   "description": "Pets in the store",
   "labels": [ "api", "rest" ],
-  "pattern": "To",
+  "pattern": "From",
+  "scheduler": "timer",
   "inputDataType": "none",
   "outputDataType": "json",
   "componentOptions": [ "specificationUri" ],
   "globalOptions": [ "specificationUri" ],
-  "endpointOptions": [ "operationId" ],
+  "endpointOptions": [ "operationId", "schedulerPeriod" ],
   "componentValues": {
     "specificationUri": "http://petstore.swagger.io/v2/swagger.json"
+  },
+  "endpointValues": {
+    "schedulerPeriod": 5000
   }
 }

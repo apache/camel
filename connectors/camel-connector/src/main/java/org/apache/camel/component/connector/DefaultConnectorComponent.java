@@ -18,7 +18,9 @@ package org.apache.camel.component.connector;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -33,6 +35,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.verifier.ResultBuilder;
 import org.apache.camel.impl.verifier.ResultErrorBuilder;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,11 +66,17 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        // if we extracted any scheduler query parameters we would need to rebuild the uri without them
+        int before = parameters.size();
+        Map<String, Object> schedulerOptions = extractSchedulerOptions(parameters);
+        int after = parameters.size();
+        if (schedulerOptions != null && before != after) {
+            URI u = new URI(uri);
+            u = URISupport.createRemainingURI(u, parameters);
+            uri = u.toString();
+        }
+        // grab the regular query parameters
         Map<String, String> options = buildEndpointOptions(remaining, parameters);
-
-        // clean-up parameters so that validation won't fail later on
-        // in DefaultConnectorComponent.validateParameters()
-        parameters.clear();
 
         String scheme = model.getBaseScheme();
 
@@ -84,7 +93,21 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
             log.info("Connector resolved: {} -> {}", sanitizeUri(uri), sanitizeUri(delegateUri));
         }
 
-        return new DefaultConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
+        Endpoint answer;
+        // are we scheduler based?
+        if ("timer".equals(model.getScheduler())) {
+            SchedulerTimerConnectorEndpoint endpoint = new SchedulerTimerConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
+            setProperties(endpoint, schedulerOptions);
+            answer = endpoint;
+        } else {
+            answer = new DefaultConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
+        }
+
+        // clean-up parameters so that validation won't fail later on
+        // in DefaultConnectorComponent.validateParameters()
+        parameters.clear();
+
+        return answer;
     }
 
     @Override
@@ -296,6 +319,53 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         return null;
     }
 
+    /**
+     * Extracts the scheduler options from the parameters.
+     * <p/>
+     * These options start with <tt>scheduler</tt> in their key name, such as <tt>schedulerPeriod</tt>
+     * which is removed from parameters, and transformed into keys without the <tt>scheduler</tt> prefix.
+     *
+     * @return the scheduler options, or <tt>null</tt> if scheduler not enabled
+     */
+    private Map<String, Object> extractSchedulerOptions(Map<String, Object> parameters) {
+        if (model.getScheduler() != null) {
+            // include default options first
+            Map<String, Object> answer = new LinkedHashMap<>();
+            model.getDefaultEndpointOptions().forEach((key, value) -> {
+                String schedulerKey = asSchedulerKey(key);
+                if (schedulerKey != null) {
+                    answer.put(schedulerKey, value);
+                }
+            });
+
+            // and then override with from parameters
+            for (Iterator<Map.Entry<String, Object>> it = parameters.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<String, Object> entry = it.next();
+                String schedulerKey = asSchedulerKey(entry.getKey());
+                if (schedulerKey != null) {
+                    Object value = entry.getValue();
+                    answer.put(schedulerKey, value);
+                    // and remove as it should not be part of regular parameters
+                    it.remove();
+                }
+            }
+            return answer;
+        }
+
+        return null;
+    }
+
+    private static String asSchedulerKey(String key) {
+        if (key.startsWith("scheduler")) {
+            String name = key.substring(9);
+            // and lower case first char
+            name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+            return name;
+        } else {
+            return null;
+        }
+    }
+
     private Map<String, String> buildEndpointOptions(String remaining, Map<String, Object> parameters) throws URISyntaxException {
         String scheme = model.getBaseScheme();
         Map<String, String> defaultOptions = model.getDefaultEndpointOptions();
@@ -305,8 +375,13 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
 
         // default options from connector json
         if (!defaultOptions.isEmpty()) {
-            defaultOptions.forEach((k, v) -> addConnectorOption(options, k, v));
+            defaultOptions.forEach((key, value) -> {
+                if (isValidConnectionOption(key, value)) {
+                    addConnectorOption(options, key, value);
+                }
+            });
         }
+
         // options from query parameters
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             String key = entry.getKey();
@@ -314,7 +389,9 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
             if (entry.getValue() != null) {
                 value = entry.getValue().toString();
             }
-            addConnectorOption(options, key, value);
+            if (isValidConnectionOption(key, value)) {
+                addConnectorOption(options, key, value);
+            }
         }
 
         // add extra options from remaining (context-path)
@@ -322,11 +399,23 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
             String targetUri = scheme + ":" + remaining;
             Map<String, String> extra = catalog.endpointProperties(targetUri);
             if (extra != null && !extra.isEmpty()) {
-                extra.forEach((k, v) -> addConnectorOption(options, k, v));
+                extra.forEach((key, value) -> {
+                    if (isValidConnectionOption(key, value)) {
+                        addConnectorOption(options, key, value);
+                    }
+                });
             }
         }
 
         return options;
+    }
+
+    private boolean isValidConnectionOption(String key, String value) {
+        // skip specific option if its a scheduler
+        if (model.getScheduler() != null && asSchedulerKey(key) != null) {
+            return false;
+        }
+        return true;
     }
 
     private static Constructor getPublicDefaultConstructor(Class<?> clazz) {
