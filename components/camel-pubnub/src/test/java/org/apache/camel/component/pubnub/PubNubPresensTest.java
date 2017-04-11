@@ -60,7 +60,7 @@ public class PubNubPresensTest extends PubNubTestBase {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("pubnub:mychannel?pubnub=#pubnub&withPresence=true").id("presence-route")
+                from("pubnub://mychannel?pubnub=#pubnub&withPresence=true").id("presence-route")
                     .autoStartup(false)
                     .to("mock:result");
             }

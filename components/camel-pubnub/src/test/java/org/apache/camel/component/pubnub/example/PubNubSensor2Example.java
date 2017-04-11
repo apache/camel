@@ -31,8 +31,8 @@ import org.apache.camel.main.Main;
 
 import static org.apache.camel.component.pubnub.PubNubConstants.OPERATION;
 import static org.apache.camel.component.pubnub.PubNubConstants.UUID;
-import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_PUBLISHER_KEY;
-import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_SUBSCRIBER_KEY;
+import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_PUBLISH_KEY;
+import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_SUBSCRIBE_KEY;
 
 public final class PubNubSensor2Example {
 
@@ -47,8 +47,8 @@ public final class PubNubSensor2Example {
     }
 
     static class SimulatedDeviceEventGeneratorRoute extends RouteBuilder {
-        private final String deviceEP = "pubnub:iot?uuid=device2&publisherKey=" + PUBNUB_PUBLISHER_KEY + "&subscriberKey=" + PUBNUB_SUBSCRIBER_KEY;
-        private final String devicePrivateEP = "pubnub:device2private?uuid=device2&publisherKey=" + PUBNUB_PUBLISHER_KEY + "&subscriberKey=" + PUBNUB_SUBSCRIBER_KEY;
+        private final String deviceEP = "pubnub://iot?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
+        private final String devicePrivateEP = "pubnub://device2private?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
 
         @Override
         public void configure() throws Exception {
@@ -63,7 +63,7 @@ public final class PubNubSensor2Example {
     }
 
     static class PubsubRoute extends RouteBuilder {
-        private static String masterEP = "pubnub:iot?uuid=master&subscriberKey=" + PUBNUB_SUBSCRIBER_KEY + "&publisherKey=" + PUBNUB_PUBLISHER_KEY;
+        private static String masterEP = "pubnub://iot?uuid=master&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY + "&publishKey=" + PUBNUB_PUBLISH_KEY;
         private static Map<String, String> devices = new ConcurrentHashMap<String, String>();
 
         @Override
@@ -81,7 +81,7 @@ public final class PubNubSensor2Example {
         }
 
         public static class DataProcessorBean {
-            @EndpointInject(uri = "pubnub:iot?uuid=master&subscriberKey=" + PUBNUB_SUBSCRIBER_KEY)
+            @EndpointInject(uri = "pubnub://iot?uuid=master&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
             private static ProducerTemplate template;
 
             public static String getUnicastChannelOfDevice() {
@@ -94,7 +94,7 @@ public final class PubNubSensor2Example {
                 deviceUUID = message.getPublisher();
                 if (devices.get(deviceUUID) == null) {
                     Map<String, Object> headers = new HashMap<String, Object>();
-                    headers.put(OPERATION, "WHERE_NOW");
+                    headers.put(OPERATION, "WHERENOW");
                     headers.put(UUID, deviceUUID);
                     @SuppressWarnings("unchecked")
                     java.util.List<String> channels = (java.util.List<String>) template.requestBodyAndHeaders(null, headers);

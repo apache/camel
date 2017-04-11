@@ -18,6 +18,7 @@ package org.apache.camel.component.pubnub;
 
 import java.util.Arrays;
 
+import com.pubnub.api.PubNubException;
 import com.pubnub.api.callbacks.PNCallback;
 import com.pubnub.api.models.consumer.PNPublishResult;
 import com.pubnub.api.models.consumer.PNStatus;
@@ -65,28 +66,35 @@ public class PubNubProducer extends DefaultAsyncProducer {
             doFire(exchange, callback);
             break;
         }
-        case GET_HISTORY: {
+        case GETHISTORY: {
             doGetHistory(exchange, callback);
             break;
         }
-        case GET_STATE: {
+        case GETSTATE: {
             doGetState(exchange, callback);
             break;
         }
-        case HERE_NOW: {
+        case HERENOW: {
             doHereNow(exchange, callback);
             break;
         }
-        case SET_STATE: {
+        case SETSTATE: {
             doSetState(exchange, callback);
             break;
         }
-        case WHERE_NOW: {
+        case WHERENOW: {
             doWhereNow(exchange, callback);
             break;
         }
         default:
             throw new UnsupportedOperationException(operation.toString());
+        }
+        if (exchange.getException() != null) {
+            if (exchange.getException() instanceof PubNubException) {
+                LOG.error("Exception from PubNub : {}", exchange.getException(PubNubException.class).getPubnubError().getMessage());
+            }
+            callback.done(true);
+            return true;
         }
         return false;
     }
@@ -138,7 +146,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
     }
 
     private void doGetHistory(Exchange exchange, AsyncCallback callback) {
-        // @formatter:off
         endpoint.getPubnub()
             .history()
             .channel(getChannel(exchange))
@@ -149,7 +156,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
                     processMessage(exchange, callback, status, result.getMessages());
                 }
             });
-    // @formatter:on
     }
 
     private void doSetState(Exchange exchange, AsyncCallback callback) {
@@ -173,7 +179,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
     }
 
     private void doGetState(Exchange exchange, AsyncCallback callback) {
-        // @formatter:off
         endpoint.getPubnub()
             .getPresenceState()
             .channels(Arrays.asList(getChannel(exchange)))
@@ -185,7 +190,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
                     processMessage(exchange, callback, status, result.getStateByUUID());
                 }
             });
-    // @formatter:on
     }
 
     private void doHereNow(Exchange exchange, AsyncCallback callback) {
@@ -204,7 +208,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
     }
 
     private void doWhereNow(Exchange exchange, AsyncCallback callback) {
-        // @formatter:off
         endpoint.getPubnub()
             .whereNow()
             .uuid(getUUID(exchange))
@@ -215,21 +218,19 @@ public class PubNubProducer extends DefaultAsyncProducer {
                     processMessage(exchange, callback, status, result.getChannels());
                 };
             });
-        // @formatter:on
     }
 
     private void processMessage(Exchange exchange, AsyncCallback callback, PNStatus status, Object body) {
         if (status.isError()) {
             exchange.setException(status.getErrorData().getThrowable());
-            callback.done(true);
-        } else if (body != null) {
-            exchange.getIn().setBody(body);
+            callback.done(false);
+            return;
         }
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().copyFrom(exchange.getIn());
-            if (body != null) {
-                exchange.getOut().setBody(body);
-            }
+            exchange.getOut().setBody(body);
+        } else {
+            exchange.getIn().setBody(body);
         }
 
         // signal exchange completion
@@ -241,7 +242,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
         if (operation == null) {
             operation = pubnubConfiguration.getOperation();
         }
-        return operation != null ? Operation.valueOf(operation) : Operation.PUBLISH;
+        return operation != null ? Operation.valueOf(operation.toUpperCase()) : Operation.PUBLISH;
     }
 
     private String getChannel(Exchange exchange) {
@@ -255,6 +256,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
     }
 
     private enum Operation {
-        HERE_NOW, WHERE_NOW, GET_STATE, SET_STATE, GET_HISTORY, PUBLISH, FIRE;
+        HERENOW, WHERENOW, GETSTATE, SETSTATE, GETHISTORY, PUBLISH, FIRE;
     }
 }
