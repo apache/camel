@@ -48,7 +48,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class HttpComponentAutoConfiguration {
 
     @Lazy
-    @Bean(name = "http4-component")
+    @Bean(name = {"http4-component", "https4-component"})
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HttpComponent.class)
     public HttpComponent configureHttpComponent(CamelContext camelContext,

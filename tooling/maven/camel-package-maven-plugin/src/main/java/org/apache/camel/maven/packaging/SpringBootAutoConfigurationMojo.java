@@ -41,9 +41,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
@@ -528,7 +530,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             for (String componentClass : grModels.keySet()) {
                 List<ComponentModel> compModels = grModels.get(componentClass);
                 ComponentModel model = compModels.get(0); // They should be equivalent
-                List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
+                List<String> aliases = compModels.stream().flatMap(mod -> this.getComponentModelSchemes(mod, allModels)).distinct().sorted().collect(Collectors.toList());
 
                 // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
                 boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
@@ -1404,6 +1406,21 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeComponentSpringFactorySource(packageName, name);
     }
 
+    private Stream<String> getComponentModelSchemes(ComponentModel model, List<ComponentModel> allModels) {
+        Set<String> mainSchemes = allModels.stream().map(ComponentModel::getScheme).collect(Collectors.toSet());
+        Set<String> schemes = new TreeSet<>();
+        schemes.add(model.getScheme());
+        if (model.getAlternativeSchemes() != null) {
+            String[] alternativeSchemes = model.getAlternativeSchemes().split(",");
+            for (String s : alternativeSchemes) {
+                if (!StringHelper.isEmpty(s) && !mainSchemes.contains(s)) {
+                    schemes.add(s);
+                }
+            }
+        }
+        return schemes.stream();
+    }
+
     private static String createComponentBody(String shortJavaType, boolean hasOptions) {
         StringBuilder sb = new StringBuilder();
         sb.append(shortJavaType).append(" component = new ").append(shortJavaType).append("();").append("\n");
@@ -1611,6 +1628,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         ComponentModel component = new ComponentModel(true);
         component.setScheme(getSafeValue("scheme", rows));
+        component.setAlternativeSchemes(getSafeValue("alternativeSchemes", rows));
         component.setSyntax(getSafeValue("syntax", rows));
         component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
         component.setTitle(getSafeValue("title", rows));
