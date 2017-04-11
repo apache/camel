@@ -62,7 +62,7 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
     @Override
     public void subscribe(Subscriber<? super StreamPayload<Exchange>> subscriber) {
         Objects.requireNonNull(subscriber, "subscriber must not be null");
-        CamelSubscription sub = new CamelSubscription(workerPool, this, this.backpressureStrategy, subscriber);
+        CamelSubscription sub = new CamelSubscription(workerPool, this, name, this.backpressureStrategy, subscriber);
         this.subscriptions.add(sub);
         subscriber.onSubscribe(sub);
     }
@@ -78,7 +78,7 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
         DispatchCallback<Exchange> originalCallback = data.getCallback();
         if (originalCallback != null && subs.size() > 0) {
             // When multiple subscribers have an active subscription,
-            // we aknowledge the exchange once it has been delivered to every
+            // we acknowledge the exchange once it has been delivered to every
             // subscriber (or their subscription is cancelled)
             AtomicInteger counter = new AtomicInteger(subs.size());
             // Use just the first exception in the callback when multiple exceptions are thrown
@@ -92,7 +92,9 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
         }
 
         if (subs.size() > 0) {
-            LOG.debug("Exchange published to {} subscriptions for the stream {}: {}", subs.size(), name, data.getItem());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exchange published to {} subscriptions for the stream {}: {}", subs.size(), name, data.getItem());
+            }
             // at least one subscriber
             for (CamelSubscription sub : subs) {
                 sub.publish(data);
@@ -130,5 +132,9 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
             sub.signalCompletion();
         }
         subscriptions.clear();
+    }
+
+    public int getSubscriptionSize() {
+        return subscriptions.size();
     }
 }

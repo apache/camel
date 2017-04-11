@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.reactive.streams;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -44,7 +43,7 @@ public enum ReactiveStreamsBackpressureStrategy {
         @Override
         public <T> Collection<T> update(Deque<T> buffer, T element) {
             if (buffer.size() > 0) {
-                return Arrays.asList(element);
+                return Collections.singletonList(element);
             } else {
                 buffer.addLast(element);
                 return Collections.emptySet();
@@ -61,14 +60,30 @@ public enum ReactiveStreamsBackpressureStrategy {
         public <T> Collection<T> update(Deque<T> buffer, T element) {
             Collection<T> discarded = Collections.emptySet();
             if (buffer.size() > 0) {
-                discarded = Arrays.asList(buffer.removeFirst());
+                discarded = Collections.singletonList(buffer.removeLast());
+            }
+
+            buffer.addLast(element);
+            return discarded;
+        }
+    },
+
+    /**
+     * Keeps only the oldest onNext value, overwriting any previous value if the
+     * downstream can't keep up.
+     */
+    OLDEST {
+        @Override
+        public <T> Collection<T> update(Deque<T> buffer, T element) {
+            Collection<T> discarded = Collections.emptySet();
+            if (buffer.size() > 0) {
+                discarded = Collections.singletonList(buffer.removeFirst());
             }
 
             buffer.addLast(element);
             return discarded;
         }
     };
-
 
     /**
      * Updates the buffer and returns a list of discarded elements (if any).

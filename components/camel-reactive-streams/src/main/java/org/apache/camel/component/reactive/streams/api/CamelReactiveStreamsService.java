@@ -20,16 +20,17 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
+import org.apache.camel.component.reactive.streams.engine.CamelSubscriber;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 /**
  * The interface to which any implementation of the reactive-streams engine should comply.
  */
-public interface CamelReactiveStreamsService extends CamelContextAware, Service {
+public interface CamelReactiveStreamsService extends CamelContextAware, StaticService {
 
     /*
      * Main API methods.
@@ -295,9 +296,10 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      *
      * @param name the stream name
      * @param consumer the consumer of the route
+     * @return the associated subscriber
      * @throws IllegalStateException if another consumer is already associated with the given stream name
      */
-    void attachCamelConsumer(String name, ReactiveStreamsConsumer consumer);
+    CamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer);
 
     /**
      * Used by Camel to detach the existing consumer from the given stream.

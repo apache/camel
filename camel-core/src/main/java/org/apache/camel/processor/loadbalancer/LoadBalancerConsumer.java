@@ -36,11 +36,13 @@ public class LoadBalancerConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
         loadBalancer.addProcessor(getProcessor());
     }
 
     @Override
     protected void doStop() throws Exception {
         loadBalancer.removeProcessor(getProcessor());
+        super.doStop();
     }
 }

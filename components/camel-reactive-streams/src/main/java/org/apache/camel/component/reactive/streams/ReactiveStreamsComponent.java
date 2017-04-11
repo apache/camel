@@ -21,14 +21,17 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * The Camel reactive-streams component.
  */
 public class ReactiveStreamsComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private ReactiveStreamsEngineConfiguration internalEngineConfiguration = new ReactiveStreamsEngineConfiguration();
 
+    @Metadata(label = "producer", defaultValue = "BUFFER")
     private ReactiveStreamsBackpressureStrategy backpressureStrategy = ReactiveStreamsBackpressureStrategy.BUFFER;
 
     public ReactiveStreamsComponent() {

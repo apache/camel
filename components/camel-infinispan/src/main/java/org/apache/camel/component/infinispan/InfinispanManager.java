@@ -17,6 +17,8 @@
 package org.apache.camel.component.infinispan;
 
 
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
@@ -25,6 +27,7 @@ import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.manager.DefaultCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +39,11 @@ public class InfinispanManager implements Service {
     private BasicCacheContainer cacheContainer;
     private boolean isManagedCacheContainer;
 
+    public InfinispanManager() {
+        this.camelContext = null;
+        this.configuration = new InfinispanConfiguration();
+        this.configuration.setCacheContainer(new DefaultCacheManager(true));
+    }
 
     public InfinispanManager(InfinispanConfiguration configuration) {
         this(null, configuration);
@@ -50,24 +58,34 @@ public class InfinispanManager implements Service {
     public void start() throws Exception {
         cacheContainer = configuration.getCacheContainer();
         if (cacheContainer == null) {
+            ConfigurationBuilder builder = new ConfigurationBuilder();
+            builder.classLoader(Thread.currentThread().getContextClassLoader());
+
+            Properties properties = new Properties();
+
             String uri = configuration.getConfigurationUri();
             if (uri != null && camelContext != null) {
                 uri = camelContext.resolvePropertyPlaceholders(uri);
             }
 
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
-                .classLoader(Thread.currentThread().getContextClassLoader());
-
             if (uri != null) {
-                configurationBuilder.withProperties(InfinispanUtil.loadProperties(camelContext, uri));
+                properties.putAll(InfinispanUtil.loadProperties(camelContext, uri));
+            }
+            if (configuration.getConfigurationProperties() != null) {
+                properties.putAll(configuration.getConfigurationProperties());
             }
 
-            cacheContainer = new RemoteCacheManager(
-                configurationBuilder
-                    .addServers(configuration.getHost())
-                    .build(),
-                true);
+            if (!properties.isEmpty()) {
+                builder.withProperties(properties);
+            }
 
+            if (configuration.getHost() != null) {
+                builder.addServers(configuration.getHost());
+            }
+
+
+
+            cacheContainer = new RemoteCacheManager(builder.build(), true);
             isManagedCacheContainer = true;
         }
     }
@@ -91,22 +109,22 @@ public class InfinispanManager implements Service {
         return InfinispanUtil.isRemote(cacheContainer);
     }
 
-    public BasicCache<Object, Object> getCache() {
+    public <K, V > BasicCache<K, V> getCache() {
         return getCache(configuration.getCacheName());
     }
 
-    public BasicCache<Object, Object> getCache(Exchange exchange) {
+    public <K, V > BasicCache<K, V> getCache(Exchange exchange) {
         return getCache(exchange.getIn().getHeader(InfinispanConstants.CACHE_NAME, String.class));
     }
 
-    public BasicCache<Object, Object> getCache(String cacheName) {
+    public <K, V > BasicCache<K, V> getCache(String cacheName) {
         if (cacheName == null) {
             cacheName = configuration.getCacheName();
         }
 
         LOGGER.trace("Cache[{}]", cacheName);
 
-        BasicCache<Object, Object> cache = InfinispanUtil.getCache(cacheContainer, cacheName);
+        BasicCache<K, V> cache = InfinispanUtil.getCache(cacheContainer, cacheName);
         if (configuration.hasFlags() && InfinispanUtil.isEmbedded(cache)) {
             cache = new DecoratedCache(InfinispanUtil.asAdvanced(cache), configuration.getFlags());
         }

@@ -34,6 +34,7 @@ org.apache.camel.opentracing.decorators.JdbcSpanDecorator
 org.apache.camel.opentracing.decorators.JettySpanDecorator
 org.apache.camel.opentracing.decorators.JmsSpanDecorator
 org.apache.camel.opentracing.decorators.KafkaSpanDecorator
+org.apache.camel.opentracing.decorators.LogSpanDecorator
 org.apache.camel.opentracing.decorators.MongoDBSpanDecorator
 org.apache.camel.opentracing.decorators.MqttSpanDecorator
 org.apache.camel.opentracing.decorators.NettyHttp4SpanDecorator

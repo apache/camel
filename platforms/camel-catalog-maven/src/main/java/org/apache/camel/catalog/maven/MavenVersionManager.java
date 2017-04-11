@@ -26,6 +26,8 @@ import java.util.Map;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.VersionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link VersionManager} that can load the resources using Maven to download needed artifacts from
@@ -34,6 +36,8 @@ import org.apache.camel.catalog.VersionManager;
  * This implementation uses Groovy Grape to download the Maven JARs.
  */
 public class MavenVersionManager implements VersionManager {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MavenVersionManager.class);
 
     private final ClassLoader classLoader = new GroovyClassLoader();
     private String version;
@@ -89,6 +93,7 @@ public class MavenVersionManager implements VersionManager {
             this.version = version;
             return true;
         } catch (Exception e) {
+            LOG.warn("Cannot load version " + version + " due " + e.getMessage());
             return false;
         }
     }
@@ -114,6 +119,7 @@ public class MavenVersionManager implements VersionManager {
             this.runtimeProviderVersion = version;
             return true;
         } catch (Exception e) {
+            LOG.warn("Cannot load runtime provider version " + version + " due " + e.getMessage());
             return false;
         }
     }
@@ -152,6 +158,7 @@ public class MavenVersionManager implements VersionManager {
             }
         } catch (IOException e) {
             // ignore
+            LOG.warn("Cannot open resource " + name + " and version " + version + " due " + e.getMessage());
         }
 
         return null;

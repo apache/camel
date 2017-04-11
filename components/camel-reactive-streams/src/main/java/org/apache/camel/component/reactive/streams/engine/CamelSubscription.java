@@ -28,6 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsDiscardedException;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -42,6 +43,8 @@ public class CamelSubscription implements Subscription {
     private static final Logger LOG = LoggerFactory.getLogger(CamelSubscription.class);
 
     private ExecutorService workerPool;
+
+    private String name;
 
     private CamelPublisher publisher;
 
@@ -78,9 +81,12 @@ public class CamelSubscription implements Subscription {
     private boolean sending;
 
 
-    public CamelSubscription(ExecutorService workerPool, CamelPublisher publisher, ReactiveStreamsBackpressureStrategy backpressureStrategy, Subscriber<? super StreamPayload<Exchange>> subscriber) {
+    public CamelSubscription(ExecutorService workerPool, CamelPublisher publisher, String name,
+                             ReactiveStreamsBackpressureStrategy backpressureStrategy,
+                             Subscriber<? super StreamPayload<Exchange>> subscriber) {
         this.workerPool = workerPool;
         this.publisher = publisher;
+        this.name = name;
         this.backpressureStrategy = backpressureStrategy;
         this.subscriber = subscriber;
     }
@@ -232,7 +238,9 @@ public class CamelSubscription implements Subscription {
         if (discardedMessages != null) {
             for (Map.Entry<StreamPayload<Exchange>, String> discarded : discardedMessages.entrySet()) {
                 StreamPayload<Exchange> m = discarded.getKey();
-                m.getCallback().processed(m.getItem(), new IllegalStateException(discarded.getValue()));
+                Exchange exchange = m.getItem();
+                ReactiveStreamsDiscardedException e = new ReactiveStreamsDiscardedException("Discarded by backpressure strategy", exchange, name);
+                m.getCallback().processed(exchange, e);
             }
         }
 
@@ -243,5 +251,13 @@ public class CamelSubscription implements Subscription {
         mutex.lock();
         this.backpressureStrategy = backpressureStrategy;
         mutex.unlock();
+    }
+
+    public long getBufferSize() {
+        return buffer.size();
+    }
+
+    public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
+        return backpressureStrategy;
     }
 }

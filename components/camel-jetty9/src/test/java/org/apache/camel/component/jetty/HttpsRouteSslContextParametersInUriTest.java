@@ -55,16 +55,16 @@ public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
                 // NOTE: These are here to check that they are properly ignored.
                 setSSLProps(jetty, "", "asdfasdfasdfdasfs", "sadfasdfasdfas");
 
-                from("jetty:https://localhost:" + port1 + "/test?sslContextParametersRef=sslContextParameters").to("mock:a");
+                from("jetty:https://localhost:" + port1 + "/test?sslContextParameters=#sslContextParameters").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:https://localhost:" + port1 + "/hello?sslContextParametersRef=sslContextParameters").process(proc);
+                from("jetty:https://localhost:" + port1 + "/hello?sslContextParameters=#sslContextParameters").process(proc);
 
-                from("jetty:https://localhost:" + port2 + "/test?sslContextParametersRef=sslContextParameters").to("mock:b");
+                from("jetty:https://localhost:" + port2 + "/test?sslContextParameters=#sslContextParameters").to("mock:b");
             }
         };
     }

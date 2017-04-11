@@ -44,9 +44,9 @@ import org.springframework.util.CompositeIterator;
 public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSqlPrepareStatementStrategy.class);
-    private static final Pattern REPLACE_IN_PATTERN = Pattern.compile("\\:\\?in\\:(\\w+|\\$\\{[^\\}]+\\})", Pattern.MULTILINE);
-    private static final Pattern REPLACE_PATTERN = Pattern.compile("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
-    private static final Pattern NAME_PATTERN = Pattern.compile("\\:\\?((in\\:(\\w+|\\$\\{[^\\}]+\\}))|(\\w+|\\$\\{[^\\}]+\\}))", Pattern.MULTILINE);
+    private static final Pattern REPLACE_IN_PATTERN = Pattern.compile("\\:\\?in\\:(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\})", Pattern.MULTILINE);
+    private static final Pattern REPLACE_PATTERN = Pattern.compile("\\:\\?\\w+|\\:\\?\\$\\{[^\\}]+\\}|\\:\\?\\$simple\\{[^\\}]+\\}", Pattern.MULTILINE);
+    private static final Pattern NAME_PATTERN = Pattern.compile("\\:\\?((in\\:(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\}))|(\\w+|\\$\\{[^\\}]+\\}|\\$simple\\{[^\\}]+\\}))", Pattern.MULTILINE);
     private final char separator;
 
     public DefaultSqlPrepareStatementStrategy() {
@@ -186,7 +186,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
 
         Object answer = null;
-        if (nextParam.startsWith("${") && nextParam.endsWith("}")) {
+        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
             answer = SimpleLanguage.expression(nextParam).evaluate(exchange, Object.class);
         } else if (bodyMap.containsKey(nextParam)) {
             answer = bodyMap.get(nextParam);
@@ -201,7 +201,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
         Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
 
-        if (nextParam.startsWith("${") && nextParam.endsWith("}")) {
+        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
             return true;
         } else if (bodyMap.containsKey(nextParam)) {
             return true;

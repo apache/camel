@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -57,6 +58,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
@@ -1964,5 +1966,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets the associated {@link RuntimeCamelCatalog} for this CamelContext.
      */
     RuntimeCamelCatalog getRuntimeCamelCatalog();
+
+    /**
+     * Gets a list of {@link LogListener}.
+     */
+    Set<LogListener> getLogListeners();
+
+    /**
+     * Adds a {@link LogListener}.
+     */
+    void addLogListener(LogListener listener);
 
 }

@@ -37,20 +37,12 @@ public final class CatalogHelper {
      * Warning, don't use for crazy big streams :)
      */
     public static void loadLines(InputStream in, List<String> lines) throws IOException {
-        InputStreamReader isr = new InputStreamReader(in);
-        try {
-            BufferedReader reader = new LineNumberReader(isr);
-            while (true) {
-                String line = reader.readLine();
-                if (line != null) {
-                    lines.add(line);
-                } else {
-                    break;
-                }
+        try (final InputStreamReader isr = new InputStreamReader(in);
+            final BufferedReader reader = new LineNumberReader(isr)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
             }
-        } finally {
-            isr.close();
-            in.close();
         }
     }
 
@@ -64,22 +56,14 @@ public final class CatalogHelper {
      */
     public static String loadText(InputStream in) throws IOException {
         StringBuilder builder = new StringBuilder();
-        InputStreamReader isr = new InputStreamReader(in);
-        try {
-            BufferedReader reader = new LineNumberReader(isr);
-            while (true) {
-                String line = reader.readLine();
-                if (line != null) {
-                    builder.append(line);
-                    builder.append("\n");
-                } else {
-                    break;
-                }
+        try (final InputStreamReader isr = new InputStreamReader(in);
+            final BufferedReader reader = new LineNumberReader(isr)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+                builder.append("\n");
             }
             return builder.toString();
-        } finally {
-            isr.close();
-            in.close();
         }
     }
 

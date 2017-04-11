@@ -17,6 +17,7 @@
 package org.apache.camel.component.reactive.streams.springboot;
 
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -35,7 +36,7 @@ public class ReactiveStreamsComponentConfiguration {
      * The backpressure strategy to use when pushing events to a slow
      * subscriber.
      */
-    private ReactiveStreamsBackpressureStrategy backpressureStrategy;
+    private ReactiveStreamsBackpressureStrategy backpressureStrategy = ReactiveStreamsBackpressureStrategy.BUFFER;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property

@@ -132,6 +132,7 @@
     <module>camel-google-pubsub</module>
     <module>camel-gora</module>
     <module>camel-grape</module>
+    <module>camel-grpc</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>

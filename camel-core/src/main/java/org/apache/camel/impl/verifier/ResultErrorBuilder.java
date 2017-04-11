@@ -16,10 +16,15 @@
  */
 package org.apache.camel.impl.verifier;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.ComponentVerifier.VerificationError;
 import org.apache.camel.util.ObjectHelper;
 
@@ -144,6 +149,12 @@ public final class ResultErrorBuilder {
         return new ResultErrorBuilder()
             .code(VerificationError.StandardCode.UNSUPPORTED_SCOPE)
             .description("Unsupported scope: " + scope);
+    }
+
+    public static ResultErrorBuilder withUnsupportedComponent(String component) {
+        return new ResultErrorBuilder()
+            .code(VerificationError.StandardCode.UNSUPPORTED_COMPONENT)
+            .description("Unsupported component: " + component);
     }
 
     public static ResultErrorBuilder withException(Exception exception) {

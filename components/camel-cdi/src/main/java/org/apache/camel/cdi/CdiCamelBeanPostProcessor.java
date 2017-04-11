@@ -97,16 +97,7 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
     }
 
     private CamelPostProcessorHelper getPostProcessorHelper(String contextName) {
-        CamelPostProcessorHelper helper = postProcessorHelpers.get(contextName);
-        if (helper == null) {
-            CamelContext context = getOrLookupCamelContext(contextName);
-            if (context == null) {
-                throw new UnsatisfiedResolutionException("No Camel context with name [" + contextName + "] is deployed!");
-            }
-            helper = new CamelPostProcessorHelper(context);
-            postProcessorHelpers.put(contextName, helper);
-        }
-        return helper;
+        return postProcessorHelpers.computeIfAbsent(contextName, k -> new CamelPostProcessorHelper(getOrLookupCamelContext(k)));
     }
 
     private CamelContext getOrLookupCamelContext(String contextName) {

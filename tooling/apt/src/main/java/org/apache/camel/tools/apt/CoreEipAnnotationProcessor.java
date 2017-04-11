@@ -561,9 +561,14 @@ public class CoreEipAnnotationProcessor {
         ep = new EipOption("trace", "Trace", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
-        // trace
+        // message history
         docComment = findJavaDoc(elementUtils, null, "messageHistory", null, classElement, true);
         ep = new EipOption("messageHistory", "Message History", "attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null, false);
+        eipOptions.add(ep);
+
+        // log mask
+        docComment = findJavaDoc(elementUtils, null, "logMask", null, classElement, true);
+        ep = new EipOption("logMask", "Log Mask", "attribute", "java.lang.String", false, "false", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // trace
