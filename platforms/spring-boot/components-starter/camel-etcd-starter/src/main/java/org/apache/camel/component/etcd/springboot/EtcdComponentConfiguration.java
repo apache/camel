@@ -52,6 +52,10 @@ public class EtcdComponentConfiguration {
      */
     private EtcdConfigurationNestedConfiguration configuration;
     /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -100,6 +104,15 @@ public class EtcdComponentConfiguration {
         this.configuration = configuration;
     }
 
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
     }
@@ -121,10 +134,6 @@ public class EtcdComponentConfiguration {
          */
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
-        /**
-         * Enable usage of Camel global SSL parameters.
-         */
-        private Boolean useGlobalSslContextParameters = false;
         /**
          * The user name to use for basic authentication.
          */
@@ -181,15 +190,6 @@ public class EtcdComponentConfiguration {
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
-        }
-
-        public Boolean getUseGlobalSslContextParameters() {
-            return useGlobalSslContextParameters;
-        }
-
-        public void setUseGlobalSslContextParameters(
-                Boolean useGlobalSslContextParameters) {
-            this.useGlobalSslContextParameters = useGlobalSslContextParameters;
         }
 
         public String getUserName() {

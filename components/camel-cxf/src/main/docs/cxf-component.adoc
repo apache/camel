@@ -112,7 +112,7 @@ cxf:bean:cxfEndpoint?wsdlURL=wsdl/hello_world.wsdl&dataFormat=PAYLOAD
 
 
 // component options: START
-The CXF component supports 3 options which are listed below.
+The CXF component supports 4 options which are listed below.
 
 
 
@@ -120,6 +120,7 @@ The CXF component supports 3 options which are listed below.
 |=======================================================================
 | Name | Description | Default | Type
 | **allowStreaming** (advanced) | This option controls whether the CXF component when running in PAYLOAD mode will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases. |  | Boolean
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **headerFilterStrategy** (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================

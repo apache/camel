@@ -64,6 +64,10 @@ public class ServiceNowComponentConfiguration {
      */
     private String oauthTokenUrl;
     /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -125,6 +129,15 @@ public class ServiceNowComponentConfiguration {
 
     public void setOauthTokenUrl(String oauthTokenUrl) {
         this.oauthTokenUrl = oauthTokenUrl;
+    }
+
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
@@ -292,10 +305,6 @@ public class ServiceNowComponentConfiguration {
          */
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
-        /**
-         * Enable usage of Camel global SSL configuration.
-         */
-        private Boolean useGlobalSslContextParameters = false;
         /**
          * To configure http-client
          */
@@ -577,15 +586,6 @@ public class ServiceNowComponentConfiguration {
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
-        }
-
-        public Boolean getUseGlobalSslContextParameters() {
-            return useGlobalSslContextParameters;
-        }
-
-        public void setUseGlobalSslContextParameters(
-                Boolean useGlobalSslContextParameters) {
-            this.useGlobalSslContextParameters = useGlobalSslContextParameters;
         }
 
         public HTTPClientPolicy getHttpClientPolicy() {

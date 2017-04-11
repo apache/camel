@@ -121,11 +121,11 @@ public class HttpComponentConfiguration {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
-    public Boolean getUseGlobalSSLContextParameters() {
+    public Boolean getUseGlobalSslContextParameters() {
         return useGlobalSslContextParameters;
     }
 
-    public void setUseGlobalSSLContextParameters(
+    public void setUseGlobalSslContextParameters(
             Boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }

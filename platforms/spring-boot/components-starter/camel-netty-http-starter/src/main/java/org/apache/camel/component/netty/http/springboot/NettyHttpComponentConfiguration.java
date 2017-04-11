@@ -55,6 +55,10 @@ public class NettyHttpComponentConfiguration {
      */
     private NettyHttpSecurityConfigurationNestedConfiguration securityConfiguration;
     /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * The core pool size for the ordered thread pool if its in use. The default
      * value is 16.
      */
@@ -99,6 +103,15 @@ public class NettyHttpComponentConfiguration {
     public void setSecurityConfiguration(
             NettyHttpSecurityConfigurationNestedConfiguration securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
+    }
+
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Integer getMaximumPoolSize() {

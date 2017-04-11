@@ -14,7 +14,7 @@ etcd:namespace/path[?options]
 ### URI Options
 
 // component options: START
-The etcd component supports 6 options which are listed below.
+The etcd component supports 7 options which are listed below.
 
 
 
@@ -26,6 +26,7 @@ The etcd component supports 6 options which are listed below.
 | **userName** (common) | The user name to use for basic authentication. |  | String
 | **password** (common) | The password to use for basic authentication. |  | String
 | **configuration** (advanced) | Sets the common configuration shared among endpoints |  | EtcdConfiguration
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
@@ -46,7 +47,7 @@ with the following path and query parameters:
 | **path** | The path the endpoint refers to |  | String
 |=======================================================================
 
-#### Query Parameters (30 parameters):
+#### Query Parameters (29 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -79,7 +80,6 @@ with the following path and query parameters:
 | **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 | **password** (security) | The password to use for basic authentication. |  | String
 | **sslContextParameters** (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
-| **useGlobalSslContext Parameters** (security) | Enable usage of Camel global SSL parameters. | false | boolean
 | **userName** (security) | The user name to use for basic authentication. |  | String
 |=======================================================================
 // endpoint options: END

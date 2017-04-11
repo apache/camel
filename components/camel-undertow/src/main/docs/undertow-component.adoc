@@ -38,7 +38,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Undertow component supports 4 options which are listed below.
+The Undertow component supports 5 options which are listed below.
 
 
 
@@ -47,6 +47,7 @@ The Undertow component supports 4 options which are listed below.
 | Name | Description | Default | Type
 | **undertowHttpBinding** (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | UndertowHttpBinding
 | **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **hostOptions** (advanced) | To configure common options such as thread pools |  | UndertowHostOptions
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================

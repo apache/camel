@@ -45,7 +45,7 @@ The Lumberjack component supports 3 options which are listed below.
 |=======================================================================
 | Name | Description | Default | Type
 | **sslContextParameters** (security) | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level. |  | SSLContextParameters
-| **useGlobalSslContext Parameters** (security) | Enable usage of Camel global SSL parameters | false | boolean
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END

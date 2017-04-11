@@ -90,9 +90,9 @@ public class WebsocketComponentConfiguration {
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
-     * Enable usage of Camel global SSL context parameters
+     * Enable usage of global SSL context parameters.
      */
-    private Boolean useGlobalSslContextParameters = true;
+    private Boolean useGlobalSslContextParameters = false;
     /**
      * To configure a map which contains custom WebSocketFactory for sub
      * protocols. The key in the map is the sub protocol. The default key is
