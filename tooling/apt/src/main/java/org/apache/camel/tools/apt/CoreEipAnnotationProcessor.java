@@ -337,6 +337,8 @@ public class CoreEipAnnotationProcessor {
             }
         }
 
+        Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+
         name = prefix + name;
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
@@ -350,16 +352,25 @@ public class CoreEipAnnotationProcessor {
 
         // gather enums
         Set<String> enums = new TreeSet<String>();
-        boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-        if (isEnum) {
-            TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-            if (enumClass != null) {
-                // find all the enum constants which has the possible enum value that can be used
-                List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                for (VariableElement var : fields) {
-                    if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                        String val = var.toString();
-                        enums.add(val);
+        boolean isEnum;
+        if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
+            isEnum = true;
+            String[] values = metadata.enums().split(",");
+            for (String val : values) {
+                enums.add(val);
+            }
+        } else {
+            isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+            if (isEnum) {
+                TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
+                if (enumClass != null) {
+                    // find all the enum constants which has the possible enum value that can be used
+                    List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                    for (VariableElement var : fields) {
+                        if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                            String val = var.toString();
+                            enums.add(val);
+                        }
                     }
                 }
             }
@@ -367,7 +378,6 @@ public class CoreEipAnnotationProcessor {
 
         boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
         String displayName = null;
-        Metadata metadata = fieldElement.getAnnotation(Metadata.class);
         if (metadata != null) {
             displayName = metadata.displayName();
         }
@@ -422,6 +432,8 @@ public class CoreEipAnnotationProcessor {
         fieldName = fieldElement.getSimpleName().toString();
         if (element != null) {
 
+            Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+
             String kind = "element";
             String name = element.name();
             if (isNullOrEmpty(name) || "##default".equals(name)) {
@@ -445,17 +457,26 @@ public class CoreEipAnnotationProcessor {
             }
 
             // gather enums
-            Set<String> enums = new LinkedHashSet<String>();
-            boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-            if (isEnum) {
-                TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-                if (enumClass != null) {
-                    // find all the enum constants which has the possible enum value that can be used
-                    List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                    for (VariableElement var : fields) {
-                        if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                            String val = var.toString();
-                            enums.add(val);
+            Set<String> enums = new TreeSet<String>();
+            boolean isEnum;
+            if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
+                isEnum = true;
+                String[] values = metadata.enums().split(",");
+                for (String val : values) {
+                    enums.add(val);
+                }
+            } else {
+                isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                if (isEnum) {
+                    TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
+                    if (enumClass != null) {
+                        // find all the enum constants which has the possible enum value that can be used
+                        List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                        for (VariableElement var : fields) {
+                            if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                String val = var.toString();
+                                enums.add(val);
+                            }
                         }
                     }
                 }
@@ -493,7 +514,6 @@ public class CoreEipAnnotationProcessor {
 
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             String displayName = null;
-            Metadata metadata = fieldElement.getAnnotation(Metadata.class);
             if (metadata != null) {
                 displayName = metadata.displayName();
             }

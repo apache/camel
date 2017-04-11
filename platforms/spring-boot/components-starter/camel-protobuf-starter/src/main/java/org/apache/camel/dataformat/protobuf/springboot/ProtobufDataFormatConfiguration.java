@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.protobuf.springboot;
 
+import org.apache.camel.dataformat.protobuf.ProtobufDataFormat;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
