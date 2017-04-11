@@ -32,8 +32,9 @@ public class ProtobufDataFormatConfiguration {
     private String instanceClass;
     /**
      * Defines a content type format in which protobuf message will be
-     * serialized/deserialized from(to) the Java been. It can be native protobuf
-     * format or json fields representation. The default value is 'native'.
+     * serialized/deserialized from(to) the Java been. The format can either be
+     * native or json for either native protobuf or json fields representation.
+     * The default value is native.
      */
     private String contentTypeFormat;
     /**

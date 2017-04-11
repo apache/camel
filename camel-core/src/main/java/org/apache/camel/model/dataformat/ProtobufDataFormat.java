@@ -38,7 +38,7 @@ import org.apache.camel.spi.Metadata;
 public class ProtobufDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String instanceClass;
-    @XmlAttribute
+    @XmlAttribute @Metadata(enums = "native,json", defaultValue = "native")
     private String contentTypeFormat;
     @XmlTransient
     private Object defaultInstance;
@@ -71,8 +71,9 @@ public class ProtobufDataFormat extends DataFormatDefinition {
     
     /**
      * Defines a content type format in which protobuf message will be
-     * serialized/deserialized from(to) the Java been. It can be native protobuf
-     * format or json fields representation. The default value is 'native'.
+     * serialized/deserialized from(to) the Java been.
+     * The format can either be native or json for either native protobuf or json fields representation.
+     * The default value is native.
      */
     public void setContentTypeFormat(String contentTypeFormat) {
         this.contentTypeFormat = contentTypeFormat;
