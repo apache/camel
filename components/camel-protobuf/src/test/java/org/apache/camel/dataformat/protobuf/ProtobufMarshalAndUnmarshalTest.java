@@ -25,31 +25,30 @@ import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class ProtobufMarshalAndUnmarshallTest extends CamelTestSupport {
+public class ProtobufMarshalAndUnmarshalTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalWithDataFormat() throws Exception {
         marshalAndUnmarshal("direct:in", "direct:back");
     }
-    
+
     @Test
     public void testMarshalAndUnmarshalWithDSL1() throws Exception {
         marshalAndUnmarshal("direct:marshal", "direct:unmarshalA");
     }
-    
+
     @Test
     public void testMarshalAndUnmarshalWithDSL2() throws Exception {
         marshalAndUnmarshal("direct:marshal", "direct:unmarshalB");
     }
-    
+
     @Test
     public void testMarshalAndUnmarshalWithDSL3() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:unmarshalC").unmarshal().protobuf(new CamelException("wrong instance"))
-                        .to("mock:reverse");
+                    from("direct:unmarshalC").unmarshal().protobuf(new CamelException("wrong instance")).to("mock:reverse");
                 }
             });
             fail("Expect the exception here");
@@ -58,11 +57,9 @@ public class ProtobufMarshalAndUnmarshallTest extends CamelTestSupport {
             assertTrue("Get a wrong reason", ex.getCause() instanceof IllegalArgumentException);
         }
     }
-    
-    
+
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
-        org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person input = AddressBookProtos.Person
-            .newBuilder().setName("Martin").setId(1234).build();
+        AddressBookProtos.Person input = AddressBookProtos.Person.newBuilder().setName("Martin").setId(1234).build();
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
@@ -88,10 +85,10 @@ public class ProtobufMarshalAndUnmarshallTest extends CamelTestSupport {
 
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
-                
+
                 from("direct:marshal").marshal().protobuf();
                 from("direct:unmarshalA").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").to("mock:reverse");
-                
+
                 from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
             }
         };
