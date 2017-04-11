@@ -31,7 +31,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SnakeYAMLDataFormatConfiguration {
 
     /**
-     * Which yaml library to use such. Is by default SnakeYAML
+     * Which yaml library to use. By default it is SnakeYAML
      */
     private YAMLLibrary library = YAMLLibrary.SnakeYAML;
     /**
