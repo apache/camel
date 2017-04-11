@@ -31,6 +31,12 @@ public class ProtobufDataFormatConfiguration {
      */
     private String instanceClass;
     /**
+     * Defines a content type format in which protobuf message will be
+     * serialized/deserialized from(to) the Java been. It can be native protobuf
+     * format or json fields representation. The default value is 'native'.
+     */
+    private String contentTypeFormat;
+    /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
      * example application/xml for data formats marshalling to XML or
@@ -44,6 +50,14 @@ public class ProtobufDataFormatConfiguration {
 
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
+    }
+
+    public String getContentTypeFormat() {
+        return contentTypeFormat;
+    }
+
+    public void setContentTypeFormat(String contentTypeFormat) {
+        this.contentTypeFormat = contentTypeFormat;
     }
 
     public Boolean getContentTypeHeader() {

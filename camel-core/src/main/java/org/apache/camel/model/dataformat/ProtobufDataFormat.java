@@ -38,6 +38,8 @@ import org.apache.camel.spi.Metadata;
 public class ProtobufDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String instanceClass;
+    @XmlAttribute
+    private String contentTypeFormat;
     @XmlTransient
     private Object defaultInstance;
     
@@ -49,6 +51,12 @@ public class ProtobufDataFormat extends DataFormatDefinition {
         this();
         setInstanceClass(instanceClass); 
     }
+    
+    public ProtobufDataFormat(String instanceClass, String contentTypeFormat) {
+        this();
+        setInstanceClass(instanceClass);
+        setContentTypeFormat(contentTypeFormat);
+    }
 
     public String getInstanceClass() {
         return instanceClass;
@@ -59,6 +67,15 @@ public class ProtobufDataFormat extends DataFormatDefinition {
      */
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
+    }
+    
+    /**
+     * Defines a content type format in which protobuf message will be
+     * serialized/deserialized from(to) the Java been. It can be native protobuf
+     * format or json fields representation. The default value is 'native'.
+     */
+    public void setContentTypeFormat(String contentTypeFormat) {
+        this.contentTypeFormat = contentTypeFormat;
     }
 
     public Object getDefaultInstance() {
@@ -73,6 +90,9 @@ public class ProtobufDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (this.instanceClass != null) {
             setProperty(camelContext, dataFormat, "instanceClass", instanceClass);
+        }
+        if (this.contentTypeFormat != null) {
+            setProperty(camelContext, dataFormat, "contentTypeFormat", contentTypeFormat);
         }
         if (this.defaultInstance != null) {
             setProperty(camelContext, dataFormat, "defaultInstance", defaultInstance);
