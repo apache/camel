@@ -98,7 +98,7 @@ Number of Components: 228 in 182 JAR artifacts (14 deprecated)
 | link:camel-bonita/src/main/docs/bonita-component.adoc[Bonita] (camel-bonita) +
 `bonita:operation` | 2.19 | Camel Bonita support
 
-| link:camel-box/src/main/docs/box-component.adoc[Box] (camel-box) +
+| link:camel-box/camel-box-component/src/main/docs/box-component.adoc[Box] (camel-box) +
 `box:apiName/methodName` | 2.14 | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
 
 | link:camel-braintree/src/main/docs/braintree-component.adoc[Braintree] (camel-braintree) +
@@ -293,7 +293,7 @@ Number of Components: 228 in 182 JAR artifacts (14 deprecated)
 | link:camel-ibatis/src/main/docs/ibatis-component.adoc[iBatis] (camel-ibatis) +
 `ibatis:statement` | 1.2 | *deprecated* Performs a query poll insert update or delete in a relational database using Apache iBATIS.
 
-| link:camel-mail/src/main/docs/imap-component.adoc[IMAP] (camel-mail) +
+| link:camel-mail/src/main/docs/mail-component.adoc[IMAP] (camel-mail) +
 `imap:host:port` | 1.0 | To send or receive emails using imap/pop3 or stmp protocols.
 
 | link:camel-infinispan/src/main/docs/infinispan-component.adoc[Infinispan] (camel-infinispan) +
@@ -374,7 +374,7 @@ Number of Components: 228 in 182 JAR artifacts (14 deprecated)
 | link:camel-ldap/src/main/docs/ldap-component.adoc[LDAP] (camel-ldap) +
 `ldap:dirContextName` | 1.5 | The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
 
-| link:camel-linkedin/src/main/docs/linkedin-component.adoc[Linkedin] (camel-linkedin) +
+| link:camel-linkedin/camel-linkedin-component/src/main/docs/linkedin-component.adoc[Linkedin] (camel-linkedin) +
 `linkedin:apiName/methodName` | 2.14 | The linkedin component is uses for retrieving LinkedIn user profiles connections companies groups posts etc.
 
 | link:../camel-core/src/main/docs/log-component.adoc[Log] (camel-core) +
@@ -443,10 +443,10 @@ Number of Components: 228 in 182 JAR artifacts (14 deprecated)
 | link:camel-netty4-http/src/main/docs/netty4-http-component.adoc[Netty4 HTTP] (camel-netty4-http) +
 `netty4-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
 
-| link:camel-olingo2/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
+| link:camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
 `olingo2:apiName/methodName` | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
 
-| link:camel-olingo4/src/main/docs/olingo4-component.adoc[Olingo4] (camel-olingo4) +
+| link:camel-olingo4/camel-olingo4-component/src/main/docs/olingo4-component.adoc[Olingo4] (camel-olingo4) +
 `olingo4:apiName/methodName` | 2.19 | Communicates with OData 4.0 services using Apache Olingo OData API.
 
 | link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
@@ -533,7 +533,7 @@ Number of Components: 228 in 182 JAR artifacts (14 deprecated)
 | link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.
 
-| link:camel-salesforce/src/main/docs/salesforce-component.adoc[Salesforce] (camel-salesforce) +
+| link:camel-salesforce/camel-salesforce-component/src/main/docs/salesforce-component.adoc[Salesforce] (camel-salesforce) +
 `salesforce:operationName:topicName` | 2.12 | The salesforce component is used for integrating Camel with the massive Salesforce API.
 
 | link:camel-sap-netweaver/src/main/docs/sap-netweaver-component.adoc[SAP NetWeaver] (camel-sap-netweaver) +
@@ -730,7 +730,7 @@ Number of Data Formats: 45 in 36 JAR artifacts (0 deprecated)
 
 | link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | Camel FlatPack support
 
-| link:src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | GZip compression data format
+| link:../camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | GZip compression data format
 
 | link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | Hessian serialization support
 
@@ -740,7 +740,7 @@ Number of Data Formats: 45 in 36 JAR artifacts (0 deprecated)
 
 | link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16 | Camel Jackson XML support
 
-| link:src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Java Object Serialization data format
+| link:../camel-core/src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Java Object Serialization data format
 
 | link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | Camel JAXB support
 
@@ -766,7 +766,7 @@ Number of Data Formats: 45 in 36 JAR artifacts (0 deprecated)
 
 | link:camel-soap/src/main/docs/soapjaxb-dataformat.adoc[SOAP] (camel-soap) | 2.3 | Camel SOAP support
 
-| link:src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String (text based) data format
+| link:../camel-core/src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String (text based) data format
 
 | link:camel-syslog/src/main/docs/syslog-dataformat.adoc[Syslog] (camel-syslog) | 2.6 | Camel Syslog support
 
@@ -792,7 +792,7 @@ Number of Data Formats: 45 in 36 JAR artifacts (0 deprecated)
 
 | link:camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML] (camel-snakeyaml) | 2.17 | Camel SnakeYAML support
 
-| link:src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip compression data format (not for zip files)
+| link:../camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip compression data format (not for zip files)
 
 | link:camel-zipfile/src/main/docs/zipfile-dataformat.adoc[Zip File] (camel-zipfile) | 2.11 | Camel Zip file support
 |=======================================================================
@@ -809,19 +809,19 @@ Number of Languages: 24 in 12 JAR artifacts (6 deprecated)
 |=======================================================================
 | Language | Available From | Description
 
-| link:src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | For expressions and predicates using a java bean (aka method call)
+| link:../camel-core/src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | For expressions and predicates using a java bean (aka method call)
 
-| link:src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | For expressions and predicates using a constant
+| link:../camel-core/src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | For expressions and predicates using a constant
 
 | link:camel-juel/src/main/docs/el-language.adoc[EL] (camel-juel) | 1.1 | *deprecated* For EL expressions and predicates
 
-| link:src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | An expression which extracts the named exchange property
+| link:../camel-core/src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | An expression which extracts the named exchange property
 
-| link:src/main/docs/file-language.adoc[File] (camel-core) | 1.1 | For expressions and predicates using the file/simple language
+| link:../camel-core/src/main/docs/file-language.adoc[File] (camel-core) | 1.1 | For expressions and predicates using the file/simple language
 
 | link:camel-groovy/src/main/docs/groovy-language.adoc[Groovy] (camel-groovy) | 1.3 | For Groovy expressions and predicates
 
-| link:src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | An expression which extracts the named exchange header
+| link:../camel-core/src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | An expression which extracts the named exchange header
 
 | link:camel-hl7/src/main/docs/terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | For HL7 terser expressions and predicates
 
@@ -839,21 +839,21 @@ Number of Languages: 24 in 12 JAR artifacts (6 deprecated)
 
 | link:camel-script/src/main/docs/python-language.adoc[Python] (camel-script) | 1.0 | *deprecated* For Python expressions and predicates
 
-| link:src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | For using a custom expression or predicate
+| link:../camel-core/src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | For using a custom expression or predicate
 
 | link:camel-script/src/main/docs/ruby-language.adoc[Ruby] (camel-script) | 1.0 | *deprecated* For Ruby expressions and predicates
 
-| link:src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | For expressions and predicates using the simple language
+| link:../camel-core/src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | For expressions and predicates using the simple language
 
 | link:camel-spring/src/main/docs/spel-language.adoc[SpEL] (camel-spring) | 2.7 | For Spring Expression Language (SpEL) expressions and predicates
 
 | link:camel-josql/src/main/docs/sql-language.adoc[SQL] (camel-josql) | 1.0 | *deprecated* For SQL expressions and predicates
 
-| link:src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | For expressions and predicates using a body or header tokenizer
+| link:../camel-core/src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | For expressions and predicates using a body or header tokenizer
 
-| link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | For expressions and predicates using a body or header XML tokenizer
+| link:../camel-core/src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | For expressions and predicates using a body or header XML tokenizer
 
-| link:src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | For XPath expressions and predicates
+| link:../camel-core/src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | For XPath expressions and predicates
 
 | link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | For XQuery expressions and predicates
 |=======================================================================
@@ -902,13 +902,13 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (14 deprecated)
 
 | link:camel-rx/src/main/docs/rx.adoc[RX] (camel-rx) | 2.11 | *deprecated* Camel Reactive using RxJava library
 
-| link:camel-scala/src/main/docs/scala.adoc[Scala DSL] (camel-scala) | 1.4 | *deprecated* Camel Scala DSL
+| link:camel-scala/src/main/docs/scala-dsl.adoc[Scala DSL] (camel-scala) | 1.4 | *deprecated* Camel Scala DSL
 
-| link:camel-scr/src/main/docs/scr.adoc[SCR] (camel-scr) | 2.15 | *deprecated* Camel with OSGi SCR (Declarative Services)
+| link:camel-scr/src/main/docs/camel-and-scr.adoc[SCR] (camel-scr) | 2.15 | *deprecated* Camel with OSGi SCR (Declarative Services)
 
 | link:camel-servletlistener/src/main/docs/servletlistener.adoc[Servlet Listener] (camel-servletlistener) | 2.11 | *deprecated* Bootstrapping Camel using Servet Listener
 
-| link:camel-shiro/src/main/docs/shiro.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
+| link:camel-shiro/src/main/docs/shiro-security.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
 
 | link:camel-spring-boot/src/main/docs/spring-boot.adoc[Spring Boot] (camel-spring-boot) | 2.15 | Using Camel with Spring Boot
 
@@ -918,7 +918,7 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (14 deprecated)
 
 | link:camel-spring-dm/src/main/docs/spring-dm.adoc[Spring DM] (camel-spring-dm) | 2.18 | *deprecated* Camel SpringDM (OSGi) XML DSL
 
-| link:camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc[Spring Java Configuration] (camel-spring-javaconfig) | 2.0 | Using Camel with Spring Java Configuration
+| link:camel-spring-javaconfig/src/main/docs/spring-java-config.adoc[Spring Java Configuration] (camel-spring-javaconfig) | 2.0 | Using Camel with Spring Java Configuration
 
 | link:camel-spring-security/src/main/docs/spring-security.adoc[Spring Security] (camel-spring-security) | 2.3 | Security using Spring Security
 
@@ -930,7 +930,7 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (14 deprecated)
 
 | link:camel-test-blueprint/src/main/docs/test-blueprint.adoc[Test Blueprint] (camel-test-blueprint) | 2.10 | Camel unit testing with OSGi Blueprint
 
-| link:camel-test-cdi/src/main/docs/test-cdi.adoc[Test CDI] (camel-test-cdi) | 2.17 | Camel unit testing with CDI
+| link:camel-test-cdi/src/main/docs/cdi-testing.adoc[Test CDI] (camel-test-cdi) | 2.17 | Camel unit testing with CDI
 
 | link:camel-test-karaf/src/main/docs/test-karaf.adoc[Test Karaf] (camel-test-karaf) | 2.18 | Camel integration testing with Apache Karaf
 
