@@ -26,24 +26,22 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
+import static org.apache.camel.component.pubnub.PubNubConstants.TIMETOKEN;
 
-public class PubNubSubscriberTest extends PubNubTestBase {
+public class PubNubFireTest extends PubNubTestBase {
+    private String endpoint = "pubnub://someChannel?operation=fire&pubnub=#pubnub";
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mockResult;
 
     @Test
-    public void testPubSubMessageSubscribe() throws Exception {
-        stubFor(get(urlPathEqualTo("/v2/subscribe/mySubscribeKey/mychannel/0"))
-            .willReturn(aResponse()
-                .withBody("{\"t\":{\"t\":\"14607577960932487\",\"r\":1},\"m\":[{\"a\":\"4\",\"f\":0,\"i\":\"Publisher-A\",\"p\":{\"t\":\"14607577960925503\",\"r\":1},\"o\":"
-                          + "{\"t\":\"14737141991877032\",\"r\":2},\"k\":\"sub-c-4cec9f8e-01fa-11e6-8180-0619f8945a4f\",\"c\":\"mychannel\",\"d\":{\"text\":\"Message\"},\"b\":\"coolChannel\"}]}")));
-        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/mychannel/heartbeat"))
-            .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"service\": \"Presence\"}")));
-
-        context.startRoute("subroute");
+    public void testFire() throws Exception {
+        stubFor(get(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0/%22Hi%22"))
+            .willReturn(aResponse().withBody("[1,\"Sent\",\"14598111595318003\"]")));
         mockResult.expectedMessageCount(1);
-        mockResult.expectedHeaderReceived(PubNubConstants.CHANNEL, "mychannel");
+        mockResult.expectedHeaderReceived(TIMETOKEN, "14598111595318003");
+
+        template.sendBody("direct:publish", "Hi");
         assertMockEndpointsSatisfied();
     }
 
@@ -51,10 +49,21 @@ public class PubNubSubscriberTest extends PubNubTestBase {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("pubnub://mychannel?pubnub=#pubnub").id("subroute").autoStartup(false)
-                    .to("mock:result");
+                from("direct:publish").to(endpoint).to("mock:result");
             }
         };
+    }
+
+    static class Hello {
+        private String message;
+
+        Hello(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 
 }

@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "pubnub", title = "PubNub", syntax = "pubnub:endpointType:channel", consumerClass = PubNubConsumer.class, label = "cloud,iot,messaging")
+@UriEndpoint(scheme = "pubnub", title = "PubNub", syntax = "pubnub://channel", consumerClass = PubNubConsumer.class, label = "cloud,iot,messaging")
 public class PubNubEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -93,10 +93,11 @@ public class PubNubEndpoint extends DefaultEndpoint {
     private PubNub getInstance() {
         PubNub answer = null;
         PNConfiguration pnConfiguration = new PNConfiguration();
-        pnConfiguration.setPublishKey(configuration.getPublisherKey());
-        pnConfiguration.setSubscribeKey(configuration.getSubscriberKey());
+        pnConfiguration.setPublishKey(configuration.getPublishKey());
+        pnConfiguration.setSubscribeKey(configuration.getSubscribeKey());
         pnConfiguration.setSecretKey(configuration.getSecretKey());
         pnConfiguration.setAuthKey(configuration.getAuthKey());
+        pnConfiguration.setCipherKey(configuration.getCipherKey());
         pnConfiguration.setSecure(configuration.isSecure());
         if (ObjectHelper.isNotEmpty(configuration.getUuid())) {
             pnConfiguration.setUuid(configuration.getUuid());

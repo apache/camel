@@ -30,10 +30,10 @@ public class PubNubConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         PubNubComponent component = new PubNubComponent(context);
-        PubNubEndpoint endpoint = (PubNubEndpoint) component.createEndpoint("pubnub:xxx?subscriberKey=mysubkey");
+        PubNubEndpoint endpoint = (PubNubEndpoint) component.createEndpoint("pubnub://xxx?subscribeKey=mysubkey");
 
         assertEquals("xxx", endpoint.getConfiguration().getChannel());
-        assertEquals("mysubkey", endpoint.getConfiguration().getSubscriberKey());
+        assertEquals("mysubkey", endpoint.getConfiguration().getSubscribeKey());
         assertTrue(endpoint.getConfiguration().isSecure());
     }
 
@@ -41,11 +41,11 @@ public class PubNubConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMaximalConfiguration() throws Exception {
         PubNubComponent component = new PubNubComponent(context);
         PubNubEndpoint endpoint = (PubNubEndpoint)component
-            .createEndpoint("pubnub:xxx?subscriberKey=mysubkey&publisherKey=mypubkey&secretKey=secrets&uuid=myuuid&operation=PUBLISH&secure=false&authKey=authKey");
+            .createEndpoint("pubnub://xxx?subscribeKey=mysubkey&publishKey=mypubkey&secretKey=secrets&uuid=myuuid&operation=PUBLISH&secure=false&authKey=authKey");
 
         assertEquals("xxx", endpoint.getConfiguration().getChannel());
-        assertEquals("mysubkey", endpoint.getConfiguration().getSubscriberKey());
-        assertEquals("mypubkey", endpoint.getConfiguration().getPublisherKey());
+        assertEquals("mysubkey", endpoint.getConfiguration().getSubscribeKey());
+        assertEquals("mypubkey", endpoint.getConfiguration().getPublishKey());
         assertEquals("secrets", endpoint.getConfiguration().getSecretKey());
         assertEquals("myuuid", endpoint.getConfiguration().getUuid());
         assertEquals("PUBLISH", endpoint.getConfiguration().getOperation());

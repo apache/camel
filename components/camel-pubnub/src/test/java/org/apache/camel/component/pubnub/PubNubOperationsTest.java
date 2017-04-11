@@ -44,7 +44,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
             .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"payload\": {\"channels\": [\"channel-a\",\"channel-b\"]}, \"service\": \"Presence\"}")));
 
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(PubNubConstants.OPERATION, "WHERE_NOW");
+        headers.put(PubNubConstants.OPERATION, "WHERENOW");
         headers.put(PubNubConstants.UUID, "myUUID");
         @SuppressWarnings("unchecked")
         List<String> response = template.requestBodyAndHeaders("direct:publish", null, headers, List.class);
@@ -60,7 +60,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
                       + "\"uuid\" : \"myUUID1\"}, {\"uuid\" : \"b9eb408c-bcec-4d34-b4c4-fabec057ad0d\"}, {\"state\" : {\"abcd\" : {\"age\" : 15}}, \"uuid\" : \"myUUID2\"},"
                       + " {\"state\" : {\"abcd\" : {\"age\" : 24}}, \"uuid\" : \"myUUID9\"}], \"occupancy\" : 5} Return Occupancy O")));
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(PubNubConstants.OPERATION, "HERE_NOW");
+        headers.put(PubNubConstants.OPERATION, "HERENOW");
         PNHereNowResult response = template.requestBodyAndHeaders("direct:publish", null, headers, PNHereNowResult.class);
         assertNotNull(response);
         assertEquals(5, response.getTotalOccupancy());
@@ -95,7 +95,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
         stubFor(get(urlPathEqualTo("/v2/history/sub-key/mySubscribeKey/channel/myChannel")).willReturn(aResponse().withBody(getPubnub().getMapper().toJson(testArray))));
 
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(PubNubConstants.OPERATION, "GET_HISTORY");
+        headers.put(PubNubConstants.OPERATION, "GETHISTORY");
         @SuppressWarnings("unchecked")
         List<PNHistoryItemResult> response = template.requestBodyAndHeaders("direct:publish", null, headers, List.class);
         assertNotNull(response);
@@ -108,7 +108,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
             .withBody("{ \"status\": 200, \"message\": \"OK\", \"payload\": "
                       + "{ \"myChannel\": { \"age\" : 20, \"status\" : \"online\"}, \"ch2\": { \"age\": 100, \"status\": \"offline\" } }, \"service\": \"Presence\"}")));
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(PubNubConstants.OPERATION, "GET_STATE");
+        headers.put(PubNubConstants.OPERATION, "GETSTATE");
         @SuppressWarnings("unchecked")
         Map<String, JsonObject> response = template.requestBodyAndHeaders("direct:publish", null, headers, Map.class);
         assertNotNull(response);
@@ -122,7 +122,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
         Map<String, Object> myState = new HashMap<>();
         myState.put("age", 20);
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(PubNubConstants.OPERATION, "SET_STATE");
+        headers.put(PubNubConstants.OPERATION, "SETSTATE");
         PNSetStateResult response = template.requestBodyAndHeaders("direct:publish", myState, headers, PNSetStateResult.class);
         assertNotNull(response);
         assertNotNull(response.getState());
@@ -133,7 +133,7 @@ public class PubNubOperationsTest extends PubNubTestBase {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:publish").to("pubnub:myChannel?uuid=myuuid&pubnub=#pubnub")
+                from("direct:publish").to("pubnub://myChannel?uuid=myuuid&pubnub=#pubnub")
                     .to("mock:result");
             }
         };
