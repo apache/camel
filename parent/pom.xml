@@ -692,7 +692,7 @@
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
     <zendesk-client-version>0.5.3</zendesk-client-version>
     <zipkin-version>1.19.4</zipkin-version>
-    <zipkin-reporter-version>0.6.12</zipkin-reporter-version>
+    <zipkin-reporter-version>0.6.13</zipkin-reporter-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.10</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
