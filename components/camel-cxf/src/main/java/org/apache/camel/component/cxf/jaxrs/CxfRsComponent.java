@@ -26,6 +26,7 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.blueprint.BlueprintSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -39,6 +40,9 @@ import org.slf4j.LoggerFactory;
 public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsComponent.class);
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public CxfRsComponent() {
         super(CxfRsEndpoint.class);
@@ -125,5 +129,18 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
     protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) endpoint;
         cxfRsEndpoint.updateEndpointUri(uri);
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 }

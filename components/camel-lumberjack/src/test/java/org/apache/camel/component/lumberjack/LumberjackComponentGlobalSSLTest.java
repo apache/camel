@@ -43,7 +43,9 @@ public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.setSSLContextParameters(createClientSSLContextParameters());
+        context.setSSLContextParameters(createServerSSLContextParameters());
+        LumberjackComponent component = (LumberjackComponent) context.getComponent("lumberjack");
+        component.setUseGlobalSSLContextParameters(true);
         return context;
     }
 
@@ -51,9 +53,6 @@ public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-
-                LumberjackComponent component = (LumberjackComponent) context().getComponent("lumberjack");
-                component.setUseGlobalSslContextParameters(true);
 
                 // Lumberjack configured with SSL
                 from("lumberjack:0.0.0.0:" + port).to("mock:output");

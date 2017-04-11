@@ -17,6 +17,7 @@
 package org.apache.camel.component.mina2;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -30,6 +31,7 @@ public class Mina2SslGlobalContextParametersTcpTest extends BaseMina2Test {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.setSSLContextParameters(createSslContextParameters());
+        ((SSLContextParametersAware) context.getComponent("mina2")).setUseGlobalSSLContextParameters(true);
         return context;
     }
 
@@ -42,17 +44,6 @@ public class Mina2SslGlobalContextParametersTcpTest extends BaseMina2Test {
         template.sendBodyAndHeader("mina2:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true", body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testMinaRouteWithoutSSL() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint("mock:result");
-        Object body = "Hello there!";
-        endpoint.expectedBodiesReceived(body);
-
-        template.sendBodyAndHeader("mina2:tcp://localhost:" + getPort() + "?useGlobalSslContextParameters=false&sync=false&minaLogger=true", body, "cheese", 123);
-
-        endpoint.assertIsNotSatisfied(100);
     }
     
     @Override

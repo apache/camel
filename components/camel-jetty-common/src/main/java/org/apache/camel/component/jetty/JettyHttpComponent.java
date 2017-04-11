@@ -129,6 +129,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected Long continuationTimeout;
     protected boolean useContinuation = true;
     protected SSLContextParameters sslContextParameters;
+    protected boolean useGlobalSSLContextParameters;
     protected Integer requestBufferSize;
     protected Integer requestHeaderSize;
     protected Integer responseBufferSize;
@@ -947,6 +948,20 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     @Metadata(description = "To configure security using SSLContextParameters", label = "security")
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters
+     */
+    @Override
+    @Metadata(description = "Enable usage of global SSL context parameters", label = "security", defaultValue = "false")
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     public Integer getResponseBufferSize() {

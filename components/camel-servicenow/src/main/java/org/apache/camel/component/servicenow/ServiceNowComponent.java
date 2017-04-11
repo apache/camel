@@ -36,6 +36,8 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
 
     @Metadata(label = "advanced")
     private ServiceNowConfiguration configuration;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public ServiceNowComponent() {
         super(ServiceNowEndpoint.class);
@@ -79,7 +81,7 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
             configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
         }
 
-        if (configuration.isUseGlobalSslContextParameters() && configuration.getSslContextParameters() == null) {
+        if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
@@ -166,6 +168,19 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
     @Metadata(label = "security", secret = true)
     public void setOauthTokenUrl(String oauthTokenUrl) {
         configuration.setOauthTokenUrl(oauthTokenUrl);
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     /**

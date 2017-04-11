@@ -85,6 +85,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
         + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
     protected SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
     @Metadata(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
     @Metadata(label = "producer", description = "To use a custom org.apache.http.client.CookieStore."
@@ -456,6 +458,19 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     public HostnameVerifier getX509HostnameVerifier() {

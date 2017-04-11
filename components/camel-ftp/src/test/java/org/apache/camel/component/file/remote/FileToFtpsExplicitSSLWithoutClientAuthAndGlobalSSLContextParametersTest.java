@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
@@ -37,6 +38,8 @@ public class FileToFtpsExplicitSSLWithoutClientAuthAndGlobalSSLContextParameters
         sslContextParameters.setSecureSocketProtocol("SSL");
         sslContextParameters.setTrustManagers(tmp);
         context.setSSLContextParameters(sslContextParameters);
+
+        ((SSLContextParametersAware) context.getComponent("ftps")).setUseGlobalSSLContextParameters(true);
         return context;
     }
     

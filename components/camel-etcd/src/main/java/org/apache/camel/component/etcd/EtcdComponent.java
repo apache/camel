@@ -34,6 +34,8 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
 
     @Metadata(label = "advanced")
     private EtcdConfiguration configuration = new EtcdConfiguration();
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public EtcdComponent() {
         super();
@@ -107,6 +109,19 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
     }
 
     @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    }
+
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String ns = StringHelper.before(remaining, "/");
         String path = StringHelper.after(remaining, "/");
@@ -148,7 +163,7 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
 
         setProperties(configuration, parameters);
 
-        if (configuration.isUseGlobalSslContextParameters() && configuration.getSslContextParameters() == null) {
+        if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(getGlobalSSLContextParameters());
         }
 

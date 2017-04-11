@@ -32,9 +32,8 @@ public class LumberjackComponent extends UriEndpointComponent implements SSLCont
 
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
-
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSslContextParameters;
+    private boolean useGlobalSSLContextParameters;
 
     public LumberjackComponent() {
         this(LumberjackEndpoint.class);
@@ -62,7 +61,7 @@ public class LumberjackComponent extends UriEndpointComponent implements SSLCont
         LumberjackEndpoint answer = new LumberjackEndpoint(uri, this, host, port);
         setProperties(answer, parameters);
 
-        if (isUseGlobalSslContextParameters() && answer.getSslContextParameters() == null) {
+        if (answer.getSslContextParameters() == null) {
             answer.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
@@ -81,15 +80,17 @@ public class LumberjackComponent extends UriEndpointComponent implements SSLCont
         this.sslContextParameters = sslContextParameters;
     }
 
-    public boolean isUseGlobalSslContextParameters() {
-        return useGlobalSslContextParameters;
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
     }
 
     /**
-     * Enable usage of Camel global SSL parameters
+     * Enable usage of global SSL context parameters.
      */
-    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
-        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
 }

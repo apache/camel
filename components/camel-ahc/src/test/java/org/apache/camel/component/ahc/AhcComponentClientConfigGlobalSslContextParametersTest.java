@@ -17,6 +17,7 @@
 package org.apache.camel.component.ahc;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.SSLContextParametersAware;
 
 /**
  * Lookup from the registry should work when only one set of context parameters is present.
@@ -27,6 +28,8 @@ public class AhcComponentClientConfigGlobalSslContextParametersTest extends AhcC
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.setSSLContextParameters(createSSLContextParameters());
+        ((SSLContextParametersAware) context.getComponent("ahc")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("jetty")).setUseGlobalSSLContextParameters(true);
         return context;
     }
 

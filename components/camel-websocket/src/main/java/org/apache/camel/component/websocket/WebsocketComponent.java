@@ -66,8 +66,8 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
 
     @Metadata(label = "security")
     protected SSLContextParameters sslContextParameters;
-    @Metadata(label = "security", defaultValue = "true")
-    protected boolean useGlobalSslContextParameters = true;
+    @Metadata(label = "security", defaultValue = "false")
+    protected boolean useGlobalSSLContextParameters;
     @Metadata(label = "advanced")
     protected ThreadPool threadPool;
     @Metadata(defaultValue = "9292")
@@ -280,10 +280,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
-        Boolean useGlobalSslContextParameters = getAndRemoveParameter(parameters, "useGlobalSslContextParameters", Boolean.class);
-        if (useGlobalSslContextParameters == null) {
-            useGlobalSslContextParameters = this.useGlobalSslContextParameters;
-        }
+
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         String staticResources = getAndRemoveParameter(parameters, "staticResources", String.class);
         int port = extractPortNumber(remaining);
@@ -302,7 +299,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
             // fallback to component configured
             sslContextParameters = getSslContextParameters();
         }
-        if (useGlobalSslContextParameters && sslContextParameters == null) {
+        if (sslContextParameters == null) {
             sslContextParameters = getGlobalSSLContextParameters();
         }
 
@@ -319,7 +316,6 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
         endpoint.setSslContextParameters(sslContextParameters);
         endpoint.setPort(port);
         endpoint.setHost(host);
-        endpoint.setUseGlobalSslContextParameters(useGlobalSslContextParameters);
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -738,15 +734,17 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
         this.sslContextParameters = sslContextParameters;
     }
 
-    public boolean isUseGlobalSslContextParameters() {
-        return useGlobalSslContextParameters;
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
     }
 
     /**
-     * Enable usage of Camel global SSL context parameters
+     * Enable usage of global SSL context parameters.
      */
-    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
-        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     public Map<String, WebSocketFactory> getSocketFactory() {

@@ -55,6 +55,8 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     private AhcBinding binding;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
     @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
 
@@ -209,6 +211,19 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
      */
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     protected String createAddressUri(String uri, String remaining) {

@@ -21,6 +21,7 @@ import java.net.URL;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
@@ -53,6 +54,8 @@ public class RestletHttpsWithGlobalSSLContextParametersTest extends RestletTestS
         sslContextParameters.setKeyManagers(kmp);
 
         context.setSSLContextParameters(sslContextParameters);
+
+        ((SSLContextParametersAware) context.getComponent("restlet")).setUseGlobalSSLContextParameters(true);
         return context;
     }
     

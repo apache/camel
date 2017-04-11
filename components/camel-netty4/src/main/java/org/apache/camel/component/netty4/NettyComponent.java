@@ -40,6 +40,8 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
     private int maximumPoolSize = 16;
     @Metadata(label = "advanced")
     private volatile EventExecutorGroup executorService;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public NettyComponent() {
         super(NettyEndpoint.class);
@@ -123,6 +125,19 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
      */
     public void setExecutorService(EventExecutorGroup executorService) {
         this.executorService = executorService;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     public EventExecutorGroup getExecutorService() {

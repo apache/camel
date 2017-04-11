@@ -63,6 +63,10 @@ public class HttpComponentConfiguration {
      */
     private Boolean allowJavaSerializedObject = false;
     /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSSLContextParameters = false;
+    /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.
      */
@@ -115,6 +119,15 @@ public class HttpComponentConfiguration {
 
     public void setAllowJavaSerializedObject(Boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
+    public Boolean getUseGlobalSSLContextParameters() {
+        return useGlobalSSLContextParameters;
+    }
+
+    public void setUseGlobalSSLContextParameters(
+            Boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {

@@ -69,6 +69,8 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
     private List<BayeuxServer.Extension> extensions;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     class ConnectorRef {
         Connector connector;
@@ -324,6 +326,19 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     protected Server createServer() throws Exception {

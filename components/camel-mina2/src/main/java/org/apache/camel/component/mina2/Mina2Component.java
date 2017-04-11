@@ -37,6 +37,8 @@ public class Mina2Component extends UriEndpointComponent implements SSLContextPa
 
     @Metadata(label = "advanced")
     private Mina2Configuration configuration;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public Mina2Component() {
         super(Mina2Endpoint.class);
@@ -68,7 +70,7 @@ public class Mina2Component extends UriEndpointComponent implements SSLContextPa
         config.setFilters(resolveAndRemoveReferenceListParameter(parameters, "filters", IoFilter.class));
         setProperties(config, parameters);
 
-        if (config.isUseGlobalSslContextParameters() && config.getSslContextParameters() == null) {
+        if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
@@ -117,4 +119,18 @@ public class Mina2Component extends UriEndpointComponent implements SSLContextPa
     public void setConfiguration(Mina2Configuration configuration) {
         this.configuration = configuration;
     }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    }
+
 }

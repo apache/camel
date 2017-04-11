@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.etcd;
 
-import mousio.etcd4j.EtcdClient;
-import mousio.etcd4j.EtcdSecurityContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.jsse.SSLContextParameters;
+
+import mousio.etcd4j.EtcdClient;
+import mousio.etcd4j.EtcdSecurityContext;
 
 @UriParams
 public class EtcdConfiguration implements CamelContextAware, Cloneable {
@@ -32,8 +33,6 @@ public class EtcdConfiguration implements CamelContextAware, Cloneable {
     private String uris = EtcdConstants.ETCD_DEFAULT_URIS;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security", defaultValue = "false")
-    private boolean useGlobalSslContextParameters;
     @UriParam(label = "security", secret = true)
     private String userName;
     @UriParam(label = "security", secret = true)
@@ -91,17 +90,6 @@ public class EtcdConfiguration implements CamelContextAware, Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
-    }
-
-    public boolean isUseGlobalSslContextParameters() {
-        return useGlobalSslContextParameters;
-    }
-
-    /**
-     * Enable usage of Camel global SSL parameters.
-     */
-    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
-        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public String getUserName() {

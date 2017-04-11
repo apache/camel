@@ -33,6 +33,7 @@ import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -47,6 +48,9 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
  */
 public class SpringWebserviceComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public SpringWebserviceComponent() {
         super(SpringWebserviceEndpoint.class);
@@ -183,6 +187,19 @@ public class SpringWebserviceComponent extends UriEndpointComponent implements S
                 configuration.setMessageFilter(new BasicMessageFilter());
             }
         }
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
 }
