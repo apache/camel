@@ -19,7 +19,7 @@ package org.apache.camel.component.pubnub.example;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
 
-import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_SUBSCRIBER_KEY;
+import static org.apache.camel.component.pubnub.example.PubNubExampleConstants.PUBNUB_SUBSCRIBE_KEY;
 
 public final class PubNubPresenseExample {
 
@@ -35,7 +35,7 @@ public final class PubNubPresenseExample {
     static class PresensRoute extends RouteBuilder {
         @Override
         public void configure() throws Exception {
-            from("pubnub:iot?withPresence=true&subscriberKey=" + PUBNUB_SUBSCRIBER_KEY)
+            from("pubnub://iot?withPresence=true&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
                 .log("${body}")
                 .to("mock:result");
         }

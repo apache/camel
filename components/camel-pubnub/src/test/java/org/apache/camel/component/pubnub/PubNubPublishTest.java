@@ -31,7 +31,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.apache.camel.component.pubnub.PubNubConstants.TIMETOKEN;
 
 public class PubNubPublishTest extends PubNubTestBase {
-    private String endpoint = "pubnub:someChannel?pubnub=#pubnub";
+    private String endpoint = "pubnub://someChannel?pubnub=#pubnub";
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mockResult;
@@ -59,7 +59,7 @@ public class PubNubPublishTest extends PubNubTestBase {
     }
 
     @Test
-    public void testFire() throws Exception {
+    public void testFireWithOperationHeader() throws Exception {
         stubFor(get(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0/%22Hi%22"))
             .willReturn(aResponse().withBody("[1,\"Sent\",\"14598111595318003\"]")));
         mockResult.expectedMessageCount(1);

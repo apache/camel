@@ -29,17 +29,20 @@ public class PubNubConfiguration {
     @Metadata(required = "true")
     private String channel;
 
-    @UriParam()
-    private String publisherKey;
+    @UriParam(label = "security", secret = true)
+    private String publishKey;
 
-    @UriParam()
-    private String subscriberKey;
+    @UriParam(label = "security", secret = true)
+    private String subscribeKey;
 
-    @UriParam()
+    @UriParam(label = "security", secret = true)
     private String secretKey;
 
-    @UriParam()
+    @UriParam(label = "security", secret = true)
     private String authKey;
+
+    @UriParam(label = "security", secret = true)
+    private String cipherKey;
 
     @UriParam(defaultValue = "true")
     private boolean secure = true;
@@ -47,7 +50,7 @@ public class PubNubConfiguration {
     @UriParam()
     private String uuid;
 
-    @UriParam(label = "producer", enums = "HERE_NOW,WHERE_NOW,GET_STATE,SET_STATE,GET_HISTORY,PUBLISH,FIRE")
+    @UriParam(label = "producer", enums = "HERENOW,WHERENOW,GETSTATE,SETSTATE,GETHISTORY,PUBLISH,FIRE")
     private String operation;
 
     @UriParam(label = "consumer", defaultValue = "false")
@@ -56,23 +59,23 @@ public class PubNubConfiguration {
     /**
      * The publish key obtained from your PubNub account. Required when publishing messages.
      */
-    public String getPublisherKey() {
-        return this.publisherKey;
+    public String getPublishKey() {
+        return this.publishKey;
     }
 
-    public void setPublisherKey(String publisherKey) {
-        this.publisherKey = publisherKey;
+    public void setPublishKey(String publishKey) {
+        this.publishKey = publishKey;
     }
 
     /**
      * The subscribe key obtained from your PubNub account. Required when subscribing to channels or listening for presence events
      */
-    public String getSubscriberKey() {
-        return this.subscriberKey;
+    public String getSubscribeKey() {
+        return this.subscribeKey;
     }
 
-    public void setSubscriberKey(String subscriberKey) {
-        this.subscriberKey = subscriberKey;
+    public void setSubscribeKey(String subscribeKey) {
+        this.subscribeKey = subscribeKey;
     }
 
     /**
@@ -98,6 +101,17 @@ public class PubNubConfiguration {
     }
 
     /**
+     * If cipher is passed, all communicatons to/from PubNub will be encrypted.
+     */
+    public String getCipherKey() {
+        return cipherKey;
+    }
+
+    public void setCipherKey(String cipherKey) {
+        this.cipherKey = cipherKey;
+    }
+
+    /**
      * Use ssl
      */
     public boolean isSecure() {
@@ -120,7 +134,7 @@ public class PubNubConfiguration {
     }
 
     /**
-     * The uuid identifying the connection. Will be auto assigned if not set.
+     * UUID to be used as a device identifier, a default UUID is generated if not passed.
      */
     public void setUuid(String uuid) {
         this.uuid = uuid;
@@ -132,6 +146,15 @@ public class PubNubConfiguration {
 
     /**
      * The operation to perform.
+     * <ul>
+     * <li>PUBLISH: Default. Send a message to all subscribers of a channel.</li>
+     * <li>FIRE: allows the client to send a message to BLOCKS Event Handlers. These messages will go directly to any Event Handlers registered on the channel that you fire to and will trigger their execution,</li>
+     * <li>HERENOW: Obtain information about the current state of a channel including a list of unique user-ids currently subscribed to the channel and the total occupancy count.</li>
+     * <li>WHERENOW: Obtain information about the current list of channels to which a uuid is subscribed to.</li>
+     * <li>GETSTATE: Used to get key/value pairs specific to a subscriber uuid. State information is supplied as a JSON object of key/value pairs</li>
+     * <li>SETSTATE: Used to set key/value pairs specific to a subscriber uuid</li>
+     * <li>GETHISTORY: Fetches historical messages of a channel.</li>
+     * </ul>
      */
     public void setOperation(String operation) {
         this.operation = operation;
