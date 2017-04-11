@@ -58,6 +58,7 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.model.dataformat.XmlRpcDataFormat;
+import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.processor.UnmarshalProcessor;
@@ -113,6 +114,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
         @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
+        @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
         @XmlElement(required = false, name = "zip", type = ZipDataFormat.class),
         @XmlElement(required = false, name = "zipFile", type = ZipFileDataFormat.class)}
         )
