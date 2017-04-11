@@ -23,12 +23,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.apache.camel.test.karaf.CamelKarafTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
+@Ignore("spring-dm not work and is to be removed")
 @RunWith(PaxExam.class)
 public class CamelSpringTest extends AbstractFeatureTest {
 
