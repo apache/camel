@@ -246,7 +246,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.box/box-java-sdk/${box-java-sdk-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-box-api/${project.version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.camel/camel-box-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-box/${project.version}</bundle>
   </feature>
   <feature name='camel-braintree' version='${project.version}' resolver='(obr)' start-level='50'>
