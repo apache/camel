@@ -41,7 +41,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Olingo4Configuration, Olingo4ApiCollection> implements SSLContextParametersAware {
 
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     // component level shared proxy
     private Olingo4AppWrapper apiProxy;
@@ -149,7 +149,7 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
             SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
             if (sslContextParameters == null) {
                 // use global ssl config
-                sslContextParameters = getGlobalSSLContextParameters();
+                sslContextParameters = retrieveGlobalSslContextParameters();
             }
             if (sslContextParameters == null) {
                 // use defaults if not specified
@@ -178,16 +178,16 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public void closeApiProxy(Olingo4AppWrapper apiProxy) {

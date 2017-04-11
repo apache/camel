@@ -78,7 +78,7 @@ public class NettyHttpGlobalSSLTest extends CamelTestSupport {
         sslContextParameters.setTrustManagers(trustManagers);
         context.setSSLContextParameters(sslContextParameters);
 
-        ((SSLContextParametersAware) context.getComponent("netty-http")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("netty-http")).setUseGlobalSslContextParameters(true);
         return context;
     }
 

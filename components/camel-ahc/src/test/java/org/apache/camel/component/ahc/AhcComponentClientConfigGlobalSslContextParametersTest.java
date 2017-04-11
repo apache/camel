@@ -28,8 +28,8 @@ public class AhcComponentClientConfigGlobalSslContextParametersTest extends AhcC
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.setSSLContextParameters(createSSLContextParameters());
-        ((SSLContextParametersAware) context.getComponent("ahc")).setUseGlobalSSLContextParameters(true);
-        ((SSLContextParametersAware) context.getComponent("jetty")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("ahc")).setUseGlobalSslContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("jetty")).setUseGlobalSslContextParameters(true);
         return context;
     }
 

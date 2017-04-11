@@ -67,7 +67,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
     @Metadata(label = "security")
     protected SSLContextParameters sslContextParameters;
     @Metadata(label = "security", defaultValue = "false")
-    protected boolean useGlobalSSLContextParameters;
+    protected boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     protected ThreadPool threadPool;
     @Metadata(defaultValue = "9292")
@@ -300,7 +300,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
             sslContextParameters = getSslContextParameters();
         }
         if (sslContextParameters == null) {
-            sslContextParameters = getGlobalSSLContextParameters();
+            sslContextParameters = retrieveGlobalSslContextParameters();
         }
 
         // prefer to use endpoint configured over component configured
@@ -735,16 +735,16 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Map<String, WebSocketFactory> getSocketFactory() {

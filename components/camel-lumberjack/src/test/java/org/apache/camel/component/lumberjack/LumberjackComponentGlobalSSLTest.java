@@ -45,7 +45,7 @@ public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
         context.setSSLContextParameters(createServerSSLContextParameters());
         LumberjackComponent component = (LumberjackComponent) context.getComponent("lumberjack");
-        component.setUseGlobalSSLContextParameters(true);
+        component.setUseGlobalSslContextParameters(true);
         return context;
     }
 

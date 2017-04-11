@@ -40,7 +40,7 @@ public class IrcComponent extends UriEndpointComponent implements SSLContextPara
     private final transient Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
 
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public IrcComponent() {
         super(IrcEndpoint.class);
@@ -83,7 +83,7 @@ public class IrcComponent extends UriEndpointComponent implements SSLContextPara
 
             SSLContextParameters sslParams = configuration.getSslContextParameters();
             if (sslParams == null) {
-                sslParams = getGlobalSSLContextParameters();
+                sslParams = retrieveGlobalSslContextParameters();
             }
 
             if (sslParams != null) {
@@ -154,15 +154,15 @@ public class IrcComponent extends UriEndpointComponent implements SSLContextPara
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

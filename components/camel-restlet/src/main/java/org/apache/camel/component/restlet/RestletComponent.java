@@ -115,7 +115,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     @Metadata(label = "advanced")
     private List<String> enabledConverters;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public RestletComponent() {
         this(new Component());
@@ -166,7 +166,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
 
         if (result.getSslContextParameters() == null) {
-            result.setSslContextParameters(getGlobalSSLContextParameters());
+            result.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return result;
@@ -731,16 +731,16 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     @Override

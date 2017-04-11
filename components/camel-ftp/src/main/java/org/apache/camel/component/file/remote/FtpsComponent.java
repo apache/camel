@@ -36,7 +36,7 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpsComponent extends FtpComponent implements SSLContextParametersAware {
 
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public FtpsComponent() {
         setEndpointClass(FtpsEndpoint.class);
@@ -64,7 +64,7 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
         extractAndSetFtpClientParameters(parameters, endpoint);
 
         if (endpoint.getSslContextParameters() == null) {
-            endpoint.setSslContextParameters(getGlobalSSLContextParameters());
+            endpoint.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return endpoint;
@@ -95,16 +95,16 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

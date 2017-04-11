@@ -37,7 +37,7 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
     @Metadata(label = "advanced")
     private ServiceNowConfiguration configuration;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public ServiceNowComponent() {
         super(ServiceNowEndpoint.class);
@@ -82,7 +82,7 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
         }
 
         if (configuration.getSslContextParameters() == null) {
-            configuration.setSslContextParameters(getGlobalSSLContextParameters());
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return new ServiceNowEndpoint(uri, this, configuration, instanceName);
@@ -171,16 +171,16 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     /**

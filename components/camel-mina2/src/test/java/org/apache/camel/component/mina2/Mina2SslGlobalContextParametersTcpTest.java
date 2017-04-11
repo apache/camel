@@ -31,7 +31,7 @@ public class Mina2SslGlobalContextParametersTcpTest extends BaseMina2Test {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.setSSLContextParameters(createSslContextParameters());
-        ((SSLContextParametersAware) context.getComponent("mina2")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("mina2")).setUseGlobalSslContextParameters(true);
         return context;
     }
 

@@ -42,7 +42,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsComponent.class);
 
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public CxfRsComponent() {
         super(CxfRsEndpoint.class);
@@ -119,7 +119,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
         // use global ssl config if set
         if (answer.getSslContextParameters() == null) {
-            answer.setSslContextParameters(getGlobalSSLContextParameters());
+            answer.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return answer;
@@ -132,15 +132,15 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

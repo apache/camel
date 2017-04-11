@@ -65,7 +65,7 @@ public class HttpComponentConfiguration {
     /**
      * Enable usage of global SSL context parameters.
      */
-    private Boolean useGlobalSSLContextParameters = false;
+    private Boolean useGlobalSslContextParameters = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.
@@ -122,12 +122,12 @@ public class HttpComponentConfiguration {
     }
 
     public Boolean getUseGlobalSSLContextParameters() {
-        return useGlobalSSLContextParameters;
+        return useGlobalSslContextParameters;
     }
 
     public void setUseGlobalSSLContextParameters(
-            Boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {

@@ -56,7 +56,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
 
@@ -70,7 +70,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
 
         SSLContextParameters ssl = getSslContextParameters();
         if (ssl == null) {
-            ssl = getGlobalSSLContextParameters();
+            ssl = retrieveGlobalSslContextParameters();
         }
 
         // Do not set the HTTP URI because we still have all of the Camel internal
@@ -214,16 +214,16 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     protected String createAddressUri(String uri, String remaining) {

@@ -96,7 +96,7 @@ public class WebsocketSSLContextGlobalRouteExampleTest extends CamelTestSupport 
         sslContextParameters.setServerParameters(scsp);
         context.setSSLContextParameters(sslContextParameters);
 
-        ((SSLContextParametersAware) context.getComponent("websocket")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("websocket")).setUseGlobalSslContextParameters(true);
         return context;
     }
 
