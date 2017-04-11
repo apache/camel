@@ -22,7 +22,6 @@ import org.apache.camel.component.jetty9.springboot.JettyHttpComponentAutoConfig
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,6 @@ import static org.junit.Assert.assertEquals;
         "camel.component.jetty.use-global-ssl-context-parameters=true",
         "camel.component.http4.use-global-ssl-context-parameters=true",
 })
-@Ignore("Bug in https4 spring-boot configuration")
 public class Jetty9SSLTest {
 
     private static int port;
