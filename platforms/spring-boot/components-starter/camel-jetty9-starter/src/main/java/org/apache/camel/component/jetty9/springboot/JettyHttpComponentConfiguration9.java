@@ -149,6 +149,10 @@ public class JettyHttpComponentConfiguration9 {
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
+     * Enable usage of global SSL context parameters
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * Allows to configure a custom value of the response buffer size on the
      * Jetty connectors.
      */
@@ -378,6 +382,15 @@ public class JettyHttpComponentConfiguration9 {
     public void setSslContextParameters(
             SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Integer getResponseBufferSize() {

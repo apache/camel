@@ -50,6 +50,10 @@ public class StompComponentConfiguration {
      */
     private String host;
     /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -97,6 +101,15 @@ public class StompComponentConfiguration {
         this.host = host;
     }
 
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
     }
@@ -129,10 +142,6 @@ public class StompComponentConfiguration {
          */
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
-        /**
-         * Enable usage of Camel global SSL configuration
-         */
-        private Boolean useGlobalSslContextParameters;
 
         public String getBrokerURL() {
             return brokerURL;
@@ -173,15 +182,6 @@ public class StompComponentConfiguration {
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
-        }
-
-        public Boolean getUseGlobalSslContextParameters() {
-            return useGlobalSslContextParameters;
-        }
-
-        public void setUseGlobalSslContextParameters(
-                Boolean useGlobalSslContextParameters) {
-            this.useGlobalSslContextParameters = useGlobalSslContextParameters;
         }
     }
 }

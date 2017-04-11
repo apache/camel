@@ -51,7 +51,7 @@ route, use the link:jetty.html[Jetty Component] instead.
 
 
 // component options: START
-The HTTP4 component supports 14 options which are listed below.
+The HTTP4 component supports 15 options which are listed below.
 
 
 
@@ -62,6 +62,7 @@ The HTTP4 component supports 14 options which are listed below.
 | **clientConnectionManager** (advanced) | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component. |  | HttpClientConnection Manager
 | **httpContext** (advanced) | To use a custom org.apache.http.protocol.HttpContext when executing requests. |  | HttpContext
 | **sslContextParameters** (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances you need to define a new HttpComponent per instance you need. |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **x509HostnameVerifier** (security) | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier. |  | HostnameVerifier
 | **maxTotalConnections** (advanced) | The maximum number of connections. | 200 | int
 | **connectionsPerRoute** (advanced) | The maximum number of connections per route. | 20 | int

@@ -30,7 +30,7 @@ for this component:
 
 
 // component options: START
-The ServiceNow component supports 8 options which are listed below.
+The ServiceNow component supports 9 options which are listed below.
 
 
 
@@ -44,6 +44,7 @@ The ServiceNow component supports 8 options which are listed below.
 | **oauthClientId** (security) | OAuth2 ClientID |  | String
 | **oauthClientSecret** (security) | OAuth2 ClientSecret |  | String
 | **oauthTokenUrl** (security) | OAuth token Url |  | String
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
@@ -64,7 +65,7 @@ with the following path and query parameters:
 | **instanceName** | *Required* The ServiceNow instance name |  | String
 |=======================================================================
 
-#### Query Parameters (41 parameters):
+#### Query Parameters (40 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -108,7 +109,6 @@ with the following path and query parameters:
 | **proxyPassword** (security) | Password for proxy authentication |  | String
 | **proxyUserName** (security) | Username for proxy authentication |  | String
 | **sslContextParameters** (security) | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
-| **useGlobalSslContext Parameters** (security) | Enable usage of Camel global SSL configuration. | false | boolean
 | **userName** (security) | *Required* ServiceNow user account name MUST be provided |  | String
 |=======================================================================
 // endpoint options: END

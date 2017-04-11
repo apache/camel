@@ -53,7 +53,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Netty4 component supports 4 options which are listed below.
+The Netty4 component supports 5 options which are listed below.
 
 
 
@@ -63,6 +63,7 @@ The Netty4 component supports 4 options which are listed below.
 | **maximumPoolSize** (advanced) | The thread pool size for the EventExecutorGroup if its in use. The default value is 16. | 16 | int
 | **configuration** (advanced) | To use the NettyConfiguration as configuration when creating endpoints. |  | NettyConfiguration
 | **executorService** (advanced) | To use the given EventExecutorGroup |  | EventExecutorGroup
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END

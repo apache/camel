@@ -62,7 +62,7 @@ public class HttpComponentSSLAutoConfiguration {
         @Override
         public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
             try {
-                if (config != null && config.getUseGlobalSSLContextParameters() != null && config.getUseGlobalSSLContextParameters()) {
+                if (config != null && config.getUseGlobalSslContextParameters() != null && config.getUseGlobalSslContextParameters()) {
                     SSLContextParameters globalSSLParams = context.getSSLContextParameters();
 
                     if (globalSSLParams != null) {

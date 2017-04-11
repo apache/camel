@@ -48,7 +48,7 @@ where `cometds:` represents an SSL configured endpoint.
 
 
 // component options: START
-The CometD component supports 7 options which are listed below.
+The CometD component supports 8 options which are listed below.
 
 
 
@@ -61,6 +61,7 @@ The CometD component supports 7 options which are listed below.
 | **securityPolicy** (security) | To use a custom configured SecurityPolicy to control authorization |  | SecurityPolicy
 | **extensions** (common) | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests. |  | List
 | **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END

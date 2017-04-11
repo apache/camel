@@ -52,6 +52,10 @@ public class KafkaComponentConfiguration {
      */
     private ExecutorService workerPool;
     /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -81,6 +85,15 @@ public class KafkaComponentConfiguration {
 
     public void setWorkerPool(ExecutorService workerPool) {
         this.workerPool = workerPool;
+    }
+
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
@@ -324,10 +337,6 @@ public class KafkaComponentConfiguration {
          */
         @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
-        /**
-         * Enable usage of Camel global SSL config
-         */
-        private Boolean useGlobalSslContextParameters = false;
         /**
          * The password of the private key in the key store file. This is
          * optional for client.
@@ -935,15 +944,6 @@ public class KafkaComponentConfiguration {
         public void setSslContextParameters(
                 SSLContextParameters sslContextParameters) {
             this.sslContextParameters = sslContextParameters;
-        }
-
-        public Boolean getUseGlobalSslContextParameters() {
-            return useGlobalSslContextParameters;
-        }
-
-        public void setUseGlobalSslContextParameters(
-                Boolean useGlobalSslContextParameters) {
-            this.useGlobalSslContextParameters = useGlobalSslContextParameters;
         }
 
         public String getSslKeyPassword() {

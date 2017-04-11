@@ -36,7 +36,7 @@ public class LumberjackComponentConfiguration {
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
-     * Enable usage of Camel global SSL parameters
+     * Enable usage of global SSL context parameters.
      */
     private Boolean useGlobalSslContextParameters = false;
     /**
