@@ -53,6 +53,10 @@ public class NettyComponentConfiguration {
      */
     private Integer maximumPoolSize = 16;
     /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -74,6 +78,15 @@ public class NettyComponentConfiguration {
 
     public void setMaximumPoolSize(Integer maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
+    }
+
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

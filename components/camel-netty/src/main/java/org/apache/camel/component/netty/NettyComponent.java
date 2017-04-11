@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
@@ -32,7 +33,7 @@ import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timer;
 
-public class NettyComponent extends UriEndpointComponent {
+public class NettyComponent extends UriEndpointComponent implements SSLContextParametersAware {
     // use a shared timer for Netty (see javadoc for HashedWheelTimer)
     private Timer timer;
     private volatile OrderedMemoryAwareThreadPoolExecutor executorService;
@@ -41,6 +42,8 @@ public class NettyComponent extends UriEndpointComponent {
     private NettyConfiguration configuration;
     @Metadata(label = "advanced", defaultValue = "16")
     private int maximumPoolSize = 16;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public NettyComponent() {
         super(NettyEndpoint.class);
@@ -71,6 +74,10 @@ public class NettyComponent extends UriEndpointComponent {
             if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
                 IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
             }
+        }
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         // validate config
@@ -114,6 +121,19 @@ public class NettyComponent extends UriEndpointComponent {
      */
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Timer getTimer() {

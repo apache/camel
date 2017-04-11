@@ -28,6 +28,7 @@ import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
@@ -53,12 +54,14 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
  *
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent {
+public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     protected HttpClientConfigurer httpClientConfigurer;
     @Metadata(label = "advanced")
     protected HttpConnectionManager httpConnectionManager;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public HttpComponent() {
         super(HttpEndpoint.class);
@@ -369,6 +372,19 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         // need to override and call super for component docs
         super.setAllowJavaSerializedObject(allowJavaSerializedObject);
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     /**

@@ -130,6 +130,10 @@ public class SalesforceComponentConfiguration {
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
+     * Enable usage of global SSL context parameters
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * Hostname of the HTTP proxy server to use.
      */
     private String httpProxyHost;
@@ -295,6 +299,15 @@ public class SalesforceComponentConfiguration {
     public void setSslContextParameters(
             SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public String getHttpProxyHost() {

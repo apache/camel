@@ -34,6 +34,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
@@ -66,7 +67,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
+public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
     private static final Object LOCK = new Object();
 
@@ -113,6 +114,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private Boolean synchronous;
     @Metadata(label = "advanced")
     private List<String> enabledConverters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public RestletComponent() {
         this(new Component());
@@ -160,6 +163,10 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         result.setHost(host);
         if (port > 0) {
             result.setPort(port);
+        }
+
+        if (result.getSslContextParameters() == null) {
+            result.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return result;
@@ -721,6 +728,19 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         if (ObjectHelper.isNotEmpty(enabledConverters)) {
             this.enabledConverters = Arrays.asList(enabledConverters.split(","));
         }
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     @Override

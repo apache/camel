@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.StringHelper;
@@ -29,10 +30,12 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 /**
  * Represents the component that manages {@link AbstractEtcdEndpoint}.
  */
-public class EtcdComponent extends DefaultComponent {
+public class EtcdComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private EtcdConfiguration configuration = new EtcdConfiguration();
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public EtcdComponent() {
         super();
@@ -106,6 +109,19 @@ public class EtcdComponent extends DefaultComponent {
     }
 
     @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String ns = StringHelper.before(remaining, "/");
         String path = StringHelper.after(remaining, "/");
@@ -146,6 +162,10 @@ public class EtcdComponent extends DefaultComponent {
         configuration.setCamelContext(getCamelContext());
 
         setProperties(configuration, parameters);
+
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
 
         return configuration;
     }

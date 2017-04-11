@@ -40,7 +40,7 @@
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http-starter</artifactId>
+      <artifactId>camel-http4-starter</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

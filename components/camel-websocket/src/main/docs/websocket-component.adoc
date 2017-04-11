@@ -32,7 +32,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty Websocket component supports 13 options which are listed below.
+The Jetty Websocket component supports 14 options which are listed below.
 
 
 
@@ -50,6 +50,7 @@ The Jetty Websocket component supports 13 options which are listed below.
 | **maxThreads** (advanced) | To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for maxThreads is 1 2 noCores. |  | Integer
 | **threadPool** (advanced) | To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. |  | ThreadPool
 | **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **socketFactory** (common) | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation. |  | Map
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================

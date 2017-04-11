@@ -22,9 +22,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiCollection;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -36,7 +38,10 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 /**
  * Represents the component that manages {@link Olingo4Endpoint}.
  */
-public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Olingo4Configuration, Olingo4ApiCollection> {
+public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Olingo4Configuration, Olingo4ApiCollection> implements SSLContextParametersAware {
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     // component level shared proxy
     private Olingo4AppWrapper apiProxy;
@@ -143,6 +148,10 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
 
             SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
             if (sslContextParameters == null) {
+                // use global ssl config
+                sslContextParameters = retrieveGlobalSslContextParameters();
+            }
+            if (sslContextParameters == null) {
                 // use defaults if not specified
                 sslContextParameters = new SSLContextParameters();
             }
@@ -166,6 +175,19 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
         apiProxy.getOlingo4App().setHttpHeaders(configuration.getHttpHeaders());
 
         return apiProxy;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public void closeApiProxy(Olingo4AppWrapper apiProxy) {

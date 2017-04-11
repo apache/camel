@@ -256,7 +256,7 @@ public class CamelConfigurationProperties {
      *
      * Default is false.
      */
-    private boolean logMask = false;
+    private boolean logMask;
 
     /**
      * Sets whether to log exhausted message body with message history.

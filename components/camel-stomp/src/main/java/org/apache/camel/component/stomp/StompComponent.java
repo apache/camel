@@ -19,10 +19,11 @@ package org.apache.camel.component.stomp;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 
-public class StompComponent extends UriEndpointComponent {
+public class StompComponent extends UriEndpointComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private StompConfiguration configuration = new StompConfiguration();
@@ -32,6 +33,8 @@ public class StompComponent extends UriEndpointComponent {
     @Metadata(label = "security", secret = true)
     private String passcode;
     private String host;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public StompComponent() {
         super(StompEndpoint.class);
@@ -48,6 +51,11 @@ public class StompComponent extends UriEndpointComponent {
 
         StompEndpoint endpoint = new StompEndpoint(uri, this, config, destination);
         setProperties(endpoint, parameters);
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         return endpoint;
     }
 
@@ -89,4 +97,18 @@ public class StompComponent extends UriEndpointComponent {
     public void setHost(String host) {
         configuration.setHost(host);
     }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
 }

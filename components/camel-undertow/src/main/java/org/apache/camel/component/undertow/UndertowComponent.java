@@ -29,6 +29,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
@@ -51,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * Represents the component that manages {@link UndertowEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, VerifiableComponent {
+public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<UndertowHostKey, UndertowHost>();
@@ -60,6 +61,8 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     private UndertowHttpBinding undertowHttpBinding;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private UndertowHostOptions hostOptions;
 
@@ -78,10 +81,16 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         // any additional channel options
         Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "option.");
 
+        // determine sslContextParameters
+        SSLContextParameters sslParams = this.sslContextParameters;
+        if (sslParams == null) {
+            sslParams = retrieveGlobalSslContextParameters();
+        }
+
         // create the endpoint first
         UndertowEndpoint endpoint = createEndpointInstance(endpointUri, this);
         // set options from component
-        endpoint.setSslContextParameters(sslContextParameters);
+        endpoint.setSslContextParameters(sslParams);
         // Prefer endpoint configured over component configured
         if (undertowHttpBinding == null) {
             // fallback to component configured
@@ -320,6 +329,18 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         this.sslContextParameters = sslContextParameters;
     }
 
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
 
     public UndertowHostOptions getHostOptions() {
         return hostOptions;

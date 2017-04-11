@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -56,7 +57,7 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class SalesforceComponent extends DefaultComponent implements VerifiableComponent {
+public class SalesforceComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
 
     static final int CONNECTION_TIMEOUT = 60000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
@@ -132,6 +133,8 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     @Metadata(description = "SSL parameters to use, see SSLContextParameters class for all available options.",
         label = "common,security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(description = "Enable usage of global SSL context parameters", label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     // Proxy host and port
     @Metadata(description = "Hostname of the HTTP proxy server to use.", label = "common,proxy")
@@ -294,8 +297,13 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
                 httpClient = config.getHttpClient();
             } else {
                 // set ssl context parameters if set
-                final SSLContextParameters contextParameters = sslContextParameters != null
-                    ? sslContextParameters : new SSLContextParameters();
+                SSLContextParameters contextParameters = sslContextParameters;
+                if (contextParameters == null) {
+                    contextParameters = retrieveGlobalSslContextParameters();
+                }
+                if (contextParameters == null) {
+                    contextParameters = new SSLContextParameters();
+                }
                 final SslContextFactory sslContextFactory = new SslContextFactory();
                 sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
@@ -517,6 +525,16 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public String getHttpProxyHost() {
