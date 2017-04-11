@@ -110,8 +110,8 @@ public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, 
             ((CamelContextAware) dataFormat).setCamelContext(camelContext);
         }
         // add dataFormat as service which will also start the service
-        // (false => we and handling the lifecycle of the dataFormat)
-        getCamelContext().addService(dataFormat, false);
+        // (false => we handle the lifecycle of the dataFormat)
+        getCamelContext().addService(dataFormat, false, true);
     }
 
     @Override
