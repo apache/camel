@@ -25,9 +25,9 @@ import org.junit.Test;
 
 public class ProtobufMarshalAndUnmarshalJsonTest extends CamelTestSupport {
     
-    private final static String PERSON_TEST_NAME = "Martin";
-    private final static int PERSON_TEST_ID = 1234;
-    private final static String PERSON_TEST_JSON = "{\"name\": \"Martin\",\"id\": 1234}";
+    private static final String PERSON_TEST_NAME = "Martin";
+    private static final String PERSON_TEST_JSON = "{\"name\": \"Martin\",\"id\": 1234}";
+    private static final int PERSON_TEST_ID = 1234;
     
     @Test
     public void testMarshalAndUnmarshal() throws Exception {

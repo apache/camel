@@ -47,7 +47,7 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Da
     private CamelContext camelContext;
     private Message defaultInstance;
     private String instanceClassName;
-    private boolean contentTypeHeader = false;
+    private boolean contentTypeHeader;
     private String contentTypeFormat = CONTENT_TYPE_FORMAT_NATIVE;
 
     public ProtobufDataFormat() {
