@@ -292,6 +292,8 @@ final class ConnectorModel {
                 int pos = line.indexOf(':');
                 String key = line.substring(0, pos);
                 String value = line.substring(pos + 1);
+                value = value.trim();
+                key = key.trim();
                 if (value.endsWith(",")) {
                     value = value.substring(0, value.length() - 1);
                 }
@@ -319,6 +321,8 @@ final class ConnectorModel {
                 int pos = line.indexOf(':');
                 String key = line.substring(0, pos);
                 String value = line.substring(pos + 1);
+                value = value.trim();
+                key = key.trim();
                 if (value.endsWith(",")) {
                     value = value.substring(0, value.length() - 1);
                 }
