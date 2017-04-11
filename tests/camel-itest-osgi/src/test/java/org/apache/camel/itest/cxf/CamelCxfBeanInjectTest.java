@@ -32,6 +32,7 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.message.Message;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -43,6 +44,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 @RunWith(PaxExam.class)
+@Ignore("Flaky on CI server")
 public class CamelCxfBeanInjectTest extends AbstractFeatureTest {
 
     private static final int PORT = AvailablePortFinder.getNextAvailable(30000);
