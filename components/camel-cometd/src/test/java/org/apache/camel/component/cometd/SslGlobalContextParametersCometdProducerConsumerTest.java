@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -93,6 +94,8 @@ public class SslGlobalContextParametersCometdProducerConsumerTest extends CamelT
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         context.setSSLContextParameters(sslContextParameters);
+
+        ((SSLContextParametersAware) context.getComponent("cometd")).setUseGlobalSSLContextParameters(true);
         return context;
     }
 

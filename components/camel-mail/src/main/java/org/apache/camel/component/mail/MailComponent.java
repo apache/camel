@@ -41,6 +41,8 @@ public class MailComponent extends UriEndpointComponent implements SSLContextPar
     private MailConfiguration configuration;
     @Metadata(label = "advanced")
     private ContentTypeResolver contentTypeResolver;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public MailComponent() {
         super(MailEndpoint.class);
@@ -148,5 +150,18 @@ public class MailComponent extends UriEndpointComponent implements SSLContextPar
      */
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 }

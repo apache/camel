@@ -44,6 +44,8 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
 
     @Metadata(label = "advanced")
     private ConsulConfiguration configuration = new ConsulConfiguration();
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
     
     public ConsulComponent() {
         super();
@@ -92,6 +94,19 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         configuration.setSslContextParameters(sslContextParameters);
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     public String getAclToken() {
@@ -148,7 +163,7 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
         configuration.setCamelContext(getCamelContext());
 
         // using global ssl context parameters if set
-        if (configuration.isUseGlobalSslContextParameters() && configuration.getSslContextParameters() == null) {
+        if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(getGlobalSSLContextParameters());
         }
 

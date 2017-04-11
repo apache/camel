@@ -23,6 +23,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -76,6 +77,8 @@ public class NettyHttpGlobalSSLTest extends CamelTestSupport {
         trustManagers.setKeyStore(keyStore);
         sslContextParameters.setTrustManagers(trustManagers);
         context.setSSLContextParameters(sslContextParameters);
+
+        ((SSLContextParametersAware) context.getComponent("netty-http")).setUseGlobalSSLContextParameters(true);
         return context;
     }
 

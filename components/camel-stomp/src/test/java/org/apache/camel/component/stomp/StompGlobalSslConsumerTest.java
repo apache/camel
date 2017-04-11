@@ -17,6 +17,7 @@
 package org.apache.camel.component.stomp;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 
 public class StompGlobalSslConsumerTest extends StompConsumerTest {
@@ -25,6 +26,8 @@ public class StompGlobalSslConsumerTest extends StompConsumerTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.setSSLContextParameters(getClientSSLContextParameters());
+
+        ((SSLContextParametersAware) context.getComponent("stomp")).setUseGlobalSSLContextParameters(true);
         return context;
     }
 
@@ -37,7 +40,7 @@ public class StompGlobalSslConsumerTest extends StompConsumerTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("stomp:queue:test?brokerURL=ssl://localhost:%d&useGlobalSslContextParameters=true", getPort())
+                fromF("stomp:queue:test?brokerURL=ssl://localhost:%d", getPort())
                     .transform(body().convertToString())
                     .to("mock:result");
             }

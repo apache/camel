@@ -33,6 +33,8 @@ public class StompComponent extends UriEndpointComponent implements SSLContextPa
     @Metadata(label = "security", secret = true)
     private String passcode;
     private String host;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public StompComponent() {
         super(StompEndpoint.class);
@@ -50,7 +52,7 @@ public class StompComponent extends UriEndpointComponent implements SSLContextPa
         StompEndpoint endpoint = new StompEndpoint(uri, this, config, destination);
         setProperties(endpoint, parameters);
 
-        if (config.isUseGlobalSslContextParameters() && config.getSslContextParameters() == null) {
+        if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(getGlobalSSLContextParameters());
         }
 
@@ -94,6 +96,19 @@ public class StompComponent extends UriEndpointComponent implements SSLContextPa
      */
     public void setHost(String host) {
         configuration.setHost(host);
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
 }

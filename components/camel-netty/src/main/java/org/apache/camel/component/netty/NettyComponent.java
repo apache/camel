@@ -42,6 +42,8 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
     private NettyConfiguration configuration;
     @Metadata(label = "advanced", defaultValue = "16")
     private int maximumPoolSize = 16;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public NettyComponent() {
         super(NettyEndpoint.class);
@@ -119,6 +121,19 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
      */
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     public Timer getTimer() {

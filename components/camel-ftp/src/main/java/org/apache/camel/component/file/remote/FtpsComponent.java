@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -33,6 +34,9 @@ import org.apache.commons.net.ftp.FTPFile;
  * @version 
  */
 public class FtpsComponent extends FtpComponent implements SSLContextParametersAware {
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public FtpsComponent() {
         setEndpointClass(FtpsEndpoint.class);
@@ -88,6 +92,19 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
             Map<String, Object> param = IntrospectionSupport.extractProperties(parameters, "ftpClient.trustStore.");
             endpoint.setFtpClientTrustStoreParameters(param);
         }
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
 }

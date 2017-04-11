@@ -114,6 +114,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private Boolean synchronous;
     @Metadata(label = "advanced")
     private List<String> enabledConverters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public RestletComponent() {
         this(new Component());
@@ -726,6 +728,19 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         if (ObjectHelper.isNotEmpty(enabledConverters)) {
             this.enabledConverters = Arrays.asList(enabledConverters.split(","));
         }
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     @Override

@@ -32,6 +32,8 @@ public class KafkaComponent extends UriEndpointComponent implements SSLContextPa
 
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public KafkaComponent() {
         super(KafkaEndpoint.class);
@@ -63,7 +65,7 @@ public class KafkaComponent extends UriEndpointComponent implements SSLContextPa
         setProperties(endpoint.getConfiguration(), params);
         setProperties(endpoint, params);
 
-        if (endpoint.getConfiguration().isUseGlobalSslContextParameters() && endpoint.getConfiguration().getSslContextParameters() == null) {
+        if (endpoint.getConfiguration().getSslContextParameters() == null) {
             endpoint.getConfiguration().setSslContextParameters(getGlobalSSLContextParameters());
         }
 
@@ -110,6 +112,19 @@ public class KafkaComponent extends UriEndpointComponent implements SSLContextPa
      */
     public void setWorkerPool(ExecutorService workerPool) {
         this.workerPool = workerPool;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
 }

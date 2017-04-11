@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
@@ -37,6 +38,9 @@ import org.slf4j.LoggerFactory;
 public class IrcComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
     private final transient Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public IrcComponent() {
         super(IrcEndpoint.class);
@@ -147,5 +151,18 @@ public class IrcComponent extends UriEndpointComponent implements SSLContextPara
     @Deprecated
     protected String preProcessUri(String uri) {
         return IrcConfiguration.sanitize(uri);
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 }

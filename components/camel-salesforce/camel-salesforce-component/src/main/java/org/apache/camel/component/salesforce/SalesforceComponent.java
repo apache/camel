@@ -133,6 +133,8 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     @Metadata(description = "SSL parameters to use, see SSLContextParameters class for all available options.",
         label = "common,security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(description = "Enable usage of global SSL context parameters", label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     // Proxy host and port
     @Metadata(description = "Hostname of the HTTP proxy server to use.", label = "common,proxy")
@@ -523,6 +525,16 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     public String getHttpProxyHost() {

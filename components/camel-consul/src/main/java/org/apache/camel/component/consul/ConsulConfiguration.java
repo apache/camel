@@ -23,6 +23,7 @@ import java.util.Set;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.option.ConsistencyMode;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -48,8 +49,6 @@ public class ConsulConfiguration implements CamelContextAware, Cloneable {
 
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security", defaultValue = "false")
-    private boolean useGlobalSslContextParameters;
     @UriParam(label = "security", secret = true)
     private String aclToken;
     @UriParam(label = "security", secret = true)
@@ -202,17 +201,6 @@ public class ConsulConfiguration implements CamelContextAware, Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
-    }
-
-    public boolean isUseGlobalSslContextParameters() {
-        return useGlobalSslContextParameters;
-    }
-
-    /**
-     * Enable usage of Camel global SSL configuration
-     */
-    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
-        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public String getAclToken() {

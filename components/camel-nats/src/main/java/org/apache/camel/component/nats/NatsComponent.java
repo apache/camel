@@ -21,8 +21,12 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
 
 public class NatsComponent extends DefaultComponent implements SSLContextParametersAware {
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -36,6 +40,19 @@ public class NatsComponent extends DefaultComponent implements SSLContextParamet
 
         NatsEndpoint endpoint = new NatsEndpoint(uri, this, config);
         return endpoint;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
 }

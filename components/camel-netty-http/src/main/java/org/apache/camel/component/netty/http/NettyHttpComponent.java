@@ -62,6 +62,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     private HeaderFilterStrategy headerFilterStrategy;
     @Metadata(label = "security")
     private NettyHttpSecurityConfiguration securityConfiguration;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSSLContextParameters;
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
@@ -252,6 +254,19 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
      */
     public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
+    }
+
+    @Override
+    public boolean isUseGlobalSSLContextParameters() {
+        return this.useGlobalSSLContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
+        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
     }
 
     public synchronized HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {

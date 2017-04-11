@@ -76,8 +76,6 @@ public class Mina2Configuration implements Cloneable {
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "security", defaultValue = "true")
-    private boolean useGlobalSslContextParameters = true;
-    @UriParam(label = "security", defaultValue = "true")
     private boolean autoStartTls = true;
     @UriParam(label = "advanced", defaultValue = "16")
     private int maximumPoolSize = 16; // 16 is the default mina setting
@@ -341,17 +339,6 @@ public class Mina2Configuration implements Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
-    }
-
-    public boolean isUseGlobalSslContextParameters() {
-        return useGlobalSslContextParameters;
-    }
-
-    /**
-     * Enable usage of Camel global sslContextParameters.
-     */
-    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
-        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public boolean isAutoStartTls() {

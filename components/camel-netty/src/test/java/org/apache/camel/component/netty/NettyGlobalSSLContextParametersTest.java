@@ -19,6 +19,7 @@ package org.apache.camel.component.netty;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jsse.ClientAuthentication;
 import org.apache.camel.util.jsse.KeyManagersParameters;
@@ -56,6 +57,8 @@ public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
         sslContextParameters.setServerParameters(scsp);
 
         context.setSSLContextParameters(sslContextParameters);
+
+        ((SSLContextParametersAware) context.getComponent("netty")).setUseGlobalSSLContextParameters(true);
         return context;
     }
     
