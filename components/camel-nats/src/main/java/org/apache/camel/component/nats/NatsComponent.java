@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 public class NatsComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -35,7 +35,7 @@ public class NatsComponent extends DefaultComponent implements SSLContextParamet
         config.setServers(remaining);
 
         if (config.getSslContextParameters() == null) {
-            config.setSslContextParameters(getGlobalSSLContextParameters());
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         NatsEndpoint endpoint = new NatsEndpoint(uri, this, config);
@@ -43,16 +43,16 @@ public class NatsComponent extends DefaultComponent implements SSLContextParamet
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

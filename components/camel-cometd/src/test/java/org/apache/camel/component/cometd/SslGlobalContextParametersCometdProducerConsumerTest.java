@@ -95,7 +95,7 @@ public class SslGlobalContextParametersCometdProducerConsumerTest extends CamelT
         sslContextParameters.setTrustManagers(tmp);
         context.setSSLContextParameters(sslContextParameters);
 
-        ((SSLContextParametersAware) context.getComponent("cometd")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("cometd")).setUseGlobalSslContextParameters(true);
         return context;
     }
 

@@ -39,7 +39,7 @@ public class FileToFtpsExplicitSSLWithoutClientAuthAndGlobalSSLContextParameters
         sslContextParameters.setTrustManagers(tmp);
         context.setSSLContextParameters(sslContextParameters);
 
-        ((SSLContextParametersAware) context.getComponent("ftps")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("ftps")).setUseGlobalSslContextParameters(true);
         return context;
     }
     

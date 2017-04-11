@@ -55,7 +55,7 @@ public class RestletHttpsWithGlobalSSLContextParametersTest extends RestletTestS
 
         context.setSSLContextParameters(sslContextParameters);
 
-        ((SSLContextParametersAware) context.getComponent("restlet")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("restlet")).setUseGlobalSslContextParameters(true);
         return context;
     }
     

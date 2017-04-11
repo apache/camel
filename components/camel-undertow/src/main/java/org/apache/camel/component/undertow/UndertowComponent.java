@@ -66,7 +66,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private UndertowHostOptions hostOptions;
 
@@ -88,7 +88,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         // determine sslContextParameters
         SSLContextParameters sslParams = this.sslContextParameters;
         if (sslParams == null) {
-            sslParams = getGlobalSSLContextParameters();
+            sslParams = retrieveGlobalSslContextParameters();
         }
 
         // create the endpoint first
@@ -334,16 +334,16 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public UndertowHostOptions getHostOptions() {

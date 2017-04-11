@@ -27,7 +27,7 @@ public class StompGlobalSslConsumerTest extends StompConsumerTest {
         CamelContext context = super.createCamelContext();
         context.setSSLContextParameters(getClientSSLContextParameters());
 
-        ((SSLContextParametersAware) context.getComponent("stomp")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("stomp")).setUseGlobalSslContextParameters(true);
         return context;
     }
 

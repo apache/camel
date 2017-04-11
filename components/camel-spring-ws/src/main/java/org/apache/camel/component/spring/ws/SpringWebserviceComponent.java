@@ -50,7 +50,7 @@ public class SpringWebserviceComponent extends UriEndpointComponent implements S
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
 
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public SpringWebserviceComponent() {
         super(SpringWebserviceEndpoint.class);
@@ -76,7 +76,7 @@ public class SpringWebserviceComponent extends UriEndpointComponent implements S
         configureMessageFilter(configuration);
 
         if (configuration.getSslContextParameters() == null) {
-            configuration.setSslContextParameters(getGlobalSSLContextParameters());
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return new SpringWebserviceEndpoint(this, uri, configuration);
@@ -190,16 +190,16 @@ public class SpringWebserviceComponent extends UriEndpointComponent implements S
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

@@ -40,7 +40,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     @Metadata(label = "advanced")
     private Boolean allowStreaming;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public CxfComponent() {
         super(CxfEndpoint.class);
@@ -63,16 +63,16 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     /**
@@ -134,7 +134,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
 
         // use global ssl config if set
         if (result.getSslContextParameters() == null) {
-            result.setSslContextParameters(getGlobalSSLContextParameters());
+            result.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return result;

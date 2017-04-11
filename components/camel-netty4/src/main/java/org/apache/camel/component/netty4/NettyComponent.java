@@ -41,7 +41,7 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
     @Metadata(label = "advanced")
     private volatile EventExecutorGroup executorService;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public NettyComponent() {
         super(NettyEndpoint.class);
@@ -88,7 +88,7 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
         }
 
         if (config.getSslContextParameters() == null) {
-            config.setSslContextParameters(getGlobalSSLContextParameters());
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         // validate config
@@ -128,16 +128,16 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public EventExecutorGroup getExecutorService() {

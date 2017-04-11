@@ -26,8 +26,8 @@ public interface SSLContextParametersAware extends CamelContextAware {
     /**
      * Returns the global {@link SSLContextParameters} if enabled on the implementing object, null otherwise.
      */
-    default SSLContextParameters getGlobalSSLContextParameters() {
-        if (isUseGlobalSSLContextParameters()) {
+    default SSLContextParameters retrieveGlobalSslContextParameters() {
+        if (isUseGlobalSslContextParameters()) {
             return getCamelContext().getSSLContextParameters();
         }
         return null;
@@ -36,11 +36,11 @@ public interface SSLContextParametersAware extends CamelContextAware {
     /**
      * Determine if the implementing object is using global SSL context parameters.
      */
-    boolean isUseGlobalSSLContextParameters();
+    boolean isUseGlobalSslContextParameters();
 
     /**
      * Enable usage of global SSL context parameters.
      */
-    void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters);
+    void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters);
 
 }

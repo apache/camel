@@ -49,7 +49,7 @@ public class SslGlobalTest extends CamelSpringTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         SSLContextParameters parameters = context.getRegistry().lookupByNameAndType("mySslContext", SSLContextParameters.class);
-        ((SSLContextParametersAware) context.getComponent("cxf")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("cxf")).setUseGlobalSslContextParameters(true);
         context.setSSLContextParameters(parameters);
         return context;
     }

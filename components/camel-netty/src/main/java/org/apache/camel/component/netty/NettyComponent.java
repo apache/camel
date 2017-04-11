@@ -43,7 +43,7 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
     @Metadata(label = "advanced", defaultValue = "16")
     private int maximumPoolSize = 16;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public NettyComponent() {
         super(NettyEndpoint.class);
@@ -77,7 +77,7 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
         }
 
         if (config.getSslContextParameters() == null) {
-            config.setSslContextParameters(getGlobalSSLContextParameters());
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         // validate config
@@ -124,16 +124,16 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Timer getTimer() {

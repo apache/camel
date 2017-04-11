@@ -58,7 +58,7 @@ public class NettyGlobalSSLContextParametersTest extends BaseNettyTest {
 
         context.setSSLContextParameters(sslContextParameters);
 
-        ((SSLContextParametersAware) context.getComponent("netty")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("netty")).setUseGlobalSslContextParameters(true);
         return context;
     }
     

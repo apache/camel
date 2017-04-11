@@ -129,7 +129,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     protected Long continuationTimeout;
     protected boolean useContinuation = true;
     protected SSLContextParameters sslContextParameters;
-    protected boolean useGlobalSSLContextParameters;
+    protected boolean useGlobalSslContextParameters;
     protected Integer requestBufferSize;
     protected Integer requestHeaderSize;
     protected Integer responseBufferSize;
@@ -187,7 +187,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
-        ssl = ssl != null ? ssl : getGlobalSSLContextParameters();
+        ssl = ssl != null ? ssl : retrieveGlobalSslContextParameters();
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class, getProxyHost());
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class, getProxyPort());
         Integer httpClientMinThreads = getAndRemoveParameter(parameters, "httpClientMinThreads", Integer.class, this.httpClientMinThreads);
@@ -951,8 +951,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
@@ -960,8 +960,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
      */
     @Override
     @Metadata(description = "Enable usage of global SSL context parameters", label = "security", defaultValue = "false")
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Integer getResponseBufferSize() {

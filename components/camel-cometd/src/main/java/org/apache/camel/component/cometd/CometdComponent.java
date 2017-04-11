@@ -70,7 +70,7 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     class ConnectorRef {
         Connector connector;
@@ -229,7 +229,7 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
         ServerConnector sslSocketConnector = null;
         SSLContextParameters sslParams = this.sslContextParameters;
         if (sslParams == null) {
-            sslParams = getGlobalSSLContextParameters();
+            sslParams = retrieveGlobalSslContextParameters();
         }
         if (sslParams != null) {
             SslContextFactory sslContextFactory = new CometdComponentSslContextFactory();
@@ -329,16 +329,16 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     protected Server createServer() throws Exception {

@@ -33,7 +33,7 @@ public class LumberjackComponent extends UriEndpointComponent implements SSLCont
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
 
     public LumberjackComponent() {
         this(LumberjackEndpoint.class);
@@ -62,7 +62,7 @@ public class LumberjackComponent extends UriEndpointComponent implements SSLCont
         setProperties(answer, parameters);
 
         if (answer.getSslContextParameters() == null) {
-            answer.setSslContextParameters(getGlobalSSLContextParameters());
+            answer.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return answer;
@@ -81,16 +81,16 @@ public class LumberjackComponent extends UriEndpointComponent implements SSLCont
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

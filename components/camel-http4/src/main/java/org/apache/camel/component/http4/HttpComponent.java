@@ -86,7 +86,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
     protected SSLContextParameters sslContextParameters;
     @Metadata(label = "security", defaultValue = "false")
-    private boolean useGlobalSSLContextParameters;
+    private boolean useGlobalSslContextParameters;
     @Metadata(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
     @Metadata(label = "producer", description = "To use a custom org.apache.http.client.CookieStore."
@@ -188,7 +188,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             sslContextParameters = getSslContextParameters();
         }
         if (sslContextParameters == null) {
-            sslContextParameters = getGlobalSSLContextParameters();
+            sslContextParameters = retrieveGlobalSslContextParameters();
         }
         
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
@@ -461,16 +461,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     @Override
-    public boolean isUseGlobalSSLContextParameters() {
-        return this.useGlobalSSLContextParameters;
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
     }
 
     /**
      * Enable usage of global SSL context parameters.
      */
     @Override
-    public void setUseGlobalSSLContextParameters(boolean useGlobalSSLContextParameters) {
-        this.useGlobalSSLContextParameters = useGlobalSSLContextParameters;
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public HostnameVerifier getX509HostnameVerifier() {

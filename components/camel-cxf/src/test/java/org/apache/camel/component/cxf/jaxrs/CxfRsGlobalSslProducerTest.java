@@ -55,7 +55,7 @@ public class CxfRsGlobalSslProducerTest extends CamelSpringTestSupport {
         CamelContext context = super.createCamelContext();
         SSLContextParameters parameters = context.getRegistry().lookupByNameAndType("mySslContext", SSLContextParameters.class);
         context.setSSLContextParameters(parameters);
-        ((SSLContextParametersAware) context.getComponent("cxfrs")).setUseGlobalSSLContextParameters(true);
+        ((SSLContextParametersAware) context.getComponent("cxfrs")).setUseGlobalSslContextParameters(true);
         return context;
     }
 
