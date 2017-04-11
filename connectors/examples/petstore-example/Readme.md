@@ -1,26 +1,30 @@
-## Foo Bar and Wine Example
+## PetStore Example
 
-This is an example that uses the `foo`, `bar` and `wine` Camel connectors. These connectors
-are used as if they are regular Camel components in Camel routes.
-
-See the `FooBarWineRoute` class for more details.
+This is an example that uses the `petstore` Camel connectors.
 
 ### How to run
 
 This example can be run from the command line using:
 
-    mvn camel:run
+    mvn spring-boot:run
     
-### Apache Camel IDEA Plugin
-    
-You can use tooling such as the Apache Camel IDEA Plugin to offer code assistance while create the Camel route.
+### Scheduled connector
 
-The tooling offers code completions such as listing the possible options you can use with the Camel connectors.
-Notice how the tool presents only the pre-selected options of these connectors. For example the `foo` connector
-which is based on the Camel `Timer` component only offers two options, where as if you are using `timer` instead
-you will have many more options.
+The `petstore` connector is a scheduled connector which means it has built-in
+a Camel `timer` endpoint as the starting point, so you start from the connector
+in a Camel route as shown below:
 
-The following screenshot shows hows the `foo` connector only has two options to configure:
+```
+    from("petstore?operationId=getInventory&schedulerPeriod=2000")
+        .log("Pets in the store ${body}");
 
-![Foo Connector in IDEA](img/foo-connector-options-idea.png?raw=true)
+```
 
+What happens is that Camel will transform this into a route that looks like:
+
+```
+    from("timer:petstore?period=2000")
+        .to("petstore?operationId=getInventory")
+        .log("Pets in the store ${body}");
+
+```
