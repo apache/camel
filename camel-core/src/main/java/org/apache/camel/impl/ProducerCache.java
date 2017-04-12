@@ -504,7 +504,7 @@ public class ProducerCache extends ServiceSupport {
                     // lets populate using the processor callback
                     try {
                         processor.process(exchange);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         // populate failed so return
                         exchange.setException(e);
                         return exchange;
