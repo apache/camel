@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 92 (10 deprecated)
+Number of Examples: 90 (9 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
@@ -133,8 +133,6 @@ Number of Examples: 92 (10 deprecated)
 
 | link:camel-example-spring-jms/README.md[Spring JMS] (camel-example-spring-jms) | Messaging | An example using Spring XML to talk to the JMS server from different kind of client techniques
 
-| link:camel-example-box-osgi/README.md[Box OSGi] (camel-example-box-osgi) | OSGi | An example which use a Box Endpoint in OSGi
-
 | link:camel-example-cdi-osgi/README.md[CDI OSGi] (camel-example-cdi-osgi) | OSGi | *deprecated* PAX CDI example
 
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
@@ -146,8 +144,6 @@ Number of Examples: 92 (10 deprecated)
 | link:camel-example-osgi-rmi/README.md[OSGi RMI] (camel-example-osgi-rmi) | OSGi | *deprecated* A OSGi example which exposes a RMI service.
 
 | link:camel-example-servlet-rest-blueprint/README.md[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet REST with OSGi Blueprint
-
-| link:camel-example-spring-dm/README.md[Spring DM] (camel-example-spring-dm) | OSGi | *deprecated* A simple OSGi Spring DM example which creates a bundle that can be dropped into any OSGi container
 
 | link:camel-example-sql-blueprint/README.md[SQL Blueprint] (camel-example-sql-blueprint) | OSGi | An example for showing Camel using SQL component with blueprint
 
