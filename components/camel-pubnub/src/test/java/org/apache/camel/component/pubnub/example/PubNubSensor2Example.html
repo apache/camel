@@ -1,0 +1,106 @@
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<html>
+<head>
+
+<link rel="stylesheet" type="text/css" href="https://pubnub.github.io/eon/v/eon/1.0.0/eon.css">
+<script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.6.0.min.js"></script>
+<script src="https://pubnub.github.io/eon/v/eon/1.0.0/eon.js"></script>
+
+
+<style>
+.c3-region-1 {
+    fill: #dd3333;
+    fill-opacity: 0.8
+}
+</style>
+
+</head>
+<body>
+    <div>
+        <div align="center">
+            <h1>Description</h1>
+        </div>
+        <br /> This is a example of PubNub EON charts displaying stream data
+        using the camel-pubnub component. <br /> To see live data you have
+        to:
+        <ul>
+            <li>Sign up for a PubNub acount</li>
+            <li>Replace 'mySubscriberKey' in this html with a subscriberkey obtained from PubNub.</li>
+            <li>Update the constants PUBNUB_SUBSCRIBER_KEY and PUBNUB_PUBLISHER_KEY in the class PubNubExampleConstants</li>
+            <li>Run the class PubNubSensor2Example</li>
+            <li>Open this html page in your web browser</li>
+        </ul>
+    </div>
+    <div id="chart"></div>
+<script>
+
+    var pubnub = new PubNub({
+        subscribeKey: 'mySubscriberKey'
+    });
+
+eon.chart({
+    channels: ["iot"],
+    generate: {
+        bindto: '#chart',
+        data: {
+            type:'spline',
+            colors: {
+                value0:'#ffaaaa',
+                value1:'#cc8888',
+            },
+            names: {
+                value0: "Temperature",
+                value1: "Humidity",
+            }
+        },
+        point: {
+            show: false
+        },
+        axis: {
+            x: {
+                type: 'timeseries',
+                tick: {
+                    format: '%H:%m:%S'
+                }
+            },
+            y: {
+                label: {
+                    text: 'Values',
+                    position: 'outer-middle'
+                }
+            }
+        },
+        tooltip: {
+            show: false
+        }
+    },
+    history:false,
+    pubnub: pubnub,
+    limit: 100,
+    transform: function(m) {
+      return { eon: {
+        temperature: m.temperature,
+        humidity: m.humidity
+      }}
+    }
+    
+});
+	
+    </script>
+</body>
+</html>
