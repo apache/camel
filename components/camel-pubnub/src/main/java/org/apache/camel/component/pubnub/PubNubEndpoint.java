@@ -28,10 +28,10 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "pubnub", title = "PubNub", syntax = "pubnub://channel", consumerClass = PubNubConsumer.class, label = "cloud,iot,messaging")
+@UriEndpoint(scheme = "pubnub", title = "PubNub", syntax = "pubnub:channel", consumerClass = PubNubConsumer.class, label = "cloud,iot,messaging")
 public class PubNubEndpoint extends DefaultEndpoint {
 
-    @UriParam
+    @UriParam(label = "advanced")
     private PubNub pubnub;
 
     @UriParam
@@ -41,8 +41,6 @@ public class PubNubEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.configuration = configuration;
     }
-
-    
 
     @Override
     public Producer createProducer() throws Exception {
@@ -66,7 +64,6 @@ public class PubNubEndpoint extends DefaultEndpoint {
     /**
      * Reference to a Pubnub client in the registry.
      */
-
     public PubNub getPubnub() {
         return pubnub;
     }

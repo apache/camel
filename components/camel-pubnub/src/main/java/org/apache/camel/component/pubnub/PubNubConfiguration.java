@@ -44,7 +44,7 @@ public class PubNubConfiguration {
     @UriParam(label = "security", secret = true)
     private String cipherKey;
 
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "security", defaultValue = "true")
     private boolean secure = true;
 
     @UriParam()
@@ -112,7 +112,7 @@ public class PubNubConfiguration {
     }
 
     /**
-     * Use ssl
+     * Use SSL for secure transmission.
      */
     public boolean isSecure() {
         return this.secure;

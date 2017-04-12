@@ -51,7 +51,7 @@ public class PubNubSubscriberTest extends PubNubTestBase {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("pubnub://mychannel?pubnub=#pubnub").id("subroute").autoStartup(false)
+                from("pubnub:mychannel?pubnub=#pubnub").id("subroute").autoStartup(false)
                     .to("mock:result");
             }
         };
