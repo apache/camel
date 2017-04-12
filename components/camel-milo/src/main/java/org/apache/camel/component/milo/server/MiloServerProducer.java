@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.milo.server.internal.CamelServerItem;
 import org.apache.camel.impl.DefaultProducer;
 
-class MiloServerProducer extends DefaultProducer {
+public class MiloServerProducer extends DefaultProducer {
 
     private final CamelServerItem item;
 

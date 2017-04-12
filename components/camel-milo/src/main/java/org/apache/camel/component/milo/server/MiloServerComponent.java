@@ -68,30 +68,10 @@ import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USE
  * OPC UA Server based component
  */
 public class MiloServerComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
-
-    private final static class DenyAllCertificateValidator implements CertificateValidator {
-        public static final CertificateValidator INSTANCE = new DenyAllCertificateValidator();
-
-        private DenyAllCertificateValidator() {
-        }
-
-        @Override
-        public void validate(final X509Certificate certificate) throws UaException {
-            throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
-        }
-
-        @Override
-        public void verifyTrustChain(final X509Certificate certificate, final List<X509Certificate> chain) throws UaException {
-            throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
-        }
-    }
-
-    private static final String URL_CHARSET = "UTF-8";
-
     public static final String DEFAULT_NAMESPACE_URI = "urn:org:apache:camel";
 
+    private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
+    private static final String URL_CHARSET = "UTF-8";
     private static final OpcUaServerConfig DEFAULT_SERVER_CONFIG;
 
     static {
@@ -110,6 +90,23 @@ public class MiloServerComponent extends DefaultComponent {
         }
 
         DEFAULT_SERVER_CONFIG = cfg.build();
+    }
+
+    private static final class DenyAllCertificateValidator implements CertificateValidator {
+        public static final CertificateValidator INSTANCE = new DenyAllCertificateValidator();
+
+        private DenyAllCertificateValidator() {
+        }
+
+        @Override
+        public void validate(final X509Certificate certificate) throws UaException {
+            throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
+        }
+
+        @Override
+        public void verifyTrustChain(final X509Certificate certificate, final List<X509Certificate> chain) throws UaException {
+            throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
+        }
     }
 
     private String namespaceUri = DEFAULT_NAMESPACE_URI;

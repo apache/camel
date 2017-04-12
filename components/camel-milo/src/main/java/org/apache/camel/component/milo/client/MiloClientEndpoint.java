@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 
-@UriEndpoint(scheme = "milo-client", syntax = "milo-client:tcp://user:password@host:port/path/to/service?itemId=item.id&namespaceUri=urn:foo:bar", title = "Milo based OPC UA Client", consumerClass = MiloClientConsumer.class, label = "iot")
+@UriEndpoint(scheme = "milo-client", syntax = "milo-client:tcp://user:password@host:port/path/to/service", title = "Milo based OPC UA Client", consumerClass = MiloClientConsumer.class, label = "iot")
 public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientItemConfiguration {
 
     /**
@@ -62,7 +62,7 @@ public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientIte
      * Default "await" setting for writes
      */
     @UriParam
-    private boolean defaultAwaitWrites = false;
+    private boolean defaultAwaitWrites;
 
     private final MiloClientConnection connection;
     private final MiloClientComponent component;

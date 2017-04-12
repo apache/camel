@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
 
 public class SubscriptionManager {
 
-    private final static Logger LOG = LoggerFactory.getLogger(SubscriptionManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SubscriptionManager.class);
 
     private final AtomicLong clientHandleCounter = new AtomicLong(0);
 
@@ -100,7 +100,7 @@ public class SubscriptionManager {
     }
 
     public interface Worker<T> {
-        public void work(T on) throws Exception;
+        void work(T on) throws Exception;
     }
 
     private static class Subscription {
@@ -110,7 +110,7 @@ public class SubscriptionManager {
 
         private final Consumer<DataValue> valueConsumer;
 
-        public Subscription(final NamespaceId namespaceId, final PartialNodeId partialNodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer) {
+        Subscription(final NamespaceId namespaceId, final PartialNodeId partialNodeId, final Double samplingInterval, final Consumer<DataValue> valueConsumer) {
             this.namespaceId = namespaceId;
             this.partialNodeId = partialNodeId;
             this.samplingInterval = samplingInterval;
@@ -144,7 +144,7 @@ public class SubscriptionManager {
 
         private final Map<String, UShort> namespaceCache = new ConcurrentHashMap<>();
 
-        public Connected(final OpcUaClient client, final UaSubscription manager) {
+        Connected(final OpcUaClient client, final UaSubscription manager) {
             this.client = client;
             this.manager = manager;
         }
@@ -179,9 +179,7 @@ public class SubscriptionManager {
                 }
             }
 
-            if (!items.isEmpty())
-
-            {
+            if (!items.isEmpty()) {
 
                 // create monitors
 
@@ -364,6 +362,10 @@ public class SubscriptionManager {
             }
         }
 
+        performAndEvalConnect();
+    }
+
+    private void performAndEvalConnect() {
         try {
             final Connected connected = performConnect();
             LOG.debug("Connect call done");
@@ -395,38 +397,6 @@ public class SubscriptionManager {
         } catch (final Exception e) {
             LOG.info("Failed to connect", e);
             triggerReconnect(false);
-        }
-    }
-
-    public void dispose() {
-        Connected connected;
-
-        synchronized (this) {
-            if (this.disposed) {
-                return;
-            }
-            this.disposed = true;
-            connected = this.connected;
-        }
-
-        if (connected != null) {
-            // dispose outside of lock
-            connected.dispose();
-        }
-    }
-
-    private synchronized void triggerReconnect(final boolean immediate) {
-        LOG.info("Trigger re-connect (immediate: {})", immediate);
-
-        if (this.reconnectJob != null) {
-            LOG.info("Re-connect already scheduled");
-            return;
-        }
-
-        if (immediate) {
-            this.reconnectJob = this.executor.submit(this::connect);
-        } else {
-            this.reconnectJob = this.executor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -482,6 +452,38 @@ public class SubscriptionManager {
                 client.disconnect();
             }
             throw e;
+        }
+    }
+
+    public void dispose() {
+        Connected connected;
+
+        synchronized (this) {
+            if (this.disposed) {
+                return;
+            }
+            this.disposed = true;
+            connected = this.connected;
+        }
+
+        if (connected != null) {
+            // dispose outside of lock
+            connected.dispose();
+        }
+    }
+
+    private synchronized void triggerReconnect(final boolean immediate) {
+        LOG.info("Trigger re-connect (immediate: {})", immediate);
+
+        if (this.reconnectJob != null) {
+            LOG.info("Re-connect already scheduled");
+            return;
+        }
+
+        if (immediate) {
+            this.reconnectJob = this.executor.submit(this::connect);
+        } else {
+            this.reconnectJob = this.executor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
         }
     }
 
