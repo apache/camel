@@ -22,6 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import com.google.common.base.Supplier;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.KeyStoreLoader.Result;
@@ -32,10 +36,6 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Supplier;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 public class MiloClientComponent extends DefaultComponent {
 

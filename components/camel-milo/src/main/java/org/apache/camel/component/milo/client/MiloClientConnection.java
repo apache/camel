@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.milo.client;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.function.Consumer;
+
+import static java.util.Objects.requireNonNull;
 
 import org.apache.camel.component.milo.NamespaceId;
 import org.apache.camel.component.milo.PartialNodeId;
