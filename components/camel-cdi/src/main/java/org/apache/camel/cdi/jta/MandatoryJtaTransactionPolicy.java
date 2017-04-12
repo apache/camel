@@ -1,9 +1,9 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import javax.inject.Named;
 
 @Named("PROPAGATION_MANDATORY")
-public class MandatoryJavaEETransactionPolicy extends TransactionalJavaEETransactionPolicy {
+public class MandatoryJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {
 
     @Override
     public void run(final Runnable runnable) throws Exception {

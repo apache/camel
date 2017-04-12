@@ -1,9 +1,9 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import javax.inject.Named;
 
 @Named("PROPAGATION_SUPPORTS")
-public class SupportsEETransactionPolicy extends TransactionalJavaEETransactionPolicy {
+public class SupportsJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {
 
     @Override
     public void run(final Runnable runnable) throws Throwable {

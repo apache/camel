@@ -1,10 +1,10 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import javax.inject.Named;
 import javax.transaction.Transaction;
 
 @Named("PROPAGATION_REQUIRES_NEW")
-public class RequiresNewJavaEETransactionPolicy extends TransactionalJavaEETransactionPolicy {
+public class RequiresNewJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {
 
     @Override
     public void run(final Runnable runnable) throws Throwable {

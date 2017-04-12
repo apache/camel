@@ -1,9 +1,9 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import javax.inject.Named;
 
 @Named("PROPAGATION_NEVER")
-public class NeverJavaEETransactionPolicy extends TransactionalJavaEETransactionPolicy {
+public class NeverJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {
 
     @Override
     public void run(final Runnable runnable) throws Exception {

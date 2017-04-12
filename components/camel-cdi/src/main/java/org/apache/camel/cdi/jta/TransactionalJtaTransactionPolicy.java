@@ -1,4 +1,4 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper methods for transaction handling
  */
-public abstract class TransactionalJavaEETransactionPolicy extends JavaEETransactionPolicy {
+public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPolicy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TransactionalJavaEETransactionPolicy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TransactionalJtaTransactionPolicy.class);
 
     protected void runWithTransaction(final Runnable runnable, final boolean isNew) throws Throwable {
 

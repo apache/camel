@@ -1,4 +1,4 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -13,14 +13,14 @@ import org.apache.camel.util.CamelLogger;
 /**
  * This error handler does redelivering. If the transaction fails it can be
  * retried if configured to do so. In the Spring implementation redelivering is
- * done within the transaction which is not appropriate in JavaEE since every
- * error breaks the current transaction.
+ * done within the transaction which is not appropriate in JTA since every error
+ * breaks the current transaction.
  */
-public class JavaEETransactionErrorHandler extends org.apache.camel.processor.RedeliveryErrorHandler {
+public class JtaTransactionErrorHandler extends org.apache.camel.processor.RedeliveryErrorHandler {
 
-    public JavaEETransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
+    public JtaTransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
-            ExceptionPolicyStrategy exceptionPolicyStrategy, JavaEETransactionPolicy transactionPolicy,
+            ExceptionPolicyStrategy exceptionPolicyStrategy, JtaTransactionPolicy transactionPolicy,
             Predicate retryWhile, ScheduledExecutorService executorService, LoggingLevel rollbackLoggingLevel,
             Processor onExceptionOccurredProcessor) {
 

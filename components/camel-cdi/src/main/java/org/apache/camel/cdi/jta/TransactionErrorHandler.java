@@ -1,4 +1,4 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import org.apache.camel.util.ServiceHelper;
  * Does transactional execution according given policy. This class is based on
  * {@link org.apache.camel.spring.spi.TransactionErrorHandler} excluding
  * redelivery functionality. In the Spring implementation redelivering is done
- * within the transaction which is not appropriate in JavaEE since every error
+ * within the transaction which is not appropriate in JTA since every error
  * breaks the current transaction.
  */
 public class TransactionErrorHandler extends ErrorHandlerSupport
@@ -36,7 +36,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
 
     private ExceptionPolicyStrategy exceptionPolicy;
 
-    private JavaEETransactionPolicy transactionPolicy;
+    private JtaTransactionPolicy transactionPolicy;
 
     private final String transactionKey;
 
@@ -60,7 +60,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
      *            logging level to use for logging transaction rollback occurred
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output,
-            ExceptionPolicyStrategy exceptionPolicyStrategy, JavaEETransactionPolicy transactionPolicy,
+            ExceptionPolicyStrategy exceptionPolicyStrategy, JtaTransactionPolicy transactionPolicy,
             ScheduledExecutorService executorService, LoggingLevel rollbackLoggingLevel) {
 
         this.output = output;
@@ -74,7 +74,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
 
     public void process(Exchange exchange) throws Exception {
 
-        // we have to run this synchronously as a JavaEE Transaction does *not*
+        // we have to run this synchronously as a JTA Transaction does *not*
         // support using multiple threads to span a transaction
         if (exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
             // already transacted by this transaction template
@@ -91,7 +91,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
 
-        // invoke this synchronous method as JavaEE Transaction does *not*
+        // invoke this synchronous method as JTA Transaction does *not*
         // support using multiple threads to span a transaction
         try {
             process(exchange);
@@ -159,7 +159,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         }
     }
 
-    public void setTransactionPolicy(JavaEETransactionPolicy transactionPolicy) {
+    public void setTransactionPolicy(JtaTransactionPolicy transactionPolicy) {
         this.transactionPolicy = transactionPolicy;
     }
 
@@ -168,7 +168,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         // spring transaction template is working best with rollback if you
         // throw it a runtime exception
         // otherwise it may not rollback messages send to JMS queues etc.
-        transactionPolicy.run(new JavaEETransactionPolicy.Runnable() {
+        transactionPolicy.run(new JtaTransactionPolicy.Runnable() {
 
             @Override
             public void run() throws Throwable {

@@ -1,10 +1,10 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import javax.inject.Named;
 import javax.transaction.Transaction;
 
 @Named("PROPAGATION_NOT_SUPPORTED")
-public class NotSupportedJavaEETransactionPolicy extends TransactionalJavaEETransactionPolicy {
+public class NotSupportedJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {
 
     @Override
     public void run(final Runnable runnable) throws Throwable {

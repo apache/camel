@@ -1,7 +1,7 @@
 package org.apache.camel.cdi;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.transaction.JavaEETransactionErrorHandlerBuilder;
+import org.apache.camel.cdi.jta.JtaTransactionErrorHandlerBuilder;
 
 /**
  * An extension of the {@link RouteBuilder} to provide some additional helper
@@ -9,7 +9,7 @@ import org.apache.camel.cdi.transaction.JavaEETransactionErrorHandlerBuilder;
  *
  * @version
  */
-public abstract class JavaEERouteBuilder extends RouteBuilder {
+public abstract class JtaRouteBuilder extends RouteBuilder {
 
     /**
      * Creates a transaction error handler that will lookup in application
@@ -17,8 +17,8 @@ public abstract class JavaEERouteBuilder extends RouteBuilder {
      *
      * @return the created error handler
      */
-    public JavaEETransactionErrorHandlerBuilder transactionErrorHandler() {
-        return new JavaEETransactionErrorHandlerBuilder();
+    public JtaTransactionErrorHandlerBuilder transactionErrorHandler() {
+        return new JtaTransactionErrorHandlerBuilder();
     }
 
 }

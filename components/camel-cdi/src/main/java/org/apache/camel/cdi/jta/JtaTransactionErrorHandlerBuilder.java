@@ -1,4 +1,4 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import java.util.Map;
 
@@ -20,18 +20,18 @@ import org.slf4j.LoggerFactory;
  * Builds transactional error handlers. This class is based on
  * {@link org.apache.camel.spring.spi.TransactionErrorHandlerBuilder}.
  */
-public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
+public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JavaEETransactionErrorHandlerBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JtaTransactionErrorHandlerBuilder.class);
 
     private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
 
-    public static final String ROLLBACK_LOGGING_LEVEL_PROPERTY = JavaEETransactionErrorHandlerBuilder.class.getName()
+    public static final String ROLLBACK_LOGGING_LEVEL_PROPERTY = JtaTransactionErrorHandlerBuilder.class.getName()
             + "#rollbackLoggingLevel";
 
     private LoggingLevel rollbackLoggingLevel = LoggingLevel.WARN;
 
-    private JavaEETransactionPolicy transactionPolicy;
+    private JtaTransactionPolicy transactionPolicy;
 
     private String policyRef;
 
@@ -39,11 +39,11 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
     public boolean supportTransacted() {
         return true;
     }
-    
+
     @Override
     public ErrorHandlerBuilder cloneBuilder() {
 
-        final JavaEETransactionErrorHandlerBuilder answer = new JavaEETransactionErrorHandlerBuilder();
+        final JtaTransactionErrorHandlerBuilder answer = new JtaTransactionErrorHandlerBuilder();
         cloneBuilder(answer);
         return answer;
 
@@ -53,8 +53,8 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
     protected void cloneBuilder(DefaultErrorHandlerBuilder other) {
 
         super.cloneBuilder(other);
-        if (other instanceof JavaEETransactionErrorHandlerBuilder) {
-            final JavaEETransactionErrorHandlerBuilder otherTx = (JavaEETransactionErrorHandlerBuilder) other;
+        if (other instanceof JtaTransactionErrorHandlerBuilder) {
+            final JtaTransactionErrorHandlerBuilder otherTx = (JtaTransactionErrorHandlerBuilder) other;
             transactionPolicy = otherTx.transactionPolicy;
             rollbackLoggingLevel = otherTx.rollbackLoggingLevel;
         }
@@ -72,12 +72,12 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
                 transactedDefinition.setRef(policyRef);
                 final Policy policy = transactedDefinition.resolvePolicy(routeContext);
                 if (policy != null) {
-                    if (!(policy instanceof JavaEETransactionPolicy)) {
+                    if (!(policy instanceof JtaTransactionPolicy)) {
                         throw new RuntimeCamelException("The configured policy '" + policyRef + "' is of type '"
                                 + policyRef.getClass().getName() + "' but an instance of '"
-                                + JavaEETransactionPolicy.class.getName() + "' is required!");
+                                + JtaTransactionPolicy.class.getName() + "' is required!");
                     }
-                    transactionPolicy = (JavaEETransactionPolicy) policy;
+                    transactionPolicy = (JtaTransactionPolicy) policy;
                 }
 
             }
@@ -93,15 +93,15 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
             Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
                 TransactedPolicy policy = mapPolicy.values().iterator().next();
-                if (policy != null && policy instanceof JavaEETransactionPolicy) {
-                    transactionPolicy = ((JavaEETransactionPolicy) policy);
+                if (policy != null && policy instanceof JtaTransactionPolicy) {
+                    transactionPolicy = ((JtaTransactionPolicy) policy);
                 }
             }
 
             if (transactionPolicy == null) {
                 TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
-                if (policy != null && policy instanceof JavaEETransactionPolicy) {
-                    transactionPolicy = ((JavaEETransactionPolicy) policy);
+                if (policy != null && policy instanceof JtaTransactionPolicy) {
+                    transactionPolicy = ((JtaTransactionPolicy) policy);
                 }
             }
 
@@ -119,7 +119,7 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
             rollbackLoggingLevel = LoggingLevel.valueOf(properties.get(ROLLBACK_LOGGING_LEVEL_PROPERTY));
         }
 
-        JavaEETransactionErrorHandler answer = new JavaEETransactionErrorHandler(camelContext,
+        JtaTransactionErrorHandler answer = new JtaTransactionErrorHandler(camelContext,
                 processor,
                 getLogger(),
                 getOnRedelivery(),
@@ -137,28 +137,28 @@ public class JavaEETransactionErrorHandlerBuilder extends DefaultErrorHandlerBui
 
     }
 
-    public JavaEETransactionErrorHandlerBuilder setTransactionPolicy(final String ref) {
+    public JtaTransactionErrorHandlerBuilder setTransactionPolicy(final String ref) {
         policyRef = ref;
         return this;
     }
 
-    public JavaEETransactionErrorHandlerBuilder setTransactionPolicy(final JavaEETransactionPolicy transactionPolicy) {
+    public JtaTransactionErrorHandlerBuilder setTransactionPolicy(final JtaTransactionPolicy transactionPolicy) {
         this.transactionPolicy = transactionPolicy;
         return this;
     }
 
-    public JavaEETransactionErrorHandlerBuilder setRollbackLoggingLevel(final LoggingLevel rollbackLoggingLevel) {
-    	this.rollbackLoggingLevel = rollbackLoggingLevel;
+    public JtaTransactionErrorHandlerBuilder setRollbackLoggingLevel(final LoggingLevel rollbackLoggingLevel) {
+        this.rollbackLoggingLevel = rollbackLoggingLevel;
         return this;
     }
-    
+
     protected CamelLogger createLogger() {
         return new CamelLogger(LoggerFactory.getLogger(TransactionErrorHandler.class), LoggingLevel.ERROR);
     }
 
     @Override
     public String toString() {
-        return "JavaEETransactionErrorHandlerBuilder";
+        return "JtaTransactionErrorHandlerBuilder";
     }
 
 }

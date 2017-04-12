@@ -1,4 +1,4 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import javax.annotation.Resource;
 import javax.transaction.TransactionManager;
@@ -21,9 +21,9 @@ import org.slf4j.LoggerFactory;
  * This class requires the resource {@link TransactionManager} to be available
  * through JNDI url &quot;java:/TransactionManager&quot;
  */
-public abstract class JavaEETransactionPolicy implements TransactedPolicy {
+public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JavaEETransactionPolicy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JtaTransactionPolicy.class);
 
     public static interface Runnable {
         void run() throws Throwable;
@@ -47,7 +47,7 @@ public abstract class JavaEETransactionPolicy implements TransactedPolicy {
     @Override
     public Processor wrap(RouteContext routeContext, Processor processor) {
 
-        JavaEETransactionErrorHandler answer;
+        JtaTransactionErrorHandler answer;
 
         // the goal is to configure the error handler builder on the route as a
         // transacted error handler,
@@ -80,19 +80,19 @@ public abstract class JavaEETransactionPolicy implements TransactedPolicy {
             }
         }
 
-        JavaEETransactionErrorHandlerBuilder txBuilder;
+        JtaTransactionErrorHandlerBuilder txBuilder;
         if ((builder != null) && builder.supportTransacted()) {
-            if (!(builder instanceof JavaEETransactionErrorHandlerBuilder)) {
+            if (!(builder instanceof JtaTransactionErrorHandlerBuilder)) {
                 throw new RuntimeCamelException("The given transactional error handler builder '" + builder
-                        + "' is not of type '" + JavaEETransactionErrorHandlerBuilder.class.getName()
+                        + "' is not of type '" + JtaTransactionErrorHandlerBuilder.class.getName()
                         + "' which is required in this environment!");
             }
-            LOG.debug("The ErrorHandlerBuilder configured is a JavaEETransactionErrorHandlerBuilder: {}", builder);
-            txBuilder = (JavaEETransactionErrorHandlerBuilder) builder.cloneBuilder();
+            LOG.debug("The ErrorHandlerBuilder configured is a JtaTransactionErrorHandlerBuilder: {}", builder);
+            txBuilder = (JtaTransactionErrorHandlerBuilder) builder.cloneBuilder();
         } else {
             LOG.debug(
-                    "No or no transactional ErrorHandlerBuilder configured, will use default JavaEETransactionErrorHandlerBuilder settings");
-            txBuilder = new JavaEETransactionErrorHandlerBuilder();
+                    "No or no transactional ErrorHandlerBuilder configured, will use default JtaTransactionErrorHandlerBuilder settings");
+            txBuilder = new JtaTransactionErrorHandlerBuilder();
         }
 
         txBuilder.setTransactionPolicy(this);
@@ -115,12 +115,12 @@ public abstract class JavaEETransactionPolicy implements TransactedPolicy {
 
     }
 
-    protected JavaEETransactionErrorHandler createTransactionErrorHandler(RouteContext routeContext, Processor processor,
+    protected JtaTransactionErrorHandler createTransactionErrorHandler(RouteContext routeContext, Processor processor,
             ErrorHandlerBuilder builder) {
 
-        JavaEETransactionErrorHandler answer;
+        JtaTransactionErrorHandler answer;
         try {
-            answer = (JavaEETransactionErrorHandler) builder.createErrorHandler(routeContext, processor);
+            answer = (JtaTransactionErrorHandler) builder.createErrorHandler(routeContext, processor);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }

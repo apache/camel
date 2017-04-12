@@ -1,4 +1,4 @@
-package org.apache.camel.cdi.transaction;
+package org.apache.camel.cdi.jta;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -7,9 +7,9 @@ import javax.inject.Named;
 import javax.transaction.Transaction;
 
 @Named("PROPAGATION_NESTED")
-public class NestedJavaEETransactionPolicy extends TransactionalJavaEETransactionPolicy {
+public class NestedJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {
 
-    private static final Logger logger = Logger.getLogger(NestedJavaEETransactionPolicy.class.getCanonicalName());
+    private static final Logger logger = Logger.getLogger(NestedJtaTransactionPolicy.class.getCanonicalName());
 
     @Override
     public void run(final Runnable runnable) throws Throwable {
