@@ -17,7 +17,9 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
@@ -26,9 +28,8 @@
 
   <artifactId>camel-pubnub</artifactId>
   <packaging>jar</packaging>
-
   <name>Camel :: PubNub</name>
-  <description>Camel PubNub component</description>
+  <description>Camel PubNub Support</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.pubnub.*</camel.osgi.export.pkg>
@@ -76,20 +77,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.github.tomakehurst</groupId>
       <artifactId>wiremock</artifactId>
       <version>${wiremock-version}</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 </project>

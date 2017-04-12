@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.pubnub;
 
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

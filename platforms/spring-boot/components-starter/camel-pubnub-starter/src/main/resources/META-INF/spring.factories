@@ -15,4 +15,5 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.pubnub.PubNubComponent
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.apache.camel.component.pubnub.springboot.PubNubComponentAutoConfiguration

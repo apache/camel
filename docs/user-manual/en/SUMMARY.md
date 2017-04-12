@@ -274,6 +274,7 @@
 	* [PDF](pdf-component.adoc)
 	* [PostgresSQL Event](pgevent-component.adoc)
 	* [Printer](lpr-component.adoc)
+	* [PubNub](pubnub-component.adoc)
 	* [Quartz](quartz-component.adoc)
 	* [Quartz2](quartz2-component.adoc)
 	* [QuickFix](quickfix-component.adoc)
