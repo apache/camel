@@ -145,7 +145,7 @@ public class ConsumerCache extends ServiceSupport {
                         LOG.debug("Released PollingConsumer: {} is stopped as consumer cache is full", endpoint);
                     }
                     ServiceHelper.stopAndShutdownService(pollingConsumer);
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     if (ex instanceof RuntimeCamelException) {
                         throw (RuntimeCamelException)ex;
                     } else {
@@ -171,7 +171,7 @@ public class ConsumerCache extends ServiceSupport {
             try {
                 answer = endpoint.createPollingConsumer();
                 answer.start();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new FailedToCreateConsumerException(endpoint, e);
             }
             if (pooled && answer instanceof ServicePoolAware) {

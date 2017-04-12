@@ -440,7 +440,7 @@ public class ProducerCache extends ServiceSupport {
                 // add as service which will also start the service
                 // (false => we and handling the lifecycle of the producer in this cache)
                 getCamelContext().addService(answer, false);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }
 
