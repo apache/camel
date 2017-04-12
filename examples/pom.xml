@@ -95,7 +95,6 @@
     <module>camel-example-spring-boot-rest-swagger</module>
     <module>camel-example-spring-boot-servicecall</module>
     <module>camel-example-spring-cloud-servicecall</module>
-    <module>camel-example-spring-dm</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-ws</module>
