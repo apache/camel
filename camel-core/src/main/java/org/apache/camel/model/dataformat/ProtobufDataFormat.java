@@ -79,6 +79,10 @@ public class ProtobufDataFormat extends DataFormatDefinition {
         this.contentTypeFormat = contentTypeFormat;
     }
 
+    public String getContentTypeFormat() {
+        return contentTypeFormat;
+    }
+
     public Object getDefaultInstance() {
         return defaultInstance;
     }
