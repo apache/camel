@@ -105,7 +105,7 @@ public class PubNubConsumer extends DefaultConsumer {
 
         @Override
         public void message(PubNub pubnub, PNMessageResult message) {
-            Exchange exchange = new DefaultExchange(endpoint, endpoint.getExchangePattern());
+            Exchange exchange = endpoint.createExchange();
             Message inmessage = exchange.getIn();
             inmessage.setBody(message);
             inmessage.setHeader(TIMETOKEN, message.getTimetoken());

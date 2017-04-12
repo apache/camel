@@ -47,8 +47,8 @@ public final class PubNubSensor2Example {
     }
 
     static class SimulatedDeviceEventGeneratorRoute extends RouteBuilder {
-        private final String deviceEP = "pubnub://iot?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
-        private final String devicePrivateEP = "pubnub://device2private?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
+        private final String deviceEP = "pubnub:iot?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
+        private final String devicePrivateEP = "pubnub:device2private?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
 
         @Override
         public void configure() throws Exception {
@@ -63,7 +63,7 @@ public final class PubNubSensor2Example {
     }
 
     static class PubsubRoute extends RouteBuilder {
-        private static String masterEP = "pubnub://iot?uuid=master&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY + "&publishKey=" + PUBNUB_PUBLISH_KEY;
+        private static String masterEP = "pubnub:iot?uuid=master&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY + "&publishKey=" + PUBNUB_PUBLISH_KEY;
         private static Map<String, String> devices = new ConcurrentHashMap<String, String>();
 
         @Override
@@ -81,7 +81,7 @@ public final class PubNubSensor2Example {
         }
 
         public static class DataProcessorBean {
-            @EndpointInject(uri = "pubnub://iot?uuid=master&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
+            @EndpointInject(uri = "pubnub:iot?uuid=master&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
             private static ProducerTemplate template;
 
             public static String getUnicastChannelOfDevice() {
