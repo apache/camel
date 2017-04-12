@@ -359,6 +359,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-grpc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-guava-eventbus</artifactId>
     </dependency>
     <dependency>
@@ -1436,6 +1440,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-groovy-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-grpc-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
