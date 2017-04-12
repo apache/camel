@@ -34,86 +34,86 @@ import com.google.common.base.MoreObjects;
 
 public class PartialNodeId {
 
-	private IdType type;
+    private IdType type;
 
-	private final Serializable id;
+    private final Serializable id;
 
-	public PartialNodeId(final int id) {
-		this(uint(id));
-	}
+    public PartialNodeId(final int id) {
+        this(uint(id));
+    }
 
-	public PartialNodeId(final UInteger id) {
-		requireNonNull(id);
-		this.id = id;
-	}
+    public PartialNodeId(final UInteger id) {
+        requireNonNull(id);
+        this.id = id;
+    }
 
-	public PartialNodeId(final String id) {
-		requireNonNull(id);
-		this.id = id;
-	}
+    public PartialNodeId(final String id) {
+        requireNonNull(id);
+        this.id = id;
+    }
 
-	public PartialNodeId(final UUID id) {
-		requireNonNull(id);
-		this.id = id;
-	}
+    public PartialNodeId(final UUID id) {
+        requireNonNull(id);
+        this.id = id;
+    }
 
-	public PartialNodeId(final ByteString id) {
-		requireNonNull(id);
-		this.id = id;
-	}
+    public PartialNodeId(final ByteString id) {
+        requireNonNull(id);
+        this.id = id;
+    }
 
-	public NodeId toNodeId(final int namespaceIndex) {
-		if (this.id instanceof String) {
-			return new NodeId(namespaceIndex, (String) this.id);
-		} else if (this.id instanceof UInteger) {
-			return new NodeId(ushort(namespaceIndex), (UInteger) this.id);
-		} else if (this.id instanceof ByteString) {
-			return new NodeId(namespaceIndex, (ByteString) this.id);
-		} else if (this.id instanceof UUID) {
-			return new NodeId(namespaceIndex, (UUID) this.id);
-		}
-		throw new IllegalStateException("Invalid id type: " + this.id);
-	}
+    public NodeId toNodeId(final int namespaceIndex) {
+        if (this.id instanceof String) {
+            return new NodeId(namespaceIndex, (String)this.id);
+        } else if (this.id instanceof UInteger) {
+            return new NodeId(ushort(namespaceIndex), (UInteger)this.id);
+        } else if (this.id instanceof ByteString) {
+            return new NodeId(namespaceIndex, (ByteString)this.id);
+        } else if (this.id instanceof UUID) {
+            return new NodeId(namespaceIndex, (UUID)this.id);
+        }
+        throw new IllegalStateException("Invalid id type: " + this.id);
+    }
 
-	public NodeId toNodeId(final UShort namespaceIndex) {
-		if (this.id instanceof String) {
-			return new NodeId(namespaceIndex, (String) this.id);
-		} else if (this.id instanceof UInteger) {
-			return new NodeId(namespaceIndex, (UInteger) this.id);
-		} else if (this.id instanceof ByteString) {
-			return new NodeId(namespaceIndex, (ByteString) this.id);
-		} else if (this.id instanceof UUID) {
-			return new NodeId(namespaceIndex, (UUID) this.id);
-		}
-		throw new IllegalStateException("Invalid id type: " + this.id);
-	}
+    public NodeId toNodeId(final UShort namespaceIndex) {
+        if (this.id instanceof String) {
+            return new NodeId(namespaceIndex, (String)this.id);
+        } else if (this.id instanceof UInteger) {
+            return new NodeId(namespaceIndex, (UInteger)this.id);
+        } else if (this.id instanceof ByteString) {
+            return new NodeId(namespaceIndex, (ByteString)this.id);
+        } else if (this.id instanceof UUID) {
+            return new NodeId(namespaceIndex, (UUID)this.id);
+        }
+        throw new IllegalStateException("Invalid id type: " + this.id);
+    }
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this).add("type", this.type).add("id", this.id).toString();
-	}
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("type", this.type).add("id", this.id).toString();
+    }
 
-	public Serializable getValue() {
-		return this.id;
-	}
+    public Serializable getValue() {
+        return this.id;
+    }
 
-	public static PartialNodeId fromExpandedNodeId(final ExpandedNodeId node) {
-		if (node == null) {
-			return null;
-		}
+    public static PartialNodeId fromExpandedNodeId(final ExpandedNodeId node) {
+        if (node == null) {
+            return null;
+        }
 
-		final Object value = node.getIdentifier();
+        final Object value = node.getIdentifier();
 
-		if (value instanceof String) {
-			return new PartialNodeId((String) value);
-		} else if (value instanceof UInteger) {
-			return new PartialNodeId((UInteger) value);
-		} else if (value instanceof UUID) {
-			return new PartialNodeId((UUID) value);
-		} else if (value instanceof ByteString) {
-			return new PartialNodeId((ByteString) value);
-		}
+        if (value instanceof String) {
+            return new PartialNodeId((String)value);
+        } else if (value instanceof UInteger) {
+            return new PartialNodeId((UInteger)value);
+        } else if (value instanceof UUID) {
+            return new PartialNodeId((UUID)value);
+        } else if (value instanceof ByteString) {
+            return new PartialNodeId((ByteString)value);
+        }
 
-		throw new IllegalStateException(String.format("Unknown node id type: " + value));
-	}
+        throw new IllegalStateException(String.format("Unknown node id type: " + value));
+    }
 }

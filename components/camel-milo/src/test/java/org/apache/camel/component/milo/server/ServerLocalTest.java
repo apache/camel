@@ -30,54 +30,54 @@ import org.junit.Test;
  */
 public class ServerLocalTest extends CamelTestSupport {
 
-	private static final String MILO_ITEM_1 = "milo-server:myitem1";
+    private static final String MILO_ITEM_1 = "milo-server:myitem1";
 
-	private static final String MOCK_TEST = "mock:test";
+    private static final String MOCK_TEST = "mock:test";
 
-	@EndpointInject(uri = MOCK_TEST)
-	protected MockEndpoint testEndpoint;
+    @EndpointInject(uri = MOCK_TEST)
+    protected MockEndpoint testEndpoint;
 
-	@Override
-	protected RoutesBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from(MILO_ITEM_1).to(MOCK_TEST);
-			}
-		};
-	}
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(MILO_ITEM_1).to(MOCK_TEST);
+            }
+        };
+    }
 
-	@Test
-	public void shouldStartComponent() {
-	}
+    @Test
+    public void shouldStartComponent() {
+    }
 
-	@Test
-	public void testAcceptVariantString() {
-		sendBody(MILO_ITEM_1, new Variant("Foo"));
-	}
+    @Test
+    public void testAcceptVariantString() {
+        sendBody(MILO_ITEM_1, new Variant("Foo"));
+    }
 
-	@Test
-	public void testAcceptVariantDouble() {
-		sendBody(MILO_ITEM_1, new Variant(0.0));
-	}
+    @Test
+    public void testAcceptVariantDouble() {
+        sendBody(MILO_ITEM_1, new Variant(0.0));
+    }
 
-	@Test
-	public void testAcceptString() {
-		sendBody(MILO_ITEM_1, "Foo");
-	}
+    @Test
+    public void testAcceptString() {
+        sendBody(MILO_ITEM_1, "Foo");
+    }
 
-	@Test
-	public void testAcceptDouble() {
-		sendBody(MILO_ITEM_1, 0.0);
-	}
+    @Test
+    public void testAcceptDouble() {
+        sendBody(MILO_ITEM_1, 0.0);
+    }
 
-	@Test
-	public void testAcceptDataValueString() {
-		sendBody(MILO_ITEM_1, new DataValue(new Variant("Foo")));
-	}
+    @Test
+    public void testAcceptDataValueString() {
+        sendBody(MILO_ITEM_1, new DataValue(new Variant("Foo")));
+    }
 
-	@Test
-	public void testAcceptDataValueDouble() {
-		sendBody(MILO_ITEM_1, new DataValue(new Variant(0.0)));
-	}
+    @Test
+    public void testAcceptDataValueDouble() {
+        sendBody(MILO_ITEM_1, new DataValue(new Variant(0.0)));
+    }
 }

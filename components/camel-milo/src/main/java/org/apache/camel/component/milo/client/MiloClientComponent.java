@@ -39,181 +39,177 @@ import com.google.common.collect.Multimap;
 
 public class MiloClientComponent extends DefaultComponent {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MiloClientComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MiloClientComponent.class);
 
-	private final Map<String, MiloClientConnection> cache = new HashMap<>();
-	private final Multimap<String, MiloClientEndpoint> connectionMap = HashMultimap.create();
+    private final Map<String, MiloClientConnection> cache = new HashMap<>();
+    private final Multimap<String, MiloClientEndpoint> connectionMap = HashMultimap.create();
 
-	private MiloClientConfiguration defaultConfiguration = new MiloClientConfiguration();
+    private MiloClientConfiguration defaultConfiguration = new MiloClientConfiguration();
 
-	@Override
-	protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
-			throws Exception {
+    @Override
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
 
-		final MiloClientConfiguration configuration = new MiloClientConfiguration(this.defaultConfiguration);
-		configuration.setEndpointUri(remaining);
-		setProperties(configuration, parameters);
+        final MiloClientConfiguration configuration = new MiloClientConfiguration(this.defaultConfiguration);
+        configuration.setEndpointUri(remaining);
+        setProperties(configuration, parameters);
 
-		return createEndpoint(uri, configuration, parameters);
-	}
+        return createEndpoint(uri, configuration, parameters);
+    }
 
-	private synchronized MiloClientEndpoint createEndpoint(final String uri,
-			final MiloClientConfiguration configuration, final Map<String, Object> parameters) throws Exception {
+    private synchronized MiloClientEndpoint createEndpoint(final String uri, final MiloClientConfiguration configuration, final Map<String, Object> parameters) throws Exception {
 
-		MiloClientConnection connection = this.cache.get(configuration.toCacheId());
+        MiloClientConnection connection = this.cache.get(configuration.toCacheId());
 
-		if (connection == null) {
-			LOG.info("Cache miss - creating new connection instance: {}", configuration.toCacheId());
+        if (connection == null) {
+            LOG.info("Cache miss - creating new connection instance: {}", configuration.toCacheId());
 
-			connection = new MiloClientConnection(configuration, mapToClientConfiguration(configuration));
-			this.cache.put(configuration.toCacheId(), connection);
-		}
+            connection = new MiloClientConnection(configuration, mapToClientConfiguration(configuration));
+            this.cache.put(configuration.toCacheId(), connection);
+        }
 
-		final MiloClientEndpoint endpoint = new MiloClientEndpoint(uri, this, connection,
-				configuration.getEndpointUri());
+        final MiloClientEndpoint endpoint = new MiloClientEndpoint(uri, this, connection, configuration.getEndpointUri());
 
-		setProperties(endpoint, parameters);
+        setProperties(endpoint, parameters);
 
-		// register connection with endpoint
+        // register connection with endpoint
 
-		this.connectionMap.put(configuration.toCacheId(), endpoint);
+        this.connectionMap.put(configuration.toCacheId(), endpoint);
 
-		return endpoint;
-	}
+        return endpoint;
+    }
 
-	private OpcUaClientConfigBuilder mapToClientConfiguration(final MiloClientConfiguration configuration) {
-		final OpcUaClientConfigBuilder builder = new OpcUaClientConfigBuilder();
+    private OpcUaClientConfigBuilder mapToClientConfiguration(final MiloClientConfiguration configuration) {
+        final OpcUaClientConfigBuilder builder = new OpcUaClientConfigBuilder();
 
-		whenHasText(configuration::getApplicationName,
-				value -> builder.setApplicationName(LocalizedText.english(value)));
-		whenHasText(configuration::getApplicationUri, builder::setApplicationUri);
-		whenHasText(configuration::getProductUri, builder::setProductUri);
+        whenHasText(configuration::getApplicationName, value -> builder.setApplicationName(LocalizedText.english(value)));
+        whenHasText(configuration::getApplicationUri, builder::setApplicationUri);
+        whenHasText(configuration::getProductUri, builder::setProductUri);
 
-		if (configuration.getRequestTimeout() != null) {
-			builder.setRequestTimeout(Unsigned.uint(configuration.getRequestTimeout()));
-		}
-		if (configuration.getChannelLifetime() != null) {
-			builder.setChannelLifetime(Unsigned.uint(configuration.getChannelLifetime()));
-		}
+        if (configuration.getRequestTimeout() != null) {
+            builder.setRequestTimeout(Unsigned.uint(configuration.getRequestTimeout()));
+        }
+        if (configuration.getChannelLifetime() != null) {
+            builder.setChannelLifetime(Unsigned.uint(configuration.getChannelLifetime()));
+        }
 
-		whenHasText(configuration::getSessionName, value -> builder.setSessionName(() -> value));
-		if (configuration.getSessionTimeout() != null) {
-			builder.setSessionTimeout(UInteger.valueOf(configuration.getSessionTimeout()));
-		}
+        whenHasText(configuration::getSessionName, value -> builder.setSessionName(() -> value));
+        if (configuration.getSessionTimeout() != null) {
+            builder.setSessionTimeout(UInteger.valueOf(configuration.getSessionTimeout()));
+        }
 
-		if (configuration.getMaxPendingPublishRequests() != null) {
-			builder.setMaxPendingPublishRequests(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
-		}
+        if (configuration.getMaxPendingPublishRequests() != null) {
+            builder.setMaxPendingPublishRequests(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
+        }
 
-		if (configuration.getMaxResponseMessageSize() != null) {
-			builder.setMaxResponseMessageSize(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
-		}
+        if (configuration.getMaxResponseMessageSize() != null) {
+            builder.setMaxResponseMessageSize(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
+        }
 
-		if (configuration.getSecureChannelReauthenticationEnabled() != null) {
-			builder.setSecureChannelReauthenticationEnabled(configuration.getSecureChannelReauthenticationEnabled());
-		}
+        if (configuration.getSecureChannelReauthenticationEnabled() != null) {
+            builder.setSecureChannelReauthenticationEnabled(configuration.getSecureChannelReauthenticationEnabled());
+        }
 
-		if (configuration.getKeyStoreUrl() != null) {
-			setKey(configuration, builder);
-		}
+        if (configuration.getKeyStoreUrl() != null) {
+            setKey(configuration, builder);
+        }
 
-		return builder;
-	}
+        return builder;
+    }
 
-	private void setKey(final MiloClientConfiguration configuration, final OpcUaClientConfigBuilder builder) {
-		final KeyStoreLoader loader = new KeyStoreLoader();
+    private void setKey(final MiloClientConfiguration configuration, final OpcUaClientConfigBuilder builder) {
+        final KeyStoreLoader loader = new KeyStoreLoader();
 
-		final Result result;
-		try {
-			// key store properties
-			loader.setType(configuration.getKeyStoreType());
-			loader.setUrl(configuration.getKeyStoreUrl());
-			loader.setKeyStorePassword(configuration.getKeyStorePassword());
+        final Result result;
+        try {
+            // key store properties
+            loader.setType(configuration.getKeyStoreType());
+            loader.setUrl(configuration.getKeyStoreUrl());
+            loader.setKeyStorePassword(configuration.getKeyStorePassword());
 
-			// key properties
-			loader.setKeyAlias(configuration.getKeyAlias());
-			loader.setKeyPassword(configuration.getKeyPassword());
+            // key properties
+            loader.setKeyAlias(configuration.getKeyAlias());
+            loader.setKeyPassword(configuration.getKeyPassword());
 
-			result = loader.load();
-		} catch (GeneralSecurityException | IOException e) {
-			throw new IllegalStateException("Failed to load key", e);
-		}
+            result = loader.load();
+        } catch (GeneralSecurityException | IOException e) {
+            throw new IllegalStateException("Failed to load key", e);
+        }
 
-		if (result == null) {
-			throw new IllegalStateException("Key not found in keystore");
-		}
+        if (result == null) {
+            throw new IllegalStateException("Key not found in keystore");
+        }
 
-		builder.setCertificate(result.getCertificate());
-		builder.setKeyPair(result.getKeyPair());
-	}
+        builder.setCertificate(result.getCertificate());
+        builder.setKeyPair(result.getKeyPair());
+    }
 
-	private void whenHasText(final Supplier<String> valueSupplier, final Consumer<String> valueConsumer) {
-		final String value = valueSupplier.get();
-		if (value != null && !value.isEmpty()) {
-			valueConsumer.accept(value);
-		}
-	}
+    private void whenHasText(final Supplier<String> valueSupplier, final Consumer<String> valueConsumer) {
+        final String value = valueSupplier.get();
+        if (value != null && !value.isEmpty()) {
+            valueConsumer.accept(value);
+        }
+    }
 
-	/**
-	 * All default options for client
-	 */
-	public void setDefaultConfiguration(final MiloClientConfiguration defaultConfiguration) {
-		this.defaultConfiguration = defaultConfiguration;
-	}
+    /**
+     * All default options for client
+     */
+    public void setDefaultConfiguration(final MiloClientConfiguration defaultConfiguration) {
+        this.defaultConfiguration = defaultConfiguration;
+    }
 
-	/**
-	 * Default application name
-	 */
-	public void setApplicationName(final String applicationName) {
-		this.defaultConfiguration.setApplicationName(applicationName);
-	}
+    /**
+     * Default application name
+     */
+    public void setApplicationName(final String applicationName) {
+        this.defaultConfiguration.setApplicationName(applicationName);
+    }
 
-	/**
-	 * Default application URI
-	 */
-	public void setApplicationUri(final String applicationUri) {
-		this.defaultConfiguration.setApplicationUri(applicationUri);
-	}
+    /**
+     * Default application URI
+     */
+    public void setApplicationUri(final String applicationUri) {
+        this.defaultConfiguration.setApplicationUri(applicationUri);
+    }
 
-	/**
-	 * Default product URI
-	 */
-	public void setProductUri(final String productUri) {
-		this.defaultConfiguration.setProductUri(productUri);
-	}
+    /**
+     * Default product URI
+     */
+    public void setProductUri(final String productUri) {
+        this.defaultConfiguration.setProductUri(productUri);
+    }
 
-	/**
-	 * Default reconnect timeout
-	 */
-	public void setReconnectTimeout(final Long reconnectTimeout) {
-		this.defaultConfiguration.setRequestTimeout(reconnectTimeout);
-	}
+    /**
+     * Default reconnect timeout
+     */
+    public void setReconnectTimeout(final Long reconnectTimeout) {
+        this.defaultConfiguration.setRequestTimeout(reconnectTimeout);
+    }
 
-	public synchronized void disposed(final MiloClientEndpoint endpoint) {
+    public synchronized void disposed(final MiloClientEndpoint endpoint) {
 
-		final MiloClientConnection connection = endpoint.getConnection();
+        final MiloClientConnection connection = endpoint.getConnection();
 
-		// unregister usage of connection
+        // unregister usage of connection
 
-		this.connectionMap.remove(connection.getConnectionId(), endpoint);
+        this.connectionMap.remove(connection.getConnectionId(), endpoint);
 
-		// test if this was the last endpoint using this connection
+        // test if this was the last endpoint using this connection
 
-		if (!this.connectionMap.containsKey(connection.getConnectionId())) {
+        if (!this.connectionMap.containsKey(connection.getConnectionId())) {
 
-			// this was the last endpoint using the connection ...
+            // this was the last endpoint using the connection ...
 
-			// ... remove from the cache
+            // ... remove from the cache
 
-			this.cache.remove(connection.getConnectionId());
+            this.cache.remove(connection.getConnectionId());
 
-			// ... and close
+            // ... and close
 
-			try {
-				connection.close();
-			} catch (final Exception e) {
-				LOG.warn("Failed to close connection", e);
-			}
-		}
-	}
+            try {
+                connection.close();
+            } catch (final Exception e) {
+                LOG.warn("Failed to close connection", e);
+            }
+        }
+    }
 }

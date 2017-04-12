@@ -33,67 +33,65 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(scheme = "milo-server", syntax = "milo-server:itemId", title = "OPC UA Server", consumerClass = MiloServerConsumer.class, label = "iot")
 class MiloServerEndpoint extends DefaultEndpoint {
 
-	@UriPath
-	@Metadata(required = "true")
-	private String itemId;
+    @UriPath
+    @Metadata(required = "true")
+    private String itemId;
 
-	private final CamelNamespace namespace;
+    private final CamelNamespace namespace;
 
-	private CamelServerItem item;
+    private CamelServerItem item;
 
-	public MiloServerEndpoint(final String uri, final String itemId, final CamelNamespace namespace,
-			final Component component) {
-		super(uri, component);
-		this.itemId = itemId;
-		this.namespace = namespace;
-	}
+    public MiloServerEndpoint(final String uri, final String itemId, final CamelNamespace namespace, final Component component) {
+        super(uri, component);
+        this.itemId = itemId;
+        this.namespace = namespace;
+    }
 
-	@Override
-	protected void doStart() throws Exception {
-		super.doStart();
-		this.item = this.namespace.getOrAddItem(this.itemId);
-	}
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        this.item = this.namespace.getOrAddItem(this.itemId);
+    }
 
-	@Override
-	protected void doStop() throws Exception {
-		if (this.item != null) {
-			this.item.dispose();
-			this.item = null;
-		}
-		super.doStop();
-	}
+    @Override
+    protected void doStop() throws Exception {
+        if (this.item != null) {
+            this.item.dispose();
+            this.item = null;
+        }
+        super.doStop();
+    }
 
-	@Override
-	public Producer createProducer() throws Exception {
-		return new MiloServerProducer(this, this.item);
-	}
+    @Override
+    public Producer createProducer() throws Exception {
+        return new MiloServerProducer(this, this.item);
+    }
 
-	@Override
-	public Consumer createConsumer(final Processor processor) throws Exception {
-		return new MiloServerConsumer(this, processor, this.item);
-	}
+    @Override
+    public Consumer createConsumer(final Processor processor) throws Exception {
+        return new MiloServerConsumer(this, processor, this.item);
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
-	/**
-	 * ID of the item
-	 *
-	 * @param itemId
-	 *            the new ID of the item
-	 */
-	public void setItemId(final String itemId) {
-		this.itemId = itemId;
-	}
+    /**
+     * ID of the item
+     *
+     * @param itemId the new ID of the item
+     */
+    public void setItemId(final String itemId) {
+        this.itemId = itemId;
+    }
 
-	/**
-	 * Get the ID of the item
-	 *
-	 * @return the ID of the item
-	 */
-	public String getItemId() {
-		return this.itemId;
-	}
+    /**
+     * Get the ID of the item
+     *
+     * @return the ID of the item
+     */
+    public String getItemId() {
+        return this.itemId;
+    }
 }

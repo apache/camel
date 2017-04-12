@@ -40,107 +40,103 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CamelServerItem {
-	private static final Logger LOG = LoggerFactory.getLogger(CamelServerItem.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelServerItem.class);
 
-	private UaObjectNode baseNode;
-	private UaVariableNode item;
+    private UaObjectNode baseNode;
+    private UaVariableNode item;
 
-	private DataValue value = new DataValue(StatusCode.BAD);
-	private final Set<Consumer<DataValue>> listeners = new CopyOnWriteArraySet<>();
+    private DataValue value = new DataValue(StatusCode.BAD);
+    private final Set<Consumer<DataValue>> listeners = new CopyOnWriteArraySet<>();
 
-	public CamelServerItem(final String itemId, final ServerNodeMap nodeManager, final UShort namespaceIndex,
-			final UaObjectNode baseNode) {
+    public CamelServerItem(final String itemId, final ServerNodeMap nodeManager, final UShort namespaceIndex, final UaObjectNode baseNode) {
 
-		this.baseNode = baseNode;
+        this.baseNode = baseNode;
 
-		final NodeId nodeId = new NodeId(namespaceIndex, "items-" + itemId);
-		final QualifiedName qname = new QualifiedName(namespaceIndex, itemId);
-		final LocalizedText displayName = LocalizedText.english(itemId);
+        final NodeId nodeId = new NodeId(namespaceIndex, "items-" + itemId);
+        final QualifiedName qname = new QualifiedName(namespaceIndex, itemId);
+        final LocalizedText displayName = LocalizedText.english(itemId);
 
-		// create variable node
+        // create variable node
 
-		this.item = new UaVariableNode(nodeManager, nodeId, qname, displayName) {
+        this.item = new UaVariableNode(nodeManager, nodeId, qname, displayName) {
 
-			@Override
-			public DataValue getValue() {
-				return getDataValue();
-			}
+            @Override
+            public DataValue getValue() {
+                return getDataValue();
+            }
 
-			@Override
-			public synchronized void setValue(final DataValue value) {
-				setDataValue(value);
-			}
+            @Override
+            public synchronized void setValue(final DataValue value) {
+                setDataValue(value);
+            }
 
-		};
+        };
 
-		// item.setDataType();
-		this.item.setAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
-		this.item.setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
+        // item.setDataType();
+        this.item.setAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
+        this.item.setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
 
-		baseNode.addComponent(this.item);
-	}
+        baseNode.addComponent(this.item);
+    }
 
-	public void dispose() {
-		this.baseNode.removeComponent(this.item);
-		this.listeners.clear();
-	}
+    public void dispose() {
+        this.baseNode.removeComponent(this.item);
+        this.listeners.clear();
+    }
 
-	public void addWriteListener(final Consumer<DataValue> consumer) {
-		this.listeners.add(consumer);
-	}
+    public void addWriteListener(final Consumer<DataValue> consumer) {
+        this.listeners.add(consumer);
+    }
 
-	public void removeWriteListener(final Consumer<DataValue> consumer) {
-		this.listeners.remove(consumer);
-	}
+    public void removeWriteListener(final Consumer<DataValue> consumer) {
+        this.listeners.remove(consumer);
+    }
 
-	protected void setDataValue(final DataValue value) {
-		LOG.debug("setValue -> {}", value);
-		runThrough(this.listeners, c -> c.accept(value));
-	}
+    protected void setDataValue(final DataValue value) {
+        LOG.debug("setValue -> {}", value);
+        runThrough(this.listeners, c -> c.accept(value));
+    }
 
-	/**
-	 * Run through a list, aggregating errors
-	 *
-	 * <p>
-	 * The consumer is called for each list item, regardless if the consumer did
-	 * through an exception. All exceptions are caught and thrown in one
-	 * RuntimeException. The first exception being wrapped directly while the
-	 * latter ones, if any, are added as suppressed exceptions.
-	 * </p>
-	 *
-	 * @param list
-	 *            the list to run through
-	 * @param consumer
-	 *            the consumer processing list elements
-	 */
-	protected <T> void runThrough(final Collection<Consumer<T>> list, final Consumer<Consumer<T>> consumer) {
-		LinkedList<Throwable> errors = null;
+    /**
+     * Run through a list, aggregating errors
+     * <p>
+     * The consumer is called for each list item, regardless if the consumer did
+     * through an exception. All exceptions are caught and thrown in one
+     * RuntimeException. The first exception being wrapped directly while the
+     * latter ones, if any, are added as suppressed exceptions.
+     * </p>
+     *
+     * @param list the list to run through
+     * @param consumer the consumer processing list elements
+     */
+    protected <T> void runThrough(final Collection<Consumer<T>> list, final Consumer<Consumer<T>> consumer) {
+        LinkedList<Throwable> errors = null;
 
-		for (final Consumer<T> listener : list) {
-			try {
-				consumer.accept(listener);
-			} catch (final Throwable e) {
-				if (errors == null) {
-					errors = new LinkedList<>();
-				}
-				errors.add(e);
-			}
-		}
+        for (final Consumer<T> listener : list) {
+            try {
+                consumer.accept(listener);
+            } catch (final Throwable e) {
+                if (errors == null) {
+                    errors = new LinkedList<>();
+                }
+                errors.add(e);
+            }
+        }
 
-		if (errors == null || errors.isEmpty()) {
-			return;
-		}
+        if (errors == null || errors.isEmpty()) {
+            return;
+        }
 
-		final RuntimeException ex = new RuntimeException(errors.pollFirst());
-		errors.forEach(ex::addSuppressed);
-		throw ex;
-	}
+        final RuntimeException ex = new RuntimeException(errors.pollFirst());
+        errors.forEach(ex::addSuppressed);
+        throw ex;
+    }
 
-	protected DataValue getDataValue() {
-		return this.value;
-	}
+    protected DataValue getDataValue() {
+        return this.value;
+    }
 
-	public void update(final Object value) {
-		this.value = new DataValue(new Variant(value), StatusCode.GOOD, DateTime.now());
-	}
+    public void update(final Object value) {
+        this.value = new DataValue(new Variant(value), StatusCode.GOOD, DateTime.now());
+    }
 }

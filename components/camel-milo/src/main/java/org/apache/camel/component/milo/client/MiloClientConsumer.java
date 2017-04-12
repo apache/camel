@@ -31,62 +31,62 @@ import org.slf4j.LoggerFactory;
 
 public class MiloClientConsumer extends DefaultConsumer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
 
-	private final MiloClientConnection connection;
+    private final MiloClientConnection connection;
 
-	private final MiloClientItemConfiguration configuration;
+    private final MiloClientItemConfiguration configuration;
 
-	private MonitorHandle handle;
+    private MonitorHandle handle;
 
-	public MiloClientConsumer(final MiloClientEndpoint endpoint, final Processor processor,
-			final MiloClientConnection connection, final MiloClientItemConfiguration configuration) {
-		super(endpoint, processor);
+    public MiloClientConsumer(final MiloClientEndpoint endpoint, final Processor processor, final MiloClientConnection connection,
+                              final MiloClientItemConfiguration configuration) {
+        super(endpoint, processor);
 
-		Objects.requireNonNull(connection);
-		Objects.requireNonNull(configuration);
+        Objects.requireNonNull(connection);
+        Objects.requireNonNull(configuration);
 
-		this.connection = connection;
-		this.configuration = configuration;
-	}
+        this.connection = connection;
+        this.configuration = configuration;
+    }
 
-	@Override
-	protected void doStart() throws Exception {
-		super.doStart();
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
-		this.handle = this.connection.monitorValue(this.configuration, this::handleValueUpdate);
-	}
+        this.handle = this.connection.monitorValue(this.configuration, this::handleValueUpdate);
+    }
 
-	@Override
-	protected void doStop() throws Exception {
-		if (this.handle != null) {
-			this.handle.unregister();
-			this.handle = null;
-		}
+    @Override
+    protected void doStop() throws Exception {
+        if (this.handle != null) {
+            this.handle.unregister();
+            this.handle = null;
+        }
 
-		super.doStop();
-	}
+        super.doStop();
+    }
 
-	private void handleValueUpdate(final DataValue value) {
-		final Exchange exchange = getEndpoint().createExchange();
-		exchange.setIn(mapMessage(value));
-		try {
-			getAsyncProcessor().process(exchange);
-		} catch (final Exception e) {
-			LOG.debug("Failed to process message", e);
-		}
-	}
+    private void handleValueUpdate(final DataValue value) {
+        final Exchange exchange = getEndpoint().createExchange();
+        exchange.setIn(mapMessage(value));
+        try {
+            getAsyncProcessor().process(exchange);
+        } catch (final Exception e) {
+            LOG.debug("Failed to process message", e);
+        }
+    }
 
-	private Message mapMessage(final DataValue value) {
-		if (value == null) {
-			return null;
-		}
+    private Message mapMessage(final DataValue value) {
+        if (value == null) {
+            return null;
+        }
 
-		final DefaultMessage result = new DefaultMessage();
+        final DefaultMessage result = new DefaultMessage();
 
-		Messages.fillFromDataValue(value, result);
+        Messages.fillFromDataValue(value, result);
 
-		return result;
-	}
+        return result;
+    }
 
 }

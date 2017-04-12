@@ -21,39 +21,38 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class Application2Client {
-	public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
-		// camel conext
+        // camel conext
 
-		final CamelContext context = new DefaultCamelContext();
+        final CamelContext context = new DefaultCamelContext();
 
-		// add paho
+        // add paho
 
-		// no need to register, gets auto detected
-		// context.addComponent("paho", new PahoComponent());
+        // no need to register, gets auto detected
+        // context.addComponent("paho", new PahoComponent());
 
-		// add OPC UA
+        // add OPC UA
 
-		// add routes
+        // add routes
 
-		context.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
 
-			@Override
-			public void configure() throws Exception {
-				from("milo-client:tcp://foo:bar@localhost:12685?nodeId=items-MyItem&namespaceUri=urn:org:apache:camel")
-						.log("From OPC UA: ${body}")
-						.to("milo-client:tcp://foo:bar@localhost:12685?nodeId=items-MyItem2&namespaceUri=urn:org:apache:camel");
-			}
-		});
+            @Override
+            public void configure() throws Exception {
+                from("milo-client:tcp://foo:bar@localhost:12685?nodeId=items-MyItem&namespaceUri=urn:org:apache:camel").log("From OPC UA: ${body}")
+                    .to("milo-client:tcp://foo:bar@localhost:12685?nodeId=items-MyItem2&namespaceUri=urn:org:apache:camel");
+            }
+        });
 
-		// start
+        // start
 
-		context.start();
+        context.start();
 
-		// sleep
+        // sleep
 
-		while (true) {
-			Thread.sleep(Long.MAX_VALUE);
-		}
-	}
+        while (true) {
+            Thread.sleep(Long.MAX_VALUE);
+        }
+    }
 }

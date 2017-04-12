@@ -68,383 +68,374 @@ import org.slf4j.LoggerFactory;
  */
 public class MiloServerComponent extends DefaultComponent {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
 
-	private final static class DenyAllCertificateValidator implements CertificateValidator {
-		public static final CertificateValidator INSTANCE = new DenyAllCertificateValidator();
+    private final static class DenyAllCertificateValidator implements CertificateValidator {
+        public static final CertificateValidator INSTANCE = new DenyAllCertificateValidator();
 
-		private DenyAllCertificateValidator() {
-		}
+        private DenyAllCertificateValidator() {
+        }
 
-		@Override
-		public void validate(final X509Certificate certificate) throws UaException {
-			throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
-		}
+        @Override
+        public void validate(final X509Certificate certificate) throws UaException {
+            throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
+        }
 
-		@Override
-		public void verifyTrustChain(final X509Certificate certificate, final List<X509Certificate> chain)
-				throws UaException {
-			throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
-		}
-	}
+        @Override
+        public void verifyTrustChain(final X509Certificate certificate, final List<X509Certificate> chain) throws UaException {
+            throw new UaException(StatusCodes.Bad_CertificateUseNotAllowed);
+        }
+    }
 
-	private static final String URL_CHARSET = "UTF-8";
+    private static final String URL_CHARSET = "UTF-8";
 
-	public static final String DEFAULT_NAMESPACE_URI = "urn:org:apache:camel";
+    public static final String DEFAULT_NAMESPACE_URI = "urn:org:apache:camel";
 
-	private static final OpcUaServerConfig DEFAULT_SERVER_CONFIG;
-	
-	static {
-		final OpcUaServerConfigBuilder cfg = OpcUaServerConfig.builder();
+    private static final OpcUaServerConfig DEFAULT_SERVER_CONFIG;
 
-		cfg.setCertificateManager(new DefaultCertificateManager());
-		cfg.setCertificateValidator(DenyAllCertificateValidator.INSTANCE);
-		cfg.setSecurityPolicies(EnumSet.allOf(SecurityPolicy.class));
-		cfg.setApplicationName(LocalizedText.english("Apache Camel Milo Server"));
-		cfg.setApplicationUri("urn:org:apache:camel:milo:server");
-		cfg.setProductUri("urn:org:apache:camel:milo");
+    static {
+        final OpcUaServerConfigBuilder cfg = OpcUaServerConfig.builder();
 
-		if (Boolean.getBoolean("org.apache.camel.milo.server.default.enableAnonymous")) {
-			cfg.setUserTokenPolicies(singletonList(USER_TOKEN_POLICY_ANONYMOUS));
-			cfg.setIdentityValidator(AnonymousIdentityValidator.INSTANCE);
-		}
+        cfg.setCertificateManager(new DefaultCertificateManager());
+        cfg.setCertificateValidator(DenyAllCertificateValidator.INSTANCE);
+        cfg.setSecurityPolicies(EnumSet.allOf(SecurityPolicy.class));
+        cfg.setApplicationName(LocalizedText.english("Apache Camel Milo Server"));
+        cfg.setApplicationUri("urn:org:apache:camel:milo:server");
+        cfg.setProductUri("urn:org:apache:camel:milo");
 
-		DEFAULT_SERVER_CONFIG = cfg.build();
-	}
+        if (Boolean.getBoolean("org.apache.camel.milo.server.default.enableAnonymous")) {
+            cfg.setUserTokenPolicies(singletonList(USER_TOKEN_POLICY_ANONYMOUS));
+            cfg.setIdentityValidator(AnonymousIdentityValidator.INSTANCE);
+        }
 
-	private String namespaceUri = DEFAULT_NAMESPACE_URI;
+        DEFAULT_SERVER_CONFIG = cfg.build();
+    }
 
-	private final OpcUaServerConfigBuilder serverConfig;
+    private String namespaceUri = DEFAULT_NAMESPACE_URI;
 
-	private OpcUaServer server;
-	private CamelNamespace namespace;
+    private final OpcUaServerConfigBuilder serverConfig;
 
-	private final Map<String, MiloServerEndpoint> endpoints = new HashMap<>();
+    private OpcUaServer server;
+    private CamelNamespace namespace;
 
-	private Boolean enableAnonymousAuthentication;
+    private final Map<String, MiloServerEndpoint> endpoints = new HashMap<>();
 
-	private Map<String, String> userMap;
+    private Boolean enableAnonymousAuthentication;
 
-	private List<String> bindAddresses;
+    private Map<String, String> userMap;
 
-	private Supplier<CertificateValidator> certificateValidator;
+    private List<String> bindAddresses;
 
-	private final List<Runnable> runOnStop = new LinkedList<>();
+    private Supplier<CertificateValidator> certificateValidator;
 
-	public MiloServerComponent() {
-		this(DEFAULT_SERVER_CONFIG);
-	}
+    private final List<Runnable> runOnStop = new LinkedList<>();
 
-	public MiloServerComponent(final OpcUaServerConfig serverConfig) {
-		this.serverConfig = OpcUaServerConfig.copy(serverConfig != null ? serverConfig : DEFAULT_SERVER_CONFIG);
-	}
+    public MiloServerComponent() {
+        this(DEFAULT_SERVER_CONFIG);
+    }
 
-	@Override
-	protected void doStart() throws Exception {
-		this.server = new OpcUaServer(buildServerConfig());
+    public MiloServerComponent(final OpcUaServerConfig serverConfig) {
+        this.serverConfig = OpcUaServerConfig.copy(serverConfig != null ? serverConfig : DEFAULT_SERVER_CONFIG);
+    }
 
-		this.namespace = this.server.getNamespaceManager().registerAndAdd(this.namespaceUri,
-				index -> new CamelNamespace(index, this.namespaceUri, this.server));
+    @Override
+    protected void doStart() throws Exception {
+        this.server = new OpcUaServer(buildServerConfig());
 
-		super.doStart();
-		this.server.startup();
-	}
+        this.namespace = this.server.getNamespaceManager().registerAndAdd(this.namespaceUri, index -> new CamelNamespace(index, this.namespaceUri, this.server));
 
-	/**
-	 * Build the final server configuration, apply all complex configuration
-	 *
-	 * @return the new server configuration, never returns {@code null}
-	 */
-	private OpcUaServerConfig buildServerConfig() {
+        super.doStart();
+        this.server.startup();
+    }
 
-		if (this.userMap != null || this.enableAnonymousAuthentication != null) {
-			// set identity validator
+    /**
+     * Build the final server configuration, apply all complex configuration
+     *
+     * @return the new server configuration, never returns {@code null}
+     */
+    private OpcUaServerConfig buildServerConfig() {
 
-			final Map<String, String> userMap = this.userMap != null ? new HashMap<>(this.userMap)
-					: Collections.emptyMap();
-			final boolean allowAnonymous = this.enableAnonymousAuthentication != null
-					? this.enableAnonymousAuthentication : false;
-			final IdentityValidator identityValidator = new UsernameIdentityValidator(allowAnonymous, challenge -> {
-				final String pwd = userMap.get(challenge.getUsername());
-				if (pwd == null) {
-					return false;
-				}
-				return pwd.equals(challenge.getPassword());
-			});
-			this.serverConfig.setIdentityValidator(identityValidator);
+        if (this.userMap != null || this.enableAnonymousAuthentication != null) {
+            // set identity validator
 
-			// add token policies
+            final Map<String, String> userMap = this.userMap != null ? new HashMap<>(this.userMap) : Collections.emptyMap();
+            final boolean allowAnonymous = this.enableAnonymousAuthentication != null ? this.enableAnonymousAuthentication : false;
+            final IdentityValidator identityValidator = new UsernameIdentityValidator(allowAnonymous, challenge -> {
+                final String pwd = userMap.get(challenge.getUsername());
+                if (pwd == null) {
+                    return false;
+                }
+                return pwd.equals(challenge.getPassword());
+            });
+            this.serverConfig.setIdentityValidator(identityValidator);
 
-			final List<UserTokenPolicy> tokenPolicies = new LinkedList<>();
-			if (Boolean.TRUE.equals(this.enableAnonymousAuthentication)) {
-				tokenPolicies.add(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS);
-			}
-			if (userMap != null) {
-				tokenPolicies.add(OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME);
-			}
-			this.serverConfig.setUserTokenPolicies(tokenPolicies);
-		}
+            // add token policies
 
-		if (this.bindAddresses != null) {
-			this.serverConfig.setBindAddresses(new ArrayList<>(this.bindAddresses));
-		}
+            final List<UserTokenPolicy> tokenPolicies = new LinkedList<>();
+            if (Boolean.TRUE.equals(this.enableAnonymousAuthentication)) {
+                tokenPolicies.add(OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS);
+            }
+            if (userMap != null) {
+                tokenPolicies.add(OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME);
+            }
+            this.serverConfig.setUserTokenPolicies(tokenPolicies);
+        }
 
-		if (this.certificateValidator != null) {
-			final CertificateValidator validator = this.certificateValidator.get();
-			LOG.debug("Using validator: {}", validator);
-			if (validator instanceof Closeable) {
-				runOnStop(() -> {
-					try {
-						LOG.debug("Closing: {}", validator);
-						((Closeable) validator).close();
-					} catch (final IOException e) {
-						LOG.warn("Failed to close", e);
-					}
-				});
-			}
-			this.serverConfig.setCertificateValidator(validator);
-		}
+        if (this.bindAddresses != null) {
+            this.serverConfig.setBindAddresses(new ArrayList<>(this.bindAddresses));
+        }
 
-		// build final configuration
+        if (this.certificateValidator != null) {
+            final CertificateValidator validator = this.certificateValidator.get();
+            LOG.debug("Using validator: {}", validator);
+            if (validator instanceof Closeable) {
+                runOnStop(() -> {
+                    try {
+                        LOG.debug("Closing: {}", validator);
+                        ((Closeable)validator).close();
+                    } catch (final IOException e) {
+                        LOG.warn("Failed to close", e);
+                    }
+                });
+            }
+            this.serverConfig.setCertificateValidator(validator);
+        }
 
-		return this.serverConfig.build();
-	}
+        // build final configuration
 
-	private void runOnStop(final Runnable runnable) {
-		this.runOnStop.add(runnable);
-	}
+        return this.serverConfig.build();
+    }
 
-	@Override
-	protected void doStop() throws Exception {
-		this.server.shutdown();
-		super.doStop();
+    private void runOnStop(final Runnable runnable) {
+        this.runOnStop.add(runnable);
+    }
 
-		this.runOnStop.forEach(runnable -> {
-			try {
-				runnable.run();
-			} catch (final Exception e) {
-				LOG.warn("Failed to run on stop", e);
-			}
-		});
-		this.runOnStop.clear();
-	}
+    @Override
+    protected void doStop() throws Exception {
+        this.server.shutdown();
+        super.doStop();
 
-	@Override
-	protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
-			throws Exception {
-		synchronized (this) {
-			if (remaining == null || remaining.isEmpty()) {
-				return null;
-			}
+        this.runOnStop.forEach(runnable -> {
+            try {
+                runnable.run();
+            } catch (final Exception e) {
+                LOG.warn("Failed to run on stop", e);
+            }
+        });
+        this.runOnStop.clear();
+    }
 
-			MiloServerEndpoint endpoint = this.endpoints.get(remaining);
+    @Override
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+        synchronized (this) {
+            if (remaining == null || remaining.isEmpty()) {
+                return null;
+            }
 
-			if (endpoint == null) {
-				endpoint = new MiloServerEndpoint(uri, remaining, this.namespace, this);
-				setProperties(endpoint, parameters);
-				this.endpoints.put(remaining, endpoint);
-			}
+            MiloServerEndpoint endpoint = this.endpoints.get(remaining);
 
-			return endpoint;
-		}
-	}
+            if (endpoint == null) {
+                endpoint = new MiloServerEndpoint(uri, remaining, this.namespace, this);
+                setProperties(endpoint, parameters);
+                this.endpoints.put(remaining, endpoint);
+            }
 
-	/**
-	 * The URI of the namespace, defaults to <code>urn:org:apache:camel</code>
-	 */
-	public void setNamespaceUri(final String namespaceUri) {
-		this.namespaceUri = namespaceUri;
-	}
+            return endpoint;
+        }
+    }
 
-	/**
-	 * The application name
-	 */
-	public void setApplicationName(final String applicationName) {
-		Objects.requireNonNull(applicationName);
-		this.serverConfig.setApplicationName(LocalizedText.english(applicationName));
-	}
+    /**
+     * The URI of the namespace, defaults to <code>urn:org:apache:camel</code>
+     */
+    public void setNamespaceUri(final String namespaceUri) {
+        this.namespaceUri = namespaceUri;
+    }
 
-	/**
-	 * The application URI
-	 */
-	public void setApplicationUri(final String applicationUri) {
-		Objects.requireNonNull(applicationUri);
-		this.serverConfig.setApplicationUri(applicationUri);
-	}
+    /**
+     * The application name
+     */
+    public void setApplicationName(final String applicationName) {
+        Objects.requireNonNull(applicationName);
+        this.serverConfig.setApplicationName(LocalizedText.english(applicationName));
+    }
 
-	/**
-	 * The product URI
-	 */
-	public void setProductUri(final String productUri) {
-		Objects.requireNonNull(productUri);
-		this.serverConfig.setProductUri(productUri);
-	}
+    /**
+     * The application URI
+     */
+    public void setApplicationUri(final String applicationUri) {
+        Objects.requireNonNull(applicationUri);
+        this.serverConfig.setApplicationUri(applicationUri);
+    }
 
-	/**
-	 * The TCP port the server binds to
-	 */
-	public void setBindPort(final int port) {
-		this.serverConfig.setBindPort(port);
-	}
+    /**
+     * The product URI
+     */
+    public void setProductUri(final String productUri) {
+        Objects.requireNonNull(productUri);
+        this.serverConfig.setProductUri(productUri);
+    }
 
-	/**
-	 * Set whether strict endpoint URLs are enforced
-	 */
-	public void setStrictEndpointUrlsEnabled(final boolean strictEndpointUrlsEnforced) {
-		this.serverConfig.setStrictEndpointUrlsEnabled(strictEndpointUrlsEnforced);
-	}
+    /**
+     * The TCP port the server binds to
+     */
+    public void setBindPort(final int port) {
+        this.serverConfig.setBindPort(port);
+    }
 
-	/**
-	 * Server name
-	 */
-	public void setServerName(final String serverName) {
-		this.serverConfig.setServerName(serverName);
-	}
+    /**
+     * Set whether strict endpoint URLs are enforced
+     */
+    public void setStrictEndpointUrlsEnabled(final boolean strictEndpointUrlsEnforced) {
+        this.serverConfig.setStrictEndpointUrlsEnabled(strictEndpointUrlsEnforced);
+    }
 
-	/**
-	 * Server hostname
-	 */
-	public void setHostname(final String hostname) {
-		this.serverConfig.setHostname(hostname);
-	}
+    /**
+     * Server name
+     */
+    public void setServerName(final String serverName) {
+        this.serverConfig.setServerName(serverName);
+    }
 
-	/**
-	 * Security policies
-	 */
-	public void setSecurityPolicies(final Set<SecurityPolicy> securityPolicies) {
-		if (securityPolicies == null || securityPolicies.isEmpty()) {
-			this.serverConfig.setSecurityPolicies(EnumSet.noneOf(SecurityPolicy.class));
-		} else {
-			this.serverConfig.setSecurityPolicies(EnumSet.copyOf(securityPolicies));
-		}
-	}
+    /**
+     * Server hostname
+     */
+    public void setHostname(final String hostname) {
+        this.serverConfig.setHostname(hostname);
+    }
 
-	/**
-	 * Security policies by URI or name
-	 */
-	public void setSecurityPoliciesById(final Collection<String> securityPolicies) {
-		final EnumSet<SecurityPolicy> policies = EnumSet.noneOf(SecurityPolicy.class);
+    /**
+     * Security policies
+     */
+    public void setSecurityPolicies(final Set<SecurityPolicy> securityPolicies) {
+        if (securityPolicies == null || securityPolicies.isEmpty()) {
+            this.serverConfig.setSecurityPolicies(EnumSet.noneOf(SecurityPolicy.class));
+        } else {
+            this.serverConfig.setSecurityPolicies(EnumSet.copyOf(securityPolicies));
+        }
+    }
 
-		if (securityPolicies != null) {
-			for (final String policyName : securityPolicies) {
-				final SecurityPolicy policy = SecurityPolicy.fromUriSafe(policyName)
-						.orElseGet(() -> SecurityPolicy.valueOf(policyName));
-				policies.add(policy);
-			}
-		}
+    /**
+     * Security policies by URI or name
+     */
+    public void setSecurityPoliciesById(final Collection<String> securityPolicies) {
+        final EnumSet<SecurityPolicy> policies = EnumSet.noneOf(SecurityPolicy.class);
 
-		this.serverConfig.setSecurityPolicies(policies);
-	}
+        if (securityPolicies != null) {
+            for (final String policyName : securityPolicies) {
+                final SecurityPolicy policy = SecurityPolicy.fromUriSafe(policyName).orElseGet(() -> SecurityPolicy.valueOf(policyName));
+                policies.add(policy);
+            }
+        }
 
-	/**
-	 * Security policies by URI or name
-	 */
-	public void setSecurityPoliciesById(final String... ids) {
-		if (ids != null) {
-			setSecurityPoliciesById(Arrays.asList(ids));
-		} else {
-			setSecurityPoliciesById((Collection<String>) null);
-		}
-	}
+        this.serverConfig.setSecurityPolicies(policies);
+    }
 
-	/**
-	 * Set user password combinations in the form of "user1:pwd1,user2:pwd2"
-	 * <p>
-	 * Usernames and passwords will be URL decoded
-	 * </p>
-	 */
-	public void setUserAuthenticationCredentials(final String userAuthenticationCredentials) {
-		if (userAuthenticationCredentials != null) {
-			this.userMap = new HashMap<>();
+    /**
+     * Security policies by URI or name
+     */
+    public void setSecurityPoliciesById(final String... ids) {
+        if (ids != null) {
+            setSecurityPoliciesById(Arrays.asList(ids));
+        } else {
+            setSecurityPoliciesById((Collection<String>)null);
+        }
+    }
 
-			for (final String creds : userAuthenticationCredentials.split(",")) {
-				final String[] toks = creds.split(":", 2);
-				if (toks.length == 2) {
-					try {
-						this.userMap.put(URLDecoder.decode(toks[0], URL_CHARSET),
-								URLDecoder.decode(toks[1], URL_CHARSET));
-					} catch (final UnsupportedEncodingException e) {
-						// FIXME: do log
-					}
-				}
-			}
-		} else {
-			this.userMap = null;
-		}
-	}
+    /**
+     * Set user password combinations in the form of "user1:pwd1,user2:pwd2"
+     * <p>
+     * Usernames and passwords will be URL decoded
+     * </p>
+     */
+    public void setUserAuthenticationCredentials(final String userAuthenticationCredentials) {
+        if (userAuthenticationCredentials != null) {
+            this.userMap = new HashMap<>();
 
-	/**
-	 * Enable anonymous authentication, disabled by default
-	 */
-	public void setEnableAnonymousAuthentication(final boolean enableAnonymousAuthentication) {
-		this.enableAnonymousAuthentication = enableAnonymousAuthentication;
-	}
+            for (final String creds : userAuthenticationCredentials.split(",")) {
+                final String[] toks = creds.split(":", 2);
+                if (toks.length == 2) {
+                    try {
+                        this.userMap.put(URLDecoder.decode(toks[0], URL_CHARSET), URLDecoder.decode(toks[1], URL_CHARSET));
+                    } catch (final UnsupportedEncodingException e) {
+                        // FIXME: do log
+                    }
+                }
+            }
+        } else {
+            this.userMap = null;
+        }
+    }
 
-	/**
-	 * Set the addresses of the local addresses the server should bind to
-	 */
-	public void setBindAddresses(final String bindAddresses) {
-		if (bindAddresses != null) {
-			this.bindAddresses = Arrays.asList(bindAddresses.split(","));
-		} else {
-			this.bindAddresses = null;
-		}
-	}
+    /**
+     * Enable anonymous authentication, disabled by default
+     */
+    public void setEnableAnonymousAuthentication(final boolean enableAnonymousAuthentication) {
+        this.enableAnonymousAuthentication = enableAnonymousAuthentication;
+    }
 
-	/**
-	 * Server build info
-	 */
-	public void setBuildInfo(final BuildInfo buildInfo) {
-		this.serverConfig.setBuildInfo(buildInfo);
-	}
+    /**
+     * Set the addresses of the local addresses the server should bind to
+     */
+    public void setBindAddresses(final String bindAddresses) {
+        if (bindAddresses != null) {
+            this.bindAddresses = Arrays.asList(bindAddresses.split(","));
+        } else {
+            this.bindAddresses = null;
+        }
+    }
 
-	/**
-	 * Server certificate
-	 */
-	public void setServerCertificate(final KeyStoreLoader.Result result) {
-		/*
-		 * We are not implicitly deactivating the server certificate manager. If
-		 * the key could not be found by the KeyStoreLoader, it will return
-		 * "null" from the load() method.
-		 *
-		 * So if someone calls setServerCertificate ( loader.load () ); he may,
-		 * by accident, disable the server certificate.
-		 *
-		 * If disabling the server certificate is desired, do it explicitly.
-		 */
-		Objects.requireNonNull(result, "Setting a null is not supported. call setCertificateManager(null) instead.)");
-		setServerCertificate(result.getKeyPair(), result.getCertificate());
-	}
+    /**
+     * Server build info
+     */
+    public void setBuildInfo(final BuildInfo buildInfo) {
+        this.serverConfig.setBuildInfo(buildInfo);
+    }
 
-	/**
-	 * Server certificate
-	 */
-	public void setServerCertificate(final KeyPair keyPair, final X509Certificate certificate) {
-		setCertificateManager(new DefaultCertificateManager(keyPair, certificate));
-	}
+    /**
+     * Server certificate
+     */
+    public void setServerCertificate(final KeyStoreLoader.Result result) {
+        /*
+         * We are not implicitly deactivating the server certificate manager. If
+         * the key could not be found by the KeyStoreLoader, it will return
+         * "null" from the load() method. So if someone calls
+         * setServerCertificate ( loader.load () ); he may, by accident, disable
+         * the server certificate. If disabling the server certificate is
+         * desired, do it explicitly.
+         */
+        Objects.requireNonNull(result, "Setting a null is not supported. call setCertificateManager(null) instead.)");
+        setServerCertificate(result.getKeyPair(), result.getCertificate());
+    }
 
-	/**
-	 * Server certificate manager
-	 */
-	public void setCertificateManager(final CertificateManager certificateManager) {
-		if (certificateManager != null) {
-			this.serverConfig.setCertificateManager(certificateManager);
-		} else {
-			this.serverConfig.setCertificateManager(new DefaultCertificateManager());
-		}
-	}
+    /**
+     * Server certificate
+     */
+    public void setServerCertificate(final KeyPair keyPair, final X509Certificate certificate) {
+        setCertificateManager(new DefaultCertificateManager(keyPair, certificate));
+    }
 
-	/**
-	 * Validator for client certificates
-	 */
-	public void setCertificateValidator(final Supplier<CertificateValidator> certificateValidator) {
-		this.certificateValidator = certificateValidator;
-	}
+    /**
+     * Server certificate manager
+     */
+    public void setCertificateManager(final CertificateManager certificateManager) {
+        if (certificateManager != null) {
+            this.serverConfig.setCertificateManager(certificateManager);
+        } else {
+            this.serverConfig.setCertificateManager(new DefaultCertificateManager());
+        }
+    }
 
-	/**
-	 * Validator for client certificates using default file based approach
-	 */
-	public void setDefaultCertificateValidator(final File certificatesBaseDir) {
-		this.certificateValidator = () -> new DefaultCertificateValidator(certificatesBaseDir);
-	}
+    /**
+     * Validator for client certificates
+     */
+    public void setCertificateValidator(final Supplier<CertificateValidator> certificateValidator) {
+        this.certificateValidator = certificateValidator;
+    }
+
+    /**
+     * Validator for client certificates using default file based approach
+     */
+    public void setDefaultCertificateValidator(final File certificatesBaseDir) {
+        this.certificateValidator = () -> new DefaultCertificateValidator(certificatesBaseDir);
+    }
 }

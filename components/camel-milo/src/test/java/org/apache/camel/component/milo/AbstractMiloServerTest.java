@@ -28,63 +28,62 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
-	public static void testBody(final AssertionClause clause, final Consumer<DataValue> valueConsumer) {
-		testBody(clause, DataValue.class, valueConsumer);
-	}
+    public static void testBody(final AssertionClause clause, final Consumer<DataValue> valueConsumer) {
+        testBody(clause, DataValue.class, valueConsumer);
+    }
 
-	public static <T> void testBody(final AssertionClause clause, final Class<T> bodyClass,
-			final Consumer<T> valueConsumer) {
-		clause.predicate(exchange -> {
-			final T body = exchange.getIn().getBody(bodyClass);
-			valueConsumer.accept(body);
-			return true;
-		});
-	}
+    public static <T> void testBody(final AssertionClause clause, final Class<T> bodyClass, final Consumer<T> valueConsumer) {
+        clause.predicate(exchange -> {
+            final T body = exchange.getIn().getBody(bodyClass);
+            valueConsumer.accept(body);
+            return true;
+        });
+    }
 
-	public static Consumer<DataValue> assertGoodValue(final Object expectedValue) {
-		return value -> {
-			assertNotNull(value);
-			assertEquals(expectedValue, value.getValue().getValue());
-			assertTrue(value.getStatusCode().isGood());
-			assertFalse(value.getStatusCode().isBad());
-		};
-	}
+    public static Consumer<DataValue> assertGoodValue(final Object expectedValue) {
+        return value -> {
+            assertNotNull(value);
+            assertEquals(expectedValue, value.getValue().getValue());
+            assertTrue(value.getStatusCode().isGood());
+            assertFalse(value.getStatusCode().isBad());
+        };
+    }
 
-	@Override
-	protected CamelContext createCamelContext() throws Exception {
-		final CamelContext context = super.createCamelContext();
-		configureContext(context);
-		return context;
-	}
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        final CamelContext context = super.createCamelContext();
+        configureContext(context);
+        return context;
+    }
 
-	protected void configureContext(final CamelContext context) throws Exception {
-		final MiloServerComponent server = context.getComponent("milo-server", MiloServerComponent.class);
-		configureMiloServer(server);
-	}
+    protected void configureContext(final CamelContext context) throws Exception {
+        final MiloServerComponent server = context.getComponent("milo-server", MiloServerComponent.class);
+        configureMiloServer(server);
+    }
 
-	protected void configureMiloServer(final MiloServerComponent server) throws Exception {
-		server.setBindAddresses("localhost");
-		server.setBindPort(12685);
-		server.setUserAuthenticationCredentials("foo:bar,foo2:bar2");
-	}
+    protected void configureMiloServer(final MiloServerComponent server) throws Exception {
+        server.setBindAddresses("localhost");
+        server.setBindPort(12685);
+        server.setUserAuthenticationCredentials("foo:bar,foo2:bar2");
+    }
 
-	/**
-	 * Create a default key store for testing
-	 *
-	 * @return always returns a key store
-	 */
-	protected KeyStoreLoader.Result loadDefaultTestKey() {
-		try {
+    /**
+     * Create a default key store for testing
+     *
+     * @return always returns a key store
+     */
+    protected KeyStoreLoader.Result loadDefaultTestKey() {
+        try {
 
-			final KeyStoreLoader loader = new KeyStoreLoader();
-			loader.setUrl("file:src/test/resources/cert/cert.p12");
-			loader.setKeyStorePassword("pwd1");
-			loader.setKeyPassword("pwd1");
-			return loader.load();
-		} catch (final GeneralSecurityException | IOException e) {
-			throw new RuntimeException(e);
-		}
+            final KeyStoreLoader loader = new KeyStoreLoader();
+            loader.setUrl("file:src/test/resources/cert/cert.p12");
+            loader.setKeyStorePassword("pwd1");
+            loader.setKeyPassword("pwd1");
+            return loader.load();
+        } catch (final GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e);
+        }
 
-	}
+    }
 
 }
