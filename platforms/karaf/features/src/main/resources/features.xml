@@ -58,13 +58,17 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-spring/${project.version}</bundle>
   </feature>
+  <!-- disabled camel-spring-dm so users don't install it by accident: CAMEL-11059
   <feature name='camel-spring-dm' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-spring-dm is deprecated and is strongly advised not to be used. Use blueprint instead</details>
     <feature version='[1.2,2)'>spring-dm</feature>
     <feature version='${spring-dm-version-range}'>spring</feature>
     <feature version='${spring-dm-version-range}'>spring-tx</feature>
     <bundle>mvn:org.apache.camel/camel-spring-dm/${project.version}</bundle>
   </feature>
+  -->
   <feature name='camel-scr' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-scr is deprecated. Consider using blueprint instead</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>scr</feature>
     <feature>eventadmin</feature>
@@ -287,7 +291,7 @@
     <bundle>mvn:org.apache.camel/camel-castor/${project.version}</bundle>
   </feature>
   <feature name='camel-cdi' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>camel-cdi in OSGi is deprecated. camel-cdi requires that either pax-cdi-weld or pax-cdi-openwebbeans has been installed</details>
+    <details>camel-cdi in OSGi is deprecated. Use blueprint instead. camel-cdi requires that either pax-cdi-weld or pax-cdi-openwebbeans has been installed</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${pax-cdi-version}'>pax-cdi</feature>
     <feature>eventadmin</feature>
