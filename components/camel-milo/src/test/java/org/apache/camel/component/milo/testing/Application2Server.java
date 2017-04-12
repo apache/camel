@@ -21,7 +21,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class Application2Server {
+public final class Application2Server {
+    private Application2Server() {
+    }
+
     public static void main(final String[] args) throws Exception {
 
         // camel conext

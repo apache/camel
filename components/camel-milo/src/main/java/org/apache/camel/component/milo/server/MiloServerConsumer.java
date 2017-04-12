@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
-class MiloServerConsumer extends DefaultConsumer {
+public class MiloServerConsumer extends DefaultConsumer {
 
     private final CamelServerItem item;
     private final Consumer<DataValue> writeHandler = this::performWrite;
