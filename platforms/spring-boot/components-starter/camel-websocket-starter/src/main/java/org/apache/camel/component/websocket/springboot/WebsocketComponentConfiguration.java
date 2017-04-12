@@ -90,6 +90,10 @@ public class WebsocketComponentConfiguration {
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * To configure a map which contains custom WebSocketFactory for sub
      * protocols. The key in the map is the sub protocol. The default key is
      * reserved for the default implementation.
@@ -189,6 +193,15 @@ public class WebsocketComponentConfiguration {
     public void setSslContextParameters(
             SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Map<String, WebSocketFactory> getSocketFactory() {

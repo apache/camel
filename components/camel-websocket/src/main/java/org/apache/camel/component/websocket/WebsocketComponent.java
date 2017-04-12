@@ -27,6 +27,7 @@ import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
@@ -54,7 +55,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebsocketComponent extends UriEndpointComponent {
+public class WebsocketComponent extends UriEndpointComponent implements SSLContextParametersAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(WebsocketComponent.class);
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
@@ -65,6 +66,8 @@ public class WebsocketComponent extends UriEndpointComponent {
 
     @Metadata(label = "security")
     protected SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    protected boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     protected ThreadPool threadPool;
     @Metadata(defaultValue = "9292")
@@ -296,9 +299,8 @@ public class WebsocketComponent extends UriEndpointComponent {
             // fallback to component configured
             sslContextParameters = getSslContextParameters();
         }
-
-        if (sslContextParameters != null) {
-            endpoint.setSslContextParameters(sslContextParameters);
+        if (sslContextParameters == null) {
+            sslContextParameters = retrieveGlobalSslContextParameters();
         }
 
         // prefer to use endpoint configured over component configured
@@ -730,6 +732,19 @@ public class WebsocketComponent extends UriEndpointComponent {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public Map<String, WebSocketFactory> getSocketFactory() {

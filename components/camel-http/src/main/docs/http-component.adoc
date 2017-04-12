@@ -114,7 +114,7 @@ from("direct:start")
 
 
 // component options: START
-The HTTP component supports 7 options which are listed below.
+The HTTP component supports 8 options which are listed below.
 
 
 
@@ -126,6 +126,7 @@ The HTTP component supports 7 options which are listed below.
 | **httpBinding** (producer) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
 | **httpConfiguration** (producer) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
 | **allowJavaSerialized Object** (producer) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **headerFilterStrategy** (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================

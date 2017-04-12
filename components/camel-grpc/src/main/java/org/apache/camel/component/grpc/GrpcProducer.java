@@ -69,7 +69,7 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
             @Override
             public void onError(Throwable t) {
                 exchange.setException(t);
-                callback.done(true);
+                callback.done(false);
             }
 
             @Override
@@ -82,6 +82,7 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
             GrpcUtils.invokeAsyncMethod(grpcStub, configuration.getMethod(), message.getBody(), asyncHandler);
         } catch (Exception e) {
             exchange.setException(e);
+            callback.done(true);
             return true;
         }
         return false;

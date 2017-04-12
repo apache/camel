@@ -37,7 +37,7 @@ else
 fi  
 
 ## ensure the files are sorted
-for filename in $(ls -f $testdir/* | sort);
+for filename in $(ls -f $testdir/*Test* | sort);
 do
   testname=$(basename ${filename%.*})
 

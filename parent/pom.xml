@@ -499,7 +499,7 @@
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
     <openstack4j-version>3.0.2</openstack4j-version>
     <openstack4j-guava-version>17.0</openstack4j-guava-version>
-    <opentracing-java-agent-version>0.0.10</opentracing-java-agent-version>
+    <opentracing-java-agent-version>0.0.11</opentracing-java-agent-version>
     <opentracing-java-spanmanager-version>0.0.3</opentracing-java-spanmanager-version>
     <opentracing-version>0.21.0</opentracing-version>
     <ops4j-base-version>1.5.0</ops4j-base-version>
@@ -693,7 +693,7 @@
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
     <zendesk-client-version>0.5.3</zendesk-client-version>
     <zipkin-version>1.19.4</zipkin-version>
-    <zipkin-reporter-version>0.6.12</zipkin-reporter-version>
+    <zipkin-reporter-version>0.6.13</zipkin-reporter-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.10</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>

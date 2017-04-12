@@ -186,6 +186,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -301,6 +302,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ValidatorRegistry<ValidatorKey> validatorRegistry;
     private ReloadStrategy reloadStrategy;
     private final RuntimeCamelCatalog runtimeCamelCatalog = new DefaultRuntimeCamelCatalog(this, true);
+    private SSLContextParameters sslContextParameters;
 
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
@@ -4415,6 +4417,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     @Override
     public RuntimeCamelCatalog getRuntimeCamelCatalog() {
         return runtimeCamelCatalog;
+    }
+
+    @Override
+    public void setSSLContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public SSLContextParameters getSSLContextParameters() {
+        return this.sslContextParameters;
     }
 
     protected Map<String, RouteService> getRouteServices() {

@@ -24,6 +24,7 @@ import javax.xml.transform.TransformerFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher;
 import org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
@@ -32,6 +33,7 @@ import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -44,8 +46,11 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
 /**
  * Apache Camel component for working with Spring Web Services (a.k.a Spring-WS).
  */
-public class SpringWebserviceComponent extends UriEndpointComponent {
+public class SpringWebserviceComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public SpringWebserviceComponent() {
         super(SpringWebserviceEndpoint.class);
@@ -69,6 +74,11 @@ public class SpringWebserviceComponent extends UriEndpointComponent {
         setProperties(configuration, parameters);
         configureProducerConfiguration(remaining, configuration);
         configureMessageFilter(configuration);
+
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         return new SpringWebserviceEndpoint(this, uri, configuration);
     }
 
@@ -177,6 +187,19 @@ public class SpringWebserviceComponent extends UriEndpointComponent {
                 configuration.setMessageFilter(new BasicMessageFilter());
             }
         }
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

@@ -44,6 +44,7 @@ final class ConnectorModel {
     private static final Pattern JAVA_TYPE_PATTERN = Pattern.compile("\"javaType\"\\s?:\\s?\"([\\w|.]+)\".*");
     private static final Pattern BASE_JAVA_TYPE_PATTERN = Pattern.compile("\"baseJavaType\"\\s?:\\s?\"([\\w|.]+)\".*");
     private static final Pattern BASE_SCHEME_PATTERN = Pattern.compile("\"baseScheme\"\\s?:\\s?\"([\\w|.-]+)\".*");
+    private static final Pattern SCHEDULER_PATTERN = Pattern.compile("\"scheduler\"\\s?:\\s?\"([\\w|.-]+)\".*");
     private static final Pattern INPUT_DATA_TYPE_PATTERN = Pattern.compile("\"inputDataType\"\\s?:\\s?\"(\\*|[\\w|.:*]+)\".*");
     private static final Pattern OUTPUT_DATA_TYPE_PATTERN = Pattern.compile("\"outputDataType\"\\s?:\\s?\"([\\w|.:*]+)\".*");
 
@@ -53,6 +54,7 @@ final class ConnectorModel {
 
     private String baseScheme;
     private String baseJavaType;
+    private String scheduler;
     private String connectorJSon;
     private String connectorName;
     private DataType inputDataType;
@@ -88,6 +90,14 @@ final class ConnectorModel {
         }
 
         return baseJavaType;
+    }
+
+    public String getScheduler() {
+        if (scheduler == null) {
+            scheduler = extractScheduler(lines.get());
+        }
+
+        return scheduler;
     }
 
     public String getConnectorName() {
@@ -223,6 +233,17 @@ final class ConnectorModel {
         return null;
     }
 
+    private static String extractScheduler(List<String> json) {
+        for (String line : json) {
+            line = line.trim();
+            Matcher matcher = SCHEDULER_PATTERN.matcher(line);
+            if (matcher.matches()) {
+                return matcher.group(1);
+            }
+        }
+        return null;
+    }
+
     private static String extractBaseScheme(List<String> json) {
         for (String line : json) {
             line = line.trim();
@@ -271,6 +292,8 @@ final class ConnectorModel {
                 int pos = line.indexOf(':');
                 String key = line.substring(0, pos);
                 String value = line.substring(pos + 1);
+                value = value.trim();
+                key = key.trim();
                 if (value.endsWith(",")) {
                     value = value.substring(0, value.length() - 1);
                 }
@@ -298,6 +321,8 @@ final class ConnectorModel {
                 int pos = line.indexOf(':');
                 String key = line.substring(0, pos);
                 String value = line.substring(pos + 1);
+                value = value.trim();
+                key = key.trim();
                 if (value.endsWith(",")) {
                     value = value.substring(0, value.length() - 1);
                 }

@@ -21,16 +21,19 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
-public class KafkaComponent extends UriEndpointComponent {
+public class KafkaComponent extends UriEndpointComponent implements SSLContextParametersAware {
 
     private KafkaConfiguration configuration;
 
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public KafkaComponent() {
         super(KafkaEndpoint.class);
@@ -61,6 +64,11 @@ public class KafkaComponent extends UriEndpointComponent {
 
         setProperties(endpoint.getConfiguration(), params);
         setProperties(endpoint, params);
+
+        if (endpoint.getConfiguration().getSslContextParameters() == null) {
+            endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         return endpoint;
     }
 
@@ -104,6 +112,19 @@ public class KafkaComponent extends UriEndpointComponent {
      */
     public void setWorkerPool(ExecutorService workerPool) {
         this.workerPool = workerPool;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

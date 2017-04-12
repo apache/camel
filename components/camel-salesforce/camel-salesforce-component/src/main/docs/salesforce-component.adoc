@@ -470,7 +470,7 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 26 options which are listed below.
+The Salesforce component supports 27 options which are listed below.
 
 
 
@@ -490,6 +490,7 @@ The Salesforce component supports 26 options which are listed below.
 | **config** (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpoint Config
 | **httpClientProperties** (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | **sslContextParameters** (security) | SSL parameters to use see SSLContextParameters class for all available options. |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters | false | boolean
 | **httpProxyHost** (proxy) | Hostname of the HTTP proxy server to use. |  | String
 | **httpProxyPort** (proxy) | Port number of the HTTP proxy server to use. |  | Integer
 | **httpProxyUsername** (security) | Username to use to authenticate against the HTTP proxy server. |  | String

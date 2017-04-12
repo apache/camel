@@ -21,8 +21,6 @@ import java.util.List;
 
 public class ComponentModel {
 
-    private final boolean coreOnly;
-
     private String kind;
     private String scheme;
     private String syntax;
@@ -40,10 +38,6 @@ public class ComponentModel {
     private String artifactId;
     private String version;
     private final List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
-
-    public ComponentModel(boolean coreOnly) {
-        this.coreOnly = coreOnly;
-    }
 
     public String getKind() {
         return kind;

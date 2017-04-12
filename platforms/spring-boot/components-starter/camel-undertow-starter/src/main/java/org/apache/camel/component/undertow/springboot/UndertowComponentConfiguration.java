@@ -42,6 +42,10 @@ public class UndertowComponentConfiguration {
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
+     * Enable usage of global SSL context parameters.
+     */
+    private Boolean useGlobalSslContextParameters = false;
+    /**
      * To configure common options such as thread pools
      */
     private UndertowHostOptionsNestedConfiguration hostOptions;
@@ -67,6 +71,15 @@ public class UndertowComponentConfiguration {
     public void setSslContextParameters(
             SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public Boolean getUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    public void setUseGlobalSslContextParameters(
+            Boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public UndertowHostOptionsNestedConfiguration getHostOptions() {

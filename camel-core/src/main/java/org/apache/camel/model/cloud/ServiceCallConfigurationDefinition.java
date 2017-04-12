@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceDiscovery;
@@ -402,6 +403,18 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     public ServiceCallConfigurationDefinition expression(Expression expression) {
         setExpression(expression);
         return this;
+    }
+
+    /**
+     * Sets a custom {@link Expression} to use through an expression builder clause.
+     *
+     * @return a expression builder clause to set the body
+     */
+    public ExpressionClause<ServiceCallConfigurationDefinition> expression() {
+        ExpressionClause<ServiceCallConfigurationDefinition> clause = new ExpressionClause<>(this);
+        setExpression(clause);
+
+        return clause;
     }
 
     /**

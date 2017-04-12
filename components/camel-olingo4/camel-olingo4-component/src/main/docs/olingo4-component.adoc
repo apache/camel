@@ -43,7 +43,7 @@ for this component:
 
 
 // component options: START
-The Olingo4 component supports 2 options which are listed below.
+The Olingo4 component supports 3 options which are listed below.
 
 
 
@@ -51,6 +51,7 @@ The Olingo4 component supports 2 options which are listed below.
 |=======================================================================
 | Name | Description | Default | Type
 | **configuration** (common) | To use the shared configuration |  | Olingo4Configuration
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END

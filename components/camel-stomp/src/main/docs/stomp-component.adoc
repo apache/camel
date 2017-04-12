@@ -34,7 +34,7 @@ Where *destination* is the name of the queue.
 
 
 // component options: START
-The Stomp component supports 6 options which are listed below.
+The Stomp component supports 7 options which are listed below.
 
 
 
@@ -46,6 +46,7 @@ The Stomp component supports 6 options which are listed below.
 | **login** (security) | The username |  | String
 | **passcode** (security) | The password |  | String
 | **host** (common) | The virtual host |  | String
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END

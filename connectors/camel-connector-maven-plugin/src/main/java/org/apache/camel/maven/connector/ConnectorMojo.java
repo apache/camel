@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -281,6 +282,25 @@ public class ConnectorMojo extends AbstractJarMojo {
         List options = (List) dto.get("endpointOptions");
         Map values = (Map) dto.get("endpointValues");
         Map overrides = (Map) dto.get("endpointOverrides");
+
+        // if the dto is scheduled then we need to add timer options
+        if ("timer".equals(dto.get("scheduler"))) {
+            // include the period option from the timer as we use that
+            Map<String, String> period = new LinkedHashMap<>();
+            period.put("name", "schedulerPeriod");
+            period.put("kind", "parameter");
+            period.put("displayName", "Period");
+            period.put("group", "consumer");
+            period.put("type", "integer");
+            period.put("javaType", "long");
+            period.put("deprecated", "false");
+            period.put("secret", "false");
+            period.put("defaultValue", "1000");
+            period.put("description", "Delay in milli seconds between scheduling (executing)");
+
+            getLog().debug("Connector is using scheduler: timer");
+            rows.add(period);
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("  \"properties\": {\n");

@@ -52,7 +52,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty 9 component supports 32 options which are listed below.
+The Jetty 9 component supports 33 options which are listed below.
 
 
 
@@ -80,6 +80,7 @@ The Jetty 9 component supports 32 options which are listed below.
 | **continuationTimeout** (consumer) | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
 | **useContinuation** (consumer) | Whether or not to use Jetty continuations for the Jetty Server. | true | boolean
 | **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters | false | boolean
 | **responseBufferSize** (common) | Allows to configure a custom value of the response buffer size on the Jetty connectors. |  | Integer
 | **requestBufferSize** (common) | Allows to configure a custom value of the request buffer size on the Jetty connectors. |  | Integer
 | **requestHeaderSize** (common) | Allows to configure a custom value of the request header size on the Jetty connectors. |  | Integer

@@ -73,12 +73,12 @@ public class ConnectorProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(producer);
+        ServiceHelper.startServices(beforeProducer, producer, afterProducer);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(producer);
+        ServiceHelper.stopServices(beforeProducer, producer, afterProducer);
     }
 
     @Override
@@ -93,6 +93,6 @@ public class ConnectorProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(producer);
+        ServiceHelper.stopAndShutdownServices(beforeProducer, producer, afterProducer);
     }
 }

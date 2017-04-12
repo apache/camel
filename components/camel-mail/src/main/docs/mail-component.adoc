@@ -77,7 +77,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mail component supports 3 options which are listed below.
+The Mail component supports 4 options which are listed below.
 
 
 
@@ -86,6 +86,7 @@ The Mail component supports 3 options which are listed below.
 | Name | Description | Default | Type
 | **configuration** (advanced) | Sets the Mail configuration |  | MailConfiguration
 | **contentTypeResolver** (advanced) | Resolver to determine Content-Type for file attachments. |  | ContentTypeResolver
+| **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END

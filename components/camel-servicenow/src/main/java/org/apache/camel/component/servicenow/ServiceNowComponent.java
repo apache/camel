@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
@@ -31,10 +32,12 @@ import org.apache.camel.util.IntrospectionSupport;
  * Represents the component that manages {@link ServiceNowEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class ServiceNowComponent extends UriEndpointComponent implements VerifiableComponent {
+public class ServiceNowComponent extends UriEndpointComponent implements VerifiableComponent, SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private ServiceNowConfiguration configuration;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public ServiceNowComponent() {
         super(ServiceNowEndpoint.class);
@@ -76,6 +79,10 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
         }
         if (!configuration.hasOauthTokenUrl()) {
             configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
+        }
+
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         return new ServiceNowEndpoint(uri, this, configuration, instanceName);
@@ -161,6 +168,19 @@ public class ServiceNowComponent extends UriEndpointComponent implements Verifia
     @Metadata(label = "security", secret = true)
     public void setOauthTokenUrl(String oauthTokenUrl) {
         configuration.setOauthTokenUrl(oauthTokenUrl);
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     /**

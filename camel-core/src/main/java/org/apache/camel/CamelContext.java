@@ -85,6 +85,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.util.LoadPropertiesException;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Interface used to represent the CamelContext used to configure routes and the
@@ -1976,5 +1977,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Adds a {@link LogListener}.
      */
     void addLogListener(LogListener listener);
+
+    /**
+     * Sets the global SSL context parameters.
+     */
+    void setSSLContextParameters(SSLContextParameters sslContextParameters);
+
+    /**
+     * Gets the global SSL context parameters if configured.
+     */
+    SSLContextParameters getSSLContextParameters();
 
 }

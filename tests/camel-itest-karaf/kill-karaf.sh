@@ -17,5 +17,8 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
+echo "Listing all karaf processes"
+jps -l | grep karaf
+
 echo "Killing all karaf processes"
-jps -l | grep karaf | cut -d ' ' -f 1 | xargs -n1 kill -kill
+jps -l | grep karaf | cut -d ' ' -f 1 | xargs -n1 kill

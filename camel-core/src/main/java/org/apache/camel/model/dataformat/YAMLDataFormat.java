@@ -86,9 +86,9 @@ public class YAMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Which yaml library to use such.
+     * Which yaml library to use.
      * <p/>
-     * Is by default SnakeYAML
+     * By default it is SnakeYAML
      */
     public void setLibrary(YAMLLibrary library) {
         this.library = library;
