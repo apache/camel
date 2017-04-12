@@ -1,0 +1,30 @@
+= Camel REST DSL Swagger Maven Plugin
+
+The Camel REST DSL Swagger Maven Plugin supports the following goals
+
+ - camel-restdsl-swagger:generate - To generate consumer REST DSL
+ RouteBuilder source code from Swagger specification
+
+== camel-restdsl-swagger:generate
+
+The `camel-restdsl-swagger:generate` goal of the Camel REST DSL
+Swagger Maven Plugin is used to generate REST DSL RouteBuilder
+implementation source code from Maven.
+
+=== Options
+
+The plugin supports the following options which can be configured from
+the command line (use `-D` syntax), or defined in the `pom.xml` file 
+in the `<configuration>` tag.
+
+|========================================
+| Parameter | Default Value | Description
+| `skip` | `false` | Set to `true` to skip code generation.
+| `specificationUri` | `src/spec/swagger.json` | URI of the Swagger specification, loaded using Swagger's resource loading mechanism, supports filesystem paths, HTTP and classpath resources, by default `src/spec/swagger.json` within the project directory
+| `className` | from `title` or `RestDslRoute` | Name of the generated class, taken from the Swagger specification title or set to `RestDslRoute` by default
+| `packageName` | from `host` or `rest.dsl.generated` | Name of the package for the generated class, taken from the Swagger specification host value or `rest.dsl.generated` by default
+| `indent` | `"&nbsp;&nbsp;&nbsp;&nbsp;"` | What identing character(s) to use, by default four spaces, you can use `\t` to signify tab character
+| `outputDirectory` | `generated-sources/restdsl-swagger` | Where to place the generated source file, by default `generated-sources/restdsl-swagger` within the project directory
+| `destinationGenerator` | | Fully qualified class name of the class that implements `org.apache.camel.generator.swagger.DestinationGenerator` interface for customizing destination endpoint
+|========================================
+
