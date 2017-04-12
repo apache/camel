@@ -1,0 +1,47 @@
+## Ribbon Component
+
+*Available as of Camel version 2.18*
+
+The ribbon component provides use of Netflix Ribbon for client side load balancing.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ribbon</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+This component helps applying load balancing feature at the client side
+when using ServiceCall EIP. 
+
+As you can see [ServiceCall EIP](http://camel.apache.org/servicecall-eip.html), ribbon
+makes use of http component for calling the remote service. The details of different protocols
+are outlined in the EIP page.
+
+[source,java]
+---------------------------------------
+StaticServiceDiscovery servers = new StaticServiceDiscovery();
+servers.addServer("localhost", 9090);
+servers.addServer("localhost", 9091);
+
+RibbonConfiguration configuration = new RibbonConfiguration();
+RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
+
+from("direct:start")
+    .serviceCall()
+        .name("myService")
+        .loadBalancer(loadBalancer)
+        .serviceDiscovery(servers)
+        .end()
+    .to("mock:result");
+---------------------------------------
+
+### See Also
+
+* link:http://camel.apache.org/servicecall-eip.html[ServiceCall EIP]
