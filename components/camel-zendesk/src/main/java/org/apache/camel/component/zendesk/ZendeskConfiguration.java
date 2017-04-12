@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.zendesk;
 
-import java.util.Map;
-
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

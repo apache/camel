@@ -16,23 +16,7 @@
  */
 package org.apache.camel.component.zendesk.internal;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.zendesk.ZendeskConfiguration;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.zendesk.client.v2.Zendesk;
 
 /**
