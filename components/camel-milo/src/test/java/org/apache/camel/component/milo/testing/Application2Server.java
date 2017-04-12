@@ -22,51 +22,48 @@ import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class Application2Server {
-	public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
-		// camel conext
+        // camel conext
 
-		final CamelContext context = new DefaultCamelContext();
+        final CamelContext context = new DefaultCamelContext();
 
-		// add paho
+        // add paho
 
-		// no need to register, gets auto detected
-		// context.addComponent("paho", new PahoComponent());
-		((MiloServerComponent) context.getComponent("milo-server")).setUserAuthenticationCredentials("foo:bar");
+        // no need to register, gets auto detected
+        // context.addComponent("paho", new PahoComponent());
+        ((MiloServerComponent)context.getComponent("milo-server")).setUserAuthenticationCredentials("foo:bar");
 
-		// add routes
+        // add routes
 
-		context.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
 
-			@Override
-			public void configure() throws Exception {
-				/*
-				 * from(
-				 * "paho:javaonedemo/eclipse-greenhouse-9home/sensors/temperature?brokerUrl=tcp://iot.eclipse.org:1883")
-				 * .log("Temp update: ${body}").convertBodyTo(String.class).to(
-				 * "milo-server:MyItem");
-				 */
+            @Override
+            public void configure() throws Exception {
+                /*
+                 * from(
+                 * "paho:javaonedemo/eclipse-greenhouse-9home/sensors/temperature?brokerUrl=tcp://iot.eclipse.org:1883")
+                 * .log("Temp update: ${body}").convertBodyTo(String.class).to(
+                 * "milo-server:MyItem");
+                 */
 
-				from("paho:my/foo/bar?brokerUrl=tcp://iot.eclipse.org:1883").log("Temp update: ${body}")
-						.convertBodyTo(String.class).to("milo-server:MyItem");
+                from("paho:my/foo/bar?brokerUrl=tcp://iot.eclipse.org:1883").log("Temp update: ${body}").convertBodyTo(String.class).to("milo-server:MyItem");
 
-				from("milo-server:MyItem").log("MyItem: ${body}");
-				from("milo-server:MyItem2").log("MyItem2: ${body}").convertBodyTo(String.class)
-						.to("paho:de/dentrassi/camel/milo/temperature?brokerUrl=tcp://iot.eclipse.org:1883");
+                from("milo-server:MyItem").log("MyItem: ${body}");
+                from("milo-server:MyItem2").log("MyItem2: ${body}").convertBodyTo(String.class).to("paho:de/dentrassi/camel/milo/temperature?brokerUrl=tcp://iot.eclipse.org:1883");
 
-				from("paho:de/dentrassi/camel/milo/temperature?brokerUrl=tcp://iot.eclipse.org:1883")
-						.log("Back from MQTT: ${body}");
-			}
-		});
+                from("paho:de/dentrassi/camel/milo/temperature?brokerUrl=tcp://iot.eclipse.org:1883").log("Back from MQTT: ${body}");
+            }
+        });
 
-		// start
+        // start
 
-		context.start();
+        context.start();
 
-		// sleep
+        // sleep
 
-		while (true) {
-			Thread.sleep(Long.MAX_VALUE);
-		}
-	}
+        while (true) {
+            Thread.sleep(Long.MAX_VALUE);
+        }
+    }
 }

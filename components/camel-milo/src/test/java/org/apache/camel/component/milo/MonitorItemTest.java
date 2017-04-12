@@ -30,59 +30,60 @@ import org.junit.Test;
  */
 public class MonitorItemTest extends AbstractMiloServerTest {
 
-	private static final String DIRECT_START_1 = "direct:start1";
+    private static final String DIRECT_START_1 = "direct:start1";
 
-	private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
+    private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
-	private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:12685?node=" + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
+    private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:12685?node="
+                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
 
-	private static final String MOCK_TEST_1 = "mock:test1";
+    private static final String MOCK_TEST_1 = "mock:test1";
 
-	@EndpointInject(uri = MOCK_TEST_1)
-	protected MockEndpoint test1Endpoint;
+    @EndpointInject(uri = MOCK_TEST_1)
+    protected MockEndpoint test1Endpoint;
 
-	@Produce(uri = DIRECT_START_1)
-	protected ProducerTemplate producer1;
+    @Produce(uri = DIRECT_START_1)
+    protected ProducerTemplate producer1;
 
-	@Override
-	protected RoutesBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
 
-				from(MILO_CLIENT_ITEM_C1_1).to(MOCK_TEST_1);
-			}
-		};
-	}
+                from(MILO_CLIENT_ITEM_C1_1).to(MOCK_TEST_1);
+            }
+        };
+    }
 
-	/**
-	 * Monitor multiple events
-	 */
-	@Test
-	public void testMonitorItem1() throws Exception {
-		/*
-		 * we will wait 2 * 1_000 milliseconds between server updates since the
-		 * default server update rate is 1_000 milliseconds
-		 */
+    /**
+     * Monitor multiple events
+     */
+    @Test
+    public void testMonitorItem1() throws Exception {
+        /*
+         * we will wait 2 * 1_000 milliseconds between server updates since the
+         * default server update rate is 1_000 milliseconds
+         */
 
-		// set server values
-		this.producer1.sendBody("Foo");
-		Thread.sleep(2_000);
-		this.producer1.sendBody("Bar");
-		Thread.sleep(2_000);
-		this.producer1.sendBody("Baz");
-		Thread.sleep(2_000);
+        // set server values
+        this.producer1.sendBody("Foo");
+        Thread.sleep(2_000);
+        this.producer1.sendBody("Bar");
+        Thread.sleep(2_000);
+        this.producer1.sendBody("Baz");
+        Thread.sleep(2_000);
 
-		// item 1 ... only this one receives
-		this.test1Endpoint.setExpectedCount(3);
+        // item 1 ... only this one receives
+        this.test1Endpoint.setExpectedCount(3);
 
-		// tests
-		testBody(this.test1Endpoint.message(0), assertGoodValue("Foo"));
-		testBody(this.test1Endpoint.message(1), assertGoodValue("Bar"));
-		testBody(this.test1Endpoint.message(2), assertGoodValue("Baz"));
+        // tests
+        testBody(this.test1Endpoint.message(0), assertGoodValue("Foo"));
+        testBody(this.test1Endpoint.message(1), assertGoodValue("Bar"));
+        testBody(this.test1Endpoint.message(2), assertGoodValue("Baz"));
 
-		// assert
-		this.assertMockEndpointsSatisfied();
-	}
+        // assert
+        this.assertMockEndpointsSatisfied();
+    }
 }

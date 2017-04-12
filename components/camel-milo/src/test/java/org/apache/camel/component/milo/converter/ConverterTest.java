@@ -24,26 +24,26 @@ import org.junit.Test;
 
 public class ConverterTest extends CamelTestSupport {
 
-	@Test
-	public void testDataValueToVariant() {
-		final Variant value = testConvertDataValue("Foo", Variant.class);
-		Assert.assertNotNull(value);
-		Assert.assertEquals("Foo", value.getValue());
-	}
+    @Test
+    public void testDataValueToVariant() {
+        final Variant value = testConvertDataValue("Foo", Variant.class);
+        Assert.assertNotNull(value);
+        Assert.assertEquals("Foo", value.getValue());
+    }
 
-	@Test
-	public void testVariantToDataValue() {
-		final DataValue value = testConvert(new Variant("Foo"), DataValue.class);
-		Assert.assertNotNull(value);
-		Assert.assertEquals("Foo", value.getValue().getValue());
-		Assert.assertTrue(value.getStatusCode().isGood());
-	}
+    @Test
+    public void testVariantToDataValue() {
+        final DataValue value = testConvert(new Variant("Foo"), DataValue.class);
+        Assert.assertNotNull(value);
+        Assert.assertEquals("Foo", value.getValue().getValue());
+        Assert.assertTrue(value.getStatusCode().isGood());
+    }
 
-	private <T> T testConvert(final Object value, final Class<T> clazz) {
-		return this.context.getTypeConverter().convertTo(clazz, value);
-	}
+    private <T> T testConvert(final Object value, final Class<T> clazz) {
+        return this.context.getTypeConverter().convertTo(clazz, value);
+    }
 
-	private <T> T testConvertDataValue(final Object value, final Class<T> clazz) {
-		return this.context.getTypeConverter().convertTo(clazz, new DataValue(new Variant(value)));
-	}
+    private <T> T testConvertDataValue(final Object value, final Class<T> clazz) {
+        return this.context.getTypeConverter().convertTo(clazz, new DataValue(new Variant(value)));
+    }
 }

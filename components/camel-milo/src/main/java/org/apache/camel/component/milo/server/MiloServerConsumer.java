@@ -29,50 +29,50 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 class MiloServerConsumer extends DefaultConsumer {
 
-	private final CamelServerItem item;
-	private final Consumer<DataValue> writeHandler = this::performWrite;
+    private final CamelServerItem item;
+    private final Consumer<DataValue> writeHandler = this::performWrite;
 
-	public MiloServerConsumer(final Endpoint endpoint, final Processor processor, final CamelServerItem item) {
-		super(endpoint, processor);
-		this.item = item;
-	}
+    public MiloServerConsumer(final Endpoint endpoint, final Processor processor, final CamelServerItem item) {
+        super(endpoint, processor);
+        this.item = item;
+    }
 
-	@Override
-	protected void doStart() throws Exception {
-		super.doStart();
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
-		this.item.addWriteListener(this.writeHandler);
-	}
+        this.item.addWriteListener(this.writeHandler);
+    }
 
-	@Override
-	protected void doStop() throws Exception {
-		this.item.removeWriteListener(this.writeHandler);
+    @Override
+    protected void doStop() throws Exception {
+        this.item.removeWriteListener(this.writeHandler);
 
-		super.doStop();
-	}
+        super.doStop();
+    }
 
-	protected void performWrite(final DataValue value) {
+    protected void performWrite(final DataValue value) {
 
-		final Exchange exchange = getEndpoint().createExchange();
-		exchange.setIn(mapToMessage(value));
+        final Exchange exchange = getEndpoint().createExchange();
+        exchange.setIn(mapToMessage(value));
 
-		try {
-			getAsyncProcessor().process(exchange);
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+        try {
+            getAsyncProcessor().process(exchange);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	private DefaultMessage mapToMessage(final DataValue value) {
-		if (value == null) {
-			return null;
-		}
+    private DefaultMessage mapToMessage(final DataValue value) {
+        if (value == null) {
+            return null;
+        }
 
-		final DefaultMessage result = new DefaultMessage();
+        final DefaultMessage result = new DefaultMessage();
 
-		Messages.fillFromDataValue(value, result);
+        Messages.fillFromDataValue(value, result);
 
-		return result;
-	}
+        return result;
+    }
 
 }

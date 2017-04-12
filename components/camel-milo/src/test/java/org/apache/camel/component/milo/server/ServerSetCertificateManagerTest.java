@@ -30,22 +30,21 @@ import org.junit.Test;
  */
 public class ServerSetCertificateManagerTest extends AbstractMiloServerTest {
 
-	@Override
-	protected void configureMiloServer(final MiloServerComponent server) throws Exception {
-		super.configureMiloServer(server);
+    @Override
+    protected void configureMiloServer(final MiloServerComponent server) throws Exception {
+        super.configureMiloServer(server);
 
-		final Path baseDir = Paths.get("target/testing/cert/default");
-		final Path trusted = baseDir.resolve("trusted");
+        final Path baseDir = Paths.get("target/testing/cert/default");
+        final Path trusted = baseDir.resolve("trusted");
 
-		Files.createDirectories(trusted);
-		Files.copy(Paths.get("src/test/resources/cert/certificate.der"), trusted.resolve("certificate.der"),
-				REPLACE_EXISTING);
+        Files.createDirectories(trusted);
+        Files.copy(Paths.get("src/test/resources/cert/certificate.der"), trusted.resolve("certificate.der"), REPLACE_EXISTING);
 
-		server.setServerCertificate(loadDefaultTestKey());
-		server.setDefaultCertificateValidator(baseDir.toFile());
-	}
+        server.setServerCertificate(loadDefaultTestKey());
+        server.setDefaultCertificateValidator(baseDir.toFile());
+    }
 
-	@Test
-	public void shouldStart() {
-	}
+    @Test
+    public void shouldStart() {
+    }
 }
