@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.pubnub;
 
-
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
 
@@ -28,7 +27,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "pubnub", title = "PubNub", syntax = "pubnub:channel", consumerClass = PubNubConsumer.class, label = "cloud,iot,messaging")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "pubnub", title = "PubNub", syntax = "pubnub:channel",
+    consumerClass = PubNubConsumer.class, label = "cloud,iot,messaging")
 public class PubNubEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "advanced")

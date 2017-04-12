@@ -192,6 +192,7 @@
         <include>org.apache.camel:camel-pgevent</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
+        <include>org.apache.camel:camel-pubnub</include>
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-quartz2</include>
         <include>org.apache.camel:camel-quickfix</include>

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.pubnub;
 
-
 import java.util.Arrays;
 
 import com.pubnub.api.PubNub;
@@ -29,7 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,10 +94,10 @@ public class PubNubConsumer extends DefaultConsumer {
         @Override
         public void status(PubNub pubnub, PNStatus status) {
             if (status.getCategory() == PNUnexpectedDisconnectCategory || status.getCategory() == PNTimeoutCategory) {
-                LOG.trace("Got status : {}. Reconnecting to PubNub", status);
+                LOG.trace("Got status: {}. Reconnecting to PubNub", status);
                 pubnub.reconnect();
             } else {
-                LOG.trace("Status message : {}", status);
+                LOG.trace("Status message: {}", status);
             }
         }
 
@@ -113,14 +111,13 @@ public class PubNubConsumer extends DefaultConsumer {
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
-                exchange.setException(e);
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
             }
         }
 
         @Override
         public void presence(PubNub pubnub, PNPresenceEventResult presence) {
-            Exchange exchange = new DefaultExchange(endpoint, endpoint.getExchangePattern());
+            Exchange exchange = endpoint.createExchange();
             Message inmessage = exchange.getIn();
             inmessage.setBody(presence);
             inmessage.setHeader(TIMETOKEN, presence.getTimetoken());
@@ -131,7 +128,6 @@ public class PubNubConsumer extends DefaultConsumer {
                 exchange.setException(e);
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
             }
-
         }
 
     }

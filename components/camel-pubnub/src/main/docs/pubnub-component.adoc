@@ -1,10 +1,11 @@
 ## PubNub Component
 
-*Available as of Camel version *
+*Available as of Camel version 2.19*
 
-Camel PubNub component can be used to communicate with the https://www.pubnub.com/[PubNub] data stream network for connected devices. This component uses pubnub https://github.com/pubnub/java[java library].
+Camel PubNub component can be used to communicate with the https://www.pubnub.com/[PubNub] data stream network for connected devices.
+This component uses pubnub https://github.com/pubnub/java[java library].
 
-### Use cases include
+Use cases includs:
 
 ** Chat rooms: Sending and receiving messages
 ** Locations and Connected cars: dispatching taxi cabs
@@ -89,17 +90,19 @@ with the following path and query parameters:
 |=======================================================================
 |Name |Description
 |`CamelPubNubTimeToken` |The Timestamp for the event.
-
 |`CamelPubNubChannel` |The channel for which the message belongs.
+|=======================================================================
 
-### Messsage body
+
+### Message body
+
 The message body can contain any JSON serializable data, including: Objects, Arrays, Ints and Strings. Message data should not contain special Java V4 classes or functions as these will not serialize. String content can include any single-byte or multi-byte UTF-8
 
 Object serialization when sending is done automatically. Just pass the full object as the message payload. PubNub will takes care of object serialization.
 
 When receiving the message body utilize objects provided by the PubNub API.
 
-### Use cases
+### Examples
 
 #### Publishing events
 

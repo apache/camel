@@ -23,9 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * Represents the component that manages {@link PubNubEndpoint}.
- */
 public class PubNubComponent extends DefaultComponent {
 
     public PubNubComponent(CamelContext context) {
@@ -39,9 +36,11 @@ public class PubNubComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ObjectHelper.notNull(remaining, "channel");
+
         PubNubConfiguration pubNubConfiguration = new PubNubConfiguration();
         pubNubConfiguration.setChannel(remaining);
         setProperties(pubNubConfiguration, parameters);
+
         PubNubEndpoint endpoint = new PubNubEndpoint(uri, this, pubNubConfiguration);
         setProperties(endpoint, parameters);
         return endpoint;
