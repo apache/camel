@@ -239,7 +239,6 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         this.probeContentType = probeContentType;
     }
 
-
     public String getExtendedAttributes() {
         return extendedAttributes;
     }
