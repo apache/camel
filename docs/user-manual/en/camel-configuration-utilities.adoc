@@ -610,3 +610,38 @@ ID example is used to resolve the property placeholders.
 
 </beans>
 ---------------------------------------------------------------------------------------------------------------
+
+[[CamelConfigurationUtilities-UsingSpringBoot.1]]
+Using Spring-Boot
+
+As of *2.19.0*, Camel provides a global SSL configuration that can be customized using the
+spring-boot _application.properties_ or _application.yml_ file.
+
+Components do not use the global SSL configuration by default, but this behavior can
+be changed using component-specific options. A flag named _useGlobalSslContextParameters_ is
+included in all components that support the global SSL configuration.
+
+The following example shows how to configure global SSL parameters (in _application.yml_) and enable their
+usage in the _camel-undertow_ component.
+
+[source,text]
+---------------------------------------------------------------------------------------------------------------
+camel:
+  # To enable global SSL in undertow
+  component:
+    undertow:
+      use-global-ssl-context-parameters: true
+  ssl:
+    config:
+      key-managers:
+        key-password: "changeit"
+        key-store:
+          resource: "/keystore.p12"
+          password: "changeit"
+          type: "PKCS12"
+      trust-managers:
+        key-store:
+          resource: "/cacerts"
+          password: "changeit"
+          type: "jks"
+---------------------------------------------------------------------------------------------------------------

@@ -43,7 +43,6 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext
 @ContextConfiguration(classes = {NettyHttpComponentAutoConfiguration.class, CamelAutoConfiguration.class})
 @SpringBootTest(properties = {
-        "camel.ssl.enabled=true",
         "camel.ssl.config.cert-alias=web",
         "camel.ssl.config.key-managers.key-password=changeit",
         "camel.ssl.config.key-managers.key-store.resource=/keystore.p12",
