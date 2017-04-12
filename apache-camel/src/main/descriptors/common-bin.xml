@@ -73,7 +73,7 @@
         <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-drill</include>
-	    <include>org.apache.camel:camel-dropbox</include>
+	      <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
@@ -231,12 +231,8 @@
         <include>org.apache.camel:camel-splunk</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>
-        <include>org.apache.camel:camel-spring-boot</include>
-        <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-cloud</include>
-        <include>org.apache.camel:camel-spring-cloud-starter</include>
         <include>org.apache.camel:camel-spring-cloud-netflix</include>
-        <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
         <include>org.apache.camel:camel-spring-dm</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
@@ -280,7 +276,6 @@
         <include>org.apache.camel:camel-yammer</include>
         <include>org.apache.camel:camel-zipfile</include>
         <include>org.apache.camel:camel-zipkin</include>
-        <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper</include>
         <include>org.apache.camel:camel-zookeeper-master</include>
       </includes>
@@ -505,9 +500,10 @@
         <include>org.apache.camel:camel-spark-starter</include>
         <include>org.apache.camel:camel-splunk-starter</include>
         <include>org.apache.camel:camel-spring-batch-starter</include>
+        <include>org.apache.camel:camel-spring-boot</include>
         <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-cloud-starter</include>
-        <include>org.apache.camel:camel-spring-dm-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
         <include>org.apache.camel:camel-spring-integration-starter</include>
         <include>org.apache.camel:camel-spring-javaconfig-starter</include>
         <include>org.apache.camel:camel-spring-ldap-starter</include>
@@ -544,6 +540,7 @@
         <include>org.apache.camel:camel-zipfile-starter</include>
         <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper-starter</include>
+        <include>org.apache.camel:camel-zookeeper-master-starter</include>
       </includes>
     </dependencySet>
   </dependencySets>
