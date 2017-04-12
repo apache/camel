@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.milo;
 
-import static java.util.Objects.requireNonNull;
-
 import java.io.Serializable;
+
+import static java.util.Objects.requireNonNull;
 
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
