@@ -74,7 +74,7 @@ public class MiloClientConnection implements AutoCloseable {
 
     @FunctionalInterface
     public interface MonitorHandle {
-        public void unregister();
+        void unregister();
     }
 
     public MonitorHandle monitorValue(final MiloClientItemConfiguration configuration, final Consumer<DataValue> valueConsumer) {

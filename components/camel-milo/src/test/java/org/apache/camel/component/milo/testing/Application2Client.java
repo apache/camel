@@ -20,7 +20,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class Application2Client {
+public final class Application2Client {
+
+    private Application2Client() {
+    }
+
     public static void main(final String[] args) throws Exception {
 
         // camel conext
