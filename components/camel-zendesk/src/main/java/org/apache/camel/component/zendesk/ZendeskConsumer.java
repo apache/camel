@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.zendesk;
 
-import java.util.List;
-import java.util.Stack;
-
 import org.apache.camel.Processor;
 import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.util.component.AbstractApiConsumer;

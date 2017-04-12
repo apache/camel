@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.zendesk;
 
-import java.lang.reflect.Proxy;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -27,13 +26,9 @@ import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.component.zendesk.internal.ZendeskConstants;
 import org.apache.camel.component.zendesk.internal.ZendeskHelper;
 import org.apache.camel.component.zendesk.internal.ZendeskPropertiesHelper;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
