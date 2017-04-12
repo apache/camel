@@ -20,19 +20,17 @@ import org.apache.camel.impl.DefaultMessage;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 public final class Messages {
-	private Messages() {
-	}
+    private Messages() {
+    }
 
-	/**
-	 * Fill a Message from a DataValue
-	 *
-	 * @param value
-	 *            the value to feed from
-	 * @param result
-	 *            the result to feed to
-	 */
-	public static void fillFromDataValue(final DataValue value, final DefaultMessage result) {
-		result.setBody(value);
-		result.setFault(value.getStatusCode().isBad());
-	}
+    /**
+     * Fill a Message from a DataValue
+     *
+     * @param value the value to feed from
+     * @param result the result to feed to
+     */
+    public static void fillFromDataValue(final DataValue value, final DefaultMessage result) {
+        result.setBody(value);
+        result.setFault(value.getStatusCode().isBad());
+    }
 }

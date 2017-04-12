@@ -23,16 +23,16 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 
 @Converter
 public final class ValueConverter implements TypeConverters {
-	private ValueConverter() {
-	}
+    private ValueConverter() {
+    }
 
-	@Converter
-	public static Variant toVariant(final DataValue value) {
-		return value.getValue();
-	}
+    @Converter
+    public static Variant toVariant(final DataValue value) {
+        return value.getValue();
+    }
 
-	@Converter
-	public static DataValue toDataValue(final Variant value) {
-		return new DataValue(value);
-	}
+    @Converter
+    public static DataValue toDataValue(final Variant value) {
+        return new DataValue(value);
+    }
 }

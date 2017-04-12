@@ -55,159 +55,153 @@ import com.google.common.collect.Lists;
 
 public class CamelNamespace implements Namespace {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
 
-	private final UShort namespaceIndex;
+    private final UShort namespaceIndex;
 
-	private final String namespaceUri;
+    private final String namespaceUri;
 
-	private final ServerNodeMap nodeManager;
-	private final SubscriptionModel subscriptionModel;
+    private final ServerNodeMap nodeManager;
+    private final SubscriptionModel subscriptionModel;
 
-	private final UaFolderNode folder;
-	private final UaObjectNode itemsObject;
+    private final UaFolderNode folder;
+    private final UaObjectNode itemsObject;
 
-	private final Map<String, CamelServerItem> itemMap = new HashMap<>();
+    private final Map<String, CamelServerItem> itemMap = new HashMap<>();
 
-	public CamelNamespace(final UShort namespaceIndex, final String namespaceUri, final OpcUaServer server) {
-		this.namespaceIndex = namespaceIndex;
-		this.namespaceUri = namespaceUri;
+    public CamelNamespace(final UShort namespaceIndex, final String namespaceUri, final OpcUaServer server) {
+        this.namespaceIndex = namespaceIndex;
+        this.namespaceUri = namespaceUri;
 
-		this.nodeManager = server.getNodeMap();
-		this.subscriptionModel = new SubscriptionModel(server, this);
+        this.nodeManager = server.getNodeMap();
+        this.subscriptionModel = new SubscriptionModel(server, this);
 
-		// create structure
+        // create structure
 
-		{
-			final NodeId nodeId = new NodeId(namespaceIndex, "camel");
-			final QualifiedName name = new QualifiedName(namespaceIndex, "camel");
-			final LocalizedText displayName = LocalizedText.english("Camel");
+        {
+            final NodeId nodeId = new NodeId(namespaceIndex, "camel");
+            final QualifiedName name = new QualifiedName(namespaceIndex, "camel");
+            final LocalizedText displayName = LocalizedText.english("Camel");
 
-			this.folder = new UaFolderNode(this.nodeManager, nodeId, name, displayName);
-			this.nodeManager.addNode(this.folder);
-		}
+            this.folder = new UaFolderNode(this.nodeManager, nodeId, name, displayName);
+            this.nodeManager.addNode(this.folder);
+        }
 
-		{
-			final NodeId nodeId = new NodeId(namespaceIndex, "items");
-			final QualifiedName name = new QualifiedName(namespaceIndex, "items");
-			final LocalizedText displayName = LocalizedText.english("Items");
-			this.itemsObject = new UaObjectNode(this.nodeManager, nodeId, name, displayName);
-			this.folder.addComponent(this.itemsObject);
-		}
+        {
+            final NodeId nodeId = new NodeId(namespaceIndex, "items");
+            final QualifiedName name = new QualifiedName(namespaceIndex, "items");
+            final LocalizedText displayName = LocalizedText.english("Items");
+            this.itemsObject = new UaObjectNode(this.nodeManager, nodeId, name, displayName);
+            this.folder.addComponent(this.itemsObject);
+        }
 
-		// register reference to structure
+        // register reference to structure
 
-		try {
-			server.getUaNamespace().addReference(Identifiers.ObjectsFolder, Identifiers.Organizes, true,
-					this.folder.getNodeId().expanded(), NodeClass.Object);
-		} catch (final UaException e) {
-			throw new RuntimeException("Failed to register folder", e);
-		}
-	}
+        try {
+            server.getUaNamespace().addReference(Identifiers.ObjectsFolder, Identifiers.Organizes, true, this.folder.getNodeId().expanded(), NodeClass.Object);
+        } catch (final UaException e) {
+            throw new RuntimeException("Failed to register folder", e);
+        }
+    }
 
-	@Override
-	public UShort getNamespaceIndex() {
-		return this.namespaceIndex;
-	}
+    @Override
+    public UShort getNamespaceIndex() {
+        return this.namespaceIndex;
+    }
 
-	@Override
-	public String getNamespaceUri() {
-		return this.namespaceUri;
-	}
+    @Override
+    public String getNamespaceUri() {
+        return this.namespaceUri;
+    }
 
-	@Override
-	public CompletableFuture<List<Reference>> browse(final AccessContext context, final NodeId nodeId) {
-		final ServerNode node = this.nodeManager.get(nodeId);
+    @Override
+    public CompletableFuture<List<Reference>> browse(final AccessContext context, final NodeId nodeId) {
+        final ServerNode node = this.nodeManager.get(nodeId);
 
-		if (node != null) {
-			return CompletableFuture.completedFuture(node.getReferences());
-		} else {
-			final CompletableFuture<List<Reference>> f = new CompletableFuture<>();
-			f.completeExceptionally(new UaException(StatusCodes.Bad_NodeIdUnknown));
-			return f;
-		}
-	}
+        if (node != null) {
+            return CompletableFuture.completedFuture(node.getReferences());
+        } else {
+            final CompletableFuture<List<Reference>> f = new CompletableFuture<>();
+            f.completeExceptionally(new UaException(StatusCodes.Bad_NodeIdUnknown));
+            return f;
+        }
+    }
 
-	@Override
-	public void read(final ReadContext context, final Double maxAge, final TimestampsToReturn timestamps,
-			final List<ReadValueId> readValueIds) {
-		final List<DataValue> results = Lists.newArrayListWithCapacity(readValueIds.size());
+    @Override
+    public void read(final ReadContext context, final Double maxAge, final TimestampsToReturn timestamps, final List<ReadValueId> readValueIds) {
+        final List<DataValue> results = Lists.newArrayListWithCapacity(readValueIds.size());
 
-		for (final ReadValueId id : readValueIds) {
-			final ServerNode node = this.nodeManager.get(id.getNodeId());
+        for (final ReadValueId id : readValueIds) {
+            final ServerNode node = this.nodeManager.get(id.getNodeId());
 
-			final DataValue value;
+            final DataValue value;
 
-			if (node != null) {
-				value = node.readAttribute(new AttributeContext(context), id.getAttributeId(), timestamps,
-						id.getIndexRange());
-			} else {
-				value = new DataValue(StatusCodes.Bad_NodeIdUnknown);
-			}
+            if (node != null) {
+                value = node.readAttribute(new AttributeContext(context), id.getAttributeId(), timestamps, id.getIndexRange());
+            } else {
+                value = new DataValue(StatusCodes.Bad_NodeIdUnknown);
+            }
 
-			results.add(value);
-		}
+            results.add(value);
+        }
 
-		context.complete(results);
-	}
+        context.complete(results);
+    }
 
-	@Override
-	public void write(final WriteContext context, final List<WriteValue> writeValues) {
-		final List<StatusCode> results = Lists.newArrayListWithCapacity(writeValues.size());
+    @Override
+    public void write(final WriteContext context, final List<WriteValue> writeValues) {
+        final List<StatusCode> results = Lists.newArrayListWithCapacity(writeValues.size());
 
-		for (final WriteValue writeValue : writeValues) {
-			try {
-				final ServerNode node = this.nodeManager.getNode(writeValue.getNodeId())
-						.orElseThrow(() -> new UaException(StatusCodes.Bad_NodeIdUnknown));
+        for (final WriteValue writeValue : writeValues) {
+            try {
+                final ServerNode node = this.nodeManager.getNode(writeValue.getNodeId()).orElseThrow(() -> new UaException(StatusCodes.Bad_NodeIdUnknown));
 
-				node.writeAttribute(new AttributeContext(context), writeValue.getAttributeId(), writeValue.getValue(),
-						writeValue.getIndexRange());
+                node.writeAttribute(new AttributeContext(context), writeValue.getAttributeId(), writeValue.getValue(), writeValue.getIndexRange());
 
-				if (LOG.isTraceEnabled()) {
-					final Variant variant = writeValue.getValue().getValue();
-					final Object o = variant != null ? variant.getValue() : null;
-					LOG.trace("Wrote value={} to attributeId={} of {}", o, writeValue.getAttributeId(),
-							writeValue.getNodeId());
-				}
+                if (LOG.isTraceEnabled()) {
+                    final Variant variant = writeValue.getValue().getValue();
+                    final Object o = variant != null ? variant.getValue() : null;
+                    LOG.trace("Wrote value={} to attributeId={} of {}", o, writeValue.getAttributeId(), writeValue.getNodeId());
+                }
 
-				results.add(StatusCode.GOOD);
-			} catch (final UaException e) {
-				results.add(e.getStatusCode());
-			}
-		}
+                results.add(StatusCode.GOOD);
+            } catch (final UaException e) {
+                results.add(e.getStatusCode());
+            }
+        }
 
-		context.complete(results);
-	}
+        context.complete(results);
+    }
 
-	@Override
-	public void onDataItemsCreated(final List<DataItem> dataItems) {
-		this.subscriptionModel.onDataItemsCreated(dataItems);
-	}
+    @Override
+    public void onDataItemsCreated(final List<DataItem> dataItems) {
+        this.subscriptionModel.onDataItemsCreated(dataItems);
+    }
 
-	@Override
-	public void onDataItemsModified(final List<DataItem> dataItems) {
-		this.subscriptionModel.onDataItemsModified(dataItems);
-	}
+    @Override
+    public void onDataItemsModified(final List<DataItem> dataItems) {
+        this.subscriptionModel.onDataItemsModified(dataItems);
+    }
 
-	@Override
-	public void onDataItemsDeleted(final List<DataItem> dataItems) {
-		this.subscriptionModel.onDataItemsDeleted(dataItems);
-	}
+    @Override
+    public void onDataItemsDeleted(final List<DataItem> dataItems) {
+        this.subscriptionModel.onDataItemsDeleted(dataItems);
+    }
 
-	@Override
-	public void onMonitoringModeChanged(final List<MonitoredItem> monitoredItems) {
-		this.subscriptionModel.onMonitoringModeChanged(monitoredItems);
-	}
+    @Override
+    public void onMonitoringModeChanged(final List<MonitoredItem> monitoredItems) {
+        this.subscriptionModel.onMonitoringModeChanged(monitoredItems);
+    }
 
-	public CamelServerItem getOrAddItem(final String itemId) {
-		synchronized (this) {
-			CamelServerItem item = this.itemMap.get(itemId);
-			if (item == null) {
-				item = new CamelServerItem(itemId, this.nodeManager, this.namespaceIndex, this.itemsObject);
-				this.itemMap.put(itemId, item);
-			}
-			return item;
-		}
-	}
+    public CamelServerItem getOrAddItem(final String itemId) {
+        synchronized (this) {
+            CamelServerItem item = this.itemMap.get(itemId);
+            if (item == null) {
+                item = new CamelServerItem(itemId, this.nodeManager, this.namespaceIndex, this.itemsObject);
+                this.itemMap.put(itemId, item);
+            }
+            return item;
+        }
+    }
 
 }

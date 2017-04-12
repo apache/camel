@@ -30,67 +30,70 @@ import org.junit.Test;
  */
 public class MonitorItemMultiConnectionsTest extends AbstractMiloServerTest {
 
-	private static final String DIRECT_START_1 = "direct:start1";
+    private static final String DIRECT_START_1 = "direct:start1";
 
-	private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
+    private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
-	private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:12685?node=" + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
+    private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:12685?node="
+                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
 
-	private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:tcp://foo:bar2@localhost:12685?node=" + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
+    private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:tcp://foo:bar2@localhost:12685?node="
+                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
 
-	private static final String MILO_CLIENT_ITEM_C3_1 = "milo-client:tcp://foo2:bar@localhost:12685?node=" + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
+    private static final String MILO_CLIENT_ITEM_C3_1 = "milo-client:tcp://foo2:bar@localhost:12685?node="
+                                                        + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
 
-	private static final String MOCK_TEST_1 = "mock:test1";
-	private static final String MOCK_TEST_2 = "mock:test2";
-	private static final String MOCK_TEST_3 = "mock:test3";
+    private static final String MOCK_TEST_1 = "mock:test1";
+    private static final String MOCK_TEST_2 = "mock:test2";
+    private static final String MOCK_TEST_3 = "mock:test3";
 
-	@EndpointInject(uri = MOCK_TEST_1)
-	protected MockEndpoint test1Endpoint;
+    @EndpointInject(uri = MOCK_TEST_1)
+    protected MockEndpoint test1Endpoint;
 
-	@EndpointInject(uri = MOCK_TEST_2)
-	protected MockEndpoint test2Endpoint;
+    @EndpointInject(uri = MOCK_TEST_2)
+    protected MockEndpoint test2Endpoint;
 
-	@EndpointInject(uri = MOCK_TEST_3)
-	protected MockEndpoint test3Endpoint;
+    @EndpointInject(uri = MOCK_TEST_3)
+    protected MockEndpoint test3Endpoint;
 
-	@Produce(uri = DIRECT_START_1)
-	protected ProducerTemplate producer1;
+    @Produce(uri = DIRECT_START_1)
+    protected ProducerTemplate producer1;
 
-	@Override
-	protected RoutesBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
 
-				from(MILO_CLIENT_ITEM_C1_1).to(MOCK_TEST_1);
-				from(MILO_CLIENT_ITEM_C2_1).to(MOCK_TEST_2);
-				from(MILO_CLIENT_ITEM_C3_1).to(MOCK_TEST_3);
-			}
-		};
-	}
+                from(MILO_CLIENT_ITEM_C1_1).to(MOCK_TEST_1);
+                from(MILO_CLIENT_ITEM_C2_1).to(MOCK_TEST_2);
+                from(MILO_CLIENT_ITEM_C3_1).to(MOCK_TEST_3);
+            }
+        };
+    }
 
-	/**
-	 * Monitor multiple connections, but only one has the correct credentials
-	 */
-	@Test
-	public void testMonitorItem1() throws Exception {
-		// set server value
-		this.producer1.sendBody("Foo");
+    /**
+     * Monitor multiple connections, but only one has the correct credentials
+     */
+    @Test
+    public void testMonitorItem1() throws Exception {
+        // set server value
+        this.producer1.sendBody("Foo");
 
-		// item 1 ... only this one receives
-		this.test1Endpoint.setExpectedCount(1);
-		this.test1Endpoint.setSleepForEmptyTest(5_000);
+        // item 1 ... only this one receives
+        this.test1Endpoint.setExpectedCount(1);
+        this.test1Endpoint.setSleepForEmptyTest(5_000);
 
-		// item 2
-		this.test2Endpoint.setExpectedCount(0);
-		this.test2Endpoint.setSleepForEmptyTest(5_000);
+        // item 2
+        this.test2Endpoint.setExpectedCount(0);
+        this.test2Endpoint.setSleepForEmptyTest(5_000);
 
-		// item 3
-		this.test3Endpoint.setExpectedCount(0);
-		this.test3Endpoint.setSleepForEmptyTest(5_000);
+        // item 3
+        this.test3Endpoint.setExpectedCount(0);
+        this.test3Endpoint.setSleepForEmptyTest(5_000);
 
-		// assert
-		this.assertMockEndpointsSatisfied();
-	}
+        // assert
+        this.assertMockEndpointsSatisfied();
+    }
 }

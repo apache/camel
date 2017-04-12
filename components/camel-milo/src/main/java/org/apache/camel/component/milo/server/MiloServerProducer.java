@@ -23,16 +23,16 @@ import org.apache.camel.impl.DefaultProducer;
 
 class MiloServerProducer extends DefaultProducer {
 
-	private final CamelServerItem item;
+    private final CamelServerItem item;
 
-	public MiloServerProducer(final Endpoint endpoint, final CamelServerItem item) {
-		super(endpoint);
-		this.item = item;
-	}
+    public MiloServerProducer(final Endpoint endpoint, final CamelServerItem item) {
+        super(endpoint);
+        this.item = item;
+    }
 
-	@Override
-	public void process(final Exchange exchange) throws Exception {
-		final Object value = exchange.getIn().getBody();
-		this.item.update(value);
-	}
+    @Override
+    public void process(final Exchange exchange) throws Exception {
+        final Object value = exchange.getIn().getBody();
+        this.item.update(value);
+    }
 }

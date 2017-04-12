@@ -27,37 +27,36 @@ import org.slf4j.LoggerFactory;
 
 public class MiloClientProducer extends DefaultProducer {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MiloClientProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MiloClientProducer.class);
 
-	private final MiloClientConnection connection;
+    private final MiloClientConnection connection;
 
-	private final NamespaceId namespaceId;
+    private final NamespaceId namespaceId;
 
-	private final PartialNodeId partialNodeId;
+    private final PartialNodeId partialNodeId;
 
-	private final boolean defaultAwaitWrites;
+    private final boolean defaultAwaitWrites;
 
-	public MiloClientProducer(final Endpoint endpoint, final MiloClientConnection connection,
-			final MiloClientItemConfiguration configuration, final boolean defaultAwaitWrites) {
-		super(endpoint);
+    public MiloClientProducer(final Endpoint endpoint, final MiloClientConnection connection, final MiloClientItemConfiguration configuration, final boolean defaultAwaitWrites) {
+        super(endpoint);
 
-		this.connection = connection;
-		this.defaultAwaitWrites = defaultAwaitWrites;
+        this.connection = connection;
+        this.defaultAwaitWrites = defaultAwaitWrites;
 
-		this.namespaceId = configuration.makeNamespaceId();
-		this.partialNodeId = configuration.makePartialNodeId();
-	}
+        this.namespaceId = configuration.makeNamespaceId();
+        this.partialNodeId = configuration.makePartialNodeId();
+    }
 
-	@Override
-	public void process(final Exchange exchange) throws Exception {
-		final Message msg = exchange.getIn();
-		final Object value = msg.getBody();
+    @Override
+    public void process(final Exchange exchange) throws Exception {
+        final Message msg = exchange.getIn();
+        final Object value = msg.getBody();
 
-		LOG.debug("Processing message: {}", value);
+        LOG.debug("Processing message: {}", value);
 
-		final Boolean await = msg.getHeader("await", this.defaultAwaitWrites, Boolean.class);
+        final Boolean await = msg.getHeader("await", this.defaultAwaitWrites, Boolean.class);
 
-		this.connection.writeValue(this.namespaceId, this.partialNodeId, value, await != null ? await : false);
-	}
+        this.connection.writeValue(this.namespaceId, this.partialNodeId, value, await != null ? await : false);
+    }
 
 }

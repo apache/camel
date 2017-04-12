@@ -33,122 +33,122 @@ import org.junit.Test;
  */
 public class WriteClientTest extends AbstractMiloServerTest {
 
-	private static final String DIRECT_START_1 = "direct:start1";
-	private static final String DIRECT_START_2 = "direct:start2";
-	private static final String DIRECT_START_3 = "direct:start3";
-	private static final String DIRECT_START_4 = "direct:start4";
+    private static final String DIRECT_START_1 = "direct:start1";
+    private static final String DIRECT_START_2 = "direct:start2";
+    private static final String DIRECT_START_3 = "direct:start3";
+    private static final String DIRECT_START_4 = "direct:start4";
 
-	private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
-	private static final String MILO_SERVER_ITEM_2 = "milo-server:myitem2";
+    private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
+    private static final String MILO_SERVER_ITEM_2 = "milo-server:myitem2";
 
-	private static final String MILO_CLIENT_BASE_C1 = "milo-client:tcp://foo:bar@localhost:12685";
-	private static final String MILO_CLIENT_BASE_C2 = "milo-client:tcp://foo2:bar2@localhost:12685";
+    private static final String MILO_CLIENT_BASE_C1 = "milo-client:tcp://foo:bar@localhost:12685";
+    private static final String MILO_CLIENT_BASE_C2 = "milo-client:tcp://foo2:bar2@localhost:12685";
 
-	private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
-	private static final String MILO_CLIENT_ITEM_C1_2 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem2");
-	
-	private static final String MILO_CLIENT_ITEM_C2_1 = MILO_CLIENT_BASE_C2 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
-	private static final String MILO_CLIENT_ITEM_C2_2 = MILO_CLIENT_BASE_C2 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem2");
+    private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
+    private static final String MILO_CLIENT_ITEM_C1_2 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem2");
 
-	private static final String MOCK_TEST_1 = "mock:test1";
-	private static final String MOCK_TEST_2 = "mock:test2";
+    private static final String MILO_CLIENT_ITEM_C2_1 = MILO_CLIENT_BASE_C2 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
+    private static final String MILO_CLIENT_ITEM_C2_2 = MILO_CLIENT_BASE_C2 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem2");
 
-	@EndpointInject(uri = MOCK_TEST_1)
-	protected MockEndpoint test1Endpoint;
+    private static final String MOCK_TEST_1 = "mock:test1";
+    private static final String MOCK_TEST_2 = "mock:test2";
 
-	@EndpointInject(uri = MOCK_TEST_2)
-	protected MockEndpoint test2Endpoint;
+    @EndpointInject(uri = MOCK_TEST_1)
+    protected MockEndpoint test1Endpoint;
 
-	@Produce(uri = DIRECT_START_1)
-	protected ProducerTemplate producer1;
+    @EndpointInject(uri = MOCK_TEST_2)
+    protected MockEndpoint test2Endpoint;
 
-	@Produce(uri = DIRECT_START_2)
-	protected ProducerTemplate producer2;
+    @Produce(uri = DIRECT_START_1)
+    protected ProducerTemplate producer1;
 
-	@Produce(uri = DIRECT_START_3)
-	protected ProducerTemplate producer3;
+    @Produce(uri = DIRECT_START_2)
+    protected ProducerTemplate producer2;
 
-	@Produce(uri = DIRECT_START_4)
-	protected ProducerTemplate producer4;
+    @Produce(uri = DIRECT_START_3)
+    protected ProducerTemplate producer3;
 
-	@Override
-	protected RoutesBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
+    @Produce(uri = DIRECT_START_4)
+    protected ProducerTemplate producer4;
 
-				from(MILO_SERVER_ITEM_1).to(MOCK_TEST_1);
-				from(MILO_SERVER_ITEM_2).to(MOCK_TEST_2);
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
 
-				from(DIRECT_START_1).to(MILO_CLIENT_ITEM_C1_1);
-				from(DIRECT_START_2).to(MILO_CLIENT_ITEM_C1_2);
+                from(MILO_SERVER_ITEM_1).to(MOCK_TEST_1);
+                from(MILO_SERVER_ITEM_2).to(MOCK_TEST_2);
 
-				from(DIRECT_START_3).to(MILO_CLIENT_ITEM_C2_1);
-				from(DIRECT_START_4).to(MILO_CLIENT_ITEM_C2_2);
-			}
-		};
-	}
+                from(DIRECT_START_1).to(MILO_CLIENT_ITEM_C1_1);
+                from(DIRECT_START_2).to(MILO_CLIENT_ITEM_C1_2);
 
-	@Test
-	public void testWrite1() throws Exception {
-		// item 1
-		this.test1Endpoint.setExpectedCount(2);
-		testBody(this.test1Endpoint.message(0), assertGoodValue("Foo1"));
-		testBody(this.test1Endpoint.message(1), assertGoodValue("Foo2"));
+                from(DIRECT_START_3).to(MILO_CLIENT_ITEM_C2_1);
+                from(DIRECT_START_4).to(MILO_CLIENT_ITEM_C2_2);
+            }
+        };
+    }
 
-		// item 2
-		this.test2Endpoint.setExpectedCount(0);
+    @Test
+    public void testWrite1() throws Exception {
+        // item 1
+        this.test1Endpoint.setExpectedCount(2);
+        testBody(this.test1Endpoint.message(0), assertGoodValue("Foo1"));
+        testBody(this.test1Endpoint.message(1), assertGoodValue("Foo2"));
 
-		// send
-		sendValue(this.producer1, new Variant("Foo1"));
-		sendValue(this.producer1, new Variant("Foo2"));
+        // item 2
+        this.test2Endpoint.setExpectedCount(0);
 
-		// assert
-		this.assertMockEndpointsSatisfied();
-	}
+        // send
+        sendValue(this.producer1, new Variant("Foo1"));
+        sendValue(this.producer1, new Variant("Foo2"));
 
-	@Test
-	public void testWrite2() throws Exception {
-		// item 1
-		this.test1Endpoint.setExpectedCount(0);
+        // assert
+        this.assertMockEndpointsSatisfied();
+    }
 
-		// item 2
-		this.test2Endpoint.setExpectedCount(2);
-		testBody(this.test2Endpoint.message(0), assertGoodValue("Foo1"));
-		testBody(this.test2Endpoint.message(1), assertGoodValue("Foo2"));
+    @Test
+    public void testWrite2() throws Exception {
+        // item 1
+        this.test1Endpoint.setExpectedCount(0);
 
-		// send
-		sendValue(this.producer2, new Variant("Foo1"));
-		sendValue(this.producer2, new Variant("Foo2"));
+        // item 2
+        this.test2Endpoint.setExpectedCount(2);
+        testBody(this.test2Endpoint.message(0), assertGoodValue("Foo1"));
+        testBody(this.test2Endpoint.message(1), assertGoodValue("Foo2"));
 
-		// assert
-		this.assertMockEndpointsSatisfied();
-	}
+        // send
+        sendValue(this.producer2, new Variant("Foo1"));
+        sendValue(this.producer2, new Variant("Foo2"));
 
-	@Test
-	public void testWrite3() throws Exception {
-		// item 1
-		this.test1Endpoint.setExpectedCount(2);
-		testBody(this.test1Endpoint.message(0), assertGoodValue("Foo1"));
-		testBody(this.test1Endpoint.message(1), assertGoodValue("Foo3"));
+        // assert
+        this.assertMockEndpointsSatisfied();
+    }
 
-		// item 1
-		this.test2Endpoint.setExpectedCount(2);
-		testBody(this.test2Endpoint.message(0), assertGoodValue("Foo2"));
-		testBody(this.test2Endpoint.message(1), assertGoodValue("Foo4"));
+    @Test
+    public void testWrite3() throws Exception {
+        // item 1
+        this.test1Endpoint.setExpectedCount(2);
+        testBody(this.test1Endpoint.message(0), assertGoodValue("Foo1"));
+        testBody(this.test1Endpoint.message(1), assertGoodValue("Foo3"));
 
-		// send
-		sendValue(this.producer1, new Variant("Foo1"));
-		sendValue(this.producer2, new Variant("Foo2"));
-		sendValue(this.producer3, new Variant("Foo3"));
-		sendValue(this.producer4, new Variant("Foo4"));
+        // item 1
+        this.test2Endpoint.setExpectedCount(2);
+        testBody(this.test2Endpoint.message(0), assertGoodValue("Foo2"));
+        testBody(this.test2Endpoint.message(1), assertGoodValue("Foo4"));
 
-		// assert
-		assertMockEndpointsSatisfied();
-	}
+        // send
+        sendValue(this.producer1, new Variant("Foo1"));
+        sendValue(this.producer2, new Variant("Foo2"));
+        sendValue(this.producer3, new Variant("Foo3"));
+        sendValue(this.producer4, new Variant("Foo4"));
 
-	private static void sendValue(final ProducerTemplate producerTemplate, final Variant variant) {
-		// we always write synchronously since we do need the message order
-		producerTemplate.sendBodyAndHeader(variant, "await", true);
-	}
+        // assert
+        assertMockEndpointsSatisfied();
+    }
+
+    private static void sendValue(final ProducerTemplate producerTemplate, final Variant variant) {
+        // we always write synchronously since we do need the message order
+        producerTemplate.sendBodyAndHeader(variant, "await", true);
+    }
 }

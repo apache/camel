@@ -24,27 +24,27 @@ import org.junit.Test;
  */
 public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
 
-	@Test
-	public void testSetSecurityPolicies1() {
-		final MiloServerComponent component = new MiloServerComponent();
-		component.setSecurityPoliciesById("None");
-	}
+    @Test
+    public void testSetSecurityPolicies1() {
+        final MiloServerComponent component = new MiloServerComponent();
+        component.setSecurityPoliciesById("None");
+    }
 
-	@Test
-	public void testSetSecurityPolicies2() {
-		final MiloServerComponent component = new MiloServerComponent();
-		component.setSecurityPoliciesById("http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256");
-	}
+    @Test
+    public void testSetSecurityPolicies2() {
+        final MiloServerComponent component = new MiloServerComponent();
+        component.setSecurityPoliciesById("http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256");
+    }
 
-	@Test
-	public void testSetSecurityPolicies3() {
-		final MiloServerComponent component = new MiloServerComponent();
-		component.setSecurityPoliciesById("None", "http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256");
-	}
+    @Test
+    public void testSetSecurityPolicies3() {
+        final MiloServerComponent component = new MiloServerComponent();
+        component.setSecurityPoliciesById("None", "http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256");
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testSetSecurityPolicies4() {
-		final MiloServerComponent component = new MiloServerComponent();
-		component.setSecurityPoliciesById("I just made that up");
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetSecurityPolicies4() {
+        final MiloServerComponent component = new MiloServerComponent();
+        component.setSecurityPoliciesById("I just made that up");
+    }
 }

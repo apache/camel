@@ -20,9 +20,9 @@ import org.apache.camel.component.milo.NamespaceId;
 import org.apache.camel.component.milo.PartialNodeId;
 
 public interface MiloClientItemConfiguration {
-	public NamespaceId makeNamespaceId();
+    public NamespaceId makeNamespaceId();
 
-	public PartialNodeId makePartialNodeId();
+    public PartialNodeId makePartialNodeId();
 
-	public Double getSamplingInterval();
+    public Double getSamplingInterval();
 }

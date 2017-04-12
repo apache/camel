@@ -31,97 +31,91 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 
 public class MiloClientConnection implements AutoCloseable {
 
-	private final MiloClientConfiguration configuration;
+    private final MiloClientConfiguration configuration;
 
-	private SubscriptionManager manager;
+    private SubscriptionManager manager;
 
-	private boolean initialized;
+    private boolean initialized;
 
-	private final OpcUaClientConfigBuilder clientConfiguration;
+    private final OpcUaClientConfigBuilder clientConfiguration;
 
-	public MiloClientConnection(final MiloClientConfiguration configuration,
-			final OpcUaClientConfigBuilder clientConfiguration) {
-		requireNonNull(configuration);
+    public MiloClientConnection(final MiloClientConfiguration configuration, final OpcUaClientConfigBuilder clientConfiguration) {
+        requireNonNull(configuration);
 
-		// make a copy since the configuration is mutable
-		this.configuration = configuration.clone();
-		this.clientConfiguration = clientConfiguration;
-	}
+        // make a copy since the configuration is mutable
+        this.configuration = configuration.clone();
+        this.clientConfiguration = clientConfiguration;
+    }
 
-	protected void init() throws Exception {
-		this.manager = new SubscriptionManager(this.configuration, this.clientConfiguration,
-				Stack.sharedScheduledExecutor(), 10_000);
-	}
+    protected void init() throws Exception {
+        this.manager = new SubscriptionManager(this.configuration, this.clientConfiguration, Stack.sharedScheduledExecutor(), 10_000);
+    }
 
-	@Override
-	public void close() throws Exception {
-		if (this.manager != null) {
-			this.manager.dispose();
-			this.manager = null;
-		}
-	}
+    @Override
+    public void close() throws Exception {
+        if (this.manager != null) {
+            this.manager.dispose();
+            this.manager = null;
+        }
+    }
 
-	protected synchronized void checkInit() {
-		if (this.initialized) {
-			return;
-		}
+    protected synchronized void checkInit() {
+        if (this.initialized) {
+            return;
+        }
 
-		try {
-			init();
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
-		}
-		this.initialized = true;
-	}
+        try {
+            init();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+        this.initialized = true;
+    }
 
-	@FunctionalInterface
-	public interface MonitorHandle {
-		public void unregister();
-	}
+    @FunctionalInterface
+    public interface MonitorHandle {
+        public void unregister();
+    }
 
-	public MonitorHandle monitorValue(final MiloClientItemConfiguration configuration,
-			final Consumer<DataValue> valueConsumer) {
+    public MonitorHandle monitorValue(final MiloClientItemConfiguration configuration, final Consumer<DataValue> valueConsumer) {
 
-		requireNonNull(configuration);
-		requireNonNull(valueConsumer);
+        requireNonNull(configuration);
+        requireNonNull(valueConsumer);
 
-		checkInit();
+        checkInit();
 
-		final NamespaceId namespaceId = configuration.makeNamespaceId();
-		final PartialNodeId partialNodeId = configuration.makePartialNodeId();
+        final NamespaceId namespaceId = configuration.makeNamespaceId();
+        final PartialNodeId partialNodeId = configuration.makePartialNodeId();
 
-		final UInteger handle = this.manager.registerItem(namespaceId, partialNodeId,
-				configuration.getSamplingInterval(), valueConsumer);
+        final UInteger handle = this.manager.registerItem(namespaceId, partialNodeId, configuration.getSamplingInterval(), valueConsumer);
 
-		return () -> MiloClientConnection.this.manager.unregisterItem(handle);
-	}
+        return () -> MiloClientConnection.this.manager.unregisterItem(handle);
+    }
 
-	public String getConnectionId() {
-		return this.configuration.toCacheId();
-	}
+    public String getConnectionId() {
+        return this.configuration.toCacheId();
+    }
 
-	public void writeValue(final NamespaceId namespaceId, final PartialNodeId partialNodeId, final Object value,
-			final boolean await) {
-		checkInit();
+    public void writeValue(final NamespaceId namespaceId, final PartialNodeId partialNodeId, final Object value, final boolean await) {
+        checkInit();
 
-		this.manager.write(namespaceId, partialNodeId, mapValue(value), await);
-	}
+        this.manager.write(namespaceId, partialNodeId, mapValue(value), await);
+    }
 
-	/**
-	 * Map the incoming value to some value writable to the milo client
-	 *
-	 * @param value
-	 *            the incoming value
-	 * @return the outgoing value
-	 */
-	private DataValue mapValue(final Object value) {
-		if (value instanceof DataValue) {
-			return (DataValue) value;
-		}
-		if (value instanceof Variant) {
-			return new DataValue((Variant) value);
-		}
-		return new DataValue(new Variant(value));
-	}
+    /**
+     * Map the incoming value to some value writable to the milo client
+     *
+     * @param value the incoming value
+     * @return the outgoing value
+     */
+    private DataValue mapValue(final Object value) {
+        if (value instanceof DataValue) {
+            return (DataValue)value;
+        }
+        if (value instanceof Variant) {
+            return new DataValue((Variant)value);
+        }
+        return new DataValue(new Variant(value));
+    }
 
 }

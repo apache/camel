@@ -32,61 +32,55 @@ import org.junit.Test;
  */
 public class NodeIdTest extends AbstractMiloServerTest {
 
-	@Test
-	public void testFull1() {
-		final String s = String.format("nsu=%s;s=%s", DEFAULT_NAMESPACE_URI, "item-1");
-		testUri("milo-client:tcp://foo:bar@localhost:12685?samplingInterval=1000&node=RAW(" + s + ")",
-				DEFAULT_NAMESPACE_URI, "item-1");
-	}
+    @Test
+    public void testFull1() {
+        final String s = String.format("nsu=%s;s=%s", DEFAULT_NAMESPACE_URI, "item-1");
+        testUri("milo-client:tcp://foo:bar@localhost:12685?samplingInterval=1000&node=RAW(" + s + ")", DEFAULT_NAMESPACE_URI, "item-1");
+    }
 
-	@Test
-	public void testFull2() {
-		final String s = String.format("ns=%s;s=%s", 1, "item-1");
-		testUri("milo-client:tcp://foo:bar@localhost:12685?samplingInterval=1000&node=RAW(" + s + ")", ushort(1),
-				"item-1");
-	}
+    @Test
+    public void testFull2() {
+        final String s = String.format("ns=%s;s=%s", 1, "item-1");
+        testUri("milo-client:tcp://foo:bar@localhost:12685?samplingInterval=1000&node=RAW(" + s + ")", ushort(1), "item-1");
+    }
 
-	@Test
-	public void testFull3() {
-		final String s = String.format("ns=%s;i=%s", 1, 2);
-		testUri("milo-client:tcp://foo:bar@localhost:12685?samplingInterval=1000&node=RAW(" + s + ")", ushort(1),
-				uint(2));
-	}
+    @Test
+    public void testFull3() {
+        final String s = String.format("ns=%s;i=%s", 1, 2);
+        testUri("milo-client:tcp://foo:bar@localhost:12685?samplingInterval=1000&node=RAW(" + s + ")", ushort(1), uint(2));
+    }
 
-	@Test
-	public void testFull1NonRaw() {
-		final String s = String.format("ns=%s;i=%s", 1, 2);
-		testUri("milo-client:tcp://foo:bar@localhost:12685?samplingInterval=1000&node="
-				+ urlFormParameterEscaper().escape(s), ushort(1), uint(2));
-	}
+    @Test
+    public void testFull1NonRaw() {
+        final String s = String.format("ns=%s;i=%s", 1, 2);
+        testUri("milo-client:tcp://foo:bar@localhost:12685?samplingInterval=1000&node=" + urlFormParameterEscaper().escape(s), ushort(1), uint(2));
+    }
 
-	@Test
-	public void testDocURL() {
-		testUri("milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)", "http://foo.bar",
-				"foo/bar");
-	}
+    @Test
+    public void testDocURL() {
+        testUri("milo-client://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)", "http://foo.bar", "foo/bar");
+    }
 
-	@Test(expected = ResolveEndpointFailedException.class)
-	public void testMixed() {
-		// This must fail since "node" is incomplete
-		testUri("milo-client:tcp://foo:bar@localhost:12685?node=foo&namespaceUri=" + DEFAULT_NAMESPACE_URI, null, null);
-	}
+    @Test(expected = ResolveEndpointFailedException.class)
+    public void testMixed() {
+        // This must fail since "node" is incomplete
+        testUri("milo-client:tcp://foo:bar@localhost:12685?node=foo&namespaceUri=" + DEFAULT_NAMESPACE_URI, null, null);
+    }
 
-	private void testUri(final String uri, final Serializable namespace, final Serializable partialNodeId) {
-		assertNodeId(getMandatoryEndpoint(uri, MiloClientEndpoint.class), namespace, partialNodeId);
-	}
+    private void testUri(final String uri, final Serializable namespace, final Serializable partialNodeId) {
+        assertNodeId(getMandatoryEndpoint(uri, MiloClientEndpoint.class), namespace, partialNodeId);
+    }
 
-	private void assertNodeId(final MiloClientEndpoint endpoint, final Serializable namespace,
-			final Serializable partialNodeId) {
+    private void assertNodeId(final MiloClientEndpoint endpoint, final Serializable namespace, final Serializable partialNodeId) {
 
-		final NamespaceId ns = endpoint.makeNamespaceId();
-		final PartialNodeId pn = endpoint.makePartialNodeId();
+        final NamespaceId ns = endpoint.makeNamespaceId();
+        final PartialNodeId pn = endpoint.makePartialNodeId();
 
-		assertNotNull(ns);
-		assertNotNull(pn);
+        assertNotNull(ns);
+        assertNotNull(pn);
 
-		assertEquals(namespace, ns.getValue());
-		assertEquals(partialNodeId, pn.getValue());
-	}
+        assertEquals(namespace, ns.getValue());
+        assertEquals(partialNodeId, pn.getValue());
+    }
 
 }

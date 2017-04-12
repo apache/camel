@@ -33,146 +33,145 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 @UriEndpoint(scheme = "milo-client", syntax = "milo-client:tcp://user:password@host:port/path/to/service?itemId=item.id&namespaceUri=urn:foo:bar", title = "Milo based OPC UA Client", consumerClass = MiloClientConsumer.class, label = "iot")
 public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientItemConfiguration {
 
-	/**
-	 * The OPC UA server endpoint
-	 */
-	@UriPath
-	@Metadata(required = "true")
-	private final String endpointUri;
+    /**
+     * The OPC UA server endpoint
+     */
+    @UriPath
+    @Metadata(required = "true")
+    private final String endpointUri;
 
-	/**
-	 * The node definition (see Node ID)
-	 */
-	@UriParam
-	private ExpandedNodeId node;
+    /**
+     * The node definition (see Node ID)
+     */
+    @UriParam
+    private ExpandedNodeId node;
 
-	/**
-	 * The sampling interval in milliseconds
-	 */
-	@UriParam
-	private Double samplingInterval;
+    /**
+     * The sampling interval in milliseconds
+     */
+    @UriParam
+    private Double samplingInterval;
 
-	/**
-	 * The client configuration
-	 */
-	@UriParam
-	private MiloClientConfiguration client;
+    /**
+     * The client configuration
+     */
+    @UriParam
+    private MiloClientConfiguration client;
 
-	/**
-	 * Default "await" setting for writes
-	 */
-	@UriParam
-	private boolean defaultAwaitWrites = false;
+    /**
+     * Default "await" setting for writes
+     */
+    @UriParam
+    private boolean defaultAwaitWrites = false;
 
-	private final MiloClientConnection connection;
-	private final MiloClientComponent component;
+    private final MiloClientConnection connection;
+    private final MiloClientComponent component;
 
-	public MiloClientEndpoint(final String uri, final MiloClientComponent component,
-			final MiloClientConnection connection, final String endpointUri) {
-		super(uri, component);
+    public MiloClientEndpoint(final String uri, final MiloClientComponent component, final MiloClientConnection connection, final String endpointUri) {
+        super(uri, component);
 
-		Objects.requireNonNull(component);
-		Objects.requireNonNull(connection);
-		Objects.requireNonNull(endpointUri);
+        Objects.requireNonNull(component);
+        Objects.requireNonNull(connection);
+        Objects.requireNonNull(endpointUri);
 
-		this.endpointUri = endpointUri;
+        this.endpointUri = endpointUri;
 
-		this.component = component;
-		this.connection = connection;
-	}
+        this.component = component;
+        this.connection = connection;
+    }
 
-	@Override
-	protected void doStart() throws Exception {
-		super.doStart();
-	}
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+    }
 
-	@Override
-	protected void doStop() throws Exception {
-		this.component.disposed(this);
-		super.doStop();
-	}
+    @Override
+    protected void doStop() throws Exception {
+        this.component.disposed(this);
+        super.doStop();
+    }
 
-	@Override
-	public Producer createProducer() throws Exception {
-		return new MiloClientProducer(this, this.connection, this, this.defaultAwaitWrites);
-	}
+    @Override
+    public Producer createProducer() throws Exception {
+        return new MiloClientProducer(this, this.connection, this, this.defaultAwaitWrites);
+    }
 
-	@Override
-	public Consumer createConsumer(final Processor processor) throws Exception {
-		return new MiloClientConsumer(this, processor, this.connection, this);
-	}
+    @Override
+    public Consumer createConsumer(final Processor processor) throws Exception {
+        return new MiloClientConsumer(this, processor, this.connection, this);
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return true;
-	}
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
 
-	public MiloClientConnection getConnection() {
-		return this.connection;
-	}
+    public MiloClientConnection getConnection() {
+        return this.connection;
+    }
 
-	// item configuration
+    // item configuration
 
-	@Override
-	public PartialNodeId makePartialNodeId() {
-		PartialNodeId result = null;
+    @Override
+    public PartialNodeId makePartialNodeId() {
+        PartialNodeId result = null;
 
-		if (this.node != null) {
-			result = PartialNodeId.fromExpandedNodeId(this.node);
-		}
+        if (this.node != null) {
+            result = PartialNodeId.fromExpandedNodeId(this.node);
+        }
 
-		if (result == null) {
-			throw new IllegalStateException("Missing or invalid node id configuration");
-		} else {
-			return result;
-		}
-	}
+        if (result == null) {
+            throw new IllegalStateException("Missing or invalid node id configuration");
+        } else {
+            return result;
+        }
+    }
 
-	@Override
-	public NamespaceId makeNamespaceId() {
-		NamespaceId result = null;
+    @Override
+    public NamespaceId makeNamespaceId() {
+        NamespaceId result = null;
 
-		if (this.node != null) {
-			result = NamespaceId.fromExpandedNodeId(this.node);
-		}
+        if (this.node != null) {
+            result = NamespaceId.fromExpandedNodeId(this.node);
+        }
 
-		if (result == null) {
-			throw new IllegalStateException("Missing or invalid node id configuration");
-		} else {
-			return result;
-		}
-	}
+        if (result == null) {
+            throw new IllegalStateException("Missing or invalid node id configuration");
+        } else {
+            return result;
+        }
+    }
 
-	public void setNode(final String node) {
-		if (node == null) {
-			this.node = null;
-		} else {
-			this.node = ExpandedNodeId.parse(node);
-		}
-	}
+    public void setNode(final String node) {
+        if (node == null) {
+            this.node = null;
+        } else {
+            this.node = ExpandedNodeId.parse(node);
+        }
+    }
 
-	public String getNode() {
-		if (this.node != null) {
-			return this.node.toParseableString();
-		} else {
-			return null;
-		}
-	}
+    public String getNode() {
+        if (this.node != null) {
+            return this.node.toParseableString();
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public Double getSamplingInterval() {
-		return this.samplingInterval;
-	}
+    @Override
+    public Double getSamplingInterval() {
+        return this.samplingInterval;
+    }
 
-	public void setSamplingInterval(final Double samplingInterval) {
-		this.samplingInterval = samplingInterval;
-	}
+    public void setSamplingInterval(final Double samplingInterval) {
+        this.samplingInterval = samplingInterval;
+    }
 
-	public boolean isDefaultAwaitWrites() {
-		return this.defaultAwaitWrites;
-	}
+    public boolean isDefaultAwaitWrites() {
+        return this.defaultAwaitWrites;
+    }
 
-	public void setDefaultAwaitWrites(final boolean defaultAwaitWrites) {
-		this.defaultAwaitWrites = defaultAwaitWrites;
-	}
+    public void setDefaultAwaitWrites(final boolean defaultAwaitWrites) {
+        this.defaultAwaitWrites = defaultAwaitWrites;
+    }
 }
