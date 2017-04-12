@@ -39,19 +39,12 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
         // let it run a poll
         consumer.receive(1000);
 
-        boolean found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/foo"));
-        assertTrue("Should find file consumer thread", found);
-
         cache.releasePollingConsumer(endpoint, consumer);
 
         // takes a little to stop
         Thread.sleep(1000);
 
         assertEquals("Stopped", ((org.apache.camel.support.ServiceSupport) consumer).getStatus().name());
-
-        // should not be a file consumer thread
-        found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/foo"));
-        assertFalse("Should not find file consumer thread", found);
 
         cache.stop();
     }
