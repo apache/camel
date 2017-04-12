@@ -64,6 +64,7 @@
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
     <module>camel-example-kafka</module>
+    <module>camel-example-kotlin</module>
     <module>camel-example-loadbalancing</module>
     <module>camel-example-loan-broker-cxf</module>
     <module>camel-example-loan-broker-jms</module>
@@ -78,6 +79,7 @@
     <module>camel-example-reportincident</module>
     <module>camel-example-reportincident-wssecurity</module>
     <module>camel-example-rest-producer</module>
+    <module>camel-example-rest-swagger</module>
     <module>camel-example-restlet-jdbc</module>
     <module>camel-example-route-throttling</module>
     <module>camel-example-scala</module>
