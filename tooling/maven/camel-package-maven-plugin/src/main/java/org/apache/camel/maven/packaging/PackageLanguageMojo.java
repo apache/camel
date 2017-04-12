@@ -144,10 +144,13 @@ public class PackageLanguageMojo extends AbstractMojo {
             }
         }
 
-        // find camel-core and grab the data format model from there, and enrich this model with information from this artifact
-        // and create json schema model file for this data format
+        // is this from Apache Camel then the data format is out of the box and we should enrich the json schema with more details
+        boolean apacheCamel = "org.apache.camel".equals(project.getGroupId());
+
+        // find camel-core and grab the language model from there, and enrich this model with information from this artifact
+        // and create json schema model file for this language
         try {
-            if (count > 0) {
+            if (apacheCamel && count > 0) {
                 Artifact camelCore = findCamelCoreArtifact(project);
                 if (camelCore != null) {
                     File core = camelCore.getFile();
