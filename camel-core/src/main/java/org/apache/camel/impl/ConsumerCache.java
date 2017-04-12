@@ -134,9 +134,16 @@ public class ConsumerCache extends ServiceSupport {
             if (pollingConsumer instanceof IsSingleton) {
                 singleton = ((IsSingleton) pollingConsumer).isSingleton();
             }
-            if (!singleton) {
+            String key = endpoint.getEndpointUri();
+            boolean cached = consumers.containsKey(key);
+            if (!singleton || !cached) {
                 try {
-                    // stop and shutdown non-singleton producers as we should not leak resources
+                    // stop and shutdown non-singleton/non-cached consumers as we should not leak resources
+                    if (!singleton) {
+                        LOG.debug("Released PollingConsumer: {} is stopped as consumer is not singleton", endpoint);
+                    } else {
+                        LOG.debug("Released PollingConsumer: {} is stopped as consumer cache is full", endpoint);
+                    }
                     ServiceHelper.stopAndShutdownService(pollingConsumer);
                 } catch (Exception ex) {
                     if (ex instanceof RuntimeCamelException) {
