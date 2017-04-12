@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import com.pubnub.api.PubNubException;
 import com.pubnub.api.callbacks.PNCallback;
+import com.pubnub.api.models.consumer.PNErrorData;
 import com.pubnub.api.models.consumer.PNPublishResult;
 import com.pubnub.api.models.consumer.PNStatus;
 import com.pubnub.api.models.consumer.history.PNHistoryResult;
@@ -56,43 +57,41 @@ public class PubNubProducer extends DefaultAsyncProducer {
         Operation operation = getOperation(exchange);
 
         LOG.debug("Executing {} operation", operation);
-
-        switch (operation) {
-        case PUBLISH: {
-            doPublish(exchange, callback);
-            break;
-        }
-        case FIRE: {
-            doFire(exchange, callback);
-            break;
-        }
-        case GETHISTORY: {
-            doGetHistory(exchange, callback);
-            break;
-        }
-        case GETSTATE: {
-            doGetState(exchange, callback);
-            break;
-        }
-        case HERENOW: {
-            doHereNow(exchange, callback);
-            break;
-        }
-        case SETSTATE: {
-            doSetState(exchange, callback);
-            break;
-        }
-        case WHERENOW: {
-            doWhereNow(exchange, callback);
-            break;
-        }
-        default:
-            throw new UnsupportedOperationException(operation.toString());
-        }
-        if (exchange.getException() != null) {
-            if (exchange.getException() instanceof PubNubException) {
-                LOG.error("Exception from PubNub : {}", exchange.getException(PubNubException.class).getPubnubError().getMessage());
+        try {
+            switch (operation) {
+            case PUBLISH: {
+                doPublish(exchange, callback);
+                break;
             }
+            case FIRE: {
+                doFire(exchange, callback);
+                break;
+            }
+            case GETHISTORY: {
+                doGetHistory(exchange, callback);
+                break;
+            }
+            case GETSTATE: {
+                doGetState(exchange, callback);
+                break;
+            }
+            case HERENOW: {
+                doHereNow(exchange, callback);
+                break;
+            }
+            case SETSTATE: {
+                doSetState(exchange, callback);
+                break;
+            }
+            case WHERENOW: {
+                doWhereNow(exchange, callback);
+                break;
+            }
+            default:
+                throw new UnsupportedOperationException(operation.toString());
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
             callback.done(true);
             return true;
         }
@@ -103,8 +102,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
     private void doPublish(Exchange exchange, AsyncCallback callback) {
         Object body = exchange.getIn().getBody();
         if (ObjectHelper.isEmpty(body)) {
-            exchange.setException(new CamelException("Can not publish empty message"));
-            callback.done(true);
+            throw new RuntimeException("Can not publish empty message");
         }
         LOG.debug("Sending message [{}] to channel [{}]", body, getChannel(exchange));
         endpoint.getPubnub()
@@ -222,9 +220,14 @@ public class PubNubProducer extends DefaultAsyncProducer {
 
     private void processMessage(Exchange exchange, AsyncCallback callback, PNStatus status, Object body) {
         if (status.isError()) {
-            exchange.setException(status.getErrorData().getThrowable());
+            PNErrorData errorData = status.getErrorData();
             callback.done(false);
-            return;
+            exchange.setException(errorData.getThrowable());
+            if (errorData != null && errorData.getThrowable() instanceof PubNubException) {
+                PubNubException pubNubException = (PubNubException) errorData.getThrowable();
+                throw new RuntimeException(pubNubException.getPubnubError().getMessage(), errorData.getThrowable());
+            }
+            throw new RuntimeException(status.getErrorData().getThrowable());
         }
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().copyFrom(exchange.getIn());
