@@ -512,7 +512,7 @@ public class RestSwaggerReader {
             if (swagger.getDefinitions() != null && swagger.getDefinitions().get(entry.getKey()) != null) {
                 Model oldModel = swagger.getDefinitions().get(entry.getKey());
                 if (oldModel.getVendorExtensions() != null && !oldModel.getVendorExtensions().isEmpty()) {
-                    oldExt = oldModel.getVendorExtensions().get("x-className") == null;
+                    oldExt = oldModel.getVendorExtensions().get("x-className") != null;
                 }
             }
 
