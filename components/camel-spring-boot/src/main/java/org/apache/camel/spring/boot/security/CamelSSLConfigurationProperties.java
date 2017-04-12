@@ -24,25 +24,12 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class CamelSSLConfigurationProperties {
 
     /**
-     * Enable the global ssl configuration in Camel.
-     */
-    private boolean enabled;
-
-    /**
      * The Camel global SSL configuration
      */
     @NestedConfigurationProperty
     private SSLContextParameters config;
 
     public CamelSSLConfigurationProperties() {
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public SSLContextParameters getConfig() {
