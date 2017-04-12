@@ -320,7 +320,7 @@ public class ProducerCache extends ServiceSupport {
                             doneSync -> asyncDispatchExchange(endpoint, producer, resultProcessor,
                                     finalExchange, producerCallback));
                         return false;
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         // populate failed so return
                         innerExchange.setException(e);
                         producerCallback.done(true);
@@ -575,7 +575,7 @@ public class ProducerCache extends ServiceSupport {
                 // add as service which will also start the service
                 // (false => we and handling the lifecycle of the producer in this cache)
                 getCamelContext().addService(answer, false);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }
 
