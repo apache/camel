@@ -227,6 +227,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-digitalocean</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-disruptor</artifactId>
     </dependency>
     <dependency>
@@ -619,6 +623,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-metrics</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-milo</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
