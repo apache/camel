@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.milo.server.internal;
 
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ubyte;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
@@ -38,6 +36,8 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ubyte;
 
 public class CamelServerItem {
     private static final Logger LOG = LoggerFactory.getLogger(CamelServerItem.class);

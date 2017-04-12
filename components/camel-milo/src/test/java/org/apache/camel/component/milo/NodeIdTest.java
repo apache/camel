@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.milo;
 
-import static com.google.common.net.UrlEscapers.urlFormParameterEscaper;
-import static org.apache.camel.component.milo.server.MiloServerComponent.DEFAULT_NAMESPACE_URI;
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
-
 import java.io.Serializable;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.milo.client.MiloClientEndpoint;
 import org.junit.Test;
+
+import static com.google.common.net.UrlEscapers.urlFormParameterEscaper;
+import static org.apache.camel.component.milo.server.MiloServerComponent.DEFAULT_NAMESPACE_URI;
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
 
 /**
  * Testing different ways to specify node IDs

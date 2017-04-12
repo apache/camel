@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.milo;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;

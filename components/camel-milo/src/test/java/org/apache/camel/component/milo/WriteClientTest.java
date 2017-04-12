@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.milo;
 
-import static org.apache.camel.component.milo.NodeIds.nodeValue;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -27,6 +25,8 @@ import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.junit.Test;
+
+import static org.apache.camel.component.milo.NodeIds.nodeValue;
 
 /**
  * Unit tests for writing from the client side
