@@ -447,20 +447,4 @@ public class MiloServerComponent extends DefaultComponent {
 	public void setDefaultCertificateValidator(final File certificatesBaseDir) {
 		this.certificateValidator = () -> new DefaultCertificateValidator(certificatesBaseDir);
 	}
-
-	/**
-	 * Validator for client certificates using default file based approach
-	 */
-	public void setDefaultCertificateExistingValidator(final File trustedDir) {
-		throw new UnsupportedOperationException("Can be implemented after fix in upstream");
-
-		/*
-		 * checkDispose(this.certificateValidator);
-		 *
-		 * this.certificateValidator = new
-		 * DefaultCertificateValidator(trustedDir, null, null);
-		 * this.serverConfig.setCertificateValidator(this.certificateValidator);
-		 */
-	}
-
 }

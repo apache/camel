@@ -1,11 +1,12 @@
-/*
- * Copyright (C) 2016 Jens Reimann <jreimann@redhat.com> and others
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.milo;
+
+import static org.apache.camel.component.milo.NodeIds.nodeValue;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -42,15 +44,11 @@ public class WriteClientTest extends AbstractMiloServerTest {
 	private static final String MILO_CLIENT_BASE_C1 = "milo-client:tcp://foo:bar@localhost:12685";
 	private static final String MILO_CLIENT_BASE_C2 = "milo-client:tcp://foo2:bar2@localhost:12685";
 
-	private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?nodeId=items-myitem1&namespaceUri="
-			+ MiloServerComponent.DEFAULT_NAMESPACE_URI;
-	private static final String MILO_CLIENT_ITEM_C1_2 = MILO_CLIENT_BASE_C1 + "?nodeId=items-myitem2&namespaceUri="
-			+ MiloServerComponent.DEFAULT_NAMESPACE_URI;
-
-	private static final String MILO_CLIENT_ITEM_C2_1 = MILO_CLIENT_BASE_C2 + "?nodeId=items-myitem1&namespaceUri="
-			+ MiloServerComponent.DEFAULT_NAMESPACE_URI;
-	private static final String MILO_CLIENT_ITEM_C2_2 = MILO_CLIENT_BASE_C2 + "?nodeId=items-myitem2&namespaceUri="
-			+ MiloServerComponent.DEFAULT_NAMESPACE_URI;
+	private static final String MILO_CLIENT_ITEM_C1_1 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
+	private static final String MILO_CLIENT_ITEM_C1_2 = MILO_CLIENT_BASE_C1 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem2");
+	
+	private static final String MILO_CLIENT_ITEM_C2_1 = MILO_CLIENT_BASE_C2 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
+	private static final String MILO_CLIENT_ITEM_C2_2 = MILO_CLIENT_BASE_C2 + "?node=" + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem2");
 
 	private static final String MOCK_TEST_1 = "mock:test1";
 	private static final String MOCK_TEST_2 = "mock:test2";
