@@ -107,7 +107,6 @@
     <module>camel-consul-starter</module>
     <module>camel-context-starter</module>
     <module>camel-core-starter</module>
-    <module>camel-core-xml-starter</module>
     <module>camel-couchbase-starter</module>
     <module>camel-couchdb-starter</module>
     <module>camel-crypto-starter</module>
