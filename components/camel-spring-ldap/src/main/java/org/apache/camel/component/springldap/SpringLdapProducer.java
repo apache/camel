@@ -18,7 +18,6 @@ package org.apache.camel.component.springldap;
 
 import java.util.Map;
 import java.util.function.BiFunction;
-
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.ModificationItem;
@@ -97,8 +96,8 @@ public class SpringLdapProducer extends DefaultProducer {
         if (StringUtils.isBlank(dn)) {
             ContextSource contextSource = ldapTemplate.getContextSource();
             if (contextSource instanceof BaseLdapPathContextSource) {
-		dn = ((BaseLdapPathContextSource) contextSource).getBaseLdapPathAsString();
-	    }
+                dn = ((BaseLdapPathContextSource) contextSource).getBaseLdapPathAsString();
+            }
         }
         if (operation != LdapOperation.FUNCTION_DRIVEN && (StringUtils.isBlank(dn))) {
             throw new UnsupportedOperationException("DN must not be empty, but you provided an empty DN");
