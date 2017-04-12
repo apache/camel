@@ -41,17 +41,17 @@ public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest 
 	private static final String MILO_SERVER_ITEM_1 = "milo-server:myitem1";
 
 	// with key
-	private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:12685?nodeId=items-myitem1&namespaceUri="
-			+ MiloServerComponent.DEFAULT_NAMESPACE_URI
+	private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:tcp://foo:bar@localhost:12685?node="
+			+ NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1")
 			+ "&keyStoreUrl=file:src/test/resources/cert/cert.p12&keyStorePassword=pwd1&keyPassword=pwd1";
 
 	// with wrong password
-	private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:tcp://foo:bar2@localhost:12685?nodeId=items-myitem1&namespaceUri="
-			+ MiloServerComponent.DEFAULT_NAMESPACE_URI;
+	private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:tcp://foo:bar2@localhost:12685?node="
+			+ NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
 
 	// without key, clientId=1
-	private static final String MILO_CLIENT_ITEM_C3_1 = "milo-client:tcp://foo:bar@localhost:12685?clientId=1&nodeId=items-myitem1&namespaceUri="
-			+ MiloServerComponent.DEFAULT_NAMESPACE_URI;
+	private static final String MILO_CLIENT_ITEM_C3_1 = "milo-client:tcp://foo:bar@localhost:12685?clientId=1&node="
+			+ NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "items-myitem1");
 
 	private static final String MOCK_TEST_1 = "mock:test1";
 	private static final String MOCK_TEST_2 = "mock:test2";

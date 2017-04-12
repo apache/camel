@@ -33,14 +33,6 @@ import org.junit.Test;
 public class NodeIdTest extends AbstractMiloServerTest {
 
 	@Test
-	public void testLegacy() {
-		testUri("milo-client:tcp://foo:bar@localhost:12685?nodeId=items-myitem1&namespaceUri=" + DEFAULT_NAMESPACE_URI,
-				DEFAULT_NAMESPACE_URI, "items-myitem1");
-		testUri("milo-client:tcp://foo:bar@localhost:12685?nodeId=items-myitem1&namespaceIndex=1", ushort(1),
-				"items-myitem1");
-	}
-
-	@Test
 	public void testFull1() {
 		final String s = String.format("nsu=%s;s=%s", DEFAULT_NAMESPACE_URI, "item-1");
 		testUri("milo-client:tcp://foo:bar@localhost:12685?samplingInterval=1000&node=RAW(" + s + ")",

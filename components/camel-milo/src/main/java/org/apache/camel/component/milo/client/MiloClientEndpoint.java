@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.milo.client;
 
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
-
 import java.util.Objects;
 
 import org.apache.camel.Consumer;
@@ -41,33 +39,6 @@ public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientIte
 	@UriPath
 	@Metadata(required = "true")
 	private final String endpointUri;
-
-	/**
-	 * The node ID as string ID **deprecated**
-	 *
-	 * @deprecated Use "node" instead
-	 */
-	@UriParam
-	@Deprecated
-	private String nodeId;
-
-	/**
-	 * The namespace as URI **deprecated**
-	 *
-	 * @deprecated Use "node" instead
-	 */
-	@UriParam
-	@Deprecated
-	private String namespaceUri;
-
-	/**
-	 * The namespace as numeric index **deprecated**
-	 *
-	 * @deprecated Use "node" instead
-	 */
-	@UriParam
-	@Deprecated
-	private Integer namespaceIndex;
 
 	/**
 	 * The node definition (see Node ID)
@@ -150,10 +121,6 @@ public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientIte
 			result = PartialNodeId.fromExpandedNodeId(this.node);
 		}
 
-		if (result == null && this.nodeId != null) {
-			result = new PartialNodeId(this.nodeId);
-		}
-
 		if (result == null) {
 			throw new IllegalStateException("Missing or invalid node id configuration");
 		} else {
@@ -169,42 +136,11 @@ public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientIte
 			result = NamespaceId.fromExpandedNodeId(this.node);
 		}
 
-		if (result == null && this.namespaceIndex != null) {
-			result = new NamespaceId(ushort(this.namespaceIndex));
-		}
-		if (result == null && this.namespaceUri != null) {
-			result = new NamespaceId(this.namespaceUri);
-		}
-
 		if (result == null) {
 			throw new IllegalStateException("Missing or invalid node id configuration");
 		} else {
 			return result;
 		}
-	}
-
-	public String getNodeId() {
-		return this.nodeId;
-	}
-
-	public void setNodeId(final String nodeId) {
-		this.nodeId = nodeId;
-	}
-
-	public String getNamespaceUri() {
-		return this.namespaceUri;
-	}
-
-	public void setNamespaceUri(final String namespaceUri) {
-		this.namespaceUri = namespaceUri;
-	}
-
-	public Integer getNamespaceIndex() {
-		return this.namespaceIndex;
-	}
-
-	public void setNamespaceIndex(final int namespaceIndex) {
-		this.namespaceIndex = namespaceIndex;
 	}
 
 	public void setNode(final String node) {

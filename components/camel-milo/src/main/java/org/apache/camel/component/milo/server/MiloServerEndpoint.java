@@ -64,12 +64,6 @@ class MiloServerEndpoint extends DefaultEndpoint {
 	}
 
 	@Override
-	protected void doShutdown() throws Exception {
-		// FIXME: need to call back to component?
-		super.doShutdown();
-	}
-
-	@Override
 	public Producer createProducer() throws Exception {
 		return new MiloServerProducer(this, this.item);
 	}
@@ -102,5 +96,4 @@ class MiloServerEndpoint extends DefaultEndpoint {
 	public String getItemId() {
 		return this.itemId;
 	}
-
 }
