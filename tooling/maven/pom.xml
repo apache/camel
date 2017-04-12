@@ -36,6 +36,7 @@
     <module>guice-maven-plugin</module>
     <module>camel-api-component-maven-plugin</module>
     <module>bom-generator-maven-plugin</module>
+    <module>camel-restdsl-swagger-plugin</module>
   </modules>
 
   <!-- Apply to children. -->
