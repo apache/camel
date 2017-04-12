@@ -297,7 +297,7 @@ Number of Components: 228 in 182 JAR artifacts (14 deprecated)
 `imap:host:port` | 1.0 | To send or receive emails using imap/pop3 or stmp protocols.
 
 | link:camel-infinispan/src/main/docs/infinispan-component.adoc[Infinispan] (camel-infinispan) +
-`infinispan:host` | 2.13 | For reading/writing from/to Infinispan distributed key/value store and data grid.
+`infinispan:cacheName` | 2.13 | For reading/writing from/to Infinispan distributed key/value store and data grid.
 
 | link:camel-influxdb/src/main/docs/influxdb-component.adoc[InfluxDB] (camel-influxdb) +
 `influxdb:connectionBean` | 2.18 | The influxdb component allows you to interact with InfluxDB a time series database.
