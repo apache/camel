@@ -85,7 +85,7 @@ In other words, shared connections located by the combination of endpoint URI an
 // endpoint options: START
 The Milo based OPC UA Client endpoint is configured using URI syntax:
 
-    milo-client:tcp://user:password@host:port/path/to/service?itemId=item.id&namespaceUri=urn:foo:bar
+    milo-client:tcp://user:password@host:port/path/to/service
 
 with the following path and query parameters:
 
