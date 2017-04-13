@@ -219,6 +219,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 }
                 if (add) {
                     models.add(model);
+
+                    // special for camel-mail where we want to refer its imap scheme to mail so its mail.adoc in the doc link
+                    if ("imap".equals(model.getScheme())) {
+                        model.setScheme("mail");
+                        model.setTitle("Mail");
+                    }
                 }
             }
 
