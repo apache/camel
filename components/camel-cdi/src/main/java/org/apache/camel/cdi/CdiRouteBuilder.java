@@ -25,7 +25,7 @@ import org.apache.camel.cdi.transaction.JtaTransactionErrorHandlerBuilder;
  *
  * @version
  */
-public abstract class JtaRouteBuilder extends RouteBuilder {
+public abstract class CdiRouteBuilder extends RouteBuilder {
 
     /**
      * Creates a transaction error handler that will lookup in application
@@ -36,5 +36,4 @@ public abstract class JtaRouteBuilder extends RouteBuilder {
     public JtaTransactionErrorHandlerBuilder transactionErrorHandler() {
         return new JtaTransactionErrorHandlerBuilder();
     }
-
 }
