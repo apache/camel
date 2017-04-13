@@ -185,7 +185,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
                 @Override
                 public void onResponse(PNGetStateResult result, PNStatus status) {
                     LOG.debug("Got state [{}]", result.getStateByUUID());
-                    processMessage(exchange, callback, status, result.getStateByUUID());
+                    processMessage(exchange, callback, status, result);
                 }
             });
     }
@@ -221,7 +221,6 @@ public class PubNubProducer extends DefaultAsyncProducer {
     private void processMessage(Exchange exchange, AsyncCallback callback, PNStatus status, Object body) {
         if (status.isError()) {
             PNErrorData errorData = status.getErrorData();
-            callback.done(false);
             exchange.setException(errorData.getThrowable());
             if (errorData != null && errorData.getThrowable() instanceof PubNubException) {
                 PubNubException pubNubException = (PubNubException) errorData.getThrowable();
