@@ -37,6 +37,7 @@ public class CamelUndertowTest extends AbstractSpringBootTestSupport {
                 .module(inferModuleName(CamelUndertowTest.class))
                 //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseUndertowTest$|UndertowHttpsSpringTest$)")
+                .dependency("org.hibernate:hibernate-validator")
                 .build();
     }
 

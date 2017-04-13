@@ -37,6 +37,7 @@ public class CamelNetty4HttpTest extends AbstractSpringBootTestSupport {
                 .module(inferModuleName(CamelNetty4HttpTest.class))
                 //.dependency(DependencyResolver.withVersion("org.hibernate:hibernate-validator"))
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseNettyTest$|ManagedNettyEndpointTest$|NettyMixedCaseHttpPathTest$|NettyHttpContentTypeTest$)")
+                .dependency("org.hibernate:hibernate-validator")
                 // removed JMX check tests and tests that nof fail singularly
                 .build();
     }

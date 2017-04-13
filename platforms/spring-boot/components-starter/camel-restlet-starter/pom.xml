@@ -54,10 +54,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-    </dependency>
     <!--END OF GENERATED CODE-->
   </dependencies>
   <!--START OF GENERATED CODE-->
