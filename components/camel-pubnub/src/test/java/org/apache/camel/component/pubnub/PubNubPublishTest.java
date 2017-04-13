@@ -46,14 +46,6 @@ public class PubNubPublishTest extends PubNubTestBase {
     }
 
     @Test(expected = CamelExecutionException.class)
-    public void testPubNubException() throws Exception {
-        stubFor(post(urlPathEqualTo("/publish/myPublishKey/mySubscribeKey/0/someChannel/0")).willReturn(aResponse().withStatus(401).withBody("[0,\"Blabla\",\"14598111595318003\"]")));
-
-        template.sendBody("direct:publish", new Hello("Hi"));
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test(expected = CamelExecutionException.class)
     public void testPublishEmptyBody() throws Exception {
         template.sendBody("direct:publish", null);
     }

@@ -17,8 +17,8 @@
 package org.apache.camel.component.pubnub;
 
 public abstract class PubNubConstants {
-    public static String OPERATION = "CamelPubNubOperation";
-    public static String TIMETOKEN = "CamelPubNubTimeToken";
-    public static String CHANNEL = "CamelPubNubChannel";
-    public static String UUID = "CamelPubNubUUID";
+    public static final String OPERATION = "CamelPubNubOperation";
+    public static final String TIMETOKEN = "CamelPubNubTimeToken";
+    public static final String CHANNEL = "CamelPubNubChannel";
+    public static final String UUID = "CamelPubNubUUID";
 }

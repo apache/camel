@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.JsonObject;
 import com.pubnub.api.models.consumer.history.PNHistoryItemResult;
+import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 import com.pubnub.api.models.consumer.presence.PNHereNowResult;
 import com.pubnub.api.models.consumer.presence.PNSetStateResult;
 
@@ -109,10 +109,9 @@ public class PubNubOperationsTest extends PubNubTestBase {
                       + "{ \"myChannel\": { \"age\" : 20, \"status\" : \"online\"}, \"ch2\": { \"age\": 100, \"status\": \"offline\" } }, \"service\": \"Presence\"}")));
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(PubNubConstants.OPERATION, "GETSTATE");
-        @SuppressWarnings("unchecked")
-        Map<String, JsonObject> response = template.requestBodyAndHeaders("direct:publish", null, headers, Map.class);
+        PNGetStateResult response = template.requestBodyAndHeaders("direct:publish", null, headers, PNGetStateResult.class);
         assertNotNull(response);
-        assertNotNull(response.get("myChannel"));
+        assertNotNull(response.getStateByUUID().get("myChannel"));
     }
 
     @Test
