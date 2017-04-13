@@ -43,9 +43,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
     // *******************************
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define an aggregation strategy which targets the exchnage.
      */
     public T exchange(final BiFunction<Exchange, Exchange, Exchange> function) {
         strategy = function::apply;
@@ -57,9 +55,24 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
     // *******************************
 
     /**
-     * TODO: document
+     * Define an aggregation strategy which targets Exchanges In Message.
      *
-     * Note: this is experimental and subject to changes in future releases.
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .aggregate()
+     *         .message((old, new) -> {
+     *             if (old == null) {
+     *                 return new;
+     *             }
+     *
+     *             String oldBody = old.getBody(String.class);
+     *             String newBody = new.getBody(String.class);
+     *
+     *             old.setBody(oldBody + "+" + newBody);
+     *
+     *             return old;
+     *         });
+     * }</pre></blockquote>
      */
     public T message(final BiFunction<Message, Message, Message> function) {
         return exchange((Exchange oldExchange, Exchange newExchange) -> {
@@ -82,27 +95,45 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
     // *******************************
 
     /**
-     * TODO: document
+     * Define an aggregation strategy which targets Exchanges In Body.
      *
-     * Note: this is experimental and subject to changes in future releases.
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .aggregate()
+     *         .body((old, new) -> {
+     *             if (old == null) {
+     *                 return new;
+     *             }
+     *
+     *             return old.toString() + new.toString();
+     *         });
+     * }</pre></blockquote>
      */
     public T body(final BiFunction<Object, Object, Object> function) {
         return body(Object.class, function);
     }
 
     /**
-     * TODO: document
+     * Define an aggregation strategy which targets Exchanges In Body.
      *
-     * Note: this is experimental and subject to changes in future releases.
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .aggregate()
+     *         .body(String.class, (old, new) -> {
+     *             if (old == null) {
+     *                 return new;
+     *             }
+     *
+     *             return old + new;
+     *         });
+     * }</pre></blockquote>
      */
     public <B> T body(final Class<B> type, final BiFunction<B, B, Object> function) {
         return body(type, type, function);
     }
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define an aggregation strategy which targets Exchanges In Body.
      */
     public <O, N> T body(final Class<O> oldType, final Class<N> newType, final BiFunction<O, N, Object> function) {
         return exchange((Exchange oldExchange, Exchange newExchange) -> {

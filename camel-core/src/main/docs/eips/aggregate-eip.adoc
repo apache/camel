@@ -26,7 +26,7 @@ The Aggregate EIP supports 25 options which are listed below:
 |=======================================================================
 | Name | Java Type | Description
 | correlationExpression | NamespaceAwareExpression | *Required* The expression used to calculate the correlation key to use for aggregation. The Exchange which has the same correlation key is aggregated together. If the correlation key could not be evaluated an Exception is thrown. You can disable this by using the ignoreBadCorrelationKeys option.
-| completionPredicate | NamespaceAwareExpression | TODO: document Note: this is experimental and subject to changes in future releases.
+| completionPredicate | NamespaceAwareExpression | Sets the predicate used to determine if the aggregation is completed with a fluent builder
 | completionTimeout | NamespaceAwareExpression | Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval only one of the two can be used.
 | completionSize | NamespaceAwareExpression | Number of messages aggregated before the aggregation is complete. This option can be set as either a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
 | optimisticLockRetryPolicy | OptimisticLockRetryPolicyDefinition | Allows to configure retry settings when using optimistic locking.

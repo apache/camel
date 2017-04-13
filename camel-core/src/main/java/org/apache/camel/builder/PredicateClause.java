@@ -23,7 +23,6 @@ import java.util.function.Predicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
-// TODO: Document me
 public class PredicateClause<T> implements org.apache.camel.Predicate {
     private final T parent;
     private Predicate<Exchange> predicate;
@@ -43,9 +42,7 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     // *******************************
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link org.apache.camel.Predicate} which targets the Exchange.
      */
     public T exchange(final Predicate<Exchange> predicate) {
         this.predicate = predicate::test;
@@ -58,9 +55,16 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     // *******************************
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link org.apache.camel.Predicate} which targets the Exchange In Message.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .choice()
+     *         .when()
+     *            .message(m -> m.getBody() != null)
+     *            .log("Received ${body}")
+     *     .endChoice()
+     * }</pre></blockquote>
      */
     public T message(final Predicate<Message> predicate) {
         return exchange(e -> predicate.test(e.getIn()));
@@ -70,28 +74,50 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     // Body
     // *******************************
 
+
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link org.apache.camel.Predicate} which targets the Exchange In Body.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .choice()
+     *         .when()
+     *            .body(b -> b != null)
+     *            .log("Received ${body}")
+     *     .endChoice()
+     * }</pre></blockquote>
      */
     public T body(final Predicate<Object> predicate) {
         return exchange(e -> predicate.test(e.getIn().getBody()));
     }
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link org.apache.camel.Predicate} which targets the typed Exchange In Body.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .choice()
+     *         .when()
+     *            .body(Long.class, b -> (b & 1) == 0)
+     *            .log("Received even number ${body}")
+     *     .endChoice()
+     * }</pre></blockquote>
      */
     public <B> T body(final Class<B> type, final Predicate<B> predicate) {
         return exchange(e -> predicate.test(e.getIn().getBody(type)));
     }
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link org.apache.camel.Predicate} which targets the Exchange In Body and its Headers.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .choice()
+     *         .when()
+     *            .body((b, h) -> b != null || h.containsKy("ToProcess"))
+     *            .log("Received ${body}")
+     *     .endChoice()
+     * }</pre></blockquote>
      */
     public T body(final BiPredicate<Object, Map<String, Object>> predicate) {
         return exchange(e -> predicate.test(
@@ -101,9 +127,16 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
     }
 
     /**
-     * TODO: document
-     *
-     * Note: this is experimental and subject to changes in future releases.
+     * Define a {@link org.apache.camel.Predicate} which targets the typed Exchange In Body and its Headers.
+     *     
+     * <blockquote><pre>{@code
+     * from("direct:aggregate")
+     *     .choice()
+     *         .when()
+     *            .body(String.class, (b, h) -> b != null && !b.isEmpty() || h.containsKy("ToProcess"))
+     *            .log("Received ${body}")
+     *     .endChoice()
+     * }</pre></blockquote>
      */
     public <B> T body(final Class<B> type, final BiPredicate<B, Map<String, Object>> predicate) {
         return exchange(e -> predicate.test(

@@ -21,7 +21,5 @@ package org.apache.camel.cloud;
  */
 @FunctionalInterface
 public interface LoadBalancerFunction<T> {
-
-    // TODO: Document me
     T apply(ServiceDefinition serviceDefinition) throws Exception;
 }

@@ -73,8 +73,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of the exchange
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T exchange(final Function<Exchange, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -93,8 +91,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T message(final Function<Message, Object> function) {
         return inMessage(function);
@@ -109,8 +105,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T inMessage(final Function<Message, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -129,8 +123,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T outMessage(final Function<Message, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -149,8 +141,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message body
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T body(final Function<Object, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -162,8 +152,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message body and headers
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T body(final BiFunction<Object, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -184,8 +172,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message body converted to the expected type
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public <B> T body(Class<B> expectedType, final Function<B, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -197,8 +183,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an inbound message body converted to the expected type and headers
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public <B> T body(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -219,8 +203,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message body
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T outBody(final Function<Object, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -232,8 +214,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message body and headers
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public T outBody(final BiFunction<Object, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -254,8 +234,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message body converted to the expected type
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public <B> T outBody(Class<B> expectedType, final Function<B, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
@@ -267,8 +245,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * A functional expression of an outbound message body converted to the expected type and headers
-     *
-     * Note: this is experimental and subject to changes in future releases.
      */
     public <B> T outBody(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
