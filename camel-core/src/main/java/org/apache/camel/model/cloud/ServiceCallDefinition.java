@@ -56,7 +56,7 @@ import static org.apache.camel.util.CamelContextHelper.findByType;
 import static org.apache.camel.util.CamelContextHelper.lookup;
 
 /**
- * Remote service call definition
+ * To call remote services
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "serviceCall")
