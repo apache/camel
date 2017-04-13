@@ -218,6 +218,19 @@ public class ComponentModel {
     }
 
     public String getDocLink() {
+        // special for these components
+        if ("camel-box".equals(artifactId)) {
+            return "camel-box/camel-box-component/src/main/docs";
+        } else if ("camel-linkedin".equals(artifactId)) {
+            return "camel-linkedin/camel-linkedin-component/src/main/docs";
+        } else if ("camel-olingo2".equals(artifactId)) {
+            return "camel-olingo2/camel-olingo2-component/src/main/docs";
+        } else if ("camel-olingo4".equals(artifactId)) {
+            return "camel-olingo4/camel-olingo4-component/src/main/docs";
+        } else if ("camel-salesforce".equals(artifactId)) {
+            return "camel-salesforce/camel-salesforce-component/src/main/docs";
+        }
+
         if ("camel-core".equals(artifactId)) {
             return coreOnly ? "src/main/docs" : "../camel-core/src/main/docs";
         } else {
