@@ -197,48 +197,52 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
         @Override
         public void notify(EventObject event) throws Exception {
-            if (event instanceof ExchangeSendingEvent) {
-                ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
-                SpanManager.ManagedSpan parent = spanManager.current();
-                SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
-                if (!sd.newSpan()) {
-                    return;
+            try {
+                if (event instanceof ExchangeSendingEvent) {
+                    ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
+                    SpanManager.ManagedSpan parent = spanManager.current();
+                    SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
+                    if (!sd.newSpan()) {
+                        return;
+                    }
+                    SpanBuilder spanBuilder = tracer.buildSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint()))
+                        .withTag(Tags.SPAN_KIND.getKey(), sd.getInitiatorSpanKind());
+                    // Temporary workaround to avoid adding 'null' span as a parent
+                    if (parent != null && parent.getSpan() != null) {
+                        spanBuilder.asChildOf(parent.getSpan());
+                    }
+                    Span span = spanBuilder.start();
+                    sd.pre(span, ese.getExchange(), ese.getEndpoint());
+                    tracer.inject(span.context(), Format.Builtin.TEXT_MAP,
+                        new CamelHeadersInjectAdapter(ese.getExchange().getIn().getHeaders()));
+                    ese.getExchange().setProperty(MANAGED_SPAN_PROPERTY, spanManager.activate(span));
+                    spanManager.clear();
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("OpenTracing: start client span=" + span);
+                    }
+                } else if (event instanceof ExchangeSentEvent) {
+                    ExchangeSentEvent ese = (ExchangeSentEvent) event;
+                    SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
+                    if (!sd.newSpan()) {
+                        return;
+                    }
+                    SpanManager.ManagedSpan managedSpan = (SpanManager.ManagedSpan)
+                            ese.getExchange().getProperty(MANAGED_SPAN_PROPERTY);
+                    if (managedSpan != null) {
+                        spanManager.activate(managedSpan);
+                        ese.getExchange().setProperty(MANAGED_SPAN_PROPERTY, null);
+                    } else {
+                        managedSpan = spanManager.current();
+                    }
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("OpenTracing: start client span=" + managedSpan.getSpan());
+                    }
+                    sd.post(managedSpan.getSpan(), ese.getExchange(), ese.getEndpoint());
+                    managedSpan.getSpan().finish();
+                    managedSpan.deactivate();
                 }
-                SpanBuilder spanBuilder = tracer.buildSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint()))
-                    .withTag(Tags.SPAN_KIND.getKey(), sd.getInitiatorSpanKind());
-                // Temporary workaround to avoid adding 'null' span as a parent
-                if (parent != null && parent.getSpan() != null) {
-                    spanBuilder.asChildOf(parent.getSpan());
-                }
-                Span span = spanBuilder.start();
-                sd.pre(span, ese.getExchange(), ese.getEndpoint());
-                tracer.inject(span.context(), Format.Builtin.TEXT_MAP,
-                    new CamelHeadersInjectAdapter(ese.getExchange().getIn().getHeaders()));
-                ese.getExchange().setProperty(MANAGED_SPAN_PROPERTY, spanManager.activate(span));
-                spanManager.clear();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("OpenTracing: start client span=" + span);
-                }
-            } else if (event instanceof ExchangeSentEvent) {
-                ExchangeSentEvent ese = (ExchangeSentEvent) event;
-                SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
-                if (!sd.newSpan()) {
-                    return;
-                }
-                SpanManager.ManagedSpan managedSpan = (SpanManager.ManagedSpan)
-                        ese.getExchange().getProperty(MANAGED_SPAN_PROPERTY);
-                if (managedSpan != null) {
-                    spanManager.activate(managedSpan);
-                    ese.getExchange().setProperty(MANAGED_SPAN_PROPERTY, null);
-                } else {
-                    managedSpan = spanManager.current();
-                }
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("OpenTracing: start client span=" + managedSpan.getSpan());
-                }
-                sd.post(managedSpan.getSpan(), ese.getExchange(), ese.getEndpoint());
-                managedSpan.getSpan().finish();
-                managedSpan.deactivate();
+            } catch (Throwable t) {
+                LOG.error("OpenTracing: Failed to capture tracing data", t);
             }
         }
 
@@ -261,37 +265,45 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
-            // Check if continuing exchange on same thread
-            if (exchange.getProperties().containsKey(MANAGED_SPAN_PROPERTY)) {
-                spanManager.activate((SpanManager.ManagedSpan)exchange.getProperty(MANAGED_SPAN_PROPERTY));
-                exchange.setProperty(MANAGED_SPAN_PROPERTY, null);
-            }
-            SpanDecorator sd = getSpanDecorator(route.getEndpoint());
-            Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
-                .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
-                    new CamelHeadersExtractAdapter(exchange.getIn().getHeaders())))
-                .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind())
-                .start();
-            sd.pre(span, exchange, route.getEndpoint());
-            spanManager.activate(span);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("OpenTracing: start server span=" + span);
+            try {
+                // Check if continuing exchange on same thread
+                if (exchange.getProperties().containsKey(MANAGED_SPAN_PROPERTY)) {
+                    spanManager.activate((SpanManager.ManagedSpan)exchange.getProperty(MANAGED_SPAN_PROPERTY));
+                    exchange.setProperty(MANAGED_SPAN_PROPERTY, null);
+                }
+                SpanDecorator sd = getSpanDecorator(route.getEndpoint());
+                Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
+                    .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
+                        new CamelHeadersExtractAdapter(exchange.getIn().getHeaders())))
+                    .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind())
+                    .start();
+                sd.pre(span, exchange, route.getEndpoint());
+                spanManager.activate(span);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("OpenTracing: start server span=" + span);
+                }
+            } catch (Throwable t) {
+                LOG.error("OpenTracing: Failed to capture tracing data", t);
             }
         }
 
         @Override
         public void onExchangeDone(Route route, Exchange exchange) {
-            SpanManager.ManagedSpan managedSpan = spanManager.current();
-            if (managedSpan.getSpan() != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("OpenTracing: finish server span=" + managedSpan.getSpan());
+            try {
+                SpanManager.ManagedSpan managedSpan = spanManager.current();
+                if (managedSpan.getSpan() != null) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("OpenTracing: finish server span=" + managedSpan.getSpan());
+                    }
+                    SpanDecorator sd = getSpanDecorator(route.getEndpoint());
+                    sd.post(managedSpan.getSpan(), exchange, route.getEndpoint());
+                    managedSpan.getSpan().finish();
+                    managedSpan.deactivate();
+                } else {
+                    LOG.warn("OpenTracing: could not find managed span for exchange=" + exchange);
                 }
-                SpanDecorator sd = getSpanDecorator(route.getEndpoint());
-                sd.post(managedSpan.getSpan(), exchange, route.getEndpoint());
-                managedSpan.getSpan().finish();
-                managedSpan.deactivate();
-            } else {
-                LOG.warn("OpenTracing: could not find managed span for exchange=" + exchange);
+            } catch (Throwable t) {
+                LOG.error("OpenTracing: Failed to capture tracing data", t);
             }
         }
     }
@@ -300,18 +312,22 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
         @Override
         public String onLog(Exchange exchange, CamelLogger camelLogger, String message) {
-            SpanManager.ManagedSpan managedSpan = (SpanManager.ManagedSpan)
-                    exchange.getProperty(MANAGED_SPAN_PROPERTY);
-            Span span = null;
-            if (managedSpan != null) {
-                span = managedSpan.getSpan();
-            } else {
-                span = spanManager.current().getSpan();
-            }
-            if (span != null) {
-                Map<String, Object> fields = new HashMap<>();
-                fields.put("message", message);
-                span.log(fields);
+            try {
+                SpanManager.ManagedSpan managedSpan = (SpanManager.ManagedSpan)
+                        exchange.getProperty(MANAGED_SPAN_PROPERTY);
+                Span span = null;
+                if (managedSpan != null) {
+                    span = managedSpan.getSpan();
+                } else {
+                    span = spanManager.current().getSpan();
+                }
+                if (span != null) {
+                    Map<String, Object> fields = new HashMap<>();
+                    fields.put("message", message);
+                    span.log(fields);
+                }
+            } catch (Throwable t) {
+                LOG.error("OpenTracing: Failed to capture tracing data", t);
             }
             return message;
         }
