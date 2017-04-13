@@ -1110,6 +1110,8 @@
   <feature name='camel-juel' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature>war</feature>
+    <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.web/javax.el/${javax.el-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-juel/${project.version}</bundle>
   </feature>
