@@ -1,0 +1,7 @@
+## TestNG (deprecated)
+
+*Available since Camel 2.8*
+
+Camel testing using TestNG.
+
+This component has been deprecated and we recommend using `camel-test` instead which is using JUnit.

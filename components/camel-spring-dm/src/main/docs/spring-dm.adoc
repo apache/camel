@@ -1,6 +1,4 @@
-## Spring DM
-
-*deprecated*
+## Spring DM (deprecated)
 
 Spring Dynamic Modules for OSGi allows to use Spring XML files in OSGi containers such as Apache Karaf.
 
