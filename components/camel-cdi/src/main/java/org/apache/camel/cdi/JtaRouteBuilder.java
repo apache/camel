@@ -1,7 +1,7 @@
 package org.apache.camel.cdi;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.jta.JtaTransactionErrorHandlerBuilder;
+import org.apache.camel.cdi.transaction.JtaTransactionErrorHandlerBuilder;
 
 /**
  * An extension of the {@link RouteBuilder} to provide some additional helper

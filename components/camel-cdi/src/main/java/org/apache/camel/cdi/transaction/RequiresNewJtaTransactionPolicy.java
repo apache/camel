@@ -1,10 +1,10 @@
-package org.apache.camel.cdi.jta;
+package org.apache.camel.cdi.transaction;
 
 import javax.inject.Named;
 import javax.transaction.Transaction;
 
-@Named("PROPAGATION_NOT_SUPPORTED")
-public class NotSupportedJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {
+@Named("PROPAGATION_REQUIRES_NEW")
+public class RequiresNewJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {
 
     @Override
     public void run(final Runnable runnable) throws Throwable {
@@ -13,7 +13,7 @@ public class NotSupportedJtaTransactionPolicy extends TransactionalJtaTransactio
         try {
 
             suspendedTransaction = suspendTransaction();
-            runnable.run();
+            runWithTransaction(runnable, true);
 
         } finally {
             resumeTransaction(suspendedTransaction);

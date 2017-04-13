@@ -1,4 +1,4 @@
-package org.apache.camel.cdi.jta;
+package org.apache.camel.cdi.transaction;
 
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
