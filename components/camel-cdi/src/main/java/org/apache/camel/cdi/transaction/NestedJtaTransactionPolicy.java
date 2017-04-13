@@ -16,20 +16,19 @@
  */
 package org.apache.camel.cdi.transaction;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.inject.Named;
 import javax.transaction.Transaction;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named("PROPAGATION_NESTED")
 public class NestedJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {
 
-    private final Logger logger = Logger.getLogger(NestedJtaTransactionPolicy.class.getCanonicalName());
+    private final Logger logger = LoggerFactory.getLogger(NestedJtaTransactionPolicy.class.getCanonicalName());
 
     @Override
     public void run(final Runnable runnable) throws Throwable {
-
         Transaction suspendedTransaction = null;
         boolean rollback = false;
         try {
@@ -44,12 +43,12 @@ public class NestedJtaTransactionPolicy extends TransactionalJtaTransactionPolic
                     rollback(false);
                 }
             } catch (Exception e) {
-                logger.log(Level.WARNING, "Could not do rollback of outer transaction", e);
+                logger.warn("Could not do rollback of outer transaction", e);
             }
             try {
                 resumeTransaction(suspendedTransaction);
             } catch (Exception e) {
-                logger.log(Level.WARNING, "Could not resume outer transaction", e);
+                logger.warn("Could not resume outer transaction", e);
             }
         }
     }
