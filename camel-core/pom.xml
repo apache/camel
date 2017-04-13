@@ -406,12 +406,12 @@
               <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
             </group>
             <group>
-              <title>The routing model for EIP rule definitions</title>
+              <title>EIP model</title>
               <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
             </group>
             <group>
-              <title>Strategy APIs for implementors extending Camel</title>
-              <packages>org.apache.camel.spi</packages>
+              <title>Camel Components</title>
+              <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
             </group>
             <group>
               <title>Language APIs and plugins for Expressions and Predicates</title>
@@ -422,20 +422,24 @@
               <packages>org.apache.camel.processor:org.apache.camel.processor.*</packages>
             </group>
             <group>
-              <title>Camel Components</title>
-              <packages>org.apache.camel.component.*</packages>
+              <title>Strategy APIs for implementors extending Camel</title>
+              <packages>org.apache.camel.spi</packages>
             </group>
             <group>
               <title>Support APIs for implementors</title>
-              <packages>org.apache.camel.support.*</packages>
+              <packages>org.apache.camel.support:org.apache.camel.support.*</packages>
             </group>
             <group>
-              <title>Main class for running Camel standalone</title>
-              <packages>org.apache.camel.main.*</packages>
+              <title>Management (JMX) API</title>
+              <packages>org.apache.camel.management:org.apache.camel.management.*:org.apache.camel.api.management.mbean</packages>
             </group>
             <group>
               <title>Camel Runtime</title>
               <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
+            </group>
+            <group>
+              <title>Camel Main to run Camel standalone</title>
+              <packages>org.apache.camel.main</packages>
             </group>
             <group>
               <title>Type conversion helper classes</title>
@@ -503,12 +507,12 @@
                   <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
                 </group>
                 <group>
-                  <title>The bean and JAXB2 model for EIP rule definitions</title>
+                  <title>EIP model</title>
                   <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
                 </group>
                 <group>
-                  <title>Strategy APIs for implementors extending Camel</title>
-                  <packages>org.apache.camel.spi</packages>
+                  <title>Camel Components</title>
+                  <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
                 </group>
                 <group>
                   <title>Language APIs and plugins for Expressions and Predicates</title>
@@ -519,27 +523,23 @@
                   <packages>org.apache.camel.processor:org.apache.camel.processor.*</packages>
                 </group>
                 <group>
-                  <title>Camel Components</title>
-                  <packages>org.apache.camel.component.*</packages>
-                </group>
-                <group>
-                  <title>Camel Support having base classes to extend</title>
-                  <packages>org.apache.camel.support</packages>
+                  <title>Strategy APIs for implementors extending Camel</title>
+                  <packages>org.apache.camel.spi</packages>
                 </group>
                 <group>
                   <title>Support APIs for implementors</title>
-                  <packages>org.apache.camel.support.*</packages>
+                  <packages>org.apache.camel.support:org.apache.camel.support.*</packages>
                 </group>
                 <group>
-                  <title>Main class for running Camel standalone</title>
-                  <packages>org.apache.camel.main.*</packages>
+                  <title>Management (JMX) API</title>
+                  <packages>org.apache.camel.management:org.apache.camel.management.*:org.apache.camel.api.management.mbean</packages>
                 </group>
                 <group>
                   <title>Camel Runtime</title>
                   <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
                 </group>
                 <group>
-                  <title>Camel Starters</title>
+                  <title>Camel Main to run Camel standalone</title>
                   <packages>org.apache.camel.main</packages>
                 </group>
                 <group>
