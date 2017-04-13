@@ -901,7 +901,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the predicate used to determine if the aggregation is completed
+     * A Predicate to indicate when an aggregated exchange is complete.
+     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * the aggregationStrategy object will be used as the completionPredicate.
      */
     public AggregateDefinition completionPredicate(@AsPredicate Predicate predicate) {
         checkNoCompletedPredicate();
@@ -910,7 +912,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the predicate used to determine if the aggregation is completed with a fluent builder
+     * A Predicate to indicate when an aggregated exchange is complete.
+     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * the aggregationStrategy object will be used as the completionPredicate.
      */
     @AsPredicate
     public PredicateClause<AggregateDefinition> completionPredicate() {
@@ -920,7 +924,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the predicate used to determine if the aggregation is completed with a fluent builder
+     * A Predicate to indicate when an aggregated exchange is complete.
+     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * the aggregationStrategy object will be used as the completionPredicate.
      */
     @AsPredicate
     public PredicateClause<AggregateDefinition> completion() {
@@ -928,7 +934,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the predicate used to determine if the aggregation is completed
+     * A Predicate to indicate when an aggregated exchange is complete.
+     * If this is not specified and the AggregationStrategy object implements Predicate,
+     * the aggregationStrategy object will be used as the completionPredicate.
      */
     public AggregateDefinition completion(@AsPredicate Predicate predicate) {
         return completionPredicate(predicate);
