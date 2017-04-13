@@ -30,7 +30,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 
-@UriEndpoint(scheme = "milo-client", syntax = "milo-client:tcp://user:password@host:port/path/to/service", title = "Milo based OPC UA Client", consumerClass = MiloClientConsumer.class, label = "iot")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "Milo based OPC UA Client",
+    consumerClass = MiloClientConsumer.class, label = "iot")
 public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientItemConfiguration {
 
     /**
