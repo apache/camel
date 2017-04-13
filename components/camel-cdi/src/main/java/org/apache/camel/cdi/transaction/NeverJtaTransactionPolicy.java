@@ -28,7 +28,5 @@ public class NeverJtaTransactionPolicy extends TransactionalJtaTransactionPolicy
             throw new IllegalStateException(
                     "Policy 'PROPAGATION_NEVER' is configured but an active transaction was found!");
         }
-
     }
-
 }

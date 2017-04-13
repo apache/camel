@@ -33,10 +33,8 @@ public class NestedJtaTransactionPolicy extends TransactionalJtaTransactionPolic
         Transaction suspendedTransaction = null;
         boolean rollback = false;
         try {
-
             suspendedTransaction = suspendTransaction();
             runWithTransaction(runnable, true);
-
         } catch (Throwable e) {
             rollback = true;
             throw e;
@@ -54,7 +52,5 @@ public class NestedJtaTransactionPolicy extends TransactionalJtaTransactionPolic
                 logger.log(Level.WARNING, "Could not resume outer transaction", e);
             }
         }
-
     }
-
 }

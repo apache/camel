@@ -27,14 +27,10 @@ public class NotSupportedJtaTransactionPolicy extends TransactionalJtaTransactio
 
         Transaction suspendedTransaction = null;
         try {
-
             suspendedTransaction = suspendTransaction();
             runnable.run();
-
         } finally {
             resumeTransaction(suspendedTransaction);
         }
-
     }
-
 }

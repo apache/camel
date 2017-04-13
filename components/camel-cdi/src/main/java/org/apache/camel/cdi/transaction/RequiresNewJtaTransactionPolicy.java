@@ -27,14 +27,10 @@ public class RequiresNewJtaTransactionPolicy extends TransactionalJtaTransaction
 
         Transaction suspendedTransaction = null;
         try {
-
             suspendedTransaction = suspendTransaction();
             runWithTransaction(runnable, true);
-
         } finally {
             resumeTransaction(suspendedTransaction);
         }
-
     }
-
 }

@@ -79,18 +79,15 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     public TransactionErrorHandler(CamelContext camelContext, Processor output,
             ExceptionPolicyStrategy exceptionPolicyStrategy, JtaTransactionPolicy transactionPolicy,
             ScheduledExecutorService executorService, LoggingLevel rollbackLoggingLevel) {
-
         this.output = output;
         this.transactionPolicy = transactionPolicy;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
         this.transactionKey = ObjectHelper.getIdentityHashCode(transactionPolicy);
 
         setExceptionPolicy(exceptionPolicyStrategy);
-
     }
 
     public void process(Exchange exchange) throws Exception {
-
         // we have to run this synchronously as a JTA Transaction does *not*
         // support using multiple threads to span a transaction
         if (exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
@@ -103,11 +100,9 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
             // transaction
             processInTransaction(exchange);
         }
-
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-
         // invoke this synchronous method as JTA Transaction does *not*
         // support using multiple threads to span a transaction
         try {
@@ -119,7 +114,6 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         // notify callback we are done synchronously
         callback.done(true);
         return true;
-
     }
 
     protected void processInTransaction(final Exchange exchange) throws Exception {
@@ -132,12 +126,10 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         try {
             // mark the beginning of this transaction boundary
             exchange.getUnitOfWork().beginTransactedBy(transactionKey);
-
             // do in transaction
             logTransactionBegin(redelivered, ids);
             doInTransactionTemplate(exchange);
             logTransactionCommit(redelivered, ids);
-
         } catch (TransactionRolledbackException e) {
             // do not set as exception, as its just a dummy exception to force
             // spring TX to rollback
@@ -160,13 +152,13 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
                 // stack trace
                 Exception cause = exchange.getException();
                 if (cause != null) {
-                    log.debug("Transaction rollback (" + transactionKey + ") redelivered(" + redelivered + ") for "
-                            + ids + " due exchange was marked for rollbackOnlyLast and caught: ", cause);
+                    log.debug("Transaction rollback ({}) redelivered({}) for {} "
+                        + "due exchange was marked for rollbackOnlyLast and caught: ",
+                        transactionKey, redelivered, ids, cause);
                 } else {
-                    log.debug(
-                            "Transaction rollback ({}) redelivered({}) for {} "
-                                    + "due exchange was marked for rollbackOnlyLast",
-                            new Object[] {transactionKey, redelivered, ids});
+                    log.debug("Transaction rollback ({}) redelivered({}) for {} "
+                        + "due exchange was marked for rollbackOnlyLast",
+                        transactionKey, redelivered, ids);
                 }
             }
             // remove caused exception due we was marked as rollback only last
@@ -181,7 +173,6 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     }
 
     protected void doInTransactionTemplate(final Exchange exchange) throws Throwable {
-
         // spring transaction template is working best with rollback if you
         // throw it a runtime exception
         // otherwise it may not rollback messages send to JMS queues etc.
@@ -189,7 +180,6 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
 
             @Override
             public void run() throws Throwable {
-
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard
                 // it as to do "rollback"
@@ -220,9 +210,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
                     throw rce;
                 }
             }
-
         });
-
     }
 
     /**
@@ -236,13 +224,11 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
      *            the exchange
      */
     protected void processByErrorHandler(final Exchange exchange) {
-
         try {
             output.process(exchange);
         } catch (Throwable e) {
             throw new RuntimeCamelException(e);
         }
-
     }
 
     /**
@@ -251,7 +237,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     private void logTransactionBegin(String redelivered, String ids) {
         if (log.isDebugEnabled()) {
             log.debug("Transaction begin ({}) redelivered({}) for {})",
-                    new Object[] {transactionKey, redelivered, ids});
+                    transactionKey, redelivered, ids);
         }
     }
 
@@ -267,14 +253,14 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
             if (rollbackLoggingLevel == LoggingLevel.INFO || rollbackLoggingLevel == LoggingLevel.WARN
                     || rollbackLoggingLevel == LoggingLevel.ERROR) {
                 log.info("Transaction commit ({}) redelivered({}) for {})",
-                        new Object[] {transactionKey, redelivered, ids});
+                        transactionKey, redelivered, ids);
                 // return after we have logged
                 return;
             }
         }
 
         // log non redelivered by default at DEBUG level
-        log.debug("Transaction commit ({}) redelivered({}) for {})", new Object[] {transactionKey, redelivered, ids});
+        log.debug("Transaction commit ({}) redelivered({}) for {})", transactionKey, redelivered, ids);
     }
 
     /**
@@ -286,42 +272,42 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         } else if (rollbackLoggingLevel == LoggingLevel.ERROR && log.isErrorEnabled()) {
             if (rollbackOnly) {
                 log.error("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] {transactionKey, redelivered, ids});
+                        transactionKey, redelivered, ids);
             } else {
                 log.error("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
+                        transactionKey, redelivered, ids, e.getMessage());
             }
         } else if (rollbackLoggingLevel == LoggingLevel.WARN && log.isWarnEnabled()) {
             if (rollbackOnly) {
                 log.warn("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] {transactionKey, redelivered, ids});
+                        transactionKey, redelivered, ids);
             } else {
                 log.warn("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
+                        transactionKey, redelivered, ids, e.getMessage());
             }
         } else if (rollbackLoggingLevel == LoggingLevel.INFO && log.isInfoEnabled()) {
             if (rollbackOnly) {
                 log.info("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] {transactionKey, redelivered, ids});
+                        transactionKey, redelivered, ids);
             } else {
                 log.info("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
+                        transactionKey, redelivered, ids, e.getMessage());
             }
         } else if (rollbackLoggingLevel == LoggingLevel.DEBUG && log.isDebugEnabled()) {
             if (rollbackOnly) {
                 log.debug("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] {transactionKey, redelivered, ids});
+                        transactionKey, redelivered, ids);
             } else {
                 log.debug("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
+                        transactionKey, redelivered, ids, e.getMessage());
             }
         } else if (rollbackLoggingLevel == LoggingLevel.TRACE && log.isTraceEnabled()) {
             if (rollbackOnly) {
                 log.trace("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] {transactionKey, redelivered, ids});
+                        transactionKey, redelivered, ids);
             } else {
                 log.trace("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
+                        transactionKey, redelivered, ids, e.getMessage());
             }
         }
     }
@@ -349,8 +335,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     protected void doStop() throws Exception {
         // noop, do not stop any services which we only do when shutting down
         // as the error handler can be context scoped, and should not stop in
-        // case
-        // a route stops
+        // case a route stops
     }
 
     @Override
@@ -383,5 +368,4 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         log.trace("Prepare shutdown on error handler {}", this);
         preparingShutdown = true;
     }
-
 }

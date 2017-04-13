@@ -23,9 +23,6 @@ public class RequiredJtaTransactionPolicy extends TransactionalJtaTransactionPol
 
     @Override
     public void run(final Runnable runnable) throws Throwable {
-
         runWithTransaction(runnable, !hasActiveTransaction());
-
     }
-
 }

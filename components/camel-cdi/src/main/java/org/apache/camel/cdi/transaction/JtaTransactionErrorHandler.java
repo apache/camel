@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.CamelLogger;
@@ -32,7 +33,7 @@ import org.apache.camel.util.CamelLogger;
  * done within the transaction which is not appropriate in JTA since every error
  * breaks the current transaction.
  */
-public class JtaTransactionErrorHandler extends org.apache.camel.processor.RedeliveryErrorHandler {
+public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
 
     public JtaTransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
@@ -58,7 +59,5 @@ public class JtaTransactionErrorHandler extends org.apache.camel.processor.Redel
                 executorService,
                 null,
                 onExceptionOccurredProcessor);
-
     }
-
 }

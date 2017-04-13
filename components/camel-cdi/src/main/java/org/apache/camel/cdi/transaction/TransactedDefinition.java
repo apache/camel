@@ -30,5 +30,4 @@ public class TransactedDefinition extends org.apache.camel.model.TransactedDefin
     public Policy resolvePolicy(RouteContext routeContext) {
         return super.resolvePolicy(routeContext);
     }
-
 }
