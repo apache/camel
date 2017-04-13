@@ -20,21 +20,28 @@ import java.util.List;
 
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.util.ObjectHelper;
 
 public class RoundRobinServiceChooser implements ServiceChooser {
     private int counter = -1;
 
     @Override
-    public ServiceDefinition choose(List<ServiceDefinition> servers) {
-        int size = servers.size();
+    public synchronized ServiceDefinition choose(List<ServiceDefinition> definitions) {
+        // Fail if the service definition list is null or empty
+        if (ObjectHelper.isEmpty(definitions)) {
+            throw new IllegalArgumentException("The ServiceDefinition list should not be empty");
+        }
+
+        int size = definitions.size();
         if (size == 1 || ++counter >= size) {
             counter = 0;
         }
-        return servers.get(counter);
+
+        return definitions.get(counter);
     }
 
     @Override
     public String toString() {
-        return "RoundRobinServiceCallServiceChooser";
+        return "RoundRobinServiceChooser";
     }
 }
