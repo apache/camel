@@ -1,0 +1,8 @@
+## Spring DM
+
+*deprecated*
+
+Spring Dynamic Modules for OSGi allows to use Spring XML files in OSGi containers such as Apache Karaf.
+
+However Spring DM is EOL and its highly recommended not to use.
+Use OSGi Blueprint instead which you can find in the `camel-blueprint` component.
