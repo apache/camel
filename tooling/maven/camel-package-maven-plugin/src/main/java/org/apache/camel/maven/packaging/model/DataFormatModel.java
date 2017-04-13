@@ -23,6 +23,8 @@ import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
 
 public class DataFormatModel {
 
+    private final boolean coreOnly;
+
     private String kind;
     private String name;
     private String modelName;
@@ -36,6 +38,14 @@ public class DataFormatModel {
     private String artifactId;
     private String version;
     private final List<DataFormatOptionModel> dataFormatOptions = new ArrayList<DataFormatOptionModel>();
+
+    public DataFormatModel() {
+        this(false);
+    }
+
+    public DataFormatModel(boolean coreOnly) {
+        this.coreOnly = coreOnly;
+    }
 
     public String getKind() {
         return kind;
@@ -159,7 +169,7 @@ public class DataFormatModel {
 
     public String getDocLink() {
         if ("camel-core".equals(artifactId)) {
-            return "src/main/docs";
+            return coreOnly ? "src/main/docs" : "../camel-core/src/main/docs";
         } else {
             return artifactId + "/src/main/docs";
         }

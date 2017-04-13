@@ -341,7 +341,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
             List<DataFormatModel> models = new ArrayList<>();
             for (File file : dataFormatFiles) {
                 String json = loadText(new FileInputStream(file));
-                DataFormatModel model = generateDataFormatModel(json);
+                DataFormatModel model = generateDataFormatModel(json, coreOnly);
 
                 // special for bindy as we have one common file
                 if (model.getName().startsWith("bindy")) {
@@ -418,7 +418,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
             List<LanguageModel> models = new ArrayList<>();
             for (File file : languageFiles) {
                 String json = loadText(new FileInputStream(file));
-                LanguageModel model = generateLanguageModel(json);
+                LanguageModel model = generateLanguageModel(json, coreOnly);
                 models.add(model);
             }
 
@@ -815,10 +815,10 @@ public class PrepareReadmeMojo extends AbstractMojo {
         return other;
     }
 
-    private DataFormatModel generateDataFormatModel(String json) {
+    private DataFormatModel generateDataFormatModel(String json, boolean coreOnly) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
 
-        DataFormatModel dataFormat = new DataFormatModel();
+        DataFormatModel dataFormat = new DataFormatModel(coreOnly);
         dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
         dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
@@ -834,10 +834,10 @@ public class PrepareReadmeMojo extends AbstractMojo {
         return dataFormat;
     }
 
-    private LanguageModel generateLanguageModel(String json) {
+    private LanguageModel generateLanguageModel(String json, boolean coreOnly) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
 
-        LanguageModel language = new LanguageModel();
+        LanguageModel language = new LanguageModel(coreOnly);
         language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         language.setName(JSonSchemaHelper.getSafeValue("name", rows));
         language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
