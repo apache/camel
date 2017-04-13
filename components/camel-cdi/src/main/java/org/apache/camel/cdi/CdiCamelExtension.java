@@ -416,17 +416,17 @@ public class CdiCamelExtension implements Extension {
 
         // Start Camel contexts
         if (configuration.autoStartContexts()) {
-	        for (CamelContext context : contexts) {
-	            if (ServiceStatus.Started.equals(context.getStatus())) {
-	                continue;
-	            }
-	            logger.info("Camel CDI is starting Camel context [{}]", context.getName());
-	            try {
-	                context.start();
-	            } catch (Exception exception) {
-	                adv.addDeploymentProblem(exception);
-	            }
-	        }
+            for (CamelContext context : contexts) {
+                if (ServiceStatus.Started.equals(context.getStatus())) {
+                    continue;
+                }
+                logger.info("Camel CDI is starting Camel context [{}]", context.getName());
+                try {
+                    context.start();
+                } catch (Exception exception) {
+                    adv.addDeploymentProblem(exception);
+                }
+            }
         }
 
         // Clean-up

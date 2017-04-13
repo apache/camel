@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.cdi.transaction;
 
 import java.util.ArrayList;
@@ -32,6 +48,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         implements AsyncProcessor, ShutdownPrepared, Navigate<Processor> {
 
     protected final Processor output;
+
     protected volatile boolean preparingShutdown;
 
     private ExceptionPolicyStrategy exceptionPolicy;
@@ -149,7 +166,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
                     log.debug(
                             "Transaction rollback ({}) redelivered({}) for {} "
                                     + "due exchange was marked for rollbackOnlyLast",
-                            new Object[] { transactionKey, redelivered, ids });
+                            new Object[] {transactionKey, redelivered, ids});
                 }
             }
             // remove caused exception due we was marked as rollback only last
@@ -234,7 +251,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     private void logTransactionBegin(String redelivered, String ids) {
         if (log.isDebugEnabled()) {
             log.debug("Transaction begin ({}) redelivered({}) for {})",
-                    new Object[] { transactionKey, redelivered, ids });
+                    new Object[] {transactionKey, redelivered, ids});
         }
     }
 
@@ -250,14 +267,14 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
             if (rollbackLoggingLevel == LoggingLevel.INFO || rollbackLoggingLevel == LoggingLevel.WARN
                     || rollbackLoggingLevel == LoggingLevel.ERROR) {
                 log.info("Transaction commit ({}) redelivered({}) for {})",
-                        new Object[] { transactionKey, redelivered, ids });
+                        new Object[] {transactionKey, redelivered, ids});
                 // return after we have logged
                 return;
             }
         }
 
         // log non redelivered by default at DEBUG level
-        log.debug("Transaction commit ({}) redelivered({}) for {})", new Object[] { transactionKey, redelivered, ids });
+        log.debug("Transaction commit ({}) redelivered({}) for {})", new Object[] {transactionKey, redelivered, ids});
     }
 
     /**
@@ -269,42 +286,42 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         } else if (rollbackLoggingLevel == LoggingLevel.ERROR && log.isErrorEnabled()) {
             if (rollbackOnly) {
                 log.error("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] { transactionKey, redelivered, ids });
+                        new Object[] {transactionKey, redelivered, ids});
             } else {
                 log.error("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] { transactionKey, redelivered, ids, e.getMessage() });
+                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
             }
         } else if (rollbackLoggingLevel == LoggingLevel.WARN && log.isWarnEnabled()) {
             if (rollbackOnly) {
                 log.warn("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] { transactionKey, redelivered, ids });
+                        new Object[] {transactionKey, redelivered, ids});
             } else {
                 log.warn("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] { transactionKey, redelivered, ids, e.getMessage() });
+                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
             }
         } else if (rollbackLoggingLevel == LoggingLevel.INFO && log.isInfoEnabled()) {
             if (rollbackOnly) {
                 log.info("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] { transactionKey, redelivered, ids });
+                        new Object[] {transactionKey, redelivered, ids});
             } else {
                 log.info("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] { transactionKey, redelivered, ids, e.getMessage() });
+                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
             }
         } else if (rollbackLoggingLevel == LoggingLevel.DEBUG && log.isDebugEnabled()) {
             if (rollbackOnly) {
                 log.debug("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] { transactionKey, redelivered, ids });
+                        new Object[] {transactionKey, redelivered, ids});
             } else {
                 log.debug("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] { transactionKey, redelivered, ids, e.getMessage() });
+                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
             }
         } else if (rollbackLoggingLevel == LoggingLevel.TRACE && log.isTraceEnabled()) {
             if (rollbackOnly) {
                 log.trace("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly",
-                        new Object[] { transactionKey, redelivered, ids });
+                        new Object[] {transactionKey, redelivered, ids});
             } else {
                 log.trace("Transaction rollback ({}) redelivered({}) for {} caught: {}",
-                        new Object[] { transactionKey, redelivered, ids, e.getMessage() });
+                        new Object[] {transactionKey, redelivered, ids, e.getMessage()});
             }
         }
     }
