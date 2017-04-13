@@ -52,8 +52,7 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
 
         // given
         BulkRequest request = new BulkRequest();
-        request.add(new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz")
-                .source("{\"" + prefix + "content\": \"" + prefix + "hello\"}"));
+        request.add(new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz").source("{\"" + prefix + "content\": \"" + prefix + "hello\"}"));
 
         // when
         @SuppressWarnings("unchecked")
@@ -71,8 +70,7 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
 
         // given
         BulkRequest request = new BulkRequest();
-        request.add(new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz")
-                .source("{\"" + prefix + "content\": \"" + prefix + "hello\"}"));
+        request.add(new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz").source("{\"" + prefix + "content\": \"" + prefix + "hello\"}"));
 
         // when
         BulkResponse response = template.requestBody("direct:bulk", request, BulkResponse.class);
@@ -87,8 +85,8 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:bulk_index").to("elasticsearch5://elasticsearch?operation=BULK_INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
-                from("direct:bulk").to("elasticsearch5://elasticsearch?operation=BULK&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                from("direct:bulk_index").to("elasticsearch5://elasticsearch?operation=BULK_INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:bulk").to("elasticsearch5://elasticsearch?operation=BULK&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
             }
         };
     }

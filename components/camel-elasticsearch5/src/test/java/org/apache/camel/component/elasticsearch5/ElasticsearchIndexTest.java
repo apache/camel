@@ -69,9 +69,9 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("elasticsearch5://elasticsearch?ip=localhost&port=9300");
-                from("direct:index").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
-                from("direct:indexWithReplication").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                from("direct:start").to("elasticsearch5://elasticsearch?ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:index").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
+                from("direct:indexWithReplication").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=" + ES_TRANSPORT_PORT);
             }
         };
     }
