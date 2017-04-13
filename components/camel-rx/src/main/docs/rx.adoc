@@ -1,9 +1,12 @@
 [[ConfluenceContent]]
 [[RX-CamelRX]]
-Camel RX
---------
+Camel RX (deprecated)
+---------------------
 
 *Available as of Camel 2.11*
+
+This component is deprecated.
+We suggest to use the newer `camel-reactive-streams` component.
 
 The camel-rx library provides Camel support for the
 https://rx.codeplex.com/[Reactive Extensions] (RX) using the
