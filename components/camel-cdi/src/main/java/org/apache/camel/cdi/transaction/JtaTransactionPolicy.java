@@ -1,4 +1,4 @@
-package org.apache.camel.cdi.jta;
+package org.apache.camel.cdi.transaction;
 
 import javax.annotation.Resource;
 import javax.transaction.TransactionManager;
