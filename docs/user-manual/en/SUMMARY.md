@@ -472,6 +472,6 @@
     * [Testing](testing.adoc)
         * [Test](test.adoc)
         * [Blueprint Testing](test-blueprint.adoc)
-        * [CDI Testing](cdi-testing.adoc)
-        * [Spring Testing](spring-testing.adoc)
+        * [CDI Testing](test-cdi.adoc)
+        * [Spring Testing](test-spring.adoc)
     * [JSSE Utility](camel-configuration-utilities.adoc)
