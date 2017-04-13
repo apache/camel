@@ -1,5 +1,7 @@
 ## Working with Camel and SCR
 
+**deprecated**
+
 SCR stands for Service Component Runtime and is an implementation of
 OSGi Declarative Services specification. SCR enables any plain old Java
 object to expose and use OSGi services with no boilerplate code.
