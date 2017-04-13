@@ -96,7 +96,7 @@ Number of Components: 231 in 184 JAR artifacts (14 deprecated)
 `binding:bindingName:delegateUri` | 2.11 | *deprecated* The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
 
 | link:camel-bonita/src/main/docs/bonita-component.adoc[Bonita] (camel-bonita) +
-`bonita:operation` | 2.19 | Camel Bonita support
+`bonita:operation` | 2.19 | Used for communicating with a remote Bonita BPM process engine.
 
 | link:camel-box/camel-box-component/src/main/docs/box-component.adoc[Box] (camel-box) +
 `box:apiName/methodName` | 2.14 | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
@@ -501,7 +501,7 @@ Number of Components: 231 in 184 JAR artifacts (14 deprecated)
 `properties:key` | 2.3 | The properties component is used for using property placeholders in endpoint uris.
 
 | link:camel-pubnub/src/main/docs/pubnub-component.adoc[PubNub] (camel-pubnub) +
-`pubnub:channel` | 2.19 | Camel PubNub Support
+`pubnub:channel` | 2.19 | To send and receive messages to PubNub data stream network for connected devices.
 
 | link:camel-quartz/src/main/docs/quartz-component.adoc[Quartz] (camel-quartz) +
 `quartz:groupName/timerName` | 1.0 | *deprecated* Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
@@ -693,7 +693,7 @@ Number of Components: 231 in 184 JAR artifacts (14 deprecated)
 `yammer:function` | 2.12 | The yammer component allows you to interact with the Yammer enterprise social network.
 
 | link:camel-zendesk/src/main/docs/zendesk-component.adoc[Zendesk] (camel-zendesk) +
-`zendesk:methodName` | 2.19 | The zendesk endpoint interacts with the Zendesk server.
+`zendesk:methodName` | 2.19 | Allows producing messages to manage Zendesk ticket user organization etc.
 
 | link:camel-zookeeper/src/main/docs/zookeeper-component.adoc[ZooKeeper] (camel-zookeeper) +
 `zookeeper:serverUrls/path` | 2.9 | The zookeeper component allows interaction with a ZooKeeper cluster.

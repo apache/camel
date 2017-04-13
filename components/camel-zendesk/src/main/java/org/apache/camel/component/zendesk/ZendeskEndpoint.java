@@ -35,7 +35,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 import org.zendesk.client.v2.Zendesk;
 
 /**
- * The zendesk endpoint interacts with the Zendesk server.
+ * Allows producing messages to manage Zendesk ticket, user, organization, etc.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zendesk", title = "Zendesk", syntax = "zendesk:methodName",
     consumerClass = ZendeskConsumer.class, consumerPrefix = "consumer", label = "api,support,cloud", lenientProperties = true)

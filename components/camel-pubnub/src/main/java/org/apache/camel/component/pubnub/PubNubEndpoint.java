@@ -27,6 +27,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * To send and receive messages to PubNub data stream network for connected devices.
+ */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "pubnub", title = "PubNub", syntax = "pubnub:channel",
     consumerClass = PubNubConsumer.class, label = "cloud,iot,messaging")
 public class PubNubEndpoint extends DefaultEndpoint {

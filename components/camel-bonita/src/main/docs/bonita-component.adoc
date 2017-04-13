@@ -2,7 +2,7 @@
 
 *Available as of Camel version 2.19*
 
-This Camel component allow you to communicate with a remote Bonita engine.
+Used for communicating with a remote Bonita BPM process engine.
 
 ### URI format
 
