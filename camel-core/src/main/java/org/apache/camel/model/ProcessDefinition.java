@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Calls a Camel processor.
+ * Calls a Camel processor
  *
  * @version 
  */

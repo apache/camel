@@ -2,6 +2,8 @@
 About the Scala DSL
 ^^^^^^^^^^^^^^^^^^^
 
+**Deprecated**
+
 http://www.scala-lang.org/[Scala] is a general purpose programming
 language designed to express common programming patterns in a concise,
 elegant, and type-safe way. It integrates very well with the Java
