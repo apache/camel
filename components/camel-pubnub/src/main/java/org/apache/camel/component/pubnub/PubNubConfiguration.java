@@ -147,7 +147,7 @@ public class PubNubConfiguration {
      * The operation to perform.
      * <ul>
      * <li>PUBLISH: Default. Send a message to all subscribers of a channel.</li>
-     * <li>FIRE: allows the client to send a message to BLOCKS Event Handlers. These messages will go directly to any Event Handlers registered on the channel that you fire to and will trigger their execution,</li>
+     * <li>FIRE: allows the client to send a message to BLOCKS Event Handlers. These messages will go directly to any Event Handlers registered on the channel.</li>
      * <li>HERENOW: Obtain information about the current state of a channel including a list of unique user-ids currently subscribed to the channel and the total occupancy count.</li>
      * <li>WHERENOW: Obtain information about the current list of channels to which a uuid is subscribed to.</li>
      * <li>GETSTATE: Used to get key/value pairs specific to a subscriber uuid. State information is supplied as a JSON object of key/value pairs</li>
