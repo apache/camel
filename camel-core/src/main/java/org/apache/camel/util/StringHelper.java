@@ -341,8 +341,7 @@ public final class StringHelper {
 
         return value;
     }
-
-    // TODO: add javadoc
+    
     public static String[] splitOnCharacter(String value, String needle, int count) {
         String rc[] = new String[count];
         rc[0] = value;

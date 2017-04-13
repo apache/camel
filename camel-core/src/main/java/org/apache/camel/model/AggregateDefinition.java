@@ -792,10 +792,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * TODO: document
-     * Note: this is experimental and subject to changes in future releases.
-     *
-     * @return the builder
+     * Sets the AggregationStrategy to use with a fluent builder.
      */
     public AggregationStrategyClause<AggregateDefinition> aggregationStrategy() {
         AggregationStrategyClause<AggregateDefinition> clause = new AggregationStrategyClause<>(this);
@@ -804,19 +801,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * TODO: document
-     * Note: this is experimental and subject to changes in future releases.
-     *
-     * @return the builder
+     * Sets the AggregationStrategy to use with a fluent builder.
      */
     public AggregationStrategyClause<AggregateDefinition> strategy() {
         return aggregationStrategy();
     }
 
     /**
-     * TODO: document
-     * Note: this is experimental and subject to changes in future releases.
+     * Sets the aggregate strategy to use
      *
+     * @param aggregationStrategy  the aggregate strategy to use
      * @return the builder
      */
     public AggregateDefinition strategy(AggregationStrategy aggregationStrategy) {
@@ -916,10 +910,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * TODO: document
-     * Note: this is experimental and subject to changes in future releases.
-     *
-     * @return the builder
+     * Sets the predicate used to determine if the aggregation is completed with a fluent builder
      */
     @AsPredicate
     public PredicateClause<AggregateDefinition> completionPredicate() {
@@ -929,10 +920,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * TODO: document
-     * Note: this is experimental and subject to changes in future releases.
-     *
-     * @return the builder
+     * Sets the predicate used to determine if the aggregation is completed with a fluent builder
      */
     @AsPredicate
     public PredicateClause<AggregateDefinition> completion() {
@@ -940,10 +928,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * TODO: document
-     * Note: this is experimental and subject to changes in future releases.
-     *
-     * @return the builder
+     * Sets the predicate used to determine if the aggregation is completed
      */
     public AggregateDefinition completion(@AsPredicate Predicate predicate) {
         return completionPredicate(predicate);

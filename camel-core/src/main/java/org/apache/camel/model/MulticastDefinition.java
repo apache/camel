@@ -108,10 +108,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     // -------------------------------------------------------------------------
 
     /**
-     * TODO: document
-     * Note: this is experimental and subject to changes in future releases.
-     *
-     * @return the builder
+     * Sets the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast using a fluent builder.
      */
     public AggregationStrategyClause<MulticastDefinition> aggregationStrategy() {
         AggregationStrategyClause<MulticastDefinition> clause = new AggregationStrategyClause<>(this);
@@ -262,10 +259,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     /**
-     * TODO: document
-     * Note: this is experimental and subject to changes in future releases.
-     *
-     * @return the builder
+     * Set the {@link Processor} to use when preparing the {@link org.apache.camel.Exchange} to be send using a fluent builder.
      */
     public ProcessClause<MulticastDefinition> onPrepare() {
         ProcessClause<MulticastDefinition> clause = new ProcessClause<>(this);
