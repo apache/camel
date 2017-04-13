@@ -242,7 +242,8 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     managedSpan.deactivate();
                 }
             } catch (Throwable t) {
-                LOG.error("OpenTracing: Failed to capture tracing data", t);
+                // This exception is ignored
+                LOG.warn("OpenTracing: Failed to capture tracing data", t);
             }
         }
 
@@ -283,7 +284,8 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     LOG.trace("OpenTracing: start server span=" + span);
                 }
             } catch (Throwable t) {
-                LOG.error("OpenTracing: Failed to capture tracing data", t);
+                // This exception is ignored
+                LOG.warn("OpenTracing: Failed to capture tracing data", t);
             }
         }
 
@@ -303,7 +305,8 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     LOG.warn("OpenTracing: could not find managed span for exchange=" + exchange);
                 }
             } catch (Throwable t) {
-                LOG.error("OpenTracing: Failed to capture tracing data", t);
+                // This exception is ignored
+                LOG.warn("OpenTracing: Failed to capture tracing data", t);
             }
         }
     }
@@ -327,7 +330,8 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     span.log(fields);
                 }
             } catch (Throwable t) {
-                LOG.error("OpenTracing: Failed to capture tracing data", t);
+                // This exception is ignored
+                LOG.warn("OpenTracing: Failed to capture tracing data", t);
             }
             return message;
         }
