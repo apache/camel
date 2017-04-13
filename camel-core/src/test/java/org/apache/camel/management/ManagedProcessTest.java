@@ -82,7 +82,7 @@ public class ManagedProcessTest extends ManagementTestSupport {
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Calls a Camel processor."));
+        assertTrue(json.contains("\"description\": \"Calls a Camel processor"));
     }
 
     @Override
