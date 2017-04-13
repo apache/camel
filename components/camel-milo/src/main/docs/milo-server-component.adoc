@@ -1,6 +1,6 @@
 ## OPC UA Server Component
 
-*Available as of Camel version *
+*Available as of Camel version 2.19*
 
 ### Eclipse Milo Server Component
 

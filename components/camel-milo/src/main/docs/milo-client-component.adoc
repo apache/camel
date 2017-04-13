@@ -1,6 +1,6 @@
 ## Milo based OPC UA Client Component
 
-*Available as of Camel version *
+*Available as of Camel version 2.19*
 
 ### Milo Client Component
 
@@ -85,7 +85,7 @@ In other words, shared connections located by the combination of endpoint URI an
 // endpoint options: START
 The Milo based OPC UA Client endpoint is configured using URI syntax:
 
-    milo-client:tcp://user:password@host:port/path/to/service
+    milo-client:endpointUri
 
 with the following path and query parameters:
 
