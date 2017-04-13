@@ -23,6 +23,8 @@ import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
 
 public class LanguageModel {
 
+    private final boolean coreOnly;
+
     private String kind;
     private String name;
     private String modelName;
@@ -36,6 +38,14 @@ public class LanguageModel {
     private String artifactId;
     private String version;
     private final List<LanguageOptionModel> languageOptions = new ArrayList<LanguageOptionModel>();
+
+    public LanguageModel() {
+        this(false);
+    }
+
+    public LanguageModel(boolean coreOnly) {
+        this.coreOnly = coreOnly;
+    }
 
     public String getKind() {
         return kind;
@@ -159,7 +169,7 @@ public class LanguageModel {
 
     public String getDocLink() {
         if ("camel-core".equals(artifactId)) {
-            return "src/main/docs";
+            return coreOnly ? "src/main/docs" : "../camel-core/src/main/docs";
         } else {
             return artifactId + "/src/main/docs";
         }
