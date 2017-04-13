@@ -2,7 +2,7 @@
 Eclipse Kura component
 ~~~~~~~~~~~~~~~~~~~~~~
 
-INFO: Kura component is available starting from Camel *2.15*.
+*Available as of Camel 2.15*
 
 This documentation page covers the integration options of Camel with the
 https://eclipse.org/kura/[Eclipse Kura] M2M gateway. The common reason
