@@ -35,7 +35,6 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
     private static final Logger LOG = LoggerFactory.getLogger(TransactionalJtaTransactionPolicy.class);
 
     protected void runWithTransaction(final Runnable runnable, final boolean isNew) throws Throwable {
-
         if (isNew) {
             begin();
         }
@@ -55,17 +54,13 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
             commit();
         }
         return;
-
     }
 
     private void begin() throws Exception {
-
         transactionManager.begin();
-
     }
 
     private void commit() throws Exception {
-
         try {
             transactionManager.commit();
         } catch (HeuristicMixedException e) {
@@ -86,35 +81,25 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
             rollback(true);
             throw e;
         }
-
     }
 
     protected void rollback(boolean isNew) throws Exception {
-
         try {
-
             if (isNew) {
                 transactionManager.rollback();
             } else {
                 transactionManager.setRollbackOnly();
             }
-
         } catch (Throwable e) {
-
             LOG.warn("Could not rollback transaction!", e);
-
         }
-
     }
 
     protected Transaction suspendTransaction() throws Exception {
-
         return transactionManager.suspend();
-
     }
 
     protected void resumeTransaction(final Transaction suspendedTransaction) {
-
         if (suspendedTransaction == null) {
             return;
         }
@@ -124,14 +109,10 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
         } catch (Throwable e) {
             LOG.warn("Could not resume transaction!", e);
         }
-
     }
 
     protected boolean hasActiveTransaction() throws Exception {
-
         return transactionManager.getStatus() != Status.STATUS_MARKED_ROLLBACK
                 && transactionManager.getStatus() != Status.STATUS_NO_TRANSACTION;
-
     }
-
 }

@@ -53,8 +53,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         // do not inherit since we create our own
         // (otherwise the default error handler would be used two times
         // because we inherit it on our own but only in case of a
-        // non-transactional
-        // error handler)
+        // non-transactional error handler)
         definition.setInheritErrorHandler(false);
     }
 
@@ -62,9 +61,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
     @Override
     public Processor wrap(RouteContext routeContext, Processor processor) {
-
         JtaTransactionErrorHandler answer;
-
         // the goal is to configure the error handler builder on the route as a
         // transacted error handler,
         // either its already a transacted or if not we replace it with a
@@ -84,12 +81,9 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             // its a reference to a error handler so lookup the reference
             ErrorHandlerBuilderRef builderRef = (ErrorHandlerBuilderRef) builder;
             String ref = builderRef.getRef();
-            // only lookup if there was explicit an error handler builder
-            // configured
-            // otherwise its just the "default" that has not explicit been
-            // configured
-            // and if so then we can safely replace that with our transacted
-            // error handler
+            // only lookup if there was explicit an error handler builder configured
+            // otherwise its just the "default" that has not explicit been configured
+            // and if so then we can safely replace that with our transacted error handler
             if (ErrorHandlerBuilderRef.isErrorHandlerBuilderConfigured(ref)) {
                 LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
                 builder = (ErrorHandlerBuilder) ErrorHandlerBuilderRef.lookupErrorHandlerBuilder(routeContext, ref);
@@ -128,7 +122,6 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
         // return with wrapped transacted error handler
         return answer;
-
     }
 
     protected JtaTransactionErrorHandler createTransactionErrorHandler(RouteContext routeContext, Processor processor,
@@ -141,12 +134,10 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         return answer;
-
     }
 
     @Override
     public String toString() {
         return getClass().getName();
     }
-
 }

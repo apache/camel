@@ -23,9 +23,6 @@ public class SupportsJtaTransactionPolicy extends TransactionalJtaTransactionPol
 
     @Override
     public void run(final Runnable runnable) throws Throwable {
-
         runnable.run();
-
     }
-
 }

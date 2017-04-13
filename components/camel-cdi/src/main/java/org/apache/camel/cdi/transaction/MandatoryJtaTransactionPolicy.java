@@ -28,7 +28,5 @@ public class MandatoryJtaTransactionPolicy extends TransactionalJtaTransactionPo
             throw new IllegalStateException(
                     "Policy 'PROPAGATION_MANDATORY' is configured but no active transaction was found!");
         }
-
     }
-
 }

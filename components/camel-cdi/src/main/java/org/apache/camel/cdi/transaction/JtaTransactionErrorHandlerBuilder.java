@@ -58,32 +58,25 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
 
     @Override
     public ErrorHandlerBuilder cloneBuilder() {
-
         final JtaTransactionErrorHandlerBuilder answer = new JtaTransactionErrorHandlerBuilder();
         cloneBuilder(answer);
         return answer;
-
     }
 
     @Override
     protected void cloneBuilder(DefaultErrorHandlerBuilder other) {
-
         super.cloneBuilder(other);
         if (other instanceof JtaTransactionErrorHandlerBuilder) {
             final JtaTransactionErrorHandlerBuilder otherTx = (JtaTransactionErrorHandlerBuilder) other;
             transactionPolicy = otherTx.transactionPolicy;
             rollbackLoggingLevel = otherTx.rollbackLoggingLevel;
         }
-
     }
 
     public Processor createErrorHandler(final RouteContext routeContext, final Processor processor) throws Exception {
-
         // resolve policy reference, if given
         if (transactionPolicy == null) {
-
             if (policyRef != null) {
-
                 final TransactedDefinition transactedDefinition = new TransactedDefinition();
                 transactedDefinition.setRef(policyRef);
                 final Policy policy = transactedDefinition.resolvePolicy(routeContext);
@@ -95,14 +88,11 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
                     }
                     transactionPolicy = (JtaTransactionPolicy) policy;
                 }
-
             }
-
         }
 
         // try to lookup default policy
         if (transactionPolicy == null) {
-
             LOG.debug(
                     "No tranaction policiy configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
 
@@ -122,9 +112,8 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
             }
 
             if (transactionPolicy != null) {
-                LOG.debug("Found TransactionPolicy in registry to use: " + transactionPolicy);
+                LOG.debug("Found TransactionPolicy in registry to use: {}", transactionPolicy);
             }
-
         }
 
         ObjectHelper.notNull(transactionPolicy, "transactionPolicy", this);
@@ -150,7 +139,6 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
-
     }
 
     public JtaTransactionErrorHandlerBuilder setTransactionPolicy(final String ref) {
@@ -176,5 +164,4 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
     public String toString() {
         return "JtaTransactionErrorHandlerBuilder";
     }
-
 }
