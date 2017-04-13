@@ -1,0 +1,8 @@
+## Test Spring
+
+*Available since 2.10*
+
+Allows to test Camel with Spring applications such as Spring XML files or Spring-Boot.
+
+The documentation needs to be updated but you can look at the old online documentation at:
+ http://camel.apache.org/spring-testing.html[http://camel.apache.org/spring-testing.html]
