@@ -393,7 +393,7 @@ Number of Components: 231 in 184 JAR artifacts (14 deprecated)
 `metrics:metricsType:metricsName` | 2.14 | To collect various metrics directly from Camel routes using the DropWizard metrics library.
 
 | link:camel-milo/src/main/docs/milo-client-component.adoc[Milo based OPC UA Client] (camel-milo) +
-`milo-client:endpointUri` | 2.19 | Camel OPC UA support
+`milo-client:endpointUri` | 2.19 | Connect to OPC UA servers using the binary protocol for acquiring telemetry data
 
 | link:camel-mina/src/main/docs/mina-component.adoc[Mina] (camel-mina) +
 `mina:protocol:host:port` | 1.0 | *deprecated* Socket level networking using TCP or UDP with the Apache Mina 1.x library.
@@ -456,7 +456,7 @@ Number of Components: 231 in 184 JAR artifacts (14 deprecated)
 `olingo4:apiName/methodName` | 2.19 | Communicates with OData 4.0 services using Apache Olingo OData API.
 
 | link:camel-milo/src/main/docs/milo-server-component.adoc[OPC UA Server] (camel-milo) +
-`milo-server:itemId` | 2.19 | OPC UA Server based endpoint
+`milo-server:itemId` | 2.19 | Make telemetry data available as an OPC UA server
 
 | link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
 `openshift:clientId` | 2.14 | *deprecated* To manage your Openshift 2.x applications.

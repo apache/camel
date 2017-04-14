@@ -30,8 +30,11 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 
-@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "Milo based OPC UA Client",
-    consumerClass = MiloClientConsumer.class, label = "iot")
+/**
+ * Connect to OPC UA servers using the binary protocol for acquiring telemetry
+ * data
+ */
+@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "Milo based OPC UA Client", consumerClass = MiloClientConsumer.class, label = "iot")
 public class MiloClientEndpoint extends DefaultEndpoint implements MiloClientItemConfiguration {
 
     /**
