@@ -209,6 +209,7 @@
 	* [HTTP](http-component.adoc)
 	* [HTTP4](http4-component.adoc)
 	* [iBatis](ibatis-component.adoc)
+	* [Ignite](ignite-component.adoc)
 	* [IMAP](imap-component.adoc)
 	* [Infinispan](infinispan-component.adoc)
 	* [InfluxDB](influxdb-component.adoc)
