@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.catalog;
+package org.apache.camel.runtimecatalog;
+
+import java.util.Set;
 
 /**
- * To be backwards compatible, but favor using {@link LanguageValidationResult} instead.
+ * Strategy to provide suggestions for unknown endpoint options
  */
-public class SimpleValidationResult extends LanguageValidationResult {
+public interface SuggestionStrategy {
 
-    public SimpleValidationResult(String text) {
-        super(text);
-    }
-
-    public String getSimple() {
-        return getText();
-    }
-
+    /**
+     * Provides a list of valid option names for a did you mean function.
+     *
+     * @param names         valid names
+     * @param unknownOption unknown option name
+     * @return a list of suggested names (did you mean)
+     */
+    String[] suggestEndpointOptions(Set<String> names, String unknownOption);
 }

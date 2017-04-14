@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.catalog;
+package org.apache.camel.runtimecatalog;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.apache.camel.catalog.URISupport.isEmpty;
+import static org.apache.camel.runtimecatalog.URISupport.isEmpty;
 
 /**
  * Details result of validating endpoint uri.

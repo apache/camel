@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.catalog;
+package org.apache.camel.runtimecatalog;
 
 import java.net.URISyntaxException;
 import java.util.Map;
