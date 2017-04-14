@@ -48,6 +48,7 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier) {
         this(endpoint, headerSupplier, () -> null, null);
     }
+
     public HeaderSelectorProducer(Endpoint endpoint, String header) {
         this(endpoint, () -> header, () -> null, null);
     }
@@ -62,6 +63,10 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue) {
         this(endpoint, () -> header, () -> defaultHeaderValue, null);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier) {
+        this(endpoint, () -> header, defaultHeaderValueSupplier, null);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier) {
@@ -102,7 +107,7 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
     @Override
     protected Processor getProcessor(Exchange exchange) throws Exception {
         String header = headerSupplier.get();
-        String action = exchange.getIn().getHeader(headerSupplier.get(), String.class);
+        String action = exchange.getIn().getHeader(header, String.class);
 
         if (action == null) {
             action = defaultHeaderValueSupplier.get();
