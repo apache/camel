@@ -357,7 +357,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>(1);
+        List<Processor> answer = new ArrayList<>(1);
         answer.add(output);
         return answer;
     }

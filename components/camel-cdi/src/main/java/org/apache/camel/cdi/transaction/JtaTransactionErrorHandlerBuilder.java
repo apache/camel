@@ -94,7 +94,7 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
         // try to lookup default policy
         if (transactionPolicy == null) {
             LOG.debug(
-                    "No tranaction policiy configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
+                    "No transaction policy configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
 
             Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
