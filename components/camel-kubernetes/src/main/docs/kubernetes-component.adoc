@@ -180,3 +180,51 @@ with the following path and query parameters:
 
 |CamelKubernetesConfigData |Map |ConfigMap Data
 |=======================================================================
+
+
+### Categories
+
+Actually the camel-kubernetes component supports the following Kubernetes resources
+
+- Namespaces
+- Pods
+- Replication Controllers
+- Services
+- Persistent Volumes
+- Persistent Volume Claims
+- Secrets
+- Resource Quota
+- Service Accounts
+- Nodes
+- Configmaps
+
+In Openshift also
+
+- Builds
+- BuildConfigs
+
+### Usage
+
+#### Producer examples
+
+Here we show some examples of producer using camel-kubernetes.
+
+#### Create a pod
+
+[source,java]
+-------------------------------------------------------------
+from("direct:createPod")
+    .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=createPod", host, authToken);
+-------------------------------------------------------------
+
+By using the KubernetesConstants.KUBERNETES_POD_SPEC header you can specify your PodSpec and pass it to this operation.
+
+#### Delete a pod
+
+[source,java]
+-------------------------------------------------------------
+from("direct:createPod")
+    .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=deletePod", host, authToken);
+-------------------------------------------------------------
+
+By using the KubernetesConstants.KUBERNETES_POD_NAME header you can specify your Pod name and pass it to this operation.
