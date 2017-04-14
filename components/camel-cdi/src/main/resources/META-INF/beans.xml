@@ -19,6 +19,13 @@
 
     <scan>
         <exclude name="org.apache.camel.cdi.Main"/>
+
+        <exclude name="org.apache.camel.cdi.transaction.*">
+            <if-class-not-available name="javax.transaction.Transaction"/>
+        </exclude>
+        <exclude name="org.apache.camel.cdi.transaction.TransactedDefinition"/>
+        <exclude name="org.apache.camel.cdi.transaction.JtaTransactionErrorHandlerBuilder"/>
+
         <exclude name="org.apache.camel.cdi.xml.*"/>
         <exclude name="org.apache.camel.cdi.XmlCdiBeanFactory"/>
         <exclude name="org.apache.camel.cdi.XmlCdiJaxbContexts"/>
