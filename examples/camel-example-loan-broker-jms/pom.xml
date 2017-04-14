@@ -177,6 +177,22 @@
         <target.main.class>org.apache.camel.loanbroker.Client</target.main.class>
       </properties>
     </profile>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>
