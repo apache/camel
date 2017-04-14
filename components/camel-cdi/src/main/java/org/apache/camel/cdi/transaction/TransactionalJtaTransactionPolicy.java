@@ -40,12 +40,6 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
         }
         try {
             runnable.run();
-        } catch (RuntimeException e) {
-            rollback(isNew);
-            throw e;
-        } catch (Error e) {
-            rollback(isNew);
-            throw e;
         } catch (Throwable e) {
             rollback(isNew);
             throw e;
@@ -53,7 +47,6 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
         if (isNew) {
             commit();
         }
-        return;
     }
 
     private void begin() throws Exception {
@@ -63,21 +56,9 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
     private void commit() throws Exception {
         try {
             transactionManager.commit();
-        } catch (HeuristicMixedException e) {
+        } catch (HeuristicMixedException | HeuristicRollbackException | RollbackException | SystemException e) {
             throw new CamelException("Unable to commit transaction", e);
-        } catch (HeuristicRollbackException e) {
-            throw new CamelException("Unable to commit transaction", e);
-        } catch (RollbackException e) {
-            throw new CamelException("Unable to commit transaction", e);
-        } catch (SystemException e) {
-            throw new CamelException("Unable to commit transaction", e);
-        } catch (RuntimeException e) {
-            rollback(true);
-            throw e;
-        } catch (Exception e) {
-            rollback(true);
-            throw e;
-        } catch (Error e) {
+        } catch (Exception | Error e) {
             rollback(true);
             throw e;
         }

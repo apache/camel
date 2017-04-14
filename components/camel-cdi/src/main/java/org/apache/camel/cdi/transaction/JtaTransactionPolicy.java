@@ -126,7 +126,6 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
     protected JtaTransactionErrorHandler createTransactionErrorHandler(RouteContext routeContext, Processor processor,
             ErrorHandlerBuilder builder) {
-
         JtaTransactionErrorHandler answer;
         try {
             answer = (JtaTransactionErrorHandler) builder.createErrorHandler(routeContext, processor);

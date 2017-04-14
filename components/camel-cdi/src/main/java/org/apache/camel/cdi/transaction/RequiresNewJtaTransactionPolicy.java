@@ -24,7 +24,6 @@ public class RequiresNewJtaTransactionPolicy extends TransactionalJtaTransaction
 
     @Override
     public void run(final Runnable runnable) throws Throwable {
-
         Transaction suspendedTransaction = null;
         try {
             suspendedTransaction = suspendTransaction();

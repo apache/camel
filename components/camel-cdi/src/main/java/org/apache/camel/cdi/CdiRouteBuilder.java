@@ -21,9 +21,7 @@ import org.apache.camel.cdi.transaction.JtaTransactionErrorHandlerBuilder;
 
 /**
  * An extension of the {@link RouteBuilder} to provide some additional helper
- * methods
- *
- * @version
+ * methods.
  */
 public abstract class CdiRouteBuilder extends RouteBuilder {
 
