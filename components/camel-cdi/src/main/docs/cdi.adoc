@@ -1084,11 +1084,11 @@ following runtimes:
 |Container |Version |Runtime
 |Weld SE |1.1.28.Final |CDI 1.0 / Java SE 7
 |OpenWebBeans |1.2.7 |CDI 1.0 / Java SE 7
-|Weld SE |2.3.4.Final |CDI 1.2 / Java SE 7
-|OpenWebBeans |1.6.3 |CDI 1.2 / Java SE 7
+|Weld SE |2.4.2.Final |CDI 1.2 / Java SE 7
+|OpenWebBeans |1.7.2 |CDI 1.2 / Java SE 7
 |WildFly |8.2.1.Final |CDI 1.2 / Java EE 7
 |WildFly |9.0.1.Final |CDI 1.2 / Java EE 7
-|WildFly |10.0.0.Final |CDI 1.2 / Java EE 7
+|WildFly |10.1.0.Final |CDI 1.2 / Java EE 7
 |Karaf |2.4.4 |CDI 1.2 / OSGi 4 / PAX CDI
 |Karaf |3.0.5 |CDI 1.2 / OSGi 5 / PAX CDI
 |Karaf |4.0.4 |CDI 1.2 / OSGi 6 / PAX CDI
