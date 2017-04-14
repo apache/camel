@@ -855,6 +855,106 @@ configuration, e.g.:
 <camelContext/>
 ----
 
+
+### Transaction support
+
+*Available as of Camel 2.19*
+
+Camel CDI provides support for Camel transactional client using JTA.
+
+That support is optional hence you need to have JTA in your application classpath, e.g., by explicitly add JTA as a dependency when using Maven:
+
+[source,xml]
+----
+<dependency>
+    <groupId>javax.transaction</groupId>
+    <artifactId>javax.transaction-api</artifactId>
+    <scope>runtime</scope>
+</dependency>
+----
+
+You'll have to have your application deployed in a JTA capable container or provide a standalone JTA implementation.
+
+[CAUTION]
+====
+Note that, for the time being, the transaction manager is looked up as JNDI resource with the `java:/TransactionManager` key.
+
+More flexible strategies will be added in the future to support a wider range of deployment scenarios.
+====
+
+#### Transaction policies
+
+Camel CDI provides implementation for the typically supported Camel `TransactedPolicy` as CDI beans. It is possible to have these policies looked up by name using the transacted EIP, e.g.:
+
+[source,java]
+----
+class MyRouteBean extends RouteBuilder {
+
+    @Override
+    public void configure() {
+        from("activemq:queue:foo")
+            .transacted("PROPAGATION_REQUIRED")
+            .bean("transformer")
+            .to("jpa:my.application.entity.Bar")
+            .log("${body.id} inserted");
+    }
+}
+----
+
+This would be equivalent to:
+
+[source,java]
+----
+class MyRouteBean extends RouteBuilder {
+
+    @Inject
+    @Named("PROPAGATION_REQUIRED")
+    Policy required;
+
+    @Override
+    public void configure() {
+        from("activemq:queue:foo")
+            .policy(required)
+            .bean("transformer")
+            .to("jpa:my.application.entity.Bar")
+            .log("${body.id} inserted");
+    }
+}
+----
+
+The list of supported transaction policy names is:
+
+- `PROPAGATION_NEVER`,
+- `PROPAGATION_NOT_SUPPORTED`,
+- `PROPAGATION_SUPPORTS`,
+- `PROPAGATION_REQUIRED`,
+- `PROPAGATION_REQUIRES_NEW`,
+- `PROPAGATION_NESTED`,
+- `PROPAGATION_MANDATORY`.
+
+#### Transactional error handler
+
+Camel CDI provides a transactional error handler that extends the redelivery error handler, forces a rollback whenever an exception occurs and creates a new transaction for each redelivery.
+
+Camel CDI provides the `CdiRouteBuilder` class that exposes the `transactionErrorHandler` helper method to enable quick access to the configuration, e.g.:
+
+[source,java]
+----
+class MyRouteBean extends CdiRouteBuilder {
+
+    @Override
+    public void configure() {
+        errorHandler(transactionErrorHandler()
+            .setTransactionPolicy("PROPAGATION_SUPPORTS")
+            .maximumRedeliveries(5)
+            .maximumRedeliveryDelay(5000)
+            .collisionAvoidancePercent(10)
+            .backOffMultiplier(1.5));
+    }
+}
+----
+
+
 ### Auto-configured OSGi integration
 
 *Available as of Camel 2.17*
