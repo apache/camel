@@ -208,7 +208,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
+              <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED</argLine>
             </configuration>
           </plugin>
         </plugins>
