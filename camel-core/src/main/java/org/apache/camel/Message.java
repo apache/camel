@@ -159,7 +159,7 @@ public interface Message {
     
     /**
      * Removes the headers from this message that match the given <tt>pattern</tt>, 
-     * except for the ones matching one ore more <tt>excludePatterns</tt>
+     * except for the ones matching one or more <tt>excludePatterns</tt>
      * 
      * @param pattern pattern of names that should be removed
      * @param excludePatterns one or more pattern of header names that should be excluded (= preserved)
