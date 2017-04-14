@@ -64,6 +64,26 @@ Besides, `RouteContainer` beans are also automatically collected,
 instantiated and added to the `CamelContext` bean instance managed by
 Camel CDI when the container initializes.
 
+*Available as of Camel 2.19*
+
+In some situations, it may be necessary to disable the auto-configuration of the `RouteBuilder` and `RouteContainer` beans. That can be achieved by observing for the `CdiCamelConfiguration` event, e.g.:
+
+[source,java]
+----
+static void configuration(@Observes CdiCamelConfiguration configuration) {
+    configuration.autoConfigureRoutes(false);
+}
+----
+
+Similarly, it is possible to deactivate the automatic starting of the configured `CamelContext` beans, e.g.:
+
+[source,java]
+----
+static void configuration(@Observes CdiCamelConfiguration configuration) {
+    configuration.autoStartContexts(false);
+}
+----
+
 ### Auto-configured Camel primitives
 
 Camel CDI provides beans for common Camel primitives that can be
