@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedRuntimeCamelCatalogMBean;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.ManagementStrategy;
 
 /**

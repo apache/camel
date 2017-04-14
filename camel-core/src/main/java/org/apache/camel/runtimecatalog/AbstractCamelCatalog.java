@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.catalog;
+package org.apache.camel.runtimecatalog;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,30 +34,30 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.camel.catalog.CatalogHelper.after;
-import static org.apache.camel.catalog.JSonSchemaHelper.getNames;
-import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyDefaultValue;
-import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyEnum;
-import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyKind;
-import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyNameFromNameWithPrefix;
-import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyPrefix;
-import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
-import static org.apache.camel.catalog.JSonSchemaHelper.isComponentConsumerOnly;
-import static org.apache.camel.catalog.JSonSchemaHelper.isComponentLenientProperties;
-import static org.apache.camel.catalog.JSonSchemaHelper.isComponentProducerOnly;
-import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
-import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyConsumerOnly;
-import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
-import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyMultiValue;
-import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyNumber;
-import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyObject;
-import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyProducerOnly;
-import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
-import static org.apache.camel.catalog.JSonSchemaHelper.stripOptionalPrefixFromName;
-import static org.apache.camel.catalog.URISupport.createQueryString;
-import static org.apache.camel.catalog.URISupport.isEmpty;
-import static org.apache.camel.catalog.URISupport.normalizeUri;
-import static org.apache.camel.catalog.URISupport.stripQuery;
+import static org.apache.camel.runtimecatalog.CatalogHelper.after;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.getNames;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.getPropertyDefaultValue;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.getPropertyEnum;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.getPropertyKind;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.getPropertyNameFromNameWithPrefix;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.getPropertyPrefix;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.getRow;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isComponentConsumerOnly;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isComponentLenientProperties;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isComponentProducerOnly;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyBoolean;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyConsumerOnly;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyInteger;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyMultiValue;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyNumber;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyObject;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyProducerOnly;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.isPropertyRequired;
+import static org.apache.camel.runtimecatalog.JSonSchemaHelper.stripOptionalPrefixFromName;
+import static org.apache.camel.runtimecatalog.URISupport.createQueryString;
+import static org.apache.camel.runtimecatalog.URISupport.isEmpty;
+import static org.apache.camel.runtimecatalog.URISupport.normalizeUri;
+import static org.apache.camel.runtimecatalog.URISupport.stripQuery;
 
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
