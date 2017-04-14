@@ -293,6 +293,9 @@ Number of Components: 231 in 184 JAR artifacts (14 deprecated)
 | link:camel-ibatis/src/main/docs/ibatis-component.adoc[iBatis] (camel-ibatis) +
 `ibatis:statement` | 1.2 | *deprecated* Performs a query poll insert update or delete in a relational database using Apache iBATIS.
 
+| link:camel-ignite/src/main/docs/ignite-component.adoc[Ignite] (camel-ignite) +
+`ignite:endpointName` | 1.17 | The Ignite Component integrates Apache Camel with Apache Ignite
+
 | link:camel-infinispan/src/main/docs/infinispan-component.adoc[Infinispan] (camel-infinispan) +
 `infinispan:cacheName` | 2.13 | For reading/writing from/to Infinispan distributed key/value store and data grid.
 
