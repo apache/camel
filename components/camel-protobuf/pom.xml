@@ -107,7 +107,7 @@
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <version>1.5</version>
+        <version>${gmaven-plugin-version}</version>
         <executions>
           <execution>
             <phase>validate</phase>
