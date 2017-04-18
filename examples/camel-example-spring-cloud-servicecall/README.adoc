@@ -48,6 +48,14 @@ In a new shell:
 
 If you keep calling the http endpoint you'll notice they are consumed using a round robin policy and that only the services matching specific tags are consumed.
 
+## Web console
+
+You can open the Consul web console
+
+     http://localhost:8500/ui
+
+Where you can find information about the services and its state.
+
 ## More information
 
 You can find more information about Apache Camel at the website: http://camel.apache.org/
