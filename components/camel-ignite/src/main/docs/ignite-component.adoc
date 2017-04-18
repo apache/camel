@@ -1,4 +1,3 @@
-[[Ignite-Component]]
 ## Ignite Component
 
 *Available as of Camel version 2.17*
@@ -40,9 +39,8 @@ If running in an OSGi container, please don't miss the <<Ignite-OsgiSupport,OSGi
 // endpoint options: END
 
 
-[[Ignite-Cache]]
-CACHE: Ignite Cache Endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### CACHE: Ignite Cache Endpoint
+
 This endpoint allows you to interact with an https://apacheignite.readme.io/docs/data-grid[Ignite Cache]:
 
 [source,text]
@@ -56,8 +54,8 @@ The cache value is always the body of the message, whereas the cache key is alwa
 
 Even if you configure a fixed operation in the endpoint URI, you can vary it per-exchange by setting the `IgniteConstants.IGNITE_CACHE_OPERATION` message header.
 
-Options
-++++++
+#### Options
+
 [width="100%",cols="1,1,1,4,1,1",options="header"]
 |=======================================================================
 | Option | Type | Default value | Description | Compulsory | Consumer/producer
@@ -102,8 +100,8 @@ N | Consumer
 Time interval in millis on the Continuous Query (see Ignite docs). | N | Consumer
 |=======================================================================
 
-Headers used
-+++++++++++
+#### Headers used
+
 This endpoint uses the following headers:
 [width="100%",cols="1,1,1,4",options="header"]
 |=======================================================================
@@ -132,10 +130,9 @@ This header carries the old cache value when passed in the incoming cache event 
 |=======================================================================
 
 
-[[Ignite-Compute]]
-COMPUTE: Ignite Compute Endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This endpoint allows you to run https://apacheignite.readme.io/docs/compute-grid[compute operations] on the cluster by passing in an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their parameters if necessary. 
+### COMPUTE: Ignite Compute Endpoint
+
+This endpoint allows you to run https://apacheignite.readme.io/docs/compute-grid[compute operations] on the cluster by passing in an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their parameters if necessary.
 
 [source,text]
 ----
@@ -148,8 +145,8 @@ The host part of the endpoint URI is a symbolic endpoint ID, it is not used for 
 
 The endpoint tries to run the object passed in the body of the IN message as the compute job. It expects different payload types depending on the execution type.
 
-Expected payload types
-+++++++++++++++++++++
+#### Expected payload types
+
 Each operation expects the indicated types:
 [width="100%",cols="1,4",options="header"]
 |=======================================================================
@@ -163,8 +160,8 @@ Each operation expects the indicated types:
 | AFFINITY_RUN | IgniteRunnable.
 |=======================================================================
 
-Options
-++++++
+#### Options
+
 [width="100%",cols="1,1,1,4,1,1",options="header"]
 |=======================================================================
 | Option | Type | Default value | Description | Compulsory | Consumer/producer
@@ -186,8 +183,8 @@ N | Producer
 | timeoutMillis | Long | --- | The timeout for the compute job. | N | Producer
 |=======================================================================
 
-Headers used
-+++++++++++
+#### Headers used
+
 This endpoint uses the following headers:
 [width="100%",cols="1,1,1,4",options="header"]
 |=======================================================================
@@ -209,9 +206,8 @@ Affinity key for the AFFINITY_CALL and AFFINITY_RUN operations.
 |=======================================================================
 
 
-[[Ignite-Messaging]]
-MESSAGING: Ignite Messaging Endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### MESSAGING: Ignite Messaging Endpoint
+
 The Ignite Messaging endpoint allows you to send and consume messages from an https://apacheignite.readme.io/docs/messaging[Ignite topic].
 
 [source,text]
@@ -221,8 +217,8 @@ ignite:messaging:topicName?option1=value1&option2=value2...
 
 This endpoint supports producers (to send messages) and consumers (to receive messages).
 
-Options
-++++++
+#### Options
+
 [width="100%",cols="1,1,1,4,1,1",options="header"]
 |=======================================================================
 | Option | Type | Default value | Description | Compulsory | Consumer/producer
@@ -239,8 +235,8 @@ N | Producer
 N | Producer
 |=======================================================================
 
-Headers used
-+++++++++++
+#### Headers used
+
 This endpoint uses the following headers:
 [width="100%",cols="1,1,1,4",options="header"]
 |=======================================================================
@@ -254,9 +250,8 @@ This header is filled in with the UUID of the subscription when a message arrive
 |=======================================================================
 
 
-[[Ignite-Events]]
-EVENTS: Ignite Events Endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### EVENTS: Ignite Events Endpoint
+
 The Ignite Events endpoint allows you to https://apacheignite.readme.io/docs/events[receive events] from the Ignite cluster by creating a local event listener.
 
 [source,text]
@@ -267,8 +262,8 @@ ignite:events:endpointId?option1=value1&option2=value2...
 This endpoint only supports consumers.
 The Exchanges created by this consumer put the received Event object into the body of the IN message.
 
-Options
-++++++
+#### Options
+
 [width="100%",cols="1,1,1,4,1,1",options="header"]
 |=======================================================================
 | Option | Type | Default value | Description | Compulsory | Consumer/producer
@@ -283,9 +278,8 @@ N | Consumer
 
 
 
-[[Ignite-Sets]]
-SETS: Ignite Sets Endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### SETS: Ignite Sets Endpoint
+
 The Ignite Sets endpoint allows you to interact with https://apacheignite.readme.io/docs/queue-and-set[Ignite Set data structures].
 
 [source,text]
@@ -295,8 +289,8 @@ ignite:sets:setName?option1=value1&option2=value2...
 
 This endpoint only supports producers.
 
-Options
-++++++
+#### Options
+
 [width="100%",cols="1,1,1,4,1,1",options="header"]
 |=======================================================================
 | Option | Type | Default value | Description | Compulsory | Consumer/producer
@@ -312,8 +306,8 @@ For example: ?config.backups=4 |
 N | Producer
 |=======================================================================
 
-Headers used
-+++++++++++
+#### Headers used
+
 This endpoint uses the following headers:
 [width="100%",cols="1,1,1,4",options="header"]
 |=======================================================================
@@ -323,9 +317,8 @@ Allows you to dynamically change the set operation.
 |=======================================================================
 
 
-[[Ignite-Queues]]
-QUEUES: Ignite Queue Endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### QUEUES: Ignite Queue Endpoint
+
 The Ignite Queue endpoint allows you to interact with https://apacheignite.readme.io/docs/queue-and-set[Ignite Queue data structures].
 
 [source,text]
@@ -335,8 +328,8 @@ ignite:queue:queueName?option1=value1&option2=value2...
 
 This endpoint only supports producers.
 
-Options
-++++++
+#### Options
+
 [width="100%",cols="1,1,1,4,1,1",options="header"]
 |=======================================================================
 | Option | Type | Default value | Description | Compulsory | Consumer/producer
@@ -360,8 +353,8 @@ The queue capacity if you'd like to use a bounded queue. |
 N | Producer
 |=======================================================================
 
-Headers used
-+++++++++++
+#### Headers used
+
 This endpoint uses the following headers:
 [width="100%",cols="1,1,1,4",options="header"]
 |=======================================================================
@@ -380,9 +373,8 @@ Dynamically sets the timeout in milliseconds to use when invoking the OFFER or P
 |=======================================================================
 
 
-[[Ignite-IDGenerator]]
-IDGEN: Ignite ID Generator Endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### IDGEN: Ignite ID Generator Endpoint
+
 The Ignite ID Generator endpoint allows you to interact with https://apacheignite.readme.io/docs/id-generator[Ignite Atomic Sequences and ID Generators].
 
 [source,text]
@@ -392,8 +384,8 @@ ignite:idgen:sequenceName?option1=value1&option2=value2...
 
 This endpoint only supports producers.
 
-Options
-++++++
+#### Options
+
 [width="100%",cols="1,1,1,4,1,1",options="header"]
 |=======================================================================
 | Option | Type | Default value | Description | Compulsory | Consumer/producer
@@ -411,9 +403,8 @@ N | Producer
 
 
 
-[[Ignite-InitializeComponent]]
-Initializing the Ignite component
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Initializing the Ignite component
+
 Each instance of the Ignite component is associated with an underlying org.apache.ignite.Ignite instance. You can interact with two Ignite clusters by initializing two instances of the Ignite component and binding them to different IgniteConfigurations. There are 3 ways to initialize the Ignite component:
 
 * By passing in an existing org.apache.ignite.Ignite instance. Here's an example using Spring config:
@@ -457,8 +448,7 @@ Additionally, if using Camel programmatically, there are several convenience sta
 
 You may use those methods to quickly create an IgniteComponent with your chosen configuration technique.
 
-General options
-^^^^^^^^^^^^^^
+### General options
 
 All endpoints share the following options:
 [width="100%",cols="1,1,1,4,1,1",options="header"]
@@ -471,28 +461,13 @@ If the underlying Ignite operation returns void (no return type), this flag dete
 Some Ignite operations can deal with multiple elements at once, if passed a Collection. Enabling this option will treat Collections as a single object, invoking the operation variant for cardinality 1.
 |=======================================================================
 
-OSGi Support
-^^^^^^^^^^^
+### OSGi Support
 
-[TIP]
-====
-Apache Ignite supports OSGi from version 1.5.0.final onwards.
-====
+TIP: Apache Ignite supports OSGi from version 1.5.0.final onwards.
 
+When installing on Apache Karaf:
 
-[NOTE,title=when installing on Apache Karaf]
-====
 1. Installing the camel-ignite feature will require the Ignite feature repository to be present.
-1. You must have exported from the JRE (system bundle) some low-level, non-standard packages that Ignite requires.
-====
+2. You must have exported from the JRE (system bundle) some low-level, non-standard packages that Ignite requires.
+
 Please refer to the OSGi section in the Ignite documentation for more information.
-
-
-
-See Also
-^^^^^^^
-
-* http://camel.apache.org/configuring-camel.html[Configuring Camel]
-* http://camel.apache.org/component.html[Component]
-* http://camel.apache.org/endpoint.html[Endpoint]
-* http://camel.apache.org/getting-started.html[Getting Started]
