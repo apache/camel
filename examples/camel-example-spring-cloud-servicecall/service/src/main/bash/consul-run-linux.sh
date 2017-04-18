@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CONSUL_VER="0.7.5"
+CONSUL_VER="0.8.1"
 CONSUL_ZIP="consul_${CONSUL_VER}_linux_amd64.zip"
 
 # cleanup
