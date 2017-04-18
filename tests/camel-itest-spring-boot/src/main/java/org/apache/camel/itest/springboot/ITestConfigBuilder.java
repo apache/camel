@@ -155,6 +155,16 @@ public class ITestConfigBuilder {
         return this;
     }
 
+    public ITestConfigBuilder includeTestDependencies(Boolean includeTestDependencies) {
+        config.setIncludeTestDependencies(includeTestDependencies);
+        return this;
+    }
+
+    public ITestConfigBuilder unitTestsEnabled(Boolean unitTestsEnabled) {
+        config.setUnitTestEnabled(unitTestsEnabled);
+        return this;
+    }
+
     public ITestConfig build() {
 
         // Checking conditions
