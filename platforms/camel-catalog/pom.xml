@@ -130,7 +130,7 @@
         <version>1.5.3</version>
         <executions>
           <execution>
-            <phase>process-sources</phase>
+            <phase>generate-sources</phase>
             <goals>
               <goal>replace</goal>
             </goals>
