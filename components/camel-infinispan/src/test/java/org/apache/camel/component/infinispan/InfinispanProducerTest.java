@@ -66,7 +66,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        Integer cacheSize = exchange.getIn().getHeader(InfinispanConstants.RESULT, Integer.class);
+        Integer cacheSize = exchange.getIn().getBody(Integer.class);
         assertEquals(cacheSize, new Integer(2));
     }
 
@@ -98,7 +98,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-                NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+                NotifyingFuture resultPutAsync = exchange.getIn().getBody(NotifyingFuture.class);
                 Object value = currentCache().get(KEY_ONE);
                 return resultPutAsync.isDone() && value.toString().equals(VALUE_ONE);
             }
@@ -120,7 +120,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-                NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+                NotifyingFuture resultPutAsync = exchange.getIn().getBody(NotifyingFuture.class);
                 Object value = currentCache().get(KEY_ONE);
                 return resultPutAsync.isDone() && value.equals(VALUE_ONE);
             }
@@ -146,7 +146,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-                NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+                NotifyingFuture resultPutAsync = exchange.getIn().getBody(NotifyingFuture.class);
                 return resultPutAsync.isDone() && currentCache().get(KEY_ONE).toString().equals(VALUE_ONE);
             }
         }, 1000);
@@ -347,7 +347,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-                NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+                NotifyingFuture resultPutAsync = exchange.getIn().getBody(NotifyingFuture.class);
                 return resultPutAsync.isDone() && currentCache().get(KEY_ONE).equals(VALUE_ONE);
             }
         }, 2000);
@@ -368,7 +368,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-                NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+                NotifyingFuture resultPutAsync = exchange.getIn().getBody(NotifyingFuture.class);
                 return resultPutAsync.isDone() && currentCache().get(KEY_ONE).equals(VALUE_ONE);
             }
         }, 100);
@@ -393,7 +393,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-                NotifyingFuture resultPutAsync = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+                NotifyingFuture resultPutAsync = exchange.getIn().getBody(NotifyingFuture.class);
                 return resultPutAsync.isDone() && currentCache().get(KEY_ONE).equals(VALUE_ONE);
             }
         }, 500);
@@ -414,7 +414,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        Boolean cacheContainsKey = exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class);
+        Boolean cacheContainsKey = exchange.getIn().getBody(Boolean.class);
         assertFalse(cacheContainsKey);
     }
 
@@ -430,7 +430,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        Boolean cacheContainsKey = exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class);
+        Boolean cacheContainsKey = exchange.getIn().getBody(Boolean.class);
         assertTrue(cacheContainsKey);
     }
 
@@ -446,7 +446,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        Boolean cacheContainsValue = exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class);
+        Boolean cacheContainsValue = exchange.getIn().getBody(Boolean.class);
         assertFalse(cacheContainsValue);
     }
 
@@ -462,7 +462,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        Boolean cacheContainsValue = exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class);
+        Boolean cacheContainsValue = exchange.getIn().getBody(Boolean.class);
         assertTrue(cacheContainsValue);
     }
 
@@ -489,7 +489,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
             }
         });
-        String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
+        String resultGet = exchange.getIn().getBody(String.class);
         assertEquals(VALUE_ONE, resultGet);
 
         waitForNullValue(KEY_ONE);
@@ -508,7 +508,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        String result = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
+        String result = exchange.getIn().getBody(String.class);
         assertEquals("existing value", result);
     }
 
@@ -524,7 +524,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_ONE, exchange.getIn().getBody(String.class));
     }
 
     @Test
@@ -540,7 +540,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_ONE, exchange.getIn().getBody(String.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
     }
 
@@ -559,7 +559,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_ONE, exchange.getIn().getBody(String.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
 
         waitForNullValue(KEY_ONE);
@@ -582,7 +582,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_ONE, exchange.getIn().getBody(String.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
 
         Thread.sleep(300);
@@ -603,7 +603,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertTrue(exchange.getIn().getBody(Boolean.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
     }
 
@@ -623,7 +623,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertTrue(exchange.getIn().getBody(Boolean.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
 
         waitForNullValue(KEY_ONE);
@@ -647,7 +647,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertTrue(exchange.getIn().getBody(Boolean.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
 
         Thread.sleep(300);
@@ -667,7 +667,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_ONE, exchange.getIn().getBody(String.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
     }
 
@@ -685,7 +685,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class), VALUE_ONE);
+        assertEquals(exchange.getIn().getBody(String.class), VALUE_ONE);
         assertEquals(currentCache().get(KEY_ONE), VALUE_TWO);
 
         waitForNullValue(KEY_ONE);
@@ -708,7 +708,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_ONE, exchange.getIn().getBody(String.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
 
         Thread.sleep(300);
@@ -728,7 +728,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertTrue(exchange.getIn().getBody(Boolean.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
     }
 
@@ -747,7 +747,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertTrue(exchange.getIn().getBody(Boolean.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
 
         waitForNullValue(KEY_ONE);
@@ -770,7 +770,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertTrue(exchange.getIn().getBody(Boolean.class));
         assertEquals(VALUE_TWO, currentCache().get(KEY_ONE));
 
         Thread.sleep(300);
@@ -789,7 +789,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertEquals(VALUE_ONE, exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class));
+        assertEquals(VALUE_ONE, exchange.getIn().getBody(String.class));
 
         Object value = currentCache().get(KEY_ONE);
         assertNull(value);
@@ -808,7 +808,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Thread.sleep(100);
-        NotifyingFuture fut = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+        NotifyingFuture fut = exchange.getIn().getBody(NotifyingFuture.class);
         assertTrue(fut.isDone());
 
         Object value = currentCache().get(KEY_ONE);
@@ -828,7 +828,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        assertTrue(exchange.getIn().getHeader(InfinispanConstants.RESULT, Boolean.class));
+        assertTrue(exchange.getIn().getBody(Boolean.class));
 
         Object value = currentCache().get(KEY_ONE);
         assertNull(value);
@@ -848,7 +848,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Thread.sleep(100);
-        NotifyingFuture fut = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+        NotifyingFuture fut = exchange.getIn().getBody(NotifyingFuture.class);
         assertTrue(fut.isDone());
 
         Object value = currentCache().get(KEY_ONE);
@@ -889,7 +889,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, COMMAND_KEY);
             }
         });
-        String resultGet = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
+        String resultGet = exchange.getIn().getBody(String.class);
         assertEquals(COMMAND_VALUE, resultGet);
 
         exchange = template.send("direct:remove", new Processor() {
@@ -898,7 +898,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, COMMAND_KEY);
             }
         });
-        String resultRemove = exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class);
+        String resultRemove = exchange.getIn().getBody(String.class);
         assertEquals(COMMAND_VALUE, resultRemove);
         assertNull(currentCache().get(COMMAND_KEY));
         assertTrue(currentCache().isEmpty());
@@ -928,7 +928,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Thread.sleep(100);
-        NotifyingFuture fut = exchange.getIn().getHeader(InfinispanConstants.RESULT, NotifyingFuture.class);
+        NotifyingFuture fut = exchange.getIn().getBody(NotifyingFuture.class);
         assertTrue(fut.isDone());
         assertTrue(currentCache().isEmpty());
     }
@@ -966,7 +966,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
             }
         });
-        Stats resultStats = exchange.getIn().getHeader(InfinispanConstants.RESULT, Stats.class);
+        Stats resultStats = exchange.getIn().getBody(Stats.class);
         assertEquals(2L, resultStats.getTotalNumberOfEntries());
     }
 
@@ -1023,7 +1023,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                         exchange.getIn().setHeader(InfinispanConstants.KEY, key);
                     }
                 });
-                return exchange.getIn().getHeader(InfinispanConstants.RESULT, String.class) == null;
+                return exchange.getIn().getBody(String.class) == null;
             }
         }, 1000);
     }

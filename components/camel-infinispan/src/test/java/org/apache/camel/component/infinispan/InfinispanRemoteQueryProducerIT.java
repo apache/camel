@@ -43,7 +43,6 @@ import org.junit.Test;
 import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
 import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY;
 import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
-import static org.apache.camel.component.infinispan.InfinispanConstants.RESULT;
 import static org.apache.camel.component.infinispan.util.UserUtils.USERS;
 import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
 import static org.apache.camel.component.infinispan.util.UserUtils.hasUser;
@@ -145,7 +144,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         });
         assertNull(request.getException());
 
-        List<User> queryResult = request.getIn().getHeader(RESULT, List.class);
+        List<User> queryResult = request.getIn().getBody(List.class);
         assertNull(queryResult);
     }
 
@@ -164,7 +163,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
         assertNull(request.getException());
 
-        List<User> queryResult = request.getIn().getHeader(RESULT, List.class);
+        List<User> queryResult = request.getIn().getBody(List.class);
         assertNotNull(queryResult);
         assertEquals(0, queryResult.size());
     }
@@ -183,7 +182,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         Exchange request = template.request(endpoint, createQueryProcessor(builder));
         assertNull(request.getException());
 
-        List<User> queryResult = request.getIn().getHeader(RESULT, List.class);
+        List<User> queryResult = request.getIn().getBody(List.class);
         assertNotNull(queryResult);
         assertEquals(2, queryResult.size());
         assertTrue(hasUser(queryResult, "nameA", "surnameA"));
