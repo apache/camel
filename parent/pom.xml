@@ -167,7 +167,7 @@
     <disruptor-version>3.3.6</disruptor-version>
     <dnsjava-version>2.1.8</dnsjava-version>
     <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
-    <docker-java-version>3.0.8</docker-java-version>
+    <docker-java-version>3.0.9</docker-java-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.5.1</dozer-version>
     <drools-version>6.5.0.Final</drools-version>
