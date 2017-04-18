@@ -24,7 +24,8 @@ Using multiple shells:
  - start consul:
 
   $ cd services
-  $ src/main/bash/consul-run.sh
+  $ src/main/bash/consul-run-linux.sh    (for linux)
+  $ src/main/bash/consul-run-osx.sh      (for mac osx)
 
  - start the service:
 
