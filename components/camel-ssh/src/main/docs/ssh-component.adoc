@@ -131,7 +131,11 @@ and use that for authentication.
 `keyPairProvider` has been set, and if so, it will use that to for
 certificate based authentication.
 3.  If neither `certResource` nor `keyPairProvider` are set, it will use
-the `username` and `password` options for authentication.
+the `username` and `password` options for authentication. Even though the `username` 
+and `password` are provided in the endpoint configuration and headers set with 
+`SshConstants.USERNAME_HEADER` (`CamelSshUsername`) and 
+`SshConstants.PASSWORD_HEADER` (`CamelSshPassword`), the endpoint 
+configuration is surpassed and credentials set in the headers are used.
 
 The following route fragment shows an SSH polling consumer using a
 certificate from the classpath.
