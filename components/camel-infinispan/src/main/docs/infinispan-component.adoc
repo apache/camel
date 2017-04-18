@@ -69,7 +69,7 @@ with the following path and query parameters:
 | **cacheName** | *Required* The cache to use |  | String
 |=======================================================================
 
-#### Query Parameters (16 parameters):
+#### Query Parameters (17 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -89,6 +89,7 @@ with the following path and query parameters:
 | **configurationProperties** (advanced) | Implementation specific properties for the CacheManager |  | Map
 | **configurationUri** (advanced) | An implementation specific URI for the CacheManager |  | String
 | **flags** (advanced) | A comma separated list of Flag to be applied by default on each cache invocation not applicable to remote caches. |  | String
+| **resultHeader** (advanced) | Store the operation result in a header instead of the message body. By default resultHeader == null and the query result is stored in the message body any existing content in the message body is discarded. If resultHeader is set the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | Object
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END

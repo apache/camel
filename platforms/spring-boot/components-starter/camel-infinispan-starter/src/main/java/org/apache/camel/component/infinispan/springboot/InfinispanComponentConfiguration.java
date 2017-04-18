@@ -115,6 +115,16 @@ public class InfinispanComponentConfiguration {
          * The CacheContainer configuration
          */
         private Object cacheContainerConfiguration;
+        /**
+         * Store the operation result in a header instead of the message body.
+         * By default, resultHeader == null and the query result is stored in
+         * the message body, any existing content in the message body is
+         * discarded. If resultHeader is set, the value is used as the name of
+         * the header to store the query result and the original message body is
+         * preserved. This value can be overridden by an in message header
+         * named: CamelInfinispanOperationResultHeader
+         */
+        private Object resultHeader;
 
         public String getCommand() {
             return command;
@@ -211,6 +221,14 @@ public class InfinispanComponentConfiguration {
         public void setCacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
             this.cacheContainerConfiguration = cacheContainerConfiguration;
+        }
+
+        public Object getResultHeader() {
+            return resultHeader;
+        }
+
+        public void setResultHeader(Object resultHeader) {
+            this.resultHeader = resultHeader;
         }
     }
 }

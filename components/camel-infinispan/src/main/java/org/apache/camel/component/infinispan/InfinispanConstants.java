@@ -44,6 +44,7 @@ public interface InfinispanConstants {
     String CLEAR_ASYNC = "CamelInfinispanOperationClearAsync";
     String SIZE = "CamelInfinispanOperationSize";
     String RESULT = "CamelInfinispanOperationResult";
+    String RESULT_HEADER = "CamelInfinispanOperationResultHeader";
     String LIFESPAN_TIME = "CamelInfinispanLifespanTime";
     String LIFESPAN_TIME_UNIT = "CamelInfinispanTimeUnit";
     String MAX_IDLE_TIME = "CamelInfinispanMaxIdleTime";

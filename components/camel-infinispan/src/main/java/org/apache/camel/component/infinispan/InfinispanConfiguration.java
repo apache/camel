@@ -63,6 +63,8 @@ public class InfinispanConfiguration implements Cloneable {
     private BasicCacheContainer cacheContainer;
     @UriParam(label = "advanced")
     private Object cacheContainerConfiguration;
+    @UriParam(label = "advanced")
+    private Object resultHeader;
 
 
     public String getCommand() {
@@ -255,5 +257,25 @@ public class InfinispanConfiguration implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    public Object getResultHeader() {
+        return resultHeader;
+    }
+
+    /**
+     * Store the operation result in a header instead of the message body.
+     *
+     * By default, resultHeader == null and the query result is stored in the
+     * message body, any existing content in the message body is discarded. If
+     * resultHeader is set, the value is used as the name of the header to store
+     * the query result and the original message body is preserved.
+     *
+     * This value can be overridden by an in message header named:
+     *
+     *     CamelInfinispanOperationResultHeader
+     */
+    public void setResultHeader(Object resultHeader) {
+        this.resultHeader = resultHeader;
     }
 }

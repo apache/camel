@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.infinispan.remote.InfinispanRemoteOperation;
 import org.apache.camel.util.ObjectHelper;
-import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.util.concurrent.NotifyingFuture;
 import org.infinispan.query.dsl.Query;
@@ -54,9 +53,13 @@ public final class InfinispanOperation {
     private static Operation getOperation(Message message, InfinispanConfiguration configuration) {
         String operation = message.getHeader(InfinispanConstants.OPERATION, String.class);
         if (operation == null) {
-            if (configuration.hasCommand()) {
-                operation = InfinispanConstants.OPERATION + configuration.getCommand();
-            } else {
+            operation = configuration.getCommand();
+
+            if (operation != null && !operation.startsWith(InfinispanConstants.OPERATION)) {
+                operation = InfinispanConstants.OPERATION + operation;
+            }
+
+            if (operation == null) {
                 operation = InfinispanConstants.PUT;
             }
         }
@@ -64,7 +67,7 @@ public final class InfinispanOperation {
         return Operation.fromOperation(operation);
     }
 
-    private enum Operation {
+    public enum Operation {
         PUT {
             @Override
             void execute(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
@@ -82,7 +85,7 @@ public final class InfinispanOperation {
                 } else {
                     result = cache.put(getKey(message), getValue(message));
                 }
-                setResult(result, message);
+                setResult(configuration, result, message);
             }
         }, PUTASYNC {
             @Override
@@ -101,7 +104,7 @@ public final class InfinispanOperation {
                 } else {
                     result = cache.putAsync(getKey(message), getValue(message));
                 }
-                setResult(result, message);
+                setResult(configuration, result, message);
             }
         }, PUTALL {
             @Override
@@ -137,7 +140,7 @@ public final class InfinispanOperation {
                 } else {
                     result = cache.putAllAsync(getMap(message));
                 }
-                setResult(result, message);
+                setResult(configuration, result, message);
             }
         }, PUTIFABSENT {
             @Override
@@ -156,7 +159,7 @@ public final class InfinispanOperation {
                 } else {
                     result = cache.putIfAbsent(getKey(message), getValue(message));
                 }
-                setResult(result, message);
+                setResult(configuration, result, message);
             }
         }, PUTIFABSENTASYNC {
             @Override
@@ -175,22 +178,22 @@ public final class InfinispanOperation {
                 } else {
                     result = cache.putIfAbsentAsync(getKey(message), getValue(message));
                 }
-                setResult(result, message);
+                setResult(configuration, result, message);
             }
         }, GET {
             @Override
             void execute(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
-                setResult(cache.get(getKey(message)), message);
+                setResult(configuration, cache.get(getKey(message)), message);
             }
         }, CONTAINSKEY {
             @Override
             void execute(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
-                setResult(cache.containsKey(getKey(message)), message);
+                setResult(configuration, cache.containsKey(getKey(message)), message);
             }
         }, CONTAINSVALUE {
             @Override
             void execute(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
-                setResult(cache.containsValue(getValue(message)), message);
+                setResult(configuration, cache.containsValue(getValue(message)), message);
             }
         }, REMOVE {
             @Override
@@ -201,7 +204,7 @@ public final class InfinispanOperation {
                 } else {
                     result = cache.remove(getKey(message), getValue(message));
                 }
-                setResult(result, message);
+                setResult(configuration, result, message);
             }
         }, REMOVEASYNC {
             @Override
@@ -212,7 +215,7 @@ public final class InfinispanOperation {
                 } else {
                     result = cache.removeAsync(getKey(message), getValue(message));
                 }
-                setResult(result, message);
+                setResult(configuration, result, message);
             }
         }, REPLACE {
             @Override
@@ -243,7 +246,7 @@ public final class InfinispanOperation {
                         result = cache.replace(getKey(message), getOldValue(message), getValue(message));
                     }
                 }
-                setResult(result, message);
+                setResult(configuration, result, message);
             }
         }, REPLACEASYNC {
             @Override
@@ -274,12 +277,12 @@ public final class InfinispanOperation {
                         result = cache.replaceAsync(getKey(message), getOldValue(message), getValue(message));
                     }
                 }
-                setResult(result, message);
+                setResult(configuration, result, message);
             }
         }, SIZE {
             @Override
             void execute(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
-                setResult(cache.size(), message);
+                setResult(configuration, cache.size(), message);
             }
         }, CLEAR {
             @Override
@@ -289,7 +292,7 @@ public final class InfinispanOperation {
         }, CLEARASYNC {
             @Override
             void execute(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
-                setResult(cache.clearAsync(), message);
+                setResult(configuration, cache.clearAsync(), message);
             }
         }, QUERY {
             @Override
@@ -298,20 +301,25 @@ public final class InfinispanOperation {
                 if (query == null) {
                     return;
                 }
-                setResult(query.list(), message);
+                setResult(configuration, query.list(), message);
             }
         }, STATS {
             @Override
             void execute(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
                 LOGGER.warn("You'll need to enable statistics to obtain meaningful data from your cache");
-                setResult(((Cache) cache).getAdvancedCache().getStats(), message);
+                setResult(configuration, InfinispanUtil.asAdvanced(cache).getAdvancedCache().getStats(), message);
             }
         };
 
         private static final Operation[] OPERATIONS = values();
 
-        void setResult(Object result, Message message) {
-            message.setHeader(InfinispanConstants.RESULT, result);
+        void setResult(InfinispanConfiguration configuration, Object result, Message message) {
+            String resultHeader = message.getHeader(InfinispanConstants.RESULT_HEADER, configuration::getResultHeader, String.class);
+            if (configuration == null) {
+                message.setHeader(resultHeader, result);
+            } else {
+                message.setBody(result);
+            }
         }
 
         Object getKey(Message message) {
@@ -326,8 +334,8 @@ public final class InfinispanOperation {
             return message.getHeader(InfinispanConstants.OLD_VALUE);
         }
 
-        Map<? extends Object, ? extends Object>  getMap(Message message) {
-            return (Map<? extends Object, ? extends Object>) message.getHeader(InfinispanConstants.MAP);
+        Map<Object, Object>  getMap(Message message) {
+            return message.getHeader(InfinispanConstants.MAP, Map.class);
         }
 
         Query getQuery(InfinispanConfiguration configuration, BasicCache<Object, Object> cache, Message message) {
