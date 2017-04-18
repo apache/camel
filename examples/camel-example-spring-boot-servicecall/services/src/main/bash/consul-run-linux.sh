@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CONSUL_VER="0.7.5"
+CONSUL_VER="0.8.1"
 CONSUL_ZIP="consul_${CONSUL_VER}_linux_amd64.zip"
 
 # cleanup
@@ -39,4 +39,5 @@ target/consul \
     -bind 0.0.0.0 \
     -log-level trace \
     -data-dir target/consul-data \
-    -config-dir target/consul-config
+    -config-dir target/consul-config \
+    -ui

@@ -52,4 +52,5 @@ target/consul \
     -bind 0.0.0.0 \
     -log-level trace \
     -data-dir target/consul-data \
-    -config-dir target/consul-config
+    -config-dir target/consul-config \
+    -ui
