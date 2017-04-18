@@ -26,7 +26,7 @@ This component helps applying load balancing feature at the client side when usi
 [source,java]
 ----
 RibbonConfiguration configuration = new RibbonConfiguration();
-configuration.setClientConfig(Collections.singletonMap("ServerListRefreshInterval", "250"));
+configuration.addProperties("ServerListRefreshInterval", "250");
 
 RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
 
@@ -44,7 +44,7 @@ from("direct:start")
 [source,properties]
 .application.properties
 ----
-camel.cloud.ribbon.client-config[ServerListRefreshInterval] = 250
+camel.cloud.ribbon.properties[ServerListRefreshInterval] = 250
 ----
 +
 [source,java]

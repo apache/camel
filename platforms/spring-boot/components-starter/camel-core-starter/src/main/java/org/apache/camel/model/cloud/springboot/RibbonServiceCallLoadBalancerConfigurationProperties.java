@@ -14,15 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ribbon.springboot.cloud;
+package org.apache.camel.model.cloud.springboot;
 
-import org.apache.camel.component.ribbon.RibbonConfiguration;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "camel.cloud.ribbon")
-public class RibbonCloudConfiguration {
+@ConfigurationProperties(prefix = "camel.cloud.ribbon.load-balancer")
+public class RibbonServiceCallLoadBalancerConfigurationProperties
+        extends
+            RibbonServiceCallLoadBalancerConfigurationCommon {
+
+    /**
+     * Enable the component
+     */
     private boolean enabled = true;
-    private LoadBalancerConfiguration loadBalancer = new LoadBalancerConfiguration();
+    /**
+     * Define additional configuration definitions
+     */
+    private Map<String, RibbonServiceCallLoadBalancerConfigurationCommon> configurations = new HashMap<>();
+
+    public Map<String, RibbonServiceCallLoadBalancerConfigurationCommon> getConfigurations() {
+        return configurations;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -30,16 +44,5 @@ public class RibbonCloudConfiguration {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public LoadBalancerConfiguration getLoadBalancer() {
-        return loadBalancer;
-    }
-
-    // *************************************************************************
-    //
-    // *************************************************************************
-
-    public class LoadBalancerConfiguration extends RibbonConfiguration {
     }
 }
