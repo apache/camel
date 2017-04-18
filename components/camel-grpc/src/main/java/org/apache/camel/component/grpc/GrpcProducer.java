@@ -27,9 +27,9 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 /**
  * Represents asynchronous and synchronous gRPC producer implementations.
@@ -122,10 +122,10 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
     }
 
     protected void initializeChannel() {
-        if (!StringUtils.isEmpty(configuration.getHost()) && !StringUtils.isEmpty(configuration.getPort())) {
+        if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             LOG.info("Creating channel to the remote gRPC server " + configuration.getHost() + ":" + configuration.getPort());
             channel = ManagedChannelBuilder.forAddress(configuration.getHost(), configuration.getPort()).usePlaintext(configuration.getUsePlainText()).build();
-        } else if (!StringUtils.isEmpty(configuration.getTarget())) {
+        } else if (!ObjectHelper.isEmpty(configuration.getTarget())) {
             LOG.info("Creating channel to the remote gRPC server " + configuration.getTarget());
             channel = ManagedChannelBuilder.forTarget(configuration.getTarget()).usePlaintext(configuration.getUsePlainText()).build();
         } else {
