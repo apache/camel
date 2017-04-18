@@ -17,11 +17,14 @@
 package org.apache.camel.generator.swagger;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
+import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -42,6 +45,8 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
     private static final String DEFAULT_PACKAGE_NAME = "rest.dsl.generated";
 
     private Function<Swagger, String> classNameGenerator = RestDslSourceCodeGenerator::generateClassName;
+
+    private Instant generated = Instant.now();
 
     private String indent = DEFAULT_INDENT;
 
@@ -85,6 +90,10 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return emitter.result();
     }
 
+    Instant generated() {
+        return generated;
+    }
+
     JavaFile generateSourceCode() {
         final MethodSpec methodSpec = generateConfigureMethod(swagger);
 
@@ -92,11 +101,19 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
         final TypeSpec generatedRouteBulder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(methodSpec)
+            .addAnnotation(AnnotationSpec.builder(Generated.class).addMember("value", "$S", getClass().getName())
+                .addMember("date", "$S", generated()).build())
             .addJavadoc("Generated from Swagger specification by Camel REST DSL generator.\n").build();
 
         final String packageNameToUse = packageNameGenerator.apply(swagger);
 
         return JavaFile.builder(packageNameToUse, generatedRouteBulder).indent(indent).build();
+    }
+
+    RestDslSourceCodeGenerator<T> withGeneratedTime(final Instant generated) {
+        this.generated = generated;
+
+        return this;
     }
 
     static String generateClassName(final Swagger swagger) {
