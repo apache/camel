@@ -56,9 +56,10 @@ public class SshConsumer extends ScheduledPollConsumer {
         }
         
         String command = endpoint.getPollCommand();
-        SshResult result = SshHelper.sendExecCommand(command, endpoint, client);
-
         Exchange exchange = endpoint.createExchange();
+        
+        SshResult result = SshHelper.sendExecCommand(exchange.getIn().getHeaders(), command, endpoint, client);
+        
         exchange.getIn().setBody(result.getStdout());
         exchange.getIn().setHeader(SshResult.EXIT_VALUE, result.getExitValue());
         exchange.getIn().setHeader(SshResult.STDERR, result.getStderr());

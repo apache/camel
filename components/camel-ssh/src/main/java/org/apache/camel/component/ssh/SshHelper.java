@@ -19,6 +19,7 @@ package org.apache.camel.component.ssh;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.KeyPair;
+import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.sshd.ClientChannel;
@@ -38,7 +39,7 @@ public final class SshHelper {
     private SshHelper() {
     }
     
-    public static SshResult sendExecCommand(String command, SshEndpoint endpoint, SshClient client) throws Exception {
+    public static SshResult sendExecCommand(Map<String, Object> headers, String command, SshEndpoint endpoint, SshClient client) throws Exception {
         SshResult result = null;
         
         SshConfiguration configuration = endpoint.getConfiguration();
@@ -81,8 +82,21 @@ public final class SshHelper {
                 KeyPair pair = keyPairProvider.loadKey(configuration.getKeyType());
                 authResult = session.authPublicKey(configuration.getUsername(), pair);
             } else {
-                LOG.debug("Attempting to authenticate username '{}' using Password...", configuration.getUsername());
-                authResult = session.authPassword(configuration.getUsername(), configuration.getPassword());
+                String userName = configuration.getUsername();
+                String password = configuration.getPassword();
+                
+                Object userNameHeaderObj = headers.get(SshConstants.USERNAME_HEADER);
+                if (userNameHeaderObj != null && userNameHeaderObj instanceof String) {
+                    userName = (String) headers.get(SshConstants.USERNAME_HEADER);
+                }
+                
+                Object passwordHeaderObj = headers.get(SshConstants.PASSWORD_HEADER);
+                if (passwordHeaderObj != null && passwordHeaderObj instanceof String) {
+                    password = (String) headers.get(SshConstants.PASSWORD_HEADER);
+                }
+                
+                LOG.debug("Attempting to authenticate username '{}' using Password...", userName);
+                authResult = session.authPassword(userName, password);
             }
     
             authResult.await(configuration.getTimeout());
