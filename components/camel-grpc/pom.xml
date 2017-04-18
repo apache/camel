@@ -16,7 +16,8 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -29,7 +30,7 @@
   <packaging>jar</packaging>
   <name>Camel :: gRPC</name>
   <description>Camel component for gRPC (Remote Procedure Call) support</description>
-  
+
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.grpc.*;${camel.osgi.version}</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=grpc</camel.osgi.export.service>
@@ -55,7 +56,7 @@
       <artifactId>grpc-stub</artifactId>
       <version>${grpc-version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
@@ -90,7 +91,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <extensions>
       <!-- Operating system and CPU architecture detection extension -->
@@ -100,8 +101,34 @@
         <version>1.4.1.Final</version>
       </extension>
     </extensions>
-    
+
     <plugins>
+      <!--
+        Check if the running OS platform supports the protobuf generator plugin. 
+        If the platform doesn't support, the protobuf test code generation, their 
+        assembly and launch will be skipped 
+        Supported platforms are: 
+        - Linux (x86 32 and 64-bit)
+        - Windows (x86 32 and 64-bit)
+        - OSX (x86 32 and 64-bit)
+      -->
+      <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>${gmaven-plugin-version}</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source><![CDATA[pom.properties['skip-test']=pom.properties['os.detected.classifier'].matches('^.*?(linux|windows|osx)-x86.*$') ? 'false' : 'true';]]></source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- gRPC and protobuf Java code generator plugin -->
       <plugin>
         <groupId>org.xolstice.maven.plugins</groupId>
@@ -111,6 +138,7 @@
           <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
           <pluginId>grpc-java</pluginId>
           <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc-version}:exe:${os.detected.classifier}</pluginArtifact>
+          <skip>${skip-test}</skip>
         </configuration>
         <executions>
           <execution>
@@ -121,7 +149,30 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-testCompile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <skip>${skip-test}</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>${skip-test}</skipTests>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-  
 </project>
