@@ -24,6 +24,8 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Generated;
+
 ## add imports for XStreamConverter and PicklistEnumConverter if needed
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
@@ -66,6 +68,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 /**
  * Salesforce DTO for SObject $desc.Name
  */
+@Generated("org.apache.camel.maven.CamelSalesforceMojo")
 @XStreamAlias("$desc.Name")
 public class $desc.Name extends AbstractDescribedSObjectBase {
 
