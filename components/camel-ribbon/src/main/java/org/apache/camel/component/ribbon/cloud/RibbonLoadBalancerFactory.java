@@ -70,12 +70,12 @@ public class RibbonLoadBalancerFactory implements LoadBalancerFactory {
         configuration.setClientName(clientName);
     }
 
-    public Map<String, String> getClientConfig() {
-        return configuration.getClientConfig();
+    public Map<String, String> getProperties() {
+        return configuration.getProperties();
     }
 
-    public void setClientConfig(Map<String, String> clientConfig) {
-        configuration.setClientConfig(clientConfig);
+    public void setProperties(Map<String, String> clientConfig) {
+        configuration.setProperties(clientConfig);
     }
 
     // *************************************************************************

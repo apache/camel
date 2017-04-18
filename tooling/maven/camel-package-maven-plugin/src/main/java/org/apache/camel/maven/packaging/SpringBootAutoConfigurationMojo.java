@@ -263,6 +263,18 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             createOtherModelConfigurationSource(pkg, model, "camel.cloud.kubernetes.service-discovery", true);
         }
 
+        // Ribbon
+        json = loadModelJson(files, "ribbonLoadBalancer");
+        if (json != null) {
+            OtherModel model = generateOtherModel(json);
+
+            int pos = model.getJavaType().lastIndexOf(".");
+            String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+
+            // Generate properties, auto-configuration happens in camel-kubernetes-starter
+            createOtherModelConfigurationSource(pkg, model, "camel.cloud.ribbon.load-balancer", true);
+        }
+
         // Rest
         json = loadModelJson(files, "restConfiguration");
         if (json != null) {

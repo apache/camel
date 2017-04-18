@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.etcd.springboot.cloud;
+package org.apache.camel.component.ribbon.springboot.cloud;
 
 import java.util.Map;
 
-import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.model.cloud.springboot.EtcdServiceCallServiceDiscoveryConfigurationProperties;
+import org.apache.camel.cloud.LoadBalancer;
+import org.apache.camel.model.cloud.springboot.RibbonServiceCallLoadBalancerConfigurationProperties;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,13 +36,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootApplication
 @SpringBootTest(
     classes = {
-        EtcdServiceDiscoveryDisabledTest.TestConfiguration.class
+        RibbonLoadBalancerEnabledTest.TestConfiguration.class
     },
     properties = {
         "debug=false",
-        "camel.cloud.etcd.service-discovery.enabled=false"
+        "camel.cloud.ribbon.load-balancer.enabled=true"
 })
-public class EtcdServiceDiscoveryDisabledTest {
+public class RibbonLoadBalancerEnabledTest {
     @Autowired
     ApplicationContext context;
 
@@ -50,12 +50,13 @@ public class EtcdServiceDiscoveryDisabledTest {
     public void testConfiguration() throws Exception {
         Map<String, ?> beans;
 
-        beans = context.getBeansOfType(EtcdServiceCallServiceDiscoveryConfigurationProperties.class);
-        Assert.assertTrue(beans.isEmpty());
-
-        beans = context.getBeansOfType(ServiceDiscovery.class);
+        beans = context.getBeansOfType(RibbonServiceCallLoadBalancerConfigurationProperties.class);
         Assert.assertFalse(beans.isEmpty());
-        Assert.assertFalse(beans.containsKey("etcd-service-discovery"));
+        Assert.assertEquals(1, beans.size());
+
+        beans = context.getBeansOfType(LoadBalancer.class);
+        Assert.assertFalse(beans.isEmpty());
+        Assert.assertTrue(beans.containsKey("ribbon-load-balancer"));
     }
 
     @Configuration

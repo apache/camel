@@ -30,6 +30,7 @@ import com.netflix.loadbalancer.DummyPing;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.PollingServerListUpdater;
 import com.netflix.loadbalancer.RoundRobinRule;
+import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
 import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
 import org.apache.camel.CamelContext;
@@ -103,12 +104,14 @@ public class RibbonLoadBalancer
     protected void doStart() throws Exception {
         ObjectHelper.notNull(configuration, "configuration");
         ObjectHelper.notNull(camelContext, "camel context");
-        ObjectHelper.notNull(serviceDiscovery, "service discovery");
-        ObjectHelper.notNull(serviceFilter, "service filter");
 
-        LOGGER.info("ServiceCall is using ribbon load balancer with service discovery type: {} and service filter type: {}",
-            serviceDiscovery.getClass(),
-            serviceFilter.getClass());
+        if (serviceDiscovery != null) {
+            LOGGER.info("ServiceCall is using ribbon load balancer with service discovery type: {} and service filter: {}",
+                serviceDiscovery.getClass(),
+                serviceDiscovery != null ? serviceFilter.getClass() : "none");
+        } else {
+            LOGGER.info("ServiceCall is using ribbon load balancer");
+        }
 
         ServiceHelper.startService(serviceDiscovery);
     }
@@ -127,28 +130,50 @@ public class RibbonLoadBalancer
 
     @Override
     public <T> T process(String serviceName, LoadBalancerFunction<T> request) throws Exception {
-        ILoadBalancer loadBalancer = loadBalancers.computeIfAbsent(serviceName, key -> createLoadBalancer(key, serviceDiscovery));
-        RibbonServiceDefinition service = (RibbonServiceDefinition)loadBalancer.chooseServer(serviceName);
+        ILoadBalancer loadBalancer = loadBalancers.computeIfAbsent(serviceName, key -> createLoadBalancer(key));
+        Server server = loadBalancer.chooseServer(serviceName);
 
-        if (service == null) {
+        if (server == null) {
             throw new RejectedExecutionException("No active services with name " + serviceName);
         }
 
-        return request.apply(service);
+        ServiceDefinition definition;
+
+        if (server instanceof ServiceDefinition) {
+            // If the service discovery is one of camel provides, the definition
+            // is already of the expected type.
+            definition = (ServiceDefinition)server;
+        } else {
+            // If ribbon server list is configured through client config properties
+            // i.e. with listOfServers property the instance provided by the load
+            // balancer is of type Server so a conversion is needed
+            definition = new RibbonServiceDefinition(
+                serviceName,
+                server.getHost(),
+                server.getPort()
+            );
+
+            String zone = server.getZone();
+            if (zone != null) {
+                server.setZone(zone);
+            }
+        }
+
+        return request.apply(definition);
     }
 
     // ************************
     // Helpers
     // ************************
 
-    private ZoneAwareLoadBalancer<RibbonServiceDefinition> createLoadBalancer(String serviceName, ServiceDiscovery serviceDiscovery) {
+    private ZoneAwareLoadBalancer<RibbonServiceDefinition> createLoadBalancer(String serviceName) {
         // setup client config
         IClientConfig config = configuration.getClientName() != null
             ? IClientConfig.Builder.newBuilder(configuration.getClientName()).build()
             : IClientConfig.Builder.newBuilder().build();
 
-        if (configuration.getClientConfig() != null) {
-            for (Map.Entry<String, String> entry : configuration.getClientConfig().entrySet()) {
+        if (configuration.getProperties() != null) {
+            for (Map.Entry<String, String> entry : configuration.getProperties().entrySet()) {
                 IClientConfigKey key = IClientConfigKey.Keys.valueOf(entry.getKey());
                 String value = entry.getValue();
 
@@ -157,13 +182,21 @@ public class RibbonLoadBalancer
             }
         }
 
-        return new ZoneAwareLoadBalancer<>(
-            config,
-            configuration.getRuleOrDefault(RoundRobinRule::new),
-            configuration.getPingOrDefault(DummyPing::new),
-            new RibbonServerList(serviceName, serviceDiscovery, serviceFilter),
-            null,
-            new PollingServerListUpdater(config));
+        ZoneAwareLoadBalancer<RibbonServiceDefinition> loadBalancer;
+
+        if (serviceDiscovery != null) {
+            loadBalancer = new ZoneAwareLoadBalancer<>(
+                config,
+                configuration.getRuleOrDefault(RoundRobinRule::new),
+                configuration.getPingOrDefault(DummyPing::new),
+                new RibbonServerList(serviceName, serviceDiscovery, serviceFilter),
+                null,
+                new PollingServerListUpdater(config));
+        } else {
+            loadBalancer = new ZoneAwareLoadBalancer<>(config);
+        }
+
+        return loadBalancer;
     }
 
     static final class RibbonServerList implements ServerList<RibbonServiceDefinition>  {
