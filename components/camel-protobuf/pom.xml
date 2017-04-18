@@ -17,6 +17,7 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -51,7 +52,7 @@
       <version>${protobuf-version}</version>
     </dependency>
     <dependency>
-    <groupId>commons-io</groupId>
+      <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
 
@@ -82,7 +83,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <extensions>
       <!-- Operating system and CPU architecture detection extension -->
@@ -92,8 +93,34 @@
         <version>1.4.1.Final</version>
       </extension>
     </extensions>
-    
+
     <plugins>
+      <!--
+        Check if the running OS platform supports the protobuf generator plugin. 
+        If the platform doesn't support, the protobuf test code generation, their 
+        assembly and launch will be skipped 
+        Supported platforms are: 
+        - Linux (x86 32 and 64-bit)
+        - Windows (x86 32 and 64-bit)
+        - OSX (x86 32 and 64-bit)
+      -->
+      <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source><![CDATA[pom.properties['skip-test']=pom.properties['os.detected.classifier'].matches('^.*?(linux|windows|osx)-x86.*$') ? 'false' : 'true';]]></source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- Protobuf Java code generator plugin -->
       <plugin>
         <groupId>org.xolstice.maven.plugins</groupId>
@@ -107,9 +134,34 @@
             </goals>
             <configuration>
               <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
+              <skip>${skip-test}</skip>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-testCompile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <skip>${skip-test}</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>${skip-test}</skipTests>
+        </configuration>
       </plugin>
     </plugins>
   </build>
