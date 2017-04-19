@@ -72,7 +72,7 @@ public class BindyRecordFieldStartingWithSeperatorCharTest extends CamelTestSupp
             @Override
             public void configure() throws Exception {
                 BindyCsvDataFormat camelDataFormat =
-                  new BindyCsvDataFormat(BindyCsvRowFormat.class);
+                    new BindyCsvDataFormat(BindyCsvRowFormat.class);
                 from("direct:start").unmarshal(camelDataFormat).to("mock:result");
             }
         };
