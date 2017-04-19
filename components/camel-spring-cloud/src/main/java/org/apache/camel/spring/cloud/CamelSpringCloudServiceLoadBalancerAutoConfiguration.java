@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.cloud;
 
-import org.apache.camel.cloud.LoadBalancer;
+import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.spring.boot.cloud.CamelCloudAutoConfiguration;
 import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
 import org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscoveryAutoConfiguration;
@@ -35,13 +35,13 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBean({ CamelCloudAutoConfiguration.class, LoadBalancerClient.class })
 @AutoConfigureAfter({ LoadBalancerAutoConfiguration.class, CamelCloudServiceDiscoveryAutoConfiguration.class })
 @EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
-@Conditional(CamelSpringCloudLoadBalancerAutoConfiguration.LoadBalancerCondition.class)
-public class CamelSpringCloudLoadBalancerAutoConfiguration {
+@Conditional(CamelSpringCloudServiceLoadBalancerAutoConfiguration.LoadBalancerCondition.class)
+public class CamelSpringCloudServiceLoadBalancerAutoConfiguration {
 
     @Bean(name = "load-balancer")
     @ConditionalOnMissingBean
-    public LoadBalancer cloudLoadBalancer(LoadBalancerClient loadBalancerClient) {
-        return new CamelSpringCloudLoadBalancer(loadBalancerClient);
+    public ServiceLoadBalancer cloudLoadBalancer(LoadBalancerClient loadBalancerClient) {
+        return new CamelSpringCloudServiceLoadBalancer(loadBalancerClient);
     }
 
     // *******************************

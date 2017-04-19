@@ -18,8 +18,8 @@ package org.apache.camel.component.ribbon.springboot.cloud;
 
 import java.util.Map;
 
-import org.apache.camel.cloud.LoadBalancer;
-import org.apache.camel.model.cloud.springboot.RibbonServiceCallLoadBalancerConfigurationProperties;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.model.cloud.springboot.RibbonServiceCallServiceLoadBalancerConfigurationProperties;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,10 +50,10 @@ public class RibbonLoadBalancerDisabledTest {
     public void testConfiguration() throws Exception {
         Map<String, ?> beans;
 
-        beans = context.getBeansOfType(RibbonServiceCallLoadBalancerConfigurationProperties.class);
+        beans = context.getBeansOfType(RibbonServiceCallServiceLoadBalancerConfigurationProperties.class);
         Assert.assertTrue(beans.isEmpty());
 
-        beans = context.getBeansOfType(LoadBalancer.class);
+        beans = context.getBeansOfType(ServiceLoadBalancer.class);
         Assert.assertTrue(beans.isEmpty());
         Assert.assertFalse(beans.containsKey("ribbon-load-balancer"));
     }

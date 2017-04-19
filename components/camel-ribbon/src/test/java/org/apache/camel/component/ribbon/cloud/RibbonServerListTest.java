@@ -31,7 +31,7 @@ public class RibbonServerListTest {
     @Test
     public void testFixedServerList() throws Exception {
         ZoneAwareLoadBalancer<RibbonServiceDefinition> lb = LoadBalancerBuilder.<RibbonServiceDefinition>newBuilder()
-            .withDynamicServerList(new RibbonLoadBalancer.RibbonServerList(
+            .withDynamicServerList(new RibbonServiceLoadBalancer.RibbonServerList(
                 "unknown",
                 StaticServiceDiscovery.forServices(
                     new RibbonServiceDefinition("unknown", "localhost", 9090),

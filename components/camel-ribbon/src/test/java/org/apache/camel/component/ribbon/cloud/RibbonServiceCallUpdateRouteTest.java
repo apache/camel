@@ -75,7 +75,7 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
                 RibbonConfiguration configuration = new RibbonConfiguration();
                 // lets update quick so we do not have to sleep so much in the tests
                 configuration.addProperty("ServerListRefreshInterval", "250");
-                RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
+                RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 from("direct:start")
                     .serviceCall()

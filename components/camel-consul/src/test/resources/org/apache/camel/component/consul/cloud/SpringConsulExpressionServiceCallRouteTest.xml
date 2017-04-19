@@ -54,7 +54,7 @@
     <!-- Routes                                -->
     <!-- ************************************* -->
 
-    <route>
+    <route id="scall">
       <from uri="direct:start"/>
       <choice>
         <when>

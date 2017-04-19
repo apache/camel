@@ -17,6 +17,12 @@
 
 package org.apache.camel.component.consul.cloud;
 
+import java.util.List;
+
+import org.apache.camel.component.ribbon.cloud.RibbonServiceLoadBalancer;
+import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -24,5 +30,15 @@ public class SpringConsulDefaultServiceCallRouteTest extends SpringConsulService
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/consul/cloud/SpringConsulDefaultServiceCallRouteTest.xml");
+    }
+
+    @Test
+    public void testServiceCallConfiguration() throws Exception {
+        List<DefaultServiceCallProcessor> processors = findServiceCallProcessors();
+
+        Assert.assertFalse(processors.isEmpty());
+        Assert.assertEquals(2, processors.size());
+        Assert.assertFalse(processors.get(0).getLoadBalancer() instanceof RibbonServiceLoadBalancer);
+        Assert.assertFalse(processors.get(1).getLoadBalancer() instanceof RibbonServiceLoadBalancer);
     }
 }

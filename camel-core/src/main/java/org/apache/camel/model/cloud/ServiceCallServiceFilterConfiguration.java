@@ -163,6 +163,8 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
             try {
                 Map<String, Object> parameters = new HashMap<>();
                 IntrospectionSupport.getProperties(this, parameters, null, false);
+
+                // Convert properties to Map<String, String>
                 parameters.put("properties", getPropertiesAsMap(camelContext));
 
                 postProcessFactoryParameters(camelContext, parameters);

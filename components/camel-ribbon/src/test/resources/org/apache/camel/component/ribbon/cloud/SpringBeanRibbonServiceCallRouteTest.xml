@@ -28,7 +28,7 @@
     <property name="servers" value="localhost:9090,localhost:9091"/>
   </bean>
 
-  <bean id="balancer" class="org.apache.camel.component.ribbon.cloud.RibbonLoadBalancer">
+  <bean id="balancer" class="org.apache.camel.component.ribbon.cloud.RibbonServiceLoadBalancer">
     <constructor-arg index="0">
       <bean class="org.apache.camel.component.ribbon.RibbonConfiguration"/>
     </constructor-arg>
@@ -39,7 +39,7 @@
     <!-- service call configuration to use ribbon -->
     <serviceCallConfiguration id="ribbon" loadBalancerRef="balancer" serviceDiscoveryRef="discovery"/>
 
-    <route>
+    <route id="scall">
       <from uri="direct:start"/>
       <serviceCall name="myService"/>
       <to uri="mock:result"/>

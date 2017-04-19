@@ -27,10 +27,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceFilter;
+import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.Metadata;
 
@@ -62,7 +62,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     @XmlAttribute
     private String loadBalancerRef;
     @XmlTransient
-    private LoadBalancer loadBalancer;
+    private ServiceLoadBalancer loadBalancer;
     @XmlAttribute
     private String expressionRef;
     @XmlTransient
@@ -88,10 +88,10 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
     @XmlElements({
-        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class),
-        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallLoadBalancerConfiguration.class) }
+        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallServiceLoadBalancerConfiguration.class),
+        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) }
     )
-    private ServiceCallLoadBalancerConfiguration loadBalancerConfiguration;
+    private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
     @XmlElements({
         @XmlElement(name = "expression", type = ServiceCallExpressionConfiguration.class)}
@@ -207,20 +207,20 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets a reference to a custom {@link LoadBalancer} to use.
+     * Sets a reference to a custom {@link ServiceLoadBalancer} to use.
      */
     public void setLoadBalancerRef(String loadBalancerRef) {
         this.loadBalancerRef = loadBalancerRef;
     }
 
-    public LoadBalancer getLoadBalancer() {
+    public ServiceLoadBalancer getLoadBalancer() {
         return loadBalancer;
     }
 
     /**
-     * Sets a custom {@link LoadBalancer} to use.
+     * Sets a custom {@link ServiceLoadBalancer} to use.
      */
-    public void setLoadBalancer(LoadBalancer loadBalancer) {
+    public void setLoadBalancer(ServiceLoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 
@@ -268,14 +268,14 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         this.serviceFilterConfiguration = serviceFilterConfiguration;
     }
 
-    public ServiceCallLoadBalancerConfiguration getLoadBalancerConfiguration() {
+    public ServiceCallServiceLoadBalancerConfiguration getLoadBalancerConfiguration() {
         return loadBalancerConfiguration;
     }
 
     /**
      * Configures theL oadBalancer using the given configuration.
      */
-    public void setLoadBalancerConfiguration(ServiceCallLoadBalancerConfiguration loadBalancerConfiguration) {
+    public void setLoadBalancerConfiguration(ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
         this.loadBalancerConfiguration = loadBalancerConfiguration;
     }
 
@@ -374,7 +374,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets a reference to a custom {@link LoadBalancer} to use.
+     * Sets a reference to a custom {@link ServiceLoadBalancer} to use.
      */
     public ServiceCallConfigurationDefinition loadBalancer(String loadBalancerRef) {
         setLoadBalancerRef(loadBalancerRef);
@@ -382,9 +382,9 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * Sets a custom {@link LoadBalancer} to use.
+     * Sets a custom {@link ServiceLoadBalancer} to use.
      */
-    public ServiceCallConfigurationDefinition loadBalancer(LoadBalancer loadBalancer) {
+    public ServiceCallConfigurationDefinition loadBalancer(ServiceLoadBalancer loadBalancer) {
         setLoadBalancer(loadBalancer);
         return this;
     }
@@ -436,7 +436,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     /**
      * Configures the LoadBalancer using the given configuration.
      */
-    public ServiceCallConfigurationDefinition loadBalancerConfiguration(ServiceCallLoadBalancerConfiguration loadBalancerConfiguration) {
+    public ServiceCallConfigurationDefinition loadBalancerConfiguration(ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration) {
         setLoadBalancerConfiguration(loadBalancerConfiguration);
         return this;
     }
@@ -610,21 +610,21 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     // *****************************
 
     public ServiceCallConfigurationDefinition defaultLoadBalancer() {
-        DefaultServiceCallLoadBalancerConfiguration conf = new DefaultServiceCallLoadBalancerConfiguration();
+        DefaultServiceCallServiceLoadBalancerConfiguration conf = new DefaultServiceCallServiceLoadBalancerConfiguration();
         setLoadBalancerConfiguration(conf);
 
         return this;
     }
 
     public ServiceCallConfigurationDefinition ribbonLoadBalancer() {
-        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration();
+        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration();
         setLoadBalancerConfiguration(conf);
 
         return this;
     }
 
     public ServiceCallConfigurationDefinition ribbonLoadBalancer(String clientName) {
-        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration();
+        RibbonServiceCallServiceLoadBalancerConfiguration conf = new RibbonServiceCallServiceLoadBalancerConfiguration();
         conf.setClientName(clientName);
 
         setLoadBalancerConfiguration(conf);

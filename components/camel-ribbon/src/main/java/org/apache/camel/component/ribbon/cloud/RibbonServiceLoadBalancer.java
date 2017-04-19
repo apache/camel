@@ -35,13 +35,13 @@ import com.netflix.loadbalancer.ServerList;
 import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.cloud.LoadBalancer;
-import org.apache.camel.cloud.LoadBalancerFunction;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryAware;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterAware;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.cloud.ServiceLoadBalancerFunction;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -49,11 +49,11 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RibbonLoadBalancer
+public class RibbonServiceLoadBalancer
         extends ServiceSupport
-        implements CamelContextAware, ServiceDiscoveryAware, ServiceFilterAware, LoadBalancer {
+        implements CamelContextAware, ServiceDiscoveryAware, ServiceFilterAware, ServiceLoadBalancer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RibbonLoadBalancer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RibbonServiceLoadBalancer.class);
 
     private final RibbonConfiguration configuration;
     private final ConcurrentMap<String, ZoneAwareLoadBalancer<RibbonServiceDefinition>> loadBalancers;
@@ -61,7 +61,7 @@ public class RibbonLoadBalancer
     private ServiceDiscovery serviceDiscovery;
     private ServiceFilter serviceFilter;
 
-    public RibbonLoadBalancer(RibbonConfiguration configuration) {
+    public RibbonServiceLoadBalancer(RibbonConfiguration configuration) {
         this.configuration = configuration;
         this.loadBalancers = new ConcurrentHashMap<>();
     }
@@ -129,7 +129,7 @@ public class RibbonLoadBalancer
     // ************************
 
     @Override
-    public <T> T process(String serviceName, LoadBalancerFunction<T> request) throws Exception {
+    public <T> T process(String serviceName, ServiceLoadBalancerFunction<T> request) throws Exception {
         ILoadBalancer loadBalancer = loadBalancers.computeIfAbsent(serviceName, key -> createLoadBalancer(key));
         Server server = loadBalancer.chooseServer(serviceName);
 

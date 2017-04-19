@@ -30,8 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.cloud.LoadBalancer;
-import org.apache.camel.cloud.LoadBalancerFactory;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.cloud.ServiceLoadBalancerFactory;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
@@ -43,7 +43,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "routing,cloud,load-balancing")
 @XmlRootElement(name = "loadBalancerConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceCallLoadBalancerConfiguration extends IdentifiedType implements LoadBalancerFactory {
+public class ServiceCallServiceLoadBalancerConfiguration extends IdentifiedType implements ServiceLoadBalancerFactory {
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cloud/";
 
     @XmlTransient
@@ -53,11 +53,11 @@ public class ServiceCallLoadBalancerConfiguration extends IdentifiedType impleme
     @XmlElement(name = "properties") @Metadata(label = "advanced")
     private List<PropertyDefinition> properties;
 
-    public ServiceCallLoadBalancerConfiguration() {
+    public ServiceCallServiceLoadBalancerConfiguration() {
         this(null, null);
     }
 
-    public ServiceCallLoadBalancerConfiguration(ServiceCallDefinition parent, String factoryKey) {
+    public ServiceCallServiceLoadBalancerConfiguration(ServiceCallDefinition parent, String factoryKey) {
         this.parent = parent;
         this.factoryKey = factoryKey;
     }
@@ -96,7 +96,7 @@ public class ServiceCallLoadBalancerConfiguration extends IdentifiedType impleme
      * use. For example if using ribbon, then the client properties are define
      * in com.netflix.client.config.CommonClientConfigKey.
      */
-    public ServiceCallLoadBalancerConfiguration property(String key, String value) {
+    public ServiceCallServiceLoadBalancerConfiguration property(String key, String value) {
         if (properties == null) {
             properties = new ArrayList<>();
         }
@@ -130,13 +130,13 @@ public class ServiceCallLoadBalancerConfiguration extends IdentifiedType impleme
     // *************************************************************************
 
     @Override
-    public LoadBalancer newInstance(CamelContext camelContext) throws Exception {
+    public ServiceLoadBalancer newInstance(CamelContext camelContext) throws Exception {
         ObjectHelper.notNull(factoryKey, "LoadBalancer factoryKey");
 
-        LoadBalancer answer;
+        ServiceLoadBalancer answer;
 
         // First try to find the factory from the registry.
-        LoadBalancerFactory factory = CamelContextHelper.lookup(camelContext, factoryKey, LoadBalancerFactory.class);
+        ServiceLoadBalancerFactory factory = CamelContextHelper.lookup(camelContext, factoryKey, ServiceLoadBalancerFactory.class);
         if (factory != null) {
             // If a factory is found in the registry do not re-configure it as
             // it should be pre-configured.
@@ -152,8 +152,8 @@ public class ServiceCallLoadBalancerConfiguration extends IdentifiedType impleme
             }
 
             if (type != null) {
-                if (LoadBalancerFactory.class.isAssignableFrom(type)) {
-                    factory = (LoadBalancerFactory) camelContext.getInjector().newInstance(type);
+                if (ServiceLoadBalancerFactory.class.isAssignableFrom(type)) {
+                    factory = (ServiceLoadBalancerFactory) camelContext.getInjector().newInstance(type);
                 } else {
                     throw new IllegalArgumentException(
                         "Resolving LoadBalancer: " + factoryKey + " detected type conflict: Not a LoadBalancerFactory implementation. Found: " + type.getName());
@@ -163,6 +163,8 @@ public class ServiceCallLoadBalancerConfiguration extends IdentifiedType impleme
             try {
                 Map<String, Object> parameters = new HashMap<>();
                 IntrospectionSupport.getProperties(this, parameters, null, false);
+
+                // Convert properties to Map<String, String>
                 parameters.put("properties", getPropertiesAsMap(camelContext));
 
                 postProcessFactoryParameters(camelContext, parameters);

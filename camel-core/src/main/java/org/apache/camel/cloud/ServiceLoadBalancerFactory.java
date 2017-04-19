@@ -16,17 +16,12 @@
  */
 package org.apache.camel.cloud;
 
-import org.apache.camel.CamelContext;
-
 /**
  * A factory to create LoadBalancer
  *
- * @see LoadBalancer
+ * @see ServiceFactory
+ * @see ServiceLoadBalancer
  */
-public interface LoadBalancerFactory {
-
-    /**
-     * Creates an instance of a LoadBalancer.
-     */
-    LoadBalancer newInstance(CamelContext camelContext) throws Exception;
+@FunctionalInterface
+public interface ServiceLoadBalancerFactory extends ServiceFactory<ServiceLoadBalancer> {
 }

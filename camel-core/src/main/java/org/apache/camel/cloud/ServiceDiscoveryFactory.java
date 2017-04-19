@@ -16,17 +16,12 @@
  */
 package org.apache.camel.cloud;
 
-import org.apache.camel.CamelContext;
-
 /**
  * A factory to create ServiceDiscovery
  *
+ * @see ServiceFactory
  * @see ServiceDiscovery
  */
-public interface ServiceDiscoveryFactory {
-
-    /**
-     * Creates an instance of a ServiceDiscovery.
-     */
-    ServiceDiscovery newInstance(CamelContext camelContext) throws Exception;
+@FunctionalInterface
+public interface ServiceDiscoveryFactory extends ServiceFactory<ServiceDiscovery> {
 }

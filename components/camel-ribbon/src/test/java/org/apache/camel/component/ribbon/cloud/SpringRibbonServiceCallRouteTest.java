@@ -17,7 +17,14 @@
 
 package org.apache.camel.component.ribbon.cloud;
 
+import java.util.Optional;
+
+import org.apache.camel.Navigate;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -35,6 +42,33 @@ public abstract class SpringRibbonServiceCallRouteTest extends CamelSpringTestSu
         assertEquals("9090", out2);
 
         assertMockEndpointsSatisfied();
+    }
+
+    // ************************************
+    // Helpers
+    // ************************************
+
+    protected DefaultServiceCallProcessor findServiceCallProcessor() {
+        Route route = context().getRoute("scall");
+
+        Assert.assertNotNull("ServiceCall Route should be present", route);
+
+        return findServiceCallProcessor(route.navigate())
+            .orElseThrow(() -> new IllegalStateException("Unable to find a ServiceCallProcessor"));
+    }
+
+    protected Optional<DefaultServiceCallProcessor> findServiceCallProcessor(Navigate<Processor> navigate) {
+        for (Processor processor : navigate.next()) {
+            if (processor instanceof DefaultServiceCallProcessor) {
+                return Optional.ofNullable((DefaultServiceCallProcessor)processor);
+            }
+
+            if (processor instanceof Navigate) {
+                return findServiceCallProcessor((Navigate<Processor>)processor);
+            }
+        }
+
+        return Optional.empty();
     }
 }
 

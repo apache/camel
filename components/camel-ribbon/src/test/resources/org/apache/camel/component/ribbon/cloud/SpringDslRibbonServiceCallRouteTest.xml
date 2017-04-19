@@ -24,7 +24,7 @@
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
+    <route id="scall">
       <from uri="direct:start"/>
       <serviceCall name="myService">
         <!-- static list of servers -->

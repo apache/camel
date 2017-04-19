@@ -23,9 +23,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.cloud.ribbon.load-balancer")
-public class RibbonServiceCallLoadBalancerConfigurationProperties
+public class RibbonServiceCallServiceLoadBalancerConfigurationProperties
         extends
-            RibbonServiceCallLoadBalancerConfigurationCommon {
+            RibbonServiceCallServiceLoadBalancerConfigurationCommon {
 
     /**
      * Enable the component
@@ -34,9 +34,9 @@ public class RibbonServiceCallLoadBalancerConfigurationProperties
     /**
      * Define additional configuration definitions
      */
-    private Map<String, RibbonServiceCallLoadBalancerConfigurationCommon> configurations = new HashMap<>();
+    private Map<String, RibbonServiceCallServiceLoadBalancerConfigurationCommon> configurations = new HashMap<>();
 
-    public Map<String, RibbonServiceCallLoadBalancerConfigurationCommon> getConfigurations() {
+    public Map<String, RibbonServiceCallServiceLoadBalancerConfigurationCommon> getConfigurations() {
         return configurations;
     }
 

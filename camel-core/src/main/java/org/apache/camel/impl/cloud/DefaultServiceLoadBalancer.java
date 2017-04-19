@@ -21,8 +21,6 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.cloud.LoadBalancer;
-import org.apache.camel.cloud.LoadBalancerFunction;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceChooserAware;
 import org.apache.camel.cloud.ServiceDefinition;
@@ -30,24 +28,26 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryAware;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterAware;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.cloud.ServiceLoadBalancerFunction;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultLoadBalancer
+public class DefaultServiceLoadBalancer
         extends ServiceSupport
-        implements CamelContextAware, ServiceDiscoveryAware, ServiceChooserAware, ServiceFilterAware, LoadBalancer {
+        implements CamelContextAware, ServiceDiscoveryAware, ServiceChooserAware, ServiceFilterAware, ServiceLoadBalancer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLoadBalancer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceLoadBalancer.class);
 
     private CamelContext camelContext;
     private ServiceDiscovery serviceDiscovery;
     private ServiceChooser serviceChooser;
     private ServiceFilter serviceFilter;
 
-    public DefaultLoadBalancer() {
+    public DefaultServiceLoadBalancer() {
     }
 
     // *************************************
@@ -126,7 +126,7 @@ public class DefaultLoadBalancer
     // *************************************
 
     @Override
-    public <T> T process(String serviceName, LoadBalancerFunction<T> function) throws Exception {
+    public <T> T process(String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception {
         ServiceDefinition service;
 
         List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
