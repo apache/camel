@@ -18,8 +18,10 @@ package org.apache.camel.model.cloud.springboot;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Generated;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+@Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.cloud.dns.service-discovery")
 public class DnsServiceCallServiceDiscoveryConfigurationProperties
         extends
