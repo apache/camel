@@ -334,6 +334,89 @@ from("direct:start")
 </camelContext>
 ----
 
+### Load Balancer
+
+The Service Call EIP comes with its own Load Balancer which is istantiated by default if a custome one is not configured and glues Service Discovery, Service Filer, Service Chooser and Service Expression togheter to load balance requests among the available services.
+
+If you need a more sophisticate load balancer you can use Ribbon by adding camel-ribbon to the mix, maven users will need to add the following dependency to their pom.xml
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ribbon</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+----
+
+*Available options:*
+
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| clientName | String | The Ribbon client name
+| roperties | List<PropertyDefinition> | Custom client config properties
+|=======================================================================
+
+To leverage Ribbon, it is required to explicit enable it:
+
+[source,java]
+.Java DSL
+----
+from("direct:start")
+    .serviceCall("foo")
+        .ribbonLoadBalancer()
+    .to("mock:result");
+----
+
+[source,xml]
+.XML DSL
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <ribbonLoadBalancer/>
+    </serviceCall>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+
+You can configure Ribbon key programmaticaly using RibbonConfiguration:
+
+[source,java]
+.Java DSL
+----
+RibbonConfiguration configuration = new RibbonConfiguration();
+configuration.addProperty("listOfServers", "localhost:9090,localhost:9091");
+
+from("direct:start")
+    .serviceCall("foo")
+        .loadBalancer(new RibbonServiceLoadBalancer(configuration))
+    .to("mock:result");
+----
+
+Or leveraging XML specific configuration:
+
+[source,xml]
+.XML DSL
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <ribbonLoadBalancer>
+          <properties key="listOfServers" value="localhost:9090,localhost:9091"/>
+      </ribbonLoadBalancer>
+    </serviceCall>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
 ### Shared configurations
 
 The Service CAll EIP can be configured straight on the route definition or through shared configurations, here an example with two configurations registered in the Camel Context:
@@ -417,4 +500,18 @@ public class MyRouteBuilder implements RouteBuilder {
             .serviceCall("{{service.name}}");
     }
 }
+----
+
+### Spring Cloud support
+
+If you are using Camel in an application based on Spring Cloud, you can leverage Spring Cloud service discovery and load balancing capabilities by adding the Spring Cloud related dependencies (i.e. spring-cloud-consul, spring-cloud-kubernetes) as any Spring Boot/Cloud application in addition to Camel's own camel-spring-cloud dependency.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-cloud dependency</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
 ----
