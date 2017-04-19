@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 
 /**
  * The zookeeper-master camel component ensures that only a single endpoint in a cluster is active at any
@@ -72,7 +71,7 @@ public class MasterComponent extends ZookeeperComponentSupport {
         String childUri = remaining.substring(idx + 1);
         // we need to apply the params here
         if (params != null && params.size() > 0) {
-            childUri = childUri + "?" + URISupport.createQueryString(params);
+            childUri = childUri + "?" + uri.substring(uri.indexOf('?') + 1);
         }
         MasterEndpoint answer = new MasterEndpoint(uri, this, name, childUri);
         return answer;
