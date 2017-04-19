@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 231 in 184 JAR artifacts (14 deprecated)
+Number of Components: 238 in 185 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -292,6 +292,27 @@ Number of Components: 231 in 184 JAR artifacts (14 deprecated)
 
 | link:camel-ibatis/src/main/docs/ibatis-component.adoc[iBatis] (camel-ibatis) +
 `ibatis:statement` | 1.2 | *deprecated* Performs a query poll insert update or delete in a relational database using Apache iBATIS.
+
+| link:camel-ignite/src/main/docs/ignite-cache-component.adoc[Ignite Cache] (camel-ignite) +
+`ignite-cache:[cacheName]` | 2.17 | Ignite Cache endpoint.
+
+| link:camel-ignite/src/main/docs/ignite-compute-component.adoc[Ignite Compute] (camel-ignite) +
+`ignite-compute:[endpointId]` | 2.17 | Ignite Compute endpoint.
+
+| link:camel-ignite/src/main/docs/ignite-events-component.adoc[Ignite Events] (camel-ignite) +
+`ignite-events:[endpointId]` | 2.17 | Ignite Events endpoint. Only supports consumers.
+
+| link:camel-ignite/src/main/docs/ignite-idgen-component.adoc[Ignite ID Generator] (camel-ignite) +
+`ignite-idgen:[name]` | 2.17 | Ignite ID Generator endpoint.
+
+| link:camel-ignite/src/main/docs/ignite-messaging-component.adoc[Ignite Messaging] (camel-ignite) +
+`ignite-messaging:[topic]` | 2.17 | Ignite Messaging endpoint.
+
+| link:camel-ignite/src/main/docs/ignite-queue-component.adoc[Ignite Queues] (camel-ignite) +
+`ignite-queue:[name]` | 2.17 | Ignite Queue endpoint.
+
+| link:camel-ignite/src/main/docs/ignite-set-component.adoc[Ignite Sets] (camel-ignite) +
+`ignite-set:[name]` | 2.17 | Ignite Set endpoint.
 
 | link:camel-infinispan/src/main/docs/infinispan-component.adoc[Infinispan] (camel-infinispan) +
 `infinispan:cacheName` | 2.13 | For reading/writing from/to Infinispan distributed key/value store and data grid.
