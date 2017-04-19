@@ -2,14 +2,8 @@
 
 *Available as of Camel version 2.19*
 
-### Milo Client Component
-
-*Available as of Camel 2.19*
-
 The *Milo Client* component provides access to OPC UA servers using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
-
-*Java 8*: This component requires Java 8 at runtime. 
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
