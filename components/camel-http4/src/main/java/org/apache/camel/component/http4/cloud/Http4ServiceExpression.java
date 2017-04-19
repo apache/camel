@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.cloud;
+package org.apache.camel.component.http4.cloud;
 
-public final class ServiceCallConstants {
-    public static final String DEFAULT_COMPONENT = "http4";
-    public static final String DEFAULT_SERVICE_CALL_CONFIG_ID = "service-call-configuration";
-    public static final String DEFAULT_SERVICE_CALL_EXPRESSION_ID = "service-call-expression";
-    public static final String DEFAULT_SERVICE_DISCOVERY_ID = "service-discovery";
-    public static final String DEFAULT_SERVICE_FILTER_ID = "service-filter";
-    public static final String DEFAULT_SERVICE_CHOOSER_ID = "service-chooser";
-    public static final String DEFAULT_LOAD_BALANCER_ID = "load-balancer";
+import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
 
-    private ServiceCallConstants() {
+/**
+ * The default is based on camel-http4, this class is added to allow further
+ * customizations.
+ */
+public final class Http4ServiceExpression extends DefaultServiceCallExpression {
+    public Http4ServiceExpression() {
+    }
+
+    public Http4ServiceExpression(String hostHeader, String portHeader) {
+        super(hostHeader, portHeader);
     }
 }

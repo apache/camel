@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Expression;
 import org.apache.camel.cloud.ServiceLoadBalancer;
-import org.apache.camel.model.cloud.ServiceCallConstants;
+import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.cloud")
@@ -76,7 +76,7 @@ public class CamelCloudConfigurationProperties {
         /**
          * The component to use.
          */
-        private String component = ServiceCallConstants.DEFAULT_COMPONENT;
+        private String component = ServiceCallDefinitionConstants.DEFAULT_COMPONENT;
 
         /**
          * A reference to the {@link org.apache.camel.cloud.ServiceDiscovery} to use.

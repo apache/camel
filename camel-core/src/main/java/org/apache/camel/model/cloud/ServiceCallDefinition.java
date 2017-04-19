@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model.cloud;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,6 +37,7 @@ import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceChooserAware;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryAware;
+import org.apache.camel.cloud.ServiceExpressionFactory;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterAware;
 import org.apache.camel.cloud.ServiceLoadBalancer;
@@ -49,6 +51,7 @@ import org.apache.camel.impl.cloud.RoundRobinServiceChooser;
 import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 
@@ -66,7 +69,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     private String name;
     @XmlAttribute
     private String uri;
-    @XmlAttribute @Metadata(defaultValue = ServiceCallConstants.DEFAULT_COMPONENT)
+    @XmlAttribute @Metadata(defaultValue = ServiceCallDefinitionConstants.DEFAULT_COMPONENT)
     private String component;
     @XmlAttribute
     private ExchangePattern pattern;
@@ -729,7 +732,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         final ServiceFilter serviceFilter = retrieveServiceFilter(camelContext);
         final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);
         final ServiceLoadBalancer loadBalancer = retrieveLoadBalancer(camelContext);
-        final Expression expression = retrieveExpression(camelContext);
 
         if (loadBalancer instanceof CamelContextAware) {
             ((CamelContextAware) loadBalancer).setCamelContext(camelContext);
@@ -779,14 +781,17 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         // Service name is mandatory
         ObjectHelper.notNull(name, "Service name");
 
+        endpointScheme = ObjectHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallDefinitionConstants.DEFAULT_COMPONENT);
+        endpointUri = ObjectHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null);
+
         return new DefaultServiceCallProcessor(
             camelContext,
             camelContext.resolvePropertyPlaceholders(name),
-            ObjectHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallConstants.DEFAULT_COMPONENT),
-            ObjectHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null),
+            endpointScheme,
+            endpointUri,
             pattern,
             loadBalancer,
-            expression);
+            retrieveExpression(camelContext, endpointScheme));
     }
 
     // *****************************
@@ -801,7 +806,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Or if it is in the registry
             config = lookup(
                 camelContext,
-                ServiceCallConstants.DEFAULT_SERVICE_CALL_CONFIG_ID,
+                ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID,
                 ServiceCallConfigurationDefinition.class);
         }
 
@@ -865,7 +870,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, ServiceDiscovery.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_DISCOVERY_ID, ServiceDiscovery.class)
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_DISCOVERY_ID, ServiceDiscovery.class)
         ).orElseGet(
             // Default, that's s little ugly but a load balancer may live without
             // (i.e. the Ribbon one) so let's delegate the null check to the actual
@@ -921,7 +926,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, ServiceFilter.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class)
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class)
         ).orElseGet(
             // Default
             () -> new HealthyServiceFilter()
@@ -970,7 +975,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, ServiceChooser.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class)
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class)
         ).orElseGet(
             // Default
             () -> new RoundRobinServiceChooser()
@@ -1013,7 +1018,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, ServiceLoadBalancer.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_LOAD_BALANCER_ID, ServiceLoadBalancer.class)
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_LOAD_BALANCER_ID, ServiceLoadBalancer.class)
         ).orElseGet(
             // Default
             () -> new DefaultServiceLoadBalancer()
@@ -1044,8 +1049,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return answer;
     }
 
-    private Expression retrieveExpression(CamelContext camelContext) throws Exception {
-        return Suppliers.firstNotNull(
+    private Expression retrieveExpression(CamelContext camelContext, String component) throws Exception {
+        Optional<Expression> expression = Suppliers.firstNotNull(
             () -> (expressionConfiguration != null) ? expressionConfiguration.newInstance(camelContext) : null,
             // Local configuration
             () -> retrieve(Expression.class, camelContext, this::getExpression, this::getExpressionRef),
@@ -1054,11 +1059,44 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Default configuration
             () -> retrieveExpression(camelContext, this::retrieveDefaultConfig),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class)
-        ).orElseGet(
-            // Default
-            () -> new DefaultServiceCallExpression()
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class)
         );
+
+        if (expression.isPresent()) {
+            return expression.get();
+        } else {
+            String lookupName = component + "-service-expression";
+            // First try to find the factory from the registry.
+            ServiceExpressionFactory factory = CamelContextHelper.lookup(camelContext, lookupName, ServiceExpressionFactory.class);
+            if (factory != null) {
+                // If a factory is found in the registry do not re-configure it as
+                // it should be pre-configured.
+                return factory.newInstance(camelContext);
+            } else {
+
+                Class<?> type = null;
+
+                try {
+                    // Then use Service factory.
+                    type = camelContext.getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(lookupName);
+                } catch (Exception e) {
+                }
+
+                if (ObjectHelper.isNotEmpty(type)) {
+                    if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
+                        factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type);
+                    } else {
+                        throw new IllegalArgumentException(
+                            "Resolving Expression: " + lookupName + " detected type conflict: Not a ServiceExpressionFactory implementation. Found: " + type.getName());
+                    }
+                } else {
+                    // If no factory is found, returns the default
+                    factory = context -> new DefaultServiceCallExpression();
+                }
+
+                return factory.newInstance(camelContext);
+            }
+        }
     }
 
     // ************************************

@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.Assert;
@@ -91,7 +92,7 @@ public class ServiceCallConfigurationTest {
         conf.serviceFilter(sf);
 
         SimpleRegistry reg = new SimpleRegistry();
-        reg.put(org.apache.camel.model.cloud.ServiceCallConstants.DEFAULT_SERVICE_CALL_CONFIG_ID, conf);
+        reg.put(ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID, conf);
 
         CamelContext context = new DefaultCamelContext(reg);
         context.addRoutes(new RouteBuilder() {

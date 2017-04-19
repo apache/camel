@@ -17,10 +17,10 @@
 
 package org.apache.camel.spring.boot.cloud;
 
-import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceFilter;
+import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -29,7 +29,7 @@
     <!-- ServiceCall                           -->
     <!-- ************************************* -->
 
-    <defaultServiceCallConfiguration id="default">
+    <defaultServiceCallConfiguration id="default" component="jetty">
       <!-- service discovery -->
       <consulServiceDiscovery url="http://localhost:8500"/>
 
@@ -40,7 +40,7 @@
       </blacklistServiceFilter>
     </defaultServiceCallConfiguration>
 
-    <serviceCallConfiguration id="service-2">
+    <serviceCallConfiguration id="service-2" component="jetty">
       <!-- service filter -->
       <blacklistServiceFilter>
         <servers>http-service-2@127.0.0.1:9022</servers>
