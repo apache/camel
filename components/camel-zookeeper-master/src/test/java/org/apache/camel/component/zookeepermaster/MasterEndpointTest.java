@@ -23,7 +23,9 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
+import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -96,5 +98,16 @@ public class MasterEndpointTest extends AbstractJUnit4SpringContextTests {
         template.sendBodyAndHeader(expectedBody, "foo", "bar");
 
         MockEndpoint.assertIsSatisfied(camelContext);
+    }
+
+    @Test
+    public void testRawPropertiesOnChild() throws Exception {
+        final String uri = "zookeeper-master://name:sftp://myhost/inbox?password=RAW(_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_)&username=jdoe";
+
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        MasterEndpoint master = (MasterEndpoint) ctx.getEndpoint(uri);
+        SftpEndpoint sftp = (SftpEndpoint) master.getEndpoint();
+
+        assertEquals("_BEFORE_AMPERSAND_&_AFTER_AMPERSAND_", sftp.getConfiguration().getPassword());
     }
 }
