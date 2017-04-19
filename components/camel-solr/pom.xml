@@ -153,24 +153,21 @@
       <!-- clean the data directory before installing -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
+        <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
             <id>auto-clean</id>
             <phase>install</phase>
             <goals>
-              <goal>clean</goal>
+              <goal>run</goal>
             </goals>
+            <configuration>
+              <target>
+                <delete dir="${basedir}/data" quiet="true"/>
+              </target>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <excludeDefaultDirectories>true</excludeDefaultDirectories>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/data</directory>
-            </fileset>
-          </filesets>
-        </configuration>
       </plugin>
     </plugins>
   </build>
