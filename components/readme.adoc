@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 236 in 185 JAR artifacts (14 deprecated)
+Number of Components: 231 in 184 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -251,26 +251,11 @@ Number of Components: 236 in 185 JAR artifacts (14 deprecated)
 | link:camel-google-drive/src/main/docs/google-drive-component.adoc[Google Drive] (camel-google-drive) +
 `google-drive:apiName/methodName` | 2.14 | The google-drive component provides access to Google Drive file storage service.
 
-| link:camel-gae/src/main/docs/gauth-component.adoc[Google GAuth] (camel-gae) +
-`gauth:name` |  | The gauth component is used by web applications to implement a Google-specific OAuth consumer.
-
-| link:camel-gae/src/main/docs/ghttp-component.adoc[Google HTTP] (camel-gae) +
-`ghttp:httpUri` |  | The ghttp component provides HTTP connectivity to the GAE.
-
-| link:camel-gae/src/main/docs/glogin-component.adoc[Google Login] (camel-gae) +
-`glogin:hostName` |  | The glogin component is used by Camel applications outside Google App Engine (GAE) for programmatic login to GAE applications.
-
-| link:camel-gae/src/main/docs/gmail-component.adoc[Google mail] (camel-gae) +
-`gmail:sender` |  | The gmail component is used for sending emails to GAE.
-
 | link:camel-google-mail/src/main/docs/google-mail-component.adoc[Google Mail] (camel-google-mail) +
 `google-mail:apiName/methodName` | 2.15 | The google-mail component provides access to Google Mail.
 
 | link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
 `google-pubsub:projectId:destinationName` | 2.19 | Messaging client for Google Cloud Platform PubSub Service: https://cloud.google.com/pubsub/
-
-| link:camel-gae/src/main/docs/gtask-component.adoc[Google Task] (camel-gae) +
-`gtask:queueName` |  | The gtask component is used for sending messages to GAE task queue service.
 
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
