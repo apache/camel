@@ -66,7 +66,7 @@ public class RestDslGeneratorTest {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(swagger).withGeneratedTime(generated).withClassName("MyRestRoute")
-            .withPackageName("com.example").withIndent("\t")
+            .withPackageName("com.example").withIndent("\t").withSourceCodeTimestamps()
             .withDestinationGenerator(o -> "direct:rest-" + o.getOperationId()).generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/MyRestRoute.txt").toURI();

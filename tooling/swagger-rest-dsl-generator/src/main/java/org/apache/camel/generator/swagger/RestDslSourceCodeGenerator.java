@@ -52,6 +52,8 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
     private Function<Swagger, String> packageNameGenerator = RestDslSourceCodeGenerator::generatePackageName;
 
+    private boolean sourceCodeTimestamps;
+
     RestDslSourceCodeGenerator(final Swagger swagger) {
         super(swagger);
     }
@@ -71,9 +73,21 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         return this;
     }
 
+    public RestDslSourceCodeGenerator<T> withoutSourceCodeTimestamps() {
+        sourceCodeTimestamps = false;
+
+        return this;
+    }
+
     public RestDslSourceCodeGenerator<T> withPackageName(final String packageName) {
         notEmpty(packageName, "packageName");
         this.packageNameGenerator = (s) -> packageName;
+
+        return this;
+    }
+
+    public RestDslSourceCodeGenerator<T> withSourceCodeTimestamps() {
+        sourceCodeTimestamps = true;
 
         return this;
     }
@@ -99,10 +113,16 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
         final String classNameToUse = classNameGenerator.apply(swagger);
 
+        final AnnotationSpec.Builder generatedAnnotation = AnnotationSpec.builder(Generated.class).addMember("value",
+            "$S", getClass().getName());
+
+        if (sourceCodeTimestamps) {
+            generatedAnnotation.addMember("date", "$S", generated());
+        }
+
         final TypeSpec generatedRouteBulder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(methodSpec)
-            .addAnnotation(AnnotationSpec.builder(Generated.class).addMember("value", "$S", getClass().getName())
-                .addMember("date", "$S", generated()).build())
+            .addAnnotation(generatedAnnotation.build())
             .addJavadoc("Generated from Swagger specification by Camel REST DSL generator.\n").build();
 
         final String packageNameToUse = packageNameGenerator.apply(swagger);
