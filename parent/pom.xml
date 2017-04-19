@@ -147,7 +147,7 @@
     <consul-client-version>0.12.4</consul-client-version>
     <consul-client-bundle-version>0.12.4_1</consul-client-bundle-version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
-    <cxf-version>3.1.10</cxf-version>
+    <cxf-version>3.1.11</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.0.5</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.0.5</cxf-xjc-utils-version>
