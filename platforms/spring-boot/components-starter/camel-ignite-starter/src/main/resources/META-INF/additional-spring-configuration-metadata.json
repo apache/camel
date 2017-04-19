@@ -1,0 +1,46 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.ignite-queue.enabled",
+      "description": "Enable ignite-queue component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.ignite-set.enabled",
+      "description": "Enable ignite-set component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.ignite-cache.enabled",
+      "description": "Enable ignite-cache component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.ignite-compute.enabled",
+      "description": "Enable ignite-compute component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.ignite-idgen.enabled",
+      "description": "Enable ignite-idgen component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.ignite-events.enabled",
+      "description": "Enable ignite-events component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.ignite-messaging.enabled",
+      "description": "Enable ignite-messaging component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}
