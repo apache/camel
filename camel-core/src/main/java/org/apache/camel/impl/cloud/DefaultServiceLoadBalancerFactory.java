@@ -17,14 +17,14 @@
 package org.apache.camel.impl.cloud;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.cloud.LoadBalancer;
-import org.apache.camel.cloud.LoadBalancerFactory;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.cloud.ServiceLoadBalancerFactory;
 
-public class DefaultLoadBalancerFactory implements LoadBalancerFactory {
+public class DefaultServiceLoadBalancerFactory implements ServiceLoadBalancerFactory {
 
     @Override
-    public LoadBalancer newInstance(CamelContext camelContext) throws Exception {
-        DefaultLoadBalancer loadBalancer = new DefaultLoadBalancer();
+    public ServiceLoadBalancer newInstance(CamelContext camelContext) throws Exception {
+        DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
         loadBalancer.setCamelContext(camelContext);
 
         return loadBalancer;

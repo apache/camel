@@ -24,6 +24,6 @@ package org.apache.camel.cloud;
  * @see ServiceChooser
  */
 @FunctionalInterface
-public interface LoadBalancer {
-    <T> T process(String serviceName, LoadBalancerFunction<T> function) throws Exception;
+public interface ServiceLoadBalancer {
+    <T> T process(String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception;
 }

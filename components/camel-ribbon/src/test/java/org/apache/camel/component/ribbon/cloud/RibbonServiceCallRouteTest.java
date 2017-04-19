@@ -50,7 +50,7 @@ public class RibbonServiceCallRouteTest extends CamelTestSupport {
                 servers.addServer("localhost", 9091);
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
-                RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
+                RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 from("direct:start")
                     .serviceCall()

@@ -18,9 +18,9 @@ package org.apache.camel.spring.cloud;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.cloud.LoadBalancer;
-import org.apache.camel.cloud.LoadBalancerFunction;
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.cloud.ServiceLoadBalancerFunction;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -29,13 +29,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 
-public class CamelSpringCloudLoadBalancer extends ServiceSupport implements CamelContextAware, LoadBalancer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CamelSpringCloudLoadBalancer.class);
+public class CamelSpringCloudServiceLoadBalancer extends ServiceSupport implements CamelContextAware, ServiceLoadBalancer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamelSpringCloudServiceLoadBalancer.class);
 
     private final LoadBalancerClient loadBalancerClient;
     private CamelContext camelContext;
 
-    public CamelSpringCloudLoadBalancer(LoadBalancerClient loadBalancerClient) {
+    public CamelSpringCloudServiceLoadBalancer(LoadBalancerClient loadBalancerClient) {
         this.loadBalancerClient = loadBalancerClient;
     }
 
@@ -62,7 +62,7 @@ public class CamelSpringCloudLoadBalancer extends ServiceSupport implements Came
     }
 
     @Override
-    public <T> T process(String serviceName, LoadBalancerFunction<T> function) throws Exception {
+    public <T> T process(String serviceName, ServiceLoadBalancerFunction<T> function) throws Exception {
         return loadBalancerClient.execute(serviceName,  i -> function.apply(instanceToDefinition(i)));
     }
 

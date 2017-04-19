@@ -26,22 +26,12 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "routing,cloud,load-balancing")
 @XmlRootElement(name = "defaultLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DefaultServiceCallLoadBalancerConfiguration extends ServiceCallLoadBalancerConfiguration {
-    public DefaultServiceCallLoadBalancerConfiguration() {
+public class DefaultServiceCallServiceLoadBalancerConfiguration extends ServiceCallServiceLoadBalancerConfiguration {
+    public DefaultServiceCallServiceLoadBalancerConfiguration() {
         this(null);
     }
 
-    public DefaultServiceCallLoadBalancerConfiguration(ServiceCallDefinition parent) {
-        super(parent, "default-load-balancer");
+    public DefaultServiceCallServiceLoadBalancerConfiguration(ServiceCallDefinition parent) {
+        super(parent, "default-service-load-balancer");
     }
-
-    // *************************************************************************
-    // Properties
-    // *************************************************************************
-
-
-    // *************************************************************************
-    // Fluent API
-    // *************************************************************************
-
 }

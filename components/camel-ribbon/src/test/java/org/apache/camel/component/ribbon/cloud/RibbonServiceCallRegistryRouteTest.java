@@ -35,7 +35,7 @@ public class RibbonServiceCallRegistryRouteTest extends RibbonServiceCallRouteTe
                 servers.addServer("localhost", 9091);
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
-                RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
+                RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 // configure camel service call
                 ServiceCallConfigurationDefinition config = new ServiceCallConfigurationDefinition();

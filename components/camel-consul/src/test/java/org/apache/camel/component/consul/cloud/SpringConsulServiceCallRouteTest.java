@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.consul.cloud;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +25,14 @@ import com.orbitz.consul.AgentClient;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
+import org.apache.camel.Navigate;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
+import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSupport {
@@ -104,5 +112,34 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         template.sendBody("direct:start", "service-2");
 
         assertMockEndpointsSatisfied();
+    }
+
+    // ************************************
+    // Helpers
+    // ************************************
+
+    protected List<DefaultServiceCallProcessor> findServiceCallProcessors() {
+        Route route = context().getRoute("scall");
+
+        Assert.assertNotNull("ServiceCall Route should be present", route);
+
+        return findServiceCallProcessors(new ArrayList<>(), route.navigate());
+    }
+
+    protected List<DefaultServiceCallProcessor> findServiceCallProcessors(List<DefaultServiceCallProcessor> processors, Navigate<Processor> navigate) {
+        for (Processor processor : navigate.next()) {
+            if (processor instanceof DefaultServiceCallProcessor) {
+                processors.add((DefaultServiceCallProcessor)processor);
+            }
+            if (processor instanceof ChoiceProcessor) {
+                for (FilterProcessor filter : ((ChoiceProcessor) processor).getFilters()) {
+                    findServiceCallProcessors(processors, filter);
+                }
+            } else if (processor instanceof Navigate) {
+                return findServiceCallProcessors(processors, (Navigate<Processor>)processor);
+            }
+        }
+
+        return processors;
     }
 }

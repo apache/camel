@@ -16,14 +16,12 @@
  */
 package org.apache.camel.cloud;
 
-import org.apache.camel.Expression;
+import org.apache.camel.CamelContext;
 
-/**
- * A factory to create Expression
- *
- * @see ServiceFactory
- * @see Expression
- */
 @FunctionalInterface
-public interface ServiceExpressionFactory extends ServiceFactory<Expression> {
+public interface ServiceFactory<T> {
+    /**
+     * Creates an instance of a service.
+     */
+    T newInstance(CamelContext camelContext) throws Exception;
 }

@@ -21,10 +21,10 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.cloud.LoadBalancer;
-import org.apache.camel.component.ribbon.cloud.RibbonLoadBalancerFactory;
-import org.apache.camel.model.cloud.springboot.RibbonServiceCallLoadBalancerConfigurationCommon;
-import org.apache.camel.model.cloud.springboot.RibbonServiceCallLoadBalancerConfigurationProperties;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.component.ribbon.cloud.RibbonServiceLoadBalancerFactory;
+import org.apache.camel.model.cloud.springboot.RibbonServiceCallServiceLoadBalancerConfigurationCommon;
+import org.apache.camel.model.cloud.springboot.RibbonServiceCallServiceLoadBalancerConfigurationProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
@@ -44,20 +44,20 @@ import org.springframework.context.annotation.Lazy;
 @ConditionalOnBean(CamelAutoConfiguration.class)
 @Conditional(RibbonCloudAutoConfiguration.Condition.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
-@EnableConfigurationProperties(RibbonServiceCallLoadBalancerConfigurationProperties.class)
+@EnableConfigurationProperties(RibbonServiceCallServiceLoadBalancerConfigurationProperties.class)
 public class RibbonCloudAutoConfiguration {
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private RibbonServiceCallLoadBalancerConfigurationProperties configuration;
+    private RibbonServiceCallServiceLoadBalancerConfigurationProperties configuration;
     @Autowired
     private ConfigurableBeanFactory beanFactory;
 
     @Lazy
     @Bean(name = "ribbon-load-balancer")
     @ConditionalOnClass(CamelContext.class)
-    public LoadBalancer configureLoadBalancerFactory() throws Exception {
-        RibbonLoadBalancerFactory factory = new RibbonLoadBalancerFactory();
+    public ServiceLoadBalancer configureLoadBalancerFactory() throws Exception {
+        RibbonServiceLoadBalancerFactory factory = new RibbonServiceLoadBalancerFactory();
 
         IntrospectionSupport.setProperties(
             camelContext,
@@ -73,12 +73,12 @@ public class RibbonCloudAutoConfiguration {
         if (beanFactory != null) {
             Map<String, Object> parameters = new HashMap<>();
 
-            for (Map.Entry<String, RibbonServiceCallLoadBalancerConfigurationCommon> entry : configuration.getConfigurations().entrySet()) {
+            for (Map.Entry<String, RibbonServiceCallServiceLoadBalancerConfigurationCommon> entry : configuration.getConfigurations().entrySet()) {
                 // clean up params
                 parameters.clear();
 
                 // The instance factory
-                RibbonLoadBalancerFactory factory = new RibbonLoadBalancerFactory();
+                RibbonServiceLoadBalancerFactory factory = new RibbonServiceLoadBalancerFactory();
 
                 try {
                     IntrospectionSupport.getProperties(entry.getValue(), parameters, null, false);

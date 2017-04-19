@@ -19,18 +19,18 @@ package org.apache.camel.component.ribbon.cloud;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.cloud.LoadBalancer;
-import org.apache.camel.cloud.LoadBalancerFactory;
+import org.apache.camel.cloud.ServiceLoadBalancer;
+import org.apache.camel.cloud.ServiceLoadBalancerFactory;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 
-public class RibbonLoadBalancerFactory implements LoadBalancerFactory {
+public class RibbonServiceLoadBalancerFactory implements ServiceLoadBalancerFactory {
     private final RibbonConfiguration configuration;
 
-    public RibbonLoadBalancerFactory() {
+    public RibbonServiceLoadBalancerFactory() {
         this(new RibbonConfiguration());
     }
 
-    public RibbonLoadBalancerFactory(RibbonConfiguration configuration) {
+    public RibbonServiceLoadBalancerFactory(RibbonConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -83,7 +83,7 @@ public class RibbonLoadBalancerFactory implements LoadBalancerFactory {
     // *************************************************************************
 
     @Override
-    public LoadBalancer newInstance(CamelContext camelContext) throws Exception {
-        return new RibbonLoadBalancer(configuration);
+    public ServiceLoadBalancer newInstance(CamelContext camelContext) throws Exception {
+        return new RibbonServiceLoadBalancer(configuration);
     }
 }
