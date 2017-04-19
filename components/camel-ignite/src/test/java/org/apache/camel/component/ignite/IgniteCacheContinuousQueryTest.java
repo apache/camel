@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.CacheEntryEventSerializableFilter;
@@ -45,6 +46,16 @@ import static com.google.common.truth.Truth.assert_;
 public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @Override
+    protected String getScheme() {
+        return "ignite-cache";
+    }
+
+    @Override
+    protected AbstractIgniteComponent createComponent() {
+        return IgniteCacheComponent.fromConfiguration(createConfiguration());
+    }
 
     @Test
     public void testContinuousQueryDoNotFireExistingEntries() throws Exception {
@@ -136,13 +147,13 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ignite:cache:testcontinuous1?query=#query1").routeId("continuousQuery").noAutoStartup().to("mock:test1");
+                from("ignite-cache:testcontinuous1?query=#query1").routeId("continuousQuery").noAutoStartup().to("mock:test1");
 
-                from("ignite:cache:testcontinuous1?query=#query1&fireExistingQueryResults=true").routeId("continuousQuery.fireExistingEntries").noAutoStartup().to("mock:test2");
+                from("ignite-cache:testcontinuous1?query=#query1&fireExistingQueryResults=true").routeId("continuousQuery.fireExistingEntries").noAutoStartup().to("mock:test2");
 
-                from("ignite:cache:testcontinuous1?query=#query1&remoteFilter=#remoteFilter1&fireExistingQueryResults=true").routeId("remoteFilter").noAutoStartup().to("mock:test3");
+                from("ignite-cache:testcontinuous1?query=#query1&remoteFilter=#remoteFilter1&fireExistingQueryResults=true").routeId("remoteFilter").noAutoStartup().to("mock:test3");
 
-                from("ignite:cache:testcontinuous1?pageSize=10&oneExchangePerUpdate=false").routeId("groupedUpdate").noAutoStartup().to("mock:test4");
+                from("ignite-cache:testcontinuous1?pageSize=10&oneExchangePerUpdate=false").routeId("groupedUpdate").noAutoStartup().to("mock:test4");
 
             }
         };

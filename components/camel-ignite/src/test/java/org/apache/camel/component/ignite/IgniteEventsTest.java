@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.ignite.events.IgniteEventsComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.configuration.IgniteConfiguration;
@@ -43,12 +44,22 @@ import static com.google.common.truth.Truth.assert_;
 
 public class IgniteEventsTest extends AbstractIgniteTest {
 
+    @Override
+    protected String getScheme() {
+        return "ignite-events";
+    }
+
+    @Override
+    protected AbstractIgniteComponent createComponent() {
+        return IgniteEventsComponent.fromConfiguration(createConfiguration());
+    }
+
     @Test
     public void testConsumeAllEvents() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ignite:events:abc").to("mock:test1");
+                from("ignite-events:abc").to("mock:test1");
             }
         });
 
@@ -82,7 +93,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ignite:events:abc?events=#filter").to("mock:test2");
+                from("ignite-events:abc?events=#filter").to("mock:test2");
             }
         });
 
@@ -109,7 +120,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ignite:events:abc?events=EVT_CACHE_OBJECT_PUT").to("mock:test3");
+                from("ignite-events:abc?events=EVT_CACHE_OBJECT_PUT").to("mock:test3");
             }
         });
 
@@ -159,10 +170,10 @@ public class IgniteEventsTest extends AbstractIgniteTest {
     }
 
     @Override
-    protected IgniteComponent buildComponent() {
+    protected IgniteConfiguration createConfiguration() {
         IgniteConfiguration config = new IgniteConfiguration();
         config.setIncludeEventTypes(EventType.EVTS_ALL_MINUS_METRIC_UPDATE);
-        return IgniteComponent.fromConfiguration(config);
+        return config;
     }
 
 }
