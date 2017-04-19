@@ -37,6 +37,7 @@ public class CamelHealthIndicator extends AbstractHealthIndicator {
         if (camelContext == null) {
             builder.unknown();
         } else {
+            builder.withDetail("name", camelContext.getName());
             builder.withDetail("version", camelContext.getVersion());
             builder.withDetail("contextStatus", camelContext.getStatus().name());
             if (camelContext.getStatus().isStarted()) {
