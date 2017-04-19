@@ -18,11 +18,15 @@ package org.apache.camel.component.milo.testing;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.milo.NodeIds;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public final class Application {
+/**
+ * An example application focusing on the OPC UA client endpoint
+ */
+public final class ExampleClient {
 
-    private Application() {
+    private ExampleClient() {
     }
 
     public static void main(final String[] args) throws Exception {
@@ -31,32 +35,17 @@ public final class Application {
 
         final CamelContext context = new DefaultCamelContext();
 
-        // add paho
-
-        // no need to register, gets auto detected
-        // context.addComponent("paho", new PahoComponent());
-
-        // no need to register, gets auto detected
-        // context.addComponent("milo-server", new MiloClientComponent());
-        // context.addComponent("milo-client", new MiloClientComponent());
-
         // add routes
 
         context.addRoutes(new RouteBuilder() {
 
             @Override
             public void configure() throws Exception {
-                from("paho:javaonedemo/eclipse-greenhouse-9home/sensors/temperature?brokerUrl=tcp://iot.eclipse.org:1883").log("Temp update: ${body}").convertBodyTo(String.class)
-                    .to("milo-server:MyItem");
-
-                from("milo-server:MyItem").log("MyItem: ${body}");
-
-                from("milo-server:MyItem2").log("MyItem2 : ${body}").to("paho:de/dentrassi/camel/milo/test1?brokerUrl=tcp://iot.eclipse.org:1883");
-
-                from("milo-client:tcp://foo:bar@localhost:12685?nodeId=items-MyItem&namespaceUri=urn:camel").log("From OPC UA: ${body}")
-                    .to("milo-client:tcp://localhost:12685?nodeId=items-MyItem2&namespaceUri=urn:camel");
-
-                from("paho:de/dentrassi/camel/milo/test1?brokerUrl=tcp://iot.eclipse.org:1883").log("Back from MQTT: ${body}");
+                // bridge item1 to item2
+                final String item1 = NodeIds.nodeValue("urn:org:apache:camel", "items-MyItem");
+                final String item2 = NodeIds.nodeValue("urn:org:apache:camel", "items-MyItem2");
+                from("milo-client:tcp://foo:bar@localhost:12685?node=" + item1).log("From OPC UA: ${body}")
+                    .to("milo-client:tcp://foo:bar@localhost:12685?node" + item2);
             }
         });
 
