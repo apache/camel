@@ -2,10 +2,6 @@
 
 *Available as of Camel version 2.19*
 
-### Eclipse Milo Server Component
-
-*Available as of Camel 2.19*
-
 The *Milo Server* component provides an OPC UA server using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
 
@@ -25,8 +21,6 @@ for this component:
 
 Messages sent to the endpoint from Camel will be available from the OPC UA server to OPC UA Clients.
 Value write requests from OPC UA Client will trigger messages which are sent into Apache Camel.
-
-
 
 
 // component options: START
