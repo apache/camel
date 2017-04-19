@@ -26,7 +26,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="scall">
       <from uri="direct:start"/>
-      <serviceCall name="myService">
+      <serviceCall name="myService" component="jetty">
         <!-- static list of servers -->
         <staticServiceDiscovery>
           <servers>localhost:9090,localhost:9091</servers>

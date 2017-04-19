@@ -26,7 +26,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="scall">
       <from uri="direct:start"/>
-      <serviceCall name="myService">
+      <serviceCall name="myService" component="jetty">
         <!-- enable ribbon load balancer -->
         <ribbonLoadBalancer clientName="myClient">
           <properties key="listOfServers" value="localhost:9090,localhost:9091"/>

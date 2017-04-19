@@ -45,8 +45,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "serviceDiscoveryConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType implements ServiceDiscoveryFactory {
-    private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cloud/";
-
     @XmlTransient
     private final Optional<ServiceCallDefinition> parent;
     @XmlTransient
@@ -153,9 +151,9 @@ public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType imp
             Class<?> type;
             try {
                 // Then use Service factory.
-                type = camelContext.getFactoryFinder(RESOURCE_PATH).findClass(factoryKey);
+                type = camelContext.getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(factoryKey);
             } catch (Exception e) {
-                throw new NoFactoryAvailableException(RESOURCE_PATH + factoryKey, e);
+                throw new NoFactoryAvailableException(ServiceCallDefinitionConstants.RESOURCE_PATH + factoryKey, e);
             }
 
             if (type != null) {

@@ -40,6 +40,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     },
     properties = {
         "camel.cloud.load-balancer.enabled=false",
+        "camel.cloud.service-call.component=jetty",
         "camel.cloud.service-discovery.services[custom-svc-list]=localhost:9090,localhost:9091,localhost:9092",
         "camel.cloud.service-filter.blacklist[custom-svc-list]=localhost:9091",
         "ribbon.enabled=false",
@@ -68,9 +69,7 @@ public class CamelCloudServiceCallTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .serviceCall()
-                            .name("custom-svc-list")
-                            .uri("jetty:http://custom-svc-list/hello");
+                        .serviceCall("custom-svc-list/hello");
 
                     from("jetty:http://localhost:9090/hello")
                         .transform()

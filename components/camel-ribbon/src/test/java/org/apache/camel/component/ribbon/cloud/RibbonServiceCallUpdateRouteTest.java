@@ -80,6 +80,7 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
                 from("direct:start")
                     .serviceCall()
                         .name("myService")
+                        .component("jetty")
                         .loadBalancer(loadBalancer)
                         .serviceDiscovery(servers)
                         .end()

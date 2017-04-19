@@ -31,7 +31,7 @@ Using multiple shells:
  - start consul:
 
   $ cd services
-  $ src/main/bash/consul-run-linx.sh       (for linux)
+  $ src/main/bash/consul-run-linux.sh      (for linux)
   $ src/main/bash/consul-run-osx.sh        (for mac osx)
 
  - start the service-1 service group:

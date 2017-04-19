@@ -43,7 +43,7 @@ import org.apache.camel.spi.Metadata;
 public class ServiceCallConfigurationDefinition extends IdentifiedType {
     @XmlAttribute
     private String uri;
-    @XmlAttribute @Metadata(defaultValue = ServiceCallConstants.DEFAULT_COMPONENT)
+    @XmlAttribute @Metadata(defaultValue = ServiceCallDefinitionConstants.DEFAULT_COMPONENT)
     private String component;
     @XmlAttribute
     private ExchangePattern pattern;
