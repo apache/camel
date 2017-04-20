@@ -38,9 +38,10 @@ import org.eclipse.californium.core.network.config.NetworkConfig;
  * Represents the component that manages {@link CoAPEndpoint}.
  */
 public class CoAPComponent extends UriEndpointComponent implements RestConsumerFactory {
+    static final int DEFAULT_PORT = 5684;
+
     final Map<Integer, CoapServer> servers = new ConcurrentHashMap<>();
-    CoapServer defaultServer;
-    
+
     public CoAPComponent() {
         super(CoAPEndpoint.class);
     }
@@ -52,10 +53,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
     public synchronized CoapServer getServer(int port) {
         CoapServer server = servers.get(port);
         if (server == null && port == -1) {
-            server = defaultServer;
-        }
-        if (server == null && port == -1) {
-            server = servers.get(5684);
+            server = getServer(DEFAULT_PORT);
         }
         if (server == null) {
             NetworkConfig config = new NetworkConfig();
@@ -68,7 +66,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         }
         return server;
     }
-    
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new CoAPEndpoint(uri, this);
         setProperties(endpoint, parameters);
@@ -76,12 +74,12 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, 
-                                   Processor processor, 
+    public Consumer createConsumer(CamelContext camelContext,
+                                   Processor processor,
                                    String verb,
                                    String basePath,
                                    String uriTemplate,
-                                   String consumes, 
+                                   String consumes,
                                    String produces,
                                    RestConfiguration configuration,
                                    Map<String, Object> parameters) throws Exception {
@@ -129,7 +127,7 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
         if (!query.isEmpty()) {
             url += "&" + query;
         }
-        
+
         CoAPEndpoint endpoint = camelContext.getEndpoint(url, CoAPEndpoint.class);
         setProperties(endpoint, parameters);
 
@@ -145,13 +143,6 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
     protected void doStart() throws Exception {
         super.doStart();
 
-        RestConfiguration config = getCamelContext().getRestConfiguration("coap", true);
-        // configure additional options on coap configuration
-        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
-            setProperties(this, config.getComponentProperties());
-        }
-        defaultServer = getServer(config.getPort());
-        
         for (CoapServer s : servers.values()) {
             s.start();
         }
