@@ -73,26 +73,27 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
             Grape.setEnableAutoDownload(true);
 
-            final ClassLoader classLoader = new GroovyClassLoader();
+            try (final GroovyClassLoader classLoader = new GroovyClassLoader()){
 
-            Map<String, Object> param = new HashMap<>();
-            param.put("classLoader", classLoader);
-            param.put("group", groupId);
-            param.put("module", artifactId);
-            param.put("version", version);
-            // no need to download transitive dependencies as we only need to check the component or connector itself
-            param.put("validate", false);
-            param.put("transitive", false);
+            	Map<String, Object> param = new HashMap<>();
+            	param.put("classLoader", classLoader);
+            	param.put("group", groupId);
+            	param.put("module", artifactId);
+            	param.put("version", version);
+            	// no need to download transitive dependencies as we only need to check the component or connector itself
+            	param.put("validate", false);
+            	param.put("transitive", false);
 
-            LOG.debug("Downloading {}:{}:{}", groupId, artifactId, version);
-            Grape.grab(param);
+            	LOG.debug("Downloading {}:{}:{}", groupId, artifactId, version);
+            	Grape.grab(param);
 
-            // the classloader can load content from the downloaded JAR
-            if (camelCatalog != null) {
-                scanCamelComponents(camelCatalog, classLoader, names);
-            }
-            if (camelConnectorCatalog != null) {
-                scanCamelConnectors(camelConnectorCatalog, classLoader, groupId, artifactId, version, names);
+            	// the classloader can load content from the downloaded JAR
+            	if (camelCatalog != null) {
+            		scanCamelComponents(camelCatalog, classLoader, names);
+            	}
+            	if (camelConnectorCatalog != null) {
+            		scanCamelConnectors(camelConnectorCatalog, classLoader, groupId, artifactId, version, names);
+            	}
             }
 
         } catch (Exception e) {
