@@ -38,11 +38,11 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.StringHelper.notEmpty;
 
 public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<RestDslSourceCodeGenerator<T>> {
-    private static final String DEFAULT_CLASS_NAME = "RestDslRoute";
+    static final String DEFAULT_CLASS_NAME = "RestDslRoute";
+
+    static final String DEFAULT_PACKAGE_NAME = "rest.dsl.generated";
 
     private static final String DEFAULT_INDENT = "    ";
-
-    private static final String DEFAULT_PACKAGE_NAME = "rest.dsl.generated";
 
     private Function<Swagger, String> classNameGenerator = RestDslSourceCodeGenerator::generateClassName;
 
@@ -147,8 +147,15 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             return DEFAULT_CLASS_NAME;
         }
 
-        return title.chars().filter(Character::isJavaIdentifierPart).boxed().collect(Collector.of(StringBuilder::new,
-            StringBuilder::appendCodePoint, StringBuilder::append, StringBuilder::toString));
+        final String className = title.chars().filter(Character::isJavaIdentifierPart).filter(c -> c < 'z').boxed()
+            .collect(Collector.of(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append,
+                StringBuilder::toString));
+
+        if (className.isEmpty() || !Character.isJavaIdentifierStart(className.charAt(0))) {
+            return DEFAULT_CLASS_NAME;
+        }
+
+        return className;
     }
 
     static String generatePackageName(final Swagger swagger) {
@@ -157,7 +164,13 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
         if (ObjectHelper.isNotEmpty(host)) {
             final StringBuilder packageName = new StringBuilder();
 
-            final String[] parts = host.split("\\.");
+            final String hostWithoutPort = host.replaceFirst(":.*", "");
+
+            if ("localhost".equalsIgnoreCase(hostWithoutPort)) {
+                return DEFAULT_PACKAGE_NAME;
+            }
+
+            final String[] parts = hostWithoutPort.split("\\.");
 
             for (int i = parts.length - 1; i >= 0; i--) {
                 packageName.append(parts[i]);
