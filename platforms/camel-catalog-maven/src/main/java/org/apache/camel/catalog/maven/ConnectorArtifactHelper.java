@@ -32,38 +32,21 @@ public final class ConnectorArtifactHelper {
 
     public static String[] loadJSonSchemas(ClassLoader classLoader) {
         String[] answer = new String[3];
-
-        String path = "camel-connector.json";
-        try {
-            InputStream is = classLoader.getResourceAsStream(path);
-            if (is != null) {
-                answer[0] = loadText(is);
-            }
-        } catch (Throwable e) {
-            LOG.warn("Error loading " + path + " file", e);
-        }
-
-        path = "camel-connector-schema.json";
-        try {
-            InputStream is = classLoader.getResourceAsStream(path);
-            if (is != null) {
-                answer[1] = loadText(is);
-            }
-        } catch (Throwable e) {
-            LOG.warn("Error loading " + path + " file", e);
-        }
-
-        path = "camel-component-schema.json";
-        try {
-            InputStream is = classLoader.getResourceAsStream(path);
-            if (is != null) {
-                answer[2] = loadText(is);
-            }
-        } catch (Throwable e) {
-            LOG.warn("Error loading " + path + " file", e);
-        }
-
+        answer[0] = loadJsonSchema(classLoader, "camel-connector.json");
+        answer[1] = loadJsonSchema(classLoader, "camel-connector-schema.json");
+        answer[2] = loadJsonSchema(classLoader, "camel-component-schema.json");
         return answer;
     }
+
+	private static String loadJsonSchema(ClassLoader classLoader, String jsonSchemaPath) {
+		try (InputStream is = classLoader.getResourceAsStream(jsonSchemaPath)) {
+            if (is != null) {
+                return loadText(is);
+            }
+        } catch (Throwable e) {
+            LOG.warn("Error loading " + jsonSchemaPath + " file", e);
+        }
+		return null;
+	}
 
 }
