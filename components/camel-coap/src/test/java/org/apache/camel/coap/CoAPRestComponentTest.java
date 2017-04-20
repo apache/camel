@@ -42,8 +42,8 @@ public class CoAPRestComponentTest extends CamelTestSupport {
         assertEquals("Hello Ducky", rsp.getResponseText());
         rsp = client.post("data", MediaTypeRegistry.TEXT_PLAIN);
         assertEquals("Hello Ducky: data", rsp.getResponseText());
-        
-        client = new CoapClient("coap://localhost:" + coapport + "/TestParms?id=Ducky");
+
+        client = new CoapClient("coap://localhost:" + coapport + "/TestParams?id=Ducky");
         client.setTimeout(1000000);
         rsp = client.get();
         assertEquals("Hello Ducky", rsp.getResponseText());
@@ -59,7 +59,7 @@ public class CoAPRestComponentTest extends CamelTestSupport {
             public void configure() throws Exception {
                 restConfiguration("coap").host("localhost").port(coapport);
 
-                rest("/TestParms")
+                rest("/TestParams")
                     .get().to("direct:get1")
                     .post().to("direct:post1");
 
