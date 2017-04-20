@@ -52,6 +52,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
         this.cacheDirectory = directory;
     }
 
+    @Override
     public void addMavenRepository(String name, String url) {
         Map<String, Object> repo = new HashMap<>();
         repo.put("name", name);
