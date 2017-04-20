@@ -38,15 +38,15 @@ public final class ConnectorArtifactHelper {
         return answer;
     }
 
-	private static String loadJsonSchema(ClassLoader classLoader, String jsonSchemaPath) {
-		try (InputStream is = classLoader.getResourceAsStream(jsonSchemaPath)) {
+    private static String loadJsonSchema(ClassLoader classLoader, String jsonSchemaPath) {
+        try (InputStream is = classLoader.getResourceAsStream(jsonSchemaPath)) {
             if (is != null) {
                 return loadText(is);
             }
         } catch (Throwable e) {
             LOG.warn("Error loading " + jsonSchemaPath + " file", e);
         }
-		return null;
-	}
+        return null;
+    }
 
 }
