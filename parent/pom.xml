@@ -543,7 +543,7 @@
     <splunk-version>1.5.0.0_1</splunk-version>
     <spring-batch-version>3.0.7.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.7.RELEASE_1</spring-batch-bundle-version>
-    <spring-boot-version>1.4.5.RELEASE</spring-boot-version>
+    <spring-boot-version>1.4.6.RELEASE</spring-boot-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.6.5.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.7.5.RELEASE</spring-data-redis-version>
