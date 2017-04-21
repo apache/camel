@@ -9,6 +9,7 @@ The cache value is always the body of the message, whereas the cache key is alwa
 
 Even if you configure a fixed operation in the endpoint URI, you can vary it per-exchange by setting the `IgniteConstants.IGNITE_CACHE_OPERATION` message header.
 
+### Options
 
 // component options: START
 The Ignite Cache component supports 4 options which are listed below.
