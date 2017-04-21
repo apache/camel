@@ -73,7 +73,7 @@
         <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-drill</include>
-	      <include>org.apache.camel:camel-dropbox</include>
+	    <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
@@ -100,6 +100,7 @@
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-groovy-dsl</include>
+        <include>org.apache.camel:camel-grpc</include>
         <include>org.apache.camel:camel-guava-eventbus</include>
         <include>org.apache.camel:camel-guice</include>
         <include>org.apache.camel:camel-gson</include>
@@ -358,6 +359,7 @@
         <include>org.apache.camel:camel-eclipse-starter</include>
         <include>org.apache.camel:camel-ehcache-starter</include>
         <include>org.apache.camel:camel-elasticsearch-starter</include>
+        <include>org.apache.camel:camel-elasticsearch5-starter</include>
         <include>org.apache.camel:camel-elsql-starter</include>
         <include>org.apache.camel:camel-etcd-starter</include>
         <include>org.apache.camel:camel-exec-starter</include>
@@ -378,6 +380,7 @@
         <include>org.apache.camel:camel-gora-starter</include>
         <include>org.apache.camel:camel-grape-starter</include>
         <include>org.apache.camel:camel-groovy-starter</include>
+        <include>org.apache.camel:camel-grpc-starter</include>
         <include>org.apache.camel:camel-gson-starter</include>
         <include>org.apache.camel:camel-guava-eventbus-starter</include>
         <include>org.apache.camel:camel-guice-starter</include>
