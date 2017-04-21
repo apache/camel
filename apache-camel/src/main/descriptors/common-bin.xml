@@ -342,7 +342,6 @@
         <include>org.apache.camel:camel-consul-starter</include>
         <include>org.apache.camel:camel-context-starter</include>
         <include>org.apache.camel:camel-core-starter</include>
-        <include>org.apache.camel:camel-core-xml-starter</include>
         <include>org.apache.camel:camel-couchdb-starter</include>
         <include>org.apache.camel:camel-couchbase-starter</include>
         <include>org.apache.camel:camel-crypto-starter</include>
