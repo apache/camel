@@ -40,13 +40,13 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 /**
  * This is a base class of camel-ignite components which correspond to following Apache Ignite functions:
  * <ul>
- * <li>{@link IgniteSetComponent}: Cache operations.</li>
- * <li>{@link IgniteSetComponent}: Cluster computation.</li>
- * <li>{@link IgniteSetComponent}: Messaging.</li>
- * <li>{@link IgniteSetComponent}: Eventing.</li>
- * <li>{@link IgniteSetComponent}: Id Generation.</li>
- * <li>{@link IgniteSetComponent}: Set operations.</li>
- * <li>{@link IgniteSetComponent}: Queue operations.</li>
+ * <li>{@link org.apache.camel.component.ignite.cache.IgniteCacheComponent}: Cache operations.</li>
+ * <li>{@link org.apache.camel.component.ignite.compute.IgniteComputeComponent}: Cluster computation.</li>
+ * <li>{@link org.apache.camel.component.ignite.messaging.IgniteMessagingComponent}: Messaging.</li>
+ * <li>{@link org.apache.camel.component.ignite.events.IgniteEventsComponent}: Eventing.</li>
+ * <li>{@link org.apache.camel.component.ignite.idgen.IgniteIdGenComponent}: Id Generation.</li>
+ * <li>{@link org.apache.camel.component.ignite.set.IgniteSetComponent}: Set operations.</li>
+ * <li>{@link org.apache.camel.component.ignite.queue.IgniteQueueComponent}: Queue operations.</li>
  * </ul>
  */
 public abstract class AbstractIgniteComponent extends DefaultComponent {
