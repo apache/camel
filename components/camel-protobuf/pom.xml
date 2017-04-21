@@ -105,9 +105,9 @@
         - OSX (x86 32 and 64-bit)
       -->
       <plugin>
-        <groupId>org.codehaus.gmaven</groupId>
-        <artifactId>gmaven-plugin</artifactId>
-        <version>${gmaven-plugin-version}</version>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>${gmavenplus-plugin-version}</version>
         <executions>
           <execution>
             <phase>validate</phase>
@@ -115,10 +115,22 @@
               <goal>execute</goal>
             </goals>
             <configuration>
-              <source><![CDATA[pom.properties['skip-test']=pom.properties['os.detected.classifier'].matches('^.*?(linux|windows|osx)-x86.*$') ? 'false' : 'true';]]></source>
+              <scripts>
+                <script><![CDATA[
+                  project.properties['skip-test']=project.properties['os.detected.classifier'].matches('^.*?(linux|windows|osx)-x86.*$') ? 'false' : 'true';
+                ]]></script>
+              </scripts>
             </configuration>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy-version}</version>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
       </plugin>
 
       <!-- Protobuf Java code generator plugin -->
