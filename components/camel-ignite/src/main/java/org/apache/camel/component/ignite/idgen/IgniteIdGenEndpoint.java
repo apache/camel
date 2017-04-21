@@ -34,7 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Ignite ID Generator endpoint.
+ * The Ignite ID Generator endpoint is one of camel-ignite endpoints which allows you to interact with
+ * <a href="https://apacheignite.readme.io/docs/id-generator">Ignite Atomic Sequences and ID Generators</a>.
+ * This endpoint only supports producers.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-idgen", title = "Ignite ID Generator", syntax = "ignite-idgen:[name]", label = "nosql,cache,compute", producerOnly = true)
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
