@@ -241,6 +241,7 @@
                 <exclude>**/*.md</exclude>
                 <exclude>**/*.sh</exclude>
                 <exclude>**/*.bat</exclude>
+                <exclude>**/java9-maven-settings</exclude>
                 <!-- tooling/camel-manual/src/styles/print.css use a different license -->
                 <exclude>**/src/styles/print.css</exclude>
                 <!-- tooling for component docs -->
@@ -275,7 +276,9 @@
                 <!-- camel connector -->
                 <exclude>**/camel-connector.json</exclude>
                 <exclude>**/camel-connector-schema.json</exclude>
-                <exclude>**/camel-connector-maven-plugin/src/main/resources/META-INF/MANIFEST.MF</exclude>
+                <exclude>**/src/main/resources/META-INF/MANIFEST.MF</exclude>
+                <!-- examples -->
+                <exclude>**/fabric8/*.yaml</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
