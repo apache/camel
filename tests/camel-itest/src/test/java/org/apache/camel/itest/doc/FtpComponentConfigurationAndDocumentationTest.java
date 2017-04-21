@@ -42,8 +42,10 @@ public class FtpComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"minDepth\": { \"kind\": \"parameter\", \"displayName\": \"Min Depth\", \"group\": \"filter\", \"label\": \"consumer,filter\", \"type\": \"integer\", \"javaType\": \"int\""));
-        assertTrue(json.contains("\"username\": { \"kind\": \"parameter\", \"displayName\": \"Username\", \"group\": \"security\", \"label\": \"security\", \"type\": \"string\""));
+        assertTrue(json.contains("\"minDepth\": { \"kind\": \"parameter\", \"displayName\": \"Min Depth\", \"group\": \"filter\""
+            + ", \"label\": \"consumer,filter\", \"type\": \"integer\", \"javaType\": \"int\""));
+        assertTrue(json.contains("\"username\": { \"kind\": \"parameter\", \"displayName\": \"Username\", \"group\": \"security\""
+            + ", \"label\": \"security\", \"type\": \"string\""));
     }
 
 }
