@@ -21,11 +21,10 @@
  */
 package org.apache.camel.example.mention;
 
-import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
-import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
 /**
  * Contact Data Transfer Object (DTO) needed for Salesforce component.
@@ -36,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * and generates {@link AbstractDescribedSObjectBase} based classes,
  * which are needed for some of the operations (like composite API).
  */
+// CHECKSTYLE:OFF
 public class Contact extends AbstractSObjectBase {
 
     @JsonProperty("LastName")
@@ -59,3 +59,4 @@ public class Contact extends AbstractSObjectBase {
         this.screenName = screenName;
     }
 }
+// CHECKSTYLE:ON

@@ -18,47 +18,47 @@ package org.apache.camel.example.kubernetes.fmp;
 
 import java.util.UUID;
 
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.config.GroupConfig;
+import com.hazelcast.config.SSLConfig;
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hazelcast.HazelcastComponent;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 
-import com.hazelcast.client.HazelcastClient;
-import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.config.GroupConfig;
-import com.hazelcast.config.SSLConfig;
-import com.hazelcast.core.HazelcastInstance;
-
 public class HazelcastRoute extends RouteBuilder {
 
-	@Override
-	public void configure() throws Exception {
-		
-		HazelcastComponent component = new HazelcastComponent();
-		ClientConfig config = new ClientConfig();
-		config.getNetworkConfig().addAddress("hazelcast");
-		config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(false));
-                config.setGroupConfig(new GroupConfig("someGroup"));
-		HazelcastInstance instance = HazelcastClient.newHazelcastClient(config);
-		component.setHazelcastInstance(instance);
-		getContext().addComponent("hazelcast", component);
-		
-		from("timer:foo?period=5000")
-		    .log("Producer side: Sending data to Hazelcast topic..")
-		    .process(new Processor() {
-				
-				@Override
-				public void process(Exchange exchange) throws Exception {
-					exchange.getIn().setHeader(HazelcastConstants.OPERATION, HazelcastConstants.PUBLISH_OPERATION);
-					String payload = "Test " + UUID.randomUUID();
-					exchange.getIn().setBody(payload);
-				}
-			})
-		    .to("hazelcast:topic:foo");
-		
-		from("hazelcast:topic:foo")
-	        .log("Consumer side: Detected following action: $simple{in.header.CamelHazelcastListenerAction}");
-	}
+    @Override
+    public void configure() throws Exception {
+        // setup hazelcast
+        ClientConfig config = new ClientConfig();
+        config.getNetworkConfig().addAddress("hazelcast");
+        config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(false));
+        config.setGroupConfig(new GroupConfig("someGroup"));
+        HazelcastInstance instance = HazelcastClient.newHazelcastClient(config);
+
+        // setup camel hazelcast
+        HazelcastComponent hazelcast = new HazelcastComponent();
+        hazelcast.setHazelcastInstance(instance);
+        getContext().addComponent("hazelcast", hazelcast);
+
+        from("timer:foo?period=5000")
+            .log("Producer side: Sending data to Hazelcast topic..")
+            .process(new Processor() {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    exchange.getIn().setHeader(HazelcastConstants.OPERATION, HazelcastConstants.PUBLISH_OPERATION);
+                    String payload = "Test " + UUID.randomUUID();
+                    exchange.getIn().setBody(payload);
+                }
+            })
+            .to("hazelcast:topic:foo");
+
+        from("hazelcast:topic:foo")
+            .log("Consumer side: Detected following action: $simple{in.header.CamelHazelcastListenerAction}");
+    }
 
 } 

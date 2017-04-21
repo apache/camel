@@ -20,15 +20,15 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
 public class CqlPopulateBean {
-	
-	public void populate() {
-		Cluster cluster = Cluster.builder().addContactPoint("cassandra").build();
-		Session session = cluster.connect();
-		session.execute("create keyspace if not exists test with replication = {'class':'SimpleStrategy', 'replication_factor':1};");
-		session.execute("create table if not exists test.users ( id int primary key, name text );");
-		session.execute("insert into test.users (id,name) values (1, 'oscerd') if not exists;");
-		session.close();
-		cluster.close();
-	}
+
+    public void populate() {
+        Cluster cluster = Cluster.builder().addContactPoint("cassandra").build();
+        Session session = cluster.connect();
+        session.execute("create keyspace if not exists test with replication = {'class':'SimpleStrategy', 'replication_factor':1};");
+        session.execute("create table if not exists test.users ( id int primary key, name text );");
+        session.execute("insert into test.users (id,name) values (1, 'oscerd') if not exists;");
+        session.close();
+        cluster.close();
+    }
 
 }
