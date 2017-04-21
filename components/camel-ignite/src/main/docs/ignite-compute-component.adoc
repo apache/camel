@@ -10,22 +10,7 @@ The host part of the endpoint URI is a symbolic endpoint ID, it is not used for 
 
 The endpoint tries to run the object passed in the body of the IN message as the compute job. It expects different payload types depending on the execution type.
 
-#### Expected payload types
-
-Each operation expects the indicated types:
-[width="100%",cols="1,4",options="header"]
-|=======================================================================
-| Operation | Expected payloads
-| CALL | Collection of IgniteCallable, or a single IgniteCallable.
-| BROADCAST | IgniteCallable, IgniteRunnable, IgniteClosure.
-| APPLY | IgniteClosure.
-| EXECUTE | ComputeTask, Class<? extends ComputeTask> or an object representing parameters if the taskName option is not null.
-| RUN | A Collection of IgniteRunnables, or a single IgniteRunnable.
-| AFFINITY_CALL | IgniteCallable.
-| AFFINITY_RUN | IgniteRunnable.
-|=======================================================================
-
-
+### Options
 
 // component options: START
 The Ignite Compute component supports 4 options which are listed below.
@@ -73,6 +58,21 @@ with the following path and query parameters:
 |=======================================================================
 // endpoint options: END
 
+
+#### Expected payload types
+
+Each operation expects the indicated types:
+[width="100%",cols="1,4",options="header"]
+|=======================================================================
+| Operation | Expected payloads
+| CALL | Collection of IgniteCallable, or a single IgniteCallable.
+| BROADCAST | IgniteCallable, IgniteRunnable, IgniteClosure.
+| APPLY | IgniteClosure.
+| EXECUTE | ComputeTask, Class<? extends ComputeTask> or an object representing parameters if the taskName option is not null.
+| RUN | A Collection of IgniteRunnables, or a single IgniteRunnable.
+| AFFINITY_CALL | IgniteCallable.
+| AFFINITY_RUN | IgniteRunnable.
+|=======================================================================
 
 #### Headers used
 

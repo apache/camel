@@ -6,6 +6,8 @@ The Ignite ID Generator endpoint is one of link:ignite.html[camel-ignite endpoin
 
 This endpoint only supports producers.
 
+### Options
+
 // component options: START
 The Ignite ID Generator component supports 4 options which are listed below.
 

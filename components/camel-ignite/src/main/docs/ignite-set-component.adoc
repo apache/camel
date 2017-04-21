@@ -6,6 +6,8 @@ The Ignite Sets endpoint is one of link:ignite.html[camel-ignite endpoints] whic
 
 This endpoint only supports producers.
 
+### Options
+
 // component options: START
 The Ignite Sets component supports 4 options which are listed below.
 

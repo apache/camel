@@ -6,6 +6,8 @@ The Ignite Queue endpoint is one of link:ignite.html[camel-ignite endpoints] whi
 
 This endpoint only supports producers.
 
+### Options
+
 // component options: START
 The Ignite Queues component supports 4 options which are listed below.
 
