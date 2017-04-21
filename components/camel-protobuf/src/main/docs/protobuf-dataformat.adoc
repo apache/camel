@@ -182,7 +182,7 @@ default instance class name like this.
 
 ### Spring DSL
 
-The following example shows how to use Castor to unmarshal using Spring
+The following example shows how to use Protobuf to unmarshal using Spring
 configuring the protobuf data type
 
 [source,java]
