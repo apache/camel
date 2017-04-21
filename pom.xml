@@ -239,6 +239,8 @@
                 <exclude>.git/**/*</exclude>
                 <exclude>**/*.adoc</exclude>
                 <exclude>**/*.md</exclude>
+                <exclude>**/*.sh</exclude>
+                <exclude>**/*.bat</exclude>
                 <!-- tooling/camel-manual/src/styles/print.css use a different license -->
                 <exclude>**/src/styles/print.css</exclude>
                 <!-- tooling for component docs -->
@@ -246,12 +248,15 @@
                 <exclude>**/component-options.mvel</exclude>
                 <exclude>**/endpoint-options.mvel</exclude>
                 <exclude>**/dataformat-options.mvel</exclude>
+                <exclude>**/eip-options.mvel</exclude>
                 <exclude>**/language-options.mvel</exclude>
                 <exclude>**/readme-components.mvel</exclude>
                 <exclude>**/readme-components.mvel</exclude>
                 <exclude>**/readme-dataformats.mvel</exclude>
                 <exclude>**/readme-eips.mvel</exclude>
+                <exclude>**/readme-examples.mvel</exclude>
                 <exclude>**/readme-languages.mvel</exclude>
+                <exclude>**/readme-others.mvel</exclude>
                 <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
                 <!-- cxf does not handle comments here -->
                 <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
@@ -267,6 +272,10 @@
                 <exclude>**/npm-shrinkwrap.json</exclude>
                 <exclude>**/package.json</exclude>
                 <exclude>**/user-manual/**</exclude>
+                <!-- camel connector -->
+                <exclude>**/camel-connector.json</exclude>
+                <exclude>**/camel-connector-schema.json</exclude>
+                <exclude>**/camel-connector-maven-plugin/src/main/resources/META-INF/MANIFEST.MF</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
@@ -287,6 +296,7 @@
                 <exclude>**/file-sig-api.txt</exclude>
                 <exclude>**/Tasks__c.java</exclude>
                 <exclude>**/additional-spring-configuration-metadata.json</exclude>
+                <exclude>**/*.proto</exclude>
               </excludes>
             </configuration>
           </plugin>
