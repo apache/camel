@@ -215,7 +215,7 @@ smtp://mycompany.mailserver:30?password=tiger&username=scott
 - link:imaps.html[IMAPs]
 - link:pop3.html[POP3s]
 - link:pop3s.html[POP3s]
-- link:smtp.html[STMP]
+- link:smtp.html[SMTP]
 - link:smtps.html[SMTPs]
 
 #### Default ports

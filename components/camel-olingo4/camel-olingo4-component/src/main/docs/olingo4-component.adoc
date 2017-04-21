@@ -4,8 +4,8 @@
 
 The Olingo4 component utilizes http://olingo.apache.org/[Apache Olingo]
 version 4.0 APIs to interact with OData 4.0 compliant service.
-Since verison 4.0 OData is OASIS standard and number of popular commercial
-and enterprise vendors and products support this protocol.
+Since verison 4.0 OData is OASIS standard and number of popular opensource 
+and commercial vendors and products support this protocol.
 A sample list of supporting products can be found on the OData 
 http://www.odata.org/ecosystem/[website].
 
@@ -26,7 +26,8 @@ for this component:
     <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo4</artifactId>
-        <version>${camel-version}</version>
+        <version>x.x.x</version>
+        <!-- use the same version as your Camel core version -->
     </dependency>
 ----------------------------------------------
 
