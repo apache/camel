@@ -405,7 +405,7 @@ Number of Components: 238 in 185 JAR artifacts (14 deprecated)
 `lumberjack:host:port` | 2.18 | The lumberjack retrieves logs sent over the network using the Lumberjack protocol.
 
 | link:camel-mail/src/main/docs/mail-component.adoc[Mail] (camel-mail) +
-`imap:host:port` | 1.0 | To send or receive emails using imap/pop3 or stmp protocols.
+`imap:host:port` | 1.0 | To send or receive emails using imap/pop3 or smtp protocols.
 
 | link:camel-metrics/src/main/docs/metrics-component.adoc[Metrics] (camel-metrics) +
 `metrics:metricsType:metricsName` | 2.14 | To collect various metrics directly from Camel routes using the DropWizard metrics library.
