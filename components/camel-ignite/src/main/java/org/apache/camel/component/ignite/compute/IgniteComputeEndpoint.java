@@ -33,7 +33,11 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCompute;
 
 /**
- * Ignite Compute endpoint.
+ * The Ignite Compute endpoint is one of camel-ignite endpoints which allows you to run
+ * <a href="https://apacheignite.readme.io/docs/compute-grid">compute operations</a>
+ * on the cluster by passing in an IgniteCallable, an IgniteRunnable, an IgniteClosure,
+ * or collections of them, along with their parameters if necessary.
+ * This endpoint only supports producers.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-compute", title = "Ignite Compute", syntax = "ignite-compute:[endpointId]", label = "nosql,cache,compute", producerOnly = true)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {

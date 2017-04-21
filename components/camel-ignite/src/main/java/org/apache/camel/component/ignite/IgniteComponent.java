@@ -50,9 +50,14 @@ import org.slf4j.LoggerFactory;
  * <li>Set operations.</li>
  * <li>Queue operations.</li>
  * </ul>
- * @deprecated Use {@link IgniteSetComponent}, {@link IgniteSetComponent}, {@link IgniteSetComponent},
- * {@link IgniteSetComponent}, {@link IgniteSetComponent}, {@link IgniteSetComponent} and
- * {@link IgniteSetComponent}
+ * @deprecated Use 
+ * {@link org.apache.camel.component.ignite.cache.IgniteCacheComponent},
+ * {@link org.apache.camel.component.ignite.compute.IgniteComputeComponent},
+ * {@link org.apache.camel.component.ignite.events.IgniteEventsComponent},
+ * {@link org.apache.camel.component.ignite.idgen.IgniteIdGenComponent},
+ * {@link org.apache.camel.component.ignite.messaging.IgniteMessagingComponent},
+ * {@link org.apache.camel.component.ignite.queue.IgniteQueueComponent} and
+ * {@link org.apache.camel.component.ignite.set.IgniteSetComponent}
  */
 @Deprecated
 public class IgniteComponent extends AbstractIgniteComponent {
