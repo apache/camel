@@ -31,10 +31,6 @@
   <name>Camel :: Connectors :: Examples :: Salesforce Upsert Contact Connector</name>
   <description>Salesforce Upsert Contact Connector</description>
 
-  <properties>
-    <camel.version>${project.version}</camel.version>
-  </properties>
-
   <dependencies>
 
     <!-- base component to use for this connector -->
@@ -162,7 +158,7 @@
           <plugin>
             <groupId>org.apache.camel.maven</groupId>
             <artifactId>camel-salesforce-maven-plugin</artifactId>
-            <version>${camel.version}</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>generate-dtos</id>
