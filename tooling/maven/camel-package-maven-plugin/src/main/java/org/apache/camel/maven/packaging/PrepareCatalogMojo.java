@@ -320,6 +320,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels, missingJavaDoc);
     }
 
+    // CHECKSTYLE:OFF
     protected Set<String> executeComponents() throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel component json descriptors");
 
@@ -533,6 +534,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         return answer;
     }
+    // CHECKSTYLE:ON
 
     protected Set<String> executeDataFormats() throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel dataformat json descriptors");
@@ -792,16 +794,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
                     // skip these special cases
                     // (camel-jetty is a placeholder, as camel-jetty9 is the actual component)
-                    if ("camel-core-osgi".equals(dir.getName())
+                    boolean special = "camel-core-osgi".equals(dir.getName())
                         || "camel-core-xml".equals(dir.getName())
                         || "camel-box".equals(dir.getName())
                         || "camel-http-common".equals(dir.getName())
                         || "camel-jetty".equals(dir.getName())
-                        || "camel-jetty-common".equals(dir.getName())
-                        || "camel-linkedin".equals(dir.getName())
+                        || "camel-jetty-common".equals(dir.getName());
+                    boolean special2 = "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
-                        || "camel-salesforce".equals(dir.getName())) {
+                        || "camel-salesforce".equals(dir.getName());
+                    if (special || special2) {
                         continue;
                     }
 

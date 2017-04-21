@@ -168,49 +168,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 is = new FileInputStream(new File(core, "org/apache/camel/model/dataformat/" + modelName + ".json"));
                             }
                             String json = loadText(is);
-                            DataFormatModel dataFormatModel = new DataFormatModel();
-                            dataFormatModel.setName(name);
-                            dataFormatModel.setTitle("");
-                            dataFormatModel.setModelName(modelName);
-                            dataFormatModel.setLabel("");
-                            dataFormatModel.setDescription(project.getDescription());
-                            dataFormatModel.setJavaType(javaType);
-                            dataFormatModel.setGroupId(project.getGroupId());
-                            dataFormatModel.setArtifactId(project.getArtifactId());
-                            dataFormatModel.setVersion(project.getVersion());
 
-                            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-                            for (Map<String, String> row : rows) {
-                                if (row.containsKey("title")) {
-                                    String title = row.get("title");
-                                    dataFormatModel.setTitle(asModelTitle(name, title));
-                                }
-                                if (row.containsKey("label")) {
-                                    dataFormatModel.setLabel(row.get("label"));
-                                }
-                                if (row.containsKey("deprecated")) {
-                                    dataFormatModel.setDeprecated(row.get("deprecated"));
-                                }
-                                if (row.containsKey("javaType")) {
-                                    dataFormatModel.setModelJavaType(row.get("javaType"));
-                                }
-                                if (row.containsKey("firstVersion")) {
-                                    dataFormatModel.setFirstVersion(row.get("firstVersion"));
-                                }
-                                // override description for camel-core, as otherwise its too generic
-                                if ("camel-core".equals(project.getArtifactId())) {
-                                    if (row.containsKey("description")) {
-                                        dataFormatModel.setDescription(row.get("description"));
-                                    }
-                                }
-                            }
-
-                            // first version special for json
-                            String firstVersion = prepareJsonFirstVersion(name);
-                            if (firstVersion != null) {
-                                dataFormatModel.setFirstVersion(firstVersion);
-                            }
-
+                            DataFormatModel dataFormatModel = extractDataFormatModel(project, json, modelName, name, javaType);
                             log.debug("Model " + dataFormatModel);
 
                             // build json schema for the data format
@@ -289,6 +248,53 @@ public class PackageDataFormatMojo extends AbstractMojo {
         } else {
             log.debug("No META-INF/services/org/apache/camel/dataformat directory found. Are you sure you have created a Camel data format?");
         }
+    }
+
+    private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String modelName, String name, String javaType) throws Exception {
+        DataFormatModel dataFormatModel = new DataFormatModel();
+        dataFormatModel.setName(name);
+        dataFormatModel.setTitle("");
+        dataFormatModel.setModelName(modelName);
+        dataFormatModel.setLabel("");
+        dataFormatModel.setDescription(project.getDescription());
+        dataFormatModel.setJavaType(javaType);
+        dataFormatModel.setGroupId(project.getGroupId());
+        dataFormatModel.setArtifactId(project.getArtifactId());
+        dataFormatModel.setVersion(project.getVersion());
+
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("title")) {
+                String title = row.get("title");
+                dataFormatModel.setTitle(asModelTitle(name, title));
+            }
+            if (row.containsKey("label")) {
+                dataFormatModel.setLabel(row.get("label"));
+            }
+            if (row.containsKey("deprecated")) {
+                dataFormatModel.setDeprecated(row.get("deprecated"));
+            }
+            if (row.containsKey("javaType")) {
+                dataFormatModel.setModelJavaType(row.get("javaType"));
+            }
+            if (row.containsKey("firstVersion")) {
+                dataFormatModel.setFirstVersion(row.get("firstVersion"));
+            }
+            // override description for camel-core, as otherwise its too generic
+            if ("camel-core".equals(project.getArtifactId())) {
+                if (row.containsKey("description")) {
+                    dataFormatModel.setDescription(row.get("description"));
+                }
+            }
+        }
+
+        // first version special for json
+        String firstVersion = prepareJsonFirstVersion(name);
+        if (firstVersion != null) {
+            dataFormatModel.setFirstVersion(firstVersion);
+        }
+
+        return dataFormatModel;
     }
 
     private static String prepareBindyProperties(String name, String properties) {
