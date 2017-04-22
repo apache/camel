@@ -860,7 +860,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
-            () -> (serviceDiscoveryConfiguration != null) ?  serviceDiscoveryConfiguration.newInstance(camelContext) : null,
+            () -> (serviceDiscoveryConfiguration != null) ? serviceDiscoveryConfiguration.newInstance(camelContext) : null,
             // Local configuration
             () -> retrieve(ServiceDiscovery.class, camelContext, this::getServiceDiscovery, this::getServiceDiscoveryRef),
             // Linked configuration
