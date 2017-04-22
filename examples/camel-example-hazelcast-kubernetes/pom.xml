@@ -38,7 +38,6 @@
     <fabric8.maven.plugin.version>3.2.31</fabric8.maven.plugin.version>
     <exec-maven-plugin.version>1.5.0</exec-maven-plugin.version>
     <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
-    <maven-shade-plugin.version>2.3</maven-shade-plugin.version>
     <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
   </properties>
 
