@@ -34,7 +34,6 @@
   <properties>
     <maven.test.skip>true</maven.test.skip>
     <createSourcesJar>false</createSourcesJar>
-    <shade.version>1.0.1</shade.version>
     <!-- we do not need remote resources in assembly -->
     <remoteresources.skip>true</remoteresources.skip>
   </properties>
@@ -2326,6 +2325,8 @@
       <artifactId>camel-route-parser</artifactId>
     </dependency>
 
+  <!-- TODO: these dependencies should not be needed
+
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jms_1.1_spec</artifactId>
@@ -2359,7 +2360,7 @@
 
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-	    <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -2371,6 +2372,8 @@
       <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
       <optional>true</optional>
     </dependency>
+  -->
+
   </dependencies>
 
   <build>
