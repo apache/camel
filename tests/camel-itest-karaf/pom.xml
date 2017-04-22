@@ -240,14 +240,6 @@
       </build>
     </profile>
 
-    <!-- test with older karaf 3.x -->
-    <profile>
-      <id>karaf3</id>
-      <properties>
-        <karf-test-version>${karaf3-version}</karf-test-version>
-      </properties>
-    </profile>
-
   </profiles>
 
 </project>
