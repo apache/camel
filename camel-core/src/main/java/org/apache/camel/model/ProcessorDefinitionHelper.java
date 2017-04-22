@@ -546,7 +546,8 @@ public final class ProcessorDefinitionHelper {
         } else if (definition.getExecutorServiceRef() != null) {
             ScheduledExecutorService answer = lookupScheduledExecutorServiceRef(routeContext, name, definition, definition.getExecutorServiceRef());
             if (answer == null) {
-                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
+                throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() 
+                        + " not found in registry (as an ScheduledExecutorService instance) or as a thread pool profile.");
             }
             return answer;
         } else if (useDefault) {
