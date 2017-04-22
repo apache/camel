@@ -27,12 +27,17 @@ To run the example on the karaf container
 
     karaf / karaf.bat
 
-#### Step 2: Deploy
+#### Step 2: Install Came;
+
+     feature:repo-add camel ${version}
+     feature:install camel
+
+#### Step 3: Deploy
 
     feature:repo-add mvn:org.apache.camel/camel-example-transformer-blueprint/${version}/xml/features
     feature:install camel-example-transformer-blueprint
 
-#### Step 3: Check the output
+#### Step 4: Check the output
 
 You will see the output in ${karaf}/data/karaf.log
 
