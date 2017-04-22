@@ -447,7 +447,7 @@
     <maven-plugin-plugin-version>3.4</maven-plugin-plugin-version>
     <maven-remote-resources-plugin-version>1.5</maven-remote-resources-plugin-version>
     <!-- resources plugin needed by Camel maven archetypes -->
-    <maven-resources-plugin-version>3.0.1</maven-resources-plugin-version>
+    <maven-resources-plugin-version>3.0.2</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-scr-plugin-version>1.22.0</maven-scr-plugin-version>
@@ -4633,6 +4633,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven-resources-plugin-version}</version>
           <configuration>
             <encoding>UTF-8</encoding>
           </configuration>
