@@ -434,9 +434,6 @@
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
     <maven-bundle-plugin-version>3.3.0</maven-bundle-plugin-version>
     <maven-checkstyle-plugin-version>2.17</maven-checkstyle-plugin-version>
-    <!-- AtomicException.java causes a problem with Checksyle > 6.6 due to
-        https://github.com/checkstyle/checkstyle/issues/1903
-     -->
     <maven-checkstyle-version>6.17</maven-checkstyle-version>
     <maven-owasp-plugin-version>1.4.5</maven-owasp-plugin-version>
     <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
