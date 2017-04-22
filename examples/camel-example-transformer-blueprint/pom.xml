@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-example-transformer-blueprint</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Example :: Transformer :: Blueprint</name>
   <description>An example demonstrating declarative transformation along data type declaration using OSGi Blueprint XML</description>
 
@@ -106,7 +106,6 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>

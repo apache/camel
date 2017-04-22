@@ -27,8 +27,8 @@
   </parent>
 
   <artifactId>camel-example-netty-myapp-cdi</artifactId>
-  <name>Camel :: Example :: Netty HTTP :: My Application CDI</name>
-  <packaging>bundle</packaging>
+  <name>Camel :: Example :: Netty HTTP :: My Application CDI (deprecated)</name>
+  <packaging>jar</packaging>
 
   <dependencies>
 
@@ -60,7 +60,6 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
