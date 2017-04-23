@@ -424,6 +424,8 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
      *
      * @param deadLetterUri  An endpoint uri for a Dead Letter Channel where exhausted recovered Exchanges will be
      *                       moved. If this option is used then the maximumRedeliveries option must also be provided.
+     *                       Important note : if the deadletter route throws an exception, it will be send again to DLQ
+     *                       until it succeed !
      */
     public void setDeadLetterUri(String deadLetterUri) {
         this.deadLetterUri = deadLetterUri;
