@@ -22,8 +22,6 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
 public class PassThroughServiceFilter implements ServiceFilter {
-    public static final ServiceFilter INSTANCE = new PassThroughServiceFilter();
-
     @Override
     public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         return services;
