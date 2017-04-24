@@ -28,12 +28,14 @@ import org.apache.camel.impl.cloud.DefaultServiceHealth;
 import org.apache.camel.util.ObjectHelper;
 
 public class RibbonServiceDefinition extends Server implements ServiceDefinition {
+    private static final ServiceHealth DEFAULT_SERVICE_HEALTH = new DefaultServiceHealth();
+
     private String name;
     private ServiceHealth health;
     private Map<String, String> metaData;
 
     public RibbonServiceDefinition(String name, String host, int port) {
-        this(name, host, port, null, DefaultServiceHealth.INSTANCE);
+        this(name, host, port, null, DEFAULT_SERVICE_HEALTH);
     }
 
     public RibbonServiceDefinition(String name, String host, int port, ServiceHealth healt) {
@@ -41,7 +43,7 @@ public class RibbonServiceDefinition extends Server implements ServiceDefinition
     }
 
     public RibbonServiceDefinition(String name, String host, int port,  Map<String, String> meta) {
-        this(name, host, port, meta, DefaultServiceHealth.INSTANCE);
+        this(name, host, port, meta, DEFAULT_SERVICE_HEALTH);
     }
 
     public RibbonServiceDefinition(String name, String host, int port, Map<String, String> meta, ServiceHealth healt) {

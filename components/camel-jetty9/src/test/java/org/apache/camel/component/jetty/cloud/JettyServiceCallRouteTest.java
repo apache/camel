@@ -51,16 +51,16 @@ public class JettyServiceCallRouteTest extends CamelTestSupport {
                         .name("myService")
                         .component("jetty")
                         .staticServiceDiscovery()
-                            .server("myService@localhost:8081")
-                            .server("myService@localhost:8082")
+                            .servers("myService@localhost:8081")
+                            .servers("myService@localhost:8082")
                         .endParent();
 
                 from("direct:default")
                     .serviceCall()
                         .name("myService")
                         .staticServiceDiscovery()
-                            .server("myService@localhost:8081")
-                            .server("myService@localhost:8082")
+                            .servers("myService@localhost:8081")
+                            .servers("myService@localhost:8082")
                         .endParent();
 
                 from("jetty:http://localhost:8081")
