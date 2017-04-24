@@ -289,7 +289,7 @@ public class ServiceCallConfigurationTest {
             System.setProperty("scall.filter", "hello-svc@localhost:8083");
 
             ServiceCallConfigurationDefinition global = new ServiceCallConfigurationDefinition();
-            global.blacklistFilet().servers("{{scall.filter}}");
+            global.blacklistFilter().servers("{{scall.filter}}");
 
             context = new DefaultCamelContext();
             context.setServiceCallConfiguration(global);

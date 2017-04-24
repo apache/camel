@@ -676,6 +676,13 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return conf;
     }
 
+    public BlacklistServiceCallServiceFilterConfiguration blacklistFilter() {
+        BlacklistServiceCallServiceFilterConfiguration conf = new BlacklistServiceCallServiceFilterConfiguration();
+        setServiceFilterConfiguration(conf);
+
+        return conf;
+    }
+
     public ServiceCallDefinition customFilter(String serviceFilter) {
         CustomServiceCallServiceFilterConfiguration conf = new CustomServiceCallServiceFilterConfiguration();
         conf.setServiceFilterRef(serviceFilter);
