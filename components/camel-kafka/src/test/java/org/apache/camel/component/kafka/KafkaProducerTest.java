@@ -236,7 +236,7 @@ public class KafkaProducerTest {
     @Test
     public void processSendMessageWithBridgeEndpoint() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
-        endpoint.setBridgeEndpoint(true);
+        endpoint.getConfiguration().setBridgeEndpoint(true);
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
@@ -252,7 +252,7 @@ public class KafkaProducerTest {
     @Test
     public void processSendMessageWithCircularDetected() throws Exception {
         endpoint.getConfiguration().setTopic("sometopic");
-        endpoint.setCircularTopicDetection(true); // enable by default
+        endpoint.getConfiguration().setCircularTopicDetection(true);
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
         Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
@@ -269,7 +269,7 @@ public class KafkaProducerTest {
     @Test
     public void processSendMessageWithNoCircularDetected() throws Exception {
         endpoint.getConfiguration().setTopic("sometopic");
-        endpoint.setCircularTopicDetection(false); // enable by default
+        endpoint.getConfiguration().setCircularTopicDetection(false);
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
         Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
