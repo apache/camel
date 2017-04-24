@@ -89,7 +89,7 @@
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.1.1</box-java-sdk-version>
     <braintree-gateway-version>2.63.0</braintree-gateway-version>
-    <brave-zipkin-version>4.1.1</brave-zipkin-version>
+    <brave-zipkin-version>4.2.0</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
     <caffeine-version>2.4.0</caffeine-version>
@@ -693,8 +693,8 @@
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
     <zendesk-client-version>0.5.4</zendesk-client-version>
-    <zipkin-version>1.19.4</zipkin-version>
-    <zipkin-reporter-version>0.6.13</zipkin-reporter-version>
+    <zipkin-version>1.23.2</zipkin-version>
+    <zipkin-reporter-version>0.7.0</zipkin-reporter-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.10</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
