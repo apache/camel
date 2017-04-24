@@ -30,7 +30,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>put</constant>
 			</setHeader>
-			<to uri="hazelcast:replicatedmap:bar" />
+			<to uri="hazelcast-replicatedmap:bar" />
 		</route>
 
 		<route>
@@ -38,7 +38,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>get</constant>
 			</setHeader>
-			<to uri="hazelcast:replicatedmap:bar" />
+			<to uri="hazelcast-replicatedmap:bar" />
 			<to uri="seda:out" />
 		</route>
 
@@ -47,7 +47,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>delete</constant>
 			</setHeader>
-			<to uri="hazelcast:replicatedmap:bar" />
+			<to uri="hazelcast-replicatedmap:bar" />
 		</route>
 		
 		<route>
@@ -55,7 +55,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>clear</constant>
 			</setHeader>
-			<to uri="hazelcast:replicatedmap:bar" />
+			<to uri="hazelcast-replicatedmap:bar" />
 		</route>
 		
 		<route>
@@ -63,7 +63,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>containsKey</constant>
 			</setHeader>
-			<to uri="hazelcast:replicatedmap:bar" />
+			<to uri="hazelcast-replicatedmap:bar" />
 			<to uri="seda:out" />
 		</route>
 
@@ -72,7 +72,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>containsValue</constant>
 			</setHeader>
-			<to uri="hazelcast:replicatedmap:bar" />
+			<to uri="hazelcast-replicatedmap:bar" />
 			<to uri="seda:out" />
 		</route>
 	</camelContext>

@@ -111,7 +111,7 @@ INFO: hz.client_0 [someGroup] [3.8] HazelcastClient 3.8 (20170217 - d7998b4) is 
 2017-03-10 10:05:23,995 [main           ] INFO  DefaultRuntimeEndpointRegistry - Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: 1000)
 2017-03-10 10:05:24,061 [main           ] INFO  SpringCamelContext             - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html
 2017-03-10 10:05:24,114 [main           ] INFO  SpringCamelContext             - Route: route1 started and consuming from: timer://foo?period=5000
-2017-03-10 10:05:24,115 [main           ] INFO  SpringCamelContext             - Route: route2 started and consuming from: hazelcast://topic:foo
+2017-03-10 10:05:24,115 [main           ] INFO  SpringCamelContext             - Route: route2 started and consuming from: hazelcast-topic://foo
 2017-03-10 10:05:24,116 [main           ] INFO  SpringCamelContext             - Total 2 routes, of which 2 are started.
 2017-03-10 10:05:24,119 [main           ] INFO  SpringCamelContext             - Apache Camel 2.19.0-SNAPSHOT (CamelContext: camel-1) started in 0.265 seconds
 Mar 10, 2017 10:05:24 AM com.hazelcast.client.connection.ClientConnectionManager

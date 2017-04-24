@@ -30,7 +30,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>add</constant>
 			</setHeader>
-			<to uri="hazelcast:ringbuffer:foo" />
+			<to uri="hazelcast-ringbuffer:foo" />
 		</route>
 
 		<route>
@@ -38,7 +38,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>readonceHead</constant>
 			</setHeader>
-			<to uri="hazelcast:ringbuffer:foo" />
+			<to uri="hazelcast-ringbuffer:foo" />
 		</route>
 
 		<route>
@@ -46,7 +46,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>readonceTail</constant>
 			</setHeader>
-			<to uri="hazelcast:ringbuffer:foo" />
+			<to uri="hazelcast-ringbuffer:foo" />
 		</route>
 
 		<route>
@@ -54,7 +54,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>capacity</constant>
 			</setHeader>
-			<to uri="hazelcast:ringbuffer:foo" />
+			<to uri="hazelcast-ringbuffer:foo" />
 		</route>
 		
 		<route>
@@ -62,7 +62,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>remainingCapacity</constant>
 			</setHeader>
-			<to uri="hazelcast:ringbuffer:foo" />
+			<to uri="hazelcast-ringbuffer:foo" />
 		</route>
 	</camelContext>
 
