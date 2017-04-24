@@ -50,6 +50,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * JDBC based {@link org.apache.camel.spi.AggregationRepository}
+ * JdbcAggregationRepository will only preserve any Serializable compatible
+ * data types. If a data type is not such a type its dropped and a WARN is
+ * logged. And it only persists the Message body and the Message headers.
+ * The Exchange properties are not persisted.
  */
 public class JdbcAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
 
@@ -108,6 +112,9 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         transactionTemplateReadOnly.setReadOnly(true);
     }
 
+    /**
+     * @param dataSource The DataSource to use for accessing the database
+     */
     public final void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
 
@@ -194,11 +201,12 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * Inserts a new record into the given repository table
+     * Inserts a new record into the given repository table.
+     * note : the exchange properties are NOT persisted.
      *
      * @param camelContext   the current CamelContext
      * @param correlationId  the correlation key
-     * @param exchange       the aggregated exchange
+     * @param exchange       the aggregated exchange to insert. The headers will be persisted but not the properties.
      * @param repositoryName The name of the table
      * @throws Exception
      */
@@ -369,6 +377,12 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return answer;
     }
 
+    /**
+     *  If recovery is enabled then a background task is run every x'th time to scan for failed exchanges to recover
+     *  and resubmit. By default this interval is 5000 millis.
+     * @param interval  the interval
+     * @param timeUnit  the time unit
+     */
     public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
         this.recoveryInterval = timeUnit.toMillis(interval);
     }
@@ -385,6 +399,11 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return useRecovery;
     }
 
+    /**
+     *
+     * @param useRecovery Whether or not recovery is enabled. This option is by default true. When enabled the Camel
+     *                    Aggregator automatic recover failed aggregated exchange and have them resubmittedd
+     */
     public void setUseRecovery(boolean useRecovery) {
         this.useRecovery = useRecovery;
     }
@@ -401,6 +420,13 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return deadLetterUri;
     }
 
+    /**
+     *
+     * @param deadLetterUri  An endpoint uri for a Dead Letter Channel where exhausted recovered Exchanges will be
+     *                       moved. If this option is used then the maximumRedeliveries option must also be provided.
+     *                       Important note : if the deadletter route throws an exception, it will be send again to DLQ
+     *                       until it succeed !
+     */
     public void setDeadLetterUri(String deadLetterUri) {
         this.deadLetterUri = deadLetterUri;
     }
@@ -409,6 +435,12 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return returnOldExchange;
     }
 
+    /**
+     *
+     * @param returnOldExchange Whether the get operation should return the old existing Exchange if any existed.
+     *                          By default this option is false to optimize as we do not need the old exchange when
+     *                          aggregating
+     */
     public void setReturnOldExchange(boolean returnOldExchange) {
         this.returnOldExchange = returnOldExchange;
     }
@@ -421,10 +453,20 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return this.headersToStoreAsText != null && !this.headersToStoreAsText.isEmpty();
     }
 
+    /**
+     * Allows to store headers as String which is human readable. By default this option is disabled,
+     * storing the headers in binary format.
+     * @param headersToStoreAsText the list of headers to store as String
+     */
     public void setHeadersToStoreAsText(List<String> headersToStoreAsText) {
         this.headersToStoreAsText = headersToStoreAsText;
     }
 
+    /**
+     *
+     * @param storeBodyAsText Whether to store the message body as String which is human readable.
+     *                        By default this option is false storing the body in binary format.
+     */
     public void setStoreBodyAsText(boolean storeBodyAsText) {
         this.storeBodyAsText = storeBodyAsText;
     }
