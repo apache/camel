@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model.cloud;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -55,17 +54,6 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
         this.servers = servers;
     }
 
-    /**
-     * Sets the server list;
-     */
-    public void addServer(String server) {
-        if (this.servers == null) {
-            this.servers = new ArrayList<>();
-        }
-
-        this.servers.add(server);
-    }
-
     // *************************************************************************
     // Fluent API
     // *************************************************************************
@@ -75,13 +63,6 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
      */
     public BlacklistServiceCallServiceFilterConfiguration servers(List<String> servers) {
         setServers(servers);
-        return this;
-    }
-    /**
-     * Add a server to the list of servers
-     */
-    public BlacklistServiceCallServiceFilterConfiguration server(String server) {
-        addServer(server);
         return this;
     }
 }
