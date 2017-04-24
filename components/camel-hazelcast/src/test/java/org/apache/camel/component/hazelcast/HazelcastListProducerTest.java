@@ -144,31 +144,31 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:addInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX);
+                from("direct:addInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 
-                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX);
+                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 
-                from("direct:set").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.SETVALUE_OPERATION)).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX);
+                from("direct:set").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.SETVALUE_OPERATION)).toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX)
+                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX)
                         .to("seda:out");
 
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
-                        String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                        String.format("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX));
                 
-                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX);
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 
                 from("direct:addAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_ALL_OPERATION)).to(
-                        String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                        String.format("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX));
                 
                 from("direct:removeAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVE_ALL_OPERATION)).to(
-                        String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                        String.format("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX));
                 
                 from("direct:retainAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.RETAIN_ALL_OPERATION)).to(
-                        String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                        String.format("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX));
                 
-                from("direct:addWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.LIST_PREFIX, HazelcastConstants.ADD_OPERATION);
-                from("direct:addWithOperationName").toF("hazelcast:%sbar?operation=add", HazelcastConstants.LIST_PREFIX);
+                from("direct:addWithOperationNumber").toF("hazelcast-%sbar?operation=%s", HazelcastConstants.LIST_PREFIX, HazelcastConstants.ADD_OPERATION);
+                from("direct:addWithOperationName").toF("hazelcast-%sbar?operation=add", HazelcastConstants.LIST_PREFIX);
             }
         };
     }

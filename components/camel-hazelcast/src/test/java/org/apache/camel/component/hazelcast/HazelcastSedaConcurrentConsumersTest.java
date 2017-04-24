@@ -39,7 +39,7 @@ public class HazelcastSedaConcurrentConsumersTest extends CamelTestSupport {
         mock.expectedMessageCount(bodyCount);
 
         for (int i = 0; i < bodyCount; i++) {
-            template.sendBody("hazelcast:seda:foo?concurrentConsumers=4", "test");
+            template.sendBody("hazelcast-seda:foo?concurrentConsumers=4", "test");
         }
 
         assertMockEndpointsSatisfied();
@@ -51,7 +51,7 @@ public class HazelcastSedaConcurrentConsumersTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("hazelcast:seda:foo?concurrentConsumers=4").threads(6).to("mock:result");
+                from("hazelcast-seda:foo?concurrentConsumers=4").threads(6).to("mock:result");
             }
         };
     }

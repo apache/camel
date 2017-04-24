@@ -85,19 +85,19 @@ public class HazelcastRingbufferProducerTest extends HazelcastCamelTestSupport {
             public void configure() throws Exception {
               
                 from("direct:readonceHead").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.READ_ONCE_HEAD_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
                 
                 from("direct:readonceTail").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.READ_ONCE_TAIL_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
                 
                 from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
                 
                 from("direct:capacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_CAPACITY_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
                 
                 from("direct:remainingCapacity").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMAINING_CAPACITY_OPERATION)).to(
-                        String.format("hazelcast:%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
+                        String.format("hazelcast-%sfoo", HazelcastConstants.RINGBUFFER_PREFIX));
 
             }
         };

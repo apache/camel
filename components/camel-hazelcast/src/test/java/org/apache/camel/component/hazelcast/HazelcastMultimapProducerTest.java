@@ -140,33 +140,33 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
-                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
-                        String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                        String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX))
+                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION)).to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
-                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
                 
                 from("direct:valueCount").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.VALUE_COUNT_OPERATION))
-                        .to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX));
                 
                 from("direct:containsKey").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CONTAINS_KEY_OPERATION))
-                        .to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX))
                         .to("seda:out");
                 
                 from("direct:containsValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CONTAINS_VALUE_OPERATION))
-                        .to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX))
+                        .to(String.format("hazelcast-%sbar", HazelcastConstants.MULTIMAP_PREFIX))
                         .to("seda:out");
                 
-                from("direct:putWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.MULTIMAP_PREFIX, HazelcastConstants.PUT_OPERATION);
-                from("direct:putWithOperationName").toF("hazelcast:%sbar?operation=put", HazelcastConstants.MULTIMAP_PREFIX);
+                from("direct:putWithOperationNumber").toF("hazelcast-%sbar?operation=%s", HazelcastConstants.MULTIMAP_PREFIX, HazelcastConstants.PUT_OPERATION);
+                from("direct:putWithOperationName").toF("hazelcast-%sbar?operation=put", HazelcastConstants.MULTIMAP_PREFIX);
             }
         };
     }

@@ -40,7 +40,7 @@
             <setHeader headerName="CamelHazelcastOperationType">
                 <constant>put</constant>
             </setHeader>
-            <to uri="hazelcast:map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>
+            <to uri="hazelcast-map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>
         </route>
 
         <route id="testHazelcastInstanceBeanRefGet">
@@ -48,7 +48,7 @@
             <setHeader headerName="CamelHazelcastOperationType">
                 <constant>get</constant>
             </setHeader>
-            <to uri="hazelcast:map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>
+            <to uri="hazelcast-map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>
             <to uri="seda:out" />
         </route>
     </camelContext>

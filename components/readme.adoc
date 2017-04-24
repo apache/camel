@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 238 in 185 JAR artifacts (14 deprecated)
+Number of Components: 248 in 185 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -269,8 +269,38 @@ Number of Components: 238 in 185 JAR artifacts (14 deprecated)
 | link:camel-guava-eventbus/src/main/docs/guava-eventbus-component.adoc[Guava EventBus] (camel-guava-eventbus) +
 `guava-eventbus:eventBusRef` | 2.10 | The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
 
-| link:camel-hazelcast/src/main/docs/hazelcast-component.adoc[Hazelcast] (camel-hazelcast) +
-`hazelcast:command:cacheName` | 2.7 | The hazelcast component allows you to work with the Hazelcast distributed data grid / cache.
+| link:camel-hazelcast/src/main/docs/hazelcast-atomicvalue-component.adoc[Hazelcast Atomic Number] (camel-hazelcast) +
+`hazelcast-atomicvalue:cacheName` | 2.7 | The hazelcast-atomicvalue component is used to access Hazelcast atomic number which is an object that simply provides a grid wide number (long).
+
+| link:camel-hazelcast/src/main/docs/hazelcast-instance-component.adoc[Hazelcast Instance] (camel-hazelcast) +
+`hazelcast-instance:cacheName` | 2.7 | The hazelcast-instance component is used to consume join/leave events of the cache instance in the cluster.
+
+| link:camel-hazelcast/src/main/docs/hazelcast-list-component.adoc[Hazelcast List] (camel-hazelcast) +
+`hazelcast-list:cacheName` | 2.7 | The hazelcast-list component is used to access Hazelcast distributed list.
+
+| link:camel-hazelcast/src/main/docs/hazelcast-map-component.adoc[Hazelcast Map] (camel-hazelcast) +
+`hazelcast-map:cacheName` | 2.7 | The hazelcast-map component is used to access Hazelcast distributed map.
+
+| link:camel-hazelcast/src/main/docs/hazelcast-multimap-component.adoc[Hazelcast Multimap] (camel-hazelcast) +
+`hazelcast-multimap:cacheName` | 2.7 | The hazelcast-multimap component is used to to access Hazelcast distributed multimap.
+
+| link:camel-hazelcast/src/main/docs/hazelcast-queue-component.adoc[Hazelcast Queue] (camel-hazelcast) +
+`hazelcast-queue:cacheName` | 2.7 | The hazelcast-queue component is used to access Hazelcast distributed queue.
+
+| link:camel-hazelcast/src/main/docs/hazelcast-replicatedmap-component.adoc[Hazelcast Replicated Map] (camel-hazelcast) +
+`hazelcast-replicatedmap:cacheName` | 2.16 | The hazelcast-replicatedmap component is used to access Hazelcast replicated map.
+
+| link:camel-hazelcast/src/main/docs/hazelcast-ringbuffer-component.adoc[Hazelcast Ringbuffer] (camel-hazelcast) +
+`hazelcast-ringbuffer:cacheName` | 2.16 | The hazelcast-ringbuffer component is used to access Hazelcast distributed ringbuffer.
+
+| link:camel-hazelcast/src/main/docs/hazelcast-seda-component.adoc[Hazelcast SEDA] (camel-hazelcast) +
+`hazelcast-seda:cacheName` | 2.7 | The hazelcast-seda component is used to access Hazelcast BlockingQueue.
+
+| link:camel-hazelcast/src/main/docs/hazelcast-set-component.adoc[Hazelcast Set] (camel-hazelcast) +
+`hazelcast-set:cacheName` | 2.7 | The camel Endpoint to access Hazelcast distributed set.
+
+| link:camel-hazelcast/src/main/docs/hazelcast-topic-component.adoc[Hazelcast Topic] (camel-hazelcast) +
+`hazelcast-topic:cacheName` | 2.15 | The hazelcast-topic component is used to access Hazelcast distributed topic.
 
 | link:camel-hbase/src/main/docs/hbase-component.adoc[HBase] (camel-hbase) +
 `hbase:tableName` | 2.10 | For reading/writing from/to an HBase store (Hadoop database).

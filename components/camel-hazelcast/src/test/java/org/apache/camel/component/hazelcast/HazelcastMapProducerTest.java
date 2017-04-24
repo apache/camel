@@ -254,44 +254,44 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
             @Override
             public void configure() throws Exception {
 
-                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
                 
                 from("direct:putIfAbsent").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_IF_ABSENT_OPERATION))
-                         .to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+                         .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:update").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.UPDATE_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:update").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.UPDATE_OPERATION)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:getAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_ALL_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:getAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_ALL_OPERATION)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
                 
-                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
 
-                from("direct:query").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.QUERY_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:query").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.QUERY_OPERATION)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CLEAR_OPERATION)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX));
  
-                from("direct:evict").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.EVICT_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:evict").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.EVICT_OPERATION)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
 
-                from("direct:evictAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.EVICT_ALL_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
+                from("direct:evictAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.EVICT_ALL_OPERATION)).to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
                 
                 from("direct:containsKey").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CONTAINS_KEY_OPERATION))
-                        .to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
                 
                 from("direct:containsValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.CONTAINS_VALUE_OPERATION))
-                        .to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
+                        .to(String.format("hazelcast-%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
                 
-                from("direct:putWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX, HazelcastConstants.PUT_OPERATION);
-                from("direct:putWithOperationName").toF("hazelcast:%sfoo?operation=put", HazelcastConstants.MAP_PREFIX);
+                from("direct:putWithOperationNumber").toF("hazelcast-%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX, HazelcastConstants.PUT_OPERATION);
+                from("direct:putWithOperationName").toF("hazelcast-%sfoo?operation=put", HazelcastConstants.MAP_PREFIX);
             }
         };
     }
