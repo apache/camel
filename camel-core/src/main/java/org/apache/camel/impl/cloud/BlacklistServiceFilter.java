@@ -18,6 +18,7 @@ package org.apache.camel.impl.cloud;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -106,6 +107,10 @@ public class BlacklistServiceFilter implements ServiceFilter {
     @Override
     public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         return services.stream().filter(s -> !this.services.contains(s)).collect(Collectors.toList());
+    }
+
+    List<ServiceDefinition> getBlacklistedServices() {
+        return Collections.unmodifiableList(this.services);
     }
 
     // *************************************************************************

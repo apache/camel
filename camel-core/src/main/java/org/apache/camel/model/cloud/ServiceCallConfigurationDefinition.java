@@ -587,6 +587,13 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return conf;
     }
 
+    public BlacklistServiceCallServiceFilterConfiguration blacklistFilet() {
+        BlacklistServiceCallServiceFilterConfiguration conf = new BlacklistServiceCallServiceFilterConfiguration();
+        setServiceFilterConfiguration(conf);
+
+        return conf;
+    }
+
     public ServiceCallConfigurationDefinition customFilter(String serviceFilter) {
         CustomServiceCallServiceFilterConfiguration conf = new CustomServiceCallServiceFilterConfiguration();
         conf.setServiceFilterRef(serviceFilter);
