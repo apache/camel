@@ -20,7 +20,6 @@ import java.lang.reflect.Field;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -53,6 +52,8 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     private KafkaConfiguration configuration = new KafkaConfiguration();
     @UriParam(label = "producer")
     private boolean bridgeEndpoint;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean circularTopicDetection = true;
 
     public KafkaEndpoint() {
     }
@@ -195,5 +196,20 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
      */
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
+    }
+
+    public boolean isCircularTopicDetection() {
+        return circularTopicDetection;
+    }
+
+    /**
+     * If the option is true, then KafkaProducer will detect if the message is attempted to be sent back to the same topic
+     * it may come from, if the message was original from a kafka consumer. If the KafkaConstants.TOPIC header is the
+     * same as the original kafka consumer topic, then the header setting is ignored, and the topic of the producer
+     * endpoint is used. In other words this avoids sending the same message back to where it came from.
+     * This option is not in use if the option bridgeEndpoint is set to true.
+     */
+    public void setCircularTopicDetection(boolean circularTopicDetection) {
+        this.circularTopicDetection = circularTopicDetection;
     }
 }
