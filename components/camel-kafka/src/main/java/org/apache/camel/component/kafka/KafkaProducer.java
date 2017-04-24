@@ -122,13 +122,13 @@ public class KafkaProducer extends DefaultAsyncProducer {
     protected Iterator<ProducerRecord> createRecorder(Exchange exchange) throws CamelException {
         String topic = endpoint.getConfiguration().getTopic();
 
-        if (!endpoint.isBridgeEndpoint()) {
+        if (!endpoint.getConfiguration().isBridgeEndpoint()) {
             String headerTopic = exchange.getIn().getHeader(KafkaConstants.TOPIC, String.class);
             boolean allowHeader = true;
 
             // when we do not bridge then detect if we try to send back to ourselves
             // which we most likely do not want to do
-            if (headerTopic != null && endpoint.isCircularTopicDetection()) {
+            if (headerTopic != null && endpoint.getConfiguration().isCircularTopicDetection()) {
                 Endpoint from = exchange.getFromEndpoint();
                 if (from instanceof KafkaEndpoint) {
                     String fromTopic = ((KafkaEndpoint) from).getConfiguration().getTopic();
