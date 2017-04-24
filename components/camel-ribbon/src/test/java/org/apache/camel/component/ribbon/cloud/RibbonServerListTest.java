@@ -37,7 +37,7 @@ public class RibbonServerListTest {
                     new RibbonServiceDefinition("unknown", "localhost", 9090),
                     new RibbonServiceDefinition("unknown", "localhost", 9091)
                 ),
-                PassThroughServiceFilter.INSTANCE))
+                new PassThroughServiceFilter()))
             .withRule(new RoundRobinRule())
             .buildDynamicServerListLoadBalancer();
 

@@ -51,16 +51,16 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
                         .name("myService")
                         .component("undertow")
                         .staticServiceDiscovery()
-                            .server("myService@localhost:8081")
-                            .server("myService@localhost:8082")
+                            .servers("myService@localhost:8081")
+                            .servers("myService@localhost:8082")
                         .endParent();
 
                 from("direct:default")
                     .serviceCall()
                         .name("myService")
                         .staticServiceDiscovery()
-                            .server("myService@localhost:8081")
-                            .server("myService@localhost:8082")
+                            .servers("myService@localhost:8081")
+                            .servers("myService@localhost:8082")
                         .endParent();
 
                 from("undertow:http://localhost:8081")

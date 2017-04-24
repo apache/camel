@@ -51,16 +51,16 @@ public class Netty4HttpServiceCallRouteTest extends CamelTestSupport {
                         .name("myService")
                         .component("netty4-http")
                         .staticServiceDiscovery()
-                            .server("myService@localhost:8081")
-                            .server("myService@localhost:8082")
+                            .servers("myService@localhost:8081")
+                            .servers("myService@localhost:8082")
                         .endParent();
 
                 from("direct:default")
                     .serviceCall()
                         .name("myService")
                         .staticServiceDiscovery()
-                            .server("myService@localhost:8081")
-                            .server("myService@localhost:8082")
+                            .servers("myService@localhost:8081")
+                            .servers("myService@localhost:8082")
                         .endParent();
 
                 from("netty4-http:http://localhost:8081")
