@@ -252,7 +252,6 @@
     <module>camel-sap-netweaver-starter</module>
     <module>camel-saxon-starter</module>
     <module>camel-schematron-starter</module>
-    <module>camel-scr-starter</module>
     <module>camel-script-starter</module>
     <module>camel-servicenow-starter</module>
     <module>camel-servlet-starter</module>

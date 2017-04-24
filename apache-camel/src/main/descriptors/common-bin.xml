@@ -486,7 +486,6 @@
         <include>org.apache.camel:camel-saxon-starter</include>
         <include>org.apache.camel:camel-schematron-starter</include>
         <include>org.apache.camel:camel-script-starter</include>
-        <include>org.apache.camel:camel-scr-starter</include>
         <include>org.apache.camel:camel-servicenow-starter</include>
         <include>org.apache.camel:camel-servletlistener-starter</include>
         <include>org.apache.camel:camel-servlet-starter</include>
