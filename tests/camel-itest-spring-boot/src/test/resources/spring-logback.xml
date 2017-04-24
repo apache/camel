@@ -25,7 +25,7 @@
     </layout>
   </appender>
 
-  <logger name="org.apache.camel.component" level="debug"
+  <logger name="org.apache.camel.component" level="info"
           additivity="false">
     <appender-ref ref="STDOUT"/>
   </logger>
