@@ -16,13 +16,19 @@
  */
 package org.apache.camel.model.cloud;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 @Metadata(label = "routing,cloud,service-filter")
 @XmlRootElement(name = "blacklistServiceFilter")
@@ -64,5 +70,39 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     public BlacklistServiceCallServiceFilterConfiguration servers(List<String> servers) {
         setServers(servers);
         return this;
+    }
+
+    /**
+     * Sets the server list;
+     */
+    public BlacklistServiceCallServiceFilterConfiguration servers(String servers) {
+        if (ObjectHelper.isNotEmpty(servers)) {
+            String[] parts = servers.split(",");
+
+            if (this.servers == null) {
+                this.servers = new ArrayList<>();
+            }
+
+            this.servers.addAll(Arrays.asList(parts));
+        }
+
+        return this;
+    }
+
+    // *************************************************************************
+    // Utilities
+    // *************************************************************************
+
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
+        List<String> servers = List.class.cast(parameters.get("servers"));
+
+        if (ObjectHelper.isNotEmpty(servers)) {
+            final ListIterator<String> it = servers.listIterator();
+            while (it.hasNext()) {
+                it.set(camelContext.resolvePropertyPlaceholders(it.next()));
+            }
+
+            parameters.put("servers", servers);
+        }
     }
 }

@@ -68,4 +68,19 @@ public class AggregatingServiceDiscoveryTest extends ContextTestSupport {
         Assert.assertEquals(3, discovery.getServices("discovery1").size());
         Assert.assertEquals(1, discovery.getServices("discovery2").size());
     }
+
+    @Test
+    public void testMultiServiceDiscoveryConfigurationWithPlaceholders() throws Exception {
+        System.setProperty("svc-list-1", "discovery1@localhost:1111,discovery1@localhost:1112");
+        System.setProperty("svc-list-2", "discovery1@localhost:1113,discovery2@localhost:1114");
+
+        AggregatingServiceCallServiceDiscoveryConfiguration multiConf = new AggregatingServiceCallServiceDiscoveryConfiguration();
+        multiConf.staticServiceDiscovery().servers("{{svc-list-1}}");
+        multiConf.staticServiceDiscovery().servers("{{svc-list-2}}");
+
+        AggregatingServiceDiscovery discovery = (AggregatingServiceDiscovery)multiConf.newInstance(context);
+        Assert.assertEquals(2, discovery.getDelegates().size());
+        Assert.assertEquals(3, discovery.getServices("discovery1").size());
+        Assert.assertEquals(1, discovery.getServices("discovery2").size());
+    }
 }

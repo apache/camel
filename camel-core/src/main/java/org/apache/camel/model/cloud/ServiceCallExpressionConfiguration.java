@@ -246,6 +246,23 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
                     Map<String, Object> parameters = new HashMap<>();
                     IntrospectionSupport.getProperties(this, parameters, null, false);
 
+                    parameters.replaceAll(
+                        (k, v) -> {
+                            if (v != null && v instanceof String) {
+                                try {
+                                    v = camelContext.resolvePropertyPlaceholders((String) v);
+                                } catch (Exception e) {
+                                    throw new IllegalArgumentException(
+                                        String.format("Exception while resolving %s (%s)", k, v.toString()),
+                                        e
+                                    );
+                                }
+                            }
+
+                            return v;
+                        }
+                    );
+
                     // Convert properties to Map<String, String>
                     parameters.put("properties", getPropertiesAsMap(camelContext));
 
