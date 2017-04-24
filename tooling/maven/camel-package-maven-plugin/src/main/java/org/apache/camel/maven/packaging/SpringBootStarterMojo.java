@@ -81,7 +81,7 @@ import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNod
 public class SpringBootStarterMojo extends AbstractMojo {
 
     private static final String[] IGNORE_MODULES = {
-        /* OSGi -> */ "camel-blueprint", "camel-core-osgi", "camel-spring-dm", "camel-eventadmin", "camel-paxlogging",
+        /* OSGi -> */ "camel-blueprint", "camel-core-osgi", "camel-spring-dm", "camel-eventadmin", "camel-paxlogging", "camel-scr",
         /* Java EE -> */ "camel-cdi", "camel-ejb",
         /* deprecated (and not working perfectly) -> */ "camel-swagger", "camel-mina", "camel-ibatis", "camel-quartz",
         /* currently incompatible */ "camel-jclouds", "camel-spark-rest",
