@@ -30,7 +30,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>put</constant>
 			</setHeader>
-			<to uri="hazelcast:multimap:bar" />
+			<to uri="hazelcast-multimap:bar" />
 		</route>
 
 		<route>
@@ -38,7 +38,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>removevalue</constant>
 			</setHeader>
-			<to uri="hazelcast:multimap:bar" />
+			<to uri="hazelcast-multimap:bar" />
 		</route>
 
 		<route>
@@ -46,7 +46,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>get</constant>
 			</setHeader>
-			<to uri="hazelcast:multimap:bar" />
+			<to uri="hazelcast-multimap:bar" />
 			<to uri="seda:out" />
 		</route>
 
@@ -55,7 +55,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>delete</constant>
 			</setHeader>
-			<to uri="hazelcast:multimap:bar" />
+			<to uri="hazelcast-multimap:bar" />
 		</route>
 		
 		<route>
@@ -63,7 +63,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>valueCount</constant>
 			</setHeader>
-			<to uri="hazelcast:multimap:bar" />
+			<to uri="hazelcast-multimap:bar" />
 		</route>
 		
 		<route>
@@ -71,7 +71,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>containsKey</constant>
 			</setHeader>
-			<to uri="hazelcast:multimap:bar" />
+			<to uri="hazelcast-multimap:bar" />
             <to uri="seda:out" />
 		</route>
 		
@@ -80,7 +80,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>containsValue</constant>
 			</setHeader>
-			<to uri="hazelcast:multimap:bar" />
+			<to uri="hazelcast-multimap:bar" />
             <to uri="seda:out" />
 		</route>
 

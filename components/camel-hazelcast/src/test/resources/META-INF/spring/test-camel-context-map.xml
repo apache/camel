@@ -30,7 +30,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>put</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 		</route>
 
 		<route>
@@ -38,7 +38,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>update</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 		</route>
 
 		<route>
@@ -46,7 +46,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>get</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 			<to uri="seda:out" />
 		</route>
 
@@ -55,7 +55,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>delete</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 		</route>
 
 		<route>
@@ -63,7 +63,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>query</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 			<to uri="seda:out" />
 		</route>
 		
@@ -72,7 +72,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>putIfAbsent</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 		</route>
 
 		<route>
@@ -80,7 +80,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>getAll</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 			<to uri="seda:out" />
 		</route>
 	
@@ -89,7 +89,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>clear</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 		</route>
 		
 		<route>
@@ -97,7 +97,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>evict</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 			<to uri="seda:out" />
 		</route>
 
@@ -106,7 +106,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>evictAll</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 			<to uri="seda:out" />
 		</route>
 		
@@ -115,7 +115,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>containsKey</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 			<to uri="seda:out" />
 		</route>
 		
@@ -124,7 +124,7 @@
 			<setHeader headerName="CamelHazelcastOperationType">
 				<constant>containsValue</constant>
 			</setHeader>
-			<to uri="hazelcast:map:foo" />
+			<to uri="hazelcast-map:foo" />
 			<to uri="seda:out" />
 		</route>		
 	</camelContext>

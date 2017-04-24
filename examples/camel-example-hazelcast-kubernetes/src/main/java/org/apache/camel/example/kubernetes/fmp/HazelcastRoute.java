@@ -26,8 +26,8 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.hazelcast.HazelcastComponent;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
+import org.apache.camel.component.hazelcast.topic.HazelcastTopicComponent;
 
 public class HazelcastRoute extends RouteBuilder {
 
@@ -41,9 +41,9 @@ public class HazelcastRoute extends RouteBuilder {
         HazelcastInstance instance = HazelcastClient.newHazelcastClient(config);
 
         // setup camel hazelcast
-        HazelcastComponent hazelcast = new HazelcastComponent();
+        HazelcastTopicComponent hazelcast = new HazelcastTopicComponent();
         hazelcast.setHazelcastInstance(instance);
-        getContext().addComponent("hazelcast", hazelcast);
+        getContext().addComponent("hazelcast-topic", hazelcast);
 
         from("timer:foo?period=5000")
             .log("Producer side: Sending data to Hazelcast topic..")
@@ -55,9 +55,9 @@ public class HazelcastRoute extends RouteBuilder {
                     exchange.getIn().setBody(payload);
                 }
             })
-            .to("hazelcast:topic:foo");
+            .to("hazelcast-topic:foo");
 
-        from("hazelcast:topic:foo")
+        from("hazelcast-topic:foo")
             .log("Consumer side: Detected following action: $simple{in.header.CamelHazelcastListenerAction}");
     }
 
