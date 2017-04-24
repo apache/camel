@@ -17,7 +17,6 @@
 
 package org.apache.camel.model.cloud;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -56,17 +55,6 @@ public class StaticServiceCallServiceDiscoveryConfiguration extends ServiceCallS
         this.servers = servers;
     }
 
-    /**
-     * Sets the server list;
-     */
-    public void addServer(String server) {
-        if (this.servers == null) {
-            this.servers = new ArrayList<>();
-        }
-
-        this.servers.add(server);
-    }
-
     // *************************************************************************
     // Fluent API
     // *************************************************************************
@@ -76,13 +64,6 @@ public class StaticServiceCallServiceDiscoveryConfiguration extends ServiceCallS
      */
     public StaticServiceCallServiceDiscoveryConfiguration servers(List<String> servers) {
         setServers(servers);
-        return this;
-    }
-    /**
-     * Add a server to the list of servers
-     */
-    public StaticServiceCallServiceDiscoveryConfiguration server(String server) {
-        addServer(server);
         return this;
     }
 }
