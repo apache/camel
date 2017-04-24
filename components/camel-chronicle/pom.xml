@@ -109,6 +109,19 @@
           </dependency>
         </dependencies>
       </dependencyManagement>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <!--See https://github.com/OpenHFT/Chronicle-Engine/issues/19 for more details-->
+                <exclude>**/**.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 
