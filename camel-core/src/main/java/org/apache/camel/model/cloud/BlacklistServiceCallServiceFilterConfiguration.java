@@ -54,7 +54,14 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     }
 
     /**
-     * Sets the server list;
+     * Sets the server blacklist.
+     * 
+     * Each entry can be a list of servers separated by comma in the format:
+     *
+     *   [service@]host:port,[service@]host2:port,[service@]host3:port
+     *
+     * @param servers a list of servers.
+     * @return this instance
      */
     public void setServers(List<String> servers) {
         this.servers = servers;
@@ -65,7 +72,14 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     // *************************************************************************
 
     /**
-     * Sets the server list;
+     * Sets the server blacklist.
+     *
+     * Each entry can be a list of servers separated by comma in the format:
+     *
+     *   [service@]host:port,[service@]host2:port,[service@]host3:port
+     *
+     * @param servers a list of servers.
+     * @return this instance
      */
     public BlacklistServiceCallServiceFilterConfiguration servers(List<String> servers) {
         setServers(servers);
@@ -73,7 +87,10 @@ public class BlacklistServiceCallServiceFilterConfiguration extends ServiceCallS
     }
 
     /**
-     * Sets the server list;
+     * Sets the server blacklist.
+     *
+     * @param servers a list of servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port
+     * @return this instance
      */
     public BlacklistServiceCallServiceFilterConfiguration servers(String servers) {
         if (ObjectHelper.isNotEmpty(servers)) {
