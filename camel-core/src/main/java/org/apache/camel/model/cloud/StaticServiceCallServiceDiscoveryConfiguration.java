@@ -55,7 +55,13 @@ public class StaticServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     }
 
     /**
-     * Sets the server list;
+     * Sets the server list.
+     * Each entry can be a list of servers separated by comma in the format:
+     *
+     *   [service@]host:port,[service@]host2:port,[service@]host3:port
+     *
+     * @param servers a list of servers.
+     * @return this instance
      */
     public void setServers(List<String> servers) {
         this.servers = servers;
@@ -66,7 +72,13 @@ public class StaticServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     // *************************************************************************
 
     /**
-     * Sets the server list;
+     * Sets the server list.
+     * Each entry can be a list of servers separated by comma in the format:
+     *
+     *   [service@]host:port,[service@]host2:port,[service@]host3:port
+     *
+     * @param servers a list of servers.
+     * @return this instance
      */
     public StaticServiceCallServiceDiscoveryConfiguration servers(List<String> servers) {
         setServers(servers);
@@ -74,7 +86,10 @@ public class StaticServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     }
 
     /**
-     * Sets the server list;
+     * Sets the server list.
+     *
+     * @param servers a list of servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port
+     * @return this instance
      */
     public StaticServiceCallServiceDiscoveryConfiguration servers(String servers) {
         if (ObjectHelper.isNotEmpty(servers)) {
