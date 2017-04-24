@@ -115,6 +115,56 @@ The Service Call EIP can be configured through the following options:
 
 In addition to ref/binding configuration style you can leverage specific configuration DSL to customize specific options:
 
+* *Static Service Discovery:*
++
+This service discovery implementation does not query any external services to find out the list of services associated to a named service but keep them in memory. Each service should be provided in the following form:
++
+[source]
+----
+    [service@]host:port
+----
++
+TIP: The ``service`` part is used to discrimintate aginst the services but if not provided it acks like a wildcard so each non named service will be returned whatever the service name is. This is useful if you ahve a single service so the service name is redundant.
++
+NOTE: this implementation is provided by ``camel-core`` artifact.
++
+*Available options:*
++
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| servers | String | A comma separated list of servers in the form: [service@]host:port,[service@]host2:port,[service@]host3:port
+|=======================================================================
++
+[source,java]
+.Java DSL Example
+----
+from("direct:start")
+    .serviceCall("foo")
+        .staticServiceDiscovery()
+            .servers("service1@host1:80,service1@host2:80")
+            .servers("service2@host1:8080,service2@host2:8080,service2@host3:8080")
+            .end()
+    .to("mock:result");
+----
++
+[source,xml]
+.XML DSL Example
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <staticServiceDiscovery>
+        <servers>service1@host1:80,service1@host2:80</servers>
+        <servers>service2@host1:8080,service2@host2:8080,service2@host3:8080</servers>
+      </staticServiceDiscovery>
+    </serviceCall
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
 * *Consul Service Discovery:*
 +
 To leverage Consul for Service Discover, maven users will need to add the following dependency to their pom.xml
@@ -329,6 +379,60 @@ from("direct:start")
     <serviceCall name="foo">
       <kubernetesServiceDiscovery lookup="dns" namespace="myNamespace" dnsDomain="my.domain.com"/>
     </serviceCall>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+----
+
+* *Blacklist Service Filter:*
++
+This service filter implementation removes the listed services from those found by the service discovery. Each service should be provided in the following form:
++
+[source]
+----
+    [service@]host:port
+----
++
+NOTE: The services are removed if they fully match.
++
+*Available options:*
++
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| servers | String | A comma separated list of servers to blacklist: [service@]host:port,[service@]host2:port,[service@]host3:port
+|=======================================================================
++
+[source,java]
+.Java DSL Example
+----
+from("direct:start")
+    .serviceCall("foo")
+        .staticServiceDiscovery()
+            .servers("service1@host1:80,service1@host2:80")
+            .servers("service2@host1:8080,service2@host2:8080,service2@host3:8080")
+            .end()
+        .blacklistFilter()
+            .servers("service2@host2:8080")
+            .end()
+    .to("mock:result");
+----
++
+[source,xml]
+.XML DSL Example
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <serviceCall name="foo">
+      <staticServiceDiscovery>
+        <servers>service1@host1:80,service1@host2:80</servers>
+        <servers>service2@host1:8080,service2@host2:8080,service2@host3:8080</servers>
+      </staticServiceDiscovery>
+      <blacklistServiceFilter>
+        <servers>service2@host2:8080</servers>
+      </blacklistServiceFilter>
+    </serviceCall
     <to uri="mock:result"/>
   </route>
 </camelContext>
