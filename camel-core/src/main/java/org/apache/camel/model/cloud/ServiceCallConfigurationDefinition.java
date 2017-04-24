@@ -587,7 +587,7 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return conf;
     }
 
-    public BlacklistServiceCallServiceFilterConfiguration blacklistFilet() {
+    public BlacklistServiceCallServiceFilterConfiguration blacklistFilter() {
         BlacklistServiceCallServiceFilterConfiguration conf = new BlacklistServiceCallServiceFilterConfiguration();
         setServiceFilterConfiguration(conf);
 
