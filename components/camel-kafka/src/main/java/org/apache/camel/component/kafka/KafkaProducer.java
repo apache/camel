@@ -232,7 +232,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         while (c.hasNext()) {
-            futures.add(kafkaProducer.send(c.next()));
+            ProducerRecord rec = c.next();
+            if (log.isDebugEnabled()) {
+                log.debug("Sending message to topic: {}, partition: {}, key: {}", rec.topic(), rec.partition(), rec.key());
+            }
+            futures.add(kafkaProducer.send(rec));
         }
         for (Future<RecordMetadata> f : futures) {
             //wait for them all to be sent
@@ -248,7 +252,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
             KafkaProducerCallBack cb = new KafkaProducerCallBack(exchange, callback);
             while (c.hasNext()) {
                 cb.increment();
-                kafkaProducer.send(c.next(), cb);
+                ProducerRecord rec = c.next();
+                if (log.isDebugEnabled()) {
+                    log.debug("Sending message to topic: {}, partition: {}, key: {}", rec.topic(), rec.partition(), rec.key());
+                }
+                kafkaProducer.send(rec, cb);
             }
             return cb.allSent();
         } catch (Exception ex) {
@@ -306,6 +314,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
         boolean allSent() {
             if (count.decrementAndGet() == 0) {
+                log.trace("All messages sent, continue routing.");
                 //was able to get all the work done while queuing the requests
                 callback.done(true);
                 return true;
@@ -327,6 +336,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 workerPool.submit(new Runnable() {
                     @Override
                     public void run() {
+                        log.trace("All messages sent, continue routing.");
                         callback.done(false);
                     }
                 });
