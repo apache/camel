@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.kafka.clients.producer.Callback;
@@ -120,9 +121,30 @@ public class KafkaProducer extends DefaultAsyncProducer {
     @SuppressWarnings("unchecked")
     protected Iterator<ProducerRecord> createRecorder(Exchange exchange) throws CamelException {
         String topic = endpoint.getConfiguration().getTopic();
+
         if (!endpoint.isBridgeEndpoint()) {
-            topic = exchange.getIn().getHeader(KafkaConstants.TOPIC, topic, String.class);
+            String headerTopic = exchange.getIn().getHeader(KafkaConstants.TOPIC, String.class);
+            boolean allowHeader = true;
+
+            // when we do not bridge then detect if we try to send back to ourselves
+            // which we most likely do not want to do
+            if (headerTopic != null && endpoint.isCircularTopicDetection()) {
+                Endpoint from = exchange.getFromEndpoint();
+                if (from instanceof KafkaEndpoint) {
+                    String fromTopic = ((KafkaEndpoint) from).getConfiguration().getTopic();
+                    allowHeader = !headerTopic.equals(fromTopic);
+                    if (!allowHeader) {
+                        log.debug("Circular topic detected from message header."
+                            + " Cannot send to same topic as the message comes from: {}"
+                            + ". Will use endpoint configured topic: {}", from, topic);
+                    }
+                }
+            }
+            if (allowHeader && headerTopic != null) {
+                topic = headerTopic;
+            }
         }
+
         if (topic == null) {
             throw new CamelExchangeException("No topic key set", exchange);
         }

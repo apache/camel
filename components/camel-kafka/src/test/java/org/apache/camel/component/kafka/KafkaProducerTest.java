@@ -47,6 +47,7 @@ public class KafkaProducerTest {
 
     private KafkaProducer producer;
     private KafkaEndpoint endpoint;
+    private KafkaEndpoint fromEndpoint;
 
     private TypeConverter converter = Mockito.mock(TypeConverter.class);
     private CamelContext context = Mockito.mock(CamelContext.class);
@@ -62,6 +63,8 @@ public class KafkaProducerTest {
 
         endpoint = kafka.createEndpoint("kafka:sometopic", "sometopic", new HashMap());
         producer = new KafkaProducer(endpoint);
+
+        fromEndpoint = kafka.createEndpoint("kafka:fromtopic", "fromtopic", new HashMap());
 
         RecordMetadata rm = new RecordMetadata(null, 1, 1);
         Future future = Mockito.mock(Future.class);
@@ -204,7 +207,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMesssageWithPartitionKeyHeader() throws Exception {
+    public void processSendsMessageWithPartitionKeyHeader() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
@@ -218,7 +221,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMesssageWithMessageKeyHeader() throws Exception {
+    public void processSendsMessageWithMessageKeyHeader() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
@@ -246,8 +249,43 @@ public class KafkaProducerTest {
         assertRecordMetadataExists();
     }
 
+    @Test
+    public void processSendMessageWithCircularDetected() throws Exception {
+        endpoint.getConfiguration().setTopic("sometopic");
+        endpoint.setCircularTopicDetection(true); // enable by default
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+        Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
+        // this is the from topic that are from the fromEndpoint
+        in.setHeader(KafkaConstants.TOPIC, "fromtopic");
+        in.setHeader(KafkaConstants.KEY, "somekey");
+
+        producer.process(exchange);
+
+        verifySendMessage("sometopic", "somekey");
+        assertRecordMetadataExists();
+    }
+
+    @Test
+    public void processSendMessageWithNoCircularDetected() throws Exception {
+        endpoint.getConfiguration().setTopic("sometopic");
+        endpoint.setCircularTopicDetection(false); // enable by default
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        Mockito.when(exchange.getOut()).thenReturn(out);
+        Mockito.when(exchange.getFromEndpoint()).thenReturn(fromEndpoint);
+        // this is the from topic that are from the fromEndpoint
+        in.setHeader(KafkaConstants.TOPIC, "fromtopic");
+        in.setHeader(KafkaConstants.KEY, "somekey");
+
+        producer.process(exchange);
+
+        // will end up sending back to itself at fromtopic
+        verifySendMessage("fromtopic", "somekey");
+        assertRecordMetadataExists();
+    }
+
     @Test // Message and Topic Name alone
-    public void processSendsMesssageWithMessageTopicName() throws Exception {
+    public void processSendsMessageWithMessageTopicName() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
