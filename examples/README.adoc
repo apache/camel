@@ -172,7 +172,7 @@ Number of Examples: 91 (9 deprecated)
 
 | link:camel-example-spark-rest/README.md[Spark REST] (camel-example-spark-rest) | Rest | An example using Spark REST
 
-| link:camel-example-spring-boot-geocoder/README.adoc[Spring Boot Geocoder] (camel-example-spring-boot-geocoder) | Rest | An example showing Camel REST DSL and Swagger with Spring Boot
+| link:camel-example-spring-boot-geocoder/README.adoc[Spring Boot Geocoder] (camel-example-spring-boot-geocoder) | Rest | An example showing the Camel Geocoder component via REST DSL with Spring Boot
 
 | link:camel-example-spring-boot-rest-swagger/README.adoc[Spring Boot Rest Swagger] (camel-example-spring-boot-rest-swagger) | Rest | An example showing Camel REST DSL and Swagger with Spring Boot
 
