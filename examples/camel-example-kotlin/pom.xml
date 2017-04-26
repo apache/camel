@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>examples</artifactId>
-    <version>2.19.0-SNAPSHOT</version>
+    <version>2.20.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-example-kotlin</artifactId>
@@ -33,7 +33,7 @@
 
   <properties>
     <category>Other Languages</category>
-    <kotlin.version>1.1.1</kotlin.version>
+    <kotlin.version>1.1.2</kotlin.version>
   </properties>
 
   <dependencies>

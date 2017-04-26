@@ -128,8 +128,6 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
             builder.error(
                 ResultErrorBuilder.withException(e).build()
             );
-
-            throw new RuntimeException(e);
         }
 
         return builder.build();
