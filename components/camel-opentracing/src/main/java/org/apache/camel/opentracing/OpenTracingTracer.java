@@ -201,6 +201,10 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 if (event instanceof ExchangeSendingEvent) {
                     ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
                     SpanManager.ManagedSpan parent = spanManager.current();
+                    if (ese.getExchange().getProperties().containsKey(MANAGED_SPAN_PROPERTY)) {
+                        parent = (SpanManager.ManagedSpan)
+                                ese.getExchange().getProperty(MANAGED_SPAN_PROPERTY);
+                    }
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
                     if (!sd.newSpan()) {
                         return;
@@ -270,7 +274,6 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 // Check if continuing exchange on same thread
                 if (exchange.getProperties().containsKey(MANAGED_SPAN_PROPERTY)) {
                     spanManager.activate((SpanManager.ManagedSpan)exchange.getProperty(MANAGED_SPAN_PROPERTY));
-                    exchange.setProperty(MANAGED_SPAN_PROPERTY, null);
                 }
                 SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                 Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
@@ -279,7 +282,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind())
                     .start();
                 sd.pre(span, exchange, route.getEndpoint());
-                spanManager.activate(span);
+                exchange.setProperty(MANAGED_SPAN_PROPERTY, spanManager.activate(span));
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("OpenTracing: start server span=" + span);
                 }
@@ -301,6 +304,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     sd.post(managedSpan.getSpan(), exchange, route.getEndpoint());
                     managedSpan.getSpan().finish();
                     managedSpan.deactivate();
+                    exchange.setProperty(MANAGED_SPAN_PROPERTY, null);
                 } else {
                     LOG.warn("OpenTracing: could not find managed span for exchange=" + exchange);
                 }
