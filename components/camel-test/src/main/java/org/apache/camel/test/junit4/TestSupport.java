@@ -583,6 +583,22 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
+     * Returns the current major Java version e.g 8.
+     * <p/>
+     * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
+
+     * @return the current major Java version.
+     */
+    public static int getJavaMajorVersion() {
+        String javaSpecVersion = System.getProperty("java.specification.version");
+        if (javaSpecVersion.contains(".")) { //before jdk 9
+            return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
+        } else {
+            return Integer.parseInt(javaSpecVersion);
+        }
+    }
+
+    /**
      * Gets the current test name
      *
      * @return the test name
