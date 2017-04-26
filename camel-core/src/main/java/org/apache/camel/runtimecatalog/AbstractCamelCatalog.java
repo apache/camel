@@ -919,12 +919,14 @@ public abstract class AbstractCamelCatalog {
 
         // build endpoint uri
         StringBuilder sb = new StringBuilder();
-        sb.append(scheme);
-        sb.append(":");
+        // add scheme later as we need to take care if there is any context-path or query parameters which
+        // affect how the URI should be constructed
 
         if (hasAllKeys) {
             // we have all the keys for the syntax so we can build the uri the easy way
-            sb.append(syntax);
+            if (syntax != null) {
+                sb.append(syntax);
+            }
 
             if (!copy.isEmpty()) {
                 boolean hasQuestionmark = sb.toString().contains("?");
@@ -1020,7 +1022,18 @@ public abstract class AbstractCamelCatalog {
             }
         }
 
-        return sb.toString();
+        String remainder = sb.toString();
+        boolean queryOnly = remainder.startsWith("?");
+        if (queryOnly) {
+            // it has only query parameters
+            return scheme + remainder;
+        } else if (!remainder.isEmpty()) {
+            // it has context path and possible query parameters
+            return scheme + ":" + remainder;
+        } else {
+            // its empty without anything
+            return scheme;
+        }
     }
 
     @Deprecated
@@ -1055,22 +1068,24 @@ public abstract class AbstractCamelCatalog {
         // build tokens between the separators
         List<String> tokens = new ArrayList<>();
 
-        String current = "";
-        for (int i = 0; i < syntax.length(); i++) {
-            char ch = syntax.charAt(i);
-            if (Character.isLetterOrDigit(ch)) {
-                current += ch;
-            } else {
-                // reset for new current tokens
-                if (current.length() > 0) {
-                    tokens.add(current);
-                    current = "";
+        if (syntax != null) {
+            String current = "";
+            for (int i = 0; i < syntax.length(); i++) {
+                char ch = syntax.charAt(i);
+                if (Character.isLetterOrDigit(ch)) {
+                    current += ch;
+                } else {
+                    // reset for new current tokens
+                    if (current.length() > 0) {
+                        tokens.add(current);
+                        current = "";
+                    }
                 }
             }
-        }
-        // anything left over?
-        if (current.length() > 0) {
-            tokens.add(current);
+            // anything left over?
+            if (current.length() > 0) {
+                tokens.add(current);
+            }
         }
 
         return tokens.toArray(new String[tokens.size()]);
