@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
+import org.apache.camel.test.junit4.TestSupport;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -84,10 +85,14 @@ public class CamelSalesforceMojoOutputTest {
         final File pkgDir = temp.newFolder();
 
         mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
-
+        
         File generatedFile = new File(pkgDir, source);
         String generatedContent = FileUtils.readFileToString(generatedFile, StandardCharsets.UTF_8);
 
+        if (TestSupport.getJavaMajorVersion() >= 9 && (source.equals("Case.java") || source.equals("ComplexCalculatedFormula.java"))) {
+            //Content is the same, the ordering is a bit different.
+            source += "-Java9";
+        }
         String expectedContent = IOUtils
             .toString(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + source), StandardCharsets.UTF_8);
 
