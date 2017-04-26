@@ -61,13 +61,13 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
         // - OAuth JWT Flow
         //
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-            .errors(ResultErrorHelper.requiresAny(
-                parameters,
-                OptionsGroup.withName(AuthenticationType.USERNAME_PASSWORD).options("clientId", "clientSecret", "userName", "password"),
-                OptionsGroup.withName(AuthenticationType.REFRESH_TOKEN).options("clientId", "clientSecret", "refreshToken"),
-                OptionsGroup.withName(AuthenticationType.JWT).options("clientId", "userName", "keystore")
-            )
-        );
+            .errors(ResultErrorHelper.requiresAny(parameters,
+                OptionsGroup.withName(AuthenticationType.USERNAME_PASSWORD)
+                    .options("clientId", "clientSecret", "userName", "password", "!refreshToken", "!keystore"),
+                OptionsGroup.withName(AuthenticationType.REFRESH_TOKEN)
+                    .options("clientId", "clientSecret", "refreshToken", "!password", "!keystore"),
+                OptionsGroup.withName(AuthenticationType.JWT)
+                    .options("clientId", "userName", "keystore", "!password", "!refreshToken")));
 
         // Validate using the catalog
         super.verifyParametersAgainstCatalog(builder, parameters);
