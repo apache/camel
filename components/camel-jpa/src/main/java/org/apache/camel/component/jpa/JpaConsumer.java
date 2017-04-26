@@ -154,7 +154,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         } catch (Exception e) {
             // Potentially EntityManager could be in an inconsistent state after transaction rollback,
             // so disposing it to have it recreated in next poll. cf. Java Persistence API 3.3.2 Transaction Rollback
-            LOG.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+            LOG.debug("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
             entityManager.close();
             entityManager = null;
             throw new PersistenceException(e);
