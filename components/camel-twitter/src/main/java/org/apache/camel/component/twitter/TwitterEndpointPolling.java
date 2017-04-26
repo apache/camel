@@ -44,6 +44,7 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
 
     public TwitterEndpointPolling(String uri, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
+        setDelay(delay); // reconfigure the default delay
         this.properties = properties;
     }
 
