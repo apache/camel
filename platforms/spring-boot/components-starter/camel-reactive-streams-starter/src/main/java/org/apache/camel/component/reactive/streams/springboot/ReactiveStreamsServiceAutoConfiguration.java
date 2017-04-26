@@ -17,9 +17,8 @@
 package org.apache.camel.component.reactive.streams.springboot;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
-import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.component.reactive.streams.util.ReactiveStreamsServiceCreationHelper;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -37,7 +36,7 @@ public class ReactiveStreamsServiceAutoConfiguration {
     @ConditionalOnMissingBean
     @ConditionalOnClass(CamelContext.class)
     public CamelReactiveStreamsService camelReactiveStreamsService(CamelContext context) {
-        return CamelReactiveStreams.get(context);
+        return ReactiveStreamsServiceCreationHelper.createNewReactiveStreamsService(context, null);
     }
 
 }
