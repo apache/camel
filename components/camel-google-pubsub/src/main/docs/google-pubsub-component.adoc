@@ -14,11 +14,12 @@ Maven users will need to add the following dependency to their pom.xml
 for this component:
 
 ------------------------------------------------------
-    <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-google-pubsub</artifactId>
-            <version>2.19-SNAPSHOT</version>
-    </dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-pubsub</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
 
 ------------------------------------------------------
 
