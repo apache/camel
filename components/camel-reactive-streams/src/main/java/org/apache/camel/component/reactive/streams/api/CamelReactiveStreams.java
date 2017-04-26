@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.component.reactive.streams.util.ReactiveStreamsServiceCreationHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public final class CamelReactiveStreams {
             service = context.getRegistry().lookupByNameAndType(serviceName, CamelReactiveStreamsService.class);
 
             if (service == null) {
-                service = resolveServiceUsingFactory(context, serviceName);
+                service = ReactiveStreamsServiceCreationHelper.createNewReactiveStreamsService(context, serviceName);
             }
         } else {
             Set<CamelReactiveStreamsService> set = context.getRegistry().findByType(CamelReactiveStreamsService.class);
@@ -91,32 +91,11 @@ public final class CamelReactiveStreams {
 
             if (service == null) {
                 LOG.info("Using default reactive stream service");
-                service = resolveServiceUsingFactory(context, null);
+                service = ReactiveStreamsServiceCreationHelper.createNewReactiveStreamsService(context, null);
             }
         }
 
         return service;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static CamelReactiveStreamsService resolveServiceUsingFactory(CamelContext context, String name) {
-        if (name == null) {
-            name = "default-service";
-        }
-
-        String path = "META-INF/services/org/apache/camel/reactive-streams/";
-        Class<? extends CamelReactiveStreamsService> serviceClass = null;
-        try {
-            FactoryFinder finder = context.getFactoryFinder(path);
-            LOG.trace("Using FactoryFinder: {}", finder);
-            serviceClass = (Class<? extends CamelReactiveStreamsService>) finder.findClass(name);
-            return serviceClass.newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Class referenced in '" + path + name + "' not found", e);
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to create the reactive stream service defined in '" + path + name + "'", e);
-        }
-
     }
 
 }
