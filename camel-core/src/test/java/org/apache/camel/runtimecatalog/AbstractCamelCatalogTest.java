@@ -101,4 +101,58 @@ public class AbstractCamelCatalogTest {
 
         assertEquals("comp:{value1}:/value2/?param3=/value3/{param}", endpointUri);
     }
+
+    @Test
+    public void shouldContextPathAndQuery() throws URISyntaxException {
+        expect(resolver.getComponentJSonSchema("comp")).andReturn("{\n"//
+            + "  \"component\": {\n"//
+            + "    \"syntax\": \"comp:value1\"\n"//
+            + "  }\n"//
+            + "}");
+
+        replay(resolver);
+
+        final Map<String, String> properties = new HashMap<>();
+        properties.put("value1", "camel");
+        properties.put("foo", "123");
+
+        final String endpointUri = catalog.doAsEndpointUri("comp", properties, "&", false);
+
+        assertEquals("comp:camel?foo=123", endpointUri);
+    }
+
+    @Test
+    public void shouldEmptyContextPath() throws URISyntaxException {
+        expect(resolver.getComponentJSonSchema("comp")).andReturn("{\n"//
+            + "  \"component\": {\n"//
+            + "    \"syntax\": \"comp\"\n"//
+            + "  }\n"//
+            + "}");
+
+        replay(resolver);
+
+        final Map<String, String> properties = new HashMap<>();
+
+        final String endpointUri = catalog.doAsEndpointUri("comp", properties, "&", false);
+
+        assertEquals("comp", endpointUri);
+    }
+
+    @Test
+    public void shouldEmptyContextPathWithQuery() throws URISyntaxException {
+        expect(resolver.getComponentJSonSchema("comp")).andReturn("{\n"//
+            + "  \"component\": {\n"//
+            + "    \"syntax\": \"comp\"\n"//
+            + "  }\n"//
+            + "}");
+
+        replay(resolver);
+
+        final Map<String, String> properties = new HashMap<>();
+        properties.put("foo", "123");
+
+        final String endpointUri = catalog.doAsEndpointUri("comp", properties, "&", false);
+
+        assertEquals("comp?foo=123", endpointUri);
+    }
 }
