@@ -56,9 +56,9 @@
       <version>${opentracing-version}</version>
     </dependency>
     <dependency>
-      <groupId>io.opentracing.contrib</groupId>
-      <artifactId>opentracing-spanmanager</artifactId>
-      <version>${opentracing-java-spanmanager-version}</version>
+      <groupId>io.opentracing</groupId>
+      <artifactId>opentracing-noop</artifactId>
+      <version>${opentracing-version}</version>
     </dependency>
 
     <!-- test dependencies -->
