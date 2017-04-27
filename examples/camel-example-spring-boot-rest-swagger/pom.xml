@@ -67,15 +67,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-swagger-java</artifactId>
+      <artifactId>camel-swagger-java-starter</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-servlet</artifactId>
+      <artifactId>camel-servlet-starter</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jackson</artifactId>
+      <artifactId>camel-jackson-starter</artifactId>
     </dependency>
 
     <!-- Test -->
