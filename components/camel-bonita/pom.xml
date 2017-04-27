@@ -121,4 +121,25 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <!-- TODO: See https://github.com/powermock/powermock/issues/783 for more information. -->
+                <exclude>**/**.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
