@@ -487,4 +487,26 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <!-- TODO: until https://issues.apache.org/jira/browse/SUREFIRE-1265 is released. -->
+                <exclude>**/**.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
