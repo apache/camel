@@ -112,8 +112,8 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
 
     @Override
     protected void doStop() throws Exception {
-        if (channel == null) {
-            LOG.trace("Terminating channel to the remote gRPC server " + channel);
+        if (channel != null) {
+            LOG.trace("Terminating channel to the remote gRPC server");
             channel.shutdown().shutdownNow();
             channel = null;
             grpcStub = null;
