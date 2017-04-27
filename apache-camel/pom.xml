@@ -2384,6 +2384,13 @@
             </configuration>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-archiver</artifactId>
+            <version>3.0.3</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
