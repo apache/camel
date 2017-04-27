@@ -492,7 +492,146 @@
               </plugin>                          
             </plugins>
           </build>
-        </profile>      
+        </profile>
+        <profile>
+            <id>jdk9-build</id>
+            <activation>
+                <jdk>9</jdk>
+                <property>
+                    <name>!os.unsupported.schemagen</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <reuseForks>true</reuseForks>
+                            <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>process-sources</id>
+                                <phase>process-classes</phase>
+                                <configuration>
+                                    <target>
+                                        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
+                                        <echo>Copying to code together for the XSD generation</echo>
+                                        <mkdir dir="${project.build.directory}/schema-src" />
+                                        <mkdir dir="${project.build.directory}/schema" />
+                                        <copy todir="${project.build.directory}/schema-src">
+                                            <fileset dir="${basedir}/src/main/java">
+                                                <include name="org/apache/camel/blueprint/Camel*.java" />
+                                                <include name="org/apache/camel/blueprint/ErrorHandler*.java" />
+                                                <include name="org/apache/camel/blueprint/package-info.java" />
+                                                <include name="org/apache/camel/util/blueprint/**/*.java" />
+                                            </fileset>
+                                            <fileset dir="${basedir}/../camel-core-xml/src/main/java">
+                                                <include name="org/apache/camel/core/xml/*.java" />
+                                                <include name="org/apache/camel/core/xml/util/**/*.java" />
+                                            </fileset>
+                                            <fileset dir="${basedir}/../../camel-core/src/main/java">
+                                                <include name="org/apache/camel/model/**/*.java" />
+                                                <include name="org/apache/camel/ExchangePattern.java" />
+                                                <include name="org/apache/camel/LoggingLevel.java" />
+                                                <include name="org/apache/camel/ManagementStatisticsLevel.java" />
+                                                <include name="**/package-info.java" />
+                                            </fileset>
+                                        </copy>
+                                        <path id ="source.files.list">
+                                            <fileset dir="${project.build.directory}/schema-src">
+                                                <include name="**/*.java" />
+                                            </fileset>
+                                        </path>
+                                        <property name="source.files.property" refid="source.files.list"/>
+                                        <propertyregex property="schema.source.formatted" input="${source.files.property}" regexp=":" replace=" " global="true" />
+                                        <property name="schema.source.files" value="${schema.source.formatted}"/>
+                                        <echo>Schema files ${schema.source.files}</echo>
+                                    </target>
+                                    <exportAntProperties>true</exportAntProperties>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>include-sources</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <target>
+                                        <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
+                                        <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
+                                            <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
+                                            <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
+                                        </jar>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>copy-schema</id>              
+                                <phase>process-test-sources</phase>
+                                <configuration>
+                                    <target>
+                                        <echo>Copying XSD schema to be included in JAR</echo>
+                                        <move file="${project.basedir}/schema1.xsd" tofile="${project.build.directory}/schema/camel-blueprint.xsd" />
+                                        <delete file="${project.basedir}/schema2.xsd"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <!-- after the eip-documentation-enricher we need to copy some shchema files -->
+                            <execution>
+                                <id>include-schemas</id>
+                                <phase>prepare-package</phase>
+                                <configuration>
+                                    <target>
+                                        <echo>Copying XSD schema to be included in JAR</echo>
+                                        <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/blueprint" />
+                                        <copy todir="${project.build.directory}/classes">
+                                            <fileset dir="${project.build.directory}/schema" />
+                                        </copy>
+                                        <!-- copy modified schemas back again in classes so they are included in the JAR -->
+                                        <copy todir="${project.build.directory}/classes">
+                                            <fileset dir="${project.build.directory}/schema" />
+                                        </copy>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate schema</id>
+                                <phase>generate-test-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>schemagen</executable>
+                            <commandlineArgs>-cp %classpath ${schema.source.files}</commandlineArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <reporting>
