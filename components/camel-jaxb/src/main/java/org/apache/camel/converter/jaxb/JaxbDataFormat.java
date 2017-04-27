@@ -183,9 +183,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         throws XMLStreamException, JAXBException, NoTypeConversionAvailableException, IOException, InvalidPayloadException {
 
         Object element = graph;
-        QName  partNamespaceOnDataFormat = getPartNamespace();
-        String partClassFromHeader = (String)exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS);
-        String partNamespaceFromHeader = (String)exchange.getIn().getHeader(JaxbConstants.JAXB_PART_NAMESPACE);
+        QName partNamespaceOnDataFormat = getPartNamespace();
+        String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
+        String partNamespaceFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_NAMESPACE, String.class);
         if ((partialClass != null || partClassFromHeader != null)
                 && (partNamespaceOnDataFormat != null || partNamespaceFromHeader != null)) {
             if (partClassFromHeader != null) {

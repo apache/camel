@@ -31,7 +31,7 @@ public class JaxbDataFormatPartClassHeaderTest extends CamelTestSupport {
     private MockEndpoint mockMarshall;
 
     @Test
-    public void testMarshallMultipleNamespaces() throws Exception {
+    public void testMarshallIfPartClassSetInHeaders() throws Exception {
         mockMarshall.expectedMessageCount(1);
 
         Address address = new Address();
