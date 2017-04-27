@@ -548,8 +548,7 @@ public abstract class TestSupport extends Assert {
      */
     @Deprecated
     public static boolean isJava15() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.5");
+        return getJavaMajorVersion() == 5;
     }
 
     /**
@@ -558,8 +557,8 @@ public abstract class TestSupport extends Assert {
      * @return <tt>true</tt> if its Java 1.6, <tt>false</tt> if its not (for example Java 1.7 or better)
      */
     public static boolean isJava16() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.6");
+        return getJavaMajorVersion() == 6;
+
     }
     
     /**
@@ -568,8 +567,8 @@ public abstract class TestSupport extends Assert {
      * @return <tt>true</tt> if its Java 1.7, <tt>false</tt> if its not (for example Java 1.6 or older)
      */
     public static boolean isJava17() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.7");
+        return getJavaMajorVersion() == 7;
+
     }
 
     /**
@@ -578,8 +577,8 @@ public abstract class TestSupport extends Assert {
      * @return <tt>true</tt> if its Java 1.8, <tt>false</tt> if its not (for example Java 1.7 or older)
      */
     public static boolean isJava18() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.8");
+        return getJavaMajorVersion() == 8;
+
     }
 
     /**
