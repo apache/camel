@@ -76,7 +76,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>${google-guava-version}</version>
+      <version>${swagger-java-guava-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -89,6 +89,12 @@
       <groupId>io.swagger</groupId>
       <artifactId>swagger-core</artifactId>
       <version>${swagger-java-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.swagger</groupId>
@@ -99,6 +105,12 @@
       <groupId>io.swagger</groupId>
       <artifactId>swagger-jaxrs</artifactId>
       <version>${swagger-java-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.swagger</groupId>
