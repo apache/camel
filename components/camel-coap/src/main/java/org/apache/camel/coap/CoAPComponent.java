@@ -33,12 +33,15 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link CoAPEndpoint}.
  */
 public class CoAPComponent extends UriEndpointComponent implements RestConsumerFactory {
     static final int DEFAULT_PORT = 5684;
+    private static final Logger LOG = LoggerFactory.getLogger(CoAPComponent.class);
 
     final Map<Integer, CoapServer> servers = new ConcurrentHashMap<>();
 
@@ -89,6 +92,10 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
             config = getCamelContext().getRestConfiguration("coap", true);
         }
 
+        if (config.isEnableCORS()) {
+            LOG.info("CORS configuration will be ignored as CORS is not supported by the CoAP component");
+        }
+
         String host = config.getHost();
         if (ObjectHelper.isEmpty(host)) {
             if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
@@ -106,24 +113,16 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
             map.putAll(config.getEndpointProperties());
         }
 
-        // allow HTTP Options as we want to handle CORS in rest-dsl
-        boolean cors = config.isEnableCORS();
-
         String query = URISupport.createQueryString(map);
 
         String url = (config.getScheme() == null ? "coap" : config.getScheme()) + "://" + host;
         if (config.getPort() != -1) {
             url += ":" + config.getPort();
         }
-        String restrict = verb.toUpperCase(Locale.US);
-        if (cors) {
-            restrict += ",OPTIONS";
-        }
-
         if (uriTemplate == null) {
             uriTemplate = "";
         }
-        url += basePath + uriTemplate + "?coapMethod=" + restrict;
+        url += basePath + uriTemplate + "?coapMethod=" + verb.toUpperCase(Locale.US);
         if (!query.isEmpty()) {
             url += "&" + query;
         }
