@@ -464,6 +464,108 @@
       </dependencies>
     </profile>
 
+    <profile>
+      <id>jdk9-weld-2.0</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+
+      <dependencies>
+
+        <!-- provided dependencies -->
+
+        <dependency>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+          <version>${cdi-api-2.0-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core-impl</artifactId>
+          <version>${weld3-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-embedded</artifactId>
+          <version>${arquillian-weld-embedded-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <reuseForks>true</reuseForks>
+              <argLine>--patch-module java.xml.ws.annotation=${project.basedir}/target/java9/javax.annotation-api-1.2.jar --patch-module java.xml.bind=${project.basedir}/target/java9 ${camel.surefire.fork.vmargs} --add-opens java.base/java.lang=java.xml.bind</argLine>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>2.10</version>
+            <executions>
+              <execution>
+                <id>copy</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>javax.annotation</groupId>
+                      <artifactId>javax.annotation-api</artifactId>
+                      <version>1.2</version>
+                      <type>jar</type>
+                      <overWrite>false</overWrite>
+                      <outputDirectory>${project.basedir}/target/java9</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                  <overWriteReleases>false</overWriteReleases>
+                  <overWriteSnapshots>true</overWriteSnapshots>
+                </configuration>
+              </execution>
+              <execution>
+                <id>copy-jaxb</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>com.sun.xml.bind</groupId>
+                      <artifactId>jaxb-impl</artifactId>
+                      <version>${jaxb-version}</version>
+                      <overWrite>false</overWrite>
+                      <outputDirectory>${project.basedir}/target/java9</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>com.sun.xml.bind</groupId>
+                      <artifactId>jaxb-core</artifactId>
+                      <version>${jaxb-version}</version>
+                      <overWrite>false</overWrite>
+                      <outputDirectory>${project.basedir}/target/java9</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                  <overWriteReleases>false</overWriteReleases>
+                  <overWriteSnapshots>true</overWriteSnapshots>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>
