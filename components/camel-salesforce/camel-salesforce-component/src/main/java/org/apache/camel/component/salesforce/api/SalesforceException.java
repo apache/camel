@@ -64,7 +64,7 @@ public class SalesforceException extends CamelException {
     }
 
     public List<RestError> getErrors() {
-        return errors != null ? Collections.unmodifiableList(errors) : null;
+        return errors == null ? Collections.emptyList() : Collections.unmodifiableList(errors);
     }
 
     public int getStatusCode() {
