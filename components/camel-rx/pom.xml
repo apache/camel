@@ -89,5 +89,26 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
+  
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <!--TODO: Uses rest-assured which uses groovy which is not supported on Java 9 yet. This module is also deprecated.-->
+                <exclude>**/CamelOperatorTest.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
