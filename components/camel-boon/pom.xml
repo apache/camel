@@ -77,4 +77,25 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>jdk9-build</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <!--TODO: See https://github.com/boonproject/boon/issues/376 for more details-->
+                                <exclude>**/**.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
