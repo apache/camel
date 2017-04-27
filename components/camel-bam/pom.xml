@@ -222,5 +222,40 @@
         </dependency>
       </dependencies>
     </profile>
+    
+    <profile>
+      <id>jdk9-hibernate</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <testResources>
+          <testResource>
+            <directory>${basedir}/src/test/profiles/hibernate</directory>
+          </testResource>
+        </testResources>
+        
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-modules java.activation,java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-entitymanager</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jta_1.1_spec</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 </project>
