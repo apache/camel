@@ -21,7 +21,9 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -55,6 +57,8 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
     protected static final String APPLICATION_JSON_UTF8 = "application/json;charset=utf-8";
     protected static final String APPLICATION_XML_UTF8 = "application/xml;charset=utf-8";
 
+    private static final int DEFAULT_TERMINATION_TIMEOUT = 10;
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected final SalesforceHttpClient httpClient;
@@ -64,12 +68,22 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
     protected String accessToken;
     protected String instanceUrl;
 
+    private Phaser inflightRequests;
+
+    private long terminationTimeout;
+
     public AbstractClientBase(String version, SalesforceSession session,
-                              SalesforceHttpClient httpClient) throws SalesforceException {
+        SalesforceHttpClient httpClient) throws SalesforceException {
+        this(version, session, httpClient, DEFAULT_TERMINATION_TIMEOUT);
+    }
+
+    AbstractClientBase(String version, SalesforceSession session,
+                              SalesforceHttpClient httpClient, int terminationTimeout) throws SalesforceException {
 
         this.version = version;
         this.session = session;
         this.httpClient = httpClient;
+        this.terminationTimeout = terminationTimeout;
     }
 
     public void start() throws Exception {
@@ -83,10 +97,21 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
         // also register this client as a session listener
         session.addListener(this);
+
+        inflightRequests = new Phaser(1);
     }
 
     @Override
     public void stop() throws Exception {
+        inflightRequests.arrive();
+        if (!inflightRequests.isTerminated()) {
+            try {
+                inflightRequests.awaitAdvanceInterruptibly(0, terminationTimeout, TimeUnit.SECONDS);
+            } catch (InterruptedException | TimeoutException ignored) {
+                // exception is ignored
+            }
+        }
+
         // deregister listener
         session.removeListener(this);
     }
@@ -134,59 +159,64 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
             buffers.clear();
         }
 
+        inflightRequests.register();
         // execute the request
         request.send(new BufferingResponseListener(httpClient.getMaxContentLength()) {
             @Override
             public void onComplete(Result result) {
-                Response response = result.getResponse();
-                if (result.isFailed()) {
+                try {
+                    Response response = result.getResponse();
+                    if (result.isFailed()) {
 
-                    // Failure!!!
-                    // including Salesforce errors reported as exception from SalesforceSecurityHandler
-                    Throwable failure = result.getFailure();
-                    if (failure instanceof SalesforceException) {
-                        callback.onResponse(null, (SalesforceException) failure);
-                    } else {
-                        final String msg = String.format("Unexpected error {%s:%s} executing {%s:%s}",
-                            response.getStatus(), response.getReason(), request.getMethod(), request.getURI());
-                        callback.onResponse(null, new SalesforceException(msg, response.getStatus(), failure));
-                    }
-                } else {
-
-                    // HTTP error status
-                    final int status = response.getStatus();
-                    SalesforceHttpRequest request = (SalesforceHttpRequest) ((SalesforceHttpRequest) result.getRequest())
-                        .getConversation()
-                        .getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE);
-
-                    if (status == HttpStatus.BAD_REQUEST_400 && request != null) {
-                        // parse login error
-                        ContentResponse contentResponse = new HttpContentResponse(response, getContent(), getMediaType(), getEncoding());
-                        try {
-
-                            session.parseLoginResponse(contentResponse, getContentAsString());
-                            final String msg = String.format("Unexpected Error {%s:%s} executing {%s:%s}",
-                                status, response.getReason(), request.getMethod(), request.getURI());
-                            callback.onResponse(null, new SalesforceException(msg, null));
-
-                        } catch (SalesforceException e) {
-
-                            final String msg = String.format("Error {%s:%s} executing {%s:%s}",
-                                status, response.getReason(), request.getMethod(), request.getURI());
-                            callback.onResponse(null, new SalesforceException(msg, response.getStatus(), e));
-
+                        // Failure!!!
+                        // including Salesforce errors reported as exception from SalesforceSecurityHandler
+                        Throwable failure = result.getFailure();
+                        if (failure instanceof SalesforceException) {
+                            callback.onResponse(null, (SalesforceException) failure);
+                        } else {
+                            final String msg = String.format("Unexpected error {%s:%s} executing {%s:%s}",
+                                response.getStatus(), response.getReason(), request.getMethod(), request.getURI());
+                            callback.onResponse(null, new SalesforceException(msg, response.getStatus(), failure));
                         }
-                    } else if (status < HttpStatus.OK_200 || status >= HttpStatus.MULTIPLE_CHOICES_300) {
-                        // Salesforce HTTP failure!
-                        final SalesforceException exception = createRestException(response, getContentAsInputStream());
-
-                        // for APIs that return body on status 400, such as Composite API we need content as well
-                        callback.onResponse(getContentAsInputStream(), exception);
                     } else {
 
-                        // Success!!!
-                        callback.onResponse(getContentAsInputStream(), null);
+                        // HTTP error status
+                        final int status = response.getStatus();
+                        SalesforceHttpRequest request = (SalesforceHttpRequest) ((SalesforceHttpRequest) result.getRequest())
+                            .getConversation()
+                            .getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE);
+
+                        if (status == HttpStatus.BAD_REQUEST_400 && request != null) {
+                            // parse login error
+                            ContentResponse contentResponse = new HttpContentResponse(response, getContent(), getMediaType(), getEncoding());
+                            try {
+
+                                session.parseLoginResponse(contentResponse, getContentAsString());
+                                final String msg = String.format("Unexpected Error {%s:%s} executing {%s:%s}",
+                                    status, response.getReason(), request.getMethod(), request.getURI());
+                                callback.onResponse(null, new SalesforceException(msg, null));
+
+                            } catch (SalesforceException e) {
+
+                                final String msg = String.format("Error {%s:%s} executing {%s:%s}",
+                                    status, response.getReason(), request.getMethod(), request.getURI());
+                                callback.onResponse(null, new SalesforceException(msg, response.getStatus(), e));
+
+                            }
+                        } else if (status < HttpStatus.OK_200 || status >= HttpStatus.MULTIPLE_CHOICES_300) {
+                            // Salesforce HTTP failure!
+                            final SalesforceException exception = createRestException(response, getContentAsInputStream());
+
+                            // for APIs that return body on status 400, such as Composite API we need content as well
+                            callback.onResponse(getContentAsInputStream(), exception);
+                        } else {
+
+                            // Success!!!
+                            callback.onResponse(getContentAsInputStream(), null);
+                        }
                     }
+                } finally {
+                    inflightRequests.arriveAndDeregister();
                 }
             }
 
