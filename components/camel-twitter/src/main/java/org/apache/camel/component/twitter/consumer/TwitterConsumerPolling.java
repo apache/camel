@@ -29,7 +29,7 @@ import org.apache.camel.impl.ScheduledPollConsumer;
  */
 public class TwitterConsumerPolling extends ScheduledPollConsumer {
 
-    public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
+    public static final long DEFAULT_CONSUMER_DELAY = 30 * 1000L;
     private final TwitterConsumer twitter4jConsumer;
 
     public TwitterConsumerPolling(TwitterEndpointPolling endpoint, Processor processor, TwitterConsumer twitter4jConsumer) {
