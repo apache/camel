@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -87,7 +86,7 @@
                 <systemPropertyVariables>
                     <jgroups.bind_addr>127.0.0.1</jgroups.bind_addr>
                 </systemPropertyVariables>
-                <argLine>-Djava.net.preferIPv4Stack=true</argLine>
+                <argLine>${camel.surefire.fork.vmargs} -Djava.net.preferIPv4Stack=true</argLine>
              </configuration>
           </plugin>
        </plugins>
