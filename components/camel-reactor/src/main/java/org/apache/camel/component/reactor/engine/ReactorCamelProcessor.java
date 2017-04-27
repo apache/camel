@@ -28,17 +28,15 @@ import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.DirectProcessor;
+import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxProcessor;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.SynchronousSink;
 import reactor.util.concurrent.QueueSupplier;
 
 final class ReactorCamelProcessor implements Closeable {
     private final String name;
-    private final FluxProcessor<Exchange, Exchange> processor;
-    private final Flux<Exchange> processorFlux;
+    private final EmitterProcessor<Exchange> publisher;
     private final AtomicReference<FluxSink<Exchange>> camelSink;
 
     private final ReactorStreamsService service;
@@ -51,11 +49,12 @@ final class ReactorCamelProcessor implements Closeable {
         this.camelProducer = null;
         this.camelSink = new AtomicReference<>();
 
-        this.processor = DirectProcessor.create();
 
-        // As the processor can be shared among a number of subscribers we need
-        // to make it shared we can multicast events.
-        this.processorFlux = this.processor.handle(this::onItemEmitted).share();
+        // TODO: A emitter processor with buffer-size 0 would be perfect
+        // The effect of having a prefetch of 1 element is that the chain buffers at least 2 elements instead of only one
+        // (one in the FluxSink and one in the EmitterProcessor) when using the "latest" or "oldest" strategy.
+        // This affects slightly the behavior of the backpressure strategy "latest" (but it doesn't change the semantics).
+        this.publisher = EmitterProcessor.create(1);
     }
 
     @Override
@@ -63,7 +62,7 @@ final class ReactorCamelProcessor implements Closeable {
     }
 
     Publisher<Exchange> getPublisher() {
-        return processorFlux;
+        return publisher;
     }
 
     synchronized void attach(ReactiveStreamsProducer producer) {
@@ -80,15 +79,18 @@ final class ReactorCamelProcessor implements Closeable {
             Flux<Exchange> flux = Flux.create(camelSink::set);
 
             if (ObjectHelper.equal(strategy, ReactiveStreamsBackpressureStrategy.OLDEST)) {
-                flux = flux.onBackpressureDrop(this::onBackPressure);
+                // signal item emitted for non-dropped items only
+                flux = flux.onBackpressureDrop(this::onBackPressure).handle(this::onItemEmitted);
             } else if (ObjectHelper.equal(strategy, ReactiveStreamsBackpressureStrategy.LATEST)) {
-                flux = flux.onBackpressureLatest();
+                // Since there is no callback for dropped elements on backpressure "latest", item emission is signaled before dropping
+                // No exception is reported back to the exchanges
+                flux = flux.handle(this::onItemEmitted).onBackpressureLatest();
             } else {
                 // Default strategy is BUFFER
-                flux = flux.onBackpressureBuffer(QueueSupplier.SMALL_BUFFER_SIZE, this::onBackPressure);
+                flux = flux.onBackpressureBuffer(QueueSupplier.SMALL_BUFFER_SIZE, this::onBackPressure).handle(this::onItemEmitted);
             }
 
-            flux.subscribe(this.processor);
+            flux.subscribe(this.publisher);
 
             camelProducer = producer;
         }
