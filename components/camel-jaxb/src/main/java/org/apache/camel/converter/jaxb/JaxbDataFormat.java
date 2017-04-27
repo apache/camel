@@ -183,8 +183,22 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         throws XMLStreamException, JAXBException, NoTypeConversionAvailableException, IOException, InvalidPayloadException {
 
         Object element = graph;
-        if (partialClass != null && getPartNamespace() != null) {
-            element = new JAXBElement<Object>(getPartNamespace(), partialClass, graph);
+        QName  partNamespaceOnDataFormat = getPartNamespace();
+        String partClassFromHeader = (String)exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS);
+        String partNamespaceFromHeader = (String)exchange.getIn().getHeader(JaxbConstants.JAXB_PART_NAMESPACE);
+        if ((partialClass != null || partClassFromHeader != null)
+                && (partNamespaceOnDataFormat != null || partNamespaceFromHeader != null)) {
+            if (partClassFromHeader != null) {
+                try {
+                    partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
+                } catch (ClassNotFoundException e) {
+                    throw new JAXBException(e);
+                }
+            }
+            if (partNamespaceFromHeader != null) {
+                partNamespaceOnDataFormat = QName.valueOf(partNamespaceFromHeader);
+            }
+            element = new JAXBElement<Object>(partNamespaceOnDataFormat, partialClass, graph);
         }
 
         // only marshal if its possible
@@ -256,8 +270,16 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             } else {
                 xmlReader = typeConverter.convertTo(XMLStreamReader.class, stream);
             }
-            if (partialClass != null) {
+            String partClassFromHeader = (String)exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS);
+            if (partialClass != null || partClassFromHeader != null) {
                 // partial unmarshalling
+                if (partClassFromHeader != null) {
+                    try {
+                        partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClassFromHeader, Object.class);
+                    } catch (ClassNotFoundException e) {
+                        throw new JAXBException(e);
+                    }
+                }
                 answer = createUnmarshaller().unmarshal(xmlReader, partialClass);
             } else {
                 answer = createUnmarshaller().unmarshal(xmlReader);
