@@ -36,7 +36,7 @@
     <label>rest,api</label>
 
     <camel.osgi.import.before.defaults>
-      com.fasterxml.jackson.*;version="[2.4,3)"
+      com.fasterxml.jackson.*;version="[2.8,3)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.swagger.*</camel.osgi.export.pkg>
   </properties>
