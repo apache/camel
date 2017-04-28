@@ -243,7 +243,7 @@
     <google-api-services-pubsub-version>v1-rev12-1.22.0</google-api-services-pubsub-version>
     <google-truth-version>0.30</google-truth-version>
     <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
-    <groovy-version>2.4.10</groovy-version>
+    <groovy-version>2.4.11</groovy-version>
     <grpc-version>1.2.0</grpc-version>
     <gson-version>2.7</gson-version>
     <guice-version>4.0</guice-version>
