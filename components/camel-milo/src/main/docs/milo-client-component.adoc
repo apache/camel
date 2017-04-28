@@ -11,9 +11,10 @@ for this component:
 [source,xml]
 ------------------------------------------------------------
 <dependency>
-    <groupId>de.dentrassi.camel</groupId>
-    <artifactId>de.dentrassi.camel.milo</artifactId>
-    <version><!-- your Apache Camel version--></version>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-milo</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
 
