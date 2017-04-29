@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.20.0-SNAPSHOT</version>
+        <version>2.19.0</version>
     </parent>
 
     <artifactId>camel-blueprint</artifactId>
@@ -385,8 +385,8 @@
                                   <echo>Generating XSD schema</echo>
                                   <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
                                       <schema namespace="http://camel.apache.org/schema/spring" file="camel-blueprint.xsd" />
-                                      <compilerarg line="-target ${jdk.version}"/>
-                                      <compilerarg line="-source ${jdk.version}"/>
+                                      <compilerarg line="-target ${jdk.version}" />
+                                      <compilerarg line="-source ${jdk.version}" />
                                       <classpath refid="maven.compile.classpath" />
                                   </schemagen>
 

@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.20.0-SNAPSHOT</version>
+    <version>2.19.0</version>
   </parent>
 
   <artifactId>camel-spring</artifactId>
@@ -56,7 +56,7 @@
       org.apache.camel.spi.LanguageResolver;language=spel
     </camel.osgi.export.service>
     <!-- do not skip any tests by default -->
-    <platform.skip.tests/>
+    <platform.skip.tests />
   </properties>
 
   <dependencies>
@@ -588,8 +588,8 @@
                     <mkdir dir="${project.build.directory}/schema" />
                     <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
                       <schema namespace="http://camel.apache.org/schema/spring" file="camel-spring.xsd" />
-                      <compilerarg line="-target ${jdk.version}"/>
-                      <compilerarg line="-source ${jdk.version}"/>
+                      <compilerarg line="-target ${jdk.version}" />
+                      <compilerarg line="-source ${jdk.version}" />
                       <classpath refid="maven.compile.classpath" />
                     </schemagen>
                   </target>
@@ -637,14 +637,14 @@
                 <configuration>
                   <target>
                     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
-                    <path id ="source.files.list">
+                    <path id="source.files.list">
                       <fileset dir="${project.build.directory}/schema-src">
                         <include name="**/*.java" />
                       </fileset>
                     </path>
-                    <property name="source.files.property" refid="source.files.list"/>
+                    <property name="source.files.property" refid="source.files.list" />
                     <propertyregex property="schema.source.formatted" input="${source.files.property}" regexp=":" replace=" " global="true" />
-                    <property name="schema.source.files" value="${schema.source.formatted}"/>
+                    <property name="schema.source.files" value="${schema.source.formatted}" />
                     <echo>Schema files ${schema.source.files}</echo>
                   </target>
                   <exportAntProperties>true</exportAntProperties>
@@ -685,7 +685,7 @@
                   <target>
                     <echo>Copying XSD schema to be included in JAR</echo>
                     <move file="${project.basedir}/schema1.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
-                    <delete file="${project.basedir}/schema2.xsd"/>
+                    <delete file="${project.basedir}/schema2.xsd" />
                   </target>
                 </configuration>
                 <goals>
