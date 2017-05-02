@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.component.sql.stored.template.ast.InputParameter;
 import org.apache.camel.component.sql.stored.template.ast.OutParameter;
@@ -102,6 +103,26 @@ public class ParserTest extends CamelTestSupport {
     public void vendorSpecificNegativeSqlType() {
         Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${header.foo})");
         assertEquals(-1342, ((InputParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void colonInSimple() {
+
+        PropertiesComponent pc = (PropertiesComponent) context.getComponent("properties");
+        pc.setLocation("classpath:jndi.properties");
+        Exchange exchange = createExchangeWithBody(1);
+        Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${properties:java.naming.factory.initial})");
+        assertEquals("org.apache.camel.util.jndi.CamelInitialContextFactory",((InputParameter)template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
+    }
+
+    @Test
+    public void colonInLocation() {
+        Template template = parser.parseTemplate("ADDNUMBERS2(-1342 :#a:)");
+        Exchange exchange = createExchangeWithBody(1);
+
+        Map container = new HashMap();
+        container.put("a:",1);
+        assertEquals(1, ((InputParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, container));
     }
 
     @Test
