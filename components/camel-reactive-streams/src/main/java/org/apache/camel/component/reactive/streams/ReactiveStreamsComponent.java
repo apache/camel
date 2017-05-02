@@ -43,12 +43,12 @@ public class ReactiveStreamsComponent extends DefaultComponent {
     }
 
     // ****************************************
-    //
+    // Lifecycle/Implementation
     // ****************************************
 
     @Override
     protected void doStart() throws Exception {
-        // instantiate a ReactiveStreamsService
+        // force creation of ReactiveStreamsService
         getReactiveStreamsService();
 
         super.doStart();
@@ -109,11 +109,18 @@ public class ReactiveStreamsComponent extends DefaultComponent {
      * Set the type of the underlying reactive streams implementation to use. The
      * implementation is looked up from the registry or using a ServiceLoader, the
      * default implementation is DefaultCamelReactiveStreamsService
+     *
+     * @param serviceType the reactive service implementation name type
      */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
 
+    /**
+     * Lazy creation of the CamelReactiveStreamsService
+     *
+     * @return the reactive streams service
+     */
     public synchronized CamelReactiveStreamsService getReactiveStreamsService() {
         if (service == null) {
             this.service = ReactiveStreamsHelper.resolveReactiveStreamsService(
@@ -134,7 +141,7 @@ public class ReactiveStreamsComponent extends DefaultComponent {
     }
 
     // ****************************************
-    //
+    // Helpers
     // ****************************************
 
     public static final ReactiveStreamsComponent withServiceType(String serviceType) {
