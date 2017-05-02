@@ -61,15 +61,22 @@ import static org.junit.Assert.assertTrue;
 public class ReactiveStreamsAutoConfigurationTest {
     @Autowired
     private CamelContext context;
+    @Autowired
+    private CamelReactiveStreamsService reactiveStreamsService;
 
     @Test
-    public void testAutoConfiguration() throws InterruptedException {
+    public void testConfiguration() throws InterruptedException {
         CamelReactiveStreamsService service = CamelReactiveStreams.get(context);
         assertTrue(service instanceof DefaultCamelReactiveStreamsService);
+        assertEquals(service, reactiveStreamsService);
 
         ReactiveStreamsComponent component = context.getComponent(ReactiveStreamsConstants.SCHEME, ReactiveStreamsComponent.class);
         assertEquals("rs-test", component.getInternalEngineConfiguration().getThreadPoolName());
+    }
 
+    @Test
+    public void testService() throws InterruptedException {
+        CamelReactiveStreamsService service = CamelReactiveStreams.get(context);
         CountDownLatch latch = new CountDownLatch(1);
         String[] res = new String[1];
         Throwable[] error = new Throwable[1];
