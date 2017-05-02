@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsDiscardedException;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
-import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -210,10 +209,10 @@ public class CamelSubscription implements Subscription {
 
     protected void discardBuffer(List<Exchange> remaining) {
         for (Exchange data : remaining) {
-            DispatchCallback<Exchange> callback = ReactiveStreamsHelper.getCallback(data);
-            if (callback != null) {
-                callback.processed(data, new IllegalStateException("Cannot process the exchange " + data + ": subscription cancelled"));
-            }
+            ReactiveStreamsHelper.invokeDispatchCallback(
+                data,
+                new IllegalStateException("Cannot process the exchange " + data + ": subscription cancelled")
+            );
         }
     }
 
@@ -223,7 +222,7 @@ public class CamelSubscription implements Subscription {
             mutex.lock();
             if (!this.terminating && !this.terminated) {
                 Collection<Exchange> discarded = this.backpressureStrategy.update(buffer, message);
-                if (discarded.iterator().hasNext()) {
+                if (!discarded.isEmpty()) {
                     discardedMessages = new HashMap<>();
                     for (Exchange ex : discarded) {
                         discardedMessages.put(ex, "Exchange " + ex + " discarded by backpressure strategy " + this.backpressureStrategy);
@@ -239,14 +238,11 @@ public class CamelSubscription implements Subscription {
 
         // discarding outside of mutex scope
         if (discardedMessages != null) {
-            for (Map.Entry<Exchange, String> discarded : discardedMessages.entrySet()) {
-                Exchange exchange = discarded.getKey();
-                DispatchCallback<Exchange> callback = ReactiveStreamsHelper.getCallback(exchange);
-                if (callback != null) {
-                    callback.processed(
-                        exchange,
-                        new ReactiveStreamsDiscardedException("Discarded by backpressure strategy", exchange, name));
-                }
+            for (Exchange exchange: discardedMessages.keySet()) {
+                ReactiveStreamsHelper.invokeDispatchCallback(
+                    exchange,
+                    new ReactiveStreamsDiscardedException("Discarded by backpressure strategy", exchange, name)
+                );
             }
         }
 

@@ -18,7 +18,6 @@ package org.apache.camel.component.reactor.engine;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -52,8 +51,6 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
     private final ConcurrentMap<String, String> publishedUriToStream;
     private final ConcurrentMap<String, String> requestedUriToStream;
 
-    private ExecutorService workerPool;
-
     ReactorStreamsService(CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
         this.context = context;
         this.configuration = configuration;
@@ -75,12 +72,6 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
 
     @Override
     public void doStart() throws Exception {
-        this.workerPool = context.getExecutorServiceManager().newThreadPool(
-            this,
-            configuration.getThreadPoolName(),
-            configuration.getThreadPoolMinSize(),
-            configuration.getThreadPoolMaxSize()
-        );
     }
 
     @Override
@@ -90,11 +81,6 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
         }
         for (CamelSubscriber subscriber : subscribers.values()) {
             subscriber.close();
-        }
-
-        if (this.workerPool != null) {
-            this.context.getExecutorServiceManager().shutdownNow(this.workerPool);
-            this.workerPool = null;
         }
     }
 
