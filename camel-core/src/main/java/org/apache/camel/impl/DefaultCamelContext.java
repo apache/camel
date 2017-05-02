@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -302,7 +303,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ReloadStrategy reloadStrategy;
     private final RuntimeCamelCatalog runtimeCamelCatalog = new DefaultRuntimeCamelCatalog(this, true);
     private SSLContextParameters sslContextParameters;
-
+    private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(HashSet::new);
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
      * but will silently fallback and use {@link SimpleRegistry} if JNDI cannot be used.
@@ -436,8 +437,19 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Component getComponent(String name, boolean autoCreateComponents, boolean autoStart) {
-        // atomic operation to get/create a component. Avoid global locks.
-        return components.computeIfAbsent(name, comp -> initComponent(name, autoCreateComponents, autoStart));
+        // Check if the named component is already being created, that would mean
+        // that the initComponent has triggered a new getComponent
+        if (componentsInCreation.get().contains(name)) {
+            throw new IllegalStateException("Circular dependency detected, the component " + name + " is already being created");
+        }
+
+        try {
+            // atomic operation to get/create a component. Avoid global locks.
+            return components.computeIfAbsent(name, comp -> initComponent(name, autoCreateComponents, autoStart));
+        } finally {
+            // cremove the reference to the component being created
+            componentsInCreation.get().remove(name);
+        }
     }
     
     /**
@@ -450,12 +462,45 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 if (log.isDebugEnabled()) {
                     log.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
                 }
+
+                // Mark the component as being created so we can detect circular
+                // requests.
+                //
+                // In spring apps, the component resolver may trigger a new getComponent
+                // because of the underlying bean factory and as the endpoints are
+                // registered as singleton, the spring factory creates the bean
+                // and then check the type so the getComponent is always triggered.
+                //
+                // Simple circular dependency:
+                //
+                //   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+                //     <route>
+                //       <from id="twitter" uri="twitter://timeline/home?type=polling"/>
+                //       <log message="Got ${body}"/>
+                //     </route>
+                //   </camelContext>
+                //
+                // Complex circular dependency:
+                //
+                //   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+                //     <route>
+                //       <from id="log" uri="seda:test"/>
+                //       <to id="seda" uri="log:test"/>
+                //     </route>
+                //   </camelContext>
+                //
+                // This would freeze the app (lock or infinite loop).
+                //
+                // See https://issues.apache.org/jira/browse/CAMEL-11225
+                componentsInCreation.get().add(name);
+
                 component = getComponentResolver().resolveComponent(name, this);
                 if (component != null) {
                     component.setCamelContext(this);
                     postInitComponent(name, component);
                     if (autoStart && (isStarted() || isStarting())) {
-                        // If the component is looked up after the context is started, lets start it up.
+                        // If the component is looked up after the context is started,
+                        // lets start it up.
                         if (component instanceof Service) {
                             startService((Service)component);
                         }
