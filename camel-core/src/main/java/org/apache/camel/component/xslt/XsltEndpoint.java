@@ -25,6 +25,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import org.xml.sax.EntityResolver;
 
 import org.xml.sax.EntityResolver;
 
