@@ -25,7 +25,6 @@ import java.util.Set;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.context.Flag;
 
@@ -33,16 +32,8 @@ import org.infinispan.context.Flag;
 public class InfinispanConfiguration implements Cloneable {
     @UriParam
     private String hosts;
-    @UriParam(label = "producer", defaultValue = "put", enums =
-             "put,putAll,putIfAbsent,putAsync,putAllAsync,putIfAbsentAsync,"
-           + "get,"
-           + "containsKey,containsValue,"
-           + "remove,removeAsync,"
-           + "replace,replaceAsync,"
-           + "size,"
-           + "clear,clearAsync,"
-           + "query,stats")
-    private String command;
+    @UriParam(label = "producer", defaultValue = "PUT")
+    private InfinispanOperation operation = InfinispanOperation.PUT;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean sync = true;
     @UriParam(label = "consumer", javaType = "java.lang.String")
@@ -67,19 +58,19 @@ public class InfinispanConfiguration implements Cloneable {
     private Object resultHeader;
 
 
-    public String getCommand() {
-        return command;
+    public InfinispanOperation getOperation() {
+        return operation;
     }
 
     /**
      * The operation to perform.
      */
-    public void setCommand(String command) {
-        this.command = command;
+    public void setOperation(InfinispanOperation operation) {
+        this.operation = operation;
     }
 
-    public boolean hasCommand() {
-        return ObjectHelper.isNotEmpty(command);
+    public InfinispanOperation getOperationOrDefault() {
+        return this.operation != null ? operation : InfinispanOperation.PUT;
     }
 
     /**

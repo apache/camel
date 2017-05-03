@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
@@ -49,41 +50,77 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
         this(endpoint, headerSupplier, () -> null, null);
     }
 
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, boolean caseSensitive) {
+        this(endpoint, headerSupplier, () -> null, null, caseSensitive);
+    }
+
     public HeaderSelectorProducer(Endpoint endpoint, String header) {
         this(endpoint, () -> header, () -> null, null);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, String header, boolean caseSensitive) {
+        this(endpoint, () -> header, () -> null, null, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, Object target) {
         this(endpoint, () -> header, () -> null, target);
     }
 
+    public HeaderSelectorProducer(Endpoint endpoint, String header, Object target, boolean caseSensitive) {
+        this(endpoint, () -> header, () -> null, target, caseSensitive);
+    }
+
     public HeaderSelectorProducer(Endpoint endpoint,  Supplier<String> headerSupplier, Object target) {
         this(endpoint, headerSupplier, () -> null, target);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint,  Supplier<String> headerSupplier, Object target, boolean caseSensitive) {
+        this(endpoint, headerSupplier, () -> null, target, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue) {
         this(endpoint, () -> header, () -> defaultHeaderValue, null);
     }
 
+    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, boolean caseSensitive) {
+        this(endpoint, () -> header, () -> defaultHeaderValue, null, caseSensitive);
+    }
+
     public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier) {
         this(endpoint, () -> header, defaultHeaderValueSupplier, null);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier, boolean caseSensitive) {
+        this(endpoint, () -> header, defaultHeaderValueSupplier, null, caseSensitive);
     }
 
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier) {
         this(endpoint, headerSupplier, defaultHeaderValueSupplier, null);
     }
 
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier, boolean caseSensitive) {
+        this(endpoint, headerSupplier, defaultHeaderValueSupplier, null, caseSensitive);
+    }
+
     public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target) {
         this(endpoint, () -> header, () -> defaultHeaderValue, target);
     }
 
+    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target, boolean caseSensitive) {
+        this(endpoint, () -> header, () -> defaultHeaderValue, target, caseSensitive);
+    }
+
     public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier, Object target) {
+        this(endpoint, headerSupplier, defaultHeaderValueSupplier, target, true);
+    }
+
+    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Supplier<String> defaultHeaderValueSupplier, Object target, boolean caseSensitive) {
         super(endpoint);
 
         this.headerSupplier = ObjectHelper.notNull(headerSupplier, "headerSupplier");
         this.defaultHeaderValueSupplier = ObjectHelper.notNull(defaultHeaderValueSupplier, "defaultHeaderValueSupplier");
         this.target = target != null ? target : this;
-        this.handlers = new HashMap<>();
+        this.handlers = caseSensitive ?  new HashMap<>() : new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     @Override

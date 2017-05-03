@@ -19,7 +19,9 @@ package org.apache.camel.component.infinispan.springboot;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Generated;
+import org.apache.camel.component.infinispan.InfinispanComponent;
 import org.apache.camel.component.infinispan.InfinispanCustomListener;
+import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.context.Flag;
@@ -83,7 +85,7 @@ public class InfinispanComponentConfiguration {
         /**
          * The operation to perform.
          */
-        private String command = "put";
+        private InfinispanOperation operation = InfinispanOperation.PUT;
         private String hosts;
         private BasicCacheContainer cacheContainer;
         private Boolean sync = true;
@@ -126,12 +128,12 @@ public class InfinispanComponentConfiguration {
          */
         private Object resultHeader;
 
-        public String getCommand() {
-            return command;
+        public InfinispanOperation getOperation() {
+            return operation;
         }
 
-        public void setCommand(String command) {
-            this.command = command;
+        public void setOperation(InfinispanOperation operation) {
+            this.operation = operation;
         }
 
         public String getHosts() {
