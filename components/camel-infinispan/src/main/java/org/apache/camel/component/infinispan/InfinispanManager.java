@@ -21,6 +21,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.cache.impl.DecoratedCache;
@@ -165,6 +166,14 @@ public class InfinispanManager implements Service {
     }
 
     public <K, V> BasicCache<K, V> getCache(Exchange exchange, String defaultCache) {
-        return getCache(exchange.getIn().getHeader(InfinispanConstants.CACHE_NAME, defaultCache, String.class));
+        return getCache(exchange.getIn(), defaultCache);
+    }
+
+    public <K, V> BasicCache<K, V> getCache(Message message, String defaultCache) {
+        BasicCache<K, V> cache = getCache(message.getHeader(InfinispanConstants.CACHE_NAME, defaultCache, String.class));
+
+        return message.getHeader(InfinispanConstants.IGNORE_RETURN_VALUES) != null
+            ? cache
+            : InfinispanUtil.ignoreReturnValuesCache(cache);
     }
 }
