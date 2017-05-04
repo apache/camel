@@ -53,7 +53,7 @@
     <scalaxml-version>1.0.4</scalaxml-version>
 
     <maven-checkstyle-plugin-version>2.17</maven-checkstyle-plugin-version>
-    <maven-checkstyle-version>6.17</maven-checkstyle-version>
+    <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
 
     <arquillian-version>1.1.11.Final</arquillian-version>
     <hadoop2-version>2.7.2</hadoop2-version>
@@ -99,7 +99,7 @@
         </dependencies>
         <executions>
           <execution>
-            <id>validate</id>
+            <id>default-cli</id>
             <phase>validate</phase>
             <configuration>
               <includeResources>false</includeResources>
