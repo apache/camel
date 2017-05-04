@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,20 +17,14 @@
     limitations under the License.
 
 -->
-<!DOCTYPE suppressions PUBLIC
-    "-//Puppy Crawl//DTD Suppressions 1.0//EN"
-    "http://www.puppycrawl.com/dtds/suppressions_1_0.dtd">
-<suppressions>
-    <suppress checks=".*"
-              files=".+[\\\/]generated[\\\/].+\.java"
-              />
-    <suppress checks=".*"
-              files=".+[\\\/]build[\\\/]src[\\\/].+\.java"
-              />
-    <suppress checks=".*"
-              files=".+[\\\/]target[\\\/].+\.java"
-              />              
-    <suppress checks=".*"
-              files=".+[\\\/]contrib[\\\/].+\.java"
-              />
-</suppressions>
+<additionalHeaders>
+    <camel_properties_style>
+        <firstLine>## ---------------------------------------------------------------------------</firstLine>
+        <beforeEachLine>## </beforeEachLine>
+        <endLine>## ---------------------------------------------------------------------------</endLine>
+        <firstLineDetectionPattern>^## -+$</firstLineDetectionPattern>
+        <lastLineDetectionPattern>^## -+$</lastLineDetectionPattern>
+        <allowBlankLines>true</allowBlankLines>
+        <isMultiline>true</isMultiline>
+    </camel_properties_style>
+</additionalHeaders>

@@ -435,7 +435,7 @@
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
     <maven-bundle-plugin-version>3.3.0</maven-bundle-plugin-version>
     <maven-checkstyle-plugin-version>2.17</maven-checkstyle-plugin-version>
-    <maven-checkstyle-version>6.17</maven-checkstyle-version>
+    <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
     <maven-owasp-plugin-version>1.4.5</maven-owasp-plugin-version>
     <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
     <maven-jar-plugin-version>3.0.2</maven-jar-plugin-version>
@@ -4547,7 +4547,7 @@
           </dependencies>
           <executions>
             <execution>
-              <id>validate</id>
+              <id>default-cli</id>
               <phase>validate</phase>
               <configuration>
                 <includeResources>false</includeResources>
@@ -4557,8 +4557,11 @@
                 <linkXRef>false</linkXRef>
                 <suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
                 <encoding>UTF-8</encoding>
-                <sourceDirectory>${basedir}/src</sourceDirectory>
-                <excludes>**/archetype-resources/**/*.java</excludes>
+                <sourceDirectories>
+                  <sourceDirectory>${basedir}/src</sourceDirectory>
+                </sourceDirectories>
+                <includes>**/*.java,**/*.groovy,**/*.scala,**/*.properties,**/*.xml,**/*.xsd</includes>
+                <excludes>**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml</excludes>
               </configuration>
               <goals>
                 <goal>checkstyle</goal>
@@ -4846,6 +4849,26 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin-version}</version>
+        </plugin>
+        <plugin>
+          <groupId>com.mycila</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>3.0</version>
+          <configuration>
+            <header>header.txt</header>
+            <includes>
+              <include>**/*.xml</include>
+            </includes>
+            <excludes>
+            </excludes>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.camel</groupId>
+              <artifactId>camel-buildtools</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
