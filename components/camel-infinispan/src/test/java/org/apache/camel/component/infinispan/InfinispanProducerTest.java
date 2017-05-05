@@ -916,6 +916,34 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
     }
 
     @Test
+    public void testDeprecatedUriOption() throws Exception {
+        template.send("direct:put-deprecated-option", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, COMMAND_KEY);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, COMMAND_VALUE);
+            }
+        });
+        String result = (String) currentCache().get(COMMAND_KEY);
+        assertEquals(COMMAND_VALUE, result);
+        assertEquals(COMMAND_VALUE, currentCache().get(COMMAND_KEY));
+    }
+
+    @Test
+    public void testDeprecatedUriCommand() throws Exception {
+        template.send("direct:put-deprecated-command", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, COMMAND_KEY);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, COMMAND_VALUE);
+            }
+        });
+        String result = (String) currentCache().get(COMMAND_KEY);
+        assertEquals(COMMAND_VALUE, result);
+        assertEquals(COMMAND_VALUE, currentCache().get(COMMAND_KEY));
+    }
+
+    @Test
     public void clearAsyncTest() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
         currentCache().put(KEY_TWO, VALUE_TWO);
@@ -979,6 +1007,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                     .to("infinispan?cacheContainer=#cacheContainer");
                 from("direct:put")
                     .to("infinispan?cacheContainer=#cacheContainer&operation=PUT");
+                from("direct:put-deprecated-option")
+                    .to("infinispan?cacheContainer=#cacheContainer&command=PUT");
+                from("direct:put-deprecated-command")
+                    .to("infinispan?cacheContainer=#cacheContainer&command=CamelInfinispanOperationPut");
                 from("direct:putifabsent")
                     .to("infinispan?cacheContainer=#cacheContainer&operation=PUTIFABSENT");
                 from("direct:get")
