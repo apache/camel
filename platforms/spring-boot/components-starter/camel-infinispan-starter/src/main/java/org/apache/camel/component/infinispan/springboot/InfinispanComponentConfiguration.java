@@ -26,6 +26,7 @@ import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.context.Flag;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -84,6 +85,13 @@ public class InfinispanComponentConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.infinispan.InfinispanConfiguration.class;
         /**
          * The operation to perform.
+         * 
+         * @deprecated replaced by @{link setOperation}
+         */
+        @Deprecated
+        private String command = "PUT";
+        /**
+         * The operation to perform.
          */
         private InfinispanOperation operation = InfinispanOperation.PUT;
         private String hosts;
@@ -127,6 +135,17 @@ public class InfinispanComponentConfiguration {
          * named: CamelInfinispanOperationResultHeader
          */
         private Object resultHeader;
+
+        @Deprecated
+        @DeprecatedConfigurationProperty
+        public String getCommand() {
+            return command;
+        }
+
+        @Deprecated
+        public void setCommand(String command) {
+            this.command = command;
+        }
 
         public InfinispanOperation getOperation() {
             return operation;
