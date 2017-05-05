@@ -27,7 +27,6 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -47,6 +47,8 @@ import javax.annotation.Generated;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
@@ -65,6 +67,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.JavaCore;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
@@ -127,6 +132,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
      */
     private static final Pattern EXCLUDE_INNER_PATTERN = Pattern.compile("^((java\\.)|(javax\\.)|(org\\.springframework\\.context\\.ApplicationContext)|(freemarker\\.template\\.Configuration)).*");
 
+    private static final Properties FORMAT_PREFERENCES = new Properties();
+
     private static final Map<String, String> PRIMITIVEMAP;
 
     static {
@@ -140,9 +147,14 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         PRIMITIVEMAP.put("short", "java.lang.Short");
         PRIMITIVEMAP.put("double", "java.lang.Double");
         PRIMITIVEMAP.put("float", "java.lang.Float");
-    }
 
-    private static final List<String> JAVA_LANG_TYPES = Arrays.asList("Boolean", "Byte", "Character", "Class", "Double", "Float", "Integer", "Long", "Object", "Short", "String");
+        FORMAT_PREFERENCES.setProperty(JavaCore.COMPILER_SOURCE, CompilerOptions.VERSION_1_8);
+        FORMAT_PREFERENCES.setProperty(JavaCore.COMPILER_COMPLIANCE, CompilerOptions.VERSION_1_8);
+        FORMAT_PREFERENCES.setProperty(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, CompilerOptions.VERSION_1_8);
+        FORMAT_PREFERENCES.setProperty(DefaultCodeFormatterConstants.FORMATTER_BLANK_LINES_AFTER_IMPORTS, "1");
+        FORMAT_PREFERENCES.setProperty(DefaultCodeFormatterConstants.FORMATTER_INSERT_NEW_LINE_AT_END_OF_FILE_IF_MISSING, JavaCore.INSERT);
+        FORMAT_PREFERENCES.setProperty(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, JavaCore.SPACE);
+    }
 
     private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape", "camel-connector"};
 
@@ -769,7 +781,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 final PropertySource<JavaClassSource> prop = innerClass.addProperty(optionType, sourceProp.getName());
 
                 boolean anEnum;
-                Class optionClass;
+                Class<?> optionClass;
                 if (!propType.isArray()) {
                     optionClass = loadClass(projectClassLoader, optionType);
                     anEnum = optionClass.isEnum();
@@ -909,8 +921,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     // try loading class, looking for inner classes if needed
-    private Class loadClass(ClassLoader projectClassLoader, String loadClassName) throws MojoFailureException {
-        Class optionClass;
+    private Class<?> loadClass(ClassLoader projectClassLoader, String loadClassName) throws MojoFailureException {
+        Class<?> optionClass;
         while (true) {
             try {
                 optionClass = projectClassLoader.loadClass(loadClassName);
@@ -941,15 +953,17 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     protected ClassLoader getProjectClassLoader() throws MojoFailureException {
-        final List classpathElements;
+        final List<String> classpathElements;
         try {
-            classpathElements = project.getTestClasspathElements();
+            @SuppressWarnings("unchecked")
+            final List<String> tmpClasspathElements = project.getTestClasspathElements();
+            classpathElements = tmpClasspathElements;
         } catch (org.apache.maven.artifact.DependencyResolutionRequiredException e) {
             throw new MojoFailureException(e.getMessage(), e);
         }
         final URL[] urls = new URL[classpathElements.size()];
         int i = 0;
-        for (Iterator it = classpathElements.iterator(); it.hasNext(); i++) {
+        for (Iterator<String> it = classpathElements.iterator(); it.hasNext(); i++) {
             try {
                 urls[i] = new File((String) it.next()).toURI().toURL();
             } catch (MalformedURLException e) {
@@ -1557,10 +1571,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private static String sourceToString(JavaClassSource javaClass) {
-        String code = Formatter.format(javaClass);
-        // convert tabs to 4 spaces
-        code = code.replaceAll("\\t", "    ");
-        return code;
+        return Formatter.format(FORMAT_PREFERENCES, javaClass);
     }
 
     private static String loadModelJson(Set<File> jsonFiles, String modelName) {
@@ -1983,21 +1994,22 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         try {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            Map<String, Object> map = null;
+            Map<String, List<Map<String, Object>>> map = null;
             List<Map<String, Object>> properties = null;
 
             if (target.exists()) {
                 BufferedReader br = new BufferedReader(new FileReader(target));
-                map = gson.fromJson(br, Map.class);
+                map = gson.fromJson(br, new TypeToken<Map<String, List<Map<String, Object>>>>() {
+                }.getType());
 
-                properties = (List<Map<String, Object>>)map.get("properties");
+                properties = map.get("properties");
                 if (properties != null && properties.stream().anyMatch(m -> fullQualifiedName.equals(m.get("name")))) {
                     getLog().debug("No changes to existing file: " + target);
                     return;
                 }
             }
 
-            Map<String, Object> meta = new HashMap();
+            Map<String, Object> meta = new HashMap<>();
             meta.put("name", fullQualifiedName);
             meta.put("type", "java.lang.Boolean");
             meta.put("defaultValue", true);
@@ -2008,7 +2020,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
 
             if (map == null) {
-                map = new HashMap();
+                map = new HashMap<>();
             }
 
             properties.add(meta);
