@@ -852,8 +852,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected void handleException(Exchange exchange, RedeliveryData data, boolean isDeadLetterChannel) {
         Exception e = exchange.getException();
 
-        // store the original caused exception in a property, so we can restore it later
-        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+        Throwable origExceptionCaught = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        if (origExceptionCaught != null) {
+            log.error("Second Exception occured inside exception handler. Failing exchange", e);
+            exchange.setProperty(Exchange.UNIT_OF_WORK_EXHAUSTED, true);
+        } else {
+
+            // store the original caused exception in a property, so we can restore it later
+            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
 
         // find the error handler to use (if any)
         OnExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
@@ -890,6 +896,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (processor != null) {
                 data.onExceptionProcessor = processor;
             }
+        }
         }
 
         // only log if not failure handled or not an exhausted unit of work
