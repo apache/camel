@@ -22,7 +22,7 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:simpleType name="sentence">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[a-zA-Z�' ]*" />
+			<xs:pattern value="[a-zA-Z&#233;' ]*" />
 		</xs:restriction>
 	</xs:simpleType>
 </xs:schema>
