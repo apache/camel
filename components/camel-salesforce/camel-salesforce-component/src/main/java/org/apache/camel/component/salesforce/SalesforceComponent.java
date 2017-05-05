@@ -69,9 +69,13 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         + " directly on the component as well", label = "common,security")
     private SalesforceLoginConfig loginConfig;
 
+    @Metadata(description = "URL of the Salesforce instance used after authantication, by default received from"
+        + " Salesforce on successful authentication", label = "common,security")
+    private String instanceUrl;
+
     // allow fine grained login as well
-    @Metadata(description = "URL of the Salesforce instance, by default set to " + DEFAULT_LOGIN_URL,
-        label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = "true")
+    @Metadata(description = "URL of the Salesforce instance used for authentication, by default set to "
+    + DEFAULT_LOGIN_URL, label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = "true")
     private String loginUrl;
 
     @Metadata(description = "OAuth Consumer Key of the connected app configured in the Salesforce instance setup."
@@ -276,6 +280,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     protected void doStart() throws Exception {
         if (loginConfig == null) {
             loginConfig = new SalesforceLoginConfig();
+            loginConfig.setInstanceUrl(instanceUrl);
             loginConfig.setClientId(clientId);
             loginConfig.setClientSecret(clientSecret);
             loginConfig.setKeystore(keystore);
@@ -440,6 +445,10 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     public void setLoginConfig(SalesforceLoginConfig loginConfig) {
         this.loginConfig = loginConfig;
+    }
+
+    public void setInstanceUrl(String instanceUrl) {
+        this.instanceUrl = instanceUrl;
     }
 
     public void setLoginUrl(String loginUrl) {

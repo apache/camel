@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutionException;
@@ -247,7 +248,7 @@ public class SalesforceSession implements Service {
                 // don't log token or instance URL for security reasons
                 LOG.info("Login successful");
                 accessToken = token.getAccessToken();
-                instanceUrl = token.getInstanceUrl();
+                instanceUrl = Optional.ofNullable(config.getInstanceUrl()).orElse(token.getInstanceUrl());
 
                 // notify all session listeners
                 for (SalesforceSessionListener listener : listeners) {
