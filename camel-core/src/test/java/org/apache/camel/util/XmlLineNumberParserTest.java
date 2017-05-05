@@ -38,8 +38,8 @@ public class XmlLineNumberParserTest extends TestCase {
         String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
         String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
 
-        assertEquals("23", lineNumber);
-        assertEquals("48", lineNumberEnd);
+        assertEquals("24", lineNumber);
+        assertEquals("49", lineNumberEnd);
     }
 
     public void testParseCamelContext() throws Exception {
@@ -54,8 +54,8 @@ public class XmlLineNumberParserTest extends TestCase {
         String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
         String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
 
-        assertEquals("28", lineNumber);
-        assertEquals("46", lineNumberEnd);
+        assertEquals("29", lineNumber);
+        assertEquals("47", lineNumberEnd);
     }
 
     public void testParseCamelContextForceNamespace() throws Exception {
@@ -73,8 +73,8 @@ public class XmlLineNumberParserTest extends TestCase {
         String ns = node.getNamespaceURI();
         assertEquals("http://camel.apache.org/schema/spring", ns);
 
-        assertEquals("28", lineNumber);
-        assertEquals("46", lineNumberEnd);
+        assertEquals("29", lineNumber);
+        assertEquals("47", lineNumberEnd);
 
         // and there are two routes
         list = dom.getElementsByTagName("route");
@@ -84,13 +84,13 @@ public class XmlLineNumberParserTest extends TestCase {
 
         String lineNumber1 = (String) node1.getUserData(XmlLineNumberParser.LINE_NUMBER);
         String lineNumberEnd1 = (String) node1.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
-        assertEquals("30", lineNumber1);
-        assertEquals("36", lineNumberEnd1);
+        assertEquals("31", lineNumber1);
+        assertEquals("37", lineNumberEnd1);
 
         String lineNumber2 = (String) node2.getUserData(XmlLineNumberParser.LINE_NUMBER);
         String lineNumberEnd2 = (String) node2.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
-        assertEquals("38", lineNumber2);
-        assertEquals("44", lineNumberEnd2);
+        assertEquals("39", lineNumber2);
+        assertEquals("45", lineNumberEnd2);
     }
 
 }
