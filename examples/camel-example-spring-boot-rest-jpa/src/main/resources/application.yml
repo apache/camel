@@ -20,6 +20,11 @@ camel:
     # The Camel context name
     name: CamelRestJpa
 
+  component:
+    servlet:
+      mapping:
+        contextPath: /camel-rest-jpa/*
+
 mysql:
   service:
     # The host of the MySQL database server, can be customized using

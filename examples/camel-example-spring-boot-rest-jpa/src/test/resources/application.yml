@@ -19,6 +19,11 @@ camel:
   springboot:
     name: CamelRestJpa
 
+  component:
+    servlet:
+      mapping:
+        contextPath: /camel-rest-jpa/*
+
 example:
   generateOrderPeriod: 1s
   processOrderPeriod: 3s
