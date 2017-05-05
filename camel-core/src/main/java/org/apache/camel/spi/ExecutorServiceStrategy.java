@@ -247,7 +247,7 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
      * @param daemon                     whether or not the created threads is daemon or not
      * @return the created thread pool
      */
-    ExecutorService newThreadPool(Object source, final String name, int corePoolSize, int maxPoolSize,
+    ExecutorService newThreadPool(Object source, String name, int corePoolSize, int maxPoolSize,
                                   long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
                                   RejectedExecutionHandler rejectedExecutionHandler, boolean daemon);
 

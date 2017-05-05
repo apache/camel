@@ -57,7 +57,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         definition.setInheritErrorHandler(false);
     }
 
-    public abstract void run(final Runnable runnable) throws Throwable;
+    public abstract void run(Runnable runnable) throws Throwable;
 
     @Override
     public Processor wrap(RouteContext routeContext, Processor processor) {

@@ -30,6 +30,7 @@ import org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveSt
 import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsComponentAutoConfiguration;
 import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsServiceAutoConfiguration;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.reactivestreams.Publisher;
@@ -40,8 +41,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import org.junit.Assert;
 
 @RunWith(SpringRunner.class)
 @SpringBootApplication
