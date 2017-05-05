@@ -100,7 +100,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
-    public abstract Object doInvokeProxy(final Object proxy, final Method method, final Object[] args) throws Throwable;
+    public abstract Object doInvokeProxy(Object proxy, Method method, Object[] args) throws Throwable;
 
     @SuppressWarnings("unchecked")
     protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding) throws Throwable {

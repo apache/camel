@@ -200,7 +200,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         }
     }
 
-    public abstract void sendMessage(Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer, final ReleaseProducerCallback releaseProducerCallback) throws Exception;
+    public abstract void sendMessage(Exchange exchange, AsyncCallback callback, MessageProducerResources producer, ReleaseProducerCallback releaseProducerCallback) throws Exception;
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {

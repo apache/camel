@@ -95,7 +95,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
      * @param command The command to execute
      * @param principals The principals (e.g. RolePrincipal objects) to run the command under
      */
-    protected String executeCommand(final String command, Principal ... principals) {
+    protected String executeCommand(final String command, Principal... principals) {
         return executeCommand(command, COMMAND_TIMEOUT, false, principals);
     }
 
@@ -108,7 +108,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
      * @param silent     Specifies if the command should be displayed in the screen.
      * @param principals The principals (e.g. RolePrincipal objects) to run the command under
      */
-    protected String executeCommand(final String command, final Long timeout, final Boolean silent, final Principal ... principals) {
+    protected String executeCommand(final String command, final Long timeout, final Boolean silent, final Principal... principals) {
 
         waitForCommandService(command);
         String response;
