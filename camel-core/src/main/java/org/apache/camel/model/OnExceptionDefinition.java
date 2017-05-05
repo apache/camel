@@ -271,10 +271,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
                     redeliveryPolicy,
                     onRedeliveryRef,
                     onRedelivery,
-                    onExceptionOccurred
-                ).orElseThrow(
-                    () -> new IllegalArgumentException(this + " is not configured.")
-                );
+                    onExceptionOccurred)
+                .orElseThrow(() -> new IllegalArgumentException(this + " is not configured."));
         }
     }
 

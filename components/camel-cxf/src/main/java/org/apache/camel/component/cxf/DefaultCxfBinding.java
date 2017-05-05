@@ -962,7 +962,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     }
     public static Method findMethod(Class<?> cls,
                                     String name,
-                                    Class<?> ... params) {
+                                    Class<?>... params) {
         if (cls == null) {
             return null;
         }
