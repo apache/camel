@@ -470,7 +470,7 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 27 options which are listed below.
+The Salesforce component supports 28 options which are listed below.
 
 
 
@@ -479,7 +479,8 @@ The Salesforce component supports 27 options which are listed below.
 | Name | Description | Default | Type
 | **authenticationType** (security) | Explicit authentication method to be used one of USERNAME_PASSWORD REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set set this property to eliminate any ambiguity. |  | AuthenticationType
 | **loginConfig** (security) | All authentication configuration in one nested bean all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
-| **loginUrl** (security) | *Required* URL of the Salesforce instance by default set to https://login.salesforce.com | https://login.salesforce.com | String
+| **instanceUrl** (security) | URL of the Salesforce instance used after authantication by default received from Salesforce on successful authentication |  | String
+| **loginUrl** (security) | *Required* URL of the Salesforce instance used for authentication by default set to https://login.salesforce.com | https://login.salesforce.com | String
 | **clientId** (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
 | **clientSecret** (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
 | **keystore** (security) | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. |  | KeyStoreParameters
