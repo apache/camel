@@ -95,7 +95,7 @@
     <brave-zipkin-version>4.2.0</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
-    <caffeine-version>2.4.0</caffeine-version>
+    <caffeine-version>2.5.0</caffeine-version>
     <californium-version>1.0.5</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>3.2.0</cassandra-driver-version>
