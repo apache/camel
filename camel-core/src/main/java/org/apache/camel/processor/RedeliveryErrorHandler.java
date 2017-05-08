@@ -854,49 +854,54 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         Throwable origExceptionCaught = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         if (origExceptionCaught != null) {
-            log.error("Second Exception occured inside exception handler. Failing exchange", e);
+            log.error("Second Exception occurred inside exception handler. Failing exchange", e);
             exchange.setProperty(Exchange.UNIT_OF_WORK_EXHAUSTED, true);
         } else {
 
             // store the original caused exception in a property, so we can restore it later
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
 
-        // find the error handler to use (if any)
-        OnExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
-        if (exceptionPolicy != null) {
-            data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
-            data.handledPredicate = exceptionPolicy.getHandledPolicy();
-            data.continuedPredicate = exceptionPolicy.getContinuedPolicy();
-            data.retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
-            data.useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy() != null && exceptionPolicy.getUseOriginalMessagePolicy();
+            // find the error handler to use (if any)
+            OnExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
+            if (exceptionPolicy != null) {
+                data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(),
+                    data.currentRedeliveryPolicy);
+                data.handledPredicate = exceptionPolicy.getHandledPolicy();
+                data.continuedPredicate = exceptionPolicy.getContinuedPolicy();
+                data.retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
+                data.useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy() != null
+                    && exceptionPolicy.getUseOriginalMessagePolicy();
 
-            // route specific failure handler?
-            Processor processor = null;
-            UnitOfWork uow = exchange.getUnitOfWork();
-            if (uow != null && uow.getRouteContext() != null) {
-                String routeId = uow.getRouteContext().getRoute().getId();
-                processor = exceptionPolicy.getErrorHandler(routeId);
-            } else if (!exceptionPolicy.getErrorHandlers().isEmpty()) {
-                // note this should really not happen, but we have this code as a fail safe
-                // to be backwards compatible with the old behavior
-                log.warn("Cannot determine current route from Exchange with id: {}, will fallback and use first error handler.", exchange.getExchangeId());
-                processor = exceptionPolicy.getErrorHandlers().iterator().next();
-            }
-            if (processor != null) {
-                data.failureProcessor = processor;
-            }
+                // route specific failure handler?
+                Processor processor = null;
+                UnitOfWork uow = exchange.getUnitOfWork();
+                if (uow != null && uow.getRouteContext() != null) {
+                    String routeId = uow.getRouteContext().getRoute().getId();
+                    processor = exceptionPolicy.getErrorHandler(routeId);
+                } else if (!exceptionPolicy.getErrorHandlers().isEmpty()) {
+                    // note this should really not happen, but we have this code
+                    // as a fail safe
+                    // to be backwards compatible with the old behavior
+                    log.warn(
+                        "Cannot determine current route from Exchange with id: {}, will fallback and use first error handler.",
+                        exchange.getExchangeId());
+                    processor = exceptionPolicy.getErrorHandlers().iterator().next();
+                }
+                if (processor != null) {
+                    data.failureProcessor = processor;
+                }
 
-            // route specific on redelivery?
-            processor = exceptionPolicy.getOnRedelivery();
-            if (processor != null) {
-                data.onRedeliveryProcessor = processor;
+                // route specific on redelivery?
+                processor = exceptionPolicy.getOnRedelivery();
+                if (processor != null) {
+                    data.onRedeliveryProcessor = processor;
+                }
+                // route specific on exception occurred?
+                processor = exceptionPolicy.getOnExceptionOccurred();
+                if (processor != null) {
+                    data.onExceptionProcessor = processor;
+                }
             }
-            // route specific on exception occurred?
-            processor = exceptionPolicy.getOnExceptionOccurred();
-            if (processor != null) {
-                data.onExceptionProcessor = processor;
-            }
-        }
         }
 
         // only log if not failure handled or not an exhausted unit of work
