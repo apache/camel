@@ -1,0 +1,154 @@
+## Twitter Components 
+
+*Available as of Camel version 2.10*
+
+The camel-twitter consists of 4 components:
+
+* link:twitter-directmessage-component.html[Twitter Direct Message]
+* link:twitter-search-component.html[Twitter Search]
+* link:twitter-streaming-component.html[Twitter Streaming]
+* link:twitter-timeline-component.html[Twitter Timeline]
+
+The Twitter components enable the most useful features of the Twitter
+API by encapsulating http://twitter4j.org/[Twitter4J]. It allows direct,
+polling, or event-driven consumption of timelines, users, trends, and
+direct messages. Also, it supports producing messages as status updates
+or direct messages.
+
+Twitter now requires the use of OAuth for all client application
+authentication. In order to use camel-twitter with your account, you'll
+need to create a new application within Twitter at
+https://dev.twitter.com/apps/new and grant the application access to
+your account. Finally, generate your access token and secret.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-twitter</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+### Consumer endpoints
+
+Rather than the endpoints returning a List through one single route
+exchange, camel-twitter creates one route exchange per returned object.
+As an example, if "timeline/home" results in five statuses, the route
+will be executed five times (one for each Status).
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Endpoint |Context |Body Type |Notice
+|link:twitter-directmessage-component.html[twitter-directmessage] |direct, polling |twitter4j.DirectMessage | 
+
+|link:twitter-search-component.html[twitter-search] |direct, polling |twitter4j.Status | 
+
+|link:twitter-streaming-component.html[twitter-streaming] |event, polling |twitter4j.Status | 
+
+|link:twitter-timeline-component.html[twitter-timeline] |direct, polling |twitter4j.Status | 
+|=======================================================================
+
+### Producer endpoints
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|==============================
+|Endpoint |Body Type |Notice
+|link:twitter-directmessage-component.html[twitter-directmessage] |String |
+|link:twitter-search-component.html[twitter-search] |List<twitter4j.Status> |
+|link:twitter-timeline-component.html[twitter-timeline] |String |Only 'user' timelineType is supported for producer
+|==============================
+
+### Message headers
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Name |Description
+|`CamelTwitterKeywords` |This header is used by the search producer to
+change the search key words dynamically.
+
+|`CamelTwitterSearchLanguage` |*Camel 2.11.0:* This header can override
+the option of `lang` which set the search language for the search
+endpoint dynamically
+
+|`CamelTwitterCount` |*Camel 2.11.0* This header can override the option
+of `count` which sets the max twitters that will be returned.
+
+|`CamelTwitterNumberOfPages` |*Camel 2.11.0* This header can override
+the option of `numberOfPages` which sets how many pages we want to
+twitter returns.
+|=======================================================================
+
+### Message body
+
+All message bodies utilize objects provided by the Twitter4J API.
+
+### Use cases
+
+NOTE: *API Rate Limits:* Twitter REST APIs encapsulated by http://twitter4j.org/[Twitter4J] are
+subjected to https://dev.twitter.com/rest/public/rate-limiting[API Rate
+Limiting]. You can find the per method limits in the
+https://dev.twitter.com/rest/public/rate-limits[API Rate Limits]
+documentation. Note that endpoints/resources not listed in that page are
+default to 15 requests per allotted user per window.
+
+#### To create a status update within your Twitter profile, send this producer a String body:
+
+[source,java]
+----
+from("direct:foo")
+  .to("twitter-timeline://user?consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]);
+----
+
+#### To poll, every 60 sec., all statuses on your home timeline:
+
+[source,java]
+----
+from("twitter-timeline://home?type=polling&delay=60&consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]")
+  .to("bean:blah");
+----
+
+#### To search for all statuses with the keyword 'camel' only once:
+
+[source,java]
+----
+from("twitter-search://foo?type=polling&keywords=camel&consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]")
+  .to("bean:blah");
+----
+
+#### Searching using a producer with static keywords:
+
+[source,java]
+----
+from("direct:foo")
+  .to("twitter-search://foo?keywords=camel&consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]");
+----
+
+#### Searching using a producer with dynamic keywords from header:
+
+In the `bar` header we have the keywords we want to search, so we can
+assign this value to the `CamelTwitterKeywords` header:
+
+[source,java]
+----
+from("direct:foo")
+  .setHeader("CamelTwitterKeywords", header("bar"))
+  .to("twitter-search://foo?consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]");
+----
+
+### Example
+
+See also the link:twitter-websocket-example.html[Twitter Websocket
+Example].
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:twitter-websocket-example.html[Twitter Websocket Example]

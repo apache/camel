@@ -26,7 +26,7 @@ public class TwitterSalesforceRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("twitter:timeline/mentions")
+        from("twitter-timeline:mentions")
             .log("Mention ${body}")
             .process(exchange -> {
                 Status status = exchange.getIn().getBody(Status.class);

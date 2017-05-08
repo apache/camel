@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.twitter;
 
+import static org.hamcrest.core.Is.is;
+
 import java.util.Date;
 import java.util.List;
 
@@ -27,8 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hamcrest.core.Is.is;
 
 /**
  * Tests posting a twitter update with the default In Message Exchange Pattern
@@ -67,7 +67,7 @@ public class UserProducerInOnlyTest extends CamelTwitterTestSupport {
             public void configure() {
                 from("direct:tweets")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
-                        .to("twitter://timeline/user?" + getUriTokens())
+                        .to("twitter-timeline://user?" + getUriTokens())
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
             }

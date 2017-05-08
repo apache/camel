@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.twitter;
 
+import org.apache.camel.component.twitter.search.TwitterSearchComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +29,14 @@ public class SearchDirectCustomComponentTest extends CamelTwitterConsumerTestSup
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind("my-twitter", new TwitterComponent());
+        registry.bind("my-twitter", new TwitterSearchComponent());
 
         return registry;
     }
 
     @Override
     protected String getUri() {
-        return "my-twitter://search?type=direct&keywords=java&";
+        return "my-twitter://foo?type=direct&keywords=java&";
     }
 
     @Override
