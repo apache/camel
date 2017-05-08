@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 248 in 185 JAR artifacts (14 deprecated)
+Number of Components: 252 in 185 JAR artifacts (15 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -705,7 +705,19 @@ Number of Components: 248 in 185 JAR artifacts (14 deprecated)
 `timer:timerName` | 1.0 | The timer component is used for generating message exchanges when a timer fires.
 
 | link:camel-twitter/src/main/docs/twitter-component.adoc[Twitter] (camel-twitter) +
-`twitter:kind` | 2.10 | This component integrates with Twitter to send tweets or search for tweets and more.
+`twitter:kind` | 2.10 | *deprecated* Use twitter-directmessage twitter-search twitter-streaming and twitter-timeline instead of this component.
+
+| link:camel-twitter/src/main/docs/twitter-directmessage-component.adoc[Twitter Direct Message] (camel-twitter) +
+`twitter-directmessage:endpointId` | 2.10 | The Twitter Direct Message Component consumes/produces user's direct messages.
+
+| link:camel-twitter/src/main/docs/twitter-search-component.adoc[Twitter Search] (camel-twitter) +
+`twitter-search:endpointId` | 2.10 | The Twitter Search component consumes search results.
+
+| link:camel-twitter/src/main/docs/twitter-streaming-component.adoc[Twitter Streaming] (camel-twitter) +
+`twitter-streaming:streamingType` | 2.10 | The Twitter Streaming component consumes twitter statuses using Streaming API.
+
+| link:camel-twitter/src/main/docs/twitter-timeline-component.adoc[Twitter Timeline] (camel-twitter) +
+`twitter-timeline:timelineType` | 2.10 | The Twitter Timeline component consumes twitter timeline or update the status of specific user.
 
 | link:camel-undertow/src/main/docs/undertow-component.adoc[Undertow] (camel-undertow) +
 `undertow:httpURI` | 2.16 | The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
