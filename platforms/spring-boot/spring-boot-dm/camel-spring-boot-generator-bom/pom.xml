@@ -279,7 +279,7 @@
             </excludes>
           </dependencies>
 
-          <sourcePom>${basedir}/src/main/resources/target-template-pom.xml</sourcePom>
+          <sourcePom>${basedir}/target-template-pom.xml</sourcePom>
           <targetPom>${basedir}/../camel-spring-boot-dependencies/pom.xml</targetPom>
         </configuration>
 
