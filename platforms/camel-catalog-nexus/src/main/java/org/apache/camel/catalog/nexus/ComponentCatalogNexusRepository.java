@@ -64,12 +64,12 @@ public class ComponentCatalogNexusRepository extends BaseNexusRepository {
         // now download the new artifact JARs and look inside to find more details
         for (NexusArtifactDto dto : newArtifacts) {
             try {
-                log.debug("Processing new artifact: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+                logger.debug("Processing new artifact: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
                 String url = createArtifactURL(dto);
                 URL jarUrl = new URL(url);
                 addCustomCamelComponentsFromArtifact(dto, jarUrl);
             } catch (Throwable e) {
-                log.warn("Error downloading component JAR " + dto.getArtifactLink() + ". This exception is ignored. " + e.getMessage());
+                logger.warn("Error downloading component JAR " + dto.getArtifactLink() + ". This exception is ignored. " + e.getMessage());
             }
         }
     }
@@ -85,7 +85,7 @@ public class ComponentCatalogNexusRepository extends BaseNexusRepository {
      */
     protected void addComponent(NexusArtifactDto dto, CamelCatalog camelCatalog, String scheme, String javaType, String json) {
         camelCatalog.addComponent(scheme, javaType, json);
-        log.info("Added component: {}:{}:{} to Camel Catalog", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+        logger.info("Added component: {}:{}:{} to Camel Catalog", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
     }
 
     /**
@@ -94,16 +94,16 @@ public class ComponentCatalogNexusRepository extends BaseNexusRepository {
     private void addCustomCamelComponentsFromArtifact(NexusArtifactDto dto, URL jarUrl) {
         try (URLClassLoader classLoader = new URLClassLoader(new URL[]{jarUrl})) {
             // is there any custom Camel components in this library?
-            Properties properties = loadComponentProperties(classLoader);
+            Properties properties = loadComponentProperties(log, classLoader);
             String components = (String) properties.get("components");
             if (components != null) {
                 String[] part = components.split("\\s");
                 for (String scheme : part) {
                     if (!getCamelCatalog().findComponentNames().contains(scheme)) {
                         // find the class name
-                        String javaType = extractComponentJavaType(classLoader, scheme);
+                        String javaType = extractComponentJavaType(log, classLoader, scheme);
                         if (javaType != null) {
-                            String json = loadComponentJSonSchema(classLoader, scheme);
+                            String json = loadComponentJSonSchema(log, classLoader, scheme);
                             if (json != null) {
                                 addComponent(dto, getCamelCatalog(), scheme, javaType, json);
                             }
@@ -112,7 +112,7 @@ public class ComponentCatalogNexusRepository extends BaseNexusRepository {
                 }
             }
         } catch (IOException e) {
-            log.warn("Error scanning JAR for custom Camel components", e);
+            logger.warn("Error scanning JAR for custom Camel components", e);
         }
     }
 

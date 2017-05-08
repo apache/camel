@@ -30,8 +30,6 @@ import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.CollectionStringBuffer;
 import org.apache.camel.catalog.connector.CamelConnectorCatalog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.extractComponentJavaType;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentJSonSchema;
@@ -43,9 +41,16 @@ import static org.apache.camel.catalog.maven.ConnectorArtifactHelper.loadJSonSch
  */
 public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultMavenArtifactProvider.class);
-
     private String cacheDirectory;
+    private boolean log;
+
+    /**
+     * Sets whether to log errors and warnings to System.out.
+     * By default nothing is logged.
+     */
+    public void setLog(boolean log) {
+        this.log = log;
+    }
 
     @Override
     public void setCacheDirectory(String directory) {
@@ -67,7 +72,9 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
         try {
             if (cacheDirectory != null) {
-                LOG.debug("Using cache directory: {}", cacheDirectory);
+                if (log) {
+                    System.out.println("DEBUG: Using cache directory: " + cacheDirectory);
+                }
                 System.setProperty("grape.root", cacheDirectory);
             }
 
@@ -84,7 +91,9 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                 param.put("validate", false);
                 param.put("transitive", false);
 
-                LOG.debug("Downloading {}:{}:{}", groupId, artifactId, version);
+                if (log) {
+                    System.out.println("Downloading " + groupId + ":" + artifactId + ":" + version);
+                }
                 Grape.grab(param);
 
                 // the classloader can load content from the downloaded JAR
@@ -97,7 +106,9 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
             }
 
         } catch (Exception e) {
-            LOG.warn("Error during add components from artifact " + groupId + ":" + artifactId + ":" + version + " due " + e.getMessage(), e);
+            if (log) {
+                System.out.println("WARN: Error during add components from artifact " + groupId + ":" + artifactId + ":" + version + " due " + e.getMessage());
+            }
         }
 
         return names;
@@ -105,7 +116,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
     protected void scanCamelComponents(CamelCatalog camelCatalog, ClassLoader classLoader, Set<String> names) {
         // is there any custom Camel components in this library?
-        Properties properties = loadComponentProperties(classLoader);
+        Properties properties = loadComponentProperties(log, classLoader);
         if (properties != null) {
             String components = (String) properties.get("components");
             if (components != null) {
@@ -113,11 +124,13 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                 for (String scheme : part) {
                     if (!camelCatalog.findComponentNames().contains(scheme)) {
                         // find the class name
-                        String javaType = extractComponentJavaType(classLoader, scheme);
+                        String javaType = extractComponentJavaType(log, classLoader, scheme);
                         if (javaType != null) {
-                            String json = loadComponentJSonSchema(classLoader, scheme);
+                            String json = loadComponentJSonSchema(log, classLoader, scheme);
                             if (json != null) {
-                                LOG.debug("Adding component: {}", scheme);
+                                if (log) {
+                                    System.out.println("Adding component: " + scheme);
+                                }
                                 camelCatalog.addComponent(scheme, javaType, json);
                                 names.add(scheme);
                             }
@@ -131,7 +144,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
     protected void scanCamelConnectors(CamelConnectorCatalog camelConnectorCatalog, ClassLoader classLoader,
                                        String groupId, String artifactId, String version,
                                        Set<String> names) {
-        String[] json = loadJSonSchemas(classLoader);
+        String[] json = loadJSonSchemas(log, classLoader);
         if (json != null) {
             if (!camelConnectorCatalog.hasConnector(groupId, artifactId, version)) {
                 try {
@@ -149,13 +162,17 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                         csb.append(text);
                     }
 
-                    LOG.debug("Adding connector: {} with scheme: {}", name, scheme);
+                    if (log) {
+                        System.out.println("Adding connector: " + name + " with scheme: " + scheme);
+                    }
                     camelConnectorCatalog.addConnector(groupId, artifactId, version,
                         name, scheme, javaType, description, csb.toString(), json[0], json[1], json[2]);
 
                     names.add(name);
                 } catch (Throwable e) {
-                    LOG.warn("Error parsing Connector JSon due " + e.getMessage(), e);
+                    if (log) {
+                        System.out.println("WARN: Error parsing Connector JSon due " + e.getMessage());
+                    }
                 }
             }
         }
