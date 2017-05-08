@@ -23,28 +23,30 @@ import org.apache.camel.Producer;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.component.twitter.consumer.TwitterConsumer;
+import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
 import org.apache.camel.component.twitter.data.EndpointType;
 
 /**
- * Twitter direct endpoint
+ * Twitter direct endpoint.
+ * 
  */
+@Deprecated
 public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
-    private final String remaining;
+    private final String kind;
 
     // only TwitterEndpointPolling is annotated
     private TwitterConfiguration properties;
 
     public TwitterEndpointDirect(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
-        this.remaining = remaining;
+        this.kind = remaining;
         this.properties = properties;
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri(), remaining);
+        AbstractTwitterConsumerHandler twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri(), kind);
         TwitterConsumerDirect answer = new TwitterConsumerDirect(this, processor, twitter4jConsumer);
         configureConsumer(answer);
         return answer;
@@ -52,7 +54,7 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     @Override
     public Producer createProducer() throws Exception {
-        return TwitterHelper.createProducer(this, getEndpointUri(), remaining);
+        return TwitterHelper.createProducer(this, getEndpointUri(), kind);
     }
 
     @ManagedAttribute

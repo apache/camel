@@ -20,20 +20,21 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.TwitterEndpointPolling;
-import org.apache.camel.component.twitter.consumer.streaming.AbstractStreamingConsumer;
-import org.apache.camel.component.twitter.util.TwitterSorter;
+import org.apache.camel.component.twitter.streaming.AbstractStreamingConsumerHandler;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
  * Provides a scheduled polling consumer
  */
+@Deprecated
 public class TwitterConsumerPolling extends ScheduledPollConsumer {
 
     public static final long DEFAULT_CONSUMER_DELAY = 30 * 1000L;
-    private final TwitterConsumer twitter4jConsumer;
+    private final AbstractTwitterConsumerHandler twitter4jConsumer;
 
-    public TwitterConsumerPolling(TwitterEndpointPolling endpoint, Processor processor, TwitterConsumer twitter4jConsumer) {
+    public TwitterConsumerPolling(TwitterEndpoint endpoint, Processor processor, AbstractTwitterConsumerHandler twitter4jConsumer) {
         super(endpoint, processor);
         setDelay(DEFAULT_CONSUMER_DELAY);
         this.twitter4jConsumer = twitter4jConsumer;
@@ -47,15 +48,15 @@ public class TwitterConsumerPolling extends ScheduledPollConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (twitter4jConsumer instanceof AbstractStreamingConsumer) {
-            ((AbstractStreamingConsumer) twitter4jConsumer).start();
+        if (twitter4jConsumer instanceof AbstractStreamingConsumerHandler) {
+            ((AbstractStreamingConsumerHandler) twitter4jConsumer).start();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (twitter4jConsumer instanceof AbstractStreamingConsumer) {
-            ((AbstractStreamingConsumer) twitter4jConsumer).stop();
+        if (twitter4jConsumer instanceof AbstractStreamingConsumerHandler) {
+            ((AbstractStreamingConsumerHandler) twitter4jConsumer).stop();
         }
 
         super.doStop();

@@ -16,25 +16,32 @@
  */
 package org.apache.camel.component.twitter;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.twitter.consumer.TwitterConsumer;
-import org.apache.camel.component.twitter.consumer.directmessage.DirectMessageConsumer;
-import org.apache.camel.component.twitter.consumer.search.SearchConsumer;
-import org.apache.camel.component.twitter.consumer.streaming.FilterStreamingConsumer;
-import org.apache.camel.component.twitter.consumer.streaming.SampleStreamingConsumer;
-import org.apache.camel.component.twitter.consumer.streaming.UserStreamingConsumer;
-import org.apache.camel.component.twitter.consumer.timeline.HomeConsumer;
-import org.apache.camel.component.twitter.consumer.timeline.MentionsConsumer;
-import org.apache.camel.component.twitter.consumer.timeline.RetweetsConsumer;
-import org.apache.camel.component.twitter.consumer.timeline.UserConsumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
+import org.apache.camel.component.twitter.consumer.DefaultTwitterConsumer;
+import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
+import org.apache.camel.component.twitter.consumer.TwitterConsumerEvent;
+import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
 import org.apache.camel.component.twitter.data.ConsumerType;
 import org.apache.camel.component.twitter.data.StreamingType;
 import org.apache.camel.component.twitter.data.TimelineType;
-import org.apache.camel.component.twitter.producer.DirectMessageProducer;
-import org.apache.camel.component.twitter.producer.SearchProducer;
-import org.apache.camel.component.twitter.producer.TwitterProducer;
-import org.apache.camel.component.twitter.producer.UserProducer;
+import org.apache.camel.component.twitter.directmessage.DirectMessageConsumerHandler;
+import org.apache.camel.component.twitter.directmessage.DirectMessageProducer;
+import org.apache.camel.component.twitter.search.SearchConsumerHandler;
+import org.apache.camel.component.twitter.search.SearchProducer;
+import org.apache.camel.component.twitter.streaming.FilterStreamingConsumerHandler;
+import org.apache.camel.component.twitter.streaming.SampleStreamingConsumerHandler;
+import org.apache.camel.component.twitter.streaming.UserStreamingConsumerHandler;
+import org.apache.camel.component.twitter.timeline.HomeConsumerHandler;
+import org.apache.camel.component.twitter.timeline.MentionsConsumerHandler;
+import org.apache.camel.component.twitter.timeline.RetweetsConsumerHandler;
+import org.apache.camel.component.twitter.timeline.UserConsumerHandler;
+import org.apache.camel.component.twitter.timeline.UserProducer;
+
 import twitter4j.User;
 
 public final class TwitterHelper {
@@ -58,30 +65,31 @@ public final class TwitterHelper {
         message.setHeader(TwitterConstants.TWITTER_USER_ROLE + index, role);
     }
 
-    public static TwitterConsumer createConsumer(TwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
+    @Deprecated
+    public static AbstractTwitterConsumerHandler createConsumer(TwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
         String[] tokens = remaining.split("/");
-
+        
         if (tokens.length > 0) {
             switch (ConsumerType.fromString(tokens[0])) {
             case DIRECTMESSAGE:
-                return new DirectMessageConsumer(te);
+                return new DirectMessageConsumerHandler(te);
             case SEARCH:
                 boolean hasNoKeywords = te.getProperties().getKeywords() == null
                     || te.getProperties().getKeywords().trim().isEmpty();
                 if (hasNoKeywords) {
                     throw new IllegalArgumentException("Type set to SEARCH but no keywords were provided.");
                 } else {
-                    return new SearchConsumer(te);
+                    return new SearchConsumerHandler(te);
                 }
             case STREAMING:
                 if (tokens.length > 1) {
                     switch (StreamingType.fromString(tokens[1])) {
                     case SAMPLE:
-                        return new SampleStreamingConsumer(te);
+                        return new SampleStreamingConsumerHandler(te);
                     case FILTER:
-                        return new FilterStreamingConsumer(te);
+                        return new FilterStreamingConsumerHandler(te);
                     case USER:
-                        return new UserStreamingConsumer(te);
+                        return new UserStreamingConsumerHandler(te);
                     default:
                         break;
                     }
@@ -91,16 +99,16 @@ public final class TwitterHelper {
                 if (tokens.length > 1) {
                     switch (TimelineType.fromString(tokens[1])) {
                     case HOME:
-                        return new HomeConsumer(te);
+                        return new HomeConsumerHandler(te);
                     case MENTIONS:
-                        return new MentionsConsumer(te);
+                        return new MentionsConsumerHandler(te);
                     case RETWEETSOFME:
-                        return new RetweetsConsumer(te);
+                        return new RetweetsConsumerHandler(te);
                     case USER:
                         if (te.getProperties().getUser() == null || te.getProperties().getUser().trim().isEmpty()) {
                             throw new IllegalArgumentException("Fetch type set to USER TIMELINE but no user was set.");
                         } else {
-                            return new UserConsumer(te);
+                            return new UserConsumerHandler(te);
                         }
                     default:
                         break;
@@ -116,7 +124,24 @@ public final class TwitterHelper {
             + ". A consumer type was not provided (or an incorrect pairing was used).");
     }
 
-    public static TwitterProducer createProducer(TwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
+    public static Consumer createConsumer(Processor processor, AbstractTwitterEndpoint endpoint, AbstractTwitterConsumerHandler handler) throws Exception {
+        Consumer answer = new DefaultTwitterConsumer(endpoint, processor, handler);
+        switch (endpoint.getEndpointType()) {
+        case POLLING:
+            handler.setLastId(endpoint.getProperties().getSinceId());
+            endpoint.configureConsumer(answer);
+            break;
+        case DIRECT:
+            endpoint.configureConsumer(answer);
+            break;
+        default:
+            break;
+        }
+        return answer;
+    }
+
+    @Deprecated
+    public static Producer createProducer(TwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
         String[] tokens = remaining.split("/");
 
         if (tokens.length > 0) {

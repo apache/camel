@@ -106,7 +106,7 @@ public class TwitterWebSocketRoute extends RouteBuilder {
         tc.setConsumerSecret(consumerSecret);
 
         // poll twitter search for new tweets
-        fromF("twitter://search?delay=%s&keywords=%s", delay, searchTerm)
+        fromF("twitter-search://foo?delay=%s&keywords=%s", delay, searchTerm)
             .to("log:tweet")
             // and push tweets to all web socket subscribers on camel-tweet
             .to("websocket:camel-tweet?sendToAll=true");

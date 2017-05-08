@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.twitter;
 
-import java.util.*;
+import static org.apache.camel.ComponentVerifier.VerificationError.asAttribute;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.ComponentVerifier.VerificationError;
+import org.apache.camel.component.twitter.search.TwitterSearchComponent;
 import org.junit.Assert;
 import org.junit.Test;
-
-import static org.apache.camel.ComponentVerifier.VerificationError.asAttribute;
 
 public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
     @Override
@@ -33,8 +37,8 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
 
     @Test
     public void testConnectivity() {
-        TwitterComponent component = context().getComponent("twitter", TwitterComponent.class);
-        TwitterComponentVerifier verifier = (TwitterComponentVerifier)component.getVerifier();
+        TwitterSearchComponent component = context().getComponent("twitter-search", TwitterSearchComponent.class);
+        DefaultTwitterComponentVerifier verifier = (DefaultTwitterComponentVerifier)component.getVerifier();
 
         Map<String, Object> parameters = getParameters();
         ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.CONNECTIVITY, parameters);
@@ -44,8 +48,8 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
 
     @Test
     public void testInvalidKeyConfiguration() {
-        TwitterComponent component = context().getComponent("twitter", TwitterComponent.class);
-        TwitterComponentVerifier verifier = (TwitterComponentVerifier)component.getVerifier();
+        TwitterSearchComponent component = context().getComponent("twitter-search", TwitterSearchComponent.class);
+        DefaultTwitterComponentVerifier verifier = (DefaultTwitterComponentVerifier)component.getVerifier();
 
         Map<String, Object> parameters = getParameters();
         parameters.put("consumerKey", "invalid");
@@ -61,8 +65,8 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
 
     @Test
     public void testInvalidTokenConfiguration() {
-        TwitterComponent component = context().getComponent("twitter", TwitterComponent.class);
-        TwitterComponentVerifier verifier = (TwitterComponentVerifier)component.getVerifier();
+        TwitterSearchComponent component = context().getComponent("twitter-search", TwitterSearchComponent.class);
+        DefaultTwitterComponentVerifier verifier = (DefaultTwitterComponentVerifier)component.getVerifier();
 
         Map<String, Object> parameters = getParameters();
         parameters.put("accessToken", "invalid");
@@ -80,8 +84,8 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
 
     @Test
     public void testEmptyConfiguration() {
-        TwitterComponent component = context().getComponent("twitter", TwitterComponent.class);
-        TwitterComponentVerifier verifier = (TwitterComponentVerifier)component.getVerifier();
+        TwitterSearchComponent component = context().getComponent("twitter-search", TwitterSearchComponent.class);
+        DefaultTwitterComponentVerifier verifier = (DefaultTwitterComponentVerifier)component.getVerifier();
 
         {
             // Parameters validation
@@ -91,7 +95,7 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
             Assert.assertEquals(5, result.getErrors().size());
 
             List<String> expected = new LinkedList<>();
-            expected.add("kind");
+            expected.add("endpointId");
             expected.add("consumerKey");
             expected.add("consumerSecret");
             expected.add("accessToken");

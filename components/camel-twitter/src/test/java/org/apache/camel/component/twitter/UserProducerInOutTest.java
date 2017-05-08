@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.twitter;
 
+import static org.hamcrest.core.Is.is;
+
 import java.util.Date;
 import java.util.List;
 
@@ -29,8 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import twitter4j.Status;
-
-import static org.hamcrest.core.Is.is;
 
 /**
  * Tests posting a twitter update and getting the status update id from the Twitter API response
@@ -71,7 +71,7 @@ public class UserProducerInOutTest extends CamelTwitterTestSupport {
             public void configure() {
                 from("direct:tweets")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
-                        .inOut("twitter://timeline/user?" + getUriTokens())
+                        .inOut("twitter-timeline://user?" + getUriTokens())
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         //.transform().simple("The tweet '${body.text}' was published with the id '${body.id}'")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")

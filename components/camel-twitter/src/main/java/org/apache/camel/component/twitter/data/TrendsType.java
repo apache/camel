@@ -18,6 +18,7 @@ package org.apache.camel.component.twitter.data;
 
 import org.apache.camel.component.twitter.TwitterHelper;
 
+@Deprecated
 public enum TrendsType {
     DAILY, WEEKLY, UNKNOWN;
 

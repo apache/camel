@@ -32,8 +32,9 @@ import twitter4j.conf.ConfigurationBuilder;
 @UriParams
 public class TwitterConfiguration {
 
-    @UriPath(description = "The kind of endpoint", enums = "directmessage,search,streaming/filter,streaming/sample,streaming/user"
-            + ",timeline/home,timeline/mentions,timeline/retweetsofme,timeline/user") @Metadata(required = "true")
+    //@UriPath(description = "The kind of endpoint", enums = "directmessage,search,streaming/filter,streaming/sample,streaming/user"
+    //        + ",timeline/home,timeline/mentions,timeline/retweetsofme,timeline/user") @Metadata(required = "true")
+    @Deprecated
     private String kind;
     @UriParam(label = "consumer", defaultValue = "polling", enums = "polling,direct,event")
     private EndpointType type = EndpointType.POLLING;
@@ -161,6 +162,7 @@ public class TwitterConfiguration {
         return twitterStream;
     }
 
+    @Deprecated
     public String getKind() {
         return kind;
     }
@@ -169,6 +171,7 @@ public class TwitterConfiguration {
      * What polling mode to use, direct, polling or event based.
      * The event mode is only supported when the endpoint kind is event based.
      */
+    @Deprecated
     public void setKind(String kind) {
         this.kind = kind;
     }

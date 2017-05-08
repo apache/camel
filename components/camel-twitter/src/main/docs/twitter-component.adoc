@@ -1,6 +1,17 @@
-## Twitter Component
+## Twitter Component (deprecated)
 
 *Available as of Camel version 2.10*
+
+[IMPORTANT]
+====================================================================================
+The composite twitter component has been deprecated. Use individual component for directmessage, search, streaming and timeline.
+
+* link:twitter.html[Twitter Components]
+  ** link:twitter-directmessage-component.html[Twitter Direct Message]
+  ** link:twitter-search-component.html[Twitter Search]
+  ** link:twitter-streaming-component.html[Twitter Streaming]
+  ** link:twitter-timeline-component.html[Twitter Timeline]
+====================================================================================
 
 The Twitter component enables the most useful features of the Twitter
 API by encapsulating http://twitter4j.org/[Twitter4J]. It allows direct,
@@ -141,7 +152,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **kind** | *Required* What polling mode to use direct polling or event based. The event mode is only supported when the endpoint kind is event based. |  | String
+| **kind** | *Required* The kind of endpoint |  | String
 |=======================================================================
 
 #### Query Parameters (43 parameters):
