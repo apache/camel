@@ -26,8 +26,6 @@ import java.util.Map;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.VersionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link VersionManager} that can load the resources using Maven to download needed artifacts from
@@ -37,12 +35,11 @@ import org.slf4j.LoggerFactory;
  */
 public class MavenVersionManager implements VersionManager {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MavenVersionManager.class);
-
     private final ClassLoader classLoader = new GroovyClassLoader();
     private String version;
     private String runtimeProviderVersion;
     private String cacheDirectory;
+    private boolean log;
 
     /**
      * Configures the directory for the download cache.
@@ -53,6 +50,14 @@ public class MavenVersionManager implements VersionManager {
      */
     public void setCacheDirectory(String directory) {
         this.cacheDirectory = directory;
+    }
+
+    /**
+     * Sets whether to log errors and warnings to System.out.
+     * By default nothing is logged.
+     */
+    public void setLog(boolean log) {
+        this.log = log;
     }
 
     /**
@@ -93,7 +98,9 @@ public class MavenVersionManager implements VersionManager {
             this.version = version;
             return true;
         } catch (Exception e) {
-            LOG.warn("Cannot load version " + version + " due " + e.getMessage());
+            if (log) {
+                System.out.print("WARN: Cannot load version " + version + " due " + e.getMessage());
+            }
             return false;
         }
     }
@@ -119,7 +126,9 @@ public class MavenVersionManager implements VersionManager {
             this.runtimeProviderVersion = version;
             return true;
         } catch (Exception e) {
-            LOG.warn("Cannot load runtime provider version " + version + " due " + e.getMessage());
+            if (log) {
+                System.out.print("WARN: Cannot load runtime provider version " + version + " due " + e.getMessage());
+            }
             return false;
         }
     }
@@ -157,8 +166,9 @@ public class MavenVersionManager implements VersionManager {
                 return found.openStream();
             }
         } catch (IOException e) {
-            // ignore
-            LOG.warn("Cannot open resource " + name + " and version " + version + " due " + e.getMessage());
+            if (log) {
+                System.out.print("WARN: Cannot open resource " + name + " and version " + version + " due " + e.getMessage());
+            }
         }
 
         return null;

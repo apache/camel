@@ -18,33 +18,30 @@ package org.apache.camel.catalog.maven;
 
 import java.io.InputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.apache.camel.catalog.CatalogHelper.loadText;
 
 public final class ConnectorArtifactHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ComponentArtifactHelper.class);
-
     private ConnectorArtifactHelper() {
     }
 
-    public static String[] loadJSonSchemas(ClassLoader classLoader) {
+    public static String[] loadJSonSchemas(boolean log, ClassLoader classLoader) {
         String[] answer = new String[3];
-        answer[0] = loadJsonSchema(classLoader, "camel-connector.json");
-        answer[1] = loadJsonSchema(classLoader, "camel-connector-schema.json");
-        answer[2] = loadJsonSchema(classLoader, "camel-component-schema.json");
+        answer[0] = loadJsonSchema(log, classLoader, "camel-connector.json");
+        answer[1] = loadJsonSchema(log, classLoader, "camel-connector-schema.json");
+        answer[2] = loadJsonSchema(log, classLoader, "camel-component-schema.json");
         return answer;
     }
 
-    private static String loadJsonSchema(ClassLoader classLoader, String jsonSchemaPath) {
+    private static String loadJsonSchema(boolean log, ClassLoader classLoader, String jsonSchemaPath) {
         try (InputStream is = classLoader.getResourceAsStream(jsonSchemaPath)) {
             if (is != null) {
                 return loadText(is);
             }
         } catch (Throwable e) {
-            LOG.warn("Error loading " + jsonSchemaPath + " file", e);
+            if (log) {
+                System.out.println("WARN: Error loading " + jsonSchemaPath + " file due " + e.getMessage());
+            }
         }
         return null;
     }
