@@ -120,7 +120,7 @@ private int jjMoveNfa_0(int startState, int curPos)
             switch(jjstateSet[--i])
             {
                case 10:
-                  if ((0x3ff609c00000000L & l) != 0L)
+                  if ((0x7ff609c00000000L & l) != 0L)
                   {
                      if (kind > 14)
                         kind = 14;
@@ -132,8 +132,6 @@ private int jjMoveNfa_0(int startState, int curPos)
                         kind = 7;
                      jjCheckNAddStates(0, 5);
                   }
-                  else if (curChar == 58)
-                     jjstateSet[jjnewStateCnt++] = 11;
                   else if (curChar == 41)
                   {
                      if (kind > 11)
@@ -158,6 +156,8 @@ private int jjMoveNfa_0(int startState, int curPos)
                         kind = 3;
                      jjCheckNAdd(0);
                   }
+                  else if (curChar == 58)
+                     jjstateSet[jjnewStateCnt++] = 11;
                   else if (curChar == 36)
                      jjstateSet[jjnewStateCnt++] = 7;
                   break;
@@ -234,7 +234,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                   jjCheckNAdd(6);
                   break;
                case 8:
-                  if ((0x3ff609d00000000L & l) != 0L)
+                  if ((0x7ff609d00000000L & l) != 0L)
                      jjAddStates(6, 7);
                   break;
                case 11:
@@ -242,7 +242,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                      jjCheckNAdd(12);
                   break;
                case 12:
-                  if ((0x3ff609c00000000L & l) == 0L)
+                  if ((0x7ff609c00000000L & l) == 0L)
                      break;
                   if (kind > 13)
                      kind = 13;
@@ -253,7 +253,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                      jjstateSet[jjnewStateCnt++] = 11;
                   break;
                case 14:
-                  if ((0x3ff609c00000000L & l) == 0L)
+                  if ((0x7ff609c00000000L & l) == 0L)
                      break;
                   if (kind > 14)
                      kind = 14;
