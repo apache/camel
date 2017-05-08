@@ -35,9 +35,9 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(CamelSubscriber.class);
 
     /**
-     * Enough to be considered unbounded. Requests are refilled once completed.
+     * Unbounded as per rule #17. No need to refill.
      */
-    private static final long MAX_INFLIGHT_UNBOUNDED = Long.MAX_VALUE / 2;
+    private static final long UNBOUNDED_REQUESTS = Long.MAX_VALUE;
 
     private ReactiveStreamsConsumer consumer;
 
@@ -104,7 +104,10 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
 
         ReactiveStreamsConsumer target;
         synchronized (this) {
-            requested--;
+            if (requested < UNBOUNDED_REQUESTS) {
+                // When there are UNBOUNDED_REQUESTS, they remain constant
+                requested--;
+            }
             target = this.consumer;
             if (target != null) {
                 inflightCount++;
@@ -131,12 +134,14 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
         synchronized (this) {
             if (consumer != null && this.subscription != null) {
                 Integer consMax = consumer.getEndpoint().getMaxInflightExchanges();
-                long max = (consMax != null && consMax > 0) ? consMax.longValue() : MAX_INFLIGHT_UNBOUNDED;
-                long newRequest = max - requested - inflightCount;
-                if (newRequest > 0) {
-                    toBeRequested = newRequest;
-                    requested += toBeRequested;
-                    subs = this.subscription;
+                long max = (consMax != null && consMax > 0) ? consMax.longValue() : UNBOUNDED_REQUESTS;
+                if (requested < UNBOUNDED_REQUESTS) {
+                    long newRequest = max - requested - inflightCount;
+                    if (newRequest > 0) {
+                        toBeRequested = newRequest;
+                        requested += toBeRequested;
+                        subs = this.subscription;
+                    }
                 }
             }
         }
