@@ -29,7 +29,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CircularComponentCreationTest {
     @Test
     public void testSimple() {
-        doTest("org/apache/camel/spring/CircularComponentCreationSimpleTest.xml");
+        try {
+            doTest("org/apache/camel/spring/CircularComponentCreationSimpleTest.xml");
+
+            Assert.fail("Exception should have been thrown");
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof RuntimeCamelException);
+            Assert.assertTrue(e.getCause() instanceof FailedToCreateRouteException);
+        }
     }
 
     @Test
@@ -47,9 +54,6 @@ public class CircularComponentCreationTest {
         try {
             applicationContext = new ClassPathXmlApplicationContext(path);
             camelContext = new SpringCamelContext(applicationContext);
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof RuntimeCamelException);
-            Assert.assertTrue(e.getCause() instanceof FailedToCreateRouteException);
         } finally {
             IOHelper.close(applicationContext);
         }
