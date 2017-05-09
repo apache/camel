@@ -77,13 +77,14 @@ with the following path and query parameters:
 | **stream** | Name of the stream channel used by the endpoint to exchange messages. |  | String
 |=======================================================================
 
-#### Query Parameters (9 parameters):
+#### Query Parameters (10 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **concurrentConsumers** (consumer) | Number of threads used to process exchanges in the Camel route. | 1 | int
+| **exchangesRefillLowWatermark** (consumer) | Set the low watermark of requested exchanges to the active subscription as percentage of the maxInflightExchanges. When the number of pending items from the upstream source is lower than the watermark new items can be requested to the subscription. If set to 0 the subscriber will request items in batches of maxInflightExchanges only after all items of the previous batch have been processed. If set to 1 the subscriber can request a new item each time an exchange is processed (chatty). Any intermediate value can be used. | 0.25 | double
 | **forwardOnComplete** (consumer) | Determines if onComplete events should be pushed to the Camel route. | false | boolean
 | **forwardOnError** (consumer) | Determines if onError events should be pushed to the Camel route. Exceptions will be set as message body. | false | boolean
 | **maxInflightExchanges** (consumer) | Maximum number of exchanges concurrently being processed by Camel. This parameter controls backpressure on the stream. Setting a non-positive value will disable backpressure. | 128 | Integer
