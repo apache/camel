@@ -266,6 +266,7 @@
     <hibernate-validator-version>5.4.1.Final</hibernate-validator-version>
     <!-- Spring 3.2.x and 4.0.x still stick to JPA 2.0. Hibernate 4.3.x upgraded to JPA 2.1. -->
     <hibernate-version>4.2.20.Final</hibernate-version>
+    <hikaricp-version>2.3.13</hikaricp-version>
     <hk2-version>2.3.0</hk2-version>
     <hk2-osgi-resource-version>1.0.1</hk2-osgi-resource-version>
     <hsqldb-version>2.3.4</hsqldb-version>
@@ -526,7 +527,7 @@
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quartz-version-range>[1.8,2)</quartz-version-range>
-    <quartz2-version>2.2.3</quartz2-version>
+    <quartz2-version>2.3.0</quartz2-version>
     <quickfixj-version>1.6.3</quickfixj-version>
     <rabbitmq-amqp-client-version>4.1.0</rabbitmq-amqp-client-version>
     <reactive-streams-version>1.0.0</reactive-streams-version>
