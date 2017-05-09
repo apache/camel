@@ -246,6 +246,7 @@
     <google-truth-version>0.30</google-truth-version>
     <grizzly-websockets-version>2.3.25</grizzly-websockets-version> 
     <grpc-version>1.2.0</grpc-version>
+    <grpc-bundle-version>1.2.0_1</grpc-bundle-version>
     <gson-version>2.7</gson-version>
     <guice-version>4.0</guice-version>
     <guice3-version>3.0</guice3-version>
