@@ -17,9 +17,9 @@
 package org.apache.camel.management;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
@@ -28,7 +28,6 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 import org.slf4j.Logger;

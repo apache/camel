@@ -16,26 +16,18 @@
  */
 package org.apache.camel.model.validator;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import org.w3c.dom.ls.LSResourceResolver;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.validator.ValidatorEndpoint;
-import org.apache.camel.component.validator.ValidatorResourceResolverFactory;
 import org.apache.camel.impl.validator.ProcessorValidator;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Validator;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an endpoint {@link Validator} which leverages camel validator component such as

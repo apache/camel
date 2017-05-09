@@ -18,10 +18,10 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
+import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.support.ServiceSupport;
 
 /**

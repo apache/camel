@@ -27,7 +27,6 @@ import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.processor.DefaultMaskingFormatter;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
-import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;

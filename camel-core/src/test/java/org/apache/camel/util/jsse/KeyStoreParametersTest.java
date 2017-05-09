@@ -26,8 +26,6 @@ import java.security.NoSuchProviderException;
 
 import org.apache.camel.CamelContext;
 
-import static org.apache.camel.TestSupport.getJavaMajorVersion;
-
 public class KeyStoreParametersTest extends AbstractJsseParametersTest {
     
     protected KeyStoreParameters createMinimalKeyStoreParameters() {

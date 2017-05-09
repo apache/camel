@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.lang.reflect.Method;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
@@ -31,7 +32,6 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
-import org.apache.camel.Produce;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ProxyInstantiationException;

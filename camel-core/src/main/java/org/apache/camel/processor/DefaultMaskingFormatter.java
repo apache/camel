@@ -16,25 +16,12 @@
  */
 package org.apache.camel.processor;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.MaskingFormatter;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 
 /**
  * The {@link MaskingFormatter} that searches the specified keywards in the source
