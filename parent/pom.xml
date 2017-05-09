@@ -278,8 +278,8 @@
     <httpclient4-version>4.5.3</httpclient4-version>
     <httpasyncclient-version>4.1.3</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
-    <hystrix-version>1.5.10</hystrix-version>
-    <hystrix-bundle-version>1.5.10_1</hystrix-bundle-version>
+    <hystrix-version>1.5.11</hystrix-version>
+    <hystrix-bundle-version>1.5.11_1</hystrix-bundle-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
