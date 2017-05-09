@@ -34,7 +34,7 @@ Where *destination* is the name of the queue.
 
 
 // component options: START
-The Stomp component supports 7 options which are listed below.
+The Stomp component supports 8 options which are listed below.
 
 
 
@@ -47,6 +47,7 @@ The Stomp component supports 7 options which are listed below.
 | **passcode** (security) | The password |  | String
 | **host** (common) | The virtual host |  | String
 | **useGlobalSslContext Parameters** (security) | Enable usage of global SSL context parameters. | false | boolean
+| **headerFilterStrategy** (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
@@ -70,7 +71,7 @@ with the following path and query parameters:
 | **destination** | *Required* Name of the queue |  | String
 |=======================================================================
 
-#### Query Parameters (9 parameters):
+#### Query Parameters (10 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -80,6 +81,7 @@ with the following path and query parameters:
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **headerFilterStrategy** (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | **login** (security) | The username |  | String
 | **passcode** (security) | The password |  | String

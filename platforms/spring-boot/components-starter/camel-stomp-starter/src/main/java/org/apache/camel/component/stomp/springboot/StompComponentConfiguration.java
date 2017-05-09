@@ -17,6 +17,7 @@
 package org.apache.camel.component.stomp.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -55,6 +56,12 @@ public class StompComponentConfiguration {
      * Enable usage of global SSL context parameters.
      */
     private Boolean useGlobalSslContextParameters = false;
+    /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
+     */
+    @NestedConfigurationProperty
+    private HeaderFilterStrategy headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -110,6 +117,15 @@ public class StompComponentConfiguration {
     public void setUseGlobalSslContextParameters(
             Boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(
+            HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
