@@ -621,8 +621,8 @@
     <spymemcached-version>2.12.0</spymemcached-version>
     <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
     <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
-    <squareup-okio-version>1.11.0</squareup-okio-version>
-    <squareup-okio-bundle-version>1.11.0_1</squareup-okio-bundle-version>
+    <squareup-okio-version>1.12.0</squareup-okio-version>
+    <squareup-okio-bundle-version>1.12.0_1</squareup-okio-bundle-version>
     <squareup-retrofit-bundle-version>1.9.0_1</squareup-retrofit-bundle-version>
     <squareup-retrofit2-bundle-version>2.1.0_1</squareup-retrofit2-bundle-version>
     <sshd-version>0.14.0</sshd-version>
