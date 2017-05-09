@@ -484,8 +484,8 @@
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
     <openwebbeans-version>1.7.2</openwebbeans-version>
     <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
-    <okclient-version>3.6.0</okclient-version>
-    <okclient-bundle-version>3.6.0_1</okclient-bundle-version>
+    <okclient-version>3.7.0</okclient-version>
+    <okclient-bundle-version>3.7.0_1</okclient-bundle-version>
     <olingo2-version>2.0.8</olingo2-version>
     <olingo-odata2-core-bundle-version>2.0.8_1</olingo-odata2-core-bundle-version>
     <olingo2-gson-version>2.4</olingo2-gson-version>
