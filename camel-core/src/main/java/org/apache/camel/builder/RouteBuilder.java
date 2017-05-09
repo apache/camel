@@ -489,8 +489,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             for (Map.Entry<String, RestConfigurationDefinition> entry : getRestConfigurations().entrySet()) {
                 RestConfiguration config = entry.getValue().asRestConfiguration(getContext());
                 if ("".equals(entry.getKey())) {
-                    if(entry.getValue().getHost()==null) {
-              	       config.setHost("");
+                    if (entry.getValue().getHost() == null) {
+                        config.setHost("");
                     }
                     camelContext.setRestConfiguration(config);
                 } else {
