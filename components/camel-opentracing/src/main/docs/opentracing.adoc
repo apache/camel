@@ -9,9 +9,7 @@ outgoing Camel messages using http://opentracing.io/[OpenTracing].
 Events (spans) are captured for incoming and outgoing messages being sent
 to/from Camel.
 
-The component uses the https://github.com/opentracing-contrib/java-globaltracer[Global Tracer]
-project to obtain an OpenTracing provider. See the http://opentracing.io/[OpenTracing]
-website for a list of supported tracers.
+See the http://opentracing.io/[OpenTracing] website for a list of supported tracers.
 
 
 ### Configuration
@@ -29,7 +27,7 @@ context. You can optionally specify a `Tracer`, or alternatively it can be impli
 [source,java]
 --------------------------------------------------------------------------------------------------
 OpenTracingTracer ottracer = new OpenTracingTracer();
-// By default it uses the Global Tracer, but you can override it with a specific OpenTracing implementation.
+// By default it uses a Noop Tracer, but you can override it with a specific OpenTracing implementation.
 ottracer.setTracer(...);
 // And then initialize the context
 ottracer.init(camelContext);
