@@ -136,8 +136,10 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
                 Integer consMax = consumer.getEndpoint().getMaxInflightExchanges();
                 long max = (consMax != null && consMax > 0) ? consMax.longValue() : UNBOUNDED_REQUESTS;
                 if (requested < UNBOUNDED_REQUESTS) {
+                    long lowWatermark = Math.max(0, Math.round(consumer.getEndpoint().getExchangesRefillLowWatermark() * max));
+                    long minRequests = Math.max(max, max - lowWatermark);
                     long newRequest = max - requested - inflightCount;
-                    if (newRequest > 0) {
+                    if (newRequest > 0 && newRequest >= minRequests) {
                         toBeRequested = newRequest;
                         requested += toBeRequested;
                         subs = this.subscription;
