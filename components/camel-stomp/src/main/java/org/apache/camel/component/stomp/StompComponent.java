@@ -20,10 +20,11 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 
-public class StompComponent extends UriEndpointComponent implements SSLContextParametersAware {
+public class StompComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private StompConfiguration configuration = new StompConfiguration();
@@ -38,6 +39,17 @@ public class StompComponent extends UriEndpointComponent implements SSLContextPa
 
     public StompComponent() {
         super(StompEndpoint.class);
+    }
+    
+    // Implementation methods
+    // -------------------------------------------------------------------------
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (getHeaderFilterStrategy() == null) {
+            setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
+        }
     }
 
     @Override
@@ -55,6 +67,7 @@ public class StompComponent extends UriEndpointComponent implements SSLContextPa
         if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
+        endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 
         return endpoint;
     }
