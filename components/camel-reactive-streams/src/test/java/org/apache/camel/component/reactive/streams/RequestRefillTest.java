@@ -19,18 +19,17 @@ package org.apache.camel.component.reactive.streams;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.component.reactive.streams.support.TestPublisher;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
+
+import reactor.core.publisher.Flux;
 
 /**
  * Test the number of refill requests that are sent to a published from a Camel consumer.
@@ -93,7 +92,7 @@ public class RequestRefillTest extends CamelTestSupport {
     }
 
     private Publisher<Long> createPublisher(final int numReqs, final List<Long> requests) {
-        return new TestPublisher<>(LongStream.rangeClosed(1, numReqs).boxed().collect(Collectors.toList()), 0, requests::add);
+        return Flux.range(1, numReqs).map(Long::valueOf).doOnRequest(requests::add);
     }
 
     @Override
