@@ -17,11 +17,12 @@
 package org.apache.camel.component.reactive.streams.springboot.test;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
+import org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsComponentAutoConfiguration;
 import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsServiceAutoConfiguration;
-import org.apache.camel.component.reactive.streams.springboot.test.support.ReactiveStreamsServiceTestSupport;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,43 +30,42 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Checking that the deadlock does not occur when the {@code CamelReactiveStreamsService} is not injected anywhere.
+ */
 @RunWith(SpringRunner.class)
 @SpringBootApplication
 @DirtiesContext
 @SpringBootTest(
-    classes = {
-        ReactiveStreamsServiceAutoConfiguration.class,
-        ReactiveStreamsComponentAutoConfiguration.class,
-        CamelAutoConfiguration.class
-    },
-    properties = {
-        "camel.component.reactive-streams.service-type=my-engine"
-    }
+        classes = {
+                ReactiveStreamsServiceAutoConfiguration.class,
+                ReactiveStreamsComponentAutoConfiguration.class,
+                CamelAutoConfiguration.class
+        }
 )
-public class ReactiveStreamsNamedEngineTest {
+public class ReactiveStreamsDefaultEngineTest {
     @Autowired
     private CamelContext context;
-    @Autowired
-    private CamelReactiveStreamsService reactiveStreamsService;
 
     @Test
-    public void testAutoConfiguration() throws InterruptedException {
+    public void testAutoConfiguration() throws Exception {
+
+        new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("reactive-streams:data")
+                        .log("${body}");
+            }
+        }.addRoutesToCamelContext(context);
+
+        Assert.assertTrue(context.getStatus().isStarted());
         CamelReactiveStreamsService service = CamelReactiveStreams.get(context);
-        Assert.assertTrue(service instanceof MyEngine);
-        Assert.assertEquals(service, reactiveStreamsService);
+        Assert.assertTrue(service instanceof DefaultCamelReactiveStreamsService);
     }
 
-    @Component("my-engine")
-    static class MyEngine extends ReactiveStreamsServiceTestSupport {
 
-        public MyEngine() {
-            super("my-engine");
-        }
-
-    }
 }
 
