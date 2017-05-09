@@ -333,44 +333,6 @@
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
-
-        <plugin>
-            <groupId>com.mycila</groupId>
-            <artifactId>license-maven-plugin</artifactId>
-            <version>${mycila-license-version}</version>
-            <configuration>
-              <header>header.txt</header>
-              <excludes>
-                <exclude>KEYS</exclude>
-                <exclude>**/NOTICE</exclude>
-                <exclude>**/LICENSE</exclude>
-                <exclude>**/NOTICE.txt</exclude>
-                <exclude>**/LICENSE.txt</exclude>
-                <exclude>doap.rdf</exclude>
-                <exclude>**/README</exclude>
-                <exclude>**/*.adoc</exclude>
-                <exclude>**/node_modules/**</exclude>
-                <exclude>**/cacerts</exclude>
-                <exclude>**/*.p12</exclude>
-                <exclude>**/*.txt</exclude>
-              </excludes>
-              <mapping>
-                <properties>CAMEL_PROPERTIES_STYLE</properties>
-                <spring.factories>CAMEL_PROPERTIES_STYLE</spring.factories>
-                <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
-              </mapping>
-              <headerDefinitions>
-                <headerDefinition>license-properties-headerdefinition.xml</headerDefinition>
-              </headerDefinitions>
-            </configuration>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-buildtools</artifactId>
-                <version>${project.version}</version>
-              </dependency>
-            </dependencies>
-        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -769,14 +731,46 @@
     </profile>
 
     <profile>
-      <id>update-license</id>
+      <id>license</id>
       <build>
-        <defaultGoal>com.mycila:license-maven-plugin:format</defaultGoal>
+        <defaultGoal>license:format</defaultGoal>
         <plugins>
           <plugin>
             <groupId>com.mycila</groupId>
             <artifactId>license-maven-plugin</artifactId>
             <version>${mycila-license-version}</version>
+            <configuration>
+              <header>header.txt</header>
+              <excludes>
+                <exclude>KEYS</exclude>
+                <exclude>**/NOTICE</exclude>
+                <exclude>**/LICENSE</exclude>
+                <exclude>**/NOTICE.txt</exclude>
+                <exclude>**/LICENSE.txt</exclude>
+                <exclude>doap.rdf</exclude>
+                <exclude>**/README</exclude>
+                <exclude>**/*.adoc</exclude>
+                <exclude>**/node_modules/**</exclude>
+                <exclude>**/cacerts</exclude>
+                <exclude>**/*.p12</exclude>
+                <exclude>**/*.txt</exclude>
+              </excludes>
+              <mapping>
+                <properties>CAMEL_PROPERTIES_STYLE</properties>
+                <spring.factories>CAMEL_PROPERTIES_STYLE</spring.factories>
+                <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
+              </mapping>
+              <headerDefinitions>
+                <headerDefinition>license-properties-headerdefinition.xml</headerDefinition>
+              </headerDefinitions>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-buildtools</artifactId>
+                <version>${project.version}</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
