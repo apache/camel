@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
-import org.apache.camel.spi.ManagementStrategy;
 
 /**
  * @version 

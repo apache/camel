@@ -17,37 +17,15 @@
 package org.apache.camel.builder;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Channel;
-import org.apache.camel.DelegateProcessor;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.transformer.DataFormatTransformer;
 import org.apache.camel.impl.transformer.ProcessorTransformer;
 import org.apache.camel.model.dataformat.StringDataFormat;
-import org.apache.camel.processor.ChoiceProcessor;
-import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.EvaluateExpressionProcessor;
-import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.processor.MulticastProcessor;
-import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.processor.Splitter;
-import org.apache.camel.processor.ThreadsProcessor;
-import org.apache.camel.processor.idempotent.IdempotentConsumer;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 

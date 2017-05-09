@@ -18,9 +18,9 @@ package org.apache.camel.model.validator;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -29,7 +29,6 @@ import org.apache.camel.model.ExpressionNodeHelper;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;
 
 /**

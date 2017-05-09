@@ -18,6 +18,7 @@ package org.apache.camel.model.rest;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Processor;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.spi.DataFormat;

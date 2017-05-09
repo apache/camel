@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;

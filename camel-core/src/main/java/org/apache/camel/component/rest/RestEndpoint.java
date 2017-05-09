@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
