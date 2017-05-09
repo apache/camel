@@ -33,20 +33,13 @@ public class TestPublisher<T> implements Publisher<T> {
 
     private long delay;
 
-    private RequestObserver requestObserver;
-
     public TestPublisher(Iterable<T> data) {
         this(data, 0L);
     }
 
     public TestPublisher(Iterable<T> data, long delay) {
-        this(data, delay, null);
-    }
-
-    public TestPublisher(Iterable<T> data, long delay, RequestObserver requestObserver) {
         this.data = data;
         this.delay = delay;
-        this.requestObserver = requestObserver;
     }
 
     @Override
@@ -61,10 +54,6 @@ public class TestPublisher<T> implements Publisher<T> {
 
             @Override
             public void request(long l) {
-                if (requestObserver != null) {
-                    requestObserver.observe(l);
-                }
-
                 this.requested.addAndGet(l);
 
                 new Thread() {
@@ -119,9 +108,4 @@ public class TestPublisher<T> implements Publisher<T> {
         });
     }
 
-    public interface RequestObserver {
-
-        void observe(long request);
-
-    }
 }
