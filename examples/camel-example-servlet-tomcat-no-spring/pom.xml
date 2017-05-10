@@ -76,6 +76,9 @@
   </dependencies>
 
   <build>
+
+    <finalName>${project.artifactId}</finalName>
+
     <plugins>
       <!-- allows running this example with mvn jetty:run -->
       <plugin>

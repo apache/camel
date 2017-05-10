@@ -12,11 +12,11 @@ This example is based on:
 First thing you'll need to do is preparing the environment.
 
 Once your Minikube node is up and running you'll need to run the following command.
-In your src/main/resource/fabric8/ folder you'll find two yaml file. Run the following command using them:
+In your src/main/resources/fabric8/ folder you'll find two yaml file. Run the following command using them:
 
 ```
-kubectl create -f src/main/resource/fabric8/hazelcast-service.yaml
-kubectl create -f src/main/resource/fabric8/hazelcast-deployment.yaml
+kubectl create -f src/main/resources/fabric8/hazelcast-service.yaml
+kubectl create -f src/main/resources/fabric8/hazelcast-deployment.yaml
 ```
 
 To check the correct startup of the Hazelcast instance run the following command:

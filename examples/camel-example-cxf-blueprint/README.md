@@ -20,7 +20,7 @@ You will need to compile this example first:
 
 To run the example on Apache Karaf 4.x or newer
 
-#### Step 1: Laraf
+#### Step 1: Karaf
 
 Launch the server
 

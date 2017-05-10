@@ -13,8 +13,8 @@ Once your Minikube node is up and running you'll need to run the following comma
 In your src/main/resource/fabric8/ folder you'll find two yaml file. Run the following command using them:
 
 ```
-kubectl create -f src/main/resource/fabric8/cassandra-service.yaml
-kubectl create -f src/main/resource/fabric8/cassandra-statefulset.yaml
+kubectl create -f src/main/resources/fabric8/cassandra-service.yaml
+kubectl create -f src/main/resources/fabric8/cassandra-statefulset.yaml
 ```
 
 To check the correct startup of the cluster run the following command:
