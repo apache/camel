@@ -119,6 +119,7 @@ public interface Exchange {
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
     String FAILURE_ROUTE_ID     = "CamelFailureRouteId";
+    String FATAL_FALLBACK_ERROR_HANDLER  = "CamelFatalFallbackErrorHandler";
     String FILE_CONTENT_TYPE    = "CamelFileContentType";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
