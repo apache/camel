@@ -1688,6 +1688,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-reactor</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-restlet</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2998,6 +3003,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-reactive-streams-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-reactor-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
