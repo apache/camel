@@ -44,6 +44,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -59,6 +60,8 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public final class IOConverter {
+
+    static Supplier<Charset> defaultCharset = Charset::defaultCharset;
 
     private static final Logger LOG = LoggerFactory.getLogger(IOConverter.class);
 
@@ -81,7 +84,7 @@ public final class IOConverter {
     public static InputStream toInputStream(File file, String charset) throws IOException {
         if (charset != null) {
             final BufferedReader reader = toReader(file, charset);
-            final Charset defaultStreamCharset = Charset.defaultCharset();
+            final Charset defaultStreamCharset = defaultCharset.get();
             return new InputStream() {
                 private ByteBuffer bufferBytes;
                 private CharBuffer bufferedChars = CharBuffer.allocate(4096);
