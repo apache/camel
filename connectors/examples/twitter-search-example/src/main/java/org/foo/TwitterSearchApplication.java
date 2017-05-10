@@ -14,25 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.foo.salesforce.contact.springboot;
+package org.foo;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Generated;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@Generated("org.apache.camel.maven.connector.SpringBootAutoConfigurationMojo")
-@ConfigurationProperties(prefix = "camel.connector.salesforce-upsert-contact")
-public class SalesforceUpsertContactConnectorConfiguration
-        extends
-            SalesforceUpsertContactConnectorConfigurationCommon {
-
+//CHECKSTYLE:OFF
+@SpringBootApplication
+public class TwitterSearchApplication {
     /**
-     * Define additional configuration definitions
+     * A main method to start this application.
      */
-    private Map<String, SalesforceUpsertContactConnectorConfigurationCommon> configurations = new HashMap<>();
-
-    public Map<String, SalesforceUpsertContactConnectorConfigurationCommon> getConfigurations() {
-        return configurations;
+    public static void main(String[] args) {
+        SpringApplication.run(TwitterSearchApplication.class, args);
     }
 }
+//CHECKSTYLE:ON

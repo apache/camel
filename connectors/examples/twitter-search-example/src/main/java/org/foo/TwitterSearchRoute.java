@@ -14,25 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.foo.mention.springboot;
+package org.foo;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Generated;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
 
-@Generated("org.apache.camel.maven.connector.SpringBootAutoConfigurationMojo")
-@ConfigurationProperties(prefix = "camel.connector.twitter-mention")
-public class TwitterMentionConnectorConfiguration
-        extends
-            TwitterMentionConnectorConfigurationCommon {
-
-    /**
-     * Define additional configuration definitions
-     */
-    private Map<String, TwitterMentionConnectorConfigurationCommon> configurations = new HashMap<>();
-
-    public Map<String, TwitterMentionConnectorConfigurationCommon> getConfigurations() {
-        return configurations;
+@Component
+public class TwitterSearchRoute extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from("tw-search")
+            .log("Got ${body}");
     }
 }

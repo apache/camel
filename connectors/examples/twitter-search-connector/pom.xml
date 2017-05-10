@@ -30,9 +30,9 @@
   </parent>
 
   <groupId>org.foo</groupId>
-  <artifactId>twitter-mention-connector</artifactId>
-  <name>Camel :: Connectors :: Examples :: Twitter Mention Connector</name>
-  <description>Twitter Mention Connector</description>
+  <artifactId>twitter-search-connector</artifactId>
+  <name>Camel :: Connectors :: Examples :: Twitter Search Connector</name>
+  <description>Twitter Search Connector</description>
   <packaging>jar</packaging>
 
   <dependencyManagement>
@@ -80,27 +80,21 @@
       <version>${spring-boot-version}</version>
     </dependency>
 
-    <!-- logging -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <version>${spring-boot-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
