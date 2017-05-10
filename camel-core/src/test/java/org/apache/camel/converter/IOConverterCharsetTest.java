@@ -26,10 +26,13 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IOConverterCharsetTest extends ContextTestSupport {
     private static final String CONTENT = "G\u00f6tzend\u00e4mmerung,Joseph und seine Br\u00fcder";
     private static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
+    private static final Logger LOG = LoggerFactory.getLogger(IOConverterCharsetTest.class);
     
     // Just set the default charset back
     protected void tearDown() throws Exception {
@@ -141,13 +144,14 @@ public class IOConverterCharsetTest extends ContextTestSupport {
     }
 
 
-    private void switchToDefaultCharset(String charset) {
+    private void switchToDefaultCharset(String charset) throws NoSuchFieldException, IllegalAccessException {
         try {
             Field defaultCharset = Charset.class.getDeclaredField("defaultCharset");
             defaultCharset.setAccessible(true);
             defaultCharset.set(null, Charset.forName(charset));
         } catch (Exception e) {
-            // Do nothing here
+            LOG.error("Error changing default charset", e);
+            throw e;
         }
     }
 }
