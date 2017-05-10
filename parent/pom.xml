@@ -408,7 +408,7 @@
     <kie-version>6.5.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kubernetes-client-version>2.2.14</kubernetes-client-version>
-    <kubernetes-model-version>1.0.72</kubernetes-model-version>
+    <kubernetes-model-version>1.0.73</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
     <libphonenumber-version>8.4.2</libphonenumber-version>
