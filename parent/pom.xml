@@ -503,8 +503,9 @@
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
     <openstack4j-version>3.0.2</openstack4j-version>
     <openstack4j-guava-version>17.0</openstack4j-guava-version>
-    <opentracing-java-agent-version>0.0.11</opentracing-java-agent-version>
+    <opentracing-java-agent-version>0.0.12</opentracing-java-agent-version>
     <opentracing-version>0.22.0</opentracing-version>
+    <opentracing-tracerresolver-version>0.1.0</opentracing-tracerresolver-version>
     <ops4j-base-version>1.5.0</ops4j-base-version>
     <optaplanner-version>6.5.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>

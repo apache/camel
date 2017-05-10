@@ -19,7 +19,6 @@ package org.apache.camel.opentracing;
 import java.net.URI;
 import java.util.EventObject;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -28,6 +27,7 @@ import io.opentracing.NoopTracerFactory;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
+import io.opentracing.contrib.tracerresolver.TracerResolver;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
@@ -147,14 +147,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         }
 
         if (tracer == null) {
-            // Attempt to load tracer using ServiceLoader
-            Iterator<Tracer> iter = ServiceLoader.load(Tracer.class).iterator();
-            if (iter.hasNext()) {
-                tracer = iter.next();
-                if (iter.hasNext()) {
-                    LOG.warn("Multiple Tracer implementations available - selected: " + tracer);
-                }
-            }
+            tracer = TracerResolver.resolveTracer();
         }
 
         if (tracer == null) {
