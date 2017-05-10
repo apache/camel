@@ -14,25 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.foo.mention.springboot;
+package org.foo.search;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Generated;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.apache.camel.component.connector.DefaultConnectorComponent;
 
-@Generated("org.apache.camel.maven.connector.SpringBootAutoConfigurationMojo")
-@ConfigurationProperties(prefix = "camel.connector.twitter-mention")
-public class TwitterMentionConnectorConfiguration
-        extends
-            TwitterMentionConnectorConfigurationCommon {
-
-    /**
-     * Define additional configuration definitions
-     */
-    private Map<String, TwitterMentionConnectorConfigurationCommon> configurations = new HashMap<>();
-
-    public Map<String, TwitterMentionConnectorConfigurationCommon> getConfigurations() {
-        return configurations;
+/**
+ * Camel twitter-mention connector
+ */
+public class TwitterSearchComponent extends DefaultConnectorComponent {
+    
+    public TwitterSearchComponent() {
+        super("twitter-search", "org.foo.search.TwitterSearchComponent");
     }
+
 }

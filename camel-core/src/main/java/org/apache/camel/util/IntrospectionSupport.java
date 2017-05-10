@@ -635,6 +635,11 @@ public final class IntrospectionSupport {
         return false;
     }
 
+    public static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
+        // allow build pattern as a setter as well
+        return setProperty(context, context != null ? context.getTypeConverter() : null, target, name, value, null, true);
+    }
+
     public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(context, typeConverter, target, name, value, null, true);

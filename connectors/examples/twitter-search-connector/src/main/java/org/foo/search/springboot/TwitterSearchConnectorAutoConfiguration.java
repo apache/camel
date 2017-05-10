@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.foo.connector.springboot;
+package org.foo.search.springboot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ import javax.annotation.Generated;
 import javax.annotation.PostConstruct;
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IntrospectionSupport;
-import org.foo.connector.PetStoreComponent;
+import org.foo.search.TwitterSearchComponent;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -41,20 +41,21 @@ import org.springframework.context.annotation.Lazy;
 @Configuration
 @ConditionalOnBean(type = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
-@EnableConfigurationProperties(PetStoreConnectorConfiguration.class)
-public class PetStoreConnectorAutoConfiguration {
+@EnableConfigurationProperties(TwitterSearchConnectorConfiguration.class)
+public class TwitterSearchConnectorAutoConfiguration {
 
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private PetStoreConnectorConfiguration configuration;
+    private TwitterSearchConnectorConfiguration configuration;
 
     @Lazy
-    @Bean(name = "petstore-component")
+    @Bean(name = "twitter-search-component")
     @ConditionalOnClass(CamelContext.class)
-    @ConditionalOnMissingBean(name = "petstore-component")
-    public PetStoreComponent configurePetStoreComponent() throws Exception {
-        PetStoreComponent connector = new PetStoreComponent();
+    @ConditionalOnMissingBean(name = "twitter-search-component")
+    public TwitterSearchComponent configureTwitterSearchComponent()
+            throws Exception {
+        TwitterSearchComponent connector = new TwitterSearchComponent();
         connector.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,
@@ -66,13 +67,13 @@ public class PetStoreConnectorAutoConfiguration {
     }
 
     @PostConstruct
-    public void postConstructPetStoreComponent() {
+    public void postConstructTwitterSearchComponent() {
         if (camelContext != null) {
             Map<String, Object> parameters = new HashMap<>();
-            for (Map.Entry<String, PetStoreConnectorConfigurationCommon> entry : configuration
+            for (Map.Entry<String, TwitterSearchConnectorConfigurationCommon> entry : configuration
                     .getConfigurations().entrySet()) {
                 parameters.clear();
-                PetStoreComponent connector = new PetStoreComponent();
+                TwitterSearchComponent connector = new TwitterSearchComponent();
                 connector.setCamelContext(camelContext);
                 try {
                     IntrospectionSupport.getProperties(entry.getValue(),

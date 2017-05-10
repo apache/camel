@@ -1,0 +1,25 @@
+{
+  "baseScheme" : "twitter",
+  "baseGroupId" : "org.apache.camel",
+  "baseArtifactId" : "camel-twitter",
+  "baseVersion" : "2.20.0-SNAPSHOT",
+  "baseJavaType" : "org.apache.camel.component.twitter.TwitterComponent",
+  "name" : "TwitterSearch",
+  "scheme" : "twitter-search",
+  "javaType" : "org.foo.search.TwitterSearchComponent",
+  "groupId" : "org.foo",
+  "artifactId" : "twitter-search-connector",
+  "version" : "2.20.0-SNAPSHOT",
+  "description" : "Search for twitter",
+  "labels" : [ "twitter" ],
+  "pattern" : "From",
+  "inputDataType" : "none",
+  "outputDataType" : "java:twitter4j.Status",
+  "componentOptions" : [ "accessToken", "accessTokenSecret", "consumerKey", "consumerSecret" ],
+  "endpointOptions" : [ "delay", "keywords", "filterOld" ],
+  "endpointValues" : {
+    "kind" : "search",
+    "type" : "POLLING",
+    "delay" : 5000
+  }
+}
