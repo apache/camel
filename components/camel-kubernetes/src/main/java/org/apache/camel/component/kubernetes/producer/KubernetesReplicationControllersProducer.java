@@ -25,7 +25,7 @@ import io.fabric8.kubernetes.api.model.ReplicationControllerList;
 import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.RollableScallableResource;
+import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -122,8 +122,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         if (!ObjectHelper.isEmpty(namespaceName)) {
 
             NonNamespaceOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, 
-            RollableScallableResource<ReplicationController, DoneableReplicationController>> replicationControllers; 
-            replicationControllers = getEndpoint().getKubernetesClient()
+            RollableScalableResource<ReplicationController, DoneableReplicationController>> replicationControllers = getEndpoint().getKubernetesClient()
                     .replicationControllers().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 replicationControllers.withLabel(entry.getKey(),
@@ -132,8 +131,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             rcList = replicationControllers.list();
         } else {
             MixedOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, 
-            RollableScallableResource<ReplicationController, DoneableReplicationController>> replicationControllers;
-            replicationControllers = getEndpoint().getKubernetesClient()
+            RollableScalableResource<ReplicationController, DoneableReplicationController>> replicationControllers = getEndpoint().getKubernetesClient()
                     .replicationControllers();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 replicationControllers.withLabel(entry.getKey(),
