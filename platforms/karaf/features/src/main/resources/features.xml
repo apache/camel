@@ -433,6 +433,15 @@
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${project.version}</bundle>
   </feature>
+  <feature name='camel-digitalocean' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.digitalocean-api-client/${digitalocean-api-client-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-digitalocean/${project.version}</bundle>
+  </feature>
   <feature name='camel-disruptor' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>The camel-disruptor feature can only run on a SUN JVM. You need to add the package sun.misc to the java platform packages in the etc/jre.properties file.</details>
     <feature version='${project.version}'>camel-core</feature>
