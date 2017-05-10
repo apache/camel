@@ -24,28 +24,91 @@ import org.apache.camel.builder.RouteBuilder;
  * Test that exceptions in an onException handler route do not go into recursion
  */
 public class OnExceptionRecursionTest extends ContextTestSupport {
-    public void testRecursion() throws Exception {
-        try {
-            template.sendBody("direct:test", "Hello World");
-        } catch (CamelExecutionException e) {
-            assertTrue("Simulate exception in route", e.getCause() instanceof IllegalStateException);
-        }
-    }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    public void testRecursionDirect() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Throwable.class).to("direct:handle");
+                onException(Throwable.class)
+                    .to("mock:c")
+                    .to("direct:handle");
 
-                from("direct:test").throwException(new IllegalStateException()).to("log:test");
+                from("direct:test")
+                    .to("mock:a")
+                    .throwException(new IllegalStateException("Bad state"))
+                    .to("mock:b");
 
-                from("direct:handle").throwException(new NullPointerException());
+                from("direct:handle")
+                    .to("mock:d")
+                    .log("Handling exception")
+                    .throwException(new NullPointerException("A NPE error here"));
             }
+        });
+        context.start();
 
-        };
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:d").expectedMessageCount(1);
 
+        try {
+            template.sendBody("direct:test", "Hello World");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            NullPointerException npe = assertIsInstanceOf(NullPointerException.class, e.getCause());
+            assertEquals("A NPE error here", npe.getMessage());
+
+            IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, npe.getSuppressed()[0]);
+            assertEquals("Bad state", ise.getMessage());
+        }
+
+        // TODO: should only trigger error handling in direct route one time
+        // assertMockEndpointsSatisfied();
+    }
+
+    public void testRecursionDirectNoErrorHandler() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(Throwable.class)
+                    .to("mock:c")
+                    .to("direct:handle");
+
+                from("direct:test")
+                    .to("mock:a")
+                    .throwException(new IllegalStateException("Bad state"))
+                    .to("mock:b");
+
+                from("direct:handle").errorHandler(noErrorHandler())
+                    .to("mock:d")
+                    .log("Handling exception")
+                    .throwException(new NullPointerException("A NPE error here"));
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:d").expectedMessageCount(1);
+
+        try {
+            template.sendBody("direct:test", "Hello World");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            NullPointerException npe = assertIsInstanceOf(NullPointerException.class, e.getCause());
+            assertEquals("A NPE error here", npe.getMessage());
+
+            IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, npe.getSuppressed()[0]);
+            assertEquals("Bad state", ise.getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
     }
 
 }
