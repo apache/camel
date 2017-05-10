@@ -62,6 +62,11 @@
       <artifactId>opentracing-noop</artifactId>
       <version>${opentracing-version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.opentracing.contrib</groupId>
+      <artifactId>opentracing-tracerresolver</artifactId>
+      <version>${opentracing-tracerresolver-version}</version>
+    </dependency>
 
     <!-- test dependencies -->
     <dependency>
