@@ -26,8 +26,8 @@
   </parent>
   <artifactId>camel-spring-boot-dependencies</artifactId>
   <packaging>pom</packaging>
-  <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: BOM</name>
-  <description>Camel Spring-Boot BOM</description>
+  <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: Dependencies BOM</name>
+  <description>Camel Spring-Boot Dependencies BOM</description>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -3359,7 +3359,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-boot-generator-bom</artifactId>
+      <artifactId>camel-spring-boot-dependencies-generator</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
       <scope>provided</scope>
