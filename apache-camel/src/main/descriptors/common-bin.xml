@@ -202,6 +202,7 @@
         <include>org.apache.camel:camel-quickfix</include>
         <include>org.apache.camel:camel-rabbitmq</include>
         <include>org.apache.camel:camel-reactive-streams</include>
+        <include>org.apache.camel:camel-reactor</include>
         <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-ribbon</include>
         <include>org.apache.camel:camel-rmi</include>
@@ -476,6 +477,7 @@
         <include>org.apache.camel:camel-quickfix-starter</include>
         <include>org.apache.camel:camel-rabbitmq-starter</include>
         <include>org.apache.camel:camel-reactive-streams-starter</include>
+        <include>org.apache.camel:camel-reactor-starter</include>
         <include>org.apache.camel:camel-restlet-starter</include>
         <include>org.apache.camel:camel-ribbon-starter</include>
         <include>org.apache.camel:camel-rmi-starter</include>
