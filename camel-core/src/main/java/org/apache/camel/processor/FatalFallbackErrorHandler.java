@@ -59,7 +59,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
             exchange.setProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, fatals);
         }
         if (fatals.search(this) > -1) {
-            LOG.warn("Circular error-handler detected - breaking out");
+            LOG.warn("Circular error-handler detected - breaking out processing Exchange: {}", exchange);
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
             // exception to be propagated back to the caller, and to break out routing
