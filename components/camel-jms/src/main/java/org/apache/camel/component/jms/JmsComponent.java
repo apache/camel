@@ -995,8 +995,8 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
             endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
         }
 
-        setProperties(endpoint.getConfiguration(), parameters);
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        setProperties(endpoint.getConfiguration(), parameters);
 
         return endpoint;
     }
