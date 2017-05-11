@@ -106,6 +106,12 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding) throws Throwable {
         final Exchange exchange = new DefaultExchange(endpoint, pattern);
 
+        //If there are no parameters to bind, return doInvoke. 
+        if (method.getParameterCount() == 0) {
+            LOG.trace("Proxy method: {} has no parameters, return doInvoke", method);
+            return doInvoke(method, exchange);
+        }
+
         //Need to check if there are mutiple arguments and the parameters have no annotations for binding,
         //then use the original bean invocation.
         
@@ -121,7 +127,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                 }
             }
         }
-
+        
         if (binding && canUseBinding) {
             // in binding mode we bind the passed in arguments (args) to the created exchange
             // using the existing Camel @Body, @Header, @Headers, @ExchangeProperty annotations
@@ -163,7 +169,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
             exchange.getIn().setBody(invocation);
         }
 
-        if (binding) {
+        if (binding && canUseBinding) {
             LOG.trace("Binding to service interface as @Body,@Header,@ExchangeProperty detected when calling proxy method: {}", method);
         } else {
             LOG.trace("No binding to service interface as @Body,@Header,@ExchangeProperty not detected. Using BeanInvocation as message body when calling proxy method: {}");
