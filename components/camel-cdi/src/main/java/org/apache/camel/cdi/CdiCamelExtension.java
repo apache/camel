@@ -120,6 +120,8 @@ public class CdiCamelExtension implements Extension {
 
     private final Set<ImportResource> resources = newSetFromMap(new ConcurrentHashMap<>());
 
+    private final CdiCamelConfigurationEvent configuration = new CdiCamelConfigurationEvent();
+
     CdiEventEndpoint<?> getEventEndpoint(String uri) {
         return cdiEventEndpoints.get(uri);
     }
@@ -239,7 +241,7 @@ public class CdiCamelExtension implements Extension {
     }
 
     private void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager manager) {
-        // The set of extra Camel CDI beans
+    	// The set of extra Camel CDI beans
         Set<SyntheticBean<?>> extraBeans = new HashSet<>();
 
         // Add beans from Camel XML resources
@@ -373,6 +375,11 @@ public class CdiCamelExtension implements Extension {
     }
 
     private void afterDeploymentValidation(@Observes AfterDeploymentValidation adv, BeanManager manager) {
+    	if(!configuration.isUnmodifiable()) {
+    		manager.fireEvent(configuration);
+    		configuration.unmodifiable();
+    	}
+    	
         Collection<CamelContext> contexts = new ArrayList<>();
         for (Bean<?> context : manager.getBeans(CamelContext.class, ANY)) {
             contexts.add(getReference(manager, CamelContext.class, context));
@@ -387,23 +394,25 @@ public class CdiCamelExtension implements Extension {
         }
 
         // Add routes to Camel contexts
-        boolean deploymentException = false;
-        Set<Bean<?>> routes = new HashSet<>(manager.getBeans(RoutesBuilder.class, ANY));
-        routes.addAll(manager.getBeans(RouteContainer.class, ANY));
-        for (Bean<?> context : manager.getBeans(CamelContext.class, ANY)) {
-            for (Bean<?> route : routes) {
-                Set<Annotation> qualifiers = new HashSet<>(context.getQualifiers());
-                qualifiers.retainAll(route.getQualifiers());
-                if (qualifiers.size() > 1) {
-                    deploymentException |= !addRouteToContext(route, context, manager, adv);
-                }
-            }
+        if(configuration.autostartRoutes()) {
+        	boolean deploymentException = false;
+        	Set<Bean<?>> routes = new HashSet<>(manager.getBeans(RoutesBuilder.class, ANY));
+        	routes.addAll(manager.getBeans(RouteContainer.class, ANY));
+        	for (Bean<?> context : manager.getBeans(CamelContext.class, ANY)) {
+        		for (Bean<?> route : routes) {
+        			Set<Annotation> qualifiers = new HashSet<>(context.getQualifiers());
+        			qualifiers.retainAll(route.getQualifiers());
+        			if (qualifiers.size() > 1) {
+        				deploymentException |= !addRouteToContext(route, context, manager, adv);
+        			}
+        		}
+        	}
+        	// Let's return to avoid starting misconfigured contexts
+        	if (deploymentException) {
+        		return;
+        	}
         }
-        // Let's return to avoid starting misconfigured contexts
-        if (deploymentException) {
-            return;
-        }
-
+        
         // Trigger eager beans instantiation (calling toString is necessary to force
         // the initialization of normal-scoped beans).
         // FIXME: This does not work with OpenWebBeans for bean whose bean type is an
