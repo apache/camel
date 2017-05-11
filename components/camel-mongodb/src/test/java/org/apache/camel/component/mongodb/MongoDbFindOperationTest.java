@@ -158,6 +158,7 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
             headers.put(MongoDbConstants.NUM_TO_SKIP, numToSkip);
             headers.put(MongoDbConstants.LIMIT, 100);
             Object result = template.requestBodyAndHeaders("direct:findAll", (Object) null, headers);
+            System.out.println(result.getClass());
             assertTrue("Result is not of type List", result instanceof List);
 
             @SuppressWarnings("unchecked")
@@ -181,6 +182,38 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
             //assertEquals("Result total size header should equal 1000", 1000, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_TOTAL_SIZE));
             assertEquals("Result page size header should equal 100", 100, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE));
         }
+    }
+    
+    @Test
+    public void testFindDistinctNoQuery() {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.count());
+        pumpDataIntoTestCollection();
+
+        Object result = template.requestBodyAndHeader("direct:findDistinct", null, MongoDbConstants.DISTINCT_QUERY_FIELD, "scientist");
+        assertTrue("Result is not of type List", result instanceof List);
+
+        @SuppressWarnings("unchecked")
+        List<String> resultList = (List<String>)result;
+        assertEquals(10, resultList.size());
+    }
+    
+    @Test
+    public void testFindDistinctWithQuery() {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.count());
+        pumpDataIntoTestCollection();
+
+        DBObject query = BasicDBObjectBuilder.start("scientist", "Einstein").get();
+        
+        Object result = template.requestBodyAndHeader("direct:findDistinct", query, MongoDbConstants.DISTINCT_QUERY_FIELD, "scientist");
+        assertTrue("Result is not of type List", result instanceof List);
+
+        @SuppressWarnings("unchecked")
+        List<String> resultList = (List<String>)result;
+        assertEquals(1, resultList.size());
+        
+        assertEquals("Einstein", resultList.get(0));
     }
     
     @Test
@@ -255,6 +288,8 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
                     .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
                     .to("mock:resultFindById");
 
+                from("direct:findDistinct").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findDistinct&dynamicity=true")
+                    .to("mock:resultFindDistinct");
             }
         };
     }

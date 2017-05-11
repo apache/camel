@@ -23,17 +23,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.mongodb.client.AggregateIterable;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
@@ -44,6 +33,18 @@ import org.apache.camel.util.ObjectHelper;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.DistinctIterable;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 
 /**
  * The MongoDb producer.
@@ -57,6 +58,7 @@ public class MongoDbProducer extends DefaultProducer {
         bind(MongoDbOperation.aggregate, createDoAggregate());
         bind(MongoDbOperation.command, createDoCommand());
         bind(MongoDbOperation.count, createDoCount());
+        bind(MongoDbOperation.findDistinct, createDoDistinct());
         bind(MongoDbOperation.findAll, createDoFindAll());
         bind(MongoDbOperation.findById, createDoFindById());
         bind(MongoDbOperation.findOneByQuery, createDoFindOneByQuery());
@@ -293,6 +295,36 @@ public class MongoDbProducer extends DefaultProducer {
         };
     }
 
+    private Function<Exchange, Object> createDoDistinct() {
+        return exchange -> {
+            Iterable<String> result = new ArrayList<>();
+            MongoCollection<BasicDBObject> dbCol = calculateCollection(exchange);
+            
+            // get the parameters out of the Exchange Header
+            String distinctFieldName = exchange.getIn().getHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, String.class);
+            BasicDBObject query = null;
+            // do not run around looking for a type converter unless there is a need for it
+            if (exchange.getIn().getBody() != null) {
+                query = exchange.getIn().getBody(BasicDBObject.class);
+            }
+            
+            DistinctIterable<String> ret = null;
+            if (query != null) {
+                ret = dbCol.distinct(distinctFieldName, query, String.class);
+            } else {
+                ret = dbCol.distinct(distinctFieldName, String.class);
+            }
+            
+            try {
+                ret.iterator().forEachRemaining(((List<String>) result)::add);
+                exchange.getOut().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<String>) result).size());
+            } finally {
+                ret.iterator().close();
+            }
+            return result;
+        };
+    }
+    
     private Function<Exchange, Object> createDoFindAll() {
         return exchange1 -> {
             Iterable<BasicDBObject> result;
