@@ -214,6 +214,7 @@ public class TelegramServiceTest {
         msg.setChatId(chatId);
         msg.setFilenameWithExtension("file.txt");
 
+
         service.sendMessage(authorizationToken, msg);
     }
 
