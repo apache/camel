@@ -62,12 +62,16 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
         setProperties(config, parameters);
 
         StompEndpoint endpoint = new StompEndpoint(uri, this, config, destination);
+        
+        // set header filter strategy and then call set properties 
+        // if user wants to add CustomHeaderFilterStrategy
+        endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        
         setProperties(endpoint, parameters);
 
         if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
-        endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 
         return endpoint;
     }

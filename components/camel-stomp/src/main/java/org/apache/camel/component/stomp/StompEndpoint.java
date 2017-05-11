@@ -144,10 +144,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
 
     protected void send(final Exchange exchange, final AsyncCallback callback) {
         final StompFrame frame = new StompFrame(SEND);
-        
-        // feature for CAMEL-7672
         populateCamelMessageHeadersToStompFrames(exchange, frame);
-        
         frame.addHeader(DESTINATION, StompFrame.encodeHeader(destination));
         //Fix for CAMEL-9506 leveraging the camel converter to do the change
         frame.content(utf8(exchange.getIn().getBody(String.class)));
