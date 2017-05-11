@@ -53,8 +53,9 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
 
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
-        getMockEndpoint("mock:c").expectedMessageCount(1);
-        getMockEndpoint("mock:d").expectedMessageCount(1);
+        // will be called twice because of the two exceptions because the circular exception is detected to break out
+        getMockEndpoint("mock:c").expectedMessageCount(2);
+        getMockEndpoint("mock:d").expectedMessageCount(2);
 
         try {
             template.sendBody("direct:test", "Hello World");
@@ -67,8 +68,7 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
             assertEquals("Bad state", ise.getMessage());
         }
 
-        // TODO: should only trigger error handling in direct route one time
-        // assertMockEndpointsSatisfied();
+         assertMockEndpointsSatisfied();
     }
 
     public void testRecursionDirectNoErrorHandler() throws Exception {
@@ -94,6 +94,8 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
 
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
+        // we will only be called once because when the route fails its not under error handler
+        // and therefore onException wont trigger the 2nd time
         getMockEndpoint("mock:c").expectedMessageCount(1);
         getMockEndpoint("mock:d").expectedMessageCount(1);
 

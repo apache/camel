@@ -24,6 +24,8 @@ import org.apache.camel.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
+
 /**
  * An {@link org.apache.camel.processor.ErrorHandler} used as a safe fallback when
  * processing by other error handlers such as the {@link org.apache.camel.model.OnExceptionDefinition}.
@@ -52,25 +54,28 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
     @Override
     @SuppressWarnings("unchecked")
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        // get the current route id we use
+        final String id = routeIdExpression().evaluate(exchange, String.class);
+
         // prevent endless looping if we end up coming back to ourself
-        Stack<Processor> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Stack.class);
+        Stack<String> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Stack.class);
         if (fatals == null) {
             fatals = new Stack<>();
             exchange.setProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, fatals);
         }
-        if (fatals.search(this) > -1) {
-            LOG.warn("Circular error-handler detected - breaking out processing Exchange: {}", exchange);
+        if (fatals.search(id) > -1) {
+            LOG.warn("Circular error-handler detected at route: {} - breaking out processing Exchange: {}", id, exchange);
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
             // exception to be propagated back to the caller, and to break out routing
             exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, false);
+            exchange.setProperty(Exchange.ERRORHANDLER_CIRCUIT_DETECTED, true);
             callback.done(true);
             return true;
         }
 
         // okay we run under this fatal error handler now
-        final Processor fatal = this;
-        fatals.push(fatal);
+        fatals.push(id);
 
         // support the asynchronous routing engine
         boolean sync = processor.process(exchange, new AsyncCallback() {
@@ -137,9 +142,9 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                     }
                 } finally {
                     // no longer running under this fatal fallback error handler
-                    Stack<Processor> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Stack.class);
+                    Stack<String> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Stack.class);
                     if (fatals != null) {
-                        fatals.remove(fatal);
+                        fatals.remove(id);
                     }
                     callback.done(doneSync);
                 }
