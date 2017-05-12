@@ -35,9 +35,8 @@ public class RestSpanDecoratorTest {
 
     @Test
     public void testGetOperation() {
-        String query = "?restletMethods=PUT";
-        String path = "/persons/(personId)";
-        String uri = path + query;
+        String path = "/persons/{personId}";
+        String uri = "rest://put:/persons:/%7BpersonId%7D?routeId=route4";
 
         Endpoint endpoint = Mockito.mock(Endpoint.class);
         Exchange exchange = Mockito.mock(Exchange.class);
@@ -52,12 +51,12 @@ public class RestSpanDecoratorTest {
 
     @Test
     public void testGetParameters() {
-        assertEquals(Arrays.asList("id1", "id2"), RestSpanDecorator.getParameters("/context/(id1)/(id2)"));
+        assertEquals(Arrays.asList("id1", "id2"), RestSpanDecorator.getParameters("/context/{id1}/{id2}"));
     }
 
     @Test
     public void testGetParametersNone() {
-        assertTrue(RestSpanDecorator.getParameters("/context/hello/world").isEmpty());
+        assertTrue(RestSpanDecorator.getParameters("rest://put:/persons/hello/world?routeId=route4").isEmpty());
     }
 
     @Test
@@ -80,7 +79,7 @@ public class RestSpanDecoratorTest {
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
 
-        Mockito.when(endpoint.getEndpointUri()).thenReturn("/context/(" + paramName + ")");
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("rest://put:/context:/%7B" + paramName + "%7D?routeId=route4");
         Mockito.when(exchange.getFromEndpoint()).thenReturn(endpoint);
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(paramName)).thenReturn(paramValue);
@@ -95,4 +94,8 @@ public class RestSpanDecoratorTest {
         assertEquals(paramValue, span.tags().get(paramName));
     }
 
+    @Test
+    public void testGetPath() {
+        assertEquals("/persons/{personId}", RestSpanDecorator.getPath("rest://put:/persons:/%7BpersonId%7D?routeId=route4"));
+    }
 }
