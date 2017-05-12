@@ -25,7 +25,9 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class ErrorOccuredInOnExceptionRoute extends ContextTestSupport {
+public class ErrorOccurredInOnExceptionRoute extends ContextTestSupport {
+
+    // TODO: fails when run individually but works with mvn clean install and run all tests
 
     @Override
     public boolean isUseRouteBuilder() {

@@ -29,9 +29,9 @@
     <version>2.20.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-spring-boot-generator-bom</artifactId>
+  <artifactId>camel-spring-boot-dependencies-generator</artifactId>
   <packaging>pom</packaging>
-  <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: BOM Generator</name>
+  <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: Dependencies BOM Generator</name>
 
   <dependencyManagement>
 

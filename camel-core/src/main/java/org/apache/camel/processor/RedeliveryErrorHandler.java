@@ -850,6 +850,24 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     protected void handleException(Exchange exchange, RedeliveryData data, boolean isDeadLetterChannel) {
         Exception e = exchange.getException();
+        // e is never null
+
+        Throwable previous = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        if (previous != null && previous != e) {
+            // a 2nd exception was thrown while handling a previous exception
+            // so we need to add the previous as suppressed by the new exception
+            // see also FatalFallbackErrorHandler
+            Throwable[] suppressed = e.getSuppressed();
+            boolean found = false;
+            for (Throwable t : suppressed) {
+                if (t == previous) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                e.addSuppressed(previous);
+            }
+        }
 
         // store the original caused exception in a property, so we can restore it later
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
