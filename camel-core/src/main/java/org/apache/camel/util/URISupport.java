@@ -41,7 +41,7 @@ public final class URISupport {
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
-    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=([^&]*)",
+    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=(RAW\\(.*\\)|[^&]*)",
             Pattern.CASE_INSENSITIVE);
     
     // Match the user password in the URI as second capture group
