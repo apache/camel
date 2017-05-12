@@ -42,6 +42,7 @@ org.apache.camel.opentracing.decorators.NettyHttpSpanDecorator
 org.apache.camel.opentracing.decorators.PahoSpanDecorator
 org.apache.camel.opentracing.decorators.RabbitmqSpanDecorator
 org.apache.camel.opentracing.decorators.RestletSpanDecorator
+org.apache.camel.opentracing.decorators.RestSpanDecorator
 org.apache.camel.opentracing.decorators.SedaSpanDecorator
 org.apache.camel.opentracing.decorators.ServletSpanDecorator
 org.apache.camel.opentracing.decorators.SjmsSpanDecorator
