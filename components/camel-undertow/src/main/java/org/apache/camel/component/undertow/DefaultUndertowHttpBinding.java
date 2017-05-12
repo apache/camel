@@ -325,7 +325,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 // we failed due an exception so print it as plain text
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
-                exception.getCause().printStackTrace(pw);
+                exception.printStackTrace(pw);
 
                 // the body should then be the stacktrace
                 body = ByteBuffer.wrap(sw.toString().getBytes());
