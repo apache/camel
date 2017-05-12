@@ -23,17 +23,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.Processor;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.bson.conversions.Bson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -45,6 +34,17 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Processor;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The MongoDb producer.
