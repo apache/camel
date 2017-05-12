@@ -20,6 +20,8 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.test.TestingUtil;
 import org.infinispan.util.ControlledTimeService;
@@ -38,7 +40,7 @@ public class InfinispanTestSupport extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        basicCacheContainer = new DefaultCacheManager();
+        basicCacheContainer = new DefaultCacheManager(new ConfigurationBuilder().build());
         basicCacheContainer.start();
         super.setUp();
     }

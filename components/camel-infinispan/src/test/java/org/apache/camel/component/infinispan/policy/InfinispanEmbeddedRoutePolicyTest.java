@@ -17,12 +17,13 @@
 package org.apache.camel.component.infinispan.policy;
 
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 
 public class InfinispanEmbeddedRoutePolicyTest extends InfinispanRoutePolicyTestBase {
 
     @Override
     protected BasicCacheContainer createCacheManager() throws Exception {
-        return new DefaultCacheManager(true);
+        return new DefaultCacheManager(new ConfigurationBuilder().build());
     }
 }
