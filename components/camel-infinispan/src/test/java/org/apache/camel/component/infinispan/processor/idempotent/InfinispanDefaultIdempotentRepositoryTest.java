@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.infinispan.processor.idempotent;
 
+import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.manager.DefaultCacheManager;
 import org.junit.Test;
 
 import static org.jgroups.util.Util.assertFalse;
 import static org.jgroups.util.Util.assertTrue;
 
-import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.infinispan.manager.DefaultCacheManager;
-
 public class InfinispanDefaultIdempotentRepositoryTest {
 
     @Test
     public void createsRepositoryUsingInternalCache() throws Exception {
-    	DefaultCacheManager basicCacheContainer = new DefaultCacheManager(new ConfigurationBuilder().build());
+        DefaultCacheManager basicCacheContainer = new DefaultCacheManager(new ConfigurationBuilder().build());
         InfinispanIdempotentRepository repository = InfinispanIdempotentRepository.infinispanIdempotentRepository(basicCacheContainer, "default");
 
         assertFalse(repository.contains("One"));

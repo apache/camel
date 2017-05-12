@@ -120,7 +120,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-            	CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
+                CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
                 Object value = currentCache().get(KEY_ONE);
                 return resultPutAsync.isDone() && value.equals(VALUE_ONE);
             }
@@ -146,7 +146,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-            	CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
+                CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
                 return resultPutAsync.isDone() && currentCache().get(KEY_ONE).toString().equals(VALUE_ONE);
             }
         }, 1000);
@@ -347,7 +347,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-            	CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
+                CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
                 return resultPutAsync.isDone() && currentCache().get(KEY_ONE).equals(VALUE_ONE);
             }
         }, 2000);
@@ -368,7 +368,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-            	CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
+                CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
                 return resultPutAsync.isDone() && currentCache().get(KEY_ONE).equals(VALUE_ONE);
             }
         }, 100);
@@ -393,7 +393,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         waitFor(new Condition() {
             @Override
             public boolean isSatisfied() throws Exception {
-            	CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
+                CompletableFuture<Object> resultPutAsync = exchange.getIn().getBody(CompletableFuture.class);
                 return resultPutAsync.isDone() && currentCache().get(KEY_ONE).equals(VALUE_ONE);
             }
         }, 500);
