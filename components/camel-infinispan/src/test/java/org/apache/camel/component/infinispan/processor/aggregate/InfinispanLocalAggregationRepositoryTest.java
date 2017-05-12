@@ -43,7 +43,7 @@ public class InfinispanLocalAggregationRepositoryTest extends CamelTestSupport {
 
     @Test
     public void checkAggregationFromOneRoute() throws Exception {
-    	Configuration conf = new ConfigurationBuilder().build();
+        Configuration conf = new ConfigurationBuilder().build();
         final InfinispanLocalAggregationRepository repoOne =
                 new InfinispanLocalAggregationRepository();
         repoOne.setConfiguration(conf);

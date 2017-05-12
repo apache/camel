@@ -40,8 +40,8 @@ public class InfinispanIdempotentRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-    	GlobalConfiguration global = new GlobalConfigurationBuilder().globalJmxStatistics().allowDuplicateDomains(true).build();
-    	Configuration conf = new ConfigurationBuilder().build();
+        GlobalConfiguration global = new GlobalConfigurationBuilder().globalJmxStatistics().allowDuplicateDomains(true).build();
+        Configuration conf = new ConfigurationBuilder().build();
         basicCacheContainer = new DefaultCacheManager(global, conf);
         basicCacheContainer.start();
         idempotentRepository = InfinispanIdempotentRepository.infinispanIdempotentRepository(basicCacheContainer, cacheName);

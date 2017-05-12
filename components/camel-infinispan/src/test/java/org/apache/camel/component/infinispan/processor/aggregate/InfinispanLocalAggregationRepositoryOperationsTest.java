@@ -45,7 +45,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
 
     @BeforeClass
     public static void starting() throws Exception {
-    	Configuration conf = new ConfigurationBuilder().build();
+        Configuration conf = new ConfigurationBuilder().build();
         aggregationRepository = new InfinispanLocalAggregationRepository();
         aggregationRepository.setConfiguration(conf);
         aggregationRepository.start();

@@ -272,11 +272,11 @@ public class InfinispanProducer extends HeaderSelectorProducer {
         final CompletableFuture<Boolean> resultRemoveAsyncKeyValue;
 
         if (ObjectHelper.isEmpty(value)) {
-        	resultRemoveAsyncKey = cache.removeAsync(key);
+            resultRemoveAsyncKey = cache.removeAsync(key);
             setResult(message, resultRemoveAsyncKey);
         } else {
-        	resultRemoveAsyncKeyValue = cache.removeAsync(key, value);
-        	setResult(message, resultRemoveAsyncKeyValue);
+            resultRemoveAsyncKeyValue = cache.removeAsync(key, value);
+            setResult(message, resultRemoveAsyncKeyValue);
         }
     }
 
@@ -339,33 +339,33 @@ public class InfinispanProducer extends HeaderSelectorProducer {
                 TimeUnit maxIdleTimeUnit =  message.getHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.class);
 
                 if (ObjectHelper.isEmpty(oldValue)) {
-                	resultWithNewValue = cache.replaceAsync(key, value, lifespan, timeUnit, maxIdle, maxIdleTimeUnit);
+                    resultWithNewValue = cache.replaceAsync(key, value, lifespan, timeUnit, maxIdle, maxIdleTimeUnit);
                     setResult(message, resultWithNewValue);
                 } else {
-                	resultWithNewAndOldValue = cache.replaceAsync(key, oldValue, value, lifespan, timeUnit, maxIdle, maxIdleTimeUnit);
+                    resultWithNewAndOldValue = cache.replaceAsync(key, oldValue, value, lifespan, timeUnit, maxIdle, maxIdleTimeUnit);
                     setResult(message, resultWithNewAndOldValue);
                 }
             } else {
                 if (ObjectHelper.isEmpty(oldValue)) {
-                	resultWithNewValue = cache.replaceAsync(key, value, lifespan, timeUnit);
+                    resultWithNewValue = cache.replaceAsync(key, value, lifespan, timeUnit);
                     setResult(message, resultWithNewValue);
                 } else {
-                	resultWithNewAndOldValue = cache.replaceAsync(key, oldValue, value, lifespan, timeUnit);
+                    resultWithNewAndOldValue = cache.replaceAsync(key, oldValue, value, lifespan, timeUnit);
                     setResult(message, resultWithNewAndOldValue);
                 }
             }
         } else {
             if (ObjectHelper.isEmpty(oldValue)) {
-            	resultWithNewValue = cache.replaceAsync(key, value);
+                resultWithNewValue = cache.replaceAsync(key, value);
                 setResult(message, resultWithNewValue);
             } else {
-            	resultWithNewAndOldValue = cache.replaceAsync(key, oldValue, value);
+                resultWithNewAndOldValue = cache.replaceAsync(key, oldValue, value);
                 setResult(message, resultWithNewAndOldValue);
             }
         }
 
     }
-
+   
     @InvokeOnHeader("SIZE")
     @InvokeOnHeader(InfinispanConstants.SIZE)
     void onSize(Message message) {
