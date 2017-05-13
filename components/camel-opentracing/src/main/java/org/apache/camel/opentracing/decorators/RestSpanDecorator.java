@@ -78,7 +78,7 @@ public class RestSpanDecorator extends AbstractHttpSpanDecorator {
                 try {
                     path = URLDecoder.decode(path, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    LOG.error("Failed to decode URL path '" + path + "'", e);
+                    LOG.debug("Failed to decode URL path '" + path + "', ignoring exception", e);
                 }
             }
         }
