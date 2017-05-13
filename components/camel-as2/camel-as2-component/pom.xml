@@ -148,8 +148,16 @@
               <apis>
                 <api>
                     <apiName>send</apiName>
-                    <proxyClass>org.apache.camel.component.as2.api.AS2SendManager</proxyClass>
+                    <proxyClass>org.apache.camel.component.as2.api.AS2ClientManager</proxyClass>
                     <fromJavadoc/>
+                </api>
+                <api>
+                    <apiName>listen</apiName>
+                    <proxyClass>org.apache.camel.component.as2.api.AS2ServerManager</proxyClass>
+	                <fromJavadoc>
+	                  <excludeMethods>stopListening</excludeMethods>
+	                </fromJavadoc>
+                    <excludeConfigNames>handler</excludeConfigNames>
                 </api>
               </apis>
               <!-- Specify global values for all APIs here, these are overridden at API level

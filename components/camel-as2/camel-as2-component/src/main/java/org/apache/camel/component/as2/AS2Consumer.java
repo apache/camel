@@ -16,17 +16,100 @@
  */
 package org.apache.camel.component.as2;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.Processor;
+import org.apache.camel.component.as2.api.AS2Interchange;
+import org.apache.camel.component.as2.api.AS2ServerConnection;
+import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.util.component.AbstractApiConsumer;
+import org.apache.camel.util.component.ApiConsumerHelper;
+import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.util.component.ApiMethodHelper;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpRequestHandler;
 
 /**
  * The AS2 consumer.
  */
-public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuration> {
+public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuration> implements HttpRequestHandler {
+    
+    private static final String HANDLER_PROPERTY = "handler";
+    private static final String SERVER_PORT_NUMBER_PROPERTY = "serverPortNumber";
+
+    private AS2ServerConnection as2ServerConnection;
+    
+    private AS2ServerManager apiProxy;
+    
+    private final ApiMethod apiMethod;
+
+    private final Map<String, Object> properties;
 
     public AS2Consumer(AS2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
+
+        apiMethod = ApiConsumerHelper.findMethod(endpoint, this);
+
+        // Add listener property to register this consumer as listener for
+        // events.
+        properties = new HashMap<String, Object>();
+        properties.putAll(endpoint.getEndpointProperties());
+        properties.put(HANDLER_PROPERTY, this);
+
+        as2ServerConnection = endpoint.getAS2ServerConnection();
+        
+        apiProxy = new AS2ServerManager(as2ServerConnection);
     }
 
+    @Override
+    public void interceptPropertyNames(Set<String> propertyNames) {
+        propertyNames.add(HANDLER_PROPERTY);
+    }
+    
+    @Override
+    protected int poll() throws Exception {
+        return 0;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        
+        // invoke the API method to start listening
+        ApiMethodHelper.invokeMethod(apiProxy, apiMethod, properties);
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        int portNumber = (Integer) properties.get(SERVER_PORT_NUMBER_PROPERTY);
+        apiProxy.stopListening(portNumber);
+
+        super.doStop();
+    }
+
+    @Override
+    public void handle(HttpRequest request, HttpResponse response, HttpContext context)
+            throws HttpException, IOException {
+        try {
+            
+            AS2Interchange as2Interchange = new AS2Interchange();
+            as2Interchange.setRequest(request);
+            as2Interchange.setResponse(response);
+            as2Interchange.setContext(context);
+            
+            // Convert AS2 interchange to exchange and process
+            log.debug("Processed {} event for {}", ApiConsumerHelper.getResultsProcessed(this, as2Interchange, false),
+                    as2ServerConnection);
+        } catch (Exception e) {
+            log.info("Received exception consuming AS2 message: ", e);
+        }
+        
+    }
 }

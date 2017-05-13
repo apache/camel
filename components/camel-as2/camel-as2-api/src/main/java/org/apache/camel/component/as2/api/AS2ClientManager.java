@@ -20,10 +20,8 @@ import static org.apache.camel.component.as2.api.AS2Constants.APPLICATION_EDIFAC
 import static org.apache.camel.component.as2.api.AS2Constants.AS2_FROM_HEADER;
 import static org.apache.camel.component.as2.api.AS2Constants.AS2_TO_HEADER;
 import static org.apache.camel.component.as2.api.AS2Constants.AS2_VERSION_HEADER;
-import static org.apache.camel.component.as2.api.AS2Constants.CLIENT_FQDN;
 import static org.apache.camel.component.as2.api.AS2Constants.CONTENT_TYPE_HEADER;
-import static org.apache.camel.component.as2.api.AS2Constants.HTTP_CONNECTION;
-import static org.apache.camel.component.as2.api.AS2Constants.HTTP_PROCESSOR;
+import static org.apache.camel.component.as2.api.AS2Constants.HTTP_MESSAGE_ID_FQDN;
 import static org.apache.camel.component.as2.api.AS2Constants.MESSAGE_ID_HEADER;
 import static org.apache.camel.component.as2.api.AS2Constants.SUBJECT_HEADER;
 
@@ -35,38 +33,40 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.DefaultBHttpClientConnection;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.protocol.HttpCoreContext;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.HttpRequestExecutor;
 
 /**
- * AS2 Send Manager 
+ * AS2 Client Manager 
  * 
  * <p>Sends EDI Messages over HTTP  
  *
  */
-public class AS2SendManager {
+public class AS2ClientManager {
 
-    private HttpCoreContext httpContext;
+    private AS2ClientConnection as2ClientConnection;
     
-    public AS2SendManager(HttpCoreContext httpContext) {
-        this.httpContext = httpContext;
+    public AS2ClientManager(AS2ClientConnection as2ClientConnection) {
+        this.as2ClientConnection = as2ClientConnection;
     }
 
     /**
-     * Send HTTP Request transporting unencrypted and unsigned EDI message.
+     * Send <code>ediMessage</code> unencrypted and unsigned to trading partner.
      * 
      * @param ediMessage - EDI message to transport
-     * @return - HTTP Request containing unencypted and unsigned EDI message 
+     * @param subject - the subject sent in the interchange request.
+     * @param as2From - the AS2 identifier for the sending trading partner
+     * @param as2To - the AS2 identifier for the receiving trading partner
+     * @return The AS2 Interchange
      * @throws InvalidAS2NameException 
      * @throws IOException 
      * @throws HttpException 
      */
-    public Result sendNoEncryptNoSign(String ediMessage, String subject,  String as2From, String as2To) throws InvalidAS2NameException, HttpException, IOException {
+    public AS2Interchange sendNoEncryptNoSign(String ediMessage, String subject,  String as2From, String as2To) throws InvalidAS2NameException, HttpException, IOException {
+        AS2Interchange interchange = new AS2Interchange();
+        
         BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", "/");
- 
+        interchange.setRequest(request);
+        
         /* AS2-Version header */
         request.addHeader(AS2_VERSION_HEADER, "1.1");
 
@@ -87,33 +87,17 @@ public class AS2SendManager {
 
         /* Message-Id header*/
         // SHOULD be set to aid in message reconciliation
-        String clientFqdn = httpContext.getAttribute(CLIENT_FQDN, String.class);
-        request.addHeader(MESSAGE_ID_HEADER, Util.createMessageId(clientFqdn));
+        request.addHeader(MESSAGE_ID_HEADER, Util.createMessageId(HTTP_MESSAGE_ID_FQDN));
         
          // Create Message Body
         /* EDI Message is Message Body */
         HttpEntity entity = new StringEntity(ediMessage, ContentType.create(APPLICATION_EDIFACT_MIME_TYPE, Consts.UTF_8));
         request.setEntity(entity);
-
-        // Execute Request
-        HttpProcessor httpProcessor = httpContext.getAttribute(HTTP_PROCESSOR, HttpProcessor.class);
-        DefaultBHttpClientConnection httpConnection = httpContext.getAttribute(HTTP_CONNECTION, DefaultBHttpClientConnection.class);
-        HttpRequestExecutor httpexecutor = new HttpRequestExecutor();
-        httpexecutor.preProcess(request, httpProcessor, httpContext);
-        HttpResponse response = httpexecutor.execute(request, httpConnection, httpContext);   
-        httpexecutor.postProcess(response, httpProcessor, httpContext);
         
-        // Process response
-        Result result = new Result();
-        result.statusCode = response.getStatusLine().getStatusCode();
-        result.reasonPhrase = response.getStatusLine().getReasonPhrase();
+        HttpResponse response = as2ClientConnection.send(request);
+        interchange.setResponse(response);
         
-        return result;
-    }
-    
-    public static class Result {
-        public int statusCode;
-        public String reasonPhrase;
+        return interchange;
     }
     
 }

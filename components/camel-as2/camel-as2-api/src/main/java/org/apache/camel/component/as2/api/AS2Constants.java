@@ -23,24 +23,46 @@ import org.apache.http.protocol.HttpCoreContext;
  */
 public interface AS2Constants {
     
+    public static final String HTTP_USER_AGENT = "Camel AS2 Component";
+    
+    public static final String HTTP_ORIGIN_SERVER = "Camel AS2 Component";
+    
+    public static final String HTTP_MESSAGE_ID_FQDN = "camel.apache.org";
+    
     //
     // HTTP Context Attribute Names
     //
 
     /**
-     * HTTP Context Attribute Name for HTTP Connection object stored in context.
+     * HTTP Context Attribute Name for HTTP Client Connection object stored in context.
      */
-    public static final String HTTP_CONNECTION = HttpCoreContext.HTTP_CONNECTION;
+    public static final String HTTP_CLIENT_CONNECTION = HttpCoreContext.HTTP_CONNECTION;
     
     /**
-     * HTTP Context Attribute Name for HTTP Processor object stored in context.
+     * HTTP Context Attribute Name for HTTP Client Processor object stored in context.
      */
-    public static final String HTTP_PROCESSOR = "http.processor";
+    public static final String HTTP_CLIENT_PROCESSOR = "http.processor";
     
     /**
-     * HTTP Context Attribute Name for Client Fully Qualified Domain Name (FQDN) stored in context.
+     * HTTP Context Attribute Name for HTTP Client Fully Qualified Domain Name (FQDN) stored in context.
      */
-    public static final String CLIENT_FQDN = "client.fqdn";
+    public static final String HTTP_CLIENT_FQDN = "client.fqdn";
+    
+    /**
+     * HTTP Context Attribute Name for HTTP Server Connection object stored in context.
+     */
+    public static final String HTTP_SERVER_CONNECTION = "http.server.connection";
+    
+    /**
+     * HTTP Context Attribute Name for HTTP Server Processor object stored in context.
+     */
+    public static final String HTTP_SERVER_PROCESSOR = "http.server.processor";
+    
+    /**
+     * HTTP Context Attribute Name for HTTP Server Service object stored in context.
+     */
+    public static final String HTTP_SERVER_SERVICE = "http.server.service";
+    
     
     //
     // AS2 Header Names

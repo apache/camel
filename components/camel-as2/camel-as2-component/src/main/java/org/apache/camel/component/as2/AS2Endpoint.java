@@ -24,11 +24,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.as2.api.AS2SendManager;
+import org.apache.camel.component.as2.api.AS2ClientConnection;
+import org.apache.camel.component.as2.api.AS2ServerManager;
+import org.apache.camel.component.as2.api.AS2ClientManager;
+import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2Constants;
-import org.apache.camel.component.as2.internal.AS2ContextHelper;
+import org.apache.camel.component.as2.internal.AS2ConnectionHelper;
 import org.apache.camel.component.as2.internal.AS2PropertiesHelper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,7 +39,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
-import org.apache.http.protocol.HttpCoreContext;
 
 /**
  * Represents a AS2 endpoint.
@@ -49,7 +51,9 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     private Object apiProxy;
     
-    private HttpCoreContext httpContext;
+    private AS2ClientConnection as2ClientConnection;
+
+    private AS2ServerConnection as2ServerConnection;
 
     public AS2Endpoint(String uri, AS2Component component,
                          AS2ApiName apiName, String methodName, AS2Configuration endpointConfiguration) {
@@ -57,9 +61,14 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     }
     
-    public HttpCoreContext getHttpContext()
+    public AS2ClientConnection getAS2ClientConnection()
     {
-        return httpContext;
+        return as2ClientConnection;
+    }
+
+    public AS2ServerConnection getAS2ServerConnection()
+    {
+        return as2ServerConnection;
     }
 
     public Producer createProducer() throws Exception {
@@ -89,7 +98,16 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     @Override
     protected void afterConfigureProperties() {
         // create HTTP connection eagerly, a good way to validate configuration
-        createHttpContext();
+        switch (apiName) {
+        case SEND:
+            createAS2ClientConnection();
+            break;
+        case LISTEN:
+            createAS2ServerConnection();
+            break;
+        default:
+            break;
+        }
     }
     
     @Override
@@ -114,22 +132,29 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     private void createApiProxy(ApiMethod method, Map<String, Object> args) {
         switch (apiName) {
         case SEND:
-            apiProxy = new AS2SendManager(getHttpContext());
+            apiProxy = new AS2ClientManager(getAS2ClientConnection());
+            break;
+        case LISTEN:
+            apiProxy = new AS2ServerManager(getAS2ServerConnection());
             break;
         default:
             throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
-
-    private void createHttpContext() {
+    
+    private void createAS2ClientConnection() {
         try {
-            httpContext = AS2ContextHelper.createClientHttpContext(configuration);
+            as2ClientConnection = AS2ConnectionHelper.createAS2ClientConnection(configuration);
         } catch (UnknownHostException e) {
             throw new RuntimeCamelException(String.format("Client HTTP connection failed: Unknown target host '%s'",
                     configuration.getTargetHostname()));
         } catch (IOException e) {
             throw new RuntimeCamelException("Client HTTP connection failed", e);
         }
+    }
+    
+    private void createAS2ServerConnection() {
+        as2ServerConnection = AS2ConnectionHelper.createAS2ServerConnection(configuration);
     }
 
 }

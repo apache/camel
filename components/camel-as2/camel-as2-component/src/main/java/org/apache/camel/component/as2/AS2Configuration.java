@@ -38,7 +38,10 @@ public class AS2Configuration {
     private String methodName;
 
     @UriParam
-    private String userAgent = "Camel AS2 Endpoint";
+    private String userAgent = "Camel AS2 Client Endpoint";
+    
+    @UriParam
+    private String server = "Camel AS2 Server Endpoint";
     
     @UriParam
     private String targetHostname;
@@ -48,6 +51,9 @@ public class AS2Configuration {
     
     @UriParam
     private String clientFqdn = "camel.apache.org";
+    
+    @UriParam
+    private int serverPortNumber;
 
     /**
      * What kind of operation to perform
@@ -105,6 +111,26 @@ public class AS2Configuration {
      */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+    }
+
+    /**
+     * The value included in the <code>Server</code> 
+     * message header identifying the AS2 Server.
+     * 
+     * @return AS2 server identification string.
+     */
+    public String getServer() {
+        return server;
+    }
+
+    /**
+     * The value included in the <code>Server</code> 
+     * message header identifying the AS2 Server.
+     * 
+     * @param server - AS2 server identification string.
+     */
+    public void setServer(String server) {
+        this.server = server;
     }
 
     /**
@@ -170,6 +196,28 @@ public class AS2Configuration {
             throw new RuntimeCamelException("Parameter 'clientFqdn' can not be null");
         }
         this.clientFqdn = clientFqdn;
+    }
+
+    /**
+     * The port number of server.
+     * 
+     * @return The server port number.
+     */
+    public int getServerPortNumber() {
+        return serverPortNumber;
+    }
+
+    /**
+     * The port number of server.
+     * 
+     * @param serverPortNumber - the server port number.
+     */
+    public void setServerPortNumber(String serverPortNumber) {
+        try {
+            this.serverPortNumber = Integer.parseUnsignedInt(serverPortNumber);
+        } catch (NumberFormatException e) {
+            throw new RuntimeCamelException(String.format("Invalid target port number: %s", targetPortNumber));
+        }
     }
     
 }
