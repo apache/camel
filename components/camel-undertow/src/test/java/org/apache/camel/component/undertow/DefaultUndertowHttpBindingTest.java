@@ -24,6 +24,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.undertow.server.HttpServerExchange;
+import io.undertow.util.HeaderMap;
+import org.apache.camel.Message;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.xnio.XnioIoThread;
 import org.xnio.channels.EmptyStreamSourceChannel;
@@ -33,7 +38,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class DefaultUndertowHttpBindingTest {
+public class DefaultUndertowHttpBindingTest extends BaseUndertowTest {
 
     @Test(timeout = 1000)
     public void readEntireDelayedPayload() throws Exception {
@@ -87,6 +92,47 @@ public class DefaultUndertowHttpBindingTest {
         String result = new String(binding.readFromChannel(source));
 
         checkResult(result, delayedPayloads);
+    }
+
+    @Test(timeout = 1000)
+    public void toHttpResponseWithExceptionContainingNullCause() throws Exception {
+        template.send("mock:input", exchange -> {
+            // set an exception on the message from the start so the error handling is triggered
+            exchange.setException(new Exception());
+            exchange.getIn().setBody("test body");
+        });
+        MockEndpoint mock = getMockEndpoint("mock:input");
+
+        DefaultUndertowHttpBinding binding = new DefaultUndertowHttpBinding();
+        HttpServerExchange exchange = new HttpServerExchange(null, null, new HeaderMap(), 200);
+        Message message = mock.getExchanges().get(0).getIn();
+        binding.toHttpResponse(exchange, message);
+    }
+
+    @Test(timeout = 1000)
+    public void toHttpResponseWithExceptionContainingCause() throws Exception {
+        template.send("mock:input", exchange -> {
+            // set an exception on the message from the start so the error handling is triggered
+            exchange.setException(new Exception(new Exception("My error")));
+            exchange.getIn().setBody("test body");
+        });
+        MockEndpoint mock = getMockEndpoint("mock:input");
+
+        DefaultUndertowHttpBinding binding = new DefaultUndertowHttpBinding();
+        HttpServerExchange exchange = new HttpServerExchange(null, null, new HeaderMap(), 200);
+        Message message = mock.getExchanges().get(0).getIn();
+        binding.toHttpResponse(exchange, message);
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("undertow:http://localhost:{{port}}/foo")
+                        .to("mock:input");
+            }
+        };
     }
 
     private StreamSourceChannel source(final String[] delayedPayloads) {
