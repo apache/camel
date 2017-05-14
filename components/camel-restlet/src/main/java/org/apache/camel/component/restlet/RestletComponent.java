@@ -35,6 +35,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.restlet.converter.RestletConverter;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
@@ -130,27 +131,44 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
-        RestletEndpoint result = new RestletEndpoint(this, remainingRaw);
+        String endpointUri = remaining;
+
+        // include restlet methods in the uri (use GET as default)
+        String restletMethods = getAndRemoveParameter(parameters, "restletMethods", String.class);
+        if (restletMethods != null) {
+            endpointUri = endpointUri + "?restletMethods=" + restletMethods.toUpperCase();
+        }
+        String restletMethod = null;
+        if (restletMethods == null) {
+            restletMethod = getAndRemoveParameter(parameters, "restletMethod", String.class, "GET");
+            endpointUri = endpointUri + "?restletMethod=" + restletMethod.toUpperCase();
+        }
+
+        RestletEndpoint result = new RestletEndpoint(this, endpointUri);
         if (synchronous != null) {
             result.setSynchronous(synchronous);
         }
         result.setDisableStreamCache(isDisableStreamCache());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
-        // set the endpoint uri according to the parameter
-        result.updateEndpointUri();
+        if (restletMethods != null) {
+            result.setRestletMethods(RestletConverter.toMethods(restletMethods));
+        } else if (restletMethod != null) {
+            result.setRestletMethod(RestletConverter.toMethod(restletMethod));
+        }
+
+        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
 
         // construct URI so we can use it to get the splitted information
         URI u = new URI(remainingRaw);
         String protocol = u.getScheme();
 
-        String uriPattern = u.getRawPath();
+        String uriPattern = u.getPath();
         if (parameters.size() > 0) {
             uriPattern = uriPattern + "?" + URISupport.createQueryString(parameters);
         }
 
-        int port = 0;
+        int port;
         String host = u.getHost();
         if (u.getPort() > 0) {
             port = u.getPort();
@@ -230,7 +248,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         List<MethodBasedRouter> routesToRemove = new ArrayList<MethodBasedRouter>();
 
-        String pattern = decodePattern(endpoint.getUriPattern());
+        String pattern = endpoint.getUriPattern();
         if (pattern != null && !pattern.isEmpty()) {
             MethodBasedRouter methodRouter = getMethodRouter(pattern, false);
             if (methodRouter != null) {
@@ -264,7 +282,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
             // remove router if its no longer in use
             if (!router.hasRoutes()) {
-                deattachUriPatternFrimRestlet(router.getUriPattern(), endpoint, router);
+                deAttachUriPatternFromRestlet(router.getUriPattern(), endpoint, router);
                 if (!router.isStopped()) {
                     router.stop();
                 }
@@ -293,7 +311,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
         }
     }
-
 
     protected String stringArrayToString(String[] strings) {
         StringBuffer result = new StringBuffer();
@@ -437,7 +454,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     private void attachUriPatternToRestlet(String offsetPath, String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
-        uriPattern = decodePattern(uriPattern);
         MethodBasedRouter router = getMethodRouter(uriPattern, true);
 
         Map<String, String> realm = endpoint.getRestletRealm();
@@ -478,20 +494,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
     }
 
-    private void deattachUriPatternFrimRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
+    private void deAttachUriPatternFromRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
         component.getDefaultHost().detach(target);
-        LOG.debug("Deattached methodRouter uriPattern: {}", uriPattern);
-    }
-
-    @Deprecated
-    protected String preProcessUri(String uri) {
-        // If the URI was not valid (i.e. contains '{' and '}'
-        // it was most likely encoded by normalizeEndpointUri in DefaultCamelContext.getEndpoint(String)
-        return UnsafeUriCharactersEncoder.encode(uri.replaceAll("%7B", "(").replaceAll("%7D", ")"));
-    }
-
-    private static String decodePattern(String pattern) {
-        return pattern == null ? null : pattern.replaceAll("\\(", "{").replaceAll("\\)", "}");
+        LOG.debug("De-attached methodRouter uriPattern: {}", uriPattern);
     }
 
     public Boolean getControllerDaemon() {
