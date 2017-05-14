@@ -36,7 +36,11 @@ public class RestletEndpointUpdateEndpointUriTest extends CamelTestSupport {
         RestletComponent component = context.getComponent("restlet", RestletComponent.class);
 
         Endpoint endpoint = component.createEndpoint("restlet:http://localhost:9090/users/user");
-        assertEquals("The restlet endpoint didn't update it's URI properly", "http://localhost:9090/users/user?restletMethods=GET",
+        assertEquals("The restlet endpoint didn't update it's URI properly", "http://localhost:9090/users/user?restletMethod=GET",
+                     endpoint.getEndpointUri());
+
+        endpoint = component.createEndpoint("restlet:http://localhost:9090/users/user?restletMethod=post");
+        assertEquals("The restlet endpoint didn't update it's URI properly", "http://localhost:9090/users/user?restletMethod=POST",
                      endpoint.getEndpointUri());
 
         endpoint = component.createEndpoint("restlet:http://localhost:9090/users/user?restletMethods=post");

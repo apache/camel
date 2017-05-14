@@ -30,6 +30,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.util.URISupport;
 import org.restlet.Client;
 import org.restlet.Context;
 import org.restlet.Request;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RestletProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(RestletProducer.class);
-    private static final Pattern PATTERN = Pattern.compile("\\(([\\w\\.]*)\\)");
+    private static final Pattern PATTERN = Pattern.compile("\\{([\\w\\.]*)\\}");
     private Client client;
     private boolean throwException;
 
