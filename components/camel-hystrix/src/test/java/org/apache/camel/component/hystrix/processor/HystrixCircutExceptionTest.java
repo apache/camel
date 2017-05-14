@@ -16,21 +16,21 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
-import static org.apache.camel.component.hystrix.processor.HystrixConstants.HYSTRIX_RESPONSE_SHORT_CIRCUITED;
-
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.CamelExecutionException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.hystrix.processor.HystrixConstants.HYSTRIX_RESPONSE_SHORT_CIRCUITED;
+import static org.apache.camel.component.hystrix.processor.HystrixConstants.HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION;
 
 /**
  * Hystrix using timeout with Java DSL
@@ -43,11 +43,11 @@ public class HystrixCircutExceptionTest extends CamelTestSupport {
  
     
     @Test
-    public void testCurcuitOpen() throws Exception{
+    public void testCurcuitOpen() throws Exception {
         LOG.info("testCurcuitOpen start");
         // failing requests
         route.throwException = true;
-        for (int i = 0; i < 2* REQUEST_VOLUME_THRESHOLD; i++) {
+        for (int i = 0; i < 2 * REQUEST_VOLUME_THRESHOLD; i++) {
             try {
                 template.asyncRequestBody("direct:start", "Request Body");
             } catch (CamelExecutionException e) {
@@ -62,22 +62,22 @@ public class HystrixCircutExceptionTest extends CamelTestSupport {
         } catch (CamelExecutionException e) {
             LOG.info("Curcuit open expected ", e);
         }
-        getMockEndpoint("mock:result").expectedPropertyReceived(HystrixConstants.HYSTRIX_RESPONSE_SHORT_CIRCUITED, true);
+        getMockEndpoint("mock:result").expectedPropertyReceived(HYSTRIX_RESPONSE_SHORT_CIRCUITED, true);
         assertMockEndpointsSatisfied();
         // wait for the circuit to try an other request
         Thread.sleep(500);
-        for (int i = 0; i < 2* REQUEST_VOLUME_THRESHOLD; i++) {
+        for (int i = 0; i < 2 * REQUEST_VOLUME_THRESHOLD; i++) {
             try {
                 template.requestBody("direct:start", "Request Body");
                 LOG.info("Curcuit has closed");
             } catch (CamelExecutionException e) {
-                Thread.sleep(i*100);
-                LOG.info("Curcuit will be closed soon "+ e.toString());
+                Thread.sleep(i * 100);
+                LOG.info("Curcuit will be closed soon " + e.toString());
             }
         }
         template.requestBody("direct:start", "Request Body");
-        getMockEndpoint("mock:result").expectedPropertyReceived(HystrixConstants.HYSTRIX_RESPONSE_SHORT_CIRCUITED, false);
-        getMockEndpoint("mock:result").expectedPropertyReceived(HystrixConstants.HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result").expectedPropertyReceived(HYSTRIX_RESPONSE_SHORT_CIRCUITED, false);
+        getMockEndpoint("mock:result").expectedPropertyReceived(HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION, true);
         assertMockEndpointsSatisfied();
     }
     
@@ -88,7 +88,7 @@ public class HystrixCircutExceptionTest extends CamelTestSupport {
 
  
     
-   class HystrixExceptionRoute extends RouteBuilder{
+    class HystrixExceptionRoute extends RouteBuilder {
         volatile boolean throwException = true; 
         
         @Override
@@ -105,11 +105,11 @@ public class HystrixCircutExceptionTest extends CamelTestSupport {
                 .process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        if(throwException){
+                        if (throwException) {
                             LOG.info("Will throw exception");
                             throw new IOException("Route has failed");
                             //Thread.sleep(200);
-                        }else{
+                        } else {
                             LOG.info("Will NOT throw exception");
                         }
                     }
@@ -117,8 +117,8 @@ public class HystrixCircutExceptionTest extends CamelTestSupport {
                 .log("Hystrix processing end: ${threadName}")
             .end()
             .log(HYSTRIX_RESPONSE_SHORT_CIRCUITED
-                    +" = ${exchangeProperty."+HYSTRIX_RESPONSE_SHORT_CIRCUITED+"}")
-            .to("mock:result");
+                    + " = ${exchangeProperty." + HYSTRIX_RESPONSE_SHORT_CIRCUITED + "}")
+                .to("mock:result");
             
         }
     }
