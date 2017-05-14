@@ -47,7 +47,6 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -131,7 +130,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String endpointUri = remaining;
+        // decode %7B -> {
+        // decode %7D -> }
+        String endpointUri = remaining.replaceAll("%7B", "{").replaceAll("%7D", "}");
 
         // include restlet methods in the uri (use GET as default)
         String restletMethods = getAndRemoveParameter(parameters, "restletMethods", String.class);
@@ -157,16 +158,17 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             result.setRestletMethod(RestletConverter.toMethod(restletMethod));
         }
 
-        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
-
         // construct URI so we can use it to get the splitted information
+        // use raw values to support paths that has spaces
+        String remainingRaw = URISupport.extractRemainderPath(new URI(uri), true);
         URI u = new URI(remainingRaw);
         String protocol = u.getScheme();
 
-        String uriPattern = u.getPath();
-        if (parameters.size() > 0) {
-            uriPattern = uriPattern + "?" + URISupport.createQueryString(parameters);
-        }
+        String uriPattern = URISupport.createRemainingURI(u, parameters).getRawPath();
+        // must decode back to use {} style as that is what the restlet router expect to match in its uri pattern
+        // decode %7B -> {
+        // decode %7D -> }
+        uriPattern = uriPattern.replaceAll("%7B", "{").replaceAll("%7D", "}");
 
         int port;
         String host = u.getHost();
