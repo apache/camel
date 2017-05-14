@@ -130,9 +130,18 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+
+        // grab uri and remove all query parameters as we need to rebuild it a bit special
+        String endpointUri = uri;
+        if (endpointUri.indexOf('?') > 0) {
+            endpointUri = endpointUri.substring(0, endpointUri.indexOf('?'));
+        }
+        // normalize so the uri is as expected
+        endpointUri = URISupport.normalizeUri(endpointUri);
+
         // decode %7B -> {
         // decode %7D -> }
-        String endpointUri = remaining.replaceAll("%7B", "{").replaceAll("%7D", "}");
+        endpointUri = endpointUri.replaceAll("%7B", "{").replaceAll("%7D", "}");
 
         // include restlet methods in the uri (use GET as default)
         String restletMethods = getAndRemoveParameter(parameters, "restletMethods", String.class);
