@@ -153,7 +153,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         setProperties(result, parameters);
         if (restletMethods != null) {
             result.setRestletMethods(RestletConverter.toMethods(restletMethods));
-        } else if (restletMethod != null) {
+        } else {
             result.setRestletMethod(RestletConverter.toMethod(restletMethod));
         }
 
