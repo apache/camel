@@ -186,15 +186,23 @@ public class KafkaConsumer extends DefaultConsumer {
                     }
                 }
                 while (isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended()) {
+
+                    // flag to break out processing on the first exception
+                    boolean breakOnErrorHit = false;
+                    log.trace("Polling {} from topic: {} with timeout: {}", threadId, topicName, pollTimeoutMs);
                     ConsumerRecords<Object, Object> allRecords = consumer.poll(pollTimeoutMs);
+
                     for (TopicPartition partition : allRecords.partitions()) {
                         Iterator<ConsumerRecord<Object, Object>> recordIterator = allRecords.records(partition).iterator();
-                        if (recordIterator.hasNext()) {
-                            ConsumerRecord<Object, Object> record = null;
-                            while (recordIterator.hasNext()) {
+                        if (!breakOnErrorHit && recordIterator.hasNext()) {
+                            ConsumerRecord<Object, Object> record;
+
+                            long partitionLastOffset = -1;
+
+                            while (!breakOnErrorHit && recordIterator.hasNext()) {
                                 record = recordIterator.next();
                                 if (LOG.isTraceEnabled()) {
-                                    LOG.trace("partition = {}, offset = {}, key = {}, value = {}", record.partition(), record.offset(), record.key(),
+                                    LOG.trace("Partition = {}, offset = {}, key = {}, value = {}", record.partition(), record.offset(), record.key(),
                                               record.value());
                                 }
                                 Exchange exchange = endpoint.createKafkaExchange(record);
@@ -204,15 +212,34 @@ public class KafkaConsumer extends DefaultConsumer {
                                 try {
                                     processor.process(exchange);
                                 } catch (Exception e) {
-                                    getExceptionHandler().handleException("Error during processing", exchange, e);
+                                    exchange.setException(e);
+                                }
+
+                                if (exchange.getException() != null) {
+                                    // processing failed due to an unhandled exception, what should we do
+                                    if (endpoint.getConfiguration().isBreakOnFirstError()) {
+                                        // commit last good offset before we try again
+                                        commitOffset(offsetRepository, partition, partitionLastOffset);
+                                        // we are failing but store last good offset
+                                        log.warn("Error during processing {} from topic: {}. Will seek consumer to last good offset: {} and poll again.", exchange, topicName, partitionLastOffset);
+                                        if (partitionLastOffset != -1) {
+                                            consumer.seek(partition, partitionLastOffset);
+                                        }
+                                        // continue to next partition
+                                        breakOnErrorHit = true;
+                                    } else {
+                                        // will handle/log the exception and then continue to next
+                                        getExceptionHandler().handleException("Error during processing", exchange, exchange.getException());
+                                    }
+                                } else {
+                                    // record was success so remember its offset
+                                    partitionLastOffset = record.offset();
                                 }
                             }
-                            long partitionLastOffset = record.offset();
-                            if (offsetRepository != null) {
-                                offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
-                                // if autocommit is false
-                            } else if (endpoint.getConfiguration().isAutoCommitEnable() != null && !endpoint.getConfiguration().isAutoCommitEnable()) {
-                                consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
+
+                            if (!breakOnErrorHit) {
+                                // all records processed from partition so commit them
+                                commitOffset(offsetRepository, partition, partitionLastOffset);
                             }
                         }
                     }
@@ -240,6 +267,18 @@ public class KafkaConsumer extends DefaultConsumer {
             } finally {
                 LOG.debug("Closing {} ", threadId);
                 IOHelper.close(consumer);
+            }
+        }
+
+        private void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset) {
+            if (partitionLastOffset != -1) {
+                if (offsetRepository != null) {
+                    offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
+                    // if autocommit is false
+                } else if (endpoint.getConfiguration().isAutoCommitEnable() != null && !endpoint.getConfiguration().isAutoCommitEnable()) {
+                    LOG.debug("Auto commitSync {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
+                    consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
+                }
             }
         }
 
