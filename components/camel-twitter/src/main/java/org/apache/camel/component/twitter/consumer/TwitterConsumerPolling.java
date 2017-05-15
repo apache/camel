@@ -65,8 +65,6 @@ public class TwitterConsumerPolling extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         List<Exchange> exchanges = twitter4jConsumer.pollConsume();
 
-        exchanges = sort(exchanges);
-
         int index = 0;
         for (; index < exchanges.size(); index++) {
             getProcessor().process(exchanges.get(index));
@@ -75,11 +73,4 @@ public class TwitterConsumerPolling extends ScheduledPollConsumer {
         return index;
     }
 
-    protected List<Exchange> sort(List<Exchange> exchanges) {
-        if (getEndpoint().isSortById()) {
-            return TwitterSorter.sortBySinceId(exchanges);
-        }
-        return exchanges;
-    }
-    
 }
