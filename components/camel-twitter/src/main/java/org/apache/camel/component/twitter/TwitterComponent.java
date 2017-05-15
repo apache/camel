@@ -18,17 +18,18 @@ package org.apache.camel.component.twitter;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.VerifiableComponent;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Twitter component
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class TwitterComponent extends UriEndpointComponent implements VerifiableComponent {
+public class TwitterComponent extends DefaultComponent implements VerifiableComponent {
 
     @Metadata(label = "security", secret = true)
     private String consumerKey;
@@ -48,7 +49,10 @@ public class TwitterComponent extends UriEndpointComponent implements Verifiable
     private Integer httpProxyPort;
 
     public TwitterComponent() {
-        super(TwitterEndpointEvent.class);
+    }
+
+    public TwitterComponent(CamelContext context) {
+        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -74,13 +78,13 @@ public class TwitterComponent extends UriEndpointComponent implements Verifiable
 
         switch (properties.getType()) {
         case POLLING:
-            endpoint = new TwitterEndpointPolling(uri, this, properties);
+            endpoint = new TwitterEndpointPolling(uri, remaining, this, properties);
             break;
         case EVENT:
-            endpoint = new TwitterEndpointEvent(uri, this, properties);
+            endpoint = new TwitterEndpointEvent(uri,  remaining, this, properties);
             break;
         default:
-            endpoint = new TwitterEndpointDirect(uri, this, properties);
+            endpoint = new TwitterEndpointDirect(uri, remaining, this, properties);
             break;
         }
         return endpoint;
@@ -175,7 +179,7 @@ public class TwitterComponent extends UriEndpointComponent implements Verifiable
     }
 
     /**
-     * TODO: document
+     * Get a verifier for the twitter component.
      */
     public ComponentVerifier getVerifier() {
         return new TwitterComponentVerifier(this);
