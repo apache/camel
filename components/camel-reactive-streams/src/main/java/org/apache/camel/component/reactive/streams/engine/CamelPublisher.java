@@ -19,6 +19,7 @@ package org.apache.camel.component.reactive.streams.engine;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -63,7 +64,7 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
     @Override
     public void subscribe(Subscriber<? super Exchange> subscriber) {
         Objects.requireNonNull(subscriber, "subscriber must not be null");
-        CamelSubscription sub = new CamelSubscription(workerPool, this, name, this.backpressureStrategy, subscriber);
+        CamelSubscription sub = new CamelSubscription(UUID.randomUUID().toString(), workerPool, this, name, this.backpressureStrategy, subscriber);
         this.subscriptions.add(sub);
         subscriber.onSubscribe(sub);
     }
@@ -138,7 +139,8 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
         subscriptions.clear();
     }
 
-    public int getSubscriptionSize() {
-        return subscriptions.size();
+    public List<CamelSubscription> getSubscriptions() {
+        return subscriptions;
     }
+
 }
