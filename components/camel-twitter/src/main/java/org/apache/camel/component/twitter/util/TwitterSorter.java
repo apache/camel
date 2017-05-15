@@ -27,15 +27,20 @@ import twitter4j.Status;
  */
 public final class TwitterSorter {
 
-    public static List<Exchange> sortBySinceId(List<Exchange> exchanges) {
+    private TwitterSorter() {
+    }
+
+    /**
+     * Sorts the tweets by {@link Status#getId()}.
+     */
+    public static List<Exchange> sortByStatusId(List<Exchange> exchanges) {
         return exchanges.stream().sorted((e1, e2) -> {
             Object b1 = e1.getIn().getBody();
             Object b2 = e2.getIn().getBody();
             if (b1 instanceof Status && b2 instanceof Status) {
                 Status s1 = (Status) b1;
                 Status s2 = (Status) b2;
-                // we want lowest values first (eg oldest before newest)
-                return -1 * Long.compare(s1.getId(), s2.getId());
+                return Long.compare(s1.getId(), s2.getId());
             }
             return 0;
         }).collect(Collectors.toList());
