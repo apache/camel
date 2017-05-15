@@ -115,8 +115,8 @@ public class KafkaConfiguration implements Cloneable {
     private Boolean autoCommitEnable = true;
     @UriParam(label = "consumer", defaultValue = "sync", enums = "sync,async,none")
     private String autoCommitOnStop = "sync";
-    @UriParam(label = "consumer", defaultValue = "true")
-    private boolean breakOnFirstError = true;
+    @UriParam(label = "consumer")
+    private boolean breakOnFirstError;
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
 
