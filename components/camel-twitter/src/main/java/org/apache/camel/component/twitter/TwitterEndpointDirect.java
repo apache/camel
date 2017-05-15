@@ -31,19 +31,20 @@ import org.apache.camel.component.twitter.data.EndpointType;
  * Twitter direct endpoint
  */
 public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
+    private final String remaining;
 
     // only TwitterEndpointPolling is annotated
-
     private TwitterConfiguration properties;
 
-    public TwitterEndpointDirect(String uri, TwitterComponent component, TwitterConfiguration properties) {
+    public TwitterEndpointDirect(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
+        this.remaining = remaining;
         this.properties = properties;
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri());
+        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri(), remaining);
         TwitterConsumerDirect answer = new TwitterConsumerDirect(this, processor, twitter4jConsumer);
         configureConsumer(answer);
         return answer;
@@ -51,7 +52,7 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     @Override
     public Producer createProducer() throws Exception {
-        return TwitterHelper.createProducer(this, getEndpointUri());
+        return TwitterHelper.createProducer(this, getEndpointUri(), remaining);
     }
 
     @ManagedAttribute

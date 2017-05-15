@@ -14,16 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter.data;
+package org.apache.camel.component.twitter;
 
-import org.apache.camel.component.twitter.TwitterHelper;
+import org.apache.camel.impl.JndiRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public enum TrendsType {
-    DAILY, WEEKLY, UNKNOWN;
+/**
+ * consumes tweets
+ */
+public class SearchDirectCustomComponentTest extends CamelTwitterConsumerTestSupport {
 
-    private static final TrendsType[] VALUES = values();
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("my-twitter", new TwitterComponent());
 
-    public static TrendsType fromString(String uri) {
-        return TwitterHelper.enumFromString(VALUES, uri, TrendsType.UNKNOWN);
+        return registry;
+    }
+
+    @Override
+    protected String getUri() {
+        return "my-twitter://search?type=direct&keywords=java&";
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(SearchDirectCustomComponentTest.class);
     }
 }
