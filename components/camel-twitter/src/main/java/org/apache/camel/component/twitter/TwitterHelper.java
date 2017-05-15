@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.twitter;
 
-import java.util.regex.Pattern;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.twitter.consumer.TwitterConsumer;
@@ -40,9 +38,6 @@ import org.apache.camel.component.twitter.producer.UserProducer;
 import twitter4j.User;
 
 public final class TwitterHelper {
-    private static final Pattern TWITTER_SCHEMA_PATTERN = Pattern.compile("twitter:(//)*");
-    private static final Pattern TWITTER_OPTIONS_PATTERN = Pattern.compile("\\?.*");
-
     private TwitterHelper() {
     }
 
@@ -63,11 +58,11 @@ public final class TwitterHelper {
         message.setHeader(TwitterConstants.TWITTER_USER_ROLE + index, role);
     }
 
-    public static TwitterConsumer createConsumer(TwitterEndpoint te, String uri) throws IllegalArgumentException {
-        String[] uriSplit = splitUri(uri);
+    public static TwitterConsumer createConsumer(TwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
+        String[] tokens = remaining.split("/");
 
-        if (uriSplit.length > 0) {
-            switch (ConsumerType.fromUri(uriSplit[0])) {
+        if (tokens.length > 0) {
+            switch (ConsumerType.fromString(tokens[0])) {
             case DIRECTMESSAGE:
                 return new DirectMessageConsumer(te);
             case SEARCH:
@@ -79,20 +74,22 @@ public final class TwitterHelper {
                     return new SearchConsumer(te);
                 }
             case STREAMING:
-                switch (StreamingType.fromUri(uriSplit[1])) {
-                case SAMPLE:
-                    return new SampleStreamingConsumer(te);
-                case FILTER:
-                    return new FilterStreamingConsumer(te);
-                case USER:
-                    return new UserStreamingConsumer(te);
-                default:
-                    break;
+                if (tokens.length > 1) {
+                    switch (StreamingType.fromString(tokens[1])) {
+                    case SAMPLE:
+                        return new SampleStreamingConsumer(te);
+                    case FILTER:
+                        return new FilterStreamingConsumer(te);
+                    case USER:
+                        return new UserStreamingConsumer(te);
+                    default:
+                        break;
+                    }
                 }
                 break;
             case TIMELINE:
-                if (uriSplit.length > 1) {
-                    switch (TimelineType.fromUri(uriSplit[1])) {
+                if (tokens.length > 1) {
+                    switch (TimelineType.fromString(tokens[1])) {
                     case HOME:
                         return new HomeConsumer(te);
                     case MENTIONS:
@@ -119,11 +116,11 @@ public final class TwitterHelper {
             + ". A consumer type was not provided (or an incorrect pairing was used).");
     }
 
-    public static TwitterProducer createProducer(TwitterEndpoint te, String uri) throws IllegalArgumentException {
-        String[] uriSplit = splitUri(uri);
+    public static TwitterProducer createProducer(TwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
+        String[] tokens = remaining.split("/");
 
-        if (uriSplit.length > 0) {
-            switch (ConsumerType.fromUri(uriSplit[0])) {
+        if (tokens.length > 0) {
+            switch (ConsumerType.fromString(tokens[0])) {
             case DIRECTMESSAGE:
                 if (te.getProperties().getUser() == null || te.getProperties().getUser().trim().isEmpty()) {
                     throw new IllegalArgumentException(
@@ -132,8 +129,8 @@ public final class TwitterHelper {
                     return new DirectMessageProducer(te);
                 }
             case TIMELINE:
-                if (uriSplit.length > 1) {
-                    switch (TimelineType.fromUri(uriSplit[1])) {
+                if (tokens.length > 1) {
+                    switch (TimelineType.fromString(tokens[1])) {
                     case USER:
                         return new UserProducer(te);
                     default:
@@ -151,13 +148,6 @@ public final class TwitterHelper {
 
         throw new IllegalArgumentException("Cannot create any producer with uri " + uri
             + ". A producer type was not provided (or an incorrect pairing was used).");
-    }
-
-    private static String[] splitUri(String uri) {
-        uri = TWITTER_SCHEMA_PATTERN.matcher(uri).replaceAll("");
-        uri = TWITTER_OPTIONS_PATTERN.matcher(uri).replaceAll("");
-
-        return uri.split("/");
     }
 
     public static <T extends Enum<T>> T enumFromString(T[] values, String uri, T defaultValue) {
