@@ -144,7 +144,7 @@ with the following path and query parameters:
 | **kind** | *Required* What polling mode to use direct polling or event based. The event mode is only supported when the endpoint kind is event based. |  | String
 |=======================================================================
 
-#### Query Parameters (42 parameters):
+#### Query Parameters (43 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -183,6 +183,7 @@ with the following path and query parameters:
 | **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| **sortById** (sort) | Sorts by id so the oldest are first and newest last. | true | boolean
 | **httpProxyHost** (proxy) | The http proxy host which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
 | **httpProxyPassword** (proxy) | The http proxy password which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | String
 | **httpProxyPort** (proxy) | The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead. |  | Integer

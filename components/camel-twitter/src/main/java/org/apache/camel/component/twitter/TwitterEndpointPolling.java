@@ -149,6 +149,16 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
         return getProperties().getNumberOfPages();
     }
 
+    @ManagedAttribute
+    public boolean isSortById() {
+        return getProperties().isSortById();
+    }
+
+    @ManagedAttribute
+    public void setSortById(boolean sortById) {
+        getProperties().setSortById(sortById);
+    }
+
     @Override
     public EndpointType getEndpointType() {
         return EndpointType.POLLING;
