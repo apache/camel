@@ -213,7 +213,7 @@ public class KafkaComponentConfiguration {
          * poison message. Therefore its recommended to deal with that for
          * example by using Camel's error handler.
          */
-        private Boolean breakOnFirstError = true;
+        private Boolean breakOnFirstError = false;
         /**
          * URL of the Kafka brokers to use. The format is
          * host1:port1,host2:port2, and the list can be a subset of brokers or a
