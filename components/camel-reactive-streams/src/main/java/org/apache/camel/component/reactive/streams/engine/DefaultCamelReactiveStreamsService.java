@@ -37,6 +37,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
@@ -66,7 +67,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     private ExecutorService workerPool;
 
     private final ConcurrentMap<String, CamelPublisher> publishers = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, CamelSubscriber> subscribers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ReactiveStreamsCamelSubscriber> subscribers = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, String> publishedUriToStream = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, String> requestedUriToStream = new ConcurrentHashMap<>();
 
@@ -114,8 +115,8 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     }
 
     @Override
-    public CamelSubscriber streamSubscriber(String name) {
-        return subscribers.computeIfAbsent(name, n -> new CamelSubscriber(name));
+    public ReactiveStreamsCamelSubscriber streamSubscriber(String name) {
+        return subscribers.computeIfAbsent(name, n -> new ReactiveStreamsCamelSubscriber(name));
     }
 
     @SuppressWarnings("unchecked")
@@ -299,8 +300,8 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     }
 
     @Override
-    public CamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
-        CamelSubscriber subscriber = streamSubscriber(name);
+    public ReactiveStreamsCamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
+        ReactiveStreamsCamelSubscriber subscriber = streamSubscriber(name);
         subscriber.attachConsumer(consumer);
         return subscriber;
     }

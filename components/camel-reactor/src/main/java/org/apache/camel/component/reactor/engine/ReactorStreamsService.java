@@ -24,12 +24,11 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
-import org.apache.camel.component.reactive.streams.engine.CamelSubscriber;
-import org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration;
 import org.apache.camel.component.reactive.streams.util.BodyConverter;
 import org.apache.camel.component.reactive.streams.util.ConvertingPublisher;
 import org.apache.camel.component.reactive.streams.util.ConvertingSubscriber;
@@ -39,21 +38,20 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.function.Suppliers;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 final class ReactorStreamsService extends ServiceSupport implements CamelReactiveStreamsService {
     private final CamelContext context;
-    private final ReactiveStreamsEngineConfiguration configuration;
     private final Supplier<UnwrapStreamProcessor> unwrapStreamProcessorSupplier;
     private final ConcurrentMap<String, ReactorCamelProcessor> publishers;
-    private final ConcurrentMap<String, CamelSubscriber> subscribers;
+    private final ConcurrentMap<String, ReactiveStreamsCamelSubscriber> subscribers;
     private final ConcurrentMap<String, String> publishedUriToStream;
     private final ConcurrentMap<String, String> requestedUriToStream;
 
-    ReactorStreamsService(CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
+    ReactorStreamsService(CamelContext context) {
         this.context = context;
-        this.configuration = configuration;
         this.publishers = new ConcurrentHashMap<>();
         this.subscribers = new ConcurrentHashMap<>();
         this.publishedUriToStream = new ConcurrentHashMap<>();
@@ -79,7 +77,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
         for (ReactorCamelProcessor processor : publishers.values()) {
             processor.close();
         }
-        for (CamelSubscriber subscriber : subscribers.values()) {
+        for (ReactiveStreamsCamelSubscriber subscriber : subscribers.values()) {
             subscriber.close();
         }
     }
@@ -105,8 +103,8 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
     }
 
     @Override
-    public CamelSubscriber streamSubscriber(String name) {
-        return subscribers.computeIfAbsent(name, n -> new CamelSubscriber(name));
+    public ReactiveStreamsCamelSubscriber streamSubscriber(String name) {
+        return subscribers.computeIfAbsent(name, n -> new ReactiveStreamsCamelSubscriber(name));
     }
 
     @SuppressWarnings("unchecked")
@@ -296,8 +294,8 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
     // ******************************************
 
     @Override
-    public CamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
-        CamelSubscriber subscriber = streamSubscriber(name);
+    public ReactiveStreamsCamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
+        ReactiveStreamsCamelSubscriber subscriber = streamSubscriber(name);
         subscriber.attachConsumer(consumer);
 
         return subscriber;
@@ -305,7 +303,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
 
     @Override
     public void detachCamelConsumer(String name) {
-        CamelSubscriber subscriber = streamSubscriber(name);
+        ReactiveStreamsCamelSubscriber subscriber = streamSubscriber(name);
         subscriber.detachConsumer();
     }
 
