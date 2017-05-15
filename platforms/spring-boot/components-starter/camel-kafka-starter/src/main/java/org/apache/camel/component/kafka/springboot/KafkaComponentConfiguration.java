@@ -203,6 +203,18 @@ public class KafkaComponentConfiguration {
          */
         private String autoCommitOnStop = "sync";
         /**
+         * This options controls what happens when a consumer is processing an
+         * exchange and it fails. If the option is <tt>false</tt> then the
+         * consumer continues to the next message and processes it. If the
+         * option is <tt>true</tt> then the consumer breaks out, and will seek
+         * back to offset of the message that caused a failure, and then
+         * re-attempt to process this message. However this can lead to endless
+         * processing of the same message if its bound to fail every time, eg a
+         * poison message. Therefore its recommended to deal with that for
+         * example by using Camel's error handler.
+         */
+        private Boolean breakOnFirstError = true;
+        /**
          * URL of the Kafka brokers to use. The format is
          * host1:port1,host2:port2, and the list can be a subset of brokers or a
          * VIP pointing to a subset of brokers.
@@ -765,6 +777,14 @@ public class KafkaComponentConfiguration {
 
         public void setAutoCommitOnStop(String autoCommitOnStop) {
             this.autoCommitOnStop = autoCommitOnStop;
+        }
+
+        public Boolean getBreakOnFirstError() {
+            return breakOnFirstError;
+        }
+
+        public void setBreakOnFirstError(Boolean breakOnFirstError) {
+            this.breakOnFirstError = breakOnFirstError;
         }
 
         public String getBrokers() {
