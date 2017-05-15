@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
-import org.apache.camel.component.reactive.streams.engine.CamelSubscriber;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.spi.HasId;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -298,7 +298,7 @@ public interface CamelReactiveStreamsService extends Service, HasId {
      * @return the associated subscriber
      * @throws IllegalStateException if another consumer is already associated with the given stream name
      */
-    CamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer);
+    ReactiveStreamsCamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer);
 
     /**
      * Used by Camel to detach the existing consumer from the given stream.
