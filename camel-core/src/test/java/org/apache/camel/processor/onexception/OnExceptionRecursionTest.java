@@ -68,7 +68,7 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
             assertEquals("Bad state", ise.getMessage());
         }
 
-         assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     public void testRecursionDirectNoErrorHandler() throws Exception {

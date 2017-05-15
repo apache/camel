@@ -42,7 +42,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
                     .to("mock:c")
                     .log("onException")
                     .throwException(new NullPointerException("A NPE error here"))
-                .end();
+                    .end();
 
                 from("direct:test")
                     .to("mock:a")
@@ -78,7 +78,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
                     .to("mock:c")
                     .log("onException")
                     .throwException(new NullPointerException("A NPE error here"))
-                .end();
+                    .end();
 
                 from("direct:test")
                     .to("mock:a")
@@ -114,7 +114,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
                     .to("mock:c")
                     .log("onException")
                     .to("direct:error")
-                .end();
+                    .end();
 
                 from("direct:test")
                     .to("mock:a")
@@ -157,7 +157,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
                     .to("mock:c")
                     .log("onException")
                     .to("direct:error")
-                .end();
+                    .end();
 
                 from("direct:test")
                     .to("mock:a")
@@ -199,7 +199,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
                     .to("mock:c")
                     .log("onException")
                     .to("direct:error")
-                .end();
+                    .end();
 
                 from("direct:test")
                     .to("mock:a")
@@ -239,7 +239,7 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
                     .to("mock:c")
                     .log("onException")
                     .to("direct:error")
-                .end();
+                    .end();
 
                 from("direct:test")
                     .to("mock:a")
