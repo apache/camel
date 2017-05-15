@@ -14,7 +14,7 @@
     "javaType": "org.foo.connector.BarComponent",
     "groupId": "org.foo",
     "artifactId": "bar-connector",
-    "version": "2.19.0-SNAPSHOT"
+    "version": "2.20.0-SNAPSHOT"
   },
   "componentProperties": {
   },
