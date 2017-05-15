@@ -43,9 +43,11 @@ public class CamelSubscription implements Subscription {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSubscription.class);
 
+    private String id;
+
     private ExecutorService workerPool;
 
-    private String name;
+    private String streamName;
 
     private CamelPublisher publisher;
 
@@ -82,10 +84,12 @@ public class CamelSubscription implements Subscription {
     private boolean sending;
 
 
-    public CamelSubscription(ExecutorService workerPool, CamelPublisher publisher, String name, ReactiveStreamsBackpressureStrategy backpressureStrategy, Subscriber<? super Exchange> subscriber) {
+    public CamelSubscription(String id, ExecutorService workerPool, CamelPublisher publisher, String streamName,
+                             ReactiveStreamsBackpressureStrategy backpressureStrategy, Subscriber<? super Exchange> subscriber) {
+        this.id = id;
         this.workerPool = workerPool;
         this.publisher = publisher;
-        this.name = name;
+        this.streamName = streamName;
         this.backpressureStrategy = backpressureStrategy;
         this.subscriber = subscriber;
     }
@@ -241,7 +245,7 @@ public class CamelSubscription implements Subscription {
             for (Exchange exchange: discardedMessages.keySet()) {
                 ReactiveStreamsHelper.invokeDispatchCallback(
                     exchange,
-                    new ReactiveStreamsDiscardedException("Discarded by backpressure strategy", exchange, name)
+                    new ReactiveStreamsDiscardedException("Discarded by backpressure strategy", exchange, streamName)
                 );
             }
         }
@@ -261,5 +265,9 @@ public class CamelSubscription implements Subscription {
 
     public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
         return backpressureStrategy;
+    }
+
+    public String getId() {
+        return id;
     }
 }
