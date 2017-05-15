@@ -122,7 +122,7 @@ public class KafkaConsumer extends DefaultConsumer {
 
     class KafkaFetchRecords implements Runnable {
 
-        private final org.apache.kafka.clients.consumer.KafkaConsumer consumer;
+        private org.apache.kafka.clients.consumer.KafkaConsumer consumer;
         private final String topicName;
         private final String threadId;
         private final Properties kafkaProps;
@@ -131,20 +131,48 @@ public class KafkaConsumer extends DefaultConsumer {
             this.topicName = topicName;
             this.threadId = topicName + "-" + "Thread " + id;
             this.kafkaProps = kafkaProps;
-
-            ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
-            try {
-                // Kafka uses reflection for loading authentication settings, use its classloader
-                Thread.currentThread().setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
-                this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
-            } finally {
-                Thread.currentThread().setContextClassLoader(threadClassLoader);
-            }
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public void run() {
+            boolean first = true;
+            boolean reConnect = true;
+
+            while (reConnect) {
+
+                // create consumer
+                ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
+                try {
+                    // Kafka uses reflection for loading authentication settings, use its classloader
+                    Thread.currentThread().setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
+                    this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(threadClassLoader);
+                }
+
+                if (!first) {
+                    // skip one poll timeout before trying again
+                    long delay = endpoint.getConfiguration().getPollTimeoutMs();
+                    log.info("Reconnecting {} to topic {} after {} ms", threadId, topicName, delay);
+                    try {
+                        Thread.sleep(delay);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+
+                first = false;
+
+                // doRun keeps running until we either shutdown or is told to re-connect
+                reConnect = doRun();
+            }
+        }
+
+        protected boolean doRun() {
+            // allow to re-connect thread in case we use that to retry failed messages
+            boolean reConnect = false;
+
             try {
                 LOG.info("Subscribing {} to topic {}", threadId, topicName);
                 consumer.subscribe(Arrays.asList(topicName.split(",")));
@@ -185,7 +213,8 @@ public class KafkaConsumer extends DefaultConsumer {
                         consumer.seekToEnd(consumer.assignment());
                     }
                 }
-                while (isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended()) {
+
+                while (isRunAllowed() && !reConnect && !isStoppingOrStopped() && !isSuspendingOrSuspended()) {
 
                     // flag to break out processing on the first exception
                     boolean breakOnErrorHit = false;
@@ -193,11 +222,12 @@ public class KafkaConsumer extends DefaultConsumer {
                     ConsumerRecords<Object, Object> allRecords = consumer.poll(pollTimeoutMs);
 
                     for (TopicPartition partition : allRecords.partitions()) {
+
+                        long partitionLastOffset = -1;
+
                         Iterator<ConsumerRecord<Object, Object>> recordIterator = allRecords.records(partition).iterator();
                         if (!breakOnErrorHit && recordIterator.hasNext()) {
                             ConsumerRecord<Object, Object> record;
-
-                            long partitionLastOffset = -1;
 
                             while (!breakOnErrorHit && recordIterator.hasNext()) {
                                 record = recordIterator.next();
@@ -209,6 +239,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                 if (endpoint.getConfiguration().isAutoCommitEnable() != null && !endpoint.getConfiguration().isAutoCommitEnable()) {
                                     exchange.getIn().setHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, !recordIterator.hasNext());
                                 }
+
                                 try {
                                     processor.process(exchange);
                                 } catch (Exception e) {
@@ -221,10 +252,7 @@ public class KafkaConsumer extends DefaultConsumer {
                                         // commit last good offset before we try again
                                         commitOffset(offsetRepository, partition, partitionLastOffset);
                                         // we are failing but store last good offset
-                                        log.warn("Error during processing {} from topic: {}. Will seek consumer to last good offset: {} and poll again.", exchange, topicName, partitionLastOffset);
-                                        if (partitionLastOffset != -1) {
-                                            consumer.seek(partition, partitionLastOffset);
-                                        }
+                                        log.warn("Error during processing {} from topic: {}. Will seek consumer to offset: {} and re-connect and start polling again.", exchange, topicName, partitionLastOffset);
                                         // continue to next partition
                                         breakOnErrorHit = true;
                                     } else {
@@ -243,15 +271,22 @@ public class KafkaConsumer extends DefaultConsumer {
                             }
                         }
                     }
+
+                    if (breakOnErrorHit) {
+                        // force re-connect
+                        reConnect = true;
+                    }
                 }
 
-                if (endpoint.getConfiguration().isAutoCommitEnable() != null && endpoint.getConfiguration().isAutoCommitEnable()) {
-                    if ("async".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
-                        LOG.info("Auto commitAsync on stop {} from topic {}", threadId, topicName);
-                        consumer.commitAsync();
-                    } else if ("sync".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
-                        LOG.info("Auto commitSync on stop {} from topic {}", threadId, topicName);
-                        consumer.commitSync();
+                if (!reConnect) {
+                    if (endpoint.getConfiguration().isAutoCommitEnable() != null && endpoint.getConfiguration().isAutoCommitEnable()) {
+                        if ("async".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
+                            LOG.info("Auto commitAsync on stop {} from topic {}", threadId, topicName);
+                            consumer.commitAsync();
+                        } else if ("sync".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
+                            LOG.info("Auto commitSync on stop {} from topic {}", threadId, topicName);
+                            consumer.commitSync();
+                        }
                     }
                 }
 
@@ -268,6 +303,8 @@ public class KafkaConsumer extends DefaultConsumer {
                 LOG.debug("Closing {} ", threadId);
                 IOHelper.close(consumer);
             }
+
+            return reConnect;
         }
 
         private void commitOffset(StateRepository<String, String> offsetRepository, TopicPartition partition, long partitionLastOffset) {
