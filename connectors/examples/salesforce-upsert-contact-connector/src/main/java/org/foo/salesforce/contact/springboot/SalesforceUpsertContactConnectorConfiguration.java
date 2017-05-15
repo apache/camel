@@ -28,7 +28,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SalesforceUpsertContactConnectorConfiguration {
 
     /**
-     * URL of the Salesforce instance by default set to
+     * URL of the Salesforce instance used for authentication by default set to
      * https://login.salesforce.com
      */
     private String loginUrl = "https://login.salesforce.com";
