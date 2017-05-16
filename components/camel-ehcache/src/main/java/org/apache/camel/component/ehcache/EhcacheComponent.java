@@ -21,12 +21,17 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
+import org.ehcache.CacheManager;
+import org.ehcache.config.CacheConfiguration;
 
 /**
  * Represents the component that manages {@link DefaultComponent}.
  */
 public class EhcacheComponent extends DefaultComponent {
-    
+    @Metadata(label = "advanced")
+    private EhcacheConfiguration configuration = new EhcacheConfiguration();
+
     public EhcacheComponent() {
     }
 
@@ -36,13 +41,63 @@ public class EhcacheComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new EhcacheEndpoint(
-            uri,
-            this,
-            EhcacheConfiguration.create(
-                getCamelContext(),
-                remaining,
-                parameters)
-        );
+        EhcacheConfiguration configuration;
+        if (this.configuration != null) {
+            configuration = this.configuration.copy();
+        } else {
+            configuration = new EhcacheConfiguration();
+        }
+
+        setProperties(configuration, parameters);
+
+        return new EhcacheEndpoint(uri, this, remaining, configuration);
+    }
+
+    // ****************************
+    // Properties
+    // ****************************
+
+    public EhcacheConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Sets the global component configuration
+     */
+    public void setConfiguration(EhcacheConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public CacheManager getCacheManager() {
+        return configuration.getCacheManager();
+    }
+
+    /**
+     * The cache manager
+     */
+    public void setCacheManager(CacheManager cacheManager) {
+        this.configuration.setCacheManager(cacheManager);
+    }
+
+    /**
+     * The default cache configuration to be used to create caches.
+     */
+    public <K, V> void setCacheConfiguration(CacheConfiguration<K, V> cacheConfiguration) {
+        this.configuration.setConfiguration(cacheConfiguration);
+    }
+
+    public <K, V> CacheConfiguration<K, V> getCacheConfiguration() {
+        return this.configuration.getConfiguration();
+    }
+
+    public String getCacheConfigurationUri() {
+        return this.configuration.getConfigUri();
+    }
+
+    /**
+     * URI pointing to the Ehcache XML configuration file's location
+     */
+    public void setCacheConfigurationUri(String configurationUri) {
+        this.configuration.setConfigUri(configurationUri);
     }
 }

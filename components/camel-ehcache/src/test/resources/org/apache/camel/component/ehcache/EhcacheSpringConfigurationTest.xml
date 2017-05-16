@@ -37,7 +37,7 @@
     </route>
     <route>
       <from uri="direct:file"/>
-        <to uri="ehcache://myFileCacheConf?keyType=java.lang.String&amp;valueType=java.lang.String&amp;configUri=classpath:ehcache/ehcache-file-config.xml"/>
+        <to uri="ehcache://myFileCacheConf?keyType=java.lang.String&amp;valueType=java.lang.String&amp;configurationUri=classpath:ehcache/ehcache-file-config.xml"/>
     </route>
   </camelContext>
 </beans>
