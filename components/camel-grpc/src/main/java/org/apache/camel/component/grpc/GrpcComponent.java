@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Represents the component that manages {@link GrpcEndpoint}.
@@ -35,7 +36,9 @@ public class GrpcComponent extends DefaultComponent {
         config.setServicePackage(extractServicePackage(remaining));
         // Convert method name to the camel case style
         // This requires if method name as described inside .proto file directly
-        config.setMethod(GrpcUtils.convertMethod2CamelCase(config.getMethod()));
+        if (!ObjectUtils.isEmpty(config.getMethod())) {
+            config.setMethod(GrpcUtils.convertMethod2CamelCase(config.getMethod()));
+        }
 
         Endpoint endpoint = new GrpcEndpoint(uri, this, config);
         return endpoint;

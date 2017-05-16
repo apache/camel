@@ -24,11 +24,17 @@ package org.apache.camel.component.grpc.test;
 
 // The PingPong service definition.
 service PingPong {
-  // Sending ping message and getting answer
-  rpc SendPing (PingRequest) returns (PongResponse) {}
+  // Sending ping message and getting pong answer synchronously
+  rpc PingSyncSync (PingRequest) returns (PongResponse) {}
   
-  // Sending ping message and getting answer in async mode (multiple response messages)
-  rpc PingAsyncResponse (PingRequest) returns (stream PongResponse) {}
+  // Sending ping message synchronously and getting pong answer asynchronously in streaming mode (multiple response messages)
+  rpc PingSyncAsync (PingRequest) returns (stream PongResponse) {}
+  
+  // Sending ping message asynchronously and getting pong answer synchronously
+  rpc PingAsyncSync (stream PingRequest) returns (PongResponse) {}
+  
+  // Sending ping message asynchronously and getting pong answer asynchronously in streaming mode (multiple response messages)
+  rpc PingAsyncAsync (stream PingRequest) returns (stream PongResponse) {}
 }
 
 // The request message containing the user's name.
