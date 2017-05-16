@@ -58,7 +58,7 @@ public class HystrixConfigurationDefinitionCommon {
      * property takes precedence so if it set to true this property does
      * nothing.
      */
-    private Boolean circuitBreakerForceClosed = true;
+    private Boolean circuitBreakerForceClosed = false;
     /**
      * If true the HystrixCircuitBreaker.allowRequest() will always return false
      * causing the circuit to be open (tripped) and reject all requests. This
