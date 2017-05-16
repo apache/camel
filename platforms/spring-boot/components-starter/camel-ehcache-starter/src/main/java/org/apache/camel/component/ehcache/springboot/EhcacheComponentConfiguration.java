@@ -21,6 +21,7 @@ import javax.annotation.Generated;
 import org.apache.camel.component.ehcache.EhcacheComponent;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
+import org.ehcache.config.Configuration;
 import org.ehcache.event.EventFiring;
 import org.ehcache.event.EventOrdering;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -46,6 +47,11 @@ public class EhcacheComponentConfiguration {
      */
     @NestedConfigurationProperty
     private CacheManager cacheManager;
+    /**
+     * The cache manager configuration
+     */
+    @NestedConfigurationProperty
+    private Configuration cacheManagerConfiguration;
     /**
      * The default cache configuration to be used to create caches.
      */
@@ -77,6 +83,15 @@ public class EhcacheComponentConfiguration {
 
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
+    }
+
+    public Configuration getCacheManagerConfiguration() {
+        return cacheManagerConfiguration;
+    }
+
+    public void setCacheManagerConfiguration(
+            Configuration cacheManagerConfiguration) {
+        this.cacheManagerConfiguration = cacheManagerConfiguration;
     }
 
     public CacheConfiguration<K, V> getCacheConfiguration() {
@@ -137,6 +152,10 @@ public class EhcacheComponentConfiguration {
          * The cache manager
          */
         private CacheManager cacheManager;
+        /**
+         * The cache manager configuration
+         */
+        private Configuration cacheManagerConfiguration;
         private EventOrdering eventOrdering = EventOrdering.ORDERED;
         private EventFiring eventFiring = EventFiring.ASYNCHRONOUS;
         private Set eventTypes;
@@ -202,6 +221,15 @@ public class EhcacheComponentConfiguration {
 
         public void setCacheManager(CacheManager cacheManager) {
             this.cacheManager = cacheManager;
+        }
+
+        public Configuration getCacheManagerConfiguration() {
+            return cacheManagerConfiguration;
+        }
+
+        public void setCacheManagerConfiguration(
+                Configuration cacheManagerConfiguration) {
+            this.cacheManagerConfiguration = cacheManagerConfiguration;
         }
 
         public EventOrdering getEventOrdering() {
