@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
+import org.ehcache.config.Configuration;
 
 /**
  * Represents the component that manages {@link DefaultComponent}.
@@ -79,6 +80,17 @@ public class EhcacheComponent extends DefaultComponent {
         this.configuration.setCacheManager(cacheManager);
     }
 
+    public Configuration getCacheManagerConfiguration() {
+        return configuration.getCacheManagerConfiguration();
+    }
+
+    /**
+     * The cache manager configuration
+     */
+    public void setCacheManagerConfiguration(Configuration cacheManagerConfiguration) {
+        this.configuration.setCacheManagerConfiguration(cacheManagerConfiguration);
+    }
+
     /**
      * The default cache configuration to be used to create caches.
      */
@@ -91,13 +103,13 @@ public class EhcacheComponent extends DefaultComponent {
     }
 
     public String getCacheConfigurationUri() {
-        return this.configuration.getConfigUri();
+        return this.configuration.getConfigurationUri();
     }
 
     /**
      * URI pointing to the Ehcache XML configuration file's location
      */
     public void setCacheConfigurationUri(String configurationUri) {
-        this.configuration.setConfigUri(configurationUri);
+        this.configuration.setConfigurationUri(configurationUri);
     }
 }

@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -41,7 +42,6 @@ public class EhcacheManager implements Service {
     private final EhcacheConfiguration configuration;
     private final CacheManager cacheManager;
     private final ConcurrentMap<String, UserManagedCache<?, ?>> userCaches;
-
     private final boolean managed;
 
     public EhcacheManager(String cacheName, EhcacheConfiguration configuration) throws IOException {
@@ -104,6 +104,10 @@ public class EhcacheManager implements Service {
             }
         }
 
+        if (cache == null) {
+            throw new RuntimeCamelException("Unable to retrieve the cache " +  name + " from cache manager " + cacheManager);
+        }
+
         return cache;
     }
 
@@ -123,26 +127,37 @@ public class EhcacheManager implements Service {
         ObjectHelper.notNull(cacheName, "Ehcache cacheName");
         ObjectHelper.notNull(configuration, "Camel Ehcache configuration");
 
+        // Check if a cache manager has been configured
         CacheManager manager = configuration.getCacheManager();
-
-        if (manager == null) {
-            String configurationUri = configuration.getConfigurationUri();
-            if (configurationUri != null) {
-                URL url = camelContext != null
-                    ? ResourceHelper.resolveMandatoryResourceAsUrl(camelContext.getClassResolver(), configurationUri)
-                    : new URL(configurationUri);
-
-                manager = CacheManagerBuilder.newCacheManager(new XmlConfiguration(url));
-            } else {
-                CacheManagerBuilder builder = CacheManagerBuilder.newCacheManagerBuilder();
-                if (configuration.getConfiguration() != null) {
-                    builder.withCache(cacheName, configuration.getConfiguration());
-                }
-
-                manager = builder.build();
-            }
+        if (manager != null) {
+            LOGGER.info("EhcacheManager configured with supplied CacheManager");
+            return manager;
         }
 
-        return manager;
+        // Check if a cache manager configuration has been provided
+        if (configuration.hasCacheManagerConfiguration()) {
+            LOGGER.info("EhcacheManager configured with supplied CacheManagerConfiguration");
+            return CacheManagerBuilder.newCacheManager(configuration.getCacheManagerConfiguration());
+        }
+
+        // Check if a configuration file has been provided
+        if (configuration.hasConfigurationUri()) {
+            String configurationUri = configuration.getConfigurationUri();
+            URL url = camelContext != null
+                ? ResourceHelper.resolveMandatoryResourceAsUrl(camelContext.getClassResolver(), configurationUri)
+                : new URL(configurationUri);
+
+            LOGGER.info("EhcacheManager configured with supplied URI {}", url);
+            return CacheManagerBuilder.newCacheManager(new XmlConfiguration(url));
+        }
+
+        // Create a cache manager using a builder
+        CacheManagerBuilder builder = CacheManagerBuilder.newCacheManagerBuilder();
+        if (configuration.getConfiguration() != null) {
+            LOGGER.info("Ehcache {} configured with custom CacheConfiguration", cacheName);
+            builder.withCache(cacheName, configuration.getConfiguration());
+        }
+
+        return builder.build();
     }
 }

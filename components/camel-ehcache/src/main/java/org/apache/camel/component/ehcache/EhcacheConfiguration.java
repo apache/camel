@@ -26,6 +26,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
+import org.ehcache.config.Configuration;
 import org.ehcache.event.EventFiring;
 import org.ehcache.event.EventOrdering;
 import org.ehcache.event.EventType;
@@ -40,6 +41,8 @@ public class EhcacheConfiguration implements Cloneable {
     private Object key;
     @UriParam
     private CacheManager cacheManager;
+    @UriParam
+    private Configuration cacheManagerConfiguration;
     @UriParam
     private String configurationUri;
     @UriParam(label = "advanced")
@@ -67,6 +70,10 @@ public class EhcacheConfiguration implements Cloneable {
 
     public String getConfigurationUri() {
         return configurationUri;
+    }
+
+    public boolean hasConfigurationUri() {
+        return ObjectHelper.isNotEmpty(configurationUri);
     }
 
     /**
@@ -136,6 +143,21 @@ public class EhcacheConfiguration implements Cloneable {
 
     public boolean hasCacheManager() {
         return this.cacheManager != null;
+    }
+
+    public Configuration getCacheManagerConfiguration() {
+        return cacheManagerConfiguration;
+    }
+
+    /**
+     * The cache manager configuration
+     */
+    public void setCacheManagerConfiguration(Configuration cacheManagerConfiguration) {
+        this.cacheManagerConfiguration = cacheManagerConfiguration;
+    }
+
+    public boolean hasCacheManagerConfiguration() {
+        return this.cacheManagerConfiguration != null;
     }
 
     public EventOrdering getEventOrdering() {
