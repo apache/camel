@@ -73,7 +73,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
         try {
             xml = camelContext.getTypeConverter().mandatoryConvertTo(String.class, resource);
             // the JAXB model expects the spring namespace (even for blueprint)
-            dom = XmlLineNumberParser.parseXml(new ByteArrayInputStream(xml.getBytes()), null, "camelContext,routes", "http://camel.apache.org/schema/spring");
+            dom = XmlLineNumberParser.parseXml(new ByteArrayInputStream(xml.getBytes()), null, "camelContext,routeContext,routes", "http://camel.apache.org/schema/spring");
         } catch (Exception e) {
             failed++;
             log.warn("Cannot load the resource " + name + " as XML");
