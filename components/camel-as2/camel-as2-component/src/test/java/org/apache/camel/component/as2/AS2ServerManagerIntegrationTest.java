@@ -67,7 +67,6 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2Server");
         mockEndpoint.expectedMinimumMessageCount(2);
         mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS));
-//        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES));
         mockEndpoint.assertIsSatisfied();
 
         final List<Exchange> exchanges = mockEndpoint.getExchanges();
@@ -75,6 +74,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         assertFalse("poll result", exchanges.isEmpty());
         LOG.debug("poll result: " + exchanges);
     }
+    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

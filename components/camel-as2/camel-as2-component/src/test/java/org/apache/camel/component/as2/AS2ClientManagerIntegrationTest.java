@@ -4,22 +4,27 @@
  */
 package org.apache.camel.component.as2;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
+import org.apache.camel.component.as2.api.AS2ServerConnection;
+import org.apache.camel.component.as2.internal.AS2ApiCollection;
+import org.apache.camel.component.as2.internal.AS2ClientManagerApiMethod;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpRequestHandler;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.camel.component.as2.internal.AS2ApiCollection;
-import org.apache.camel.component.as2.internal.AS2ClientManagerApiMethod;
-
 /**
  * Test class for {@link org.apache.camel.component.as2.api.AS2ClientManager} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
@@ -55,9 +60,12 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
             +"MOA+8:525'\n"
             +"UNT+23+00000000000117'\n"
             +"UNZ+1+00000000000778'\n";
+    
+    private static AS2ServerConnection serverConnection;
 
     @Test
     public void testSendNoEncryptNoSign() throws Exception {
+        
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
         headers.put("CamelAS2.ediMessage", EDI_MESSAGE);
@@ -73,6 +81,18 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertNotNull("sendNoEncryptNoSign result", result);
         LOG.debug("sendNoEncryptNoSign: " + result);
     }
+    
+    @BeforeClass
+    public static void setupTest() throws Exception {
+        receiveTestMessages();
+    }
+    
+    @AfterClass
+    public static void teardownTest() throws Exception {
+        if (serverConnection != null) {
+            serverConnection.stopListnering(8888);
+        }
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -84,5 +104,20 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
             }
         };
+    }
+    
+    public static class RequestHandler implements HttpRequestHandler {
+
+        @Override
+        public void handle(HttpRequest request, HttpResponse response, HttpContext context)
+                throws HttpException, IOException {
+           LOG.debug("Received test message: " + request);
+        }
+        
+    }
+    
+    private static void receiveTestMessages() throws IOException {
+        serverConnection = new AS2ServerConnection();
+        serverConnection.listen(new RequestHandler(), 8888);
     }
 }
