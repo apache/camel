@@ -16,49 +16,20 @@
  */
 package org.apache.camel.component.properties;
 
-import org.apache.camel.spring.SpringTestSupport;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.spring.CamelContextFactoryBean;
 
-/**
- * @version 
- */
-public class SpringPropertiesComponentTest extends SpringTestSupport {
+public class SpringPropertiesComponentTest extends BaseSpringPropertiesComponentTest {
 
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesComponentTest.xml");
+    public void testResolutionOfPlaceholdersOnFactoryBean() {
+        final CamelContextFactoryBean factoryBean = applicationContext.getBean("&camel-1",
+            CamelContextFactoryBean.class);
+
+        assertEquals("{{autoStartup}}", factoryBean.getAutoStartup());
+
+        final CamelContext context = applicationContext.getBean("camel-1", CamelContext.class);
+
+        assertTrue(context.isAutoStartup());
     }
 
-    public void testSpringPropertiesComponentStart() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    public void testSpringPropertiesComponentBar() throws Exception {
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
-
-        template.sendBody("direct:bar", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    public void testSpringPropertiesComponentStart2() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBody("direct:start2", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    public void testSpringPropertiesComponentBar2() throws Exception {
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
-
-        template.sendBody("direct:bar2", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
 }

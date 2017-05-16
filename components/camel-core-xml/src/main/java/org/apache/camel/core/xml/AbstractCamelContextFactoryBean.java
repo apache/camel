@@ -815,50 +815,52 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
      * @throws Exception is thrown if error occurred
      */
     protected void initCamelContext(T ctx) throws Exception {
+        final T context = getContext();
+
         if (getStreamCache() != null) {
-            ctx.setStreamCaching(CamelContextHelper.parseBoolean(getContext(), getStreamCache()));
+            ctx.setStreamCaching(CamelContextHelper.parseBoolean(context, getStreamCache()));
         }
         if (getTrace() != null) {
-            ctx.setTracing(CamelContextHelper.parseBoolean(getContext(), getTrace()));
+            ctx.setTracing(CamelContextHelper.parseBoolean(context, getTrace()));
         }
         if (getMessageHistory() != null) {
-            ctx.setMessageHistory(CamelContextHelper.parseBoolean(getContext(), getMessageHistory()));
+            ctx.setMessageHistory(CamelContextHelper.parseBoolean(context, getMessageHistory()));
         }
         if (getLogMask() != null) {
-            ctx.setLogMask(CamelContextHelper.parseBoolean(getContext(), getLogMask()));
+            ctx.setLogMask(CamelContextHelper.parseBoolean(context, getLogMask()));
         }
         if (getLogExhaustedMessageBody() != null) {
-            ctx.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(getContext(), getLogExhaustedMessageBody()));
+            ctx.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(context, getLogExhaustedMessageBody()));
         }
         if (getDelayer() != null) {
-            ctx.setDelayer(CamelContextHelper.parseLong(getContext(), getDelayer()));
+            ctx.setDelayer(CamelContextHelper.parseLong(context, getDelayer()));
         }
         if (getHandleFault() != null) {
-            ctx.setHandleFault(CamelContextHelper.parseBoolean(getContext(), getHandleFault()));
+            ctx.setHandleFault(CamelContextHelper.parseBoolean(context, getHandleFault()));
         }
         if (getErrorHandlerRef() != null) {
             ctx.setErrorHandlerBuilder(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
         }
         if (getAutoStartup() != null) {
-            ctx.setAutoStartup(CamelContextHelper.parseBoolean(getContext(), getAutoStartup()));
+            ctx.setAutoStartup(CamelContextHelper.parseBoolean(context, getAutoStartup()));
         }
         if (getUseMDCLogging() != null) {
-            ctx.setUseMDCLogging(CamelContextHelper.parseBoolean(getContext(), getUseMDCLogging()));
+            ctx.setUseMDCLogging(CamelContextHelper.parseBoolean(context, getUseMDCLogging()));
         }
         if (getUseBreadcrumb() != null) {
-            ctx.setUseBreadcrumb(CamelContextHelper.parseBoolean(getContext(), getUseBreadcrumb()));
+            ctx.setUseBreadcrumb(CamelContextHelper.parseBoolean(context, getUseBreadcrumb()));
         }
         if (getAllowUseOriginalMessage() != null) {
-            ctx.setAllowUseOriginalMessage(CamelContextHelper.parseBoolean(getContext(), getAllowUseOriginalMessage()));
+            ctx.setAllowUseOriginalMessage(CamelContextHelper.parseBoolean(context, getAllowUseOriginalMessage()));
         }
         if (getRuntimeEndpointRegistryEnabled() != null) {
-            ctx.getRuntimeEndpointRegistry().setEnabled(CamelContextHelper.parseBoolean(getContext(), getRuntimeEndpointRegistryEnabled()));
+            ctx.getRuntimeEndpointRegistry().setEnabled(CamelContextHelper.parseBoolean(context, getRuntimeEndpointRegistryEnabled()));
         }
         if (getManagementNamePattern() != null) {
-            ctx.getManagementNameStrategy().setNamePattern(getManagementNamePattern());
+            ctx.getManagementNameStrategy().setNamePattern(CamelContextHelper.parseText(context, getManagementNamePattern()));
         }
         if (getThreadNamePattern() != null) {
-            ctx.getExecutorServiceManager().setThreadNamePattern(getThreadNamePattern());
+            ctx.getExecutorServiceManager().setThreadNamePattern(CamelContextHelper.parseText(context, getThreadNamePattern()));
         }
         if (getShutdownRoute() != null) {
             ctx.setShutdownRoute(getShutdownRoute());
