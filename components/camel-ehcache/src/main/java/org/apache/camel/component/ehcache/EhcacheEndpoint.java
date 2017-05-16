@@ -37,12 +37,12 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     private final EhcacheConfiguration configuration;
     private final EhcacheManager cacheManager;
 
-    EhcacheEndpoint(String uri, EhcacheComponent component,  String cacheName, EhcacheConfiguration configuration) throws Exception {
+    EhcacheEndpoint(String uri, EhcacheComponent component,  String cacheName, EhcacheManager cacheManager, EhcacheConfiguration configuration) throws Exception {
         super(uri, component);
 
         this.cacheName = cacheName;
         this.configuration = configuration;
-        this.cacheManager = new EhcacheManager(cacheName, configuration, component.getCamelContext());
+        this.cacheManager = cacheManager;
     }
 
     @Override
