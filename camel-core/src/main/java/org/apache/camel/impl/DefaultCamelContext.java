@@ -2986,7 +2986,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // count how many routes are actually started
             int started = 0;
             for (Route route : getRoutes()) {
-                if (getRouteStatus(route.getId()).isStarted()) {
+                ServiceStatus status = getRouteStatus(route.getId());
+                if (status != null && status.isStarted()) {
                     started++;
                 }
             }
