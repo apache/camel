@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.stub.StreamObserver;
+import io.grpc.netty.NettyChannelBuilder;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.grpc.client.GrpcResponseAggregationStreamObserver;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -52,34 +49,8 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Message message = exchange.getIn();
 
-        StreamObserver<Object> asyncHandler = new StreamObserver<Object>() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onNext(Object response) {
-                final Object currentBody = exchange.getOut().getBody();
-                List<Object> returnBody = new ArrayList<Object>();
-                if (currentBody instanceof List) {
-                    returnBody = (List<Object>)currentBody;
-                }
-                returnBody.add(response);
-                exchange.getOut().setBody(returnBody);
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                exchange.setException(t);
-                callback.done(false);
-            }
-
-            @Override
-            public void onCompleted() {
-                exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-                callback.done(false);
-            }
-        };
         try {
-            GrpcUtils.invokeAsyncMethod(grpcStub, configuration.getMethod(), message.getBody(), asyncHandler);
+            GrpcUtils.invokeAsyncMethod(grpcStub, configuration.getMethod(), message.getBody(), new GrpcResponseAggregationStreamObserver(exchange, callback));
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -122,14 +93,16 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
     }
 
     protected void initializeChannel() {
+        NettyChannelBuilder channelBuilder = null;
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             LOG.info("Creating channel to the remote gRPC server " + configuration.getHost() + ":" + configuration.getPort());
-            channel = ManagedChannelBuilder.forAddress(configuration.getHost(), configuration.getPort()).usePlaintext(configuration.getUsePlainText()).build();
+            channelBuilder = NettyChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
         } else if (!ObjectHelper.isEmpty(configuration.getTarget())) {
             LOG.info("Creating channel to the remote gRPC server " + configuration.getTarget());
-            channel = ManagedChannelBuilder.forTarget(configuration.getTarget()).usePlaintext(configuration.getUsePlainText()).build();
+            channelBuilder =  NettyChannelBuilder.forTarget(configuration.getTarget());
         } else {
             throw new IllegalArgumentException("No connection properties (host, port or target) specified");
         }
+        channel = channelBuilder.usePlaintext(configuration.getUsePlainText()).build();
     }
 }

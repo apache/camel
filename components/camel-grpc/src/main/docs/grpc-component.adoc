@@ -61,9 +61,25 @@ with the following path and query parameters:
 |=======================================================================
 // endpoint options: END
 
-### gRPC Resource Type Mapping
-In case of synchronous invocation, component expects method request class in Body and returns response class as out Body.
-In case of asynchronous invocation, component expects method request class in Body and returns java.util.List of the response class as out Body.
+### gRPC producer resource type mapping
+
+The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note, that invocation of the procedures with incoming stream parameter in asynchronous style are not allowed.
+
+[width="100%",cols="15%,15%,15%,25%,25%",options="header",]
+|=======================================================================
+|Invocation style |Request type|Response type|Request Body Type|Result Body Type
+
+|*synchronous*|simple|simple|Object|Object
+|*synchronous*|simple|stream|Object|List<Object>
+|synchronous|stream|simple|not allowed|not allowed
+|synchronous|stream|stream|not allowed|not allowed
+
+|*asynchronous*|simple|simple|Object|List<Object>
+|*asynchronous*|simple|stream|Object|List<Object>
+|*asynchronous*|stream|simple|Object or List<Object>|List<Object>
+|*asynchronous*|stream|stream|Object or List<Object>|List<Object>
+
+|=======================================================================
 
 ### Examples
 
