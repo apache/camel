@@ -42,6 +42,7 @@ import static org.apache.camel.util.CamelContextHelper.mandatoryLookup;
  * To integrate camel-hystrix with the Camel routes using the Hystrix EIP.
  */
 public class HystrixProcessorFactory extends TypedProcessorFactory<HystrixDefinition> {
+
     public HystrixProcessorFactory() {
         super(HystrixDefinition.class);
     }
