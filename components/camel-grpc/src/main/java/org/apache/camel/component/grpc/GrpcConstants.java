@@ -21,7 +21,7 @@ package org.apache.camel.component.grpc;
  */
 public interface GrpcConstants {
 
-    String GRPC_SERVICE_CLASS_PREFIX = "Grpc";
+    String GRPC_SERVICE_CLASS_POSTFIX = "Grpc";
     String GRPC_SERVICE_SYNC_STUB_METHOD = "newBlockingStub";
     String GRPC_SERVICE_ASYNC_STUB_METHOD = "newStub";
     String GRPC_SERVICE_FUTURE_STUB_METHOD = "newFutureStub";

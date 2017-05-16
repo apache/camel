@@ -17,6 +17,9 @@
 package org.apache.camel.component.grpc;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import io.grpc.Channel;
 import io.grpc.stub.StreamObserver;
@@ -51,7 +54,7 @@ public final class GrpcUtils {
         paramChannel[0] = Channel.class;
         Object grpcBlockingStub = null;
 
-        String serviceClassName = packageName + "." + serviceName + GrpcConstants.GRPC_SERVICE_CLASS_PREFIX;
+        String serviceClassName = packageName + "." + serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX;
         try {
             Class grpcServiceClass = Class.forName(serviceClassName);
             Method grpcBlockingMethod = ReflectionUtils.findMethod(grpcServiceClass, stubMethod, paramChannel);
@@ -65,32 +68,49 @@ public final class GrpcUtils {
         }
         return grpcBlockingStub;
     }
-
-    @SuppressWarnings("rawtypes")
-    public static void invokeAsyncMethod(Object asyncStubClass, String invokeMethod, Object request, StreamObserver asyncHandler) {
-        Class[] paramMethod = new Class[2];
-        paramMethod[0] = request.getClass();
-        paramMethod[1] = StreamObserver.class;
+    
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static void invokeAsyncMethod(Object asyncStubClass, String invokeMethod, Object request, StreamObserver responseObserver) {
+        Class[] paramMethod = null;
 
         Method method = ReflectionUtils.findMethod(asyncStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
-            throw new IllegalArgumentException("gRPC service method not found: " + invokeMethod + " with parameter: " + request.getClass().getName());
+            throw new IllegalArgumentException("gRPC service method not found: " + asyncStubClass.getClass().getName() + "." + invokeMethod);
         }
-        ReflectionUtils.invokeMethod(method, asyncStubClass, request, asyncHandler);
+        if (method.getReturnType().equals(StreamObserver.class)) {
+            StreamObserver<Object> requestObserver = (StreamObserver<Object>)ReflectionUtils.invokeMethod(method, asyncStubClass, responseObserver);
+            if (request instanceof List) {
+                List<Object> requestList = (List<Object>)request;
+                requestList.forEach((requestItem) -> {
+                    requestObserver.onNext(requestItem);
+                });
+            } else {
+                requestObserver.onNext(request);
+            }
+            requestObserver.onCompleted();
+        } else {
+            ReflectionUtils.invokeMethod(method, asyncStubClass, request, responseObserver);
+        }
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static Object invokeSyncMethod(Object blockingStubClass, String invokeMethod, Object request) {
-        Class[] paramMethod = new Class[1];
-        paramMethod[0] = request.getClass();
-        Object responseObject = null;
+        Class[] paramMethod = null;
 
         Method method = ReflectionUtils.findMethod(blockingStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
-            throw new IllegalArgumentException("gRPC service method not found: " + invokeMethod + " with parameter: " + request.getClass().getName());
+            throw new IllegalArgumentException("gRPC service method not found: " + blockingStubClass.getClass().getName() + "." + invokeMethod);
         }
-        responseObject = ReflectionUtils.invokeMethod(method, blockingStubClass, request);
-        return responseObject;
+        if (method.getReturnType().equals(Iterator.class)) {
+            Iterator<Object> responseObjects = (Iterator<Object>)ReflectionUtils.invokeMethod(method, blockingStubClass, request);
+            List<Object> objectList = new ArrayList<Object>();
+            while (responseObjects.hasNext()) {
+                objectList.add(responseObjects.next());
+            }
+            return objectList;
+        } else {
+            return ReflectionUtils.invokeMethod(method, blockingStubClass, request);
+        }
     }
 
     /**
