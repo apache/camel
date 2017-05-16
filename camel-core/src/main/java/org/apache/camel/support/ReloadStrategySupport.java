@@ -135,7 +135,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
                 CollectionStringBuffer csb = new CollectionStringBuffer(",");
                 // collect route ids and force assign ids if not in use
                 for (RouteDefinition route : routes) {
-                    unassignedRouteIds |= route.hasCustomIdAssigned();
+                    unassignedRouteIds |= !route.hasCustomIdAssigned();
                     String id = route.idOrCreate(camelContext.getNodeIdFactory());
                     csb.append(id);
                 }
