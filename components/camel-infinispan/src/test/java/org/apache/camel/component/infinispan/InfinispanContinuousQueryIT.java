@@ -47,8 +47,7 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         @Override
         public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("CQ%")
-                .toBuilder().build();
+                .having("name").like("CQ%").build();
         }
     };
 
@@ -56,8 +55,7 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         @Override
         public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%TEST%")
-                .toBuilder().build();
+                .having("name").like("%TEST%").build();
         }
     };
 
@@ -65,8 +63,7 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         @Override
         public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%Q0%")
-                .toBuilder().build();
+                .having("name").like("%Q0%").build();
         }
     };
 
