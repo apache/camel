@@ -524,7 +524,7 @@
     <bundle dependency='true'>mvn:com.ning/compress-lzf/${compress-lzf-version}</bundle>
     <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch/${elasticsearch5-bundle-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.elasticsearch.client/transport/${elasticsearch5-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch-client/${elasticsearch5-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-elasticsearch5/${project.version}</bundle>
   </feature>
   <feature name='camel-etcd' version='${project.version}' resolver='(obr)' start-level='50'>
