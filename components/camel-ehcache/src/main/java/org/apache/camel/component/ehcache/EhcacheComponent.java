@@ -21,11 +21,15 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
+import org.ehcache.CacheManager;
 
 /**
  * Represents the component that manages {@link DefaultComponent}.
  */
 public class EhcacheComponent extends DefaultComponent {
+    @Metadata(label = "advanced")
+    private CacheManager cacheManager;
     
     public EhcacheComponent() {
     }
@@ -36,13 +40,26 @@ public class EhcacheComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new EhcacheEndpoint(
-            uri,
-            this,
-            EhcacheConfiguration.create(
-                getCamelContext(),
-                remaining,
-                parameters)
-        );
+        EhcacheConfiguration configuration = EhcacheConfiguration.create(getCamelContext(), remaining, parameters);
+        if (configuration.getCacheManager() == null) {
+            configuration.setCacheManager(cacheManager);
+        }
+
+        return new EhcacheEndpoint(uri, this, configuration);
+    }
+
+    // *****************************
+    // Properties
+    // *****************************
+
+    public CacheManager getCacheManager() {
+        return cacheManager;
+    }
+
+    /**
+     * The cache manager
+     */
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 }

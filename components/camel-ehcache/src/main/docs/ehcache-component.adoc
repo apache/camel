@@ -37,7 +37,16 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Ehcache component has no options.
+The Ehcache component supports 2 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **cacheManager** (advanced) | The cache manager |  | CacheManager
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
 // component options: END
 
 
