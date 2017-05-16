@@ -29,12 +29,12 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     private final EhcacheManager manager;
     private final Cache cache;
 
-    public EhcacheConsumer(EhcacheEndpoint endpoint, EhcacheConfiguration configuration, Processor processor) throws Exception {
+    public EhcacheConsumer(EhcacheEndpoint endpoint, String cacheName, EhcacheConfiguration configuration, Processor processor) throws Exception {
         super(endpoint, processor);
 
         this.configuration = configuration;
         this.manager = endpoint.getManager();
-        this.cache = manager.getCache();
+        this.cache = manager.getCache(cacheName, configuration.getKeyType(), configuration.getValueType());
     }
 
     @Override

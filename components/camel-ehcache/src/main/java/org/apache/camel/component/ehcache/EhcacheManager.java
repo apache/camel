@@ -17,16 +17,21 @@
 package org.apache.camel.component.ehcache;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.UserManagedCache;
 import org.ehcache.config.CacheConfiguration;
+import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.UserManagedCacheBuilder;
+import org.ehcache.xml.XmlConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +44,12 @@ public class EhcacheManager implements Service {
 
     private final boolean managed;
 
-    public EhcacheManager(EhcacheConfiguration configuration) throws IOException {
-        this(configuration.createCacheManager(), !configuration.hasCacheManager(), configuration);
+    public EhcacheManager(String cacheName, EhcacheConfiguration configuration) throws IOException {
+        this(cacheName, configuration, null);
+    }
+
+    public EhcacheManager(String cacheName, EhcacheConfiguration configuration, CamelContext camelContext) throws IOException {
+        this(createCacheManager(cacheName, configuration, camelContext), !configuration.hasCacheManager(), configuration);
     }
 
     public EhcacheManager(CacheManager cacheManager) {
@@ -98,19 +107,42 @@ public class EhcacheManager implements Service {
         return cache;
     }
 
-    public Cache<?, ?> getCache(String name) throws Exception {
-        return getCache(
-            name,
-            configuration.getKeyType(),
-            configuration.getValueType());
+    CacheManager getCacheManager() {
+        return this.cacheManager;
     }
 
-    public Cache<?, ?> getCache() throws Exception  {
-        ObjectHelper.notNull(configuration, "Ehcache configuration");
+    // *************************************************
+    //
+    // *************************************************
 
-        return getCache(
-            configuration.getCacheName(),
-            configuration.getKeyType(),
-            configuration.getValueType());
+    private static CacheManager createCacheManager(String cacheName, EhcacheConfiguration configuration) throws IOException {
+        return createCacheManager(cacheName, configuration, null);
+    }
+
+    private  static CacheManager createCacheManager(String cacheName, EhcacheConfiguration configuration, CamelContext camelContext) throws IOException {
+        ObjectHelper.notNull(cacheName, "Ehcache cacheName");
+        ObjectHelper.notNull(configuration, "Camel Ehcache configuration");
+
+        CacheManager manager = configuration.getCacheManager();
+
+        if (manager == null) {
+            String configurationUri = configuration.getConfigurationUri();
+            if (configurationUri != null) {
+                URL url = camelContext != null
+                    ? ResourceHelper.resolveMandatoryResourceAsUrl(camelContext.getClassResolver(), configurationUri)
+                    : new URL(configurationUri);
+
+                manager = CacheManagerBuilder.newCacheManager(new XmlConfiguration(url));
+            } else {
+                CacheManagerBuilder builder = CacheManagerBuilder.newCacheManagerBuilder();
+                if (configuration.getConfiguration() != null) {
+                    builder.withCache(cacheName, configuration.getConfiguration());
+                }
+
+                manager = builder.build();
+            }
+        }
+
+        return manager;
     }
 }
