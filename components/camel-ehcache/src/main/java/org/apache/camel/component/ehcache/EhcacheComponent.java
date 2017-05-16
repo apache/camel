@@ -16,20 +16,30 @@
  */
 package org.apache.camel.component.ehcache;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.Configuration;
+import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.xml.XmlConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link DefaultComponent}.
  */
 public class EhcacheComponent extends DefaultComponent {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheComponent.class);
+
     @Metadata(label = "advanced")
     private EhcacheConfiguration configuration = new EhcacheConfiguration();
 
@@ -42,16 +52,53 @@ public class EhcacheComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EhcacheConfiguration configuration;
-        if (this.configuration != null) {
-            configuration = this.configuration.copy();
-        } else {
-            configuration = new EhcacheConfiguration();
-        }
-
+        EhcacheConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);
 
-        return new EhcacheEndpoint(uri, this, remaining, configuration);
+        return new EhcacheEndpoint(uri, this, remaining, createCacheManager(configuration), configuration);
+    }
+
+    // ****************************
+    // Helpers
+    // ****************************
+
+    private EhcacheManager createCacheManager(EhcacheConfiguration configuration) throws IOException {
+        ObjectHelper.notNull(configuration, "Camel Ehcache configuration");
+
+        // Check if a cache manager has been configured
+        CacheManager manager = configuration.getCacheManager();
+        if (manager != null) {
+            LOGGER.info("EhcacheManager configured with supplied CacheManager");
+            return new EhcacheManager(manager, false, configuration);
+        }
+
+        // Check if a cache manager configuration has been provided
+        if (configuration.hasCacheManagerConfiguration()) {
+            LOGGER.info("EhcacheManager configured with supplied CacheManagerConfiguration");
+
+            return new EhcacheManager(
+                CacheManagerBuilder.newCacheManager(configuration.getCacheManagerConfiguration()),
+                true,
+                configuration
+            );
+        }
+
+        // Check if a configuration file has been provided
+        if (configuration.hasConfigurationUri()) {
+            String configurationUri = configuration.getConfigurationUri();
+            URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configurationUri);
+
+            LOGGER.info("EhcacheManager configured with supplied URI {}", url);
+
+            return new EhcacheManager(
+                CacheManagerBuilder.newCacheManager(new XmlConfiguration(url)),
+                true,
+                configuration
+            );
+        }
+
+        LOGGER.info("EhcacheManager configured with default builder");
+        return new EhcacheManager(CacheManagerBuilder.newCacheManagerBuilder().build(), true, configuration);
     }
 
     // ****************************
@@ -66,6 +113,9 @@ public class EhcacheComponent extends DefaultComponent {
      * Sets the global component configuration
      */
     public void setConfiguration(EhcacheConfiguration configuration) {
+        // The component configuration can't be null
+        ObjectHelper.notNull(configuration, "EhcacheConfiguration");
+
         this.configuration = configuration;
     }
 

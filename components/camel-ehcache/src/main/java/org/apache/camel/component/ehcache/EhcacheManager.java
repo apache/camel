@@ -16,51 +16,25 @@
  */
 package org.apache.camel.component.ehcache;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.UserManagedCache;
 import org.ehcache.config.CacheConfiguration;
-import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.UserManagedCacheBuilder;
-import org.ehcache.xml.XmlConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EhcacheManager implements Service {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheManager.class);
-
     private final EhcacheConfiguration configuration;
     private final CacheManager cacheManager;
     private final ConcurrentMap<String, UserManagedCache<?, ?>> userCaches;
     private final boolean managed;
 
-    public EhcacheManager(String cacheName, EhcacheConfiguration configuration) throws IOException {
-        this(cacheName, configuration, null);
-    }
-
-    public EhcacheManager(String cacheName, EhcacheConfiguration configuration, CamelContext camelContext) throws IOException {
-        this(createCacheManager(cacheName, configuration, camelContext), !configuration.hasCacheManager(), configuration);
-    }
-
-    public EhcacheManager(CacheManager cacheManager) {
-        this(cacheManager, false, null);
-    }
-
-    public EhcacheManager(CacheManager cacheManager, boolean managed) {
-        this(cacheManager, managed, null);
-    }
-
-    private EhcacheManager(CacheManager cacheManager, boolean managed, EhcacheConfiguration configuration) {
+    public EhcacheManager(CacheManager cacheManager, boolean managed, EhcacheConfiguration configuration) {
         this.cacheManager = cacheManager;
         this.userCaches = new ConcurrentHashMap<>();
         this.managed = managed;
@@ -113,51 +87,5 @@ public class EhcacheManager implements Service {
 
     CacheManager getCacheManager() {
         return this.cacheManager;
-    }
-
-    // *************************************************
-    //
-    // *************************************************
-
-    private static CacheManager createCacheManager(String cacheName, EhcacheConfiguration configuration) throws IOException {
-        return createCacheManager(cacheName, configuration, null);
-    }
-
-    private  static CacheManager createCacheManager(String cacheName, EhcacheConfiguration configuration, CamelContext camelContext) throws IOException {
-        ObjectHelper.notNull(cacheName, "Ehcache cacheName");
-        ObjectHelper.notNull(configuration, "Camel Ehcache configuration");
-
-        // Check if a cache manager has been configured
-        CacheManager manager = configuration.getCacheManager();
-        if (manager != null) {
-            LOGGER.info("EhcacheManager configured with supplied CacheManager");
-            return manager;
-        }
-
-        // Check if a cache manager configuration has been provided
-        if (configuration.hasCacheManagerConfiguration()) {
-            LOGGER.info("EhcacheManager configured with supplied CacheManagerConfiguration");
-            return CacheManagerBuilder.newCacheManager(configuration.getCacheManagerConfiguration());
-        }
-
-        // Check if a configuration file has been provided
-        if (configuration.hasConfigurationUri()) {
-            String configurationUri = configuration.getConfigurationUri();
-            URL url = camelContext != null
-                ? ResourceHelper.resolveMandatoryResourceAsUrl(camelContext.getClassResolver(), configurationUri)
-                : new URL(configurationUri);
-
-            LOGGER.info("EhcacheManager configured with supplied URI {}", url);
-            return CacheManagerBuilder.newCacheManager(new XmlConfiguration(url));
-        }
-
-        // Create a cache manager using a builder
-        CacheManagerBuilder builder = CacheManagerBuilder.newCacheManagerBuilder();
-        if (configuration.getConfiguration() != null) {
-            LOGGER.info("Ehcache {} configured with custom CacheConfiguration", cacheName);
-            builder.withCache(cacheName, configuration.getConfiguration());
-        }
-
-        return builder.build();
     }
 }
