@@ -664,9 +664,22 @@
                   <goal>run</goal>
                 </goals>
               </execution>
+              <execution>
+                <id>cpy-schema</id>
+                <phase>process-test-sources</phase>
+                <configuration>
+                  <target>
+                    <echo>Copying XSD schema to be included in JAR</echo>
+                    <move file="${project.basedir}/schema1.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
+                    <delete file="${project.basedir}/schema2.xsd"/>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
             </executions>
           </plugin>
-
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
@@ -683,27 +696,6 @@
               <executable>schemagen</executable>
               <commandlineArgs>-cp %classpath ${schema.source.files}</commandlineArgs>
             </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.8</version>
-            <executions>
-              <execution>
-                <id>cpy-schema</id>
-                <phase>generate-test-sources</phase>
-                <configuration>
-                  <target>
-                    <echo>Copying XSD schema to be included in JAR</echo>
-                    <move file="${project.basedir}/schema1.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
-                    <delete file="${project.basedir}/schema2.xsd"/>
-                  </target>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>
