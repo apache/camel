@@ -38,6 +38,7 @@ public interface InfinispanConstants {
 
     String CACHE_ENTRY_JOINING = "CacheEntryJoining";
     String CACHE_ENTRY_LEAVING = "CacheEntryLeaving";
+    String CACHE_ENTRY_UPDATED = "CacheEntryUpdated";
 
     /**
      * @deprecated use {@link InfinispanOperation#PUT} instead.
