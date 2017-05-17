@@ -137,6 +137,11 @@ public class InfinispanConsumer extends DefaultConsumer {
         public void resultJoining(Object key, Object value) {
             processEvent(InfinispanConstants.CACHE_ENTRY_JOINING, false, cacheName, key, value);
         }
+        
+        @Override
+        public void resultUpdated(Object key, Object value) {
+            processEvent(InfinispanConstants.CACHE_ENTRY_UPDATED, false, cacheName, key, value);
+        }
 
         @Override
         public void resultLeaving(Object key) {
