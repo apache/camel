@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,9 +83,18 @@ public class XmppComponent extends UriEndpointComponent {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        ReconnectionManager.setEnabledPerDefault(true);
+
+        super.doStart();
+    }
+
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(endpointCache.values());
         endpointCache.clear();
+
+        super.doStop();
     }
 
     private String extractCacheKeyFromUri(String uri) throws URISyntaxException {

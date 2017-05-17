@@ -300,6 +300,7 @@
     <isorelax-jaxp-bridge-version>1.1</isorelax-jaxp-bridge-version>
     <ivy-version>2.4.0</ivy-version>
     <jini-version>2.1</jini-version>
+    <jxmpp-version>0.5.0</jxmpp-version>
     <jackson-version>1.9.12</jackson-version>
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
@@ -573,7 +574,7 @@
     <sip-api-version>1.1</sip-api-version>
     <slf4j-api-version>1.7.22</slf4j-api-version>
     <slf4j-version>1.7.22</slf4j-version>
-    <smack-version>4.0.7</smack-version>
+    <smack-version>4.2.0</smack-version>
     <snakeyaml-version>1.18</snakeyaml-version>
     <snappy-version>1.1.2.6</snappy-version>
     <snmp4j-version>2.3.4_1</snmp4j-version>
