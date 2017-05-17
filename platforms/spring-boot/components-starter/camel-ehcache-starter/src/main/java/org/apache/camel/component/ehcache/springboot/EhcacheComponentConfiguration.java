@@ -56,7 +56,7 @@ public class EhcacheComponentConfiguration {
      * The default cache configuration to be used to create caches.
      */
     @NestedConfigurationProperty
-    private CacheConfiguration<K, V> cacheConfiguration;
+    private CacheConfiguration<?, ?> cacheConfiguration;
     /**
      * URI pointing to the Ehcache XML configuration file's location
      */
@@ -94,12 +94,12 @@ public class EhcacheComponentConfiguration {
         this.cacheManagerConfiguration = cacheManagerConfiguration;
     }
 
-    public CacheConfiguration<K, V> getCacheConfiguration() {
+    public CacheConfiguration<?, ?> getCacheConfiguration() {
         return cacheConfiguration;
     }
 
     public void setCacheConfiguration(
-            CacheConfiguration<K, V> cacheConfiguration) {
+            CacheConfiguration<?, ?> cacheConfiguration) {
         this.cacheConfiguration = cacheConfiguration;
     }
 
