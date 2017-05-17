@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
@@ -69,6 +70,19 @@ public final class MongoDbBasicConverters {
 
         return answer;
     }
+
+    @Converter
+    public static BasicDBList fromStringToBasicDBList(String s) {
+        BasicDBList answer = null;
+        try {
+            answer = (BasicDBList) JSON.parse(s);
+        } catch (Exception e) {
+            LOG.warn("String -> BasicDBList conversion selected, but the following exception occurred. Returning null.", e);
+        }
+
+        return answer;
+    }
+    
     @Converter
     public static BasicDBObject fromStringToBasicDBObject(String s) {
         BasicDBObject answer = null;
