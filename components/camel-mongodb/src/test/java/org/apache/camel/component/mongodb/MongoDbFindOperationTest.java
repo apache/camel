@@ -158,7 +158,6 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
             headers.put(MongoDbConstants.NUM_TO_SKIP, numToSkip);
             headers.put(MongoDbConstants.LIMIT, 100);
             Object result = template.requestBodyAndHeaders("direct:findAll", (Object) null, headers);
-            System.out.println(result.getClass());
             assertTrue("Result is not of type List", result instanceof List);
 
             @SuppressWarnings("unchecked")
