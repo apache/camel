@@ -25,9 +25,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The gRPC component is using for calling remote procedures via HTTP/2
+ * The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:service", producerOnly = true, label = "rpc")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:service", label = "rpc")
 public class GrpcEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GrpcConfiguration configuration;
@@ -47,7 +47,7 @@ public class GrpcEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Cannot consume from a gRPC endpoint: " + getEndpointUri());
+        return new GrpcConsumer(this, processor, configuration);
     }
 
     public boolean isSingleton() {
