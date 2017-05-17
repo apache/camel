@@ -17,6 +17,7 @@
 package org.apache.camel.component.paho.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.paho")
-public class PahoComponentConfiguration {
+public class PahoComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * The URL of the MQTT broker.

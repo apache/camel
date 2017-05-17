@@ -19,6 +19,7 @@ package org.apache.camel.component.avro.springboot;
 import javax.annotation.Generated;
 import org.apache.avro.Protocol;
 import org.apache.camel.component.avro.AvroTransport;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.avro")
-public class AvroComponentConfiguration {
+public class AvroComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a shared AvroConfiguration to configure options once

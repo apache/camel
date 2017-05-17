@@ -18,6 +18,7 @@ package org.apache.camel.component.jt400.springboot;
 
 import javax.annotation.Generated;
 import com.ibm.as400.access.AS400ConnectionPool;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.jt400")
-public class Jt400ComponentConfiguration {
+public class Jt400ComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Returns the default connection pool used by this component.

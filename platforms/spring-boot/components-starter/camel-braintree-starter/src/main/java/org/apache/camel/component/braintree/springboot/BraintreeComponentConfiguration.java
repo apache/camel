@@ -19,6 +19,7 @@ package org.apache.camel.component.braintree.springboot;
 import java.util.logging.Level;
 import javax.annotation.Generated;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.braintree")
-public class BraintreeComponentConfiguration {
+public class BraintreeComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the shared configuration

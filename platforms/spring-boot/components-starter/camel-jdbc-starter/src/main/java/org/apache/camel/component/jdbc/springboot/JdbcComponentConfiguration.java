@@ -18,6 +18,7 @@ package org.apache.camel.component.jdbc.springboot;
 
 import javax.annotation.Generated;
 import javax.sql.DataSource;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.jdbc")
-public class JdbcComponentConfiguration {
+public class JdbcComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the DataSource instance instead of looking up the data source by

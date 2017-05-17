@@ -19,6 +19,7 @@ package org.apache.camel.component.reactive.streams.springboot;
 import javax.annotation.Generated;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.reactive-streams")
-public class ReactiveStreamsComponentConfiguration {
+public class ReactiveStreamsComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Configures the internal engine for Reactive Streams.

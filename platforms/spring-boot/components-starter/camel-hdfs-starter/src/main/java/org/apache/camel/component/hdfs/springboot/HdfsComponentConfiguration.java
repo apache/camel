@@ -18,6 +18,7 @@ package org.apache.camel.component.hdfs.springboot;
 
 import javax.annotation.Generated;
 import javax.security.auth.login.Configuration;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.hdfs")
-public class HdfsComponentConfiguration {
+public class HdfsComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the given configuration for security with JAAS.

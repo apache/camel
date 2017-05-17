@@ -18,6 +18,7 @@ package org.apache.camel.component.cometd.springboot;
 
 import java.util.List;
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.cometd.bayeux.server.BayeuxServer.Extension;
 import org.cometd.bayeux.server.SecurityPolicy;
@@ -32,7 +33,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.cometd")
-public class CometdComponentConfiguration {
+public class CometdComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * The password for the keystore when using SSL.

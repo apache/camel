@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.pubsub.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.google-pubsub")
-public class GooglePubsubComponentConfiguration {
+public class GooglePubsubComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Sets the connection factory to use: provides the ability to explicitly

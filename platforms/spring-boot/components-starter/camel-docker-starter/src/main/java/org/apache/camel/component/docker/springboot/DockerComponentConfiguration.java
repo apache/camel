@@ -19,6 +19,7 @@ package org.apache.camel.component.docker.springboot;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.component.docker.DockerOperation;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.docker")
-public class DockerComponentConfiguration {
+public class DockerComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the shared docker configuration

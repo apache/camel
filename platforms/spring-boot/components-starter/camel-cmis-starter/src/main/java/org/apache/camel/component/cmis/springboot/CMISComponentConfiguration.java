@@ -18,6 +18,7 @@ package org.apache.camel.component.cmis.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.component.cmis.CMISSessionFacadeFactory;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.cmis")
-public class CMISComponentConfiguration {
+public class CMISComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade

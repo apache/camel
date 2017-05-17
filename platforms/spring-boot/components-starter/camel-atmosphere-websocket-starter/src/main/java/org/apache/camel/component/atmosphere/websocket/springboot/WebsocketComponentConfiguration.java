@@ -21,6 +21,7 @@ import org.apache.camel.component.servlet.HttpRegistry;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -31,7 +32,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.atmosphere-websocket")
-public class WebsocketComponentConfiguration {
+public class WebsocketComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Default name of servlet to use. The default name is CamelServlet.

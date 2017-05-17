@@ -18,6 +18,7 @@ package org.apache.camel.component.log.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.log")
-public class LogComponentConfiguration {
+public class LogComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Sets a custom ExchangeFormatter to convert the Exchange to a String

@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URI;
 import javax.annotation.Generated;
 import org.apache.camel.component.lucene.LuceneOperation;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.util.Version;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,7 +33,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.lucene")
-public class LuceneComponentConfiguration {
+public class LuceneComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a shared lucene configuration

@@ -28,6 +28,7 @@ import org.apache.camel.component.jms.MessageCreatedStrategy;
 import org.apache.camel.component.jms.QueueBrowseStrategy;
 import org.apache.camel.component.jms.ReplyToType;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -45,7 +46,9 @@ import org.springframework.util.ErrorHandler;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.amqp")
-public class AMQPComponentConfiguration {
+public class AMQPComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a shared JMS configuration

@@ -22,6 +22,7 @@ import org.apache.camel.component.jetty.JettyHttpBinding;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
@@ -38,7 +39,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.jetty")
-public class JettyHttpComponentConfiguration9 {
+public class JettyHttpComponentConfiguration9
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * The key password which is used to access the certificate's key entry in

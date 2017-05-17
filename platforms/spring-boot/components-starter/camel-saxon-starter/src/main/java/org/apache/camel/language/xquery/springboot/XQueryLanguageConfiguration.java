@@ -17,6 +17,7 @@
 package org.apache.camel.language.xquery.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.LanguageConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -26,7 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.language.xquery")
-public class XQueryLanguageConfiguration {
+public class XQueryLanguageConfiguration
+        extends
+            LanguageConfigurationPropertiesCommon {
 
     /**
      * Sets the class name of the result type (type from output) The default

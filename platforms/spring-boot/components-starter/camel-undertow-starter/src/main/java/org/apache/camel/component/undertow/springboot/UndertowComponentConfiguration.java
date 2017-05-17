@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.component.undertow.UndertowHttpBinding;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -30,7 +31,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.undertow")
-public class UndertowComponentConfiguration {
+public class UndertowComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a custom HttpBinding to control the mapping between Camel message

@@ -21,6 +21,7 @@ import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.apache.camel.component.cache.CacheEventListenerRegistry;
 import org.apache.camel.component.cache.CacheLoaderRegistry;
 import org.apache.camel.component.cache.CacheManagerFactory;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -33,7 +34,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.cache")
-public class CacheComponentConfiguration {
+public class CacheComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the given CacheManagerFactory for creating the CacheManager. By

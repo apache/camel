@@ -18,6 +18,7 @@ package org.apache.camel.component.sql.stored.springboot;
 
 import javax.annotation.Generated;
 import javax.sql.DataSource;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.sql-stored")
-public class SqlStoredComponentConfiguration {
+public class SqlStoredComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Sets the DataSource to use to communicate with the database.
