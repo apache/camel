@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 public class XmppComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(XmppComponent.class);
 
-    //keep a cache of endpoints so they can be properly cleaned up
-    private final Map<String, XmppEndpoint> endpointCache = new HashMap<String, XmppEndpoint>();
+    // keep a cache of endpoints so they can be properly cleaned up
+    private final Map<String, XmppEndpoint> endpointCache = new HashMap<>();
 
     public XmppComponent() {
         super(XmppEndpoint.class);
@@ -84,9 +84,9 @@ public class XmppComponent extends UriEndpointComponent {
 
     @Override
     protected void doStart() throws Exception {
-        ReconnectionManager.setEnabledPerDefault(true);
-
         super.doStart();
+
+        ReconnectionManager.setEnabledPerDefault(true);
     }
 
     @Override
