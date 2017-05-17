@@ -61,6 +61,8 @@ final class ConnectorModel {
     private DataType outputDataType;
     private Map<String, String> defaultComponentOptions;
     private Map<String, String> defaultEndpointOptions;
+    private List<String> endpointOptions;
+    private List<String> componentOptions;
 
     ConnectorModel(String componentName, String className) {
         this.componentName = componentName;
@@ -130,6 +132,22 @@ final class ConnectorModel {
         }
 
         return defaultEndpointOptions;
+    }
+
+    public List<String> getEndpointOptions() {
+        if (endpointOptions == null) {
+            endpointOptions = Collections.unmodifiableList(extractEndpointOptions(lines.get()));
+        }
+
+        return endpointOptions;
+    }
+
+    public List<String> getComponentOptions() {
+        if (endpointOptions == null) {
+            endpointOptions = Collections.unmodifiableList(extractComponentOptions(lines.get()));
+        }
+
+        return endpointOptions;
     }
 
     public DataType getInputDataType() {
@@ -329,6 +347,64 @@ final class ConnectorModel {
                 key = StringHelper.removeLeadingAndEndingQuotes(key);
                 value = StringHelper.removeLeadingAndEndingQuotes(value);
                 answer.put(key, value);
+            }
+        }
+
+        return answer;
+    }
+
+    private List<String> extractComponentOptions(List<String> lines) {
+        List<String> answer = new ArrayList<>();
+
+        // extract the default options
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("\"componentOptions\"")) {
+                int start = line.indexOf('[');
+                if (start == -1) {
+                    throw new IllegalStateException("Malformed camel-connector.json");
+                }
+
+                int end = line.indexOf(']', start);
+                if (end == -1) {
+                    throw new IllegalStateException("Malformed camel-connector.json");
+                }
+
+                line = line.substring(start + 1, end).trim();
+                for (String option : line.split(",")) {
+                    answer.add(StringHelper.removeLeadingAndEndingQuotes(option));
+                }
+
+                break;
+            }
+        }
+
+        return answer;
+    }
+
+    private List<String> extractEndpointOptions(List<String> lines) {
+        List<String> answer = new ArrayList<>();
+
+        // extract the default options
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("\"endpointOptions\"")) {
+                int start = line.indexOf('[');
+                if (start == -1) {
+                    throw new IllegalStateException("Malformed camel-connector.json");
+                }
+
+                int end = line.indexOf(']', start);
+                if (end == -1) {
+                    throw new IllegalStateException("Malformed camel-connector.json");
+                }
+
+                line = line.substring(start + 1, end).trim();
+                for (String option : line.split(",")) {
+                    answer.add(StringHelper.removeLeadingAndEndingQuotes(option));
+                }
+
+                break;
             }
         }
 

@@ -24,6 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.infinispan.configuration.cache.Configuration;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.junit.Test;
 
 
@@ -41,8 +43,10 @@ public class InfinispanLocalAggregationRepositoryTest extends CamelTestSupport {
 
     @Test
     public void checkAggregationFromOneRoute() throws Exception {
+        Configuration conf = new ConfigurationBuilder().build();
         final InfinispanLocalAggregationRepository repoOne =
-                new InfinispanLocalAggregationRepository("pippo");
+                new InfinispanLocalAggregationRepository();
+        repoOne.setConfiguration(conf);
 
         final int completionSize = 4;
         final String correlator = "CORRELATOR";

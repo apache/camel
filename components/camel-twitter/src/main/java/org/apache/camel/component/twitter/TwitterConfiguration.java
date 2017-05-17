@@ -61,6 +61,8 @@ public class TwitterConfiguration {
     private Integer count;
     @UriParam(label = "consumer,filter", defaultValue = "1")
     private Integer numberOfPages = 1;
+    @UriParam(label = "consumer,sort", defaultValue = "true")
+    private boolean sortById = true;
     @UriParam(label = "proxy")
     private String httpProxyHost;
     @UriParam(label = "proxy")
@@ -324,6 +326,17 @@ public class TwitterConfiguration {
      */
     public void setNumberOfPages(Integer numberOfPages) {
         this.numberOfPages = numberOfPages;
+    }
+
+    public boolean isSortById() {
+        return sortById;
+    }
+
+    /**
+     * Sorts by id, so the oldest are first, and newest last.
+     */
+    public void setSortById(boolean sortById) {
+        this.sortById = sortById;
     }
 
     /**

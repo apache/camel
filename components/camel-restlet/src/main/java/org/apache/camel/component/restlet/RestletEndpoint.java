@@ -357,25 +357,6 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
         this.cookieHandler = cookieHandler;
     }
 
-    // Update the endpointUri with the restlet method information
-    protected void updateEndpointUri() {
-        String endpointUri = getEndpointUri();
-        CollectionStringBuffer methods = new CollectionStringBuffer(",");
-        if (getRestletMethods() != null && getRestletMethods().length > 0) {
-            // list the method(s) as a comma seperated list
-            for (Method method : getRestletMethods()) {
-                methods.append(method.getName());
-            }
-        } else {
-            // otherwise consider the single method we own
-            methods.append(getRestletMethod());
-        }
-
-        // update the uri
-        endpointUri = endpointUri + "?restletMethods=" + methods;
-        setEndpointUri(endpointUri);
-    }
-
     @Override
     protected void doStart() throws Exception {
         if (headerFilterStrategy == null) {

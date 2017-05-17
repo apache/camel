@@ -40,6 +40,8 @@
     <module>wine-connector</module>
     <module>foo-bar-wine-example</module>
     <module>twitter-mention-connector</module>
+    <module>twitter-search-connector</module>
+    <module>twitter-search-example</module>
     <module>twitter-salesforce-example</module>
     <module>salesforce-upsert-contact-connector</module>
     <module>petstore-connector</module>

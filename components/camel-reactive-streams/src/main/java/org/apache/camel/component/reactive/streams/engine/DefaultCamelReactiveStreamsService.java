@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.reactive.streams.engine;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +37,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsHelper;
@@ -65,7 +67,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     private ExecutorService workerPool;
 
     private final ConcurrentMap<String, CamelPublisher> publishers = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, CamelSubscriber> subscribers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ReactiveStreamsCamelSubscriber> subscribers = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, String> publishedUriToStream = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, String> requestedUriToStream = new ConcurrentHashMap<>();
 
@@ -113,8 +115,8 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     }
 
     @Override
-    public CamelSubscriber streamSubscriber(String name) {
-        return subscribers.computeIfAbsent(name, n -> new CamelSubscriber(name));
+    public ReactiveStreamsCamelSubscriber streamSubscriber(String name) {
+        return subscribers.computeIfAbsent(name, n -> new ReactiveStreamsCamelSubscriber(name));
     }
 
     @SuppressWarnings("unchecked")
@@ -298,8 +300,8 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     }
 
     @Override
-    public CamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
-        CamelSubscriber subscriber = streamSubscriber(name);
+    public ReactiveStreamsCamelSubscriber attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
+        ReactiveStreamsCamelSubscriber subscriber = streamSubscriber(name);
         subscriber.attachConsumer(consumer);
         return subscriber;
     }
@@ -322,20 +324,18 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
     @ManagedOperation(description = "Information about Camel Reactive subscribers")
     public TabularData camelSubscribers() {
         try {
-            final TabularData answer = new TabularDataSupport(subscriptionsTabularType());
+            final TabularData answer = new TabularDataSupport(subscribersTabularType());
 
             subscribers.forEach((k, v) -> {
                 try {
                     String name = k;
                     long inflight = v.getInflightCount();
                     long requested = v.getRequested();
-                    long bufferSize = v.getBufferSize();
-                    String backpressure = v.getBackpressureStrategy() != null ? v.getBackpressureStrategy().name() : "";
 
-                    CompositeType ct = subscriptionsCompositeType();
+                    CompositeType ct = subscribersCompositeType();
                     CompositeData data = new CompositeDataSupport(ct,
-                        new String[] {"name", "inflight", "requested", "buffer size", "back pressure"},
-                        new Object[] {name, inflight, requested, bufferSize, backpressure});
+                        new String[] {"name", "inflight", "requested"},
+                        new Object[] {name, inflight, requested});
                     answer.put(data);
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -356,14 +356,25 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
             publishers.forEach((k, v) -> {
                 try {
                     String name = k;
-                    int subscribers = v.getSubscriptionSize();
+                    List<CamelSubscription> subscriptions = v.getSubscriptions();
+                    int subscribers = subscriptions.size();
 
-                    // TODO: include more subscriber information, either as a nested table or flattern
+                    TabularData subscriptionData = new TabularDataSupport(subscriptionsTabularType());
+                    CompositeType subCt = subscriptionsCompositeType();
+                    for (CamelSubscription sub : subscriptions) {
+                        String id = sub.getId();
+                        long bufferSize = sub.getBufferSize();
+                        String backpressure = sub.getBackpressureStrategy() != null ? sub.getBackpressureStrategy().name() : "";
+                        CompositeData subData = new CompositeDataSupport(subCt, new String[]{"name", "buffer size", "back pressure"}, new Object[]{id, bufferSize, backpressure});
+
+                        subscriptionData.put(subData);
+                    }
+
 
                     CompositeType ct = publishersCompositeType();
                     CompositeData data = new CompositeDataSupport(ct,
-                        new String[] {"name", "subscribers"},
-                        new Object[] {name, subscribers});
+                        new String[] {"name", "subscribers", "subscriptions"},
+                        new Object[] {name, subscribers, subscriptionData});
                     answer.put(data);
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -376,23 +387,35 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
         }
     }
 
-    private static CompositeType subscriptionsCompositeType() throws OpenDataException {
-        return new CompositeType("subscriptions", "Subscriptions",
-            new String[] {"name", "inflight", "requested", "buffer size", "back pressure"},
-            new String[] {"Name", "Inflight", "Requested", "Buffer Size", "Back Pressure"},
-            new OpenType[] {SimpleType.STRING, SimpleType.LONG, SimpleType.LONG, SimpleType.LONG, SimpleType.STRING});
+    private static TabularType subscribersTabularType() throws OpenDataException {
+        CompositeType ct = subscribersCompositeType();
+        return new TabularType("subscribers", "Information about Camel Reactive subscribers", ct, new String[]{"name"});
     }
 
-    private static TabularType subscriptionsTabularType() throws OpenDataException {
-        CompositeType ct = subscriptionsCompositeType();
-        return new TabularType("subscriptions", "Information about Camel Reactive subscribers", ct, new String[]{"name"});
+    private static CompositeType subscribersCompositeType() throws OpenDataException {
+        return new CompositeType("subscriptions", "Subscriptions",
+                new String[] {"name", "inflight", "requested"},
+                new String[] {"Name", "Inflight", "Requested"},
+                new OpenType[] {SimpleType.STRING, SimpleType.LONG, SimpleType.LONG});
     }
 
     private static CompositeType publishersCompositeType() throws OpenDataException {
         return new CompositeType("publishers", "Publishers",
-            new String[] {"name", "subscribers"},
-            new String[] {"Name", "Subscribers"},
-            new OpenType[] {SimpleType.STRING, SimpleType.INTEGER});
+            new String[] {"name", "subscribers", "subscriptions"},
+            new String[] {"Name", "Subscribers", "Subscriptions"},
+            new OpenType[] {SimpleType.STRING, SimpleType.INTEGER, subscriptionsTabularType()});
+    }
+
+    private static TabularType subscriptionsTabularType() throws OpenDataException {
+        CompositeType ct = subscriptionsCompositeType();
+        return new TabularType("subscriptions", "Information about External Reactive subscribers", ct, new String[]{"name"});
+    }
+
+    private static CompositeType subscriptionsCompositeType() throws OpenDataException {
+        return new CompositeType("subscriptions", "Subscriptions",
+                new String[] {"name", "buffer size", "back pressure"},
+                new String[] {"Name", "Buffer Size", "Back Pressure"},
+                new OpenType[] {SimpleType.STRING, SimpleType.LONG, SimpleType.STRING});
     }
 
     private static TabularType publishersTabularType() throws OpenDataException {

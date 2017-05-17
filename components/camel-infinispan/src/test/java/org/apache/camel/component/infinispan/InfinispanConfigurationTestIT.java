@@ -19,6 +19,7 @@ package org.apache.camel.component.infinispan;
 import org.infinispan.cache.impl.DecoratedCache;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.commons.api.BasicCache;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.jgroups.util.UUID;
 import org.junit.Test;
@@ -33,22 +34,13 @@ public class InfinispanConfigurationTestIT {
     public void embeddedCacheWithFlagsTest() throws Exception {
         InfinispanConfiguration configuration = new InfinispanConfiguration();
         configuration.setHosts("localhost");
-        configuration.setCacheContainer(new DefaultCacheManager(true));
-        configuration.setFlags(
-            org.infinispan.context.Flag.SKIP_CACHE_LOAD,
-            org.infinispan.context.Flag.SKIP_CACHE_STORE
-        );
+        configuration.setCacheContainer(new DefaultCacheManager(new ConfigurationBuilder().build(), true));
 
         InfinispanManager manager = new InfinispanManager(configuration);
         manager.start();
 
         BasicCache<Object, Object> cache = manager.getCache("misc_cache");
         assertNotNull(cache);
-        assertTrue(cache instanceof DecoratedCache);
-
-        DecoratedCache<Object, Object> decoratedCache = (DecoratedCache<Object, Object>)cache;
-        assertTrue(decoratedCache.getFlags().contains(org.infinispan.context.Flag.SKIP_CACHE_LOAD));
-        assertTrue(decoratedCache.getFlags().contains(org.infinispan.context.Flag.SKIP_CACHE_STORE));
 
         manager.getCacheContainer().stop();
         manager.stop();

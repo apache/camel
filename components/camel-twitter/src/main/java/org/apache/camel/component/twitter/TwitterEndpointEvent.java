@@ -25,18 +25,20 @@ import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultEndpoint;
 
 public class TwitterEndpointEvent extends DefaultEndpoint implements TwitterEndpoint {
+    private final String remaining;
 
     // only TwitterEndpointPolling is annotated
     private TwitterConfiguration properties;
 
-    public TwitterEndpointEvent(String uri, TwitterComponent component, TwitterConfiguration properties) {
+    public TwitterEndpointEvent(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
+        this.remaining = remaining;
         this.properties = properties;
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri());
+        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri(), remaining);
         return new TwitterConsumerEvent(this, processor, twitter4jConsumer);
     }
 

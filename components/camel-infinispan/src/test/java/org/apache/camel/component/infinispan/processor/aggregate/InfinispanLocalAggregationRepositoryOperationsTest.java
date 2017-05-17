@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
+import org.infinispan.configuration.cache.Configuration;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,7 +45,9 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
 
     @BeforeClass
     public static void starting() throws Exception {
-        aggregationRepository = new InfinispanLocalAggregationRepository("pippo");
+        Configuration conf = new ConfigurationBuilder().build();
+        aggregationRepository = new InfinispanLocalAggregationRepository();
+        aggregationRepository.setConfiguration(conf);
         aggregationRepository.start();
     }
 

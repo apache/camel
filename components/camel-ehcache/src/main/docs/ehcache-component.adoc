@@ -37,7 +37,20 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Ehcache component has no options.
+The Ehcache component supports 6 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **configuration** (advanced) | Sets the global component configuration |  | EhcacheConfiguration
+| **cacheManager** (common) | The cache manager |  | CacheManager
+| **cacheManager Configuration** (common) | The cache manager configuration |  | Configuration
+| **cacheConfiguration** (common) | The default cache configuration to be used to create caches. |  | CacheConfiguration<K, V>
+| **cacheConfigurationUri** (common) | URI pointing to the Ehcache XML configuration file's location |  | String
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
 // component options: END
 
 
@@ -57,13 +70,14 @@ with the following path and query parameters:
 | **cacheName** | *Required* the cache name |  | String
 |=======================================================================
 
-#### Query Parameters (15 parameters):
+#### Query Parameters (16 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
 | **cacheManager** (common) | The cache manager |  | CacheManager
-| **configUri** (common) | URI pointing to the Ehcache XML configuration file's location |  | String
+| **cacheManagerConfiguration** (common) | The cache manager configuration |  | Configuration
+| **configurationUri** (common) | URI pointing to the Ehcache XML configuration file's location |  | String
 | **createCacheIfNotExist** (common) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **eventFiring** (consumer) | Set the the delivery mode (synchronous asynchronous) | ASYNCHRONOUS | EventFiring
@@ -74,9 +88,9 @@ with the following path and query parameters:
 | **action** (producer) | To configure the default cache action. If an action is set in the message header then the operation from the header takes precedence. |  | String
 | **key** (producer) | To configure the default action key. If a key is set in the message header then the key from the header takes precedence. |  | Object
 | **configuration** (advanced) | The default cache configuration to be used to create caches. |  | CacheConfiguration<?,?>
-| **keyType** (advanced) | The cache key type default Object.class | java.lang.Object | String
+| **keyType** (advanced) | The cache key type default java.lang.Object | java.lang.Object | String
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| **valueType** (advanced) | The cache value type default Object.class | java.lang.Object | String
+| **valueType** (advanced) | The cache value type default java.lang.Object | java.lang.Object | String
 |=======================================================================
 // endpoint options: END
 

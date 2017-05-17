@@ -22,11 +22,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.ehcache.Cache;
+import org.ehcache.CacheManager;
 import org.ehcache.UserManagedCache;
 import org.ehcache.config.ResourcePools;
 import org.ehcache.config.ResourceType;
 import org.ehcache.config.SizedResourcePool;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
@@ -35,10 +37,12 @@ import org.junit.Test;
 public class EhcacheConfigurationTest extends CamelTestSupport {
     @EndpointInject(uri = "ehcache:myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
     private EhcacheEndpoint ehcacheProgrammaticConf;
-    @EndpointInject(uri = "ehcache:myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configUri=classpath:ehcache/ehcache-file-config.xml")
+    @EndpointInject(uri = "ehcache:myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
     private EhcacheEndpoint ehcacheFileConf;
     @EndpointInject(uri = "ehcache:myUserCacheConf")
     private EhcacheEndpoint ehcacheUserConf;
+    @EndpointInject(uri = "ehcache:myCache?cacheManager=#myCacheManager&keyType=java.lang.String&valueType=java.lang.String")
+    private EhcacheEndpoint ehcacheCacheManager;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -52,6 +56,19 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
                     .heap(100, EntryUnit.ENTRIES)
                     .offheap(1, MemoryUnit.MB))
             .build()
+        );
+        registry.bind(
+            "myCacheManager",
+            CacheManagerBuilder.newCacheManagerBuilder()
+                .withCache(
+                    "myCache",
+                    CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                    String.class,
+                    String.class,
+                    ResourcePoolsBuilder.newResourcePoolsBuilder()
+                        .heap(100, EntryUnit.ENTRIES)
+                        .offheap(1, MemoryUnit.MB))
+            ).build(true)
         );
 
         return registry;
@@ -103,6 +120,27 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
         assertEquals("user-val", cache.get("user-key"));
     }
 
+    @Test
+    public void testCacheManager() throws Exception {
+        assertEquals(
+            context().getRegistry().lookupByNameAndType("myCacheManager", CacheManager.class),
+            ehcacheCacheManager.getManager().getCacheManager()
+        );
+
+        Cache<String, String> cache = getCache(ehcacheCacheManager, "myCache");
+        ResourcePools pools = cache.getRuntimeConfiguration().getResourcePools();
+
+        SizedResourcePool h = pools.getPoolForResource(ResourceType.Core.HEAP);
+        assertNotNull(h);
+        assertEquals(100, h.getSize());
+        assertEquals(EntryUnit.ENTRIES, h.getUnit());
+
+        SizedResourcePool o = pools.getPoolForResource(ResourceType.Core.OFFHEAP);
+        assertNotNull(o);
+        assertEquals(1, o.getSize());
+        assertEquals(MemoryUnit.MB, o.getUnit());
+    }
+
     protected Cache<String, String> getCache(EhcacheEndpoint endpoint, String cacheName) throws Exception {
         return endpoint.getManager().getCache(cacheName, String.class, String.class);
     }
@@ -121,6 +159,8 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
                     .to(ehcacheFileConf);
                 from("direct:ehcacheUserConf")
                     .to(ehcacheUserConf);
+                from("direct:ehcacheCacheManager")
+                    .to(ehcacheCacheManager);
             }
         };
     }

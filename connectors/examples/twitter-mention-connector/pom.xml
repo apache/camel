@@ -142,6 +142,7 @@
             </goals>
             <phase>generate-resources</phase>
           </execution>
+          <!--
           <execution>
             <id>validate</id>
             <goals>
@@ -149,6 +150,7 @@
             </goals>
             <phase>prepare-package</phase>
           </execution>
+          -->
         </executions>
       </plugin>
 

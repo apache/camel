@@ -37,7 +37,6 @@ To run the example on Apache Karaf 4.x or newer
 	feature:install camel
 	feature:install war
 	feature:install cxf
-	feature:install camel-spring-dm
 	feature:install camel-jaxb
 	feature:install camel-cxf
 

@@ -34,6 +34,7 @@ import org.apache.camel.spi.UriParam;
 @ManagedResource(description = "Managed Twitter Endpoint")
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter", title = "Twitter", syntax = "twitter:kind", consumerClass = TwitterConsumer.class, label = "api,social")
 public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
+    private final String remaining;
 
     @UriParam(optionalPrefix = "consumer.", defaultValue = "" + TwitterConsumerPolling.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
             description = "Milliseconds before the next poll.")
@@ -42,15 +43,17 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @UriParam
     private TwitterConfiguration properties;
 
-    public TwitterEndpointPolling(String uri, TwitterComponent component, TwitterConfiguration properties) {
+    public TwitterEndpointPolling(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
-        setDelay(delay); // reconfigure the default delay
+        this.remaining = remaining;
         this.properties = properties;
+
+        setDelay(delay); // reconfigure the default delay
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri());
+        TwitterConsumer twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri(), remaining);
         // update the pulling lastID with sinceId
         twitter4jConsumer.setLastId(properties.getSinceId());
         TwitterConsumerPolling tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
@@ -60,7 +63,7 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
 
     @Override
     public Producer createProducer() throws Exception {
-        return TwitterHelper.createProducer(this, getEndpointUri());
+        return TwitterHelper.createProducer(this, getEndpointUri(), remaining);
     }
 
     @Override
@@ -144,6 +147,16 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     @ManagedAttribute
     public Integer getNumberOfPages() {
         return getProperties().getNumberOfPages();
+    }
+
+    @ManagedAttribute
+    public boolean isSortById() {
+        return getProperties().isSortById();
+    }
+
+    @ManagedAttribute
+    public void setSortById(boolean sortById) {
+        getProperties().setSortById(sortById);
     }
 
     @Override

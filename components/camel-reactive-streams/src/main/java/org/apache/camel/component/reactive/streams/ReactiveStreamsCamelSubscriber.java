@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.reactive.streams.engine;
+package org.apache.camel.component.reactive.streams;
 
 import java.io.Closeable;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
-import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -30,9 +28,9 @@ import org.slf4j.LoggerFactory;
 /**
  * The Camel subscriber. It bridges messages from reactive streams to Camel routes.
  */
-public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
+public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Closeable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelSubscriber.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReactiveStreamsCamelSubscriber.class);
 
     /**
      * Unbounded as per rule #17. No need to refill.
@@ -49,7 +47,7 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
 
     private long inflightCount;
 
-    public CamelSubscriber(String name) {
+    public ReactiveStreamsCamelSubscriber(String name) {
         this.name = name;
     }
 
@@ -208,19 +206,4 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
         return inflightCount;
     }
 
-    public long getBufferSize() {
-        if (subscription != null && subscription instanceof CamelSubscription) {
-            return ((CamelSubscription) subscription).getBufferSize();
-        } else {
-            return 0;
-        }
-    }
-
-    public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
-        if (subscription != null && subscription instanceof CamelSubscription) {
-            return ((CamelSubscription) subscription).getBackpressureStrategy();
-        } else {
-            return null;
-        }
-    }
 }

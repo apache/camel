@@ -120,7 +120,8 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <forkMode>pertest</forkMode>
+              <forkCount>1</forkCount>
+              <reuseForks>false</reuseForks>
               <systemProperties>
                 <property>
                   <name>javax.net.ssl.trustStore</name>

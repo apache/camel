@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.ehcache;
 
-import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
 import org.ehcache.Cache;
@@ -27,31 +27,14 @@ import org.ehcache.CacheManager;
 import org.ehcache.UserManagedCache;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.UserManagedCacheBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EhcacheManager implements Service {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheManager.class);
-
     private final EhcacheConfiguration configuration;
     private final CacheManager cacheManager;
     private final ConcurrentMap<String, UserManagedCache<?, ?>> userCaches;
-
     private final boolean managed;
 
-    public EhcacheManager(EhcacheConfiguration configuration) throws IOException {
-        this(configuration.createCacheManager(), !configuration.hasCacheManager(), configuration);
-    }
-
-    public EhcacheManager(CacheManager cacheManager) {
-        this(cacheManager, false, null);
-    }
-
-    public EhcacheManager(CacheManager cacheManager, boolean managed) {
-        this(cacheManager, managed, null);
-    }
-
-    private EhcacheManager(CacheManager cacheManager, boolean managed, EhcacheConfiguration configuration) {
+    public EhcacheManager(CacheManager cacheManager, boolean managed, EhcacheConfiguration configuration) {
         this.cacheManager = cacheManager;
         this.userCaches = new ConcurrentHashMap<>();
         this.managed = managed;
@@ -95,22 +78,14 @@ public class EhcacheManager implements Service {
             }
         }
 
+        if (cache == null) {
+            throw new RuntimeCamelException("Unable to retrieve the cache " +  name + " from cache manager " + cacheManager);
+        }
+
         return cache;
     }
 
-    public Cache<?, ?> getCache(String name) throws Exception {
-        return getCache(
-            name,
-            configuration.getKeyType(),
-            configuration.getValueType());
-    }
-
-    public Cache<?, ?> getCache() throws Exception  {
-        ObjectHelper.notNull(configuration, "Ehcache configuration");
-
-        return getCache(
-            configuration.getCacheName(),
-            configuration.getKeyType(),
-            configuration.getValueType());
+    CacheManager getCacheManager() {
+        return this.cacheManager;
     }
 }

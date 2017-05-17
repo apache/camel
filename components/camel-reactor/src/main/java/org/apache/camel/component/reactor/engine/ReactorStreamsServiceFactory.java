@@ -24,6 +24,6 @@ import org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineC
 public class ReactorStreamsServiceFactory implements CamelReactiveStreamsServiceFactory {
     @Override
     public CamelReactiveStreamsService newInstance(CamelContext context, ReactiveStreamsEngineConfiguration configuration) {
-        return new ReactorStreamsService(context, configuration);
+        return new ReactorStreamsService(context);
     }
 }

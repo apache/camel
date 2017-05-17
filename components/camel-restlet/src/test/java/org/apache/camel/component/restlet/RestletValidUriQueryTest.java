@@ -35,8 +35,8 @@ public class RestletValidUriQueryTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:" + portNum + "/users/(username)").process(new SetUserProcessor());
-                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/(username)");
+                from("restlet:http://localhost:" + portNum + "/users/{username}").process(new SetUserProcessor());
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/{username}");
             }
         };
     }
@@ -50,7 +50,7 @@ public class RestletValidUriQueryTest extends RestletTestSupport {
     }
     
     @Test
-    public void testPostBody() throws Exception {
+    public void testGet() throws Exception {
         HttpResponse response = doExecute(new HttpGet("http://localhost:" + portNum + "/users/homer?" + QUERY_STRING));
 
         assertHttpResponse(response, 200, "text/plain");

@@ -14,7 +14,7 @@
     "javaType": "org.foo.connector.FooComponent",
     "groupId": "org.foo",
     "artifactId": "foo-connector",
-    "version": "2.19.0-SNAPSHOT"
+    "version": "2.20.0-SNAPSHOT"
   },
   "componentProperties": {
   },

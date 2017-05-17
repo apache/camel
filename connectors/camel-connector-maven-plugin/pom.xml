@@ -85,6 +85,13 @@
       <version>${spring-boot-version}</version>
     </dependency>
 
+    <!-- guava for some word wrap helper -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${google-guava-version}</version>
+    </dependency>
+
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>

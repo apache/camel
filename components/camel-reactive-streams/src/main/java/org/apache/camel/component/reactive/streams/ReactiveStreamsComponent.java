@@ -130,8 +130,8 @@ public class ReactiveStreamsComponent extends DefaultComponent {
             );
 
             try {
-                // Start the service
-                ServiceHelper.startService(service);
+                // Start the service and add it to the Camel context to expose managed attributes
+                getCamelContext().addService(service, true, true);
             } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }

@@ -68,20 +68,42 @@ public interface ConnectorComponent extends Component {
     String getCamelConnectorJSon();
 
     /**
-     * A set of additional component options to use for the base component when creating connector endpoints.
+     * A set of additional component/endpoint options to use for the base component when creating connector endpoints.
+     *
+     * @deprecated use {@link #getOptions()} instead
      */
-    Map<String, Object> getComponentOptions();
+    @Deprecated
+    default Map<String, Object> getComponentOptions() {
+        return getOptions();
+    }
 
     /**
-     * A set of additional component options to use for the base component when creating connector endpoints.
+     * A set of additional component/endpoint options to use for the base component when creating connector endpoints.
      */
-    void setComponentOptions(Map<String, Object> baseComponentOptions);
+    Map<String, Object> getOptions();
+
+    /**
+     * A set of additional component/endpoint options to use for the base component when creating connector endpoints.
+     *
+     * @deprecated use {@link #setOptions(Map)} instead
+     */
+    default void setComponentOptions(Map<String, Object> options) {
+        setOptions(options);
+    }
+
+    /**
+     * A set of additional component/endpoint options to use for the base component when creating connector endpoints.
+     */
+    void setOptions(Map<String, Object> options);
 
     /**
      * To perform custom processing before the producer is sending the message.
      */
     void setBeforeProducer(Processor processor);
 
+    /**
+     * Gets the processor used to perform custom processing before the producer is sending the message.
+     */
     Processor getBeforeProducer();
 
     /**
@@ -89,6 +111,9 @@ public interface ConnectorComponent extends Component {
      */
     void setAfterProducer(Processor processor);
 
+    /**
+     * Gets the processor used to perform custom processing after the producer has sent the message and received any reply (if InOut).
+     */
     Processor getAfterProducer();
 
     /**
@@ -96,6 +121,9 @@ public interface ConnectorComponent extends Component {
      */
     void setBeforeConsumer(Processor processor);
 
+    /**
+     * Gets the processor used to perform custom processing when the consumer has just received a new incoming message.
+     */
     Processor getBeforeConsumer();
 
     /**
@@ -103,5 +131,8 @@ public interface ConnectorComponent extends Component {
      */
     void setAfterConsumer(Processor processor);
 
+    /**
+     * Gets the processor used to perform custom processing when the consumer is about to send back a reply message to the caller (if InOut).
+     */
     Processor getAfterConsumer();
 }

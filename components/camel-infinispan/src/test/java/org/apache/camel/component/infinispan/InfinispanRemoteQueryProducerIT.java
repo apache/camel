@@ -51,7 +51,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
     private static final InfinispanQueryBuilder NO_RESULT_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
                 .having("name").like("%abc%")
                 .toBuilder().build();
@@ -60,7 +60,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
     private static final InfinispanQueryBuilder WITH_RESULT_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
                 .having("name").like("%A")
                 .toBuilder().build();

@@ -66,7 +66,6 @@ public abstract class TwitterConsumer {
 
     /**
      * Support to update the Consumer's lastId when starting the consumer
-     * @param sinceId
      */
     public void setLastId(long sinceId) {
         lastId = sinceId;

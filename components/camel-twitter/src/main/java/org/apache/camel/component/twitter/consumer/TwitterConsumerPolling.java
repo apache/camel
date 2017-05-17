@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpointPolling;
 import org.apache.camel.component.twitter.consumer.streaming.AbstractStreamingConsumer;
+import org.apache.camel.component.twitter.util.TwitterSorter;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
@@ -36,6 +37,11 @@ public class TwitterConsumerPolling extends ScheduledPollConsumer {
         super(endpoint, processor);
         setDelay(DEFAULT_CONSUMER_DELAY);
         this.twitter4jConsumer = twitter4jConsumer;
+    }
+
+    @Override
+    public TwitterEndpointPolling getEndpoint() {
+        return (TwitterEndpointPolling) super.getEndpoint();
     }
 
     @Override
@@ -66,4 +72,5 @@ public class TwitterConsumerPolling extends ScheduledPollConsumer {
 
         return index;
     }
+
 }

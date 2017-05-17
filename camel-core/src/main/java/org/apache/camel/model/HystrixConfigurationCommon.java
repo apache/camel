@@ -40,7 +40,7 @@ public class HystrixConfigurationCommon extends IdentifiedType {
     @Metadata(label = "command", defaultValue = "50")
     private Integer circuitBreakerErrorThresholdPercentage;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "true")
+    @Metadata(label = "command", defaultValue = "false")
     private Boolean circuitBreakerForceClosed;
     @XmlAttribute
     @Metadata(label = "command", defaultValue = "false")

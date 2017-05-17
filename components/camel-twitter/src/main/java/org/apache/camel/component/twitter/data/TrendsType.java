@@ -23,7 +23,7 @@ public enum TrendsType {
 
     private static final TrendsType[] VALUES = values();
 
-    public static TrendsType fromUri(String uri) {
+    public static TrendsType fromString(String uri) {
         return TwitterHelper.enumFromString(VALUES, uri, TrendsType.UNKNOWN);
     }
 }

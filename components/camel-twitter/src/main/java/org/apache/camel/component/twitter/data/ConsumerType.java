@@ -23,7 +23,7 @@ public enum ConsumerType {
 
     private static final ConsumerType[] VALUES = values();
 
-    public static ConsumerType fromUri(String uri) {
+    public static ConsumerType fromString(String uri) {
         return TwitterHelper.enumFromString(VALUES, uri, ConsumerType.UNKNOWN);
     }
 }

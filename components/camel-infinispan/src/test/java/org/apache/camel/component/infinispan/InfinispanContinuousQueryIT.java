@@ -45,28 +45,25 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
 
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("CQ%")
-                .toBuilder().build();
+                .having("name").like("CQ%").build();
         }
     };
 
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_NO_MATCH = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%TEST%")
-                .toBuilder().build();
+                .having("name").like("%TEST%").build();
         }
     };
 
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_ALL = new InfinispanQueryBuilder() {
         @Override
-        public Query build(QueryFactory<Query> queryFactory) {
+        public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%Q0%")
-                .toBuilder().build();
+                .having("name").like("%Q0%").build();
         }
     };
 
