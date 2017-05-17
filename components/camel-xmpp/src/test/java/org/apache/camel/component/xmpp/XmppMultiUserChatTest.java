@@ -18,6 +18,7 @@ package org.apache.camel.component.xmpp;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,13 +26,20 @@ import org.junit.Test;
 /**
  * @version 
  */
-@Ignore("Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target")
 public class XmppMultiUserChatTest extends CamelTestSupport {
 
     protected MockEndpoint consumerEndpoint;
-    protected MockEndpoint producerEndpoint;
     protected String body1 = "the first message";
     protected String body2 = "the second message";
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        EmbeddedXmppTestServer.instance().bindSSLContextTo(registry);
+
+        return registry;
+    }
 
     @Test
     public void testXmppChat() throws Exception {
@@ -65,12 +73,12 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
         // vysper during chat room message routing.
 
         return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/?room=camel-test@conference.apache.camel&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
+            + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
     }
     
     protected String getConsumerUri() {
         return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/?room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
+            + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
     }
 
 }

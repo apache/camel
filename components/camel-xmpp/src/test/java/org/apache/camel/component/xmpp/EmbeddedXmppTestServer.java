@@ -17,8 +17,12 @@
 package org.apache.camel.component.xmpp;
 
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.util.Arrays;
 
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.vysper.mina.TCPEndpoint;
 import org.apache.vysper.storage.StorageProviderRegistry;
@@ -32,6 +36,11 @@ import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCModule;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Conference;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.RoomType;
 import org.apache.vysper.xmpp.server.XMPPServer;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jxmpp.jid.impl.JidCreate;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 
 public final class EmbeddedXmppTestServer {
@@ -109,5 +118,26 @@ public final class EmbeddedXmppTestServer {
 
     public int getXmppPort() {
         return port;
+    }
+
+    public void bindSSLContextTo(JndiRegistry registry) throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("xmppServer.jks"), "secret".toCharArray());
+
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
+
+        XMPPTCPConnectionConfiguration connectionConfig = XMPPTCPConnectionConfiguration.builder()
+                .setXmppDomain(JidCreate.domainBareFrom("apache.camel"))
+                .setHostAddress(InetAddress.getLocalHost())
+                .setPort(getXmppPort())
+                .setCustomSSLContext(sslContext)
+                .setHostnameVerifier((hostname, session) -> true)
+                .build();
+
+        registry.bind("customConnectionConfig", connectionConfig);
     }
 }

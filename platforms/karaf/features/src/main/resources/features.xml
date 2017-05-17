@@ -2062,9 +2062,14 @@
   <feature name='camel-xmpp' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.jxmpp/jxmpp-core/${jxmpp-version}</bundle>
+    <bundle dependency='true'>mvn:org.jxmpp/jxmpp-jid/${jxmpp-version}</bundle>
+    <bundle dependency='true'>mvn:org.jxmpp/jxmpp-util-cache/${jxmpp-version}</bundle>
     <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-core/${smack-version}</bundle>
-    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-tcp/${smack-version}</bundle>
     <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-extensions/${smack-version}</bundle>
+    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-java7/${smack-version}</bundle>
+    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-im/${smack-version}</bundle>
+    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-tcp/${smack-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xmpp/${project.version}</bundle>
   </feature>
   <feature name='camel-xstream' version='${project.version}' resolver='(obr)' start-level='50'>
