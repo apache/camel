@@ -69,6 +69,20 @@ public final class GrpcUtils {
         return grpcBlockingStub;
     }
     
+    @SuppressWarnings("rawtypes")
+    public static Class constructGrpcImplBaseClass(String packageName, String serviceName) {
+        Class grpcServerImpl;
+
+        String serverBaseImpl = packageName + "." + serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX + "$" + serviceName + GrpcConstants.GRPC_SERVER_IMPL_POSTFIX;
+        try {
+            grpcServerImpl = Class.forName(serverBaseImpl);
+
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("gRPC server base class not found: " + serverBaseImpl);
+        }
+        return grpcServerImpl;
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static void invokeAsyncMethod(Object asyncStubClass, String invokeMethod, Object request, StreamObserver responseObserver) {
         Class[] paramMethod = null;

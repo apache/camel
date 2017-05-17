@@ -27,15 +27,15 @@ public class GrpcConfiguration {
     @UriPath
     @Metadata(required = "true")
     private String service;
-    @UriParam
+    @UriParam(label = "producer")
     private String method;
     @UriParam
     private String host;
     @UriParam
     private int port;
-    @UriParam
+    @UriParam(label = "producer")
     private String target;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean usePlainText = true;
 
     private String serviceName;
