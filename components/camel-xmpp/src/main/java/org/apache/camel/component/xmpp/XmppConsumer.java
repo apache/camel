@@ -153,7 +153,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 connection.connect();
                 LOG.debug("Successfully connected to XMPP server through: {}", connection);
             } catch (SmackException e) {
-                LOG.warn("Connection to XMPP server failed. Will try to reconnect later again", e);
+                LOG.warn("Connection to XMPP server failed. Will try to reconnect later again.", e);
             }
         }
     }
