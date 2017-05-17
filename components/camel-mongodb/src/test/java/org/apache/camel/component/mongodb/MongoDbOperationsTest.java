@@ -27,6 +27,8 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.util.JSON;
 
+import de.flapdoodle.embed.process.collections.Collections;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -68,6 +70,57 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         assertNotNull("No record with 'testInsertString' _id", b);
     }
 
+    @Test
+    public void testMultiInsertStringFromDBListNoHeader() throws Exception {
+        assertEquals(0, testCollection.count());
+        Object result = template.requestBody("direct:insert", "[{\"_id\":\"testInsertString2\", \"scientist\":\"Einstein\"}, "
+                + "{\"_id\":\"testInsertString3\", \"scientist\":\"Einstein Too\"}]");
+        assertTrue(result instanceof List);
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertString2")).first();
+        assertNotNull("No record with 'testInsertString2' _id", b);
+        b = testCollection.find(new BasicDBObject("_id", "testInsertString3")).first();
+        assertNotNull("No record with 'testInsertString3' _id", b);
+    }
+
+    @Test
+    public void testMultiInsertStringFromListNoHeader() throws Exception {
+        assertEquals(0, testCollection.count());
+        Object result = template.requestBody("direct:insert", 
+                Collections.newArrayList("{\"_id\":\"testInsertString4\", \"scientist\":\"Einstein\"}",
+                        "{\"_id\":\"testInsertString5\", \"scientist\":\"Einstein Too\"}"));
+        assertTrue(result instanceof List);
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertString4")).first();
+        assertNotNull("No record with 'testInsertString4' _id", b);
+        b = testCollection.find(new BasicDBObject("_id", "testInsertString5")).first();
+        assertNotNull("No record with 'testInsertString5' _id", b);
+    }
+
+    
+    @Test
+    public void testMultiInsertStringFromDBListHeader() throws Exception {
+        assertEquals(0, testCollection.count());
+        Object result = template.requestBody("direct:multiinsert", "[{\"_id\":\"testInsertString6\", \"scientist\":\"Einstein\"}, "
+                + "{\"_id\":\"testInsertString7\", \"scientist\":\"Einstein Too\"}]");
+        assertTrue(result instanceof List);
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertString6")).first();
+        assertNotNull("No record with 'testInsertString6' _id", b);
+        b = testCollection.find(new BasicDBObject("_id", "testInsertString7")).first();
+        assertNotNull("No record with 'testInsertString7' _id", b);
+    }
+
+    @Test
+    public void testMultiInsertStringFromListHeader() throws Exception {
+        assertEquals(0, testCollection.count());
+        Object result = template.requestBody("direct:multiinsert", 
+                Collections.newArrayList("{\"_id\":\"testInsertString8\", \"scientist\":\"Einstein\"}",
+                        "{\"_id\":\"testInsertString9\", \"scientist\":\"Einstein Too\"}"));
+        assertTrue(result instanceof List);
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertString8")).first();
+        assertNotNull("No record with 'testInsertString8' _id", b);
+        b = testCollection.find(new BasicDBObject("_id", "testInsertString9")).first();
+        assertNotNull("No record with 'testInsertString9' _id", b);
+    }
+    
     @Test
     public void testStoreOidOnInsert() throws Exception {
         DBObject dbObject = new BasicDBObject();
@@ -267,6 +320,8 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
             public void configure() {
                 
                 from("direct:count").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
+                from("direct:multiinsert").setHeader(MongoDbConstants.MULTIINSERT).constant(true).
+                    to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE");
                 from("direct:insert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE");
                 from("direct:testStoreOidOnInsert").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&writeConcern=SAFE").
                     setBody().header(MongoDbConstants.OID);

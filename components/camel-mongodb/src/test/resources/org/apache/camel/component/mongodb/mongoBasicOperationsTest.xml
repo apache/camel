@@ -36,6 +36,14 @@
         <from uri="direct:insert" />
         <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=insert&amp;writeConcern=SAFE" />
     </route>
+
+    <route>
+        <from uri="direct:multiinsert" />
+        <setHeader headerName="CamelMongoDbMultiInsert">
+            <constant>true</constant>
+        </setHeader>
+        <to uri="mongodb:myDb?database={{mongodb.testDb}}&amp;collection={{mongodb.testCollection}}&amp;operation=insert&amp;writeConcern=SAFE" />
+    </route>
     
     <route>
         <from uri="direct:testStoreOidOnInsert" />
