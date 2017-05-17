@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.protobuf.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.dataformat.protobuf.ProtobufDataFormat;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.protobuf")
-public class ProtobufDataFormatConfiguration {
+public class ProtobufDataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * Name of class to use when unarmshalling

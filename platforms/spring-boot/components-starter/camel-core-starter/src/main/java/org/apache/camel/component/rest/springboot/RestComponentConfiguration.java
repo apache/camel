@@ -17,6 +17,7 @@
 package org.apache.camel.component.rest.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.rest")
-public class RestComponentConfiguration {
+public class RestComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * The Camel Rest component to use for the REST transport such as restlet

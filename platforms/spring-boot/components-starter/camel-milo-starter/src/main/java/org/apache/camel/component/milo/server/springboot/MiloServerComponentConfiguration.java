@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import javax.annotation.Generated;
 import org.apache.camel.component.milo.KeyStoreLoader.Result;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.eclipse.milo.opcua.stack.core.application.CertificateManager;
 import org.eclipse.milo.opcua.stack.core.application.CertificateValidator;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
@@ -36,7 +37,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.milo-server")
-public class MiloServerComponentConfiguration {
+public class MiloServerComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * The URI of the namespace defaults to urn:org:apache:camel

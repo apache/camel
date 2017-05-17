@@ -21,6 +21,7 @@ import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -32,7 +33,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.http")
-public class HttpComponentConfiguration {
+public class HttpComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the custom HttpClientConfigurer to perform configuration of the

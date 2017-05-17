@@ -19,6 +19,7 @@ package org.apache.camel.component.olingo4.springboot;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -33,7 +34,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.olingo4")
-public class Olingo4ComponentConfiguration {
+public class Olingo4ComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the shared configuration

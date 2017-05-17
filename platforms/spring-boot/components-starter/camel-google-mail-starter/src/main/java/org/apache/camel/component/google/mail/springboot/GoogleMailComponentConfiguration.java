@@ -20,6 +20,7 @@ import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.component.google.mail.GoogleMailClientFactory;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -30,7 +31,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.google-mail")
-public class GoogleMailComponentConfiguration {
+public class GoogleMailComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the shared configuration

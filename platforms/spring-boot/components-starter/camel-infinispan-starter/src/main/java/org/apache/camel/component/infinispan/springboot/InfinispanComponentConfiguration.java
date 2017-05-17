@@ -23,6 +23,7 @@ import org.apache.camel.component.infinispan.InfinispanComponent;
 import org.apache.camel.component.infinispan.InfinispanCustomListener;
 import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.context.Flag;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -37,7 +38,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.infinispan")
-public class InfinispanComponentConfiguration {
+public class InfinispanComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * The default configuration shared among endpoints.

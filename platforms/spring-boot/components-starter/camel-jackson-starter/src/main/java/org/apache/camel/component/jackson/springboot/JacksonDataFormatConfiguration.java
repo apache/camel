@@ -19,6 +19,7 @@ package org.apache.camel.component.jackson.springboot;
 import javax.annotation.Generated;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.json-jackson")
-public class JacksonDataFormatConfiguration {
+public class JacksonDataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * Lookup and use the existing ObjectMapper with the given id when using

@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.mime.multipart.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -26,7 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.mime-multipart")
-public class MimeMultipartDataFormatConfiguration {
+public class MimeMultipartDataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * Specify the subtype of the MIME Multipart. Default is mixed.

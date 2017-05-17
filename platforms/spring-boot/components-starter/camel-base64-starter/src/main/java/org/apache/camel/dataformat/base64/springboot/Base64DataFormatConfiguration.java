@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.base64.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -26,7 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.base64")
-public class Base64DataFormatConfiguration {
+public class Base64DataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * To specific a maximum line length for the encoded data. By default 76 is

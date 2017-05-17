@@ -26,6 +26,7 @@ import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty.ServerPipelineFactory;
 import org.apache.camel.component.netty.TextLineDelimiter;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.group.ChannelGroup;
@@ -43,7 +44,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.netty")
-public class NettyComponentConfiguration {
+public class NettyComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the NettyConfiguration as configuration when creating endpoints.

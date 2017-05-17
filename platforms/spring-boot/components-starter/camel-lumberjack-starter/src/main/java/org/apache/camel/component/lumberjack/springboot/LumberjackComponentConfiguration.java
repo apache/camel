@@ -17,6 +17,7 @@
 package org.apache.camel.component.lumberjack.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.lumberjack")
-public class LumberjackComponentConfiguration {
+public class LumberjackComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Sets the default SSL configuration to use for all the endpoints. You can

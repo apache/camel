@@ -21,6 +21,7 @@ import javax.annotation.Generated;
 import org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -30,7 +31,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.yaml-snakeyaml")
-public class SnakeYAMLDataFormatConfiguration {
+public class SnakeYAMLDataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * Which yaml library to use. By default it is SnakeYAML

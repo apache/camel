@@ -20,6 +20,7 @@ import javax.annotation.Generated;
 import javax.sql.DataSource;
 import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.component.elsql.ElSqlDatabaseVendor;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -31,7 +32,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.elsql")
-public class ElsqlComponentConfiguration {
+public class ElsqlComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a vendor specific com.opengamma.elsql.ElSqlConfig

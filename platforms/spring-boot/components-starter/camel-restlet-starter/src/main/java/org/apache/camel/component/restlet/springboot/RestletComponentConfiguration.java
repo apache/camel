@@ -19,6 +19,7 @@ package org.apache.camel.component.restlet.springboot;
 import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.restlet")
-public class RestletComponentConfiguration {
+public class RestletComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Indicates if the controller thread should be a daemon (not blocking JVM

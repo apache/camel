@@ -17,6 +17,7 @@
 package org.apache.camel.component.ignite.set.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,7 +31,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.ignite-set")
-public class IgniteSetComponentConfiguration {
+public class IgniteSetComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Sets the Ignite instance.

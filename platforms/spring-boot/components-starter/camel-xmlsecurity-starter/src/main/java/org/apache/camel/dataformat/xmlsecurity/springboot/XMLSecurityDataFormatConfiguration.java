@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.xmlsecurity.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -26,7 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.securexml")
-public class XMLSecurityDataFormatConfiguration {
+public class XMLSecurityDataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * The cipher algorithm to be used for encryption/decryption of the XML

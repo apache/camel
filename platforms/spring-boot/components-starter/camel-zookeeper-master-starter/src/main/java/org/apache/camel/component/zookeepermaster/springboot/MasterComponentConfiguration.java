@@ -18,6 +18,7 @@ package org.apache.camel.component.zookeepermaster.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.component.zookeepermaster.ContainerIdFactory;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -30,7 +31,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.zookeeper-master")
-public class MasterComponentConfiguration {
+public class MasterComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a custom ContainerIdFactory for creating container ids.

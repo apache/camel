@@ -17,6 +17,7 @@
 package org.apache.camel.language.sql.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.LanguageConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -26,7 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.language.sql")
-public class SqlLanguageConfiguration {
+public class SqlLanguageConfiguration
+        extends
+            LanguageConfigurationPropertiesCommon {
 
     /**
      * Whether to trim the value to remove leading and trailing whitespaces and

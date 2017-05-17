@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.annotation.Generated;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -30,7 +31,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.xquery")
-public class XQueryComponentConfiguration {
+public class XQueryComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the custom ModuleURIResolver

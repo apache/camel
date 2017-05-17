@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.annotation.Generated;
 import com.box.sdk.IAccessTokenCache;
 import org.apache.camel.component.box.internal.BoxApiName;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -32,7 +33,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.box")
-public class BoxComponentConfiguration {
+public class BoxComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the shared configuration

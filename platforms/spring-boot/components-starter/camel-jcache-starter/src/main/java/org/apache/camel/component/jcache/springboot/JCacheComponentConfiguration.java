@@ -19,6 +19,7 @@ package org.apache.camel.component.jcache.springboot;
 import java.util.Properties;
 import javax.annotation.Generated;
 import javax.cache.configuration.Configuration;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.jcache")
-public class JCacheComponentConfiguration {
+public class JCacheComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * The fully qualified class name of the javax.cache.spi.CachingProvider

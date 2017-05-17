@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka.springboot;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
 import org.apache.camel.spi.StateRepository;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -31,7 +32,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.kafka")
-public class KafkaComponentConfiguration {
+public class KafkaComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Allows to pre-configure the Kafka component with common options that the

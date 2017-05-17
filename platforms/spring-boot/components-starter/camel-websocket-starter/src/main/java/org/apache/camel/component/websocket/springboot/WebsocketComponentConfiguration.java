@@ -19,6 +19,7 @@ package org.apache.camel.component.websocket.springboot;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.component.websocket.WebSocketFactory;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,7 +33,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.websocket")
-public class WebsocketComponentConfiguration {
+public class WebsocketComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Set a resource path for static resources (such as .html files etc). The

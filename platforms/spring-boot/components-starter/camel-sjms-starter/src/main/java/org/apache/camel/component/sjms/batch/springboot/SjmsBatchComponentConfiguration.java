@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.batch.springboot;
 import javax.annotation.Generated;
 import javax.jms.ConnectionFactory;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -30,7 +31,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.sjms-batch")
-public class SjmsBatchComponentConfiguration {
+public class SjmsBatchComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * A ConnectionFactory is required to enable the SjmsBatchComponent.

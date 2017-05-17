@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.ws.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.spring-ws")
-public class SpringWebserviceComponentConfiguration {
+public class SpringWebserviceComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Enable usage of global SSL context parameters.

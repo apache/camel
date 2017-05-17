@@ -29,6 +29,7 @@ import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
 import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -38,7 +39,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.xmlsecurity")
-public class XmlSignatureComponentConfiguration {
+public class XmlSignatureComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a shared XmlSignerConfiguration configuration to use as base for

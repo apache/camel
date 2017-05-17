@@ -17,6 +17,7 @@
 package org.apache.camel.jsonpath.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.LanguageConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -26,7 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.language.jsonpath")
-public class JsonPathLanguageConfiguration {
+public class JsonPathLanguageConfiguration
+        extends
+            LanguageConfigurationPropertiesCommon {
 
     /**
      * Whether to suppress exceptions such as PathNotFoundException.
