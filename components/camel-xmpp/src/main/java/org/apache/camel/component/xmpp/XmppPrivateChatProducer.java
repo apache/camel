@@ -96,7 +96,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
     }
 
     private Chat getOrCreateChat(ChatManager chatManager, final String participant, String thread) throws XmppStringprepException {
-        // this starts a new chat or retrieves the existing one in a threadsafe manner
+        // this starts a new chat or retrieves the pre-existing one in a threadsafe manner
         return chatManager.chatWith(JidCreate.entityBareFrom(participant + "@" + thread));
     }
 
@@ -116,9 +116,9 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                 connection = endpoint.createConnection();
             } catch (SmackException e) {
                 if (endpoint.isTestConnectionOnStartup()) {
-                    throw new RuntimeException("Could not establish connection to XMPP server:  " + endpoint.getConnectionDescription(), e);
+                    throw new RuntimeException("Could not establish connection to XMPP server: " + endpoint.getConnectionDescription(), e);
                 } else {
-                    LOG.warn("Could not connect to XMPP server. {}  Producer will attempt lazy connection when needed.", e.getMessage());
+                    LOG.warn("Could not connect to XMPP server: {} Producer will attempt lazy connection when needed.", e.getMessage());
                 }
             }
         }

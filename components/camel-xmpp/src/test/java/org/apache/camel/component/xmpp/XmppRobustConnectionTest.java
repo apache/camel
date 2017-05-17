@@ -30,12 +30,6 @@ import org.junit.Test;
  */
 public class XmppRobustConnectionTest extends CamelTestSupport {
 
-
-    @Override
-    public void doPreSetup() throws Exception {
-        ReconnectionManager.setEnabledPerDefault(true);
-    }
-
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
