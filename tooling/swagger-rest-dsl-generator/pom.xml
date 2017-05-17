@@ -25,7 +25,7 @@
     <version>2.19.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>swagger-rest-dsl-generator</artifactId>
+  <artifactId>camel-swagger-rest-dsl-generator</artifactId>
   <name>Camel :: Tooling :: Swagger REST DSL Generator</name>
   <description>Generator of REST DSL route definitions from Swagger (OpenAPI) specification</description>
 
