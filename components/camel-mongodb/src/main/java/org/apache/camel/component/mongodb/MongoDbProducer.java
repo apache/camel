@@ -302,12 +302,7 @@ public class MongoDbProducer extends DefaultProducer {
             
             // get the parameters out of the Exchange Header
             String distinctFieldName = exchange.getIn().getHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, String.class);
-            BasicDBObject query = null;
-            // do not run around looking for a type converter unless there is a need for it
-            if (exchange.getIn().getBody() != null) {
-                query = exchange.getIn().getBody(BasicDBObject.class);
-            }
-            
+            BasicDBObject query = exchange.getIn().getBody(BasicDBObject.class);
             DistinctIterable<String> ret = null;
             if (query != null) {
                 ret = dbCol.distinct(distinctFieldName, query, String.class);
