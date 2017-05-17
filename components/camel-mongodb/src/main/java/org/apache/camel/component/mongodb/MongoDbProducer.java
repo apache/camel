@@ -355,18 +355,22 @@ public class MongoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> createDoInsert() {
         return exchange1 -> {
             MongoCollection<BasicDBObject> dbCol = calculateCollection(exchange1);
-            boolean singleInsert = true;
-            Object insert = exchange1.getIn().getBody(DBObject.class);
-            // body could not be converted to DBObject, check to see if it's of type List<DBObject>
-            if (insert == null) {
-                insert = exchange1.getIn().getBody(List.class);
-                // if the body of type List was obtained, ensure that all items are of type DBObject and cast the List to List<DBObject>
-                if (insert != null) {
+            boolean singleInsert = !exchange1.getIn().getHeader(MongoDbConstants.MULTIINSERT, Boolean.FALSE, Boolean.class);
+            
+            Object insert = null;
+            
+            if (singleInsert) {
+                insert = exchange1.getIn().getBody(DBObject.class);
+                if (insert == null) {
+                    // previous behavior:
+                    // body could not be converted to DBObject, check to see if it's of type List<DBObject>
+                    insert = getMultiInsertBody(exchange1);
                     singleInsert = false;
-                    insert = attemptConvertToList((List) insert, exchange1);
-                } else {
-                    throw new CamelMongoDbException("MongoDB operation = insert, Body is not conversible to type DBObject nor List<DBObject>");
+                } else if (insert instanceof BasicDBList) {
+                    singleInsert = false;
                 }
+            } else {
+                insert = getMultiInsertBody(exchange1);
             }
 
             if (singleInsert) {
@@ -374,6 +378,7 @@ public class MongoDbProducer extends DefaultProducer {
                 dbCol.insertOne(insertObject);
                 exchange1.getIn().setHeader(MongoDbConstants.OID, insertObject.get("_id"));
             } else {
+                @SuppressWarnings("unchecked")
                 List<BasicDBObject> insertObjects = (List<BasicDBObject>) insert;
                 dbCol.insertMany(insertObjects);
                 List<Object> objectIdentification = new ArrayList<>(insertObjects.size());
@@ -382,6 +387,23 @@ public class MongoDbProducer extends DefaultProducer {
             }
             return insert;
         };
+    }
+
+    private Object getMultiInsertBody(Exchange exchange1) {
+        Object insert;
+        // we try List first, because it should be the common case
+        insert = exchange1.getIn().getBody(List.class);
+        if (insert != null) {
+            // if the body of type List was obtained, ensure that all items are of type DBObject and cast the List to List<DBObject>
+            insert = attemptConvertToList((List<?>) insert, exchange1);
+        } else {
+            insert = exchange1.getIn().getBody(BasicDBList.class);
+        }
+
+        if (insert == null) {
+            throw new CamelMongoDbException("MongoDB operation = insert, Body is not conversible to type DBObject nor List<DBObject>");
+        }
+        return insert;
     }
 
     private Function<Exchange, Object> createDoUpdate() {
