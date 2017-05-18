@@ -52,6 +52,10 @@ public class GrpcConsumer extends DefaultConsumer {
         this.endpoint = endpoint;
         this.configuration = configuration;
     }
+    
+    public GrpcConfiguration getConfiguration() {
+        return configuration;
+    }
 
     @Override
     protected void doStart() throws Exception {
