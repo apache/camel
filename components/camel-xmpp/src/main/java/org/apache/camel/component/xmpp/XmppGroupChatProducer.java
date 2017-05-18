@@ -126,11 +126,11 @@ public class XmppGroupChatProducer extends DefaultProducer {
             room = endpoint.resolveRoom(connection);
             MultiUserChatManager chatManager = MultiUserChatManager.getInstanceFor(connection);
             chat = chatManager.getMultiUserChat(JidCreate.entityBareFrom(room));
-            MucEnterConfiguration mucc = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname())).requestNoHistory().build();
+            MucEnterConfiguration mucc = chat.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+                    .requestNoHistory()
+                    .build();
             chat.join(mucc);
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
-            }
+            LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
         }
     }
 
