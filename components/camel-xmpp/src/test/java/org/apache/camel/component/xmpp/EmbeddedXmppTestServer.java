@@ -39,6 +39,7 @@ import org.apache.vysper.xmpp.modules.extension.xep0045_muc.MUCModule;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.Conference;
 import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.RoomType;
 import org.apache.vysper.xmpp.server.XMPPServer;
+import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jxmpp.jid.impl.JidCreate;
 
@@ -129,7 +130,7 @@ public final class EmbeddedXmppTestServer {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
 
-        XMPPTCPConnectionConfiguration connectionConfig = XMPPTCPConnectionConfiguration.builder()
+        ConnectionConfiguration connectionConfig = XMPPTCPConnectionConfiguration.builder()
                 .setXmppDomain(JidCreate.domainBareFrom("apache.camel"))
                 .setHostAddress(InetAddress.getLocalHost())
                 .setPort(getXmppPort())
