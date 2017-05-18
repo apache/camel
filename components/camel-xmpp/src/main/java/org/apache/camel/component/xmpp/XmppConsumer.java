@@ -227,7 +227,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 try {
                     muc.pollMessage();
                 } catch (MultiUserChatException.MucNotJoinedException e) {
-                    LOG.warn(e.getMessage(), e);
+                    LOG.debug("Error while polling message from MultiUserChat. This exception will be ignored.", e);
                 }
             }
         }
