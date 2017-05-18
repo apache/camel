@@ -26,7 +26,7 @@ public interface XmppConstants {
     String FROM = "CamelXmppFrom";
 
     /**
-     * @deprecated use {@link #STANZA_ID}
+     * @deprecated use {@link #STANZA_ID} instead.
      */
     @Deprecated
     String PACKET_ID = "CamelXmppPacketID";
