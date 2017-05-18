@@ -97,8 +97,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private int connectionPollDelay = 10;
     @UriParam(label = "filter")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    @UriParam(label = "advanced")
-    private XMPPTCPConnectionConfiguration connectionConfig;
+    @UriParam(label = "advanced", description = "Currently only XMPPTCPConnectionConfiguration is supported (XMPP over TCP) and not BOSHConfiguration (XMPP over HTTP)")
+    private ConnectionConfiguration connectionConfig;
 
     public XmppEndpoint() {
     }
@@ -222,7 +222,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     private XMPPTCPConnection createConnectionInternal() throws UnknownHostException, XmppStringprepException {
         if (connectionConfig != null) {
-            return new XMPPTCPConnection(connectionConfig);
+            return new XMPPTCPConnection((XMPPTCPConnectionConfiguration) connectionConfig);
         }
 
         if (port == 0) {
@@ -432,7 +432,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     /**
      * To use an existing connection configuration
      */
-    public void setConnectionConfig(XMPPTCPConnectionConfiguration connectionConfig) {
+    public void setConnectionConfig(ConnectionConfiguration connectionConfig) {
         this.connectionConfig = connectionConfig;
     }
 
