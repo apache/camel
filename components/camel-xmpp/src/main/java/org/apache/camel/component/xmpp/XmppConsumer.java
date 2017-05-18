@@ -103,11 +103,11 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
             muc = mucm.getMultiUserChat(JidCreate.entityBareFrom(endpoint.resolveRoom(connection)));
             muc.addMessageListener(this);
-            MucEnterConfiguration mucc = muc.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname())).requestNoHistory().build();
+            MucEnterConfiguration mucc = muc.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+                    .requestNoHistory()
+                    .build();
             muc.join(mucc);
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
-            }
+            LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
         }
 
         this.startRobustConnectionMonitor();
@@ -176,9 +176,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         }
 
         if (muc != null) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Leaving room: {}", muc.getRoom());
-            }
+            LOG.info("Leaving room: {}", muc.getRoom());
             muc.removeMessageListener(this);
             muc.leave();
             muc = null;

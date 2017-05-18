@@ -22,6 +22,9 @@ import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.vysper.mina.TCPEndpoint;
@@ -38,10 +41,6 @@ import org.apache.vysper.xmpp.modules.extension.xep0045_muc.model.RoomType;
 import org.apache.vysper.xmpp.server.XMPPServer;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jxmpp.jid.impl.JidCreate;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-
 
 public final class EmbeddedXmppTestServer {
 
