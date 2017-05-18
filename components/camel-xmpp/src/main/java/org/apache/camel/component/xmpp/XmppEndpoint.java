@@ -48,7 +48,6 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jxmpp.jid.DomainBareJid;
-import org.jxmpp.jid.EntityBareJid;
 import org.jxmpp.jid.parts.Localpart;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.jxmpp.stringprep.XmppStringprepException;
@@ -182,8 +181,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
         newConnection.connect();
 
-        newConnection.addSyncStanzaListener(new XmppLogger("INBOUND"), (stanza -> true));
-        newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), (stanza -> true));
+        newConnection.addSyncStanzaListener(new XmppLogger("INBOUND"), stanza -> true);
+        newConnection.addSyncStanzaListener(new XmppLogger("OUTBOUND"), stanza -> true);
 
         if (!newConnection.isAuthenticated()) {
             if (user != null) {
@@ -230,7 +229,11 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             port = 5222;
         }
         String sName = getServiceName() == null ? host : getServiceName();
-        XMPPTCPConnectionConfiguration conf = XMPPTCPConnectionConfiguration.builder().setHostAddress(InetAddress.getByName(host)).setPort(port).setXmppDomain(sName).build();
+        XMPPTCPConnectionConfiguration conf = XMPPTCPConnectionConfiguration.builder()
+                .setHostAddress(InetAddress.getByName(host))
+                .setPort(port)
+                .setXmppDomain(sName)
+                .build();
         return new XMPPTCPConnection(conf);
     }
 
@@ -249,17 +252,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         List<DomainBareJid> xmppServiceDomains = multiUserChatManager.getXMPPServiceDomains();
         if (xmppServiceDomains.isEmpty()) {
             throw new XMPPErrorException(null,
-                    XMPPError.from(Condition.item_not_found, "Cannot find Multi User Chat service on connection: " + getConnectionMessage(connection)).build());
+                    XMPPError.from(Condition.item_not_found, "Cannot find any XMPPServiceDomain by MultiUserChatManager on connection: " + getConnectionMessage(connection)).build());
         }
 
-        for (EntityBareJid joinedRoom : multiUserChatManager.getJoinedRooms()) {
-            if (joinedRoom.toString().equals(room)) {
-                LOG.debug("Resolved chat room: {}", room);
-                return room;
-            }
-        }
-
-        throw new IllegalStateException("Could not find the joined room: " + room);
+        return room + "@" + xmppServiceDomains.iterator().next();
     }
 
     public String getConnectionDescription() {

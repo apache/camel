@@ -68,15 +68,18 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
     }
 
     protected String getProducerUri() {
-
-        // the nickname paramenter is necessary in these URLs because the '@' in the user name can not be parsed by
+        // the nickname parameter is necessary in these URLs because the '@' in the user name can not be parsed by
         // vysper during chat room message routing.
 
+        // here on purpose we provide the room query parameter without the domain name as 'camel-test', and camel
+        // will resolve it properly to 'camel-test@conference.apache.camel'
         return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
+            + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
     }
     
     protected String getConsumerUri() {
+        // however here we provide the room query parameter as fully qualified including the domain name as
+        // 'camel-test@conference.apache.camel'
         return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
             + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
     }
