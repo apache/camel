@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.grpc.server;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import io.grpc.stub.StreamObserver;
@@ -33,7 +31,6 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
     protected final GrpcEndpoint endpoint;
     protected final GrpcConsumer consumer;
     protected Exchange exchange;
-    protected List<Object> requestList = new LinkedList<>();
     protected StreamObserver<Object> responseObserver;
     protected Map<String, Object> headers;
 

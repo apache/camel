@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConstants;
 import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcEndpoint;
+import org.apache.camel.component.grpc.GrpcProcessingStrategies;
 
 /**
  * gRPC server method invocation handler
@@ -76,7 +77,15 @@ public class GrpcMethodHandler implements MethodHandler {
         } else if (args.length == 1 && args[0] instanceof StreamObserver) {
             // Single incoming parameter is instance of the io.grpc.stub.StreamObserver
             final StreamObserver<Object> responseObserver = (StreamObserver<Object>)args[0];
-            final StreamObserver<Object> requestObserver = new GrpcRequestAggregationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
+            StreamObserver<Object> requestObserver = null;
+            
+            if (consumer.getConfiguration().getProcessingStrategy() == GrpcProcessingStrategies.AGGREGATION) {
+                requestObserver = new GrpcRequestAggregationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
+            } else if (consumer.getConfiguration().getProcessingStrategy() == GrpcProcessingStrategies.PROPAGATION) {
+                requestObserver = new GrpcRequestPropagationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
+            } else {
+                throw new IllegalArgumentException("gRPC processing strategy not implemented " + consumer.getConfiguration().getProcessingStrategy());
+            }
             
             return requestObserver;
         } else {

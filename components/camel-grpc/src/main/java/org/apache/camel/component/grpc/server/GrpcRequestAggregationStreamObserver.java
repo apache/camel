@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.grpc.server;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +29,11 @@ import org.apache.camel.component.grpc.GrpcEndpoint;
  * onNext() call into the list and processing them in onCompleted()
  */
 public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStreamObserver {
+    private List<Object> requestList = new LinkedList<>();
 
     public GrpcRequestAggregationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer, StreamObserver<Object> responseObserver, Map<String, Object> headers) {
         super(endpoint, consumer, responseObserver, headers);
+        exchange = endpoint.createExchange();
     }
 
     @Override
@@ -46,8 +49,6 @@ public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStr
     @Override
     @SuppressWarnings("unchecked")
     public void onCompleted() {
-        exchange = endpoint.createExchange();
-
         exchange.getIn().setBody(requestList);
         exchange.getIn().setHeaders(headers);
 

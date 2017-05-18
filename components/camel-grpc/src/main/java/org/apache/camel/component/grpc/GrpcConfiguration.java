@@ -37,6 +37,8 @@ public class GrpcConfiguration {
     private String target;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean usePlainText = true;
+    @UriParam(label = "consumer")
+    private GrpcProcessingStrategies processingStrategy = GrpcProcessingStrategies.PROPAGATION;
 
     private String serviceName;
     private String servicePackage;
@@ -98,7 +100,7 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The plaintext connection to the server flag
+     * The plain text connection to the server flag
      */
     public Boolean getUsePlainText() {
         return usePlainText;
@@ -106,6 +108,17 @@ public class GrpcConfiguration {
 
     public void setUsePlainText(Boolean usePlainText) {
         this.usePlainText = usePlainText;
+    }
+
+    /**
+     * TBD
+     */
+    public GrpcProcessingStrategies getProcessingStrategy() {
+        return processingStrategy;
+    }
+
+    public void setProcessingStrategy(GrpcProcessingStrategies processingStrategy) {
+        this.processingStrategy = processingStrategy;
     }
 
     /**
