@@ -114,14 +114,14 @@ public class EhcacheComponentAutoConfiguration extends AllNestedConditions {
         }
         IntrospectionSupport.setProperties(camelContext,
                 camelContext.getTypeConverter(), component, parameters);
-        boolean useConfigurers = globalConfiguration.getConfigurer()
+        boolean useConfigurers = globalConfiguration.getCustomizer()
                 .isEnabled()
-                && componentConfiguration.getConfigurer().isEnabled();
+                && componentConfiguration.getCustomizer().isEnabled();
         if (useConfigurers && ObjectHelper.isNotEmpty(customizers)) {
-            for (ComponentCustomizer<EhcacheComponent> configurer : customizers) {
-                LOGGER.debug("Configure component {}, with configurer {}",
-                        component, configurer);
-                configurer.customize(component);
+            for (ComponentCustomizer<EhcacheComponent> customizer : customizers) {
+                LOGGER.debug("Configure component {}, with customizer {}",
+                        component, customizer);
+                customizer.customize(component);
             }
         }
         return component;

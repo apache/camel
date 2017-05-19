@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -36,16 +37,28 @@ import org.springframework.core.annotation.Order;
  * {@link CacheManager} instance and bind it to the {@link EhcacheComponent}
  * component.
  *
- * This configurer can be disabled either by disable all the
+ * This customizer can be disabled/enabled with different strategies:
+ *
+ * 1. globally using:
+ *    camel.component.customizer.enable = true/false
+ *
+ * 2. for component:
+ *    camel.component.ehcache.customizer.enabled = true/false
+ *
+ * 3. individually:
+ *    camel.component.ehcache.customizer.cache-manager.enabled = true/false
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
 @Configuration
-@ConditionalOnProperty(name = "camel.component.ehcache.configurer.cache-manager.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "camel.component.ehcache.customizer.cache-manager.enabled", matchIfMissing = true)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @AutoConfigureBefore(EhcacheComponentAutoConfiguration.class)
+@EnableConfigurationProperties(CacheManagerCustomizerConfiguration.class)
 public class CacheManagerCustomizer extends AllNestedConditions implements ComponentCustomizer<EhcacheComponent> {
     @Autowired
     private CacheManager cacheManager;
+    @Autowired
+    private CacheManagerCustomizerConfiguration configuration;
 
     public CacheManagerCustomizer() {
         super(ConfigurationPhase.REGISTER_BEAN);
@@ -53,7 +66,11 @@ public class CacheManagerCustomizer extends AllNestedConditions implements Compo
 
     @Override
     public void customize(EhcacheComponent component) {
-        component.setCacheManager(cacheManager);
+        // Set the cache manager only if the customizer is configured to always
+        // set it or if no cache manager is already configured on component
+        if (configuration.isOverride() || component.getCacheManager() == null) {
+            component.setCacheManager(cacheManager);
+        }
     }
 
     // *************************************************************************
