@@ -27,11 +27,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootApplication
 @SpringBootTest(
     classes = {
-        CacheManagerConfigurerNotEnabledTestBase.TestConfiguration.class
+        CacheManagerCustomizerNotEnabledTestBase.TestConfiguration.class
     },
     properties = {
         "debug=false",
-        "camel.component.ehcache.configurer.cache-manager.enabled=false"
+        "camel.component.ehcache.customizer.enabled=false"
     })
-public class CacheManagerConfigurerNotEnabledTest extends CacheManagerConfigurerNotEnabledTestBase {
+public class CacheManagerCustomizerNotEnabledOnComponentTest extends CacheManagerCustomizerNotEnabledTestBase {
 }
