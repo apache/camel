@@ -106,14 +106,14 @@ public class ExchangePropertyLanguageAutoConfiguration
                 null, false);
         IntrospectionSupport.setProperties(camelContext,
                 camelContext.getTypeConverter(), language, parameters);
-        boolean useConfigurers = globalConfiguration.getConfigurer()
+        boolean useCustomizers = globalConfiguration.getCustomizer()
                 .isEnabled()
-                && languageConfiguration.getConfigurer().isEnabled();
-        if (useConfigurers && ObjectHelper.isNotEmpty(customizers)) {
-            for (LanguageCustomizer<ExchangePropertyLanguage> configurer : customizers) {
-                LOGGER.debug("Configure language {}, with configurer {}",
-                        language, configurer);
-                configurer.customize(language);
+                && languageConfiguration.getCustomizer().isEnabled();
+        if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {
+            for (LanguageCustomizer<ExchangePropertyLanguage> customizer : customizers) {
+                LOGGER.debug("Configure language {}, with customizer {}",
+                        language, customizer);
+                customizer.customize(language);
             }
         }
         return language;
