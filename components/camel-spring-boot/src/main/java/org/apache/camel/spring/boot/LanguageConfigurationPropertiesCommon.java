@@ -25,7 +25,7 @@ public class LanguageConfigurationPropertiesCommon {
     private boolean enabled = true;
 
     @NestedConfigurationProperty
-    private ConfigurerProperties configurer = new ConfigurerProperties();
+    private CustomizerProperties customizer = new CustomizerProperties();
 
     public boolean isEnabled() {
         return enabled;
@@ -35,17 +35,17 @@ public class LanguageConfigurationPropertiesCommon {
         this.enabled = enabled;
     }
 
-    public ConfigurerProperties getConfigurer() {
-        return configurer;
+    public CustomizerProperties getCustomizer() {
+        return customizer;
     }
 
     // ********************************
-    // Configurer
+    // Customizer
     // ********************************
 
-    public class ConfigurerProperties {
+    public class CustomizerProperties {
         /**
-         * Global option to enable/disable language configurers, default is true.
+         * Global option to enable/disable language customizers, default is true.
          */
         private boolean enabled = true;
 
