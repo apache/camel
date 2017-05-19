@@ -33,6 +33,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.SmackException;
@@ -97,7 +98,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private int connectionPollDelay = 10;
     @UriParam(label = "filter")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    @UriParam(label = "advanced", description = "Currently only XMPPTCPConnectionConfiguration is supported (XMPP over TCP) and not BOSHConfiguration (XMPP over HTTP)")
+    @UriParam(label = "advanced", description = "Currently XMPPTCPConnectionConfiguration is only supported (XMPP over TCP) but not BOSHConfiguration (XMPP over HTTP).")
     private ConnectionConfiguration connectionConfig;
 
     public XmppEndpoint() {
@@ -222,7 +223,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     private XMPPTCPConnection createConnectionInternal() throws UnknownHostException, XmppStringprepException {
         if (connectionConfig != null) {
-            return new XMPPTCPConnection((XMPPTCPConnectionConfiguration) connectionConfig);
+            return new XMPPTCPConnection(ObjectHelper.cast(XMPPTCPConnectionConfiguration.class, connectionConfig));
         }
 
         if (port == 0) {

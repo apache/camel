@@ -27,6 +27,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.vysper.mina.TCPEndpoint;
 import org.apache.vysper.storage.StorageProviderRegistry;
 import org.apache.vysper.storage.inmemory.MemoryStorageProviderRegistry;
@@ -89,7 +90,7 @@ public final class EmbeddedXmppTestServer {
 
                 xmppServer.addEndpoint(endpoint);
 
-                InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("xmppServer.jks");
+                InputStream stream = ObjectHelper.loadResourceAsStream("xmppServer.jks");
                 xmppServer.setTLSCertificateInfo(stream, "secret");
 
                 // allow anonymous logins
@@ -122,7 +123,7 @@ public final class EmbeddedXmppTestServer {
 
     public void bindSSLContextTo(JndiRegistry registry) throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
-        keyStore.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("xmppServer.jks"), "secret".toCharArray());
+        keyStore.load(ObjectHelper.loadResourceAsStream("xmppServer.jks"), "secret".toCharArray());
 
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init(keyStore);
