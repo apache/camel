@@ -28,7 +28,7 @@
     <artifactId>camel-reactor</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Reactor</name>
-    <description>Camel Reactor  Component</description>
+    <description>Reactor based back-end for Camel's reactive streams component</description>
 
     <properties>
       <!-- use by camel-catalog -->
