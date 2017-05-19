@@ -114,15 +114,15 @@ public class UniVocityCsvDataFormatAutoConfiguration
                 } catch (Exception e) {
                     throw new RuntimeCamelException(e);
                 }
-                boolean useConfigurers = globalConfiguration.getConfigurer()
+                boolean useCustomizers = globalConfiguration.getCustomizer()
                         .isEnabled()
-                        && dataformatConfiguration.getConfigurer().isEnabled();
-                if (useConfigurers && ObjectHelper.isNotEmpty(customizers)) {
-                    for (DataFormatCustomizer<UniVocityCsvDataFormat> configurer : customizers) {
+                        && dataformatConfiguration.getCustomizer().isEnabled();
+                if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {
+                    for (DataFormatCustomizer<UniVocityCsvDataFormat> customizer : customizers) {
                         LOGGER.debug(
-                                "Configure dataformat {}, with configurer {}",
-                                dataformat, configurer);
-                        configurer.customize(dataformat);
+                                "Configure dataformat {}, with customizer {}",
+                                dataformat, customizer);
+                        customizer.customize(dataformat);
                     }
                 }
                 return dataformat;

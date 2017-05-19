@@ -102,14 +102,14 @@ public class JXPathLanguageAutoConfiguration extends AllNestedConditions {
                 null, false);
         IntrospectionSupport.setProperties(camelContext,
                 camelContext.getTypeConverter(), language, parameters);
-        boolean useConfigurers = globalConfiguration.getConfigurer()
+        boolean useCustomizers = globalConfiguration.getCustomizer()
                 .isEnabled()
-                && languageConfiguration.getConfigurer().isEnabled();
-        if (useConfigurers && ObjectHelper.isNotEmpty(customizers)) {
-            for (LanguageCustomizer<JXPathLanguage> configurer : customizers) {
-                LOGGER.debug("Configure language {}, with configurer {}",
-                        language, configurer);
-                configurer.customize(language);
+                && languageConfiguration.getCustomizer().isEnabled();
+        if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {
+            for (LanguageCustomizer<JXPathLanguage> customizer : customizers) {
+                LOGGER.debug("Configure language {}, with customizer {}",
+                        language, customizer);
+                customizer.customize(language);
             }
         }
         return language;

@@ -114,14 +114,14 @@ public class RestApiComponentAutoConfiguration extends AllNestedConditions {
         }
         IntrospectionSupport.setProperties(camelContext,
                 camelContext.getTypeConverter(), component, parameters);
-        boolean useConfigurers = globalConfiguration.getConfigurer()
+        boolean useCustomizers = globalConfiguration.getCustomizer()
                 .isEnabled()
-                && componentConfiguration.getConfigurer().isEnabled();
-        if (useConfigurers && ObjectHelper.isNotEmpty(customizers)) {
-            for (ComponentCustomizer<RestApiComponent> configurer : customizers) {
-                LOGGER.debug("Configure component {}, with configurer {}",
-                        component, configurer);
-                configurer.customize(component);
+                && componentConfiguration.getCustomizer().isEnabled();
+        if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {
+            for (ComponentCustomizer<RestApiComponent> customizer : customizers) {
+                LOGGER.debug("Configure component {}, with customizer {}",
+                        component, customizer);
+                customizer.customize(component);
             }
         }
         return component;
