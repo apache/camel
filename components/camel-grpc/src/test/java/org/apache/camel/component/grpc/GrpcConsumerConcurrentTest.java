@@ -47,28 +47,28 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     private static final String GRPC_TEST_PONG_VALUE = "PONG";
     private static final String GRPC_USER_AGENT_PREFIX = "user-agent-";
     private static AtomicInteger idCounter = new AtomicInteger();
-    
+
     public static Integer createId() {
         return idCounter.getAndIncrement();
     }
-    
+
     public static Integer getId() {
         return idCounter.get();
     }
-    
+
     @Test
     public void testAsyncWithConcurrentThreads() throws Exception {
         RunnableAssert ra = new RunnableAssert("foo") {
-            
+
             @Override
             public void run() {
                 final CountDownLatch latch = new CountDownLatch(1);
                 ManagedChannel asyncRequestChannel = NettyChannelBuilder.forAddress("localhost", GRPC_ASYNC_REQUEST_TEST_PORT).usePlaintext(true).build();
                 PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
-                
-                PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);                
+
+                PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
                 int instanceId = createId();
-                
+
                 final PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(instanceId).build();
                 StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncAsync(responseObserver);
                 requestObserver.onNext(pingRequest);
@@ -79,33 +79,34 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                
+
                 PongResponse pongResponse = responseObserver.getPongResponse();
-                
+
                 assertNotNull("instanceId = " + instanceId, pongResponse);
                 assertEquals(instanceId, pongResponse.getPongId());
                 assertEquals(GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE, pongResponse.getPongName());
-                
+
                 asyncRequestChannel.shutdown().shutdownNow();
             }
         };
-        
+
         new MultithreadingTester().add(ra).numThreads(CONCURRENT_THREAD_COUNT).numRoundsPerThread(ROUNDS_PER_THREAD_COUNT).run();
     }
-    
+
     @Test
     public void testHeadersWithConcurrentThreads() throws Exception {
         RunnableAssert ra = new RunnableAssert("foo") {
-            
+
             @Override
             public void run() {
                 int instanceId = createId();
                 final CountDownLatch latch = new CountDownLatch(1);
-                ManagedChannel asyncRequestChannel = NettyChannelBuilder.forAddress("localhost", GRPC_HEADERS_TEST_PORT).userAgent(GRPC_USER_AGENT_PREFIX + instanceId).usePlaintext(true).build();
+                ManagedChannel asyncRequestChannel = NettyChannelBuilder.forAddress("localhost", GRPC_HEADERS_TEST_PORT).userAgent(GRPC_USER_AGENT_PREFIX + instanceId)
+                    .usePlaintext(true).build();
                 PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
-                
-                PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);                
-                
+
+                PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
+
                 final PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(instanceId).build();
                 StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncAsync(responseObserver);
                 requestObserver.onNext(pingRequest);
@@ -116,39 +117,42 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                
+
                 PongResponse pongResponse = responseObserver.getPongResponse();
-                
+
                 assertNotNull("instanceId = " + instanceId, pongResponse);
                 assertEquals(instanceId, pongResponse.getPongId());
                 assertEquals(GRPC_USER_AGENT_PREFIX + instanceId, pongResponse.getPongName());
-                
+
                 asyncRequestChannel.shutdown().shutdownNow();
             }
         };
-        
+
         new MultithreadingTester().add(ra).numThreads(CONCURRENT_THREAD_COUNT).numRoundsPerThread(ROUNDS_PER_THREAD_COUNT).run();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() {                
-                from("grpc://org.apache.camel.component.grpc.PingPong?synchronous=true&host=localhost&port=" + GRPC_ASYNC_REQUEST_TEST_PORT).bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
-                from("grpc://org.apache.camel.component.grpc.PingPong?synchronous=true&host=localhost&port=" + GRPC_HEADERS_TEST_PORT).process(new HeaderExchangeProcessor());
+            public void configure() {
+                from("grpc://org.apache.camel.component.grpc.PingPong?synchronous=true&processingStrategy=AGGREGATION&host=localhost&port=" + GRPC_ASYNC_REQUEST_TEST_PORT)
+                    .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                
+                from("grpc://org.apache.camel.component.grpc.PingPong?synchronous=true&processingStrategy=AGGREGATION&host=localhost&port=" + GRPC_HEADERS_TEST_PORT)
+                    .process(new HeaderExchangeProcessor());
             }
         };
     }
-    
+
     public class PongResponseStreamObserver implements StreamObserver<PongResponse> {
         private PongResponse pongResponse;
         private final CountDownLatch latch;
-        
+
         public PongResponseStreamObserver(CountDownLatch latch) {
             this.latch = latch;
         }
-        
+
         public PongResponse getPongResponse() {
             return pongResponse;
         }
@@ -169,24 +173,26 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
             latch.countDown();
         }
     }
-    
+
     public class GrpcMessageBuilder {
         public PongResponse buildAsyncPongResponse(List<PingRequest> pingRequests) {
-            PongResponse pongResponse = PongResponse.newBuilder().setPongName(pingRequests.get(0).getPingName() + GRPC_TEST_PONG_VALUE).setPongId(pingRequests.get(0).getPingId()).build();
-            return pongResponse;
+            return PongResponse.newBuilder().setPongName(pingRequests.get(0).getPingName() + GRPC_TEST_PONG_VALUE).setPongId(pingRequests.get(0).getPingId()).build();
         }
     }
-    
+
     public class HeaderExchangeProcessor implements Processor {
-        
+
         @SuppressWarnings("unchecked")
         public void process(Exchange exchange) throws Exception {
             List<PingRequest> pingRequests = (List<PingRequest>)exchange.getIn().getBody();
             String userAgentName = (String)exchange.getIn().getHeader(GrpcConstants.GRPC_USER_AGENT_HEADER);
-            
-            // As user agent name is prepended the library's user agent information it's necessary to extract this value (before first space)
-            PongResponse pongResponse = PongResponse.newBuilder().setPongName(userAgentName.substring(0, userAgentName.indexOf(' '))).setPongId(pingRequests.get(0).getPingId()).build();
+
+            // As user agent name is prepended the library's user agent
+            // information it's necessary to extract this value (before first
+            // space)
+            PongResponse pongResponse = PongResponse.newBuilder().setPongName(userAgentName.substring(0, userAgentName.indexOf(' '))).setPongId(pingRequests.get(0).getPingId())
+                .build();
             exchange.getIn().setBody(pongResponse);
         }
-      }
+    }
 }

@@ -36,14 +36,21 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
     public void onNext(Object request) {
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(request);
+        exchange.getIn().setHeaders(headers);
         consumer.process(exchange, doneSync -> {
         });
-        responseObserver.onNext(exchange.getOut().getBody());
+        if (exchange.hasOut()) {
+            responseObserver.onNext(exchange.getOut().getBody());
+        } else {
+            responseObserver.onNext(exchange.getIn().getBody());
+        }
+        responseObserver.onCompleted();
     }
 
     @Override
     public void onError(Throwable throwable) {
         exchange = endpoint.createExchange();
+        exchange.getIn().setHeaders(headers);
         consumer.onError(exchange, throwable);
         responseObserver.onError(throwable);
     }
@@ -51,6 +58,7 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
     @Override
     public void onCompleted() {
         exchange = endpoint.createExchange();
+        exchange.getIn().setHeaders(headers);
         consumer.onCompleted(exchange);
         responseObserver.onCompleted();
     }
