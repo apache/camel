@@ -112,7 +112,7 @@ public class ParserTest extends CamelTestSupport {
         pc.setLocation("classpath:jndi.properties");
         Exchange exchange = createExchangeWithBody(1);
         Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${properties:java.naming.factory.initial})");
-        assertEquals("org.apache.camel.util.jndi.CamelInitialContextFactory",((InputParameter)template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
+        assertEquals("org.apache.camel.util.jndi.CamelInitialContextFactory", ((InputParameter)template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class ParserTest extends CamelTestSupport {
         Exchange exchange = createExchangeWithBody(1);
 
         Map container = new HashMap();
-        container.put("a:",1);
+        container.put("a:", 1);
         assertEquals(1, ((InputParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, container));
     }
 
