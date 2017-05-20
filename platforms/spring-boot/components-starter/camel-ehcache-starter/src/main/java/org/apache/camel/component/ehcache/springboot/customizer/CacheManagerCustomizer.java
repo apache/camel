@@ -28,6 +28,7 @@ import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -41,28 +42,23 @@ import org.springframework.core.annotation.Order;
  *
  * 1. globally using:
  *    camel.component.customizer.enable = true/false
- *
  * 2. for component:
  *    camel.component.ehcache.customizer.enabled = true/false
- *
  * 3. individually:
  *    camel.component.ehcache.customizer.cache-manager.enabled = true/false
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
 @Configuration
+@Conditional(CacheManagerCustomizer.NestedConditions.class)
 @ConditionalOnProperty(name = "camel.component.ehcache.customizer.cache-manager.enabled", matchIfMissing = true)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @AutoConfigureBefore(EhcacheComponentAutoConfiguration.class)
 @EnableConfigurationProperties(CacheManagerCustomizerConfiguration.class)
-public class CacheManagerCustomizer extends AllNestedConditions implements ComponentCustomizer<EhcacheComponent> {
+public class CacheManagerCustomizer implements ComponentCustomizer<EhcacheComponent> {
     @Autowired
     private CacheManager cacheManager;
     @Autowired
     private CacheManagerCustomizerConfiguration configuration;
-
-    public CacheManagerCustomizer() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
 
     @Override
     public void customize(EhcacheComponent component) {
@@ -75,20 +71,27 @@ public class CacheManagerCustomizer extends AllNestedConditions implements Compo
 
     // *************************************************************************
     // By default ConditionalOnBean works using an OR operation so if you list
-    // a number of classes, the condition succeeds if a single instance of the
-    // classes is found.
+    // a number of classes, the condition succeeds if a single instance of any
+    // class is found.
     //
     // A workaround is to use AllNestedConditions and creates some dummy classes
-    // annotated @ConditionalOnBean
+    // annotated with @ConditionalOnBean
     //
     // This should be fixed in spring-boot 2.0 where ConditionalOnBean uses and
     // AND operation instead of the OR as it does today.
     // *************************************************************************
 
-    @ConditionalOnBean(CacheManager.class)
-    static class OnCacheManager {
-    }
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    static class OnCamelAutoConfiguration {
+    static class NestedConditions extends AllNestedConditions {
+        public NestedConditions() {
+            super(ConfigurationPhase.REGISTER_BEAN);
+        }
+
+        @ConditionalOnBean(CacheManager.class)
+        static class OnCacheManager {
+        }
+
+        @ConditionalOnBean(CamelAutoConfiguration.class)
+        static class OnCamelAutoConfiguration {
+        }
     }
 }

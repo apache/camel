@@ -25,6 +25,7 @@ import org.apache.camel.component.hazelcast.seda.HazelcastSedaComponent;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -32,9 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -47,13 +46,12 @@ import org.springframework.context.annotation.Lazy;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(HazelcastSedaComponentAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        HazelcastSedaComponentAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({ComponentConfigurationProperties.class,
         HazelcastSedaComponentConfiguration.class})
-public class HazelcastSedaComponentAutoConfiguration
-        extends
-            AllNestedConditions {
+public class HazelcastSedaComponentAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(HazelcastSedaComponentAutoConfiguration.class);
@@ -66,27 +64,14 @@ public class HazelcastSedaComponentAutoConfiguration
     @Autowired
     private HazelcastSedaComponentConfiguration componentConfiguration;
 
-    public HazelcastSedaComponentAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.component", "camel.component.hazelcast-seda");
         }
     }
 
     @Lazy
     @Bean(name = "hazelcast-seda-component")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HazelcastSedaComponent.class)
     public HazelcastSedaComponent configureHazelcastSedaComponent()
             throws Exception {

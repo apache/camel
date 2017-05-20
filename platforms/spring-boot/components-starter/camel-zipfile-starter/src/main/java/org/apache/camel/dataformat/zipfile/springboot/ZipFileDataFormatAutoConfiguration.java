@@ -29,6 +29,7 @@ import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -36,9 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -50,11 +49,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(ZipFileDataFormatAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        ZipFileDataFormatAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @EnableConfigurationProperties({DataFormatConfigurationProperties.class,
         ZipFileDataFormatConfiguration.class})
-public class ZipFileDataFormatAutoConfiguration extends AllNestedConditions {
+public class ZipFileDataFormatAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ZipFileDataFormatAutoConfiguration.class);
@@ -67,31 +67,18 @@ public class ZipFileDataFormatAutoConfiguration extends AllNestedConditions {
     @Autowired
     private ZipFileDataFormatConfiguration dataformatConfiguration;
 
-    public ZipFileDataFormatAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.dataformat", "camel.dataformat.zipfile");
         }
     }
 
     @Bean(name = "zipfile-dataformat-factory")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ZipFileDataFormat.class)
     public DataFormatFactory configureZipFileDataFormatFactory()
             throws Exception {
         return new DataFormatFactory() {
+            @Override
             public DataFormat newInstance() {
                 ZipFileDataFormat dataformat = new ZipFileDataFormat();
                 if (CamelContextAware.class

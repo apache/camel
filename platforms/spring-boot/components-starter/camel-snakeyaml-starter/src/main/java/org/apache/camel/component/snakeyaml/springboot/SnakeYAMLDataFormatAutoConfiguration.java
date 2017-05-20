@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -27,8 +28,8 @@ import org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
-import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -36,9 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -50,11 +48,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(SnakeYAMLDataFormatAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        SnakeYAMLDataFormatAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @EnableConfigurationProperties({DataFormatConfigurationProperties.class,
         SnakeYAMLDataFormatConfiguration.class})
-public class SnakeYAMLDataFormatAutoConfiguration extends AllNestedConditions {
+public class SnakeYAMLDataFormatAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(SnakeYAMLDataFormatAutoConfiguration.class);
@@ -67,31 +66,18 @@ public class SnakeYAMLDataFormatAutoConfiguration extends AllNestedConditions {
     @Autowired
     private SnakeYAMLDataFormatConfiguration dataformatConfiguration;
 
-    public SnakeYAMLDataFormatAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.dataformat", "camel.dataformat.yaml-snakeyaml");
         }
     }
 
     @Bean(name = "yaml-snakeyaml-dataformat-factory")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SnakeYAMLDataFormat.class)
     public DataFormatFactory configureSnakeYAMLDataFormatFactory()
             throws Exception {
         return new DataFormatFactory() {
+            @Override
             public DataFormat newInstance() {
                 SnakeYAMLDataFormat dataformat = new SnakeYAMLDataFormat();
                 if (CamelContextAware.class

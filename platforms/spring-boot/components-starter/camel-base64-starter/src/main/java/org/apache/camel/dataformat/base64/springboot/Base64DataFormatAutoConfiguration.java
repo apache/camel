@@ -29,6 +29,7 @@ import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -36,9 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -50,11 +49,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(Base64DataFormatAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        Base64DataFormatAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @EnableConfigurationProperties({DataFormatConfigurationProperties.class,
         Base64DataFormatConfiguration.class})
-public class Base64DataFormatAutoConfiguration extends AllNestedConditions {
+public class Base64DataFormatAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(Base64DataFormatAutoConfiguration.class);
@@ -67,31 +67,18 @@ public class Base64DataFormatAutoConfiguration extends AllNestedConditions {
     @Autowired
     private Base64DataFormatConfiguration dataformatConfiguration;
 
-    public Base64DataFormatAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.dataformat", "camel.dataformat.base64");
         }
     }
 
     @Bean(name = "base64-dataformat-factory")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(Base64DataFormat.class)
     public DataFormatFactory configureBase64DataFormatFactory()
             throws Exception {
         return new DataFormatFactory() {
+            @Override
             public DataFormat newInstance() {
                 Base64DataFormat dataformat = new Base64DataFormat();
                 if (CamelContextAware.class

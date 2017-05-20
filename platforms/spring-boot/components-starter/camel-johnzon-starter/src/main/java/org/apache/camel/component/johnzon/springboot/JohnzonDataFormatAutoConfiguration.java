@@ -29,6 +29,7 @@ import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -36,9 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -50,11 +49,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(JohnzonDataFormatAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        JohnzonDataFormatAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @EnableConfigurationProperties({DataFormatConfigurationProperties.class,
         JohnzonDataFormatConfiguration.class})
-public class JohnzonDataFormatAutoConfiguration extends AllNestedConditions {
+public class JohnzonDataFormatAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(JohnzonDataFormatAutoConfiguration.class);
@@ -67,31 +67,18 @@ public class JohnzonDataFormatAutoConfiguration extends AllNestedConditions {
     @Autowired
     private JohnzonDataFormatConfiguration dataformatConfiguration;
 
-    public JohnzonDataFormatAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.dataformat", "camel.dataformat.json-johnzon");
         }
     }
 
     @Bean(name = "json-johnzon-dataformat-factory")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JohnzonDataFormat.class)
     public DataFormatFactory configureJohnzonDataFormatFactory()
             throws Exception {
         return new DataFormatFactory() {
+            @Override
             public DataFormat newInstance() {
                 JohnzonDataFormat dataformat = new JohnzonDataFormat();
                 if (CamelContextAware.class

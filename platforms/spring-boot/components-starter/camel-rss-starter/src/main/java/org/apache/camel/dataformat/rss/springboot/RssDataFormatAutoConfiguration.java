@@ -29,6 +29,7 @@ import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -36,9 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -50,11 +49,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(RssDataFormatAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        RssDataFormatAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @EnableConfigurationProperties({DataFormatConfigurationProperties.class,
         RssDataFormatConfiguration.class})
-public class RssDataFormatAutoConfiguration extends AllNestedConditions {
+public class RssDataFormatAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(RssDataFormatAutoConfiguration.class);
@@ -67,30 +67,17 @@ public class RssDataFormatAutoConfiguration extends AllNestedConditions {
     @Autowired
     private RssDataFormatConfiguration dataformatConfiguration;
 
-    public RssDataFormatAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.dataformat", "camel.dataformat.rss");
         }
     }
 
     @Bean(name = "rss-dataformat-factory")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(RssDataFormat.class)
     public DataFormatFactory configureRssDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
+            @Override
             public DataFormat newInstance() {
                 RssDataFormat dataformat = new RssDataFormat();
                 if (CamelContextAware.class

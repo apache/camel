@@ -25,6 +25,7 @@ import org.apache.camel.component.hazelcast.replicatedmap.HazelcastReplicatedmap
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -32,9 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -47,13 +46,12 @@ import org.springframework.context.annotation.Lazy;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(HazelcastReplicatedmapComponentAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        HazelcastReplicatedmapComponentAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({ComponentConfigurationProperties.class,
         HazelcastReplicatedmapComponentConfiguration.class})
-public class HazelcastReplicatedmapComponentAutoConfiguration
-        extends
-            AllNestedConditions {
+public class HazelcastReplicatedmapComponentAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(HazelcastReplicatedmapComponentAutoConfiguration.class);
@@ -66,27 +64,14 @@ public class HazelcastReplicatedmapComponentAutoConfiguration
     @Autowired
     private HazelcastReplicatedmapComponentConfiguration componentConfiguration;
 
-    public HazelcastReplicatedmapComponentAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.component", "camel.component.hazelcast-replicatedmap");
         }
     }
 
     @Lazy
     @Bean(name = "hazelcast-replicatedmap-component")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(HazelcastReplicatedmapComponent.class)
     public HazelcastReplicatedmapComponent configureHazelcastReplicatedmapComponent()
             throws Exception {

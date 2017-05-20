@@ -26,16 +26,16 @@ import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.LanguageCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.LanguageConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -48,11 +48,12 @@ import org.springframework.context.annotation.Scope;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(SimpleLanguageAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        SimpleLanguageAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({LanguageConfigurationProperties.class,
         SimpleLanguageConfiguration.class})
-public class SimpleLanguageAutoConfiguration extends AllNestedConditions {
+public class SimpleLanguageAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(SimpleLanguageAutoConfiguration.class);
@@ -65,28 +66,14 @@ public class SimpleLanguageAutoConfiguration extends AllNestedConditions {
     @Autowired
     private SimpleLanguageConfiguration languageConfiguration;
 
-    public SimpleLanguageAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.component", "camel.component.simple");
         }
     }
 
     @Bean(name = "simple-language")
-    @Scope("prototype")
-    @ConditionalOnClass(CamelContext.class)
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @ConditionalOnMissingBean(SimpleLanguage.class)
     public SimpleLanguage configureSimpleLanguage() throws Exception {
         SimpleLanguage language = new SimpleLanguage();

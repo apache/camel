@@ -25,6 +25,7 @@ import org.apache.camel.component.jetty9.JettyHttpComponent9;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -32,9 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -47,11 +46,12 @@ import org.springframework.context.annotation.Lazy;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(JettyHttpComponentAutoConfiguration9.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        JettyHttpComponentAutoConfiguration9.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({ComponentConfigurationProperties.class,
         JettyHttpComponentConfiguration9.class})
-public class JettyHttpComponentAutoConfiguration9 extends AllNestedConditions {
+public class JettyHttpComponentAutoConfiguration9 {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(JettyHttpComponentAutoConfiguration9.class);
@@ -64,27 +64,14 @@ public class JettyHttpComponentAutoConfiguration9 extends AllNestedConditions {
     @Autowired
     private JettyHttpComponentConfiguration9 componentConfiguration;
 
-    public JettyHttpComponentAutoConfiguration9() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.component", "camel.component.jetty");
         }
     }
 
     @Lazy
     @Bean(name = "jetty-component")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JettyHttpComponent9.class)
     public JettyHttpComponent9 configureJettyHttpComponent9() throws Exception {
         JettyHttpComponent9 component = new JettyHttpComponent9();
