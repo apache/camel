@@ -65,6 +65,7 @@
     <!-- Custom dependency required by some modules -->
     <ahc-netty-version>4.0.46.Final</ahc-netty-version>
     <cassandra-netty-version-testing>4.0.44.Final</cassandra-netty-version-testing>
+    <infinispan-spring-boot-version>1.0.0.Final</infinispan-spring-boot-version>
 
     <!-- The following versions should be aligned with the ones in spring-boot-repo/spring-boot-dependencies/pom.xml (for the targeted version of spring-boot) -->
     <jackson2-version>2.8.8</jackson2-version>

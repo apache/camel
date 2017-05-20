@@ -39,6 +39,12 @@
       <artifactId>camel-infinispan</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-spring-boot-starter</artifactId>
+      <version>${infinispan-spring-boot-version}</version>
+      <scope>test</scope>
+    </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
