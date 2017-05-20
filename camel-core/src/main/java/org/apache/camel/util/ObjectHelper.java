@@ -1380,12 +1380,30 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target, boolean exact) {
+        return isOverridingMethod(target.getDeclaringClass(), source, target, exact);
+    }
+
+    /**
+     * Tests whether the target method overrides the source method from the
+     * inheriting class.
+     * <p/>
+     * Tests whether they have the same name, return type, and parameter list.
+     *
+     * @param inheritingClass the class inheriting the target method overriding
+     *            the source method
+     * @param source the source method
+     * @param target the target method
+     * @param exact <tt>true</tt> if the override must be exact same types,
+     *            <tt>false</tt> if the types should be assignable
+     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     */
+    public static boolean isOverridingMethod(Class<?> inheritingClass, Method source, Method target, boolean exact) {
 
         if (source.equals(target)) {
             return true;
         } else if (source.getDeclaringClass() == target.getDeclaringClass()) {
             return false;
-        } else if (!source.getDeclaringClass().isAssignableFrom(target.getDeclaringClass())) {
+        } else if (!source.getDeclaringClass().isAssignableFrom(inheritingClass) || !target.getDeclaringClass().isAssignableFrom(inheritingClass)) {
             return false;
         }
 
