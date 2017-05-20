@@ -21,15 +21,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveStreamsService;
-import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsComponentAutoConfiguration;
-import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsServiceAutoConfiguration;
-import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -37,14 +35,12 @@ import org.springframework.test.context.junit4.SpringRunner;
  * Checking that the deadlock does not occur when the {@code CamelReactiveStreamsService} is not injected anywhere.
  */
 @RunWith(SpringRunner.class)
-@SpringBootApplication
 @DirtiesContext
+@SpringBootApplication
 @SpringBootTest(
-        classes = {
-                ReactiveStreamsServiceAutoConfiguration.class,
-                ReactiveStreamsComponentAutoConfiguration.class,
-                CamelAutoConfiguration.class
-        }
+    classes = {
+        ReactiveStreamsDefaultEngineTest.class
+    }
 )
 public class ReactiveStreamsDefaultEngineTest {
     @Autowired
@@ -66,6 +62,8 @@ public class ReactiveStreamsDefaultEngineTest {
         Assert.assertTrue(service instanceof DefaultCamelReactiveStreamsService);
     }
 
-
+    @Configuration
+    public static class TestConfiguration {
+    }
 }
 

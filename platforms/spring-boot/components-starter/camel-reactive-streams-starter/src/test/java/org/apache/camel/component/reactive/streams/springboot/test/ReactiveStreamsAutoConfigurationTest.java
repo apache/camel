@@ -26,9 +26,6 @@ import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.engine.DefaultCamelReactiveStreamsService;
-import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsComponentAutoConfiguration;
-import org.apache.camel.component.reactive.streams.springboot.ReactiveStreamsServiceAutoConfiguration;
-import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.reactivestreams.Publisher;
@@ -37,6 +34,7 @@ import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -46,13 +44,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootApplication
 @DirtiesContext
+@SpringBootApplication
 @SpringBootTest(
     classes = {
-        ReactiveStreamsServiceAutoConfiguration.class,
-        ReactiveStreamsComponentAutoConfiguration.class,
-        CamelAutoConfiguration.class
+        ReactiveStreamsAutoConfigurationTest.TestConfiguration.class
     },
     properties = {
         "camel.component.reactive-streams.internal-engine-configuration.thread-pool-name=rs-test"
@@ -119,6 +115,10 @@ public class ReactiveStreamsAutoConfigurationTest {
             from("direct:endpoint")
                 .to("reactive-streams:stream");
         }
+    }
+
+    @Configuration
+    public static class TestConfiguration {
     }
 }
 

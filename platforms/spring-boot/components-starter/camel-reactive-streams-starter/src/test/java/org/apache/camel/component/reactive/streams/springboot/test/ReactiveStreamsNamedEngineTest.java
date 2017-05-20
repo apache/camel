@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -38,9 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DirtiesContext
 @SpringBootTest(
     classes = {
-        ReactiveStreamsServiceAutoConfiguration.class,
-        ReactiveStreamsComponentAutoConfiguration.class,
-        CamelAutoConfiguration.class
+        ReactiveStreamsNamedEngineTest.TestConfiguration.class
     },
     properties = {
         "camel.component.reactive-streams.service-type=my-engine"
@@ -61,11 +60,13 @@ public class ReactiveStreamsNamedEngineTest {
 
     @Component("my-engine")
     static class MyEngine extends ReactiveStreamsServiceTestSupport {
-
         public MyEngine() {
             super("my-engine");
         }
+    }
 
+    @Configuration
+    public static class TestConfiguration {
     }
 }
 

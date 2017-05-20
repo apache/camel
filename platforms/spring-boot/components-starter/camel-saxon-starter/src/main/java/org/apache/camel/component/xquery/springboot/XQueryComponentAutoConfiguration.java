@@ -25,6 +25,7 @@ import org.apache.camel.component.xquery.XQueryComponent;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -32,9 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -47,11 +46,12 @@ import org.springframework.context.annotation.Lazy;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(XQueryComponentAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        XQueryComponentAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({ComponentConfigurationProperties.class,
         XQueryComponentConfiguration.class})
-public class XQueryComponentAutoConfiguration extends AllNestedConditions {
+public class XQueryComponentAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(XQueryComponentAutoConfiguration.class);
@@ -64,27 +64,14 @@ public class XQueryComponentAutoConfiguration extends AllNestedConditions {
     @Autowired
     private XQueryComponentConfiguration componentConfiguration;
 
-    public XQueryComponentAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.component", "camel.component.xquery");
         }
     }
 
     @Lazy
     @Bean(name = "xquery-component")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XQueryComponent.class)
     public XQueryComponent configureXQueryComponent() throws Exception {
         XQueryComponent component = new XQueryComponent();

@@ -25,6 +25,7 @@ import org.apache.camel.component.elsql.ElsqlComponent;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -32,9 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -47,11 +46,12 @@ import org.springframework.context.annotation.Lazy;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(ElsqlComponentAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        ElsqlComponentAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({ComponentConfigurationProperties.class,
         ElsqlComponentConfiguration.class})
-public class ElsqlComponentAutoConfiguration extends AllNestedConditions {
+public class ElsqlComponentAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(ElsqlComponentAutoConfiguration.class);
@@ -64,27 +64,14 @@ public class ElsqlComponentAutoConfiguration extends AllNestedConditions {
     @Autowired
     private ElsqlComponentConfiguration componentConfiguration;
 
-    public ElsqlComponentAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.component", "camel.component.elsql");
         }
     }
 
     @Lazy
     @Bean(name = "elsql-component")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ElsqlComponent.class)
     public ElsqlComponent configureElsqlComponent() throws Exception {
         ElsqlComponent component = new ElsqlComponent();

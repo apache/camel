@@ -25,6 +25,7 @@ import org.apache.camel.component.jolt.JoltComponent;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationProperties;
+import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -32,9 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -47,11 +46,12 @@ import org.springframework.context.annotation.Lazy;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
-@Conditional(JoltComponentAutoConfiguration.Condition.class)
+@Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
+        JoltComponentAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({ComponentConfigurationProperties.class,
         JoltComponentConfiguration.class})
-public class JoltComponentAutoConfiguration extends AllNestedConditions {
+public class JoltComponentAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(JoltComponentAutoConfiguration.class);
@@ -64,27 +64,14 @@ public class JoltComponentAutoConfiguration extends AllNestedConditions {
     @Autowired
     private JoltComponentConfiguration componentConfiguration;
 
-    public JoltComponentAutoConfiguration() {
-        super(ConfigurationPhase.REGISTER_BEAN);
-    }
-
-    @ConditionalOnBean(CamelContext.class)
-    public static class OnCamelContext {
-    }
-
-    @ConditionalOnBean(CamelAutoConfiguration.class)
-    public static class OnCamelAutoConfiguration {
-    }
-
-    public static class Condition extends GroupCondition {
-        public Condition() {
+    static class GroupConditions extends GroupCondition {
+        public GroupConditions() {
             super("camel.component", "camel.component.jolt");
         }
     }
 
     @Lazy
     @Bean(name = "jolt-component")
-    @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JoltComponent.class)
     public JoltComponent configureJoltComponent() throws Exception {
         JoltComponent component = new JoltComponent();
