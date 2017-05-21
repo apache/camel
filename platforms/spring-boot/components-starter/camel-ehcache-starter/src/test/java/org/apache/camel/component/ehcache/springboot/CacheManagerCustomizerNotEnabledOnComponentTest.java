@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     },
     properties = {
         "debug=false",
+        "camel.component.customizer.enabled=true",
         "camel.component.ehcache.customizer.enabled=false"
     })
 public class CacheManagerCustomizerNotEnabledOnComponentTest extends CacheManagerCustomizerNotEnabledTestBase {
