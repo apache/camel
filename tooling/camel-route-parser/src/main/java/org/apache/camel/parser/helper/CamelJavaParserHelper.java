@@ -224,6 +224,21 @@ public final class CamelJavaParserHelper {
         String name = mi.getName().getIdentifier();
 
         if (consumers) {
+            // include route id for consumers
+            if ("routeId".equals(name)) {
+                List args = mi.arguments();
+                if (args != null) {
+                    for (Object arg : args) {
+                        if (isValidArgument(name, arg)) {
+                            String routeId = getLiteralValue(clazz, block, (Expression) arg);
+                            if (!Strings.isBlank(routeId)) {
+                                int position = ((Expression) arg).getStartPosition();
+                                uris.add(new ParserResult(name, position, routeId));
+                            }
+                        }
+                    }
+                }
+            }
             if ("from".equals(name)) {
                 List args = mi.arguments();
                 if (args != null) {
