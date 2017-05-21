@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.batch.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,7 +31,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.spring-batch")
-public class SpringBatchComponentConfiguration {
+public class SpringBatchComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Explicitly specifies a JobLauncher to be used.

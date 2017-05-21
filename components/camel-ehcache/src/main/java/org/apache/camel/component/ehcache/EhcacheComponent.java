@@ -144,11 +144,11 @@ public class EhcacheComponent extends DefaultComponent {
     /**
      * The default cache configuration to be used to create caches.
      */
-    public <K, V> void setCacheConfiguration(CacheConfiguration<K, V> cacheConfiguration) {
+    public void setCacheConfiguration(CacheConfiguration<?, ?> cacheConfiguration) {
         this.configuration.setConfiguration(cacheConfiguration);
     }
 
-    public <K, V> CacheConfiguration<K, V> getCacheConfiguration() {
+    public CacheConfiguration<?, ?> getCacheConfiguration() {
         return this.configuration.getConfiguration();
     }
 

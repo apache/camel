@@ -18,6 +18,7 @@ package org.apache.camel.component.mustache.springboot;
 
 import javax.annotation.Generated;
 import com.github.mustachejava.MustacheFactory;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.mustache")
-public class MustacheComponentConfiguration {
+public class MustacheComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a custom MustacheFactory

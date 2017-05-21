@@ -20,6 +20,7 @@ import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.component.google.drive.GoogleDriveClientFactory;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -31,7 +32,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.google-drive")
-public class GoogleDriveComponentConfiguration {
+public class GoogleDriveComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the shared configuration

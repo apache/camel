@@ -17,6 +17,7 @@
 package org.apache.camel.converter.crypto.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -26,7 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.pgp")
-public class PGPDataFormatConfiguration {
+public class PGPDataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * The user ID of the key in the PGP keyring used during encryption. Can

@@ -18,6 +18,7 @@ package org.apache.camel.component.rest.swagger.springboot;
 
 import java.net.URI;
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.rest-swagger")
-public class RestSwaggerComponentConfiguration {
+public class RestSwaggerComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * API basePath for example /v2. Default is unset if set overrides the value

@@ -21,6 +21,7 @@ import javax.annotation.Generated;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.servicenow.ServiceNowComponent;
 import org.apache.camel.component.servicenow.ServiceNowRelease;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
@@ -35,7 +36,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.servicenow")
-public class ServiceNowComponentConfiguration {
+public class ServiceNowComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * The ServiceNow default configuration

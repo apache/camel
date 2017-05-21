@@ -18,8 +18,6 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.undertow.springboot.UndertowComponentAutoConfiguration;
-import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,9 +25,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -38,10 +36,14 @@ import static org.junit.Assert.assertEquals;
  * Testing the ssl configuration
  */
 @RunWith(SpringRunner.class)
-@SpringBootApplication
 @DirtiesContext
-@ContextConfiguration(classes = {UndertowComponentAutoConfiguration.class, CamelAutoConfiguration.class})
-@SpringBootTest(properties = {
+@SpringBootApplication
+@SpringBootTest(
+    classes = {
+        UndertowSSLTest.TestConfiguration.class
+    },
+    properties = {
+        "debug=false",
         "camel.ssl.config.cert-alias=web",
         "camel.ssl.config.key-managers.key-password=changeit",
         "camel.ssl.config.key-managers.key-store.resource=/keystore.p12",
@@ -51,9 +53,9 @@ import static org.junit.Assert.assertEquals;
         "camel.ssl.config.trust-managers.key-store.password=changeit",
         "camel.ssl.config.trust-managers.key-store.type=jks",
         "camel.component.undertow.use-global-ssl-context-parameters=true"
-})
+    }
+)
 public class UndertowSSLTest {
-
     private static int port;
 
     @Autowired
@@ -75,9 +77,12 @@ public class UndertowSSLTest {
         @Override
         public void configure() throws Exception {
             from("undertow:https://localhost:" + port)
-                    .transform().constant("Hello");
+                .transform().constant("Hello");
         }
     }
 
+    @Configuration
+    public static class TestConfiguration {
+    }
 }
 

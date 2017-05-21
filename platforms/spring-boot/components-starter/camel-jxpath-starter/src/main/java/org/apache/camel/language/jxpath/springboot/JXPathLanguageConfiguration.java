@@ -17,6 +17,7 @@
 package org.apache.camel.language.jxpath.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.LanguageConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -26,7 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.language.jxpath")
-public class JXPathLanguageConfiguration {
+public class JXPathLanguageConfiguration
+        extends
+            LanguageConfigurationPropertiesCommon {
 
     /**
      * Allows to turn lenient on the JXPathContext. When turned on this allows

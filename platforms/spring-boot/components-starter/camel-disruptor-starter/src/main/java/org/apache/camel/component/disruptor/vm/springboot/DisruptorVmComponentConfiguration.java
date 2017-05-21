@@ -20,6 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.component.disruptor.DisruptorProducerType;
 import org.apache.camel.component.disruptor.DisruptorWaitStrategy;
 import org.apache.camel.component.disruptor.vm.DisruptorVmComponent;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
@@ -31,7 +32,9 @@ import org.springframework.boot.context.properties.DeprecatedConfigurationProper
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.disruptor-vm")
-public class DisruptorVmComponentConfiguration {
+public class DisruptorVmComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To configure the default number of concurrent consumers

@@ -19,6 +19,7 @@ package org.apache.camel.component.ehcache.springboot;
 import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.component.ehcache.EhcacheComponent;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.Configuration;
@@ -36,7 +37,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.ehcache")
-public class EhcacheComponentConfiguration {
+public class EhcacheComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Sets the global component configuration
@@ -56,7 +59,7 @@ public class EhcacheComponentConfiguration {
      * The default cache configuration to be used to create caches.
      */
     @NestedConfigurationProperty
-    private CacheConfiguration<K, V> cacheConfiguration;
+    private CacheConfiguration<?, ?> cacheConfiguration;
     /**
      * URI pointing to the Ehcache XML configuration file's location
      */
@@ -94,12 +97,12 @@ public class EhcacheComponentConfiguration {
         this.cacheManagerConfiguration = cacheManagerConfiguration;
     }
 
-    public CacheConfiguration<K, V> getCacheConfiguration() {
+    public CacheConfiguration<?, ?> getCacheConfiguration() {
         return cacheConfiguration;
     }
 
     public void setCacheConfiguration(
-            CacheConfiguration<K, V> cacheConfiguration) {
+            CacheConfiguration<?, ?> cacheConfiguration) {
         this.cacheConfiguration = cacheConfiguration;
     }
 

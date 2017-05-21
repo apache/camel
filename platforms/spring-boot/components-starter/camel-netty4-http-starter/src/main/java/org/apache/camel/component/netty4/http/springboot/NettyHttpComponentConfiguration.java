@@ -23,6 +23,7 @@ import org.apache.camel.component.netty4.http.NettyHttpBinding;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
 import org.apache.camel.component.netty4.http.SecurityConstraint;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -33,7 +34,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.netty4-http")
-public class NettyHttpComponentConfiguration {
+public class NettyHttpComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a custom org.apache.camel.component.netty4.http.NettyHttpBinding

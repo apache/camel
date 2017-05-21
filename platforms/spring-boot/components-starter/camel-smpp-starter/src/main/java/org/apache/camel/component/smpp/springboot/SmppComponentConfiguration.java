@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.component.smpp.SmppComponent;
 import org.apache.camel.component.smpp.SmppSplittingPolicy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.jsmpp.session.SessionStateListener;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -30,7 +31,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.smpp")
-public class SmppComponentConfiguration {
+public class SmppComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the shared SmppConfiguration as configuration.

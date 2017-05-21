@@ -22,6 +22,7 @@ import javax.annotation.Generated;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -33,7 +34,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.properties")
-public class PropertiesComponentConfiguration {
+public class PropertiesComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * A list of locations to load properties. This option will override any

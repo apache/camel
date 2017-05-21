@@ -328,7 +328,7 @@ public class BeanInfo {
             methods.addAll(extraMethods);
         }
 
-        Set<Method> overrides = new HashSet<Method>();
+        Set<Method> overriddenMethods = new HashSet<Method>();
 
         // do not remove duplicates form class from the Java itself as they have some "duplicates" we need
         boolean javaClass = clazz.getName().startsWith("java.") || clazz.getName().startsWith("javax.");
@@ -343,38 +343,17 @@ public class BeanInfo {
 
                 for (Method target : methods) {
                     // skip ourselves
-                    if (ObjectHelper.isOverridingMethod(source, target, true)) {
+                    if (ObjectHelper.isOverridingMethod(getType(), source, target, true)) {
                         continue;
                     }
                     // skip duplicates which may be assign compatible (favor keep first added method when duplicate)
-                    if (ObjectHelper.isOverridingMethod(source, target, false)) {
-                        overrides.add(target);
+                    if (ObjectHelper.isOverridingMethod(getType(), source, target, false)) {
+                        overriddenMethods.add(target);
                     }
                 }
             }
-            methods.removeAll(overrides);
-            overrides.clear();
-        }
-
-        // if we are a public class, then add non duplicate interface classes also
-        if (Modifier.isPublic(clazz.getModifiers())) {
-            // add additional interface methods
-            List<Method> extraMethods = getInterfaceMethods(clazz);
-            for (Method source : extraMethods) {
-                for (Method target : methods) {
-                    if (ObjectHelper.isOverridingMethod(source, target, false)) {
-                        overrides.add(source);
-                    }
-                }
-                for (Method target : methodMap.keySet()) {
-                    if (ObjectHelper.isOverridingMethod(source, target, false)) {
-                        overrides.add(source);
-                    }
-                }
-            }
-            // remove all the overrides methods
-            extraMethods.removeAll(overrides);
-            methods.addAll(extraMethods);
+            methods.removeAll(overriddenMethods);
+            overriddenMethods.clear();
         }
 
         // now introspect the methods and filter non valid methods
@@ -386,9 +365,12 @@ public class BeanInfo {
             }
         }
 
-        Class<?> superclass = clazz.getSuperclass();
-        if (superclass != null && !superclass.equals(Object.class)) {
-            introspect(superclass);
+        Class<?> superClass = clazz.getSuperclass();
+        if (superClass != null && !superClass.equals(Object.class)) {
+            introspect(superClass);
+        }
+        for (Class<?> superInterface : clazz.getInterfaces()) {
+            introspect(superInterface);
         }
     }
 
@@ -452,7 +434,7 @@ public class BeanInfo {
         if (answer == null) {
             // maybe the method overrides, and the method map keeps info of the source override we can use
             for (Method source : methodMap.keySet()) {
-                if (ObjectHelper.isOverridingMethod(source, method, false)) {
+                if (ObjectHelper.isOverridingMethod(getType(), source, method, false)) {
                     answer = methodMap.get(source);
                     break;
                 }
@@ -917,9 +899,9 @@ public class BeanInfo {
             Method alreadyRegisteredMethod = alreadyRegisteredMethodInfo.getMethod();
             Method proposedMethod = proposedMethodInfo.getMethod();
 
-            if (ObjectHelper.isOverridingMethod(proposedMethod, alreadyRegisteredMethod, false)) {
+            if (ObjectHelper.isOverridingMethod(getType(), proposedMethod, alreadyRegisteredMethod, false)) {
                 return alreadyRegisteredMethodInfo;
-            } else if (ObjectHelper.isOverridingMethod(alreadyRegisteredMethod, proposedMethod, false)) {
+            } else if (ObjectHelper.isOverridingMethod(getType(), alreadyRegisteredMethod, proposedMethod, false)) {
                 return proposedMethodInfo;
             }
         }

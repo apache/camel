@@ -41,7 +41,7 @@
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.14.5</activemq-version>
-    <activemq-artemis-version>1.5.4</activemq-artemis-version>
+    <activemq-artemis-version>2.1.0</activemq-artemis-version>
     <aether-version>1.0.2.v20150114</aether-version>
     <ahc-version>2.0.32</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
@@ -92,7 +92,7 @@
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.1.1</box-java-sdk-version>
     <braintree-gateway-version>2.63.0</braintree-gateway-version>
-    <brave-zipkin-version>4.3.1</brave-zipkin-version>
+    <brave-zipkin-version>4.3.3</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
     <caffeine-version>2.5.0</caffeine-version>
@@ -111,14 +111,14 @@
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <cglib-bundle-version>3.2.5_1</cglib-bundle-version>
     <cglib-version>3.2.5</cglib-version>
-    <chronicle-bytes-version>1.7.36</chronicle-bytes-version>
-    <chronicle-core-version>1.7.16</chronicle-core-version>
+    <chronicle-bytes-version>1.8.2</chronicle-bytes-version>
+    <chronicle-core-version>1.8.0</chronicle-core-version>
     <chronicle-engine-version>1.13.27</chronicle-engine-version>
     <chronicle-map-version>2.4.15</chronicle-map-version>
-    <chronicle-network-version>1.7.16</chronicle-network-version>
+    <chronicle-network-version>1.8.0</chronicle-network-version>
     <chronicle-queue-version>4.5.27</chronicle-queue-version>
     <chronicle-threads-version>1.7.7</chronicle-threads-version>
-    <chronicle-wire-version>1.7.32</chronicle-wire-version>
+    <chronicle-wire-version>1.8.4</chronicle-wire-version>
     <chunk-templates-version>3.2.4</chunk-templates-version>
     <chunk-templates-bundle-version>3.2.4_1</chunk-templates-bundle-version>
     <classmate-version>1.3.3</classmate-version>
@@ -130,7 +130,7 @@
     <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
     <commons-codec-version>1.10</commons-codec-version>
     <commons-collections-version>3.2.2</commons-collections-version>
-    <commons-compress-version>1.13</commons-compress-version>
+    <commons-compress-version>1.14</commons-compress-version>
     <commons-configuration-version>1.9</commons-configuration-version>
     <commons-configuration-bundle-version>1.9_1</commons-configuration-bundle-version>
     <commons-csv-version>1.4</commons-csv-version>
@@ -262,7 +262,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
-    <hazelcast-version>3.8.1</hazelcast-version>
+    <hazelcast-version>3.8.2</hazelcast-version>
     <hbase-version>1.2.1</hbase-version>
     <hessian-version>4.0.38</hessian-version>
     <hibernate-validator-version>5.4.1.Final</hibernate-validator-version>
@@ -299,7 +299,6 @@
     <isorelax-version>20090621</isorelax-version>
     <isorelax-jaxp-bridge-version>1.1</isorelax-jaxp-bridge-version>
     <ivy-version>2.4.0</ivy-version>
-    <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
@@ -360,6 +359,7 @@
     <jibx-version>1.2.6</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
+    <jini-version>2.1</jini-version>
     <jira-rest-client-version>1.2-m01</jira-rest-client-version>
     <jira-rest-client-api-version>2.0.0-m30</jira-rest-client-api-version>
     <jmockit-version>1.5</jmockit-version>
@@ -397,6 +397,7 @@
     <!-- camel-itest-karaf doesn't work with JUnit 4.12 at present -->
     <junit-bundle-version>4.11_1</junit-bundle-version>
     <junit-version>4.12</junit-version>
+    <jxmpp-version>0.5.0</jxmpp-version>
     <jython-version>2.5.3</jython-version>
     <jzlib-version>1.1.3</jzlib-version>
     <jzlib-bundle-version>1.1.3_2</jzlib-bundle-version>
@@ -483,7 +484,7 @@
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
-    <openwebbeans-version>1.7.2</openwebbeans-version>
+    <openwebbeans-version>1.7.3</openwebbeans-version>
     <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
     <okclient-version>3.7.0</okclient-version>
     <okclient-bundle-version>3.7.0_1</okclient-bundle-version>
@@ -573,7 +574,7 @@
     <sip-api-version>1.1</sip-api-version>
     <slf4j-api-version>1.7.22</slf4j-api-version>
     <slf4j-version>1.7.22</slf4j-version>
-    <smack-version>4.0.7</smack-version>
+    <smack-version>4.2.0</smack-version>
     <snakeyaml-version>1.18</snakeyaml-version>
     <snappy-version>1.1.2.6</snappy-version>
     <snmp4j-version>2.3.4_1</snmp4j-version>
@@ -698,7 +699,7 @@
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
     <zendesk-client-version>0.5.4</zendesk-client-version>
     <zipkin-version>1.24.0</zipkin-version>
-    <zipkin-reporter-version>0.9.0</zipkin-reporter-version>
+    <zipkin-reporter-version>0.10.0</zipkin-reporter-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.10</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>

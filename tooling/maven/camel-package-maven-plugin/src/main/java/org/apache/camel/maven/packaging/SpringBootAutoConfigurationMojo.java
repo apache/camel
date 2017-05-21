@@ -16,18 +16,15 @@
  */
 package org.apache.camel.maven.packaging;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,11 +39,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.annotation.Generated;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
@@ -67,14 +61,15 @@ import org.apache.maven.project.MavenProject;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.Type;
-import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.Import;
+import org.jboss.forge.roaster.model.source.Importer;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Formatter;
 import org.jboss.forge.roaster.model.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
@@ -550,7 +545,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
 
                 // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
-                boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
+                //boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
 
                 // use springboot as sub package name so the code is not in normal
                 // package so the Spring Boot JARs can be optional at runtime
@@ -563,10 +558,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     overrideComponentName = model.getArtifactId().replace("camel-", "");
                 }
 
-                if (hasOptions) {
-                    createComponentConfigurationSource(pkg, model, overrideComponentName);
-                }
-                createComponentAutoConfigurationSource(pkg, model, aliases, hasOptions, overrideComponentName);
+                createComponentConfigurationSource(pkg, model, overrideComponentName);
+                createComponentAutoConfigurationSource(pkg, model, aliases, overrideComponentName);
                 createComponentSpringFactorySource(pkg, model);
             }
         }
@@ -600,8 +593,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 DataFormatModel model = dfModels.get(0); // They should be equivalent
                 List<String> aliases = dfModels.stream().map(DataFormatModel::getName).sorted().collect(Collectors.toList());
 
-                boolean hasOptions = !model.getDataFormatOptions().isEmpty();
-
                 // use springboot as sub package name so the code is not in normal
                 // package so the Spring Boot JARs can be optional at runtime
                 int pos = model.getJavaType().lastIndexOf(".");
@@ -613,10 +604,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     overrideDataFormatName = model.getArtifactId().replace("camel-", "");
                 }
 
-                if (hasOptions) {
-                    createDataFormatConfigurationSource(pkg, model, overrideDataFormatName);
-                }
-                createDataFormatAutoConfigurationSource(pkg, model, aliases, hasOptions, overrideDataFormatName);
+                createDataFormatConfigurationSource(pkg, model, overrideDataFormatName);
+                createDataFormatAutoConfigurationSource(pkg, model, aliases, overrideDataFormatName);
                 createDataFormatSpringFactorySource(pkg, model);
             }
         }
@@ -650,8 +639,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 LanguageModel model = dfModels.get(0); // They should be equivalent
                 List<String> aliases = dfModels.stream().map(LanguageModel::getName).sorted().collect(Collectors.toList());
 
-                boolean hasOptions = !model.getLanguageOptions().isEmpty();
-
                 // use springboot as sub package name so the code is not in normal
                 // package so the Spring Boot JARs can be optional at runtime
                 int pos = model.getJavaType().lastIndexOf(".");
@@ -663,10 +650,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     overrideLanguageName = model.getArtifactId().replace("camel-", "");
                 }
 
-                if (hasOptions) {
-                    createLanguageConfigurationSource(pkg, model, overrideLanguageName);
-                }
-                createLanguageAutoConfigurationSource(pkg, model, aliases, hasOptions, overrideLanguageName);
+                createLanguageConfigurationSource(pkg, model, overrideLanguageName);
+                createLanguageAutoConfigurationSource(pkg, model, aliases, overrideLanguageName);
                 createLanguageSpringFactorySource(pkg, model);
             }
         }
@@ -679,6 +664,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Component", "ComponentConfiguration");
         javaClass.setPackage(packageName).setName(name);
+        javaClass.extendSuperType(Roaster.create(JavaClassSource.class).setName("ComponentConfigurationPropertiesCommon"));
+        javaClass.addImport("org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon");
 
         String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
         if (!Strings.isBlank(model.getDescription())) {
@@ -1014,9 +1001,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         if ("netty4-http".equals(model.getScheme()) || "netty-http".equals(model.getScheme())) {
             String name = option.getName();
             if (name.equals("textline") || name.equals("delimiter") || name.equals("autoAppendDelimiter") || name.equals("decoderMaxLineLength")
-                    || name.equals("encoding") || name.equals("allowDefaultCodec") || name.equals("udpConnectionlessSending") || name.equals("networkInterface")
-                    || name.equals("clientMode") || name.equals("reconnect") || name.equals("reconnectInterval") || name.equals("useByteBuf")
-                    || name.equals("udpByteArrayCodec") || name.equals("broadcast")) {
+                || name.equals("encoding") || name.equals("allowDefaultCodec") || name.equals("udpConnectionlessSending") || name.equals("networkInterface")
+                || name.equals("clientMode") || name.equals("reconnect") || name.equals("reconnectInterval") || name.equals("useByteBuf")
+                || name.equals("udpByteArrayCodec") || name.equals("broadcast")) {
                 return true;
             }
         }
@@ -1031,6 +1018,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("DataFormat", "DataFormatConfiguration");
         javaClass.setPackage(packageName).setName(name);
+        javaClass.extendSuperType(Roaster.create(JavaClassSource.class).setName("DataFormatConfigurationPropertiesCommon"));
+        javaClass.addImport("org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon");
 
         String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
         if (!Strings.isBlank(model.getDescription())) {
@@ -1094,6 +1083,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Language", "LanguageConfiguration");
         javaClass.setPackage(packageName).setName(name);
+        javaClass.extendSuperType(Roaster.create(JavaClassSource.class).setName("LanguageConfigurationPropertiesCommon"));
+        javaClass.addImport("org.apache.camel.spring.boot.LanguageConfigurationPropertiesCommon");
 
         String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
         if (!Strings.isBlank(model.getDescription())) {
@@ -1121,8 +1112,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             } else if ("tokenize".equals(model.getName())) {
                 // and skip following as they are not global options
                 if ("token".equals(option.getName()) || "endToken".equals(option.getName()) || "inheritNamespaceTagName".equals(option.getName())
-                        || "headerName".equals(option.getName()) || "regex".equals(option.getName()) || "xml".equals(option.getName())
-                        || "includeTokens".equals(option.getName()) || "group".equals(option.getName()) || "skipFirst".equals(option.getName())) {
+                    || "headerName".equals(option.getName()) || "regex".equals(option.getName()) || "xml".equals(option.getName())
+                    || "includeTokens".equals(option.getName()) || "group".equals(option.getName()) || "skipFirst".equals(option.getName())) {
                     continue;
                 }
             } else if ("xtokenize".equals(model.getName())) {
@@ -1181,7 +1172,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private void createComponentAutoConfigurationSource(
-            String packageName, ComponentModel model, List<String> componentAliases, boolean hasOptions, String overrideComponentName) throws MojoFailureException {
+        String packageName, ComponentModel model, List<String> componentAliases, String overrideComponentName) throws MojoFailureException {
 
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
@@ -1189,151 +1180,223 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Component", "ComponentAutoConfiguration");
 
+        String configurationName = name.replace("ComponentAutoConfiguration", "ComponentConfiguration");
+
         javaClass.setPackage(packageName).setName(name);
 
         String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
         javaClass.getJavaDoc().setFullText(doc);
-
         javaClass.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
         javaClass.addAnnotation(Configuration.class);
-        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
-        javaClass.addAnnotation(Conditional.class).setLiteralValue(name + ".Condition.class");
-        javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(Conditional.class).setLiteralValue(
+            "{ ConditionalOnCamelContextAndAutoConfigurationBeans.class, " + name + ".GroupConditions.class }");
+        javaClass.addAnnotation(AutoConfigureAfter.class).setLiteralValue("CamelAutoConfiguration.class");
+        javaClass.addAnnotation(EnableConfigurationProperties.class).setLiteralValue(
+            "{ ComponentConfigurationProperties.class, " + configurationName + ".class }"
+        );
 
-        String configurationName = name.replace("ComponentAutoConfiguration", "ComponentConfiguration");
-        if (hasOptions) {
-            AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
-            ann.setLiteralValue("value", configurationName + ".class");
-
-            javaClass.addImport("java.util.HashMap");
-            javaClass.addImport("java.util.Map");
-            javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
-        }
-
+        javaClass.addImport(HashMap.class);
+        javaClass.addImport(Map.class);
+        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
         javaClass.addImport(model.getJavaType());
+        javaClass.addImport(List.class);
+        javaClass.addImport(ConditionalOnBean.class);
+        javaClass.addImport("org.slf4j.Logger");
+        javaClass.addImport("org.slf4j.LoggerFactory");
         javaClass.addImport("org.apache.camel.CamelContext");
+        javaClass.addImport("org.apache.camel.spi.ComponentCustomizer");
+        javaClass.addImport("org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addImport("org.apache.camel.spring.boot.ComponentConfigurationProperties");
+        javaClass.addImport("org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans");
+        javaClass.addImport("org.apache.camel.spring.boot.util.GroupCondition");
+        javaClass.addImport("org.apache.camel.util.ObjectHelper");
+
+        javaClass.addField()
+            .setPrivate()
+            .setStatic(true)
+            .setFinal(true)
+            .setName("LOGGER")
+            .setType("Logger")
+            .setLiteralInitializer("LoggerFactory.getLogger(" + name + ".class)");
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("camelContext")
+            .setType("CamelContext")
+            .addAnnotation(Autowired.class);
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("customizers")
+            .setType("List<ComponentCustomizer<" + model.getShortJavaType() + ">>")
+            .addAnnotation(Autowired.class).setLiteralValue("required", "false");
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("globalConfiguration")
+            .setType("ComponentConfigurationProperties")
+            .addAnnotation(Autowired.class);
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("componentConfiguration")
+            .setType(configurationName)
+            .addAnnotation(Autowired.class);
+
+        javaClass.addNestedType(
+            Roaster.create(JavaClassSource.class)
+                .setName("GroupConditions")
+                .setStatic(true)
+                .setPackagePrivate()
+                .extendSuperType(Roaster.create(JavaClassSource.class).setName("GroupCondition"))
+                .addMethod()
+                    .setName("GroupConditions")
+                    .setConstructor(true)
+                    .setPublic()
+                    .setBody("super(\"camel.component\", \"camel.component." + (overrideComponentName != null ? overrideComponentName : model.getScheme()).toLowerCase(Locale.US) + "\");")
+                    .getOrigin()
+        );
 
         // add method for auto configure
-        String body = createComponentBody(model.getShortJavaType(), hasOptions);
+        String body = createComponentBody(model.getShortJavaType());
         String methodName = "configure" + model.getShortJavaType();
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
-                .setName(methodName)
-                .setPublic()
-                .setBody(body)
-                .setReturnType(model.getShortJavaType())
-                .addThrows(Exception.class);
-
-        method.addParameter("CamelContext", "camelContext");
-
-        if (hasOptions) {
-            method.addParameter(configurationName, "configuration");
-        }
+            .setName(methodName)
+            .setPublic()
+            .setBody(body)
+            .setReturnType(model.getShortJavaType())
+            .addThrows(Exception.class);
 
         // Determine all the aliases
         String[] springBeanAliases = componentAliases.stream().map(alias -> alias + "-component").toArray(size -> new String[size]);
 
         method.addAnnotation(Lazy.class);
         method.addAnnotation(Bean.class).setStringArrayValue("name", springBeanAliases);
-        method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
-        method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
-
-        // Generate Condition
-        javaClass.addNestedType(createConditionType(
-            javaClass,
-            "camel.component",
-            (overrideComponentName != null ? overrideComponentName : model.getScheme()).toLowerCase(Locale.US)
-        ));
+        method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue(model.getShortJavaType() + ".class");
 
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
         writeSourceIfChanged(javaClass, fileName);
-        writeAdditionalSpringMetaData(
-            "camel",
-            "component",
-            (overrideComponentName != null ? overrideComponentName : model.getScheme()).toLowerCase(Locale.US));
     }
 
     private void createDataFormatAutoConfigurationSource(
-            String packageName, DataFormatModel model, List<String> dataFormatAliases, boolean hasOptions, String overrideDataFormatName) throws MojoFailureException {
+        String packageName, DataFormatModel model, List<String> dataFormatAliases, String overrideDataFormatName) throws MojoFailureException {
 
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
-        name = name.replace("DataFormat", "DataFormatAutoConfiguration");        
+        name = name.replace("DataFormat", "DataFormatAutoConfiguration");
 
+        String configurationName = name.replace("DataFormatAutoConfiguration", "DataFormatConfiguration");
         javaClass.setPackage(packageName).setName(name);
 
         String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
         javaClass.getJavaDoc().setFullText(doc);
-
         javaClass.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
         javaClass.addAnnotation(Configuration.class);
-        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
-        javaClass.addAnnotation(Conditional.class).setLiteralValue(name + ".Condition.class");
+        javaClass.addAnnotation(Conditional.class).setLiteralValue(
+            "{ ConditionalOnCamelContextAndAutoConfigurationBeans.class, " + name + ".GroupConditions.class }");
         javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(EnableConfigurationProperties.class).setLiteralValue(
+            "{ DataFormatConfigurationProperties.class, " + configurationName + ".class }"
+        );
 
-        String configurationName = name.replace("DataFormatAutoConfiguration", "DataFormatConfiguration");
-        if (hasOptions) {
-            AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
-            ann.setLiteralValue("value", configurationName + ".class");
-
-            javaClass.addImport("java.util.HashMap");
-            javaClass.addImport("java.util.Map");
-            javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
-        }
-
-        javaClass.addImport("org.apache.camel.CamelContextAware");
+        javaClass.addImport(HashMap.class);
+        javaClass.addImport(Map.class);
+        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
         javaClass.addImport(model.getJavaType());
+        javaClass.addImport(List.class);
+        javaClass.addImport(ConditionalOnBean.class);
+        javaClass.addImport("org.slf4j.Logger");
+        javaClass.addImport("org.slf4j.LoggerFactory");
         javaClass.addImport("org.apache.camel.CamelContext");
+        javaClass.addImport("org.apache.camel.CamelContextAware");
+        javaClass.addImport("org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addImport("org.apache.camel.spring.boot.DataFormatConfigurationProperties");
+        javaClass.addImport("org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans");
+        javaClass.addImport("org.apache.camel.spring.boot.util.GroupCondition");
+        javaClass.addImport("org.apache.camel.util.ObjectHelper");
         javaClass.addImport("org.apache.camel.RuntimeCamelException");
         javaClass.addImport("org.apache.camel.spi.DataFormat");
+        javaClass.addImport("org.apache.camel.spi.DataFormatCustomizer");
         javaClass.addImport("org.apache.camel.spi.DataFormatFactory");
 
-        String body = createDataFormatBody(model.getShortJavaType(), hasOptions);
+        javaClass.addField()
+            .setPrivate()
+            .setStatic(true)
+            .setFinal(true)
+            .setName("LOGGER")
+            .setType("Logger")
+            .setLiteralInitializer("LoggerFactory.getLogger(" + name + ".class)");
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("camelContext")
+            .setType("CamelContext")
+            .addAnnotation(Autowired.class);
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("customizers")
+            .setType("List<DataFormatCustomizer<" + model.getShortJavaType() + ">>")
+            .addAnnotation(Autowired.class)
+                .setLiteralValue("required", "false");
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("globalConfiguration")
+            .setType("DataFormatConfigurationProperties")
+            .addAnnotation(Autowired.class);
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("dataformatConfiguration")
+            .setType(configurationName)
+            .addAnnotation(Autowired.class);
+
+        javaClass.addNestedType(
+            Roaster.create(JavaClassSource.class)
+                .setName("GroupConditions")
+                .setStatic(true)
+                .setPackagePrivate()
+                .extendSuperType(Roaster.create(JavaClassSource.class).setName("GroupCondition"))
+                .addMethod()
+                    .setName("GroupConditions")
+                    .setConstructor(true)
+                    .setPublic()
+                    .setBody("super(\"camel.dataformat\", \"camel.dataformat." + (overrideDataFormatName != null ? overrideDataFormatName : model.getName()).toLowerCase(Locale.US) + "\");")
+                    .getOrigin()
+        );
+
+
+        String body = createDataFormatBody(model.getShortJavaType());
         String methodName = "configure" + model.getShortJavaType() + "Factory";
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
-                .setName(methodName)
-                .setPublic()
-                .setBody(body)
-                .setReturnType("org.apache.camel.spi.DataFormatFactory");
-
-        method.addParameter("CamelContext", "camelContext").setFinal(true);
-
-        if (hasOptions) {
-            method.addParameter(configurationName, "configuration").setFinal(true);
-        }
+            .setName(methodName)
+            .setPublic()
+            .setBody(body)
+            .setReturnType("org.apache.camel.spi.DataFormatFactory")
+            .addThrows(Exception.class);
 
         // Determine all the aliases
         // adding the '-dataformat' suffix to prevent collision with component names
         String[] springBeanAliases = dataFormatAliases.stream().map(alias -> alias + "-dataformat-factory").toArray(size -> new String[size]);
 
         method.addAnnotation(Bean.class).setStringArrayValue("name", springBeanAliases);
-        method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
-
-        // Generate Condition
-        javaClass.addNestedType(createConditionType(
-            javaClass,
-            "camel.dataformat",
-            (overrideDataFormatName != null ? overrideDataFormatName : model.getName()).toLowerCase(Locale.US)
-        ));
 
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
         writeSourceIfChanged(javaClass, fileName);
-        writeAdditionalSpringMetaData(
-            "camel",
-            "dataformat",
-            (overrideDataFormatName != null ? overrideDataFormatName : model.getName()).toLowerCase(Locale.US));
     }
 
     private void createLanguageAutoConfigurationSource(
-            String packageName, LanguageModel model, List<String> languageAliases, boolean hasOptions, String overrideLanguageName) throws MojoFailureException {
+        String packageName, LanguageModel model, List<String> languageAliases, String overrideLanguageName) throws MojoFailureException {
 
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
@@ -1341,68 +1404,107 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Language", "LanguageAutoConfiguration");
 
+        String configurationName = name.replace("LanguageAutoConfiguration", "LanguageConfiguration");
+
         javaClass.setPackage(packageName).setName(name);
 
         String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
         javaClass.getJavaDoc().setFullText(doc);
-
         javaClass.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
         javaClass.addAnnotation(Configuration.class);
-        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
-        javaClass.addAnnotation(Conditional.class).setLiteralValue(name + ".Condition.class");
-        javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(Conditional.class).setLiteralValue(
+            "{ ConditionalOnCamelContextAndAutoConfigurationBeans.class, " + name + ".GroupConditions.class }");
+        javaClass.addAnnotation(AutoConfigureAfter.class).setLiteralValue("CamelAutoConfiguration.class");
+        javaClass.addAnnotation(EnableConfigurationProperties.class).setLiteralValue(
+            "{ LanguageConfigurationProperties.class, " + configurationName + ".class }"
+        );
+        javaClass.addImport(HashMap.class);
+        javaClass.addImport(Map.class);
+        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
 
-        String configurationName = name.replace("LanguageAutoConfiguration", "LanguageConfiguration");
-        if (hasOptions) {
-            AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
-            ann.setLiteralValue("value", configurationName + ".class");
-
-            javaClass.addImport("java.util.HashMap");
-            javaClass.addImport("java.util.Map");
-            javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
-        }
-
-        javaClass.addImport("org.apache.camel.CamelContextAware");
         javaClass.addImport(model.getJavaType());
+        javaClass.addImport(List.class);
+        javaClass.addImport(ConditionalOnBean.class);
+        javaClass.addImport(ConfigurableBeanFactory.class);
+        javaClass.addImport("org.slf4j.Logger");
+        javaClass.addImport("org.slf4j.LoggerFactory");
         javaClass.addImport("org.apache.camel.CamelContext");
+        javaClass.addImport("org.apache.camel.CamelContextAware");
+        javaClass.addImport("org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addImport("org.apache.camel.spring.boot.LanguageConfigurationProperties");
+        javaClass.addImport("org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans");
+        javaClass.addImport("org.apache.camel.spring.boot.util.GroupCondition");
+        javaClass.addImport("org.apache.camel.util.ObjectHelper");
+        javaClass.addImport("org.apache.camel.spi.LanguageCustomizer");
 
-        String body = createLanguageBody(model.getShortJavaType(), hasOptions);
+        javaClass.addField()
+            .setPrivate()
+            .setStatic(true)
+            .setFinal(true)
+            .setName("LOGGER")
+            .setType("Logger")
+            .setLiteralInitializer("LoggerFactory.getLogger(" + name + ".class)");
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("camelContext")
+            .setType("CamelContext")
+            .addAnnotation(Autowired.class);
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("customizers")
+            .setType("List<LanguageCustomizer<" + model.getShortJavaType() + ">>")
+            .addAnnotation(Autowired.class).setLiteralValue("required", "false");
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("globalConfiguration")
+            .setType("LanguageConfigurationProperties")
+            .addAnnotation(Autowired.class);
+
+        javaClass.addField()
+            .setPrivate()
+            .setName("languageConfiguration")
+            .setType(configurationName)
+            .addAnnotation(Autowired.class);
+
+        javaClass.addNestedType(
+            Roaster.create(JavaClassSource.class)
+                .setName("GroupConditions")
+                .setStatic(true)
+                .setPackagePrivate()
+                .extendSuperType(Roaster.create(JavaClassSource.class).setName("GroupCondition"))
+                .addMethod()
+                    .setName("GroupConditions")
+                    .setConstructor(true)
+                    .setPublic()
+                    .setBody("super(\"camel.component\", \"camel.component." + (overrideLanguageName != null ? overrideLanguageName : model.getName()).toLowerCase(Locale.US) + "\");")
+                    .getOrigin()
+        );
+
+        String body = createLanguageBody(model.getShortJavaType());
         String methodName = "configure" + model.getShortJavaType();
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
-                .setName(methodName)
-                .setPublic()
-                .setBody(body)
-                .setReturnType(model.getShortJavaType())
-                .addThrows(Exception.class);
-
-        method.addParameter("CamelContext", "camelContext");
-        method.addParameter(configurationName, "configuration");
+            .setName(methodName)
+            .setPublic()
+            .setBody(body)
+            .setReturnType(model.getShortJavaType())
+            .addThrows(Exception.class);
 
         // Determine all the aliases
         // adding the '-language' suffix to prevent collision with component names
         String[] springBeanAliases = languageAliases.stream().map(alias -> alias + "-language").toArray(size -> new String[size]);
 
         method.addAnnotation(Bean.class).setStringArrayValue("name", springBeanAliases);
-        method.addAnnotation(Scope.class).setStringValue("prototype");
-        method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
+        method.addAnnotation(Scope.class).setLiteralValue("ConfigurableBeanFactory.SCOPE_PROTOTYPE");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
-
-        // Generate Condition
-        javaClass.addNestedType(createConditionType(
-            javaClass,
-            "camel.language",
-            (overrideLanguageName != null ? overrideLanguageName : model.getName()).toLowerCase(Locale.US)
-        ));
 
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
         writeSourceIfChanged(javaClass, fileName);
-        writeAdditionalSpringMetaData(
-            "camel",
-            "language",
-            (overrideLanguageName != null ? overrideLanguageName : model.getName()).toLowerCase(Locale.US));
     }
 
     private void createComponentSpringFactorySource(String packageName, ComponentModel model) throws MojoFailureException {
@@ -1429,42 +1531,51 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeComponentSpringFactorySource(packageName, name);
     }
 
-    private static String createComponentBody(String shortJavaType, boolean hasOptions) {
+    private static String createComponentBody(String shortJavaType) {
         StringBuilder sb = new StringBuilder();
         sb.append(shortJavaType).append(" component = new ").append(shortJavaType).append("();").append("\n");
         sb.append("component.setCamelContext(camelContext);\n");
         sb.append("\n");
-        if (hasOptions) {
-            sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-            sb.append("\n");
-            sb.append("for (Map.Entry<String, Object> entry : parameters.entrySet()) {\n");
-            sb.append("    Object value = entry.getValue();\n");
-            sb.append("    Class<?> paramClass = value.getClass();\n");
-            sb.append("    if (paramClass.getName().endsWith(\"NestedConfiguration\")) {\n");
-            sb.append("        Class nestedClass = null;\n");
-            sb.append("        try {\n");
-            sb.append("            nestedClass = (Class) paramClass.getDeclaredField(\"CAMEL_NESTED_CLASS\").get(null);\n");
-            sb.append("            HashMap<String, Object> nestedParameters = new HashMap<>();\n");
-            sb.append("            IntrospectionSupport.getProperties(value, nestedParameters, null, false);\n");
-            sb.append("            Object nestedProperty = nestedClass.newInstance();\n");
-            sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), nestedProperty, nestedParameters);\n");
-            sb.append("            entry.setValue(nestedProperty);\n");
-            sb.append("        } catch (NoSuchFieldException e) {\n");
-            sb.append("            // ignore, class must not be a nested configuration class after all\n");
-            sb.append("        }\n");
-            sb.append("    }\n");
-            sb.append("}\n");
-            sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), component, parameters);\n");
-        }
+        sb.append("Map<String, Object> parameters = new HashMap<>();\n");
+        sb.append("IntrospectionSupport.getProperties(componentConfiguration, parameters, null, false);\n");
+        sb.append("\n");
+        sb.append("for (Map.Entry<String, Object> entry : parameters.entrySet()) {\n");
+        sb.append("    Object value = entry.getValue();\n");
+        sb.append("    Class<?> paramClass = value.getClass();\n");
+        sb.append("    if (paramClass.getName().endsWith(\"NestedConfiguration\")) {\n");
+        sb.append("        Class nestedClass = null;\n");
+        sb.append("        try {\n");
+        sb.append("            nestedClass = (Class) paramClass.getDeclaredField(\"CAMEL_NESTED_CLASS\").get(null);\n");
+        sb.append("            HashMap<String, Object> nestedParameters = new HashMap<>();\n");
+        sb.append("            IntrospectionSupport.getProperties(value, nestedParameters, null, false);\n");
+        sb.append("            Object nestedProperty = nestedClass.newInstance();\n");
+        sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), nestedProperty, nestedParameters);\n");
+        sb.append("            entry.setValue(nestedProperty);\n");
+        sb.append("        } catch (NoSuchFieldException e) {\n");
+        sb.append("            // ignore, class must not be a nested configuration class after all\n");
+        sb.append("        }\n");
+        sb.append("    }\n");
+        sb.append("}\n");
+        sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), component, parameters);\n");
+        sb.append("\n");
+        sb.append("boolean useCustomizers = globalConfiguration.getCustomizer().isEnabled() && componentConfiguration.getCustomizer().isEnabled();\n");
+        sb.append("\n");
+        sb.append("if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {\n");
+        sb.append("    for (ComponentCustomizer<").append(shortJavaType).append("> customizer : customizers) {\n");
+        sb.append("        LOGGER.debug(\"Configure component {}, with customizer {}\", component, customizer);\n");
+        sb.append("        customizer.customize(component);\n");
+        sb.append("    }\n");
+        sb.append("}\n");
         sb.append("\n");
         sb.append("return component;");
+
         return sb.toString();
     }
 
-    private static String createDataFormatBody(String shortJavaType, boolean hasOptions) {
+    private static String createDataFormatBody(String shortJavaType) {
         StringBuilder sb = new StringBuilder();
         sb.append("return new DataFormatFactory() {\n");
+        sb.append("    @Override\n");
         sb.append("    public DataFormat newInstance() {\n");
         sb.append("        ").append(shortJavaType).append(" dataformat = new ").append(shortJavaType).append("();").append("\n");
         sb.append("        if (CamelContextAware.class.isAssignableFrom(").append(shortJavaType).append(".class)) {\n");
@@ -1473,16 +1584,23 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("                contextAware.setCamelContext(camelContext);\n");
         sb.append("            }\n");
         sb.append("        }\n");
-        if (hasOptions) {
-            sb.append("\n");
-            sb.append("        try {\n");
-            sb.append("            Map<String, Object> parameters = new HashMap<>();\n");
-            sb.append("            IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-            sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
-            sb.append("        } catch (Exception e) {\n");
-            sb.append("            throw new RuntimeCamelException(e);\n");
-            sb.append("        }\n");
-        }
+        sb.append("\n");
+        sb.append("        try {\n");
+        sb.append("            Map<String, Object> parameters = new HashMap<>();\n");
+        sb.append("            IntrospectionSupport.getProperties(dataformatConfiguration, parameters, null, false);\n");
+        sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
+        sb.append("        } catch (Exception e) {\n");
+        sb.append("            throw new RuntimeCamelException(e);\n");
+        sb.append("        }\n");
+        sb.append("\n");
+        sb.append("boolean useCustomizers = globalConfiguration.getCustomizer().isEnabled() && dataformatConfiguration.getCustomizer().isEnabled();\n");
+        sb.append("\n");
+        sb.append("if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {\n");
+        sb.append("    for (DataFormatCustomizer<").append(shortJavaType).append("> customizer : customizers) {\n");
+        sb.append("        LOGGER.debug(\"Configure dataformat {}, with customizer {}\", dataformat, customizer);\n");
+        sb.append("        customizer.customize(dataformat);\n");
+        sb.append("    }\n");
+        sb.append("}\n");
         sb.append("\n");
         sb.append("        return dataformat;\n");
         sb.append("    }\n");
@@ -1490,7 +1608,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         return sb.toString();
     }
 
-    private static String createLanguageBody(String shortJavaType, boolean hasOptions) {
+    private static String createLanguageBody(String shortJavaType) {
         StringBuilder sb = new StringBuilder();
         sb.append(shortJavaType).append(" language = new ").append(shortJavaType).append("();").append("\n");
         sb.append("if (CamelContextAware.class.isAssignableFrom(").append(shortJavaType).append(".class)) {\n");
@@ -1499,21 +1617,27 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sb.append("        contextAware.setCamelContext(camelContext);\n");
         sb.append("    }\n");
         sb.append("}\n");
-        if (hasOptions) {
-            sb.append("\n");
-            sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-            sb.append("\n");
-            sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), language, parameters);\n");
-        }
+        sb.append("\n");
+        sb.append("Map<String, Object> parameters = new HashMap<>();\n");
+        sb.append("IntrospectionSupport.getProperties(languageConfiguration, parameters, null, false);\n");
+        sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), language, parameters);\n");
+        sb.append("\n");
+        sb.append("boolean useCustomizers = globalConfiguration.getCustomizer().isEnabled() && languageConfiguration.getCustomizer().isEnabled();\n");
+        sb.append("\n");
+        sb.append("if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {\n");
+        sb.append("    for (LanguageCustomizer<").append(shortJavaType).append("> customizer : customizers) {\n");
+        sb.append("        LOGGER.debug(\"Configure language {}, with customizer {}\", language, customizer);\n");
+        sb.append("        customizer.customize(language);\n");
+        sb.append("    }\n");
+        sb.append("}\n");
         sb.append("\n");
         sb.append("return language;");
         return sb.toString();
     }
 
-    private static void sortImports(JavaClassSource javaClass) {
+    private static void sortImports(Importer importer) {
         // sort imports
-        List<Import> imports = javaClass.getImports();
+        List<Import> imports = importer.getImports();
 
         // sort imports
         List<String> names = new ArrayList<>();
@@ -1548,19 +1672,12 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         // remove all imports first
         for (String name : names) {
-            javaClass.removeImport(name);
+            importer.removeImport(name);
         }
         // and add them back in correct order
         for (String name : names) {
-            javaClass.addImport(name);
+            importer.addImport(name);
         }
-    }
-
-    private static String sourceToString(JavaClassSource javaClass) {
-        String code = Formatter.format(javaClass);
-        // convert tabs to 4 spaces
-        code = code.replaceAll("\\t", "    ");
-        return code;
     }
 
     private static String loadModelJson(Set<File> jsonFiles, String modelName) {
@@ -1874,6 +1991,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private void writeSourceIfChanged(JavaClassSource source, String fileName) throws MojoFailureException {
+        writeSourceIfChanged(source.toString(), fileName);
+    }
+
+    private void writeSourceIfChanged(String source, String fileName) throws MojoFailureException {
+
+        source = Formatter.format(source);
+        source = source.replaceAll("\\t", "    ");
 
         File target = new File(SpringBootHelper.starterSrcDir(baseDir, project.getArtifactId()), fileName);
 
@@ -1882,7 +2006,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         try {
             InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt");
             String header = loadText(is);
-            String code = sourceToString(source);
+            String code = source;
             code = header + code;
             getLog().debug("Source code generated:\n" + code);
 
@@ -1974,6 +2098,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
+    /*
     private void writeAdditionalSpringMetaData(String prefix, String type, String name) throws MojoFailureException {
         String fullQualifiedName = prefix + "." + type + "." + name + "." + "enabled";
         String fileName = "META-INF/additional-spring-configuration-metadata.json";
@@ -2019,6 +2144,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             throw new MojoFailureException("IOError with file " + target, e);
         }
     }
+    */
 
     private void deleteFileOnMainArtifact(File starterFile) {
         if (!DELETE_FILES_ON_MAIN_ARTIFACTS) {
@@ -2048,7 +2174,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         condition.extendSuperType(SpringBootCondition.class);
         condition.setPublic();
         condition.setStatic(true);
-        
+
         condition.addAnnotation(Generated.class).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
 
         String fullQualifiedType = prefix.endsWith(".") ? prefix +  type : prefix + "." + type;

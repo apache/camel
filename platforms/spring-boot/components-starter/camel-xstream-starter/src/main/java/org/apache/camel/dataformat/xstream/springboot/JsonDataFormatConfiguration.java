@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.xstream.springboot;
 import javax.annotation.Generated;
 import org.apache.camel.dataformat.xstream.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.json-xstream")
-public class JsonDataFormatConfiguration {
+public class JsonDataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * Lookup and use the existing ObjectMapper with the given id when using

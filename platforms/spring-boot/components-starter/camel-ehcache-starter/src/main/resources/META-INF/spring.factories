@@ -15,4 +15,5 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.apache.camel.component.ehcache.springboot.customizer.CacheManagerCustomizer,\
 org.apache.camel.component.ehcache.springboot.EhcacheComponentAutoConfiguration

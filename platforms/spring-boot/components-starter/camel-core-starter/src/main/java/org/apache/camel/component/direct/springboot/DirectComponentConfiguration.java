@@ -17,6 +17,7 @@
 package org.apache.camel.component.direct.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.direct")
-public class DirectComponentConfiguration {
+public class DirectComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * If sending a message to a direct endpoint which has no active consumer

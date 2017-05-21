@@ -19,6 +19,7 @@ package org.apache.camel.component.flink.springboot;
 import javax.annotation.Generated;
 import org.apache.camel.component.flink.DataSetCallback;
 import org.apache.camel.component.flink.DataStreamCallback;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -31,7 +32,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.flink")
-public class FlinkComponentConfiguration {
+public class FlinkComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * DataSet to compute against.

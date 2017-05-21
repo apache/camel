@@ -18,6 +18,7 @@ package org.apache.camel.component.metrics.springboot;
 
 import javax.annotation.Generated;
 import com.codahale.metrics.MetricRegistry;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.metrics")
-public class MetricsComponentConfiguration {
+public class MetricsComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use a custom configured MetricRegistry.

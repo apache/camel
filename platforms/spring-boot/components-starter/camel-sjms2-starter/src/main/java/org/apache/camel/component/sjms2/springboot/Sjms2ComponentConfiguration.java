@@ -25,6 +25,7 @@ import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -36,7 +37,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.sjms2")
-public class Sjms2ComponentConfiguration {
+public class Sjms2ComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * A ConnectionFactory is required to enable the SjmsComponent. It can be

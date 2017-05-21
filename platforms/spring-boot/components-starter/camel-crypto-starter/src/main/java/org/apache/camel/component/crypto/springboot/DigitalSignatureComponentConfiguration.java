@@ -24,6 +24,7 @@ import java.security.cert.Certificate;
 import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.crypto.CryptoOperation;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -36,7 +37,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.crypto")
-public class DigitalSignatureComponentConfiguration {
+public class DigitalSignatureComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the shared DigitalSignatureConfiguration as configuration

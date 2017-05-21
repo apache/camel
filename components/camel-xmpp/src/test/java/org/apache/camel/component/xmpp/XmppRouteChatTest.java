@@ -18,6 +18,7 @@ package org.apache.camel.component.xmpp;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -30,6 +31,15 @@ public class XmppRouteChatTest extends CamelTestSupport {
     protected MockEndpoint producerEndpoint;
     protected String body1 = "the first message";
     protected String body2 = "the second message";
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        EmbeddedXmppTestServer.instance().bindSSLContextTo(registry);
+
+        return registry;
+    }
 
     @Test
     public void testXmppChat() throws Exception {
@@ -74,11 +84,11 @@ public class XmppRouteChatTest extends CamelTestSupport {
 
     protected String getProducerUri() {
         return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/camel_consumer@apache.camel?user=camel_producer&password=secret&serviceName=apache.camel";
+            + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-producer@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
     
     protected String getConsumerUri() {
         return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/camel_producer@apache.camel?user=camel_consumer&password=secret&serviceName=apache.camel";
+            + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-consumer@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 }

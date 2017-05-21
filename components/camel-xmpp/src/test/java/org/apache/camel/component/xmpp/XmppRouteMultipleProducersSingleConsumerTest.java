@@ -18,6 +18,7 @@ package org.apache.camel.component.xmpp;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -27,6 +28,15 @@ import org.junit.Test;
 public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSupport {
     protected MockEndpoint goodEndpoint;
     protected MockEndpoint badEndpoint;
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        EmbeddedXmppTestServer.instance().bindSSLContextTo(registry);
+
+        return registry;
+    }
 
     @Test
     public void testProducerGetsEverything() throws Exception {
@@ -72,17 +82,17 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
 
     protected String getProducer1Uri() {
         return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/camel_consumer@apache.camel?user=camel_producer&password=secret&serviceName=apache.camel";
+            + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getProducer2Uri() {
         return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/camel_consumer@apache.camel?user=camel_producer1&password=secret&serviceName=apache.camel";
+            + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&user=camel_producer1&password=secret&serviceName=apache.camel";
     }
     
     protected String getConsumerUri() {
         return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/camel_producer@apache.camel?user=camel_consumer&password=secret&serviceName=apache.camel";
+            + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 
 }

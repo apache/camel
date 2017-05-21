@@ -17,6 +17,7 @@
 package org.apache.camel.component.scheduler.springboot;
 
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.scheduler")
-public class SchedulerComponentConfiguration {
+public class SchedulerComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * Number of threads used by the scheduling thread pool. Is by default using

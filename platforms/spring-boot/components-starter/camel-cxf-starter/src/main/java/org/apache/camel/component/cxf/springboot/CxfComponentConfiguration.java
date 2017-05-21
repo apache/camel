@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.cxf")
-public class CxfComponentConfiguration {
+public class CxfComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * This option controls whether the CXF component when running in PAYLOAD

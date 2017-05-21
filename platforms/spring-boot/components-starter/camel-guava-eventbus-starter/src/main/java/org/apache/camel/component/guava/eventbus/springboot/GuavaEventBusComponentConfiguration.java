@@ -18,6 +18,7 @@ package org.apache.camel.component.guava.eventbus.springboot;
 
 import javax.annotation.Generated;
 import com.google.common.eventbus.EventBus;
+import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -29,7 +30,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.component.guava-eventbus")
-public class GuavaEventBusComponentConfiguration {
+public class GuavaEventBusComponentConfiguration
+        extends
+            ComponentConfigurationPropertiesCommon {
 
     /**
      * To use the given Guava EventBus instance

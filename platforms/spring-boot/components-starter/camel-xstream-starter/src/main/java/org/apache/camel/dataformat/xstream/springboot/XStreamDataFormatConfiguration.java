@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.xstream.springboot;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -28,7 +29,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.xstream")
-public class XStreamDataFormatConfiguration {
+public class XStreamDataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * Adds permissions that controls which Java packages and classes XStream is

@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.xmljson.springboot;
 
 import java.util.List;
 import javax.annotation.Generated;
+import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.dataformat.xmljson")
-public class XmlJsonDataFormatConfiguration {
+public class XmlJsonDataFormatConfiguration
+        extends
+            DataFormatConfigurationPropertiesCommon {
 
     /**
      * Sets the encoding. Used for unmarshalling (JSON to XML conversion).

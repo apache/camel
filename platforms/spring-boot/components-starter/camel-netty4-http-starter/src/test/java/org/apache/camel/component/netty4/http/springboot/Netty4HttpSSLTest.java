@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.netty4.http.springboot;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,22 +25,24 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.apache.camel.component.netty4.http.springboot.Netty4StarterTestHelper.getPort;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Testing the ssl configuration
  */
 @RunWith(SpringRunner.class)
-@SpringBootApplication
 @DirtiesContext
-@ContextConfiguration(classes = {NettyHttpComponentAutoConfiguration.class, CamelAutoConfiguration.class})
-@SpringBootTest(properties = {
+@SpringBootApplication
+@SpringBootTest(
+    classes = {
+        Netty4HttpSSLTest.TestConfiguration.class
+    },
+    properties = {
         "camel.ssl.config.cert-alias=web",
         "camel.ssl.config.key-managers.key-password=changeit",
         "camel.ssl.config.key-managers.key-store.resource=/keystore.p12",
@@ -56,14 +56,13 @@ import static org.junit.Assert.assertEquals;
 })
 @Ignore("Bug in https4 spring-boot configuration")
 public class Netty4HttpSSLTest {
-
     @Autowired
     private ProducerTemplate producerTemplate;
 
     @Test
     public void testEndpoint() throws Exception {
         String result = producerTemplate.requestBody("https4://localhost:" + getPort(), null, String.class);
-        assertEquals("Hello", result);
+        Assert.assertEquals("Hello", result);
     }
 
     @Component
@@ -71,9 +70,12 @@ public class Netty4HttpSSLTest {
         @Override
         public void configure() throws Exception {
             from("netty4-http:https://localhost:" + getPort() + "?ssl=true")
-                    .transform().constant("Hello");
+                .transform().constant("Hello");
         }
     }
 
+    @Configuration
+    public static class TestConfiguration {
+    }
 }
 

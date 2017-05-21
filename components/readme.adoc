@@ -956,7 +956,7 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (14 deprecated)
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
-| link:camel-reactor/src/main/docs/reactor.adoc[Reactor] (camel-reactor) |  | Camel Reactor  Component
+| link:camel-reactor/src/main/docs/reactor.adoc[Reactor] (camel-reactor) | 2.20 | Reactor based back-end for Camel's reactive streams component
 
 | link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
