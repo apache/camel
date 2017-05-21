@@ -154,15 +154,15 @@ public final class XmlRouteParser {
     }
 
     /**
-     * Parses the XML source to discover Camel routes.
+     * Parses the XML source to discover Camel routes with id's assigned.
      *
      * @param xml                     the xml file as input stream
      * @param baseDir                 the base of the source code
      * @param fullyQualifiedFileName  the fully qualified source code file name
      * @param routes                  list to add discovered and parsed routes
      */
-    public static void parseXmlRouteRoutes(InputStream xml, String baseDir, String fullyQualifiedFileName,
-                                           List<CamelRouteDetails> routes) throws Exception {
+    public static void parseXmlRouteRouteIds(InputStream xml, String baseDir, String fullyQualifiedFileName,
+                                             List<CamelRouteDetails> routes) throws Exception {
 
         // find all the endpoints (currently only <route> and within <route>)
         // try parse it as dom

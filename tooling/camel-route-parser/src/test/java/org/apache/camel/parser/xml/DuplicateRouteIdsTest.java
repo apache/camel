@@ -39,7 +39,7 @@ public class DuplicateRouteIdsTest {
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myduplicateroutes.xml");
         String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/myduplicateroutes.xml";
         String baseDir = "src/test/resources";
-        XmlRouteParser.parseXmlRouteRoutes(is, baseDir, fqn, list);
+        XmlRouteParser.parseXmlRouteRouteIds(is, baseDir, fqn, list);
 
         for (CamelRouteDetails detail : list) {
             LOG.info(detail.getRouteId());
