@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -460,11 +461,14 @@ public abstract class CamelTestSupport extends TestSupport {
             routesSummary.append("\t\tRoute ").append(route.getId()).append(" total: ").append(managedRoute.getExchangesTotal()).append(" (").append(routeCoveragePercentage).append("%)\n");
 
             if (server != null) {
-                for (ManagedProcessorMBean managedProcessor : processorsForRoute.get(route.getId())) {
-                    String processorId = managedProcessor.getProcessorId();
-                    long processorExchangesTotal = managedProcessor.getExchangesTotal();
-                    long processorCoveragePercentage = Math.round((double) processorExchangesTotal / contextExchangesTotal * 100);
-                    routesSummary.append("\t\t\tProcessor ").append(processorId).append(" total: ").append(processorExchangesTotal).append(" (").append(processorCoveragePercentage).append("%)\n");
+                List<ManagedProcessorMBean> processors = processorsForRoute.get(route.getId());
+                if (processors != null) {
+                    for (ManagedProcessorMBean managedProcessor : processors) {
+                        String processorId = managedProcessor.getProcessorId();
+                        long processorExchangesTotal = managedProcessor.getExchangesTotal();
+                        long processorCoveragePercentage = Math.round((double) processorExchangesTotal / contextExchangesTotal * 100);
+                        routesSummary.append("\t\t\tProcessor ").append(processorId).append(" total: ").append(processorExchangesTotal).append(" (").append(processorCoveragePercentage).append("%)\n");
+                    }
                 }
             }
         }
@@ -496,30 +500,28 @@ public abstract class CamelTestSupport extends TestSupport {
         ObjectName processorsObjectName = new ObjectName(domain + ":context=" + context.getManagementName() + ",type=processors,name=*");
         Set<ObjectName> objectNames = server.queryNames(processorsObjectName, null);
 
-        if (server != null) {
-            for (ObjectName objectName : objectNames) {
-                String routeId = server.getAttribute(objectName, "RouteId").toString();
-                String name = objectName.getKeyProperty("name");
-                name = ObjectName.unquote(name);
+        for (ObjectName objectName : objectNames) {
+            String routeId = server.getAttribute(objectName, "RouteId").toString();
+            String name = objectName.getKeyProperty("name");
+            name = ObjectName.unquote(name);
 
-                ManagedProcessorMBean managedProcessor = context.getManagedProcessor(name, ManagedProcessorMBean.class);
+            ManagedProcessorMBean managedProcessor = context.getManagedProcessor(name, ManagedProcessorMBean.class);
 
-                if (managedProcessor != null) {
-                    if (processorsForRoute.get(routeId) == null) {
-                        List<ManagedProcessorMBean> processorsList = new ArrayList<>();
-                        processorsList.add(managedProcessor);
+            if (managedProcessor != null) {
+                if (processorsForRoute.get(routeId) == null) {
+                    List<ManagedProcessorMBean> processorsList = new ArrayList<>();
+                    processorsList.add(managedProcessor);
 
-                        processorsForRoute.put(routeId, processorsList);
-                    } else {
-                        processorsForRoute.get(routeId).add(managedProcessor);
-                    }
+                    processorsForRoute.put(routeId, processorsList);
+                } else {
+                    processorsForRoute.get(routeId).add(managedProcessor);
                 }
             }
         }
 
         // sort processors by position in route definition
         for (Map.Entry<String, List<ManagedProcessorMBean>> entry : processorsForRoute.entrySet()) {
-            Collections.sort(entry.getValue(), (o1, o2) -> o1.getIndex().compareTo(o2.getIndex()));
+            Collections.sort(entry.getValue(), Comparator.comparing(ManagedProcessorMBean::getIndex));
         }
 
         return processorsForRoute;
