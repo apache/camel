@@ -19,6 +19,7 @@ package org.apache.camel.component.ehcache.springboot.customizer;
 import org.apache.camel.component.ehcache.EhcacheComponent;
 import org.apache.camel.component.ehcache.springboot.EhcacheComponentAutoConfiguration;
 import org.apache.camel.spi.ComponentCustomizer;
+import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -50,11 +50,10 @@ import org.springframework.core.annotation.Order;
 @Order(Ordered.LOWEST_PRECEDENCE)
 @Configuration
 @Conditional(CacheManagerCustomizer.NestedConditions.class)
-@ConditionalOnProperty(name = "camel.component.ehcache.customizer.cache-manager.enabled", matchIfMissing = true)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @AutoConfigureBefore(EhcacheComponentAutoConfiguration.class)
 @EnableConfigurationProperties(CacheManagerCustomizerConfiguration.class)
-public class CacheManagerCustomizer implements ComponentCustomizer<EhcacheComponent> {
+public class CacheManagerCustomizer implements HasId, ComponentCustomizer<EhcacheComponent> {
     @Autowired
     private CacheManager cacheManager;
     @Autowired
@@ -67,6 +66,11 @@ public class CacheManagerCustomizer implements ComponentCustomizer<EhcacheCompon
         if (configuration.isOverride() || component.getCacheManager() == null) {
             component.setCacheManager(cacheManager);
         }
+    }
+
+    @Override
+    public String getId() {
+        return "camel.component.ehcache.customizer.cache-manager";
     }
 
     // *************************************************************************

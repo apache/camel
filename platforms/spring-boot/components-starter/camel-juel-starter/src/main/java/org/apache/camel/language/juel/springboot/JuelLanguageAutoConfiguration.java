@@ -23,11 +23,13 @@ import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.language.juel.JuelLanguage;
+import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.LanguageCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.LanguageConfigurationProperties;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -38,6 +40,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -58,13 +61,13 @@ public class JuelLanguageAutoConfiguration {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(JuelLanguageAutoConfiguration.class);
     @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
     private CamelContext camelContext;
+    @Autowired
+    private JuelLanguageConfiguration configuration;
     @Autowired(required = false)
     private List<LanguageCustomizer<JuelLanguage>> customizers;
-    @Autowired
-    private LanguageConfigurationProperties globalConfiguration;
-    @Autowired
-    private JuelLanguageConfiguration languageConfiguration;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
@@ -85,18 +88,27 @@ public class JuelLanguageAutoConfiguration {
             }
         }
         Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(languageConfiguration, parameters,
-                null, false);
+        IntrospectionSupport.getProperties(configuration, parameters, null,
+                false);
         IntrospectionSupport.setProperties(camelContext,
                 camelContext.getTypeConverter(), language, parameters);
-        boolean useCustomizers = globalConfiguration.getCustomizer()
-                .isEnabled()
-                && languageConfiguration.getCustomizer().isEnabled();
-        if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {
+        if (ObjectHelper.isNotEmpty(customizers)) {
             for (LanguageCustomizer<JuelLanguage> customizer : customizers) {
-                LOGGER.debug("Configure language {}, with customizer {}",
-                        language, customizer);
-                customizer.customize(language);
+                boolean useCustomizer = (customizer instanceof HasId)
+                        ? HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.language.customizer",
+                                "camel.language.el.customizer",
+                                ((HasId) customizer).getId())
+                        : HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.language.customizer",
+                                "camel.language.el.customizer");
+                if (useCustomizer) {
+                    LOGGER.debug("Configure language {}, with customizer {}",
+                            language, customizer);
+                    customizer.customize(language);
+                }
             }
         }
         return language;
