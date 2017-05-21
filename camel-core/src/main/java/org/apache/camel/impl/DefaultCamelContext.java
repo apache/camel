@@ -878,7 +878,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         Processor processor = getProcessor(id);
         ProcessorDefinition def = getProcessorDefinition(id);
 
-        if (processor != null && def != null) {
+        // processor may be null if its anonymous inner class or as lambda
+        if (def != null) {
             try {
                 ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForProcessor(this, processor, def);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
