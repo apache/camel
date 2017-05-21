@@ -135,6 +135,20 @@ public final class CamelXmlHelper {
         }
     }
 
+    public static List<Node> findAllRoutes(Document dom) {
+        List<Node> nodes = new ArrayList<>();
+
+        NodeList list = dom.getElementsByTagName("route");
+        for (int i = 0; i < list.getLength(); i++) {
+            Node child = list.item(i);
+            if ("route".equals(child.getNodeName())) {
+                nodes.add(child);
+            }
+        }
+
+        return nodes;
+    }
+
     public static List<Node> findAllSimpleExpressions(Document dom) {
         List<Node> nodes = new ArrayList<>();
 

@@ -27,6 +27,7 @@ import org.apache.camel.parser.helper.CamelXmlHelper;
 import org.apache.camel.parser.helper.XmlLineNumberParser;
 
 import org.apache.camel.parser.model.CamelEndpointDetails;
+import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.jboss.forge.roaster.model.util.Strings;
 
@@ -148,6 +149,48 @@ public final class XmlRouteParser {
                 detail.setExpression(!asPredicate);
 
                 simpleExpressions.add(detail);
+            }
+        }
+    }
+
+    /**
+     * Parses the XML source to discover Camel routes.
+     *
+     * @param xml                     the xml file as input stream
+     * @param baseDir                 the base of the source code
+     * @param fullyQualifiedFileName  the fully qualified source code file name
+     * @param routes                  list to add discovered and parsed routes
+     */
+    public static void parseXmlRouteRoutes(InputStream xml, String baseDir, String fullyQualifiedFileName,
+                                           List<CamelRouteDetails> routes) throws Exception {
+
+        // find all the endpoints (currently only <route> and within <route>)
+        // try parse it as dom
+        Document dom = null;
+        try {
+            dom = XmlLineNumberParser.parseXml(xml);
+        } catch (Exception e) {
+            // ignore as the xml file may not be valid at this point
+        }
+        if (dom != null) {
+            List<Node> nodes = CamelXmlHelper.findAllRoutes(dom);
+            for (Node node : nodes) {
+                String id = getSafeAttribute(node, "id");
+                String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
+                String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
+
+                // we only want the relative dir name from the resource directory, eg META-INF/spring/foo.xml
+                String fileName = fullyQualifiedFileName;
+                if (fileName.startsWith(baseDir)) {
+                    fileName = fileName.substring(baseDir.length() + 1);
+                }
+
+                CamelRouteDetails detail = new CamelRouteDetails();
+                detail.setFileName(fileName);
+                detail.setLineNumber(lineNumber);
+                detail.setLineNumberEnd(lineNumberEnd);
+                detail.setRouteId(id);
+                routes.add(detail);
             }
         }
     }
