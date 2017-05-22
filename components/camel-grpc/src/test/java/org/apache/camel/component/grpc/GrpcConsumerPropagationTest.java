@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.grpc;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +23,6 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.grpc.GrpcConsumerAggregationTest.GrpcMessageBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -44,7 +41,6 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
     private static final String GRPC_TEST_PONG_VALUE = "PONG";
 
     private ManagedChannel asyncRequestChannel;
-    private PingPongGrpc.PingPongStub nonBlockingStub;
     private PingPongGrpc.PingPongStub asyncNonBlockingStub;
 
     @Before

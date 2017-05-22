@@ -45,7 +45,7 @@ public class GrpcConfiguration {
 
     /**
      * Fully qualified service name from the protocol buffer descriptor file
-     * (package dot service definition name) 
+     * (package dot service definition name)
      */
     public String getService() {
         return service;
@@ -111,7 +111,12 @@ public class GrpcConfiguration {
     }
 
     /**
-     * TBD
+     * This option specifies the top-level strategy for processing service
+     * requests and responses in streaming mode. If an aggregation strategy is
+     * selected, all requests will be accumulated in the list, then transferred
+     * to the flow, and the accumulated responses will be sent to the sender. If
+     * a propagation strategy is selected, request is sent to the stream, and the
+     * response will be immediately sent back to the sender.
      */
     public GrpcProcessingStrategies getProcessingStrategy() {
         return processingStrategy;

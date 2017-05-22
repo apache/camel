@@ -67,7 +67,7 @@
     <dependency>
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
-      <version>3.20.0-GA</version>
+      <version>${javassist-version}</version>
     </dependency>
 
     <!-- for testing -->
@@ -79,7 +79,7 @@
     <dependency>
       <groupId>com.googlecode.junit-toolbox</groupId>
       <artifactId>junit-toolbox</artifactId>
-      <version>2.3</version>
+      <version>${junit-toolbox-version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -112,7 +112,7 @@
       <extension>
         <groupId>kr.motd.maven</groupId>
         <artifactId>os-maven-plugin</artifactId>
-        <version>1.4.1.Final</version>
+        <version>${os-maven-plugin-version}</version>
       </extension>
     </extensions>
 
@@ -159,7 +159,7 @@
       <plugin>
         <groupId>org.xolstice.maven.plugins</groupId>
         <artifactId>protobuf-maven-plugin</artifactId>
-        <version>0.5.0</version>
+        <version>${protobuf-maven-plugin-version}</version>
         <configuration>
           <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
           <pluginId>grpc-java</pluginId>
