@@ -97,8 +97,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             }
             //return list of allowed methods in response headers
             httpExchange.setStatusCode(StatusCodes.OK);
-            httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
+            // do not include content-type as that would indicate to the caller that we can only do text/plain
             httpExchange.getResponseHeaders().put(Headers.ALLOW, allowedMethods);
             httpExchange.getResponseSender().close();
             return;
