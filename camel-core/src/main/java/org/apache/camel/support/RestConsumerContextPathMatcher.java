@@ -138,6 +138,22 @@ public final class RestConsumerContextPathMatcher {
             }
         }
 
+        // we could not find a direct match, and if the request is OPTIONS then we need all candidates
+        if (answer == null && isOptionsMethod(requestMethod)) {
+            candidates.clear();
+            candidates.addAll(consumerPaths);
+
+            // then try again to see if we can find a direct match
+            it = candidates.iterator();
+            while (it.hasNext()) {
+                ConsumerPath consumer = it.next();
+                if (matchRestPath(requestPath, consumer.getConsumerPath(), false)) {
+                    answer = consumer;
+                    break;
+                }
+            }
+        }
+
         // if there are no wildcards, then select the matching with the longest path
         boolean noWildcards = candidates.stream().allMatch(p -> countWildcards(p.getConsumerPath()) == 0);
         if (noWildcards) {
@@ -191,7 +207,7 @@ public final class RestConsumerContextPathMatcher {
     }
 
     /**
-     * Matches the given request HTTP method with the configured HTTP method of the consumer
+     * Matches the given request HTTP method with the configured HTTP method of the consumer.
      *
      * @param method   the request HTTP method
      * @param restrict the consumer configured HTTP restrict method
@@ -203,6 +219,15 @@ public final class RestConsumerContextPathMatcher {
         }
 
         return restrict.toLowerCase(Locale.ENGLISH).contains(method.toLowerCase(Locale.ENGLISH));
+    }
+
+    /**
+     * Is the request method OPTIONS
+     *
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     */
+    private static boolean isOptionsMethod(String method) {
+        return "options".equalsIgnoreCase(method);
     }
 
     /**

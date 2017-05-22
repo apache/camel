@@ -94,6 +94,20 @@ public class CamelContinuationServlet extends CamelServlet {
             return;
         }
 
+        // if its an OPTIONS request then return which method is allowed
+        if ("OPTIONS".equals(request.getMethod()) && !consumer.isOptionsEnabled()) {
+            String s;
+            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
+                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
+            } else {
+                // allow them all
+                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            }
+            response.addHeader("Allow", s);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
         if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
             Iterator<?> it = ObjectHelper.createIterable(consumer.getEndpoint().getHttpMethodRestrict()).iterator();
             boolean match = false;
