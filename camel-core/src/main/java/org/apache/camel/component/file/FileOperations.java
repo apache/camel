@@ -81,7 +81,7 @@ public class FileOperations implements GenericFileOperations<File> {
         return file.exists();
     }
 
-    protected boolean buildDirectory(File dir, Set<PosixFilePermission> permissions) {
+    protected boolean buildDirectory(File dir, Set<PosixFilePermission> permissions, boolean absolute) {
         if (dir.exists()) {
             return true;
         }
@@ -93,7 +93,15 @@ public class FileOperations implements GenericFileOperations<File> {
         // create directory one part of a time and set permissions
         try {
             String[] parts = dir.getPath().split("\\" + File.separatorChar);
-            File base = new File("");
+
+            File base;
+            // reusing absolute flag to handle relative and absolute paths
+            if (absolute) {
+                base = new File("");
+            } else {
+                base = new File(".");
+            }
+
             for (String part : parts) {
                 File subDir = new File(base, part);
                 if (!subDir.exists()) {
@@ -121,7 +129,7 @@ public class FileOperations implements GenericFileOperations<File> {
         // always create endpoint defined directory
         if (endpoint.isAutoCreate() && !endpoint.getFile().exists()) {
             LOG.trace("Building starting directory: {}", endpoint.getFile());
-            buildDirectory(endpoint.getFile(), endpoint.getDirectoryPermissions());
+            buildDirectory(endpoint.getFile(), endpoint.getDirectoryPermissions(), absolute);
         }
 
         if (ObjectHelper.isEmpty(directory)) {
@@ -158,7 +166,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 return true;
             } else {
                 LOG.trace("Building directory: {}", path);
-                return buildDirectory(path, endpoint.getDirectoryPermissions());
+                return buildDirectory(path, endpoint.getDirectoryPermissions(), absolute);
             }
         }
     }
