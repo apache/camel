@@ -2,7 +2,7 @@
 
 *Available as of Camel version 2.19*
 
-The gRPC component allows you to do Remote Procedure Call (RPC) 
+The gRPC component allows you to call or expose Remote Procedure Call (RPC) services
 using https://developers.google.com/protocol-buffers/docs/overview[Protocol Buffers (protobuf)] 
 exchange format over HTTP/2 transport.
 
@@ -55,7 +55,7 @@ with the following path and query parameters:
 | **host** (common) | The gRPC server host name |  | String
 | **port** (common) | The gRPC server port |  | int
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
-| **processingStrategy** (consumer) | TBD |  | GrpcProcessing Strategies
+| **processingStrategy** (consumer) | This option specifies the top-level strategy for processing service requests and responses in streaming mode. If an aggregation strategy is selected all requests will be accumulated in the list then transferred to the flow and the accumulated responses will be sent to the sender. If a propagation strategy is selected request is sent to the stream and the response will be immediately sent back to the sender. |  | GrpcProcessing Strategies
 | **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | **method** (producer) | gRPC method name |  | String
@@ -85,6 +85,18 @@ The table below shows the types of objects in the message body, depending on the
 
 |=======================================================================
 
+### gRPC consumer headers (will be installed after the consumer invocation)
+
+[width="100%",cols="25%,50,25%",options="header",]
+|=======================================================================
+|Header name |Description|Possible values
+
+|*CamelGrpcMethodName*|Method name handled by the consumer service|
+|*CamelGrpcEventType*|Received event type from the sended request|onNext, onCompleted or onError
+|*CamelGrpcUserAgent*|If provided, the given agent will prepend the gRPC library's user agent information|
+
+|=======================================================================
+
 ### Examples
 
 Below is a simple synchronous method invoke with host and port parameters
@@ -107,8 +119,16 @@ An asynchronous method invoke with target host and port parameter
 
 [source,java]
 -------------------------------------------------------------------------------
-from("direct:index")
+from("direct:grpc-async")
 .to("grpc://org.apache.camel.component.grpc.PingPong?method=pingAsyncResponse&target=dns:///hostname:8000");
+-------------------------------------------------------------------------------
+
+gRPC service consumer with propagation processing strategy
+
+[source,java]
+-------------------------------------------------------------------------------
+from("grpc://org.apache.camel.component.grpc.PingPong??processingStrategy=PROPAGATION&host=localhost&port=1000")
+.to("direct:grpc-service");
 -------------------------------------------------------------------------------
 
 It's it is recommended to use Maven Protocol Buffers Plugin which calls Protocol Buffer Compiler (protoc) tool to generate Java source files from .proto (protocol buffer definition) files for the custom project. This plugin will generate procedures request and response classes, their builders and gRPC procedures stubs classes as well.
@@ -135,9 +155,9 @@ Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the pro
   <artifactId>protobuf-maven-plugin</artifactId>
   <version>0.5.0</version>
   <configuration>
-    <protocArtifact>com.google.protobuf:protoc:3.2.0:exe:${os.detected.classifier}</protocArtifact>
+    <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
     <pluginId>grpc-java</pluginId>
-    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.2.0:exe:${os.detected.classifier}</pluginArtifact>
+    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc-version}:exe:${os.detected.classifier}</pluginArtifact>
   </configuration>
   <executions>
     <execution>
