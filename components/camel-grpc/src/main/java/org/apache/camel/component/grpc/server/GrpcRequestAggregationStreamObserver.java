@@ -19,6 +19,7 @@ package org.apache.camel.component.grpc.server;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.component.grpc.GrpcConsumer;
@@ -47,23 +48,37 @@ public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStr
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onCompleted() {
+        CountDownLatch latch = new CountDownLatch(1);
+        Object responseBody = null;
+        
         exchange.getIn().setBody(requestList);
         exchange.getIn().setHeaders(headers);
 
         consumer.process(exchange, doneSync -> {
+            latch.countDown();
         });
+        
+        try {
+            latch.await();
+            
+            if (exchange.hasOut()) {
+                responseBody = exchange.getOut().getBody();
+            } else {
+                responseBody = exchange.getIn().getBody();
+            }
 
-        Object responseBody = exchange.getIn().getBody();
-        if (responseBody instanceof List) {
-            List<Object> responseList = (List<Object>)responseBody;
-            responseList.forEach((responseItem) -> {
-                responseObserver.onNext(responseItem);
-            });
-        } else {
-            responseObserver.onNext(responseBody);
+            if (responseBody instanceof List) {
+                List<?> responseList = (List<?>)responseBody;
+                responseList.forEach((responseItem) -> {
+                    responseObserver.onNext(responseItem);
+                });
+            } else {
+                responseObserver.onNext(responseBody);
+            }
+            responseObserver.onCompleted();
+        } catch (InterruptedException e) {
+            responseObserver.onError(e);
         }
-        responseObserver.onCompleted();
     }
 }

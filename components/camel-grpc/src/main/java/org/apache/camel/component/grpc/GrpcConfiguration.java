@@ -27,18 +27,30 @@ public class GrpcConfiguration {
     @UriPath
     @Metadata(required = "true")
     private String service;
+    
     @UriParam(label = "producer")
     private String method;
+    
     @UriParam
     private String host;
+    
     @UriParam
     private int port;
+    
     @UriParam(label = "producer")
     private String target;
+    
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean usePlainText = true;
+    
     @UriParam(label = "consumer")
     private GrpcProcessingStrategies processingStrategy = GrpcProcessingStrategies.PROPAGATION;
+    
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean forwardOnCompleted;
+
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean forwardOnError;
 
     private String serviceName;
     private String servicePackage;
@@ -124,6 +136,29 @@ public class GrpcConfiguration {
 
     public void setProcessingStrategy(GrpcProcessingStrategies processingStrategy) {
         this.processingStrategy = processingStrategy;
+    }
+
+    /**
+     * Determines if onCompleted events should be pushed to the Camel route.
+     */
+    public void setForwardOnCompleted(boolean forwardOnCompleted) {
+        this.forwardOnCompleted = forwardOnCompleted;
+    }
+
+    public boolean isForwardOnCompleted() {
+        return forwardOnCompleted;
+    }
+
+    /**
+     * Determines if onError events should be pushed to the Camel route.
+     * Exceptions will be set as message body.
+     */
+    public void setForwardOnError(boolean forwardOnError) {
+        this.forwardOnError = forwardOnError;
+    }
+
+    public boolean isForwardOnError() {
+        return forwardOnError;
     }
 
     /**
