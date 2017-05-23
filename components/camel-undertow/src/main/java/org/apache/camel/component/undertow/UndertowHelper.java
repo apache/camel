@@ -157,6 +157,8 @@ public final class UndertowHelper {
         String m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
         if (m != null) {
             // always use what end-user provides in a header
+            // must be in upper case
+            m = m.toUpperCase();
             answer = new HttpString(m);
         } else if (queryString != null) {
             // if a query string is provided then use GET

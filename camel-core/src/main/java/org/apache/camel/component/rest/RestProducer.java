@@ -205,6 +205,12 @@ public class RestProducer extends DefaultAsyncProducer {
             inMessage.removeHeader(Exchange.HTTP_PATH);
         }
 
+        // method
+        String method = getEndpoint().getMethod();
+        if (method != null) {
+            inMessage.setHeader(Exchange.HTTP_METHOD, method);
+        }
+
         final String produces = getEndpoint().getProduces();
         if (isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE)) && isNotEmpty(produces)) {
             inMessage.setHeader(Exchange.CONTENT_TYPE, produces);
