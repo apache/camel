@@ -111,17 +111,21 @@ public class GrpcConsumer extends DefaultConsumer {
     }
     
     public void onCompleted(Exchange exchange) {
-        exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
-        doSend(exchange, done -> {
-        });
+        if (configuration.isForwardOnCompleted()) {
+            exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
+            doSend(exchange, done -> {
+            });
+        }
     }
 
     public void onError(Exchange exchange, Throwable error) {
-        exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR);
-        exchange.getIn().setBody(error);
+        if (configuration.isForwardOnError()) {
+            exchange.getIn().setHeader(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_ERROR);
+            exchange.getIn().setBody(error);
         
-        doSend(exchange, done -> {
-        });
+            doSend(exchange, done -> {
+            });
+        }
     }
         
     private boolean doSend(Exchange exchange, AsyncCallback callback) {

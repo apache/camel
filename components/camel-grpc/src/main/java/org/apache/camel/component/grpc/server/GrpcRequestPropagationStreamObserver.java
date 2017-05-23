@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.grpc.server;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.component.grpc.GrpcConsumer;
@@ -34,17 +36,39 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
 
     @Override
     public void onNext(Object request) {
+        CountDownLatch latch = new CountDownLatch(1);
+        Object responseBody = null;
+        
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(request);
         exchange.getIn().setHeaders(headers);
+        
         consumer.process(exchange, doneSync -> {
+            latch.countDown();
         });
-        if (exchange.hasOut()) {
-            responseObserver.onNext(exchange.getOut().getBody());
-        } else {
-            responseObserver.onNext(exchange.getIn().getBody());
+        
+        try {
+            latch.await();
+            
+            if (exchange.hasOut()) {
+                responseBody = exchange.getOut().getBody();
+            } else {
+                responseBody = exchange.getIn().getBody();
+            }
+            
+            if (responseBody instanceof List) {
+                List<?> responseList = (List<?>)responseBody;
+                responseList.forEach((responseItem) -> {
+                    responseObserver.onNext(responseItem);
+                });
+            } else {
+                responseObserver.onNext(responseBody);
+            }
+            responseObserver.onCompleted();
+
+        } catch (InterruptedException e) {
+            responseObserver.onError(e);
         }
-        responseObserver.onCompleted();
     }
 
     @Override

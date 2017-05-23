@@ -47,7 +47,7 @@ with the following path and query parameters:
 | **service** | *Required* Fully qualified service name from the protocol buffer descriptor file (package dot service definition name) |  | String
 |=======================================================================
 
-#### Query Parameters (10 parameters):
+#### Query Parameters (12 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -55,6 +55,8 @@ with the following path and query parameters:
 | **host** (common) | The gRPC server host name |  | String
 | **port** (common) | The gRPC server port |  | int
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **forwardOnCompleted** (consumer) | Determines if onCompleted events should be pushed to the Camel route. | false | boolean
+| **forwardOnError** (consumer) | Determines if onError events should be pushed to the Camel route. Exceptions will be set as message body. | false | boolean
 | **processingStrategy** (consumer) | This option specifies the top-level strategy for processing service requests and responses in streaming mode. If an aggregation strategy is selected all requests will be accumulated in the list then transferred to the flow and the accumulated responses will be sent to the sender. If a propagation strategy is selected request is sent to the stream and the response will be immediately sent back to the sender. |  | GrpcProcessing Strategies
 | **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -92,7 +94,7 @@ The table below shows the types of objects in the message body, depending on the
 |Header name |Description|Possible values
 
 |*CamelGrpcMethodName*|Method name handled by the consumer service|
-|*CamelGrpcEventType*|Received event type from the sended request|onNext, onCompleted or onError
+|*CamelGrpcEventType*|Received event type from the sent request|onNext, onCompleted or onError
 |*CamelGrpcUserAgent*|If provided, the given agent will prepend the gRPC library's user agent information|
 
 |=======================================================================

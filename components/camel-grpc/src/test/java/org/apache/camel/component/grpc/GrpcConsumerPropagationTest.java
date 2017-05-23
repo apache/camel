@@ -35,23 +35,28 @@ import org.slf4j.LoggerFactory;
 public class GrpcConsumerPropagationTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerPropagationTest.class);
 
-    private static final int GRPC_ASYNC_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    private static final int GRPC_ASYNC_NEXT_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    private static final int GRPC_ASYNC_COMPLETED_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final String GRPC_TEST_PING_VALUE = "PING";
     private static final String GRPC_TEST_PONG_VALUE = "PONG";
 
-    private ManagedChannel asyncRequestChannel;
-    private PingPongGrpc.PingPongStub asyncNonBlockingStub;
+    private ManagedChannel asyncOnNextChannel;
+    private ManagedChannel asyncOnCompletedChannel;
+    private PingPongGrpc.PingPongStub asyncOnNextStub;
+    private PingPongGrpc.PingPongStub asyncOnCompletedStub;
 
     @Before
     public void startGrpcChannels() {
-        asyncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_REQUEST_TEST_PORT).usePlaintext(true).build();
-        asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
+        asyncOnNextChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_NEXT_REQUEST_TEST_PORT).usePlaintext(true).build();
+        asyncOnCompletedChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_ASYNC_COMPLETED_REQUEST_TEST_PORT).usePlaintext(true).build();
+        asyncOnNextStub = PingPongGrpc.newStub(asyncOnNextChannel);
+        asyncOnCompletedStub = PingPongGrpc.newStub(asyncOnCompletedChannel);
     }
 
     @After
     public void stopGrpcChannels() throws Exception {
-        asyncRequestChannel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+        asyncOnNextChannel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
     @Test
@@ -62,14 +67,15 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
         PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
-        StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncSync(responseObserver);
+        StreamObserver<PingRequest> requestObserver = asyncOnNextStub.pingAsyncSync(responseObserver);
         requestObserver.onNext(pingRequest);
         latch.await(5, TimeUnit.SECONDS);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:async-propagation");
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:async-on-next-propagation");
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.expectedHeaderValuesReceivedInAnyOrder(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_NEXT);
         mockEndpoint.expectedHeaderValuesReceivedInAnyOrder(GrpcConstants.GRPC_METHOD_NAME_HEADER, "pingAsyncSync");
+        mockEndpoint.assertIsSatisfied();
         
         PongResponse pongResponse = responseObserver.getPongResponse();
         assertNotNull(pongResponse);
@@ -85,14 +91,15 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
         PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
-        StreamObserver<PingRequest> requestObserver = asyncNonBlockingStub.pingAsyncAsync(responseObserver);
+        StreamObserver<PingRequest> requestObserver = asyncOnCompletedStub.pingAsyncAsync(responseObserver);
         requestObserver.onCompleted();
         latch.await(5, TimeUnit.SECONDS);
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:async-propagation");
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:async-on-completed-propagation");
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.expectedHeaderValuesReceivedInAnyOrder(GrpcConstants.GRPC_EVENT_TYPE_HEADER, GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED);
         mockEndpoint.expectedHeaderValuesReceivedInAnyOrder(GrpcConstants.GRPC_METHOD_NAME_HEADER, "pingAsyncAsync");
+        mockEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -101,8 +108,12 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 
-                from("grpc://org.apache.camel.component.grpc.PingPong?processingStrategy=PROPAGATION&host=localhost&port=" + GRPC_ASYNC_REQUEST_TEST_PORT)
-                    .to("mock:async-propagation")
+                from("grpc://org.apache.camel.component.grpc.PingPong?processingStrategy=PROPAGATION&host=localhost&port=" + GRPC_ASYNC_NEXT_REQUEST_TEST_PORT)
+                    .to("mock:async-on-next-propagation")
+                    .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                
+                from("grpc://org.apache.camel.component.grpc.PingPong?processingStrategy=PROPAGATION&forwardOnCompleted=true&host=localhost&port=" + GRPC_ASYNC_COMPLETED_REQUEST_TEST_PORT)
+                    .to("mock:async-on-completed-propagation")
                     .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
             }
         };
