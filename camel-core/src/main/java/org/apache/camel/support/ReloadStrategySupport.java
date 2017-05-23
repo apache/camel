@@ -46,10 +46,11 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ReloadStrategySupport extends ServiceSupport implements ReloadStrategy {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private CamelContext camelContext;
 
     // store state
-    private final Map<String, ResourceState> cache = new LRUCache<String, ResourceState>(100);
+    protected final Map<String, Object> cache = new LRUCache<String, Object>(100);
+
+    private CamelContext camelContext;
 
     private int succeeded;
     private int failed;
@@ -80,7 +81,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
             return;
         }
 
-        ResourceState state = cache.get(name);
+        ResourceState state = ObjectHelper.cast(ResourceState.class, cache.get(name));
         if (state == null) {
             state = new ResourceState(name, dom, xml);
             cache.put(name, state);
@@ -180,6 +181,14 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
     @ManagedAttribute(description = "Number of reloads failed")
     public int getFailedCounter() {
         return failed;
+    }
+    
+    public void setSucceeded(int succeeded) {
+        this.succeeded = succeeded;
+    }
+    
+    public void setFailed(int failed) {
+        this.failed = failed;
     }
 
     @ManagedOperation(description = "Reset counters")
