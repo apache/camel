@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.rest;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version
- */
 public class SpringFromRestDuplicateTest extends SpringTestSupport {
 
     @Override
@@ -31,7 +29,7 @@ public class SpringFromRestDuplicateTest extends SpringTestSupport {
         try {
             new ClassPathXmlApplicationContext("org/apache/camel/component/rest/SpringFromRestDuplicateTest.xml");
             fail("Should throw exception");
-        } catch (Exception e) {
+        } catch (RuntimeCamelException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("Duplicate verb detected in rest-dsl: get:{id}", iae.getMessage());
         }

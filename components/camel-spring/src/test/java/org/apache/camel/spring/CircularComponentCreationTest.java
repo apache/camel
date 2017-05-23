@@ -33,8 +33,7 @@ public class CircularComponentCreationTest {
             doTest("org/apache/camel/spring/CircularComponentCreationSimpleTest.xml");
 
             Assert.fail("Exception should have been thrown");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof RuntimeCamelException);
+        } catch (RuntimeCamelException e) {
             Assert.assertTrue(e.getCause() instanceof FailedToCreateRouteException);
         }
     }
