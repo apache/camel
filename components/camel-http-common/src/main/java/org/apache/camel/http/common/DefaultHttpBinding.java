@@ -377,7 +377,7 @@ public class DefaultHttpBinding implements HttpBinding {
             String key = entry.getKey();
             Object value = entry.getValue();
             // use an iterator as there can be multiple values. (must not use a delimiter)
-            final Iterator<?> it = ObjectHelper.createIterator(value, null);
+            final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
             while (it.hasNext()) {
                 String headerValue = convertHeaderValueToString(exchange, it.next());
                 if (headerValue != null && headerFilterStrategy != null
