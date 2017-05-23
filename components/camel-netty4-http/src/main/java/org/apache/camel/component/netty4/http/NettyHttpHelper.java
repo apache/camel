@@ -110,6 +110,8 @@ public final class NettyHttpHelper {
         }
         String name = message.getHeader(Exchange.HTTP_METHOD, String.class);
         if (name != null) {
+            // must be in upper case
+            name = name.toUpperCase();
             return HttpMethod.valueOf(name);
         }
 
