@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.spring;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.spring.SpringCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -31,6 +33,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         LOG.info("@RunWith(CamelSpringBootJUnit4ClassRunner.class) preparing: {}", testContext.getTestClass());
 
         Class<?> testClass = testContext.getTestClass();
+        SpringCamelContext.setNoStart(true);
         ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
 
         // Post CamelContext(s) instantiation but pre CamelContext(s) start setup
@@ -39,6 +42,9 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
         CamelAnnotationsHandler.handleMockEndpointsAndSkip(context, testClass);
         CamelAnnotationsHandler.handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
+        SpringCamelContext.setNoStart(false);
+        CamelContext camelContext = context.getBean(CamelContext.class);
+        camelContext.start();
     }
 
     @Override
