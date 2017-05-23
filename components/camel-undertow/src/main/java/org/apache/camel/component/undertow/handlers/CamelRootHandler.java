@@ -69,7 +69,7 @@ public class CamelRootHandler implements HttpHandler {
             // Adding a handler for the static path
             if (basePathHandler instanceof CamelPathTemplateHandler) {
                 CamelPathTemplateHandler templateHandler = (CamelPathTemplateHandler)basePathHandler;
-                if (prefixMatch) {
+                if (!prefixMatch) {
                     targetHandler = templateHandler.getDefault();
                 } else {
                     throw new IllegalArgumentException(String.format("Duplicate handlers on a path '%s'", path));
