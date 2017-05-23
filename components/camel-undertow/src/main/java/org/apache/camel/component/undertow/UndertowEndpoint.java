@@ -68,8 +68,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private String httpMethodRestrict;
-    @UriParam(label = "consumer", defaultValue = "true")
-    private Boolean matchOnUriPrefix = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private Boolean matchOnUriPrefix = Boolean.FALSE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "false")
