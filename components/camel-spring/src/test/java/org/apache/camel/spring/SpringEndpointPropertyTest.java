@@ -27,6 +27,8 @@ public class SpringEndpointPropertyTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        System.clearProperty("CamelSedaPollTimeout");
+
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringEndpointPropertyTest.xml");
     }
 
@@ -39,9 +41,9 @@ public class SpringEndpointPropertyTest extends SpringTestSupport {
         SedaEndpoint foo = applicationContext.getBean("foo", SedaEndpoint.class);
         assertNotNull(foo);
         assertEquals(100, foo.getSize());
-        assertEquals(5000, foo.getPollTimeout());
+        assertEquals(250, foo.getPollTimeout());
         assertEquals(true, foo.isBlockWhenFull());
-        assertEquals("seda://foo?blockWhenFull=true&pollTimeout=5000&size=100", foo.getEndpointUri());
+        assertEquals("seda://foo?blockWhenFull=true&pollTimeout=250&size=100", foo.getEndpointUri());
 
         SedaEndpoint bar = applicationContext.getBean("bar", SedaEndpoint.class);
         assertNotNull(bar);
