@@ -523,7 +523,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public void expectedHeaderReceived(final String name, final Object value) {
         if (expectedHeaderValues == null) {
-            expectedHeaderValues = new CaseInsensitiveMap();
+            expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             // we just wants to expects to be called once
             expects(new Runnable() {
                 public void run() {
@@ -1310,7 +1310,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         if (expectedHeaderValues != null) {
             if (actualHeaderValues == null) {
-                actualHeaderValues = new CaseInsensitiveMap();
+                actualHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             }
             if (in.hasHeaders()) {
                 actualHeaderValues.putAll(in.getHeaders());
@@ -1319,7 +1319,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         if (expectedPropertyValues != null) {
             if (actualPropertyValues == null) {
-                actualPropertyValues = new ConcurrentHashMap<String, Object>();
+                actualPropertyValues = getCamelContext().getHeadersMapFactory().newMap();
             }
             actualPropertyValues.putAll(copy.getProperties());
         }

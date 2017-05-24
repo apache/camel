@@ -128,24 +128,21 @@ public final class DefaultExchange implements Exchange {
         return exchange;
     }
 
-    private static Map<String, Object> safeCopyHeaders(Map<String, Object> headers) {
+    private Map<String, Object> safeCopyHeaders(Map<String, Object> headers) {
         if (headers == null) {
             return null;
         }
 
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.putAll(headers);
-        return answer;
+        return context.getHeadersMapFactory().fromMap(headers);
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
+    private Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
         if (properties == null) {
             return null;
         }
 
-        // TODO: properties should use same map kind as headers
-        Map<String, Object> answer = new ConcurrentHashMap<String, Object>(properties);
+        Map<String, Object> answer = context.getHeadersMapFactory().fromMap(properties);
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);

@@ -21,6 +21,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import javax.activation.DataHandler;
 
+import org.apache.camel.spi.HeadersMapFactory;
+
 /**
  * Implements the <a
  * href="http://camel.apache.org/message.html">Message</a> pattern and
@@ -28,6 +30,8 @@ import javax.activation.DataHandler;
  * <p/>
  * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers
  * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
+ * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
+ * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  *
  * @version 
  */
@@ -172,6 +176,8 @@ public interface Message {
      * <p/>
      * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers
      * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
+     * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
+     * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
      * <p/>
      * <b>Important:</b> If you want to walk the returned {@link Map} and fetch all the keys and values, you should use
      * the {@link java.util.Map#entrySet()} method, which ensure you get the keys in the original case.
