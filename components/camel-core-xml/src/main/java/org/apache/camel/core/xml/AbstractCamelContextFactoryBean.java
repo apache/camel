@@ -88,6 +88,7 @@ import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -255,6 +256,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (runtimeEndpointRegistry != null) {
             LOG.info("Using custom RuntimeEndpointRegistry: {}", runtimeEndpointRegistry);
             getContext().setRuntimeEndpointRegistry(runtimeEndpointRegistry);
+        }
+        HeadersMapFactory headersMapFactory = getBeanForType(HeadersMapFactory.class);
+        if (headersMapFactory != null) {
+            LOG.info("Using custom HeadersMapFactory: {}", headersMapFactory);
+            getContext().setHeadersMapFactory(headersMapFactory);
         }
         // custom type converters defined as <bean>s
         Map<String, TypeConverters> typeConverters = getContext().getRegistry().findByTypeWithName(TypeConverters.class);

@@ -19,6 +19,8 @@ package org.apache.camel.component.rest;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Test;
 
@@ -26,6 +28,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class RestProducerTest {
+
+    private CamelContext camelContext = new DefaultCamelContext();
 
     @Test
     public void shouldCreateDefinedQueryParameters() throws UnsupportedEncodingException, URISyntaxException {
@@ -35,7 +39,7 @@ public class RestProducerTest {
     @Test
     public void shouldCreateOptionalPlaceholderQueryParametersForPresentValues()
         throws UnsupportedEncodingException, URISyntaxException {
-        final DefaultMessage message = new DefaultMessage();
+        final DefaultMessage message = new DefaultMessage(camelContext);
         message.setHeader("param", "header");
 
         assertEquals("param=header", RestProducer.createQueryParameters("param={param?}", message));
@@ -43,7 +47,7 @@ public class RestProducerTest {
 
     @Test
     public void shouldCreatePlaceholderQueryParameters() throws UnsupportedEncodingException, URISyntaxException {
-        final DefaultMessage message = new DefaultMessage();
+        final DefaultMessage message = new DefaultMessage(camelContext);
         message.setHeader("param", "header");
 
         assertEquals("param=header", RestProducer.createQueryParameters("param={param}", message));
@@ -57,14 +61,14 @@ public class RestProducerTest {
     @Test
     public void shouldNotCreateOptionalPlaceholderQueryParametersForMissingValues()
         throws UnsupportedEncodingException, URISyntaxException {
-        final DefaultMessage message = new DefaultMessage();
+        final DefaultMessage message = new DefaultMessage(camelContext);
 
         assertEquals("", RestProducer.createQueryParameters("param={param?}", message));
     }
 
     @Test
     public void shouldSupportAllCombinations() throws UnsupportedEncodingException, URISyntaxException {
-        final DefaultMessage message = new DefaultMessage();
+        final DefaultMessage message = new DefaultMessage(camelContext);
         message.setHeader("required", "header_required");
         message.setHeader("optional_present", "header_optional_present");
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -33,7 +35,8 @@ import org.apache.camel.spi.DataTypeAware;
  *
  * @version 
  */
-public abstract class MessageSupport implements Message, DataTypeAware {
+public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
+    private CamelContext camelContext;
     private Exchange exchange;
     private Object body;
     private String messageId;
@@ -150,6 +153,10 @@ public abstract class MessageSupport implements Message, DataTypeAware {
 
     public Message copy() {
         Message answer = newInstance();
+        // must copy over CamelContext
+        if (answer instanceof CamelContextAware) {
+            ((CamelContextAware) answer).setCamelContext(getCamelContext());
+        }
         answer.copyFrom(this);
         return answer;
     }
@@ -159,10 +166,16 @@ public abstract class MessageSupport implements Message, DataTypeAware {
             // the same instance so do not need to copy
             return;
         }
-        copyFromWithNewBody(that, that.getBody());
+
+        // must copy over CamelContext
+        if (that instanceof CamelContextAware) {
+            setCamelContext(((CamelContextAware) that).getCamelContext());
+        }
         if (that instanceof DataTypeAware) {
             setDataType(((DataTypeAware)that).getDataType());
         }
+
+        copyFromWithNewBody(that, that.getBody());
     }
 
     public void copyFromWithNewBody(Message that, Object newBody) {
@@ -170,6 +183,12 @@ public abstract class MessageSupport implements Message, DataTypeAware {
             // the same instance so do not need to copy
             return;
         }
+
+        // must copy over CamelContext
+        if (that instanceof CamelContextAware) {
+            setCamelContext(((CamelContextAware) that).getCamelContext());
+        }
+        // should likely not set DataType as the new body may be a different type than the original body
 
         setMessageId(that.getMessageId());
         setBody(newBody);
@@ -202,7 +221,15 @@ public abstract class MessageSupport implements Message, DataTypeAware {
     public void setExchange(Exchange exchange) {
         this.exchange = exchange;
     }
-    
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     public void copyAttachments(Message that) {
         // the attachments may be the same instance if the end user has made some mistake
         // and set the OUT message with the same attachment instance of the IN message etc
