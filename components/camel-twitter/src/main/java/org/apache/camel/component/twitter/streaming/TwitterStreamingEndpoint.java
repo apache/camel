@@ -26,6 +26,7 @@ import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandle
 import org.apache.camel.component.twitter.data.StreamingType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
@@ -39,12 +40,16 @@ public class TwitterStreamingEndpoint extends AbstractTwitterEndpoint {
     @Metadata(required = "true")
     private StreamingType streamingType;
 
-    public TwitterStreamingEndpoint(String uri, String remaining, TwitterStreamingComponent component, TwitterConfiguration properties) {
+    @UriParam(description = "Can be used for a streaming filter. Multiple values can be separated with comma.", label = "consumer,filter")
+    private String keywords;
+
+    public TwitterStreamingEndpoint(String uri, String remaining, String keywords, TwitterStreamingComponent component, TwitterConfiguration properties) {
         super(uri, component, properties);
         if (remaining == null) {
             throw new IllegalArgumentException(String.format("The streaming type must be specified for '%s'", uri));
         }
         this.streamingType = StreamingType.valueOf(remaining.toUpperCase());
+        this.keywords = keywords;
     }
 
     @Override
@@ -60,7 +65,7 @@ public class TwitterStreamingEndpoint extends AbstractTwitterEndpoint {
             handler = new SampleStreamingConsumerHandler(this);
             break;
         case FILTER:
-            handler = new FilterStreamingConsumerHandler(this);
+            handler = new FilterStreamingConsumerHandler(this, keywords);
             break;
         case USER:
             handler = new UserStreamingConsumerHandler(this);

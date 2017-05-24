@@ -96,7 +96,7 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
             Assert.assertEquals(5, result.getErrors().size());
 
             List<String> expected = new LinkedList<>();
-            expected.add("endpointId");
+            expected.add("keywords");
             expected.add("consumerKey");
             expected.add("consumerSecret");
             expected.add("accessToken");

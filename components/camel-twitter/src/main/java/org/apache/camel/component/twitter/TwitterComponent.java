@@ -56,7 +56,7 @@ public class TwitterComponent extends AbstractTwitterComponent {
         String[] tokens = remaining.split("/");
         LOG.warn("The scheme syntax 'twitter:{}' has been deprecated. Use 'twitter-{}' instead.", tokens[0], tokens[0]);
 
-        TwitterEndpoint endpoint;
+        CommonPropertiesTwitterEndpoint endpoint;
 
         switch (properties.getType()) {
         case POLLING:
@@ -69,6 +69,8 @@ public class TwitterComponent extends AbstractTwitterComponent {
             endpoint = new TwitterEndpointDirect(uri, remaining, this, properties);
             break;
         }
+        endpoint.setUser(getAndRemoveParameter(parameters, "user", String.class));
+        endpoint.setKeywords(getAndRemoveParameter(parameters, "keywords", String.class));
         return endpoint;
     }
 
