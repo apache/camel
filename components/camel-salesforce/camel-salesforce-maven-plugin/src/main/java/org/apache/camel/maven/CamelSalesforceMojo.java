@@ -110,6 +110,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
     private static final String SOBJECT_QUERY_RECORDS_OPTIONAL_VM = "/sobject-query-records-optional.vm";
     private static final String SOBJECT_PICKLIST_VM = "/sobject-picklist.vm";
 
+    private static final List<String> IGNORED_OBJECTS = Arrays.asList("FieldDefinition");
+
     // used for velocity logging, to avoid creating velocity.log
     private static final Logger LOG = Logger.getLogger(CamelSalesforceMojo.class.getName());
 
@@ -371,7 +373,14 @@ public class CamelSalesforceMojo extends AbstractMojo {
                     if (ex != null) {
                         throw ex;
                     }
-                    descriptions.add(mapper.readValue(callback.getResponse(), SObjectDescription.class));
+                    final SObjectDescription description = mapper.readValue(callback.getResponse(), SObjectDescription.class);
+
+                    // remove some of the unused used metadata
+                    // properties in order to minimize the code size
+                    // for CAMEL-11310
+                    final SObjectDescription descriptionToAdd = description.prune();
+
+                    descriptions.add(descriptionToAdd);
                 } catch (Exception e) {
                     String msg = "Error getting SObject description for '" + name + "': " + e.getMessage();
                     throw new MojoExecutionException(msg, e);
@@ -399,6 +408,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
             // should we provide a flag to control timestamp generation?
             final String generatedDate = new Date().toString();
             for (SObjectDescription description : descriptions) {
+                if (IGNORED_OBJECTS.contains(description.getName())) {
+                    continue;
+                }
                 try {
                     processDescription(pkgDir, description, utility, generatedDate);
                 } catch (IOException e) {
