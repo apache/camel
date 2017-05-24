@@ -198,6 +198,13 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             result.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
+        // any additional query parameters from parameters then we need to include them as well
+        if (!parameters.isEmpty()) {
+            result.setQueryParameters(parameters);
+            endpointUri = URISupport.appendParametersToURI(endpointUri, parameters);
+            result.setCompleteEndpointUri(endpointUri);
+        }
+
         return result;
     }
 

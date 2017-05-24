@@ -17,13 +17,11 @@
 package org.apache.camel.component.restlet;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version 
  */
-@Ignore("Need to add support for lenient properties to producer")
 public class RestletHttpEmptyQueryParameterTest extends RestletTestSupport {
 
     @Test
