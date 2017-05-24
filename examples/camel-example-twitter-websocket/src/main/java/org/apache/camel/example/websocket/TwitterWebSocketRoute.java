@@ -17,7 +17,7 @@
 package org.apache.camel.example.websocket;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.twitter.TwitterComponent;
+import org.apache.camel.component.twitter.search.TwitterSearchComponent;
 import org.apache.camel.component.websocket.WebsocketComponent;
 
 /**
@@ -99,7 +99,7 @@ public class TwitterWebSocketRoute extends RouteBuilder {
         wc.setStaticResources("classpath:.");
 
         // setup Twitter component
-        TwitterComponent tc = getContext().getComponent("twitter", TwitterComponent.class);
+        TwitterSearchComponent tc = getContext().getComponent("twitter-search", TwitterSearchComponent.class);
         tc.setAccessToken(accessToken);
         tc.setAccessTokenSecret(accessTokenSecret);
         tc.setConsumerKey(consumerKey);
