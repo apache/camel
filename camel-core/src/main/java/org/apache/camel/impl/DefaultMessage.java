@@ -24,7 +24,9 @@ import java.util.function.Supplier;
 import javax.activation.DataHandler;
 
 import org.apache.camel.Attachment;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.util.AttachmentMap;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.EndpointHelper;
@@ -37,6 +39,8 @@ import org.apache.camel.util.ObjectHelper;
  * This allows us to be able to lookup headers using case insensitive keys, making it easier for end users
  * as they do not have to be worried about using exact keys.
  * See more details at {@link org.apache.camel.util.CaseInsensitiveMap}.
+ * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
+ * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  *
  * @version 
  */
@@ -204,11 +208,11 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public void setHeaders(Map<String, Object> headers) {
-        if (headers instanceof CaseInsensitiveMap) {
+        if (getExchange().getContext().getHeadersMapFactory().isInstanceOf(headers)) {
             this.headers = headers;
         } else {
-            // wrap it in a case insensitive map
-            this.headers = new CaseInsensitiveMap(headers);
+            // create a new map
+            this.headers = getExchange().getContext().getHeadersMapFactory().fromMap(headers);
         }
     }
 
@@ -233,7 +237,7 @@ public class DefaultMessage extends MessageSupport {
      *         the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
-        Map<String, Object> map = new CaseInsensitiveMap();
+        Map<String, Object> map = getExchange().getContext().getHeadersMapFactory().newMap();
         populateInitialHeaders(map);
         return map;
     }

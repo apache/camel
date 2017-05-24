@@ -136,6 +136,7 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
@@ -235,6 +236,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<RoutePolicyFactory>();
     private Set<LogListener> logListeners = new LinkedHashSet<>();
+    private HeadersMapFactory headersMapFactory = new DefaultHeadersMapFactory();
 
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
@@ -304,6 +306,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final RuntimeCamelCatalog runtimeCamelCatalog = new DefaultRuntimeCamelCatalog(this, true);
     private SSLContextParameters sslContextParameters;
     private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(HashSet::new);
+
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
      * but will silently fallback and use {@link SimpleRegistry} if JNDI cannot be used.
@@ -4473,6 +4476,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     @Override
     public SSLContextParameters getSSLContextParameters() {
         return this.sslContextParameters;
+    }
+
+    @Override
+    public HeadersMapFactory getHeadersMapFactory() {
+        return headersMapFactory;
+    }
+
+    @Override
+    public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
+        this.headersMapFactory = headersMapFactory;
     }
 
     protected Map<String, RouteService> getRouteServices() {

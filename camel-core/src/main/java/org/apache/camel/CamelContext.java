@@ -53,6 +53,7 @@ import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
@@ -1987,5 +1988,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets the global SSL context parameters if configured.
      */
     SSLContextParameters getSSLContextParameters();
+
+    /**
+     * Gets the {@link HeadersMapFactory} to use.
+     */
+    HeadersMapFactory getHeadersMapFactory();
+
+    /**
+     * Sets a custom {@link HeadersMapFactory} to be used.
+     */
+    void setHeadersMapFactory(HeadersMapFactory factory);
 
 }
