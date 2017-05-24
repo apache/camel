@@ -29,6 +29,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringJmxDumpRoutesAsXmlTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxDumpRouteAsXmlTest.xml");
     }

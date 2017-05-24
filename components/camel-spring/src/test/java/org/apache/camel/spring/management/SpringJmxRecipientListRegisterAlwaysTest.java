@@ -30,6 +30,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxRecipientListTestRegisterAlways.xml");
     }

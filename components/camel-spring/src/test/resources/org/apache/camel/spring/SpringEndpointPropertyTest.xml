@@ -34,7 +34,7 @@
     <!-- inside camelContext -->
     <endpoint id="foo" uri="seda:foo">
       <property key="size" value="100"/>
-      <property key="pollTimeout" value="5000"/>
+      <property key="pollTimeout" value="250"/>
       <property key="blockWhenFull" value="true"/>
     </endpoint>
 
