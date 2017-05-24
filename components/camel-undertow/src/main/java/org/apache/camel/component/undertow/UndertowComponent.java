@@ -198,9 +198,22 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             }
         }
 
+        boolean explicitOptions = true;
+        // must use upper case for restrict
+        String restrict = verb.toUpperCase(Locale.US);
+        // allow OPTIONS in rest-dsl to allow clients to call the API and have responses with ALLOW headers
+        if (!restrict.contains("OPTIONS")) {
+            restrict += ",OPTIONS";
+            // this is not an explicit OPTIONS path in the rest-dsl
+            explicitOptions = false;
+        }
+
         boolean cors = config.isEnableCORS();
         if (cors) {
             // allow HTTP Options as we want to handle CORS in rest-dsl
+            map.put("optionsEnabled", "true");
+        } else if (explicitOptions) {
+            // the rest-dsl is using OPTIONS
             map.put("optionsEnabled", "true");
         }
 
@@ -213,11 +226,6 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             url = "undertow:%s://%s:%s/%s?matchOnUriPrefix=false&httpMethodRestrict=%s";
         }
 
-        // must use upper case for restrict
-        String restrict = verb.toUpperCase(Locale.US);
-        if (cors) {
-            restrict += ",OPTIONS";
-        }
         // get the endpoint
         url = String.format(url, scheme, host, port, path, restrict);
 
