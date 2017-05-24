@@ -34,7 +34,7 @@ public class SampleAmqApplicationTests {
     @Autowired
     private CamelContext camelContext;
 
-    @Ignore("Requires a running activemq with openwire port 1234")
+    @Ignore("Requires a running activemq broker")
     public void shouldProduceMessages() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(camelContext).whenDone(1).create();
 
