@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReferenceCount;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.UserManagedCache;
@@ -32,35 +33,29 @@ public class EhcacheManager implements Service {
     private final EhcacheConfiguration configuration;
     private final CacheManager cacheManager;
     private final ConcurrentMap<String, UserManagedCache<?, ?>> userCaches;
-    private final boolean managed;
+    private final ReferenceCount refCount;
 
     public EhcacheManager(CacheManager cacheManager, boolean managed, EhcacheConfiguration configuration) {
-        this.cacheManager = cacheManager;
+        this.cacheManager = ObjectHelper.notNull(cacheManager, "cacheManager");
         this.userCaches = new ConcurrentHashMap<>();
-        this.managed = managed;
         this.configuration = configuration;
-
-        ObjectHelper.notNull(cacheManager, "cacheManager");
+        this.refCount = ReferenceCount.on(
+            managed ? cacheManager::init : () -> { },
+            managed ? cacheManager::close : () -> { }
+        );
     }
 
     @Override
     public synchronized void start() throws Exception {
-        if (managed) {
-            cacheManager.init();
-        }
+        refCount.retain();
     }
 
     @Override
     public synchronized void stop() throws Exception {
-        if (managed) {
-            cacheManager.close();
-        }
-
-        // Clean up any User managed cache
+        refCount.release();
         userCaches.values().forEach(UserManagedCache::close);
     }
 
-    @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getCache(String name, Class<K> keyType, Class<V> valueType) throws Exception {
         Cache<K, V> cache = cacheManager.getCache(name, keyType, valueType);
         if (cache == null && configuration != null && configuration.isCreateCacheIfNotExist()) {
@@ -71,10 +66,10 @@ public class EhcacheManager implements Service {
             } else {
                 // If a cache configuration is not provided, create a User Managed
                 // Cache
-                cache = (Cache<K, V>)userCaches.computeIfAbsent(
+                cache = Cache.class.cast(userCaches.computeIfAbsent(
                     name,
                     key -> UserManagedCacheBuilder.newUserManagedCacheBuilder(keyType, valueType).build(true)
-                );
+                ));
             }
         }
 
@@ -87,5 +82,9 @@ public class EhcacheManager implements Service {
 
     CacheManager getCacheManager() {
         return this.cacheManager;
+    }
+
+    ReferenceCount getReferenceCount() {
+        return refCount;
     }
 }

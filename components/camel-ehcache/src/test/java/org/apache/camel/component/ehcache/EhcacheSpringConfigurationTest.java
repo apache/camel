@@ -32,7 +32,7 @@ public class EhcacheSpringConfigurationTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "ehcache://myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
     private EhcacheEndpoint ehcacheConf;
-    @EndpointInject(uri = "ehcache://myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configUri=classpath:ehcache/ehcache-file-config.xml")
+    @EndpointInject(uri = "ehcache://myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
     private EhcacheEndpoint ehcacheFileConf;
 
     @Override
