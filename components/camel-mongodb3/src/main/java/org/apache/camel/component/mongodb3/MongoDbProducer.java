@@ -23,7 +23,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.DistinctIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -78,6 +82,7 @@ public class MongoDbProducer extends DefaultProducer {
         bind(MongoDbOperation.aggregate, createDoAggregate());
         bind(MongoDbOperation.command, createDoCommand());
         bind(MongoDbOperation.count, createDoCount());
+        bind(MongoDbOperation.findDistinct, createDoDistinct());
         bind(MongoDbOperation.findAll, createDoFindAll());
         bind(MongoDbOperation.findById, createDoFindById());
         bind(MongoDbOperation.findOneByQuery, createDoFindOneByQuery());
@@ -320,6 +325,32 @@ public class MongoDbProducer extends DefaultProducer {
                 query = new Document();
             }
             return calculateCollection(exch).count(query);
+        };
+    }
+
+    private Function<Exchange, Object> createDoDistinct() {
+        return exchange -> {
+            Iterable<String> result = new ArrayList<>();
+            MongoCollection<Document> dbCol = calculateCollection(exchange);
+
+            // get the parameters out of the Exchange Header
+            String distinctFieldName = exchange.getIn().getHeader(MongoDbConstants.DISTINCT_QUERY_FIELD, String.class);
+            //BasicDBObject query = exchange.getIn().getBody(BasicDBObject.class);
+            Bson query = exchange.getIn().getBody(Bson.class);
+            DistinctIterable<String> ret = null;
+            if (query != null) {
+                ret = dbCol.distinct(distinctFieldName, query, String.class);
+            } else {
+                ret = dbCol.distinct(distinctFieldName, String.class);
+            }
+
+            try {
+                ret.iterator().forEachRemaining(((List<String>) result)::add);
+                exchange.getOut().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, ((List<String>) result).size());
+            } finally {
+                ret.iterator().close();
+            }
+            return result;
         };
     }
 
