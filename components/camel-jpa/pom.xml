@@ -41,6 +41,8 @@
       !org.apache.camel.processor.interceptor.jpa.*,
       org.apache.camel.*;${camel.osgi.import.camel.version},
       ${camel.osgi.import.defaults},
+      org.hibernate.proxy;resolution:=optional,
+      javassist.util.proxy;resolution:=optional,
       *
     </camel.osgi.import.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jpa</camel.osgi.export.service>
