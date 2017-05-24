@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 91 (9 deprecated)
+Number of Examples: 92 (9 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
@@ -43,6 +43,8 @@ Number of Examples: 91 (9 deprecated)
 | link:camel-example-spring/README.md[Spring] (camel-example-spring) | Beginner | An example showing how to work with Camel and Spring
 
 | link:camel-example-spring-boot/readme.adoc[Spring Boot] (camel-example-spring-boot) | Beginner | An example showing how to work with Camel and Spring Boot
+
+| link:camel-example-spring-boot-activemq/readme.adoc[Spring Boot Activemq] (camel-example-spring-boot-activemq) | Beginner | An example showing how to work with Camel, ActiveMQ and Spring Boot
 
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
 

@@ -94,7 +94,7 @@
     <module>camel-example-splunk</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-boot</module>
-    <module>camel-example-spring-boot-amq</module>
+    <module>camel-example-spring-boot-activemq</module>
     <module>camel-example-spring-boot-geocoder</module>
     <module>camel-example-spring-boot-live-reload</module>
     <module>camel-example-spring-boot-metrics</module>
