@@ -60,7 +60,9 @@ public class SmppMessage extends DefaultMessage {
 
     @Override
     public SmppMessage newInstance() {
-        return new SmppMessage(this.configuration);
+        SmppMessage answer = new SmppMessage(this.configuration);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
     
     public boolean isAlertNotification() {

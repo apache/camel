@@ -35,6 +35,8 @@ public class HttpMessage extends DefaultMessage {
 
     public HttpMessage(Exchange exchange, HttpServletRequest request, HttpServletResponse response) {
         setExchange(exchange);
+        setCamelContext(exchange.getContext());
+
         this.request = request;
         this.response = response;
         // Put the request and response into the message header
@@ -56,6 +58,7 @@ public class HttpMessage extends DefaultMessage {
         this.request = request;
         this.response = response;
         setExchange(getExchange());
+        setCamelContext(exchange.getContext());
     }
 
     public HttpServletRequest getRequest() {

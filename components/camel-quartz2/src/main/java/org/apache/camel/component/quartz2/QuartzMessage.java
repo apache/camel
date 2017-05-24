@@ -30,6 +30,7 @@ public class QuartzMessage extends DefaultMessage {
     private final JobExecutionContext jobExecutionContext;
 
     public QuartzMessage(Exchange exchange, JobExecutionContext jobExecutionContext) {
+        super(exchange.getContext());
         this.jobExecutionContext = jobExecutionContext;
         setExchange(exchange);
         // do not set body as it should be null
@@ -60,5 +61,10 @@ public class QuartzMessage extends DefaultMessage {
             map.put("triggerName", trigger.getKey().getName());
             map.put("triggerGroup", trigger.getKey().getGroup());
         }
+    }
+
+    @Override
+    public DefaultMessage newInstance() {
+        return new QuartzMessage(getExchange(), jobExecutionContext);
     }
 }

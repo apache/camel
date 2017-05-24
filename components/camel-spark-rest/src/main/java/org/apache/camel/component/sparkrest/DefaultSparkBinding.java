@@ -48,7 +48,7 @@ public class DefaultSparkBinding implements SparkBinding {
     public Message toCamelMessage(Request request, Exchange exchange, SparkConfiguration configuration) throws Exception {
         LOG.trace("toCamelMessage: {}", request);
 
-        SparkMessage answer = new SparkMessage(request, null);
+        SparkMessage answer = new SparkMessage(exchange.getContext(), request, null);
         answer.setExchange(exchange);
         if (configuration.isMapHeaders()) {
             populateCamelHeaders(request, answer.getHeaders(), exchange, configuration);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.spring.integration;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 import org.springframework.messaging.support.MessageBuilder;
 
@@ -25,6 +27,8 @@ public class SpringIntegrationMessageTest {
 
     @Test
     public void testCopyFrom() {
+        CamelContext camelContext = new DefaultCamelContext();
+
         org.springframework.messaging.Message testSpringMessage =
             MessageBuilder.withPayload("Test")
                 .setHeader("header1", "value1")
@@ -32,6 +36,7 @@ public class SpringIntegrationMessageTest {
                 .build();
 
         SpringIntegrationMessage original = new SpringIntegrationMessage(testSpringMessage);
+        original.setCamelContext(camelContext);
 
         SpringIntegrationMessage copy = new SpringIntegrationMessage(testSpringMessage);
 

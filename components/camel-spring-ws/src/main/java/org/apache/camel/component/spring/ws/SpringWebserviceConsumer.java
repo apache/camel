@@ -107,7 +107,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
 
         // create inbound message
         WebServiceMessage request = messageContext.getRequest();
-        SpringWebserviceMessage inMessage = new SpringWebserviceMessage(request);
+        SpringWebserviceMessage inMessage = new SpringWebserviceMessage(exchange.getContext(), request);
         extractSourceFromSoapHeader(inMessage.getHeaders(), request);
         extractAttachmentsFromRequest(request, inMessage);
         exchange.setIn(inMessage);

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty.http;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
@@ -31,7 +32,8 @@ public class NettyHttpMessage extends DefaultMessage {
     private final transient HttpRequest httpRequest;
     private final transient HttpResponse httpResponse;
 
-    public NettyHttpMessage(HttpRequest httpRequest, HttpResponse httpResponse) {
+    public NettyHttpMessage(CamelContext camelContext, HttpRequest httpRequest, HttpResponse httpResponse) {
+        super(camelContext);
         this.httpRequest = httpRequest;
         this.httpResponse = httpResponse;
     }
@@ -46,6 +48,6 @@ public class NettyHttpMessage extends DefaultMessage {
 
     @Override
     public DefaultMessage newInstance() {
-        return new NettyHttpMessage(httpRequest, httpResponse);
+        return new NettyHttpMessage(getCamelContext(), httpRequest, httpResponse);
     }
 }

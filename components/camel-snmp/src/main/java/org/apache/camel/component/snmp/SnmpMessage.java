@@ -56,7 +56,9 @@ public class SnmpMessage extends DefaultMessage {
 
     @Override
     public SnmpMessage newInstance() {
-        return new SnmpMessage(this.pdu);
+        SnmpMessage answer = new SnmpMessage(this.pdu);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     @Override

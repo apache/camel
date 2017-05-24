@@ -191,7 +191,9 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public JmsMessage newInstance() {
-        return new JmsMessage(null, null, binding);
+        JmsMessage answer = new JmsMessage(null, null, binding);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     /**
