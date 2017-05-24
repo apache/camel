@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.paho;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -23,10 +24,8 @@ public class PahoMessage extends DefaultMessage {
 
     private transient MqttMessage mqttMessage;
 
-    public PahoMessage() {
-    }
-
-    public PahoMessage(MqttMessage mqttMessage) {
+    public PahoMessage(CamelContext camelContext, MqttMessage mqttMessage) {
+        super(camelContext);
         this.mqttMessage = mqttMessage;
     }
 
@@ -40,8 +39,7 @@ public class PahoMessage extends DefaultMessage {
 
     @Override
     public PahoMessage newInstance() {
-        return new PahoMessage(mqttMessage);
+        return new PahoMessage(getCamelContext(), mqttMessage);
     }
-
 
 }

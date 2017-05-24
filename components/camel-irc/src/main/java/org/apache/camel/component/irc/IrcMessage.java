@@ -122,7 +122,9 @@ public class IrcMessage extends DefaultMessage {
 
     @Override
     public IrcMessage newInstance() {
-        return new IrcMessage();
+        IrcMessage answer = new IrcMessage();
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     @Override

@@ -68,55 +68,82 @@ public class IrcEndpoint extends DefaultEndpoint {
 
     public Exchange createOnPrivmsgExchange(String target, IRCUser user, String msg) {
         Exchange exchange = createExchange();
-        exchange.setIn(new IrcMessage("PRIVMSG", target, user, msg));
+        IrcMessage im = new IrcMessage("PRIVMSG", target, user, msg);
+        im.setExchange(exchange);
+        im.setCamelContext(exchange.getContext());
+        exchange.setIn(im);
         return exchange;
     }
 
     public Exchange createOnNickExchange(IRCUser user, String newNick) {
         Exchange exchange = createExchange();
-        exchange.setIn(new IrcMessage("NICK", user, newNick));
+        IrcMessage im = new IrcMessage("NICK", user, newNick);
+        im.setExchange(exchange);
+        im.setCamelContext(exchange.getContext());
+        exchange.setIn(im);
         return exchange;
     }
 
     public Exchange createOnQuitExchange(IRCUser user, String msg) {
         Exchange exchange = createExchange();
-        exchange.setIn(new IrcMessage("QUIT", user, msg));
+        IrcMessage im = new IrcMessage("QUIT", user, msg);
+        im.setExchange(exchange);
+        im.setCamelContext(exchange.getContext());
+        exchange.setIn(im);
         return exchange;
     }
 
     public Exchange createOnJoinExchange(String channel, IRCUser user) {
         Exchange exchange = createExchange();
-        exchange.setIn(new IrcMessage("JOIN", channel, user));
+        IrcMessage im = new IrcMessage("JOIN", channel, user);
+        im.setExchange(exchange);
+        im.setCamelContext(exchange.getContext());
+        exchange.setIn(im);
         return exchange;
     }
 
     public Exchange createOnKickExchange(String channel, IRCUser user, String whoWasKickedNick, String msg) {
         Exchange exchange = createExchange();
-        exchange.setIn(new IrcMessage("KICK", channel, user, whoWasKickedNick, msg));
+        IrcMessage im = new IrcMessage("KICK", channel, user, whoWasKickedNick, msg);
+        im.setExchange(exchange);
+        im.setCamelContext(exchange.getContext());
+        exchange.setIn(im);
         return exchange;
     }
 
     public Exchange createOnModeExchange(String channel, IRCUser user, IRCModeParser modeParser) {
         Exchange exchange = createExchange();
-        exchange.setIn(new IrcMessage("MODE", channel, user, modeParser.getLine()));
+        IrcMessage im = new IrcMessage("MODE", channel, user, modeParser.getLine());
+        im.setExchange(exchange);
+        im.setCamelContext(exchange.getContext());
+        exchange.setIn(im);
         return exchange;
     }
 
     public Exchange createOnPartExchange(String channel, IRCUser user, String msg) {
         Exchange exchange = createExchange();
-        exchange.setIn(new IrcMessage("PART", channel, user, msg));
+        IrcMessage im = new IrcMessage("PART", channel, user, msg);
+        im.setExchange(exchange);
+        im.setCamelContext(exchange.getContext());
+        exchange.setIn(im);
         return exchange;
     }
 
     public Exchange createOnReplyExchange(int num, String value, String msg) {
         Exchange exchange = createExchange();
-        exchange.setIn(new IrcMessage("REPLY", num, value, msg));
+        IrcMessage im = new IrcMessage("REPLY", num, value, msg);
+        im.setExchange(exchange);
+        im.setCamelContext(exchange.getContext());
+        exchange.setIn(im);
         return exchange;
     }
 
     public Exchange createOnTopicExchange(String channel, IRCUser user, String topic) {
         Exchange exchange = createExchange();
-        exchange.setIn(new IrcMessage("TOPIC", channel, user, topic));
+        IrcMessage im = new IrcMessage("TOPIC", channel, user, topic);
+        im.setExchange(exchange);
+        im.setCamelContext(exchange.getContext());
+        exchange.setIn(im);
         return exchange;
     }
 

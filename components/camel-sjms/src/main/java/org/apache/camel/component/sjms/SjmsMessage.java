@@ -204,7 +204,9 @@ public class SjmsMessage extends DefaultMessage {
 
     @Override
     public SjmsMessage newInstance() {
-        return new SjmsMessage(null, null, binding);
+        SjmsMessage answer = new SjmsMessage(null, null, binding);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     /**

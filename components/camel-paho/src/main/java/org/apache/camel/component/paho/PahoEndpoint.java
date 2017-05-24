@@ -140,12 +140,12 @@ public class PahoEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createExchange(MqttMessage mqttMessage, String topic) {
-        PahoMessage paho = new PahoMessage();
-        paho.setMqttMessage(mqttMessage);
+        Exchange exchange = createExchange();
+
+        PahoMessage paho = new PahoMessage(exchange.getContext(), mqttMessage);
         paho.setBody(mqttMessage.getPayload());
         paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
 
-        Exchange exchange = createExchange();
         exchange.setIn(paho);
         return exchange;
     }
