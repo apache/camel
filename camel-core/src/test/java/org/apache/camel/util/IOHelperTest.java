@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
@@ -104,7 +105,7 @@ public class IOHelperTest extends TestCase {
     }
 
     public void testCharsetName() throws Exception {
-        Exchange exchange = new DefaultExchange((CamelContext) null);
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
         assertNull(IOHelper.getCharsetName(exchange, false));
 

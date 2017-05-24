@@ -503,6 +503,7 @@ public final class DefaultExchange implements Exchange {
         if (message instanceof MessageSupport) {
             MessageSupport messageSupport = (MessageSupport)message;
             messageSupport.setExchange(this);
+            messageSupport.setCamelContext(getContext());
         }
     }
 

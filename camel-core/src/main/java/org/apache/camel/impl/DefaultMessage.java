@@ -28,7 +28,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.util.AttachmentMap;
-import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -49,6 +48,17 @@ public class DefaultMessage extends MessageSupport {
     private Map<String, Object> headers;
     private Map<String, DataHandler> attachments;
     private Map<String, Attachment> attachmentObjects;
+
+    /**
+     * @deprecated use {@link #DefaultMessage(CamelContext)}
+     */
+    @Deprecated
+    public DefaultMessage() {
+    }
+
+    public DefaultMessage(CamelContext camelContext) {
+        setCamelContext(camelContext);
+    }
 
     public boolean isFault() {
         return fault;
@@ -208,11 +218,13 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public void setHeaders(Map<String, Object> headers) {
-        if (getExchange().getContext().getHeadersMapFactory().isInstanceOf(headers)) {
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+
+        if (getCamelContext().getHeadersMapFactory().isInstanceOf(headers)) {
             this.headers = headers;
         } else {
             // create a new map
-            this.headers = getExchange().getContext().getHeadersMapFactory().fromMap(headers);
+            this.headers = getCamelContext().getHeadersMapFactory().fromMap(headers);
         }
     }
 
@@ -225,7 +237,11 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public DefaultMessage newInstance() {
-        return new DefaultMessage();
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+
+        DefaultMessage answer = new DefaultMessage();
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     /**
@@ -237,7 +253,9 @@ public class DefaultMessage extends MessageSupport {
      *         the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
-        Map<String, Object> map = getExchange().getContext().getHeadersMapFactory().newMap();
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+
+        Map<String, Object> map = getCamelContext().getHeadersMapFactory().newMap();
         populateInitialHeaders(map);
         return map;
     }
