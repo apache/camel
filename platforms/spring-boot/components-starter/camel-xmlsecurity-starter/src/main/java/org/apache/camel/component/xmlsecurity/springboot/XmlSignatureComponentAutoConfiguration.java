@@ -23,10 +23,12 @@ import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.xmlsecurity.XmlSignatureComponent;
 import org.apache.camel.spi.ComponentCustomizer;
+import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationProperties;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -36,6 +38,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -56,13 +59,13 @@ public class XmlSignatureComponentAutoConfiguration {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(XmlSignatureComponentAutoConfiguration.class);
     @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
     private CamelContext camelContext;
+    @Autowired
+    private XmlSignatureComponentConfiguration configuration;
     @Autowired(required = false)
     private List<ComponentCustomizer<XmlSignatureComponent>> customizers;
-    @Autowired
-    private ComponentConfigurationProperties globalConfiguration;
-    @Autowired
-    private XmlSignatureComponentConfiguration componentConfiguration;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
@@ -78,8 +81,8 @@ public class XmlSignatureComponentAutoConfiguration {
         XmlSignatureComponent component = new XmlSignatureComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(componentConfiguration, parameters,
-                null, false);
+        IntrospectionSupport.getProperties(configuration, parameters, null,
+                false);
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             Object value = entry.getValue();
             Class<?> paramClass = value.getClass();
@@ -102,14 +105,23 @@ public class XmlSignatureComponentAutoConfiguration {
         }
         IntrospectionSupport.setProperties(camelContext,
                 camelContext.getTypeConverter(), component, parameters);
-        boolean useCustomizers = globalConfiguration.getCustomizer()
-                .isEnabled()
-                && componentConfiguration.getCustomizer().isEnabled();
-        if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {
+        if (ObjectHelper.isNotEmpty(customizers)) {
             for (ComponentCustomizer<XmlSignatureComponent> customizer : customizers) {
-                LOGGER.debug("Configure component {}, with customizer {}",
-                        component, customizer);
-                customizer.customize(component);
+                boolean useCustomizer = (customizer instanceof HasId)
+                        ? HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.xmlsecurity.customizer",
+                                ((HasId) customizer).getId())
+                        : HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.xmlsecurity.customizer");
+                if (useCustomizer) {
+                    LOGGER.debug("Configure component {}, with customizer {}",
+                            component, customizer);
+                    customizer.customize(component);
+                }
             }
         }
         return component;

@@ -89,29 +89,30 @@ from("direct:start")
             .simple("undertow:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello");
 ----
 
-### Configuring Service Call
+### Options
+// eip options: START
+The Service Call EIP supports 14 options which are listed below:
 
-The Service Call EIP can be configured through the following options:
 
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | name | String | *Required* Sets the name of the service to use
-| uri | String | The uri of the endpoint to send to.
+| uri | String | The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.
 | component | String | The component to use.
 | pattern | ExchangePattern | Sets the optional ExchangePattern used to invoke this endpoint
 | configurationRef | String | Refers to a ServiceCall configuration to use
 | serviceDiscoveryRef | String | Sets a reference to a custom ServiceDiscovery to use.
-| serviceDiscovery | ServiceDiscovery | Sets the ServiceDiscovery to use ([.underline]_Java DSL only_).
 | serviceFilterRef | String | Sets a reference to a custom ServiceFilter to use.
-| serviceFilter | ServiceFilter | Sets the ServiceFilter to use ([.underline]_Java DSL only_).
 | serviceChooserRef | String | Sets a reference to a custom ServiceChooser to use.
-| serviceChooser | ServiceChooser | Sets the ServiceChooser to use ([.underline]_Java DSL only_).
-| loadBalancerRef | String | Sets a reference to a custom LoadBalancer to use.
-| loadBalancer | LoadBalancer | Sets the LoadBalancer to use ([.underline]_Java DSL only_).
+| loadBalancerRef | String | Sets a reference to a custom ServiceLoadBalancer to use.
 | expressionRef | String | Set a reference to a custom Expression to use.
-| expression | Expression | Set the Expression to use to compute the Camel URI ([.underline]_Java DSL only_).
+| serviceDiscoveryConfiguration | ServiceCallServiceDiscoveryConfiguration | *Required* Configures the ServiceDiscovery using the given configuration.
+| serviceFilterConfiguration | ServiceCallServiceFilterConfiguration | *Required* Configures the ServiceFilter using the given configuration.
+| loadBalancerConfiguration | ServiceCallServiceLoadBalancerConfiguration | *Required* Configures the LoadBalancer using the given configuration.
+| expressionConfiguration | ServiceCallExpressionConfiguration | *Required* Configures the Expression using the given configuration.
 |=======================================================================
+// eip options: END
 
 In addition to ref/binding configuration style you can leverage specific configuration DSL to customize specific options:
 

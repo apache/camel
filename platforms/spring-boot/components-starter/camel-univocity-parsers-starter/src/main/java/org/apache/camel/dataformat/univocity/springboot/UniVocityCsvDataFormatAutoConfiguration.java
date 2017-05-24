@@ -27,10 +27,12 @@ import org.apache.camel.dataformat.univocity.UniVocityCsvDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
+import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -40,6 +42,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -59,13 +62,13 @@ public class UniVocityCsvDataFormatAutoConfiguration {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(UniVocityCsvDataFormatAutoConfiguration.class);
     @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
     private CamelContext camelContext;
+    @Autowired
+    private UniVocityCsvDataFormatConfiguration configuration;
     @Autowired(required = false)
     private List<DataFormatCustomizer<UniVocityCsvDataFormat>> customizers;
-    @Autowired
-    private DataFormatConfigurationProperties globalConfiguration;
-    @Autowired
-    private UniVocityCsvDataFormatConfiguration dataformatConfiguration;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
@@ -91,7 +94,7 @@ public class UniVocityCsvDataFormatAutoConfiguration {
                 }
                 try {
                     Map<String, Object> parameters = new HashMap<>();
-                    IntrospectionSupport.getProperties(dataformatConfiguration,
+                    IntrospectionSupport.getProperties(configuration,
                             parameters, null, false);
                     IntrospectionSupport.setProperties(camelContext,
                             camelContext.getTypeConverter(), dataformat,
@@ -99,15 +102,27 @@ public class UniVocityCsvDataFormatAutoConfiguration {
                 } catch (Exception e) {
                     throw new RuntimeCamelException(e);
                 }
-                boolean useCustomizers = globalConfiguration.getCustomizer()
-                        .isEnabled()
-                        && dataformatConfiguration.getCustomizer().isEnabled();
-                if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {
+                if (ObjectHelper.isNotEmpty(customizers)) {
                     for (DataFormatCustomizer<UniVocityCsvDataFormat> customizer : customizers) {
-                        LOGGER.debug(
-                                "Configure dataformat {}, with customizer {}",
-                                dataformat, customizer);
-                        customizer.customize(dataformat);
+                        boolean useCustomizer = (customizer instanceof HasId)
+                                ? HierarchicalPropertiesEvaluator
+                                        .evaluate(
+                                                applicationContext
+                                                        .getEnvironment(),
+                                                "camel.dataformat.customizer",
+                                                "camel.dataformat.univocity-csv.customizer",
+                                                ((HasId) customizer).getId())
+                                : HierarchicalPropertiesEvaluator
+                                        .evaluate(applicationContext
+                                                .getEnvironment(),
+                                                "camel.dataformat.customizer",
+                                                "camel.dataformat.univocity-csv.customizer");
+                        if (useCustomizer) {
+                            LOGGER.debug(
+                                    "Configure dataformat {}, with customizer {}",
+                                    dataformat, customizer);
+                            customizer.customize(dataformat);
+                        }
                     }
                 }
                 return dataformat;

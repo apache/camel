@@ -65,6 +65,7 @@ public class RestEndpointTest {
         final RestEndpoint restEndpoint = new RestEndpoint("rest:GET:/path", restComponent);
         restEndpoint.setComponentName("mock-rest");
         restEndpoint.setParameters(new HashMap<>());
+        restEndpoint.setHost("http://localhost");
 
         restEndpoint.setBindingMode(RestBindingMode.json);
 

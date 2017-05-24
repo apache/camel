@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -28,17 +27,22 @@ import org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatCustomizer;
 import org.apache.camel.spi.DataFormatFactory;
+import org.apache.camel.spi.HasId;
+import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.DataFormatConfigurationProperties;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -58,13 +62,13 @@ public class SnakeYAMLDataFormatAutoConfiguration {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(SnakeYAMLDataFormatAutoConfiguration.class);
     @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
     private CamelContext camelContext;
+    @Autowired
+    private SnakeYAMLDataFormatConfiguration configuration;
     @Autowired(required = false)
     private List<DataFormatCustomizer<SnakeYAMLDataFormat>> customizers;
-    @Autowired
-    private DataFormatConfigurationProperties globalConfiguration;
-    @Autowired
-    private SnakeYAMLDataFormatConfiguration dataformatConfiguration;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
@@ -90,7 +94,7 @@ public class SnakeYAMLDataFormatAutoConfiguration {
                 }
                 try {
                     Map<String, Object> parameters = new HashMap<>();
-                    IntrospectionSupport.getProperties(dataformatConfiguration,
+                    IntrospectionSupport.getProperties(configuration,
                             parameters, null, false);
                     IntrospectionSupport.setProperties(camelContext,
                             camelContext.getTypeConverter(), dataformat,
@@ -98,15 +102,27 @@ public class SnakeYAMLDataFormatAutoConfiguration {
                 } catch (Exception e) {
                     throw new RuntimeCamelException(e);
                 }
-                boolean useCustomizers = globalConfiguration.getCustomizer()
-                        .isEnabled()
-                        && dataformatConfiguration.getCustomizer().isEnabled();
-                if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {
+                if (ObjectHelper.isNotEmpty(customizers)) {
                     for (DataFormatCustomizer<SnakeYAMLDataFormat> customizer : customizers) {
-                        LOGGER.debug(
-                                "Configure dataformat {}, with customizer {}",
-                                dataformat, customizer);
-                        customizer.customize(dataformat);
+                        boolean useCustomizer = (customizer instanceof HasId)
+                                ? HierarchicalPropertiesEvaluator
+                                        .evaluate(
+                                                applicationContext
+                                                        .getEnvironment(),
+                                                "camel.dataformat.customizer",
+                                                "camel.dataformat.yaml-snakeyaml.customizer",
+                                                ((HasId) customizer).getId())
+                                : HierarchicalPropertiesEvaluator
+                                        .evaluate(applicationContext
+                                                .getEnvironment(),
+                                                "camel.dataformat.customizer",
+                                                "camel.dataformat.yaml-snakeyaml.customizer");
+                        if (useCustomizer) {
+                            LOGGER.debug(
+                                    "Configure dataformat {}, with customizer {}",
+                                    dataformat, customizer);
+                            customizer.customize(dataformat);
+                        }
                     }
                 }
                 return dataformat;

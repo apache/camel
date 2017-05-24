@@ -20,15 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.language.groovy.GroovyLanguage;
+import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.LanguageCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.LanguageConfigurationProperties;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -36,8 +37,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -58,13 +61,13 @@ public class GroovyLanguageAutoConfiguration {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(GroovyLanguageAutoConfiguration.class);
     @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
     private CamelContext camelContext;
+    @Autowired
+    private GroovyLanguageConfiguration configuration;
     @Autowired(required = false)
     private List<LanguageCustomizer<GroovyLanguage>> customizers;
-    @Autowired
-    private LanguageConfigurationProperties globalConfiguration;
-    @Autowired
-    private GroovyLanguageConfiguration languageConfiguration;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
@@ -85,18 +88,27 @@ public class GroovyLanguageAutoConfiguration {
             }
         }
         Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(languageConfiguration, parameters,
-                null, false);
+        IntrospectionSupport.getProperties(configuration, parameters, null,
+                false);
         IntrospectionSupport.setProperties(camelContext,
                 camelContext.getTypeConverter(), language, parameters);
-        boolean useCustomizers = globalConfiguration.getCustomizer()
-                .isEnabled()
-                && languageConfiguration.getCustomizer().isEnabled();
-        if (useCustomizers && ObjectHelper.isNotEmpty(customizers)) {
+        if (ObjectHelper.isNotEmpty(customizers)) {
             for (LanguageCustomizer<GroovyLanguage> customizer : customizers) {
-                LOGGER.debug("Configure language {}, with customizer {}",
-                        language, customizer);
-                customizer.customize(language);
+                boolean useCustomizer = (customizer instanceof HasId)
+                        ? HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.language.customizer",
+                                "camel.language.groovy.customizer",
+                                ((HasId) customizer).getId())
+                        : HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.language.customizer",
+                                "camel.language.groovy.customizer");
+                if (useCustomizer) {
+                    LOGGER.debug("Configure language {}, with customizer {}",
+                            language, customizer);
+                    customizer.customize(language);
+                }
             }
         }
         return language;

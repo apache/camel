@@ -15,4 +15,6 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.apache.camel.component.infinispan.springboot.customizer.RemoteCacheManagerCustomizer,\
+org.apache.camel.component.infinispan.springboot.customizer.EmbeddedCacheManagerCustomizer,\
 org.apache.camel.component.infinispan.springboot.InfinispanComponentAutoConfiguration
