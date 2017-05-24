@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ehcache.springboot;
+package org.apache.camel.component.ehcache.springboot.customizer;
 
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,7 +31,8 @@ import org.springframework.test.context.junit4.SpringRunner;
     },
     properties = {
         "debug=false",
-        "camel.component.ehcache.customizer.cache-manager.enabled=false"
+        "camel.component.customizer.enabled=true",
+        "camel.component.ehcache.customizer.enabled=false"
     })
-public class CacheManagerCustomizerNotEnabledTest extends CacheManagerCustomizerNotEnabledTestBase {
+public class CacheManagerCustomizerNotEnabledOnComponentTest extends CacheManagerCustomizerNotEnabledTestBase {
 }

@@ -14,19 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ehcache.springboot;
+package org.apache.camel.component.ehcache.springboot.customizer;
 
-import org.apache.camel.component.ehcache.EhcacheComponent;
-import org.ehcache.CacheManager;
-import org.ehcache.config.builders.CacheManagerBuilder;
-import org.junit.Assert;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -35,29 +27,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootApplication
 @SpringBootTest(
     classes = {
-        CacheManagerCustomizerTest.TestConfiguration.class
+        CacheConfigurationCustomizerNotEnabledTestBase.TestConfiguration.class
     },
     properties = {
         "debug=false",
+        "camel.component.ehcache.customizer.cache-configuration.enabled=false"
     })
-public class CacheManagerCustomizerTest {
-    @Autowired
-    CacheManager cacheManager;
-    @Autowired
-    EhcacheComponent component;
-
-    @Test
-    public void testComponentConfiguration() throws Exception {
-        Assert.assertNotNull(cacheManager);
-        Assert.assertNotNull(component);
-        Assert.assertEquals(cacheManager, component.getCacheManager());
-    }
-
-    @Configuration
-    public static class TestConfiguration {
-        @Bean(initMethod = "init", destroyMethod = "close")
-        public CacheManager cacheManager() {
-            return CacheManagerBuilder.newCacheManagerBuilder().build();
-        }
-    }
+public class CacheConfigurationCustomizerNotEnabledTest extends CacheConfigurationCustomizerNotEnabledTestBase {
 }

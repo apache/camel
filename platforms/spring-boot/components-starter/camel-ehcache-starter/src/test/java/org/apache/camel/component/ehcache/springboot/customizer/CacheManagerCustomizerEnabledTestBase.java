@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ehcache.springboot;
+package org.apache.camel.component.ehcache.springboot.customizer;
 
 import org.apache.camel.component.ehcache.EhcacheComponent;
 import org.ehcache.CacheManager;
@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-class CacheManagerCustomizerNotEnabledTestBase {
+class CacheManagerCustomizerEnabledTestBase {
     @Autowired
     CacheManager cacheManager;
     @Autowired
@@ -35,7 +35,7 @@ class CacheManagerCustomizerNotEnabledTestBase {
     public void testComponentConfiguration() throws Exception {
         Assert.assertNotNull(cacheManager);
         Assert.assertNotNull(component);
-        Assert.assertNull(component.getCacheManager());
+        Assert.assertNotNull(component.getCacheManager());
     }
 
     @Configuration
