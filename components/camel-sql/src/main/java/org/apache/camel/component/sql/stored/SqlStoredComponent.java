@@ -20,29 +20,13 @@ import java.util.Map;
 import java.util.Set;
 import javax.sql.DataSource;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class SqlStoredComponent extends UriEndpointComponent {
+public class SqlStoredComponent extends DefaultComponent {
+
     private DataSource dataSource;
-
-    public SqlStoredComponent() {
-        super(SqlStoredEndpoint.class);
-    }
-
-    public SqlStoredComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
-    }
-
-    public SqlStoredComponent(CamelContext context) {
-        super(context, SqlStoredEndpoint.class);
-    }
-
-    public SqlStoredComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
-        super(context, endpointClass);
-    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String template, Map<String, Object> parameters) throws Exception {
