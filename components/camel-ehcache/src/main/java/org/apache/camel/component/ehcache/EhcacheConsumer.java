@@ -58,18 +58,20 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
 
     @Override
     public void onEvent(CacheEvent<? extends Object, ? extends Object> event) {
-        final Exchange exchange = getEndpoint().createExchange();
-        final Message message = exchange.getIn();
+        if (isRunAllowed()) {
+            final Exchange exchange = getEndpoint().createExchange();
+            final Message message = exchange.getIn();
 
-        message.setHeader(EhcacheConstants.KEY, event.getKey());
-        message.setHeader(EhcacheConstants.EVENT_TYPE, event.getType());
-        message.setHeader(EhcacheConstants.OLD_VALUE, event.getOldValue());
-        message.setBody(event.getNewValue());
+            message.setHeader(EhcacheConstants.KEY, event.getKey());
+            message.setHeader(EhcacheConstants.EVENT_TYPE, event.getType());
+            message.setHeader(EhcacheConstants.OLD_VALUE, event.getOldValue());
+            message.setBody(event.getNewValue());
 
-        try {
-            getProcessor().process(exchange);
-        } catch (Exception e) {
-            getExceptionHandler().handleException("Error processing exchange", exchange, e);
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, e);
+            }
         }
     }
 }

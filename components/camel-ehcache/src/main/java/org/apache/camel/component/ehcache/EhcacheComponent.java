@@ -19,10 +19,13 @@ package org.apache.camel.component.ehcache;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -39,6 +42,8 @@ import org.slf4j.LoggerFactory;
  */
 public class EhcacheComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheComponent.class);
+
+    private final ConcurrentMap<Object, EhcacheManager> managers = new ConcurrentHashMap<>();
 
     @Metadata(label = "advanced")
     private EhcacheConfiguration configuration = new EhcacheConfiguration();
@@ -66,34 +71,48 @@ public class EhcacheComponent extends DefaultComponent {
         ObjectHelper.notNull(configuration, "Camel Ehcache configuration");
 
         // Check if a cache manager has been configured
-        CacheManager manager = configuration.getCacheManager();
-        if (manager != null) {
+        if (configuration.hasCacheManager()) {
             LOGGER.info("EhcacheManager configured with supplied CacheManager");
-            return new EhcacheManager(manager, false, configuration);
+
+            return managers.computeIfAbsent(
+                configuration.getCacheManager(),
+                m -> new EhcacheManager(
+                    CacheManager.class.cast(m),
+                    false,
+                    configuration)
+            );
         }
 
         // Check if a cache manager configuration has been provided
         if (configuration.hasCacheManagerConfiguration()) {
             LOGGER.info("EhcacheManager configured with supplied CacheManagerConfiguration");
 
-            return new EhcacheManager(
-                CacheManagerBuilder.newCacheManager(configuration.getCacheManagerConfiguration()),
-                true,
-                configuration
+            return managers.computeIfAbsent(
+                configuration.getCacheManagerConfiguration(),
+                c -> new EhcacheManager(
+                    CacheManagerBuilder.newCacheManager(Configuration.class.cast(c)),
+                    true,
+                    configuration
+                )
             );
         }
 
         // Check if a configuration file has been provided
         if (configuration.hasConfigurationUri()) {
             String configurationUri = configuration.getConfigurationUri();
-            URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configurationUri);
+            ClassResolver classResolver = getCamelContext().getClassResolver();
+
+            URL url = ResourceHelper.resolveMandatoryResourceAsUrl(classResolver, configurationUri);
 
             LOGGER.info("EhcacheManager configured with supplied URI {}", url);
 
-            return new EhcacheManager(
-                CacheManagerBuilder.newCacheManager(new XmlConfiguration(url)),
-                true,
-                configuration
+            return managers.computeIfAbsent(
+                url,
+                u -> new EhcacheManager(
+                    CacheManagerBuilder.newCacheManager(new XmlConfiguration(URL.class.cast(u))),
+                    true,
+                    configuration
+                )
             );
         }
 
