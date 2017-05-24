@@ -88,18 +88,22 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         this.factoryFinder = factoryFinder;
         this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
 
+        List<FallbackTypeConverter> fallbacks = new ArrayList<>();
         // add to string first as it will then be last in the last as to string can nearly
         // always convert something to a string so we want it only as the last resort
         // ToStringTypeConverter should NOT allow to be promoted
-        addFallbackTypeConverter(new ToStringTypeConverter(), false);
+        addCoreFallbackTypeConverterToList(new ToStringTypeConverter(), false, fallbacks);
         // enum is okay to be promoted
-        addFallbackTypeConverter(new EnumTypeConverter(), true);
+        addCoreFallbackTypeConverterToList(new EnumTypeConverter(), true, fallbacks);
         // arrays is okay to be promoted
-        addFallbackTypeConverter(new ArrayTypeConverter(), true);
+        addCoreFallbackTypeConverterToList(new ArrayTypeConverter(), true, fallbacks);
         // and future should also not allowed to be promoted
-        addFallbackTypeConverter(new FutureTypeConverter(this), false);
+        addCoreFallbackTypeConverterToList(new FutureTypeConverter(this), false, fallbacks);
         // add sync processor to async processor converter is to be promoted
-        addFallbackTypeConverter(new AsyncProcessorTypeConverter(), true);
+        addCoreFallbackTypeConverterToList(new AsyncProcessorTypeConverter(), true, fallbacks);
+
+        // add all core fallback converters at once which is faster (profiler)
+        fallbackConverters.addAll(fallbacks);
     }
 
     @Override
@@ -453,6 +457,24 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
+        if (typeConverter instanceof TypeConverterAware) {
+            TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
+            typeConverterAware.setTypeConverter(this);
+        }
+        if (typeConverter instanceof CamelContextAware) {
+            CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
+            if (camelContext != null) {
+                camelContextAware.setCamelContext(camelContext);
+            }
+        }
+    }
+
+    private void addCoreFallbackTypeConverterToList(TypeConverter typeConverter, boolean canPromote, List<FallbackTypeConverter> converters) {
+        log.trace("Adding core fallback type converter: {} which can promote: {}", typeConverter, canPromote);
+
+        // add in top of fallback as the toString() fallback will nearly always be able to convert
+        // the last one which is add to the FallbackTypeConverter will be called at the first place
+        converters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
