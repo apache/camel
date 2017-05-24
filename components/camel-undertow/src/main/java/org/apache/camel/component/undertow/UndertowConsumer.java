@@ -91,7 +91,10 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
         if (Methods.OPTIONS.equals(requestMethod) && !getEndpoint().isOptionsEnabled()) {
             String allowedMethods;
             if (getEndpoint().getHttpMethodRestrict() != null) {
-                allowedMethods = "OPTIONS," + getEndpoint().getHttpMethodRestrict();
+                allowedMethods = getEndpoint().getHttpMethodRestrict();
+                if (!allowedMethods.contains("OPTIONS")) {
+                    allowedMethods = "OPTIONS," + allowedMethods;
+                }
             } else {
                 allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
             }

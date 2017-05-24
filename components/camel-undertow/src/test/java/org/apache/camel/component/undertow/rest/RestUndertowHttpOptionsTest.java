@@ -20,10 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Not supported by camel-undertow yet")
 public class RestUndertowHttpOptionsTest extends BaseUndertowTest {
 
     @Test
@@ -36,13 +34,13 @@ public class RestUndertowHttpOptionsTest extends BaseUndertowTest {
         });
 
         assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("OPTIONS,GET", exchange.getOut().getHeader("ALLOW"));
+        assertEquals("GET,OPTIONS", exchange.getOut().getHeader("ALLOW"));
         assertEquals("", exchange.getOut().getBody(String.class));
 
         exchange = fluentTemplate.to("undertow:http://localhost:" + getPort() + "/users/v1/123").withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("OPTIONS,PUT", exchange.getOut().getHeader("ALLOW"));
-        assertEquals("", exchange.getOut().getBody(String.class));
+        assertEquals(200, exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("PUT,OPTIONS", exchange.getIn().getHeader("ALLOW"));
+        assertEquals("", exchange.getIn().getBody(String.class));
     }
 
     @Override
