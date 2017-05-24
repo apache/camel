@@ -4,6 +4,8 @@
 
 The Twitter Timeline component consumes twitter timeline or update the status of specific user.
 
+### Component Options
+
 // component options: START
 The Twitter Timeline component supports 9 options which are listed below.
 
@@ -25,7 +27,7 @@ The Twitter Timeline component supports 9 options which are listed below.
 // component options: END
 
 
-
+### Endpoint Options
 
 // endpoint options: START
 The Twitter Timeline endpoint is configured using URI syntax:
