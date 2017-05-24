@@ -59,6 +59,7 @@ public class RestRefTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        System.setProperty("CamelSedaPollTimeout", "10");
         return new ClassPathXmlApplicationContext("org/apache/camel/component/rest/RestRefTest.xml");
     }
 }

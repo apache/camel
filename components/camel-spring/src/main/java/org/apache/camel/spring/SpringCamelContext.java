@@ -29,6 +29,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.camel.spring.spi.SpringManagementMBeanAssembler;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -119,7 +120,11 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     public void afterPropertiesSet() throws Exception {
+        StopWatch watch = new StopWatch();
+
         maybeStart();
+        
+        LOG.debug("afterPropertiesSet() took {} millis", watch.stop());
     }
 
     public void destroy() throws Exception {

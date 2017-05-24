@@ -69,6 +69,7 @@ import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -286,6 +287,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        StopWatch watch = new StopWatch();
+
         super.afterPropertiesSet();
 
         Boolean shutdownEager = CamelContextHelper.parseBoolean(getContext(), getShutdownEager());
@@ -293,6 +296,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             LOG.debug("Using shutdownEager: " + shutdownEager);
             getContext().setShutdownEager(shutdownEager);
         }
+
+        LOG.debug("afterPropertiesSet() took {} millis", watch.stop());
     }
 
     protected void initCustomRegistry(SpringCamelContext context) {
