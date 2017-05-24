@@ -95,6 +95,7 @@ The SQL StoredProcedure component supports 7 endpoint options which are listed b
 | template | producer |  | String | *Required* Sets the StoredProcedure template to perform
 | batch | producer | false | boolean | Enables or disables batch mode
 | dataSource | producer |  | DataSource | Sets the DataSource to use to communicate with the database.
+| function | producer | false | boolean | *Available as of Camel 2.18* Whether this call is for a function.
 | noop | producer | false | boolean | If set will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing
 | outputHeader | producer |  | String | Store the template result in a header instead of the message body. By default outputHeader == null and the template result is stored in the message body any existing content in the message body is discarded. If outputHeader is set the value is used as the name of the header to store the template result and the original message body is preserved.
 | useMessageBodyForTemplate | producer | false | boolean | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used.
@@ -139,4 +140,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:sql-component.html[SQL Component]
-
