@@ -32,7 +32,8 @@ import org.apache.camel.spi.Metadata;
 public class TwitterStreamingComponent extends AbstractTwitterComponent {
 
     protected Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new TwitterStreamingEndpoint(uri, remaining, this, properties);
+        String keywords = getAndRemoveParameter(parameters, "keywords", String.class);
+        return new TwitterStreamingEndpoint(uri, remaining, keywords, this, properties);
     }
 
     /**

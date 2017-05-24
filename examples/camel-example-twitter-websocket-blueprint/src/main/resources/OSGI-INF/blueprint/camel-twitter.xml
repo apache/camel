@@ -30,7 +30,7 @@
 
     <route id="twitter-route">
       <!-- consume from twitter search to get new tweets about gaga every 5th second -->
-      <from uri="twitter-search://foo?type=polling&amp;delay=6000&amp;keywords=gaga
+      <from uri="twitter-search://gaga?type=polling&amp;delay=6000
         &amp;accessToken={{access.token}}&amp;accessTokenSecret={{access.token-secret}}&amp;consumerKey={{consumer.key}}&amp;consumerSecret={{consumer.secret}}"/>
 
       <!-- log tweet to the log -->

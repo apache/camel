@@ -33,7 +33,7 @@ The Twitter Direct Message component supports 9 options which are listed below.
 // endpoint options: START
 The Twitter Direct Message endpoint is configured using URI syntax:
 
-    twitter-directmessage:endpointId
+    twitter-directmessage:user
 
 with the following path and query parameters:
 
@@ -42,15 +42,14 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **endpointId** | *Required* The endpoint ID (not used). |  | String
+| **user** | *Required* The user name to send a direct message. This will be ignored for consumer. |  | String
 |=======================================================================
 
-#### Query Parameters (43 parameters):
+#### Query Parameters (41 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **user** (common) | Username used for user timeline consumption direct message production etc. |  | String
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
 | **type** (consumer) | Endpoint type to use. Only streaming supports event type. | polling | EndpointType
@@ -66,7 +65,6 @@ with the following path and query parameters:
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | **count** (filter) | Limiting number of results per page. |  | Integer
 | **filterOld** (filter) | Filter out old tweets that has previously been polled. This state is stored in memory only and based on last tweet id. | true | boolean
-| **keywords** (filter) | Can be used for search and streaming/filter. Multiple values can be separated with comma. |  | String
 | **lang** (filter) | The lang string ISO_639-1 which will be used for searching |  | String
 | **numberOfPages** (filter) | The number of pages result which you want camel-twitter to consume. | 1 | Integer
 | **sinceId** (filter) | The last tweet id which will be used for pulling the tweets. It is useful when the camel route is restarted after a long running. | 1 | long

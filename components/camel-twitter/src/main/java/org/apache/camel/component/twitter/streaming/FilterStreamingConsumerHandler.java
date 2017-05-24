@@ -25,8 +25,11 @@ import twitter4j.StallWarning;
  */
 public class FilterStreamingConsumerHandler extends AbstractStreamingConsumerHandler {
 
-    public FilterStreamingConsumerHandler(TwitterEndpoint endpoint) {
+    private String keywords;
+
+    public FilterStreamingConsumerHandler(TwitterEndpoint endpoint, String keywords) {
         super(endpoint);
+        this.keywords = keywords;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class FilterStreamingConsumerHandler extends AbstractStreamingConsumerHan
             filterQuery.locations(locations);
         }
 
-        String keywords = endpoint.getProperties().getKeywords();
+        String keywords = this.keywords;
         if (keywords != null && keywords.length() > 0) {
             filterQuery.track(keywords.split(","));
         }

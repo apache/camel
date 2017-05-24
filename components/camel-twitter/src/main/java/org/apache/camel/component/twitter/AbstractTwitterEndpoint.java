@@ -67,16 +67,6 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
     }
 
     @ManagedAttribute
-    public String getKeywords() {
-        return getProperties().getKeywords();
-    }
-
-    @ManagedAttribute
-    public void setKeywords(String keywords) {
-        getProperties().setKeywords(keywords);
-    }
-
-    @ManagedAttribute
     public String getLocations() {
         return getProperties().getLocations();
     }
