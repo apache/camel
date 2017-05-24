@@ -40,8 +40,9 @@ public class TemplateStoredProcedure extends StoredProcedure {
 
     private List<InputParameter> inputParameterList = new ArrayList<>();
 
-    public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template) {
+    public TemplateStoredProcedure(JdbcTemplate jdbcTemplate, Template template, boolean function) {
         this.template = template;
+        setFunction(function);
         setDataSource(jdbcTemplate.getDataSource());
 
         setSql(template.getProcedureName());
