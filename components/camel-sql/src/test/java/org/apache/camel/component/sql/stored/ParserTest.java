@@ -74,7 +74,6 @@ public class ParserTest extends CamelTestSupport {
     public void noOutputParameterShouldFail() {
         parser.parseTemplate("ADDNUMBERS2"
                 + "(INTEGER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");
-
     }
 
     @Test(expected = ParseRuntimeException.class)
@@ -107,12 +106,12 @@ public class ParserTest extends CamelTestSupport {
 
     @Test
     public void colonInSimple() {
-
         PropertiesComponent pc = (PropertiesComponent) context.getComponent("properties");
         pc.setLocation("classpath:jndi.properties");
         Exchange exchange = createExchangeWithBody(1);
         Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${properties:java.naming.factory.initial})");
-        assertEquals("org.apache.camel.util.jndi.CamelInitialContextFactory",((InputParameter)template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
+        assertEquals("org.apache.camel.util.jndi.CamelInitialContextFactory",
+            ((InputParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
     }
 
     @Test
@@ -121,7 +120,7 @@ public class ParserTest extends CamelTestSupport {
         Exchange exchange = createExchangeWithBody(1);
 
         Map container = new HashMap();
-        container.put("a:",1);
+        container.put("a:", 1);
         assertEquals(1, ((InputParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, container));
     }
 
@@ -136,7 +135,6 @@ public class ParserTest extends CamelTestSupport {
         Template template = parser.parseTemplate("ADDNUMBERS2(OUT -1342 h1)");
         assertEquals(-1342, ((OutParameter) template.getParameterList().get(0)).getSqlType());
     }
-
 
     @Test
     public void nableIssueSyntax() {
