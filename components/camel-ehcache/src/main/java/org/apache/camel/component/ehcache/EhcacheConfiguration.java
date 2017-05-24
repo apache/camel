@@ -17,7 +17,9 @@
 package org.apache.camel.component.ehcache;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.RuntimeCamelException;
@@ -47,6 +49,8 @@ public class EhcacheConfiguration implements Cloneable {
     private String configurationUri;
     @UriParam(label = "advanced")
     private CacheConfiguration<?, ?> configuration;
+    @UriParam(label = "advanced")
+    private Map<String, CacheConfiguration<?, ?>> configurations;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
     private Class<?> keyType = Object.class;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
@@ -218,16 +222,39 @@ public class EhcacheConfiguration implements Cloneable {
     /**
      * The default cache configuration to be used to create caches.
      */
-    public <K, V> void setConfiguration(CacheConfiguration<K, V> configuration) {
+    public void setConfiguration(CacheConfiguration<?, ?> configuration) {
         this.configuration = configuration;
     }
 
-    public <K, V> CacheConfiguration<K, V> getConfiguration() {
-        return (CacheConfiguration<K, V>)configuration;
+    public CacheConfiguration<?, ?> getConfiguration() {
+        return configuration;
     }
 
-    public <K, V> CacheConfiguration<K, V> getMandatoryConfiguration() {
-        return ObjectHelper.notNull(getConfiguration(), "CacheConfiguration");
+    public boolean hasConfiguration() {
+        return ObjectHelper.isNotEmpty(configuration);
+    }
+
+    public boolean hasConfiguration(String name) {
+        return ObjectHelper.applyIfNotEmpty(configurations, c -> c.containsKey(name), () -> false);
+    }
+
+    /**
+     * A map of cache configuration to be used to create caches.
+     */
+    public Map<String, CacheConfiguration<?, ?>> getConfigurations() {
+        return configurations;
+    }
+
+    public void setConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+        this.configurations = Map.class.cast(configurations);
+    }
+
+    public void addConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+        if (this.configurations == null) {
+            this.configurations = new HashMap<>();
+        }
+
+        this.configurations.putAll(configurations);
     }
 
     public Class<?> getKeyType() {

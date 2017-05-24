@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ehcache.springboot;
+package org.apache.camel.component.ehcache.springboot.customizer;
 
 import org.apache.camel.component.ehcache.EhcacheComponent;
+import org.apache.camel.component.ehcache.springboot.EhcacheComponentAutoConfiguration;
 import org.apache.camel.spi.ComponentCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.ehcache.CacheManager;
@@ -41,14 +42,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootApplication
 @SpringBootTest(
     classes = {
-        CacheManagerCustomizerNoOverrideTest.TestConfiguration.class
+        CacheManagerCustomizerOverrideTest.TestConfiguration.class
     },
     properties = {
         "debug=false",
         "camel.component.ehcache.customizer.cache-manager.enabled=true",
-        "camel.component.ehcache.customizer.cache-manager.override=false"
+        "camel.component.ehcache.customizer.cache-manager.override=true"
     })
-public class CacheManagerCustomizerNoOverrideTest {
+public class CacheManagerCustomizerOverrideTest {
     private static final CacheManager CACHE_MANAGER = CacheManagerBuilder.newCacheManagerBuilder().build();
     @Autowired
     CacheManager cacheManager;
@@ -60,7 +61,7 @@ public class CacheManagerCustomizerNoOverrideTest {
         Assert.assertNotNull(cacheManager);
         Assert.assertNotNull(component);
         Assert.assertNotNull(component.getCacheManager());
-        Assert.assertEquals(CACHE_MANAGER, component.getCacheManager());
+        Assert.assertEquals(cacheManager, component.getCacheManager());
     }
 
     @Configuration

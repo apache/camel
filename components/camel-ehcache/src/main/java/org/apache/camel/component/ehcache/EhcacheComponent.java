@@ -171,6 +171,21 @@ public class EhcacheComponent extends DefaultComponent {
         return this.configuration.getConfiguration();
     }
 
+    public Map<String, CacheConfiguration<?, ?>> getCachesConfigurations() {
+        return configuration.getConfigurations();
+    }
+
+    /**
+     * A map of caches configurations to be used to create caches.
+     */
+    public void setCachesConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+        configuration.setConfigurations(configurations);
+    }
+
+    public void addCachesConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+        configuration.addConfigurations(configurations);
+    }
+
     public String getCacheConfigurationUri() {
         return this.configuration.getConfigurationUri();
     }

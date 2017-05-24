@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.ehcache.springboot;
 
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Generated;
-import org.apache.camel.component.ehcache.EhcacheComponent;
+
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
@@ -60,6 +61,10 @@ public class EhcacheComponentConfiguration
      */
     @NestedConfigurationProperty
     private CacheConfiguration<?, ?> cacheConfiguration;
+    /**
+     * A map of caches configurations to be used to create caches.
+     */
+    private Map<String, CacheConfiguration<?, ?>> cachesConfigurations;
     /**
      * URI pointing to the Ehcache XML configuration file's location
      */
@@ -104,6 +109,15 @@ public class EhcacheComponentConfiguration
     public void setCacheConfiguration(
             CacheConfiguration<?, ?> cacheConfiguration) {
         this.cacheConfiguration = cacheConfiguration;
+    }
+
+    public Map<String, CacheConfiguration<?, ?>> getCachesConfigurations() {
+        return cachesConfigurations;
+    }
+
+    public void setCachesConfigurations(
+            Map<String, CacheConfiguration<?, ?>> cachesConfigurations) {
+        this.cachesConfigurations = cachesConfigurations;
     }
 
     public String getCacheConfigurationUri() {
@@ -166,6 +180,7 @@ public class EhcacheComponentConfiguration
          * The default cache configuration to be used to create caches.
          */
         private CacheConfiguration configuration;
+        private Map configurations;
         /**
          * The cache key type, default "java.lang.Object"
          */
@@ -265,6 +280,14 @@ public class EhcacheComponentConfiguration
 
         public void setConfiguration(CacheConfiguration configuration) {
             this.configuration = configuration;
+        }
+
+        public Map getConfigurations() {
+            return configurations;
+        }
+
+        public void setConfigurations(Map configurations) {
+            this.configurations = configurations;
         }
 
         public String getKeyType() {
