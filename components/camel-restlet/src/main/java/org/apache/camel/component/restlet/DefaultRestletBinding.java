@@ -27,12 +27,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
@@ -42,11 +44,14 @@ import org.apache.camel.StringSource;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.restlet.Request;
@@ -112,10 +117,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
 
         // copy query string to header
-        String query = request.getResourceRef().getQuery();
-        if (query != null) {
-            inMessage.setHeader(Exchange.HTTP_QUERY, query);
-        }
+        populateQueryParameters(request, exchange);
 
         // copy URI to header
         inMessage.setHeader(Exchange.HTTP_URI, request.getResourceRef().getIdentifier(true));
@@ -156,6 +158,24 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             inMessage.setBody(body);
         }
 
+    }
+
+    protected void populateQueryParameters(Request request, Exchange exchange) throws Exception {
+        String query = request.getResourceRef().getQuery();
+        if (query != null) {
+            exchange.getIn().setHeader(Exchange.HTTP_QUERY, query);
+
+            // parse query and map to Camel message headers
+            Map<String, Object> map = URISupport.parseQuery(query);
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    LOG.trace("HTTP query parameter {} = {}", key, value);
+                    exchange.getIn().setHeader(key, value);
+                }
+            }
+        }
     }
 
     public void populateRestletRequestFromExchange(Request request, Exchange exchange) {

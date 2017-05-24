@@ -87,9 +87,15 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
     private boolean autoCloseStream;
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
+    // should NOT be exposes as @UriParam
+    private transient Map<String, Object> queryParameters;
 
     public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
+    }
+
+    public void setCompleteEndpointUri(String uri) {
+        setEndpointUri(uri);
     }
 
     public boolean isSingleton() {
@@ -355,6 +361,17 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
      */
     public void setCookieHandler(CookieHandler cookieHandler) {
         this.cookieHandler = cookieHandler;
+    }
+
+    public Map<String, Object> getQueryParameters() {
+        return queryParameters;
+    }
+
+    /**
+     * Additional query parameters for producer
+     */
+    public void setQueryParameters(Map<String, Object> queryParameters) {
+        this.queryParameters = queryParameters;
     }
 
     @Override

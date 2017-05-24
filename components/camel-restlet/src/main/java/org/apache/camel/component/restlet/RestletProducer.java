@@ -17,9 +17,11 @@
 package org.apache.camel.component.restlet;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,16 +206,20 @@ public class RestletProducer extends DefaultAsyncProducer {
         return false;
     }
 
-    private static String buildUri(RestletEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
+    private static String buildUri(RestletEndpoint endpoint, Exchange exchange) throws Exception {
         // rest producer may provide an override url to be used which we should discard if using (hence the remove)
         String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
 
         if (uri == null) {
             uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
         }
+        // include any query parameters if needed
+        if (endpoint.getQueryParameters() != null) {
+            uri = URISupport.appendParametersToURI(uri, endpoint.getQueryParameters());
+        }
 
         // substitute { } placeholders in uri and use mandatory headers
-        LOG.trace("Substituting '(value)' placeholders in uri: {}", uri);
+        LOG.trace("Substituting '{value}' placeholders in uri: {}", uri);
         Matcher matcher = PATTERN.matcher(uri);
         while (matcher.find()) {
             String key = matcher.group(1);
