@@ -101,7 +101,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     // It's MILLISECONDS, the default value is always keep alive
     @Metadata(label = "advanced", description = "The time for connection to live, the time unit is millisecond, the default value is always keep alive.")
     protected long connectionTimeToLive = -1;
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
     private boolean useGlobalSslContextParameters;
 
     public HttpComponent() {
