@@ -16,21 +16,22 @@
  */
 package org.apache.camel.component.twitter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.Endpoint;
+import org.apache.camel.component.twitter.data.EndpointType;
 
 /**
- * consumes tweets
+ * @deprecated This has been introduced to just keep deprecated endpoints working as is.
+ * Remove this once Endpoint{Direct,Event,Polling} is removed.
  */
-public class SearchDirectTest extends CamelTwitterConsumerTestSupport {
-    
-    @Override
-    protected String getUri() {
-        return "twitter-search://java?type=direct&";
-    }
+@Deprecated
+public interface CommonPropertiesTwitterEndpoint extends TwitterEndpoint {
 
-    @Override
-    protected Logger getLogger() {
-        return LoggerFactory.getLogger(SearchDirectTest.class);
-    }
+    String getKeywords();
+
+    void setKeywords(String keywords);
+
+    String getUser();
+    
+    void setUser(String user);
+
 }

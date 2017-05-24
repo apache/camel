@@ -25,11 +25,15 @@ import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultEndpoint;
 
 @Deprecated
-public class TwitterEndpointEvent extends DefaultEndpoint implements TwitterEndpoint {
+public class TwitterEndpointEvent extends DefaultEndpoint implements CommonPropertiesTwitterEndpoint {
     private final String kind;
 
     // only TwitterEndpointPolling is annotated
     private TwitterConfiguration properties;
+
+    private String user;
+
+    private String keywords;
 
     public TwitterEndpointEvent(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
@@ -73,4 +77,25 @@ public class TwitterEndpointEvent extends DefaultEndpoint implements TwitterEndp
             properties.getTwitterStream().shutdown();
         }
     }
+
+    @Override
+    public String getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    @Override
+    public String getKeywords() {
+        return keywords;
+    }
+
+    @Override
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
 }

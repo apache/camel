@@ -41,12 +41,15 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(SearchConsumerHandler.class);
 
-    public SearchConsumerHandler(TwitterEndpoint te) {
+    private String keywords;
+
+    public SearchConsumerHandler(TwitterEndpoint te, String keywords) {
         super(te);
+        this.keywords = keywords;
     }
 
     public List<Exchange> pollConsume() throws TwitterException {
-        String keywords = endpoint.getProperties().getKeywords();
+        String keywords = this.keywords;
 
         Query query;
 
@@ -66,7 +69,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
     }
 
     public List<Exchange> directConsume() throws TwitterException {
-        String keywords = endpoint.getProperties().getKeywords();
+        String keywords = this.keywords;
         if (keywords == null || keywords.trim().length() == 0) {
             return Collections.emptyList();
         }

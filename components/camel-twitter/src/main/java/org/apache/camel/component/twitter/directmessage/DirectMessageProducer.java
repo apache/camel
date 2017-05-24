@@ -29,15 +29,17 @@ import org.apache.camel.util.ObjectHelper;
 public class DirectMessageProducer extends DefaultProducer {
 
     private TwitterEndpoint endpoint;
+    private String user;
 
-    public DirectMessageProducer(TwitterEndpoint endpoint) {
+    public DirectMessageProducer(TwitterEndpoint endpoint, String user) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.user = user;
     }
 
     public void process(Exchange exchange) throws Exception {
         // send direct message
-        String toUsername = endpoint.getProperties().getUser();
+        String toUsername = user;
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(TwitterConstants.TWITTER_USER, String.class))) {
             toUsername = exchange.getIn().getHeader(TwitterConstants.TWITTER_USER, String.class);
         }

@@ -32,11 +32,15 @@ import org.apache.camel.component.twitter.data.EndpointType;
  * 
  */
 @Deprecated
-public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
+public class TwitterEndpointDirect extends DirectEndpoint implements CommonPropertiesTwitterEndpoint {
     private final String kind;
 
     // only TwitterEndpointPolling is annotated
     private TwitterConfiguration properties;
+
+    private String user;
+
+    private String keywords;
 
     public TwitterEndpointDirect(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
@@ -97,13 +101,23 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
     }
 
     @ManagedAttribute
+    public String getUser() {
+        return user;
+    }
+
+    @ManagedAttribute
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    @ManagedAttribute
     public String getKeywords() {
-        return getProperties().getKeywords();
+        return keywords;
     }
 
     @ManagedAttribute
     public void setKeywords(String keywords) {
-        getProperties().setKeywords(keywords);
+        this.keywords = keywords;
     }
 
     @ManagedAttribute

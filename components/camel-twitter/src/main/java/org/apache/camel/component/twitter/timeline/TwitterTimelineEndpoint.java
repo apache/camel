@@ -39,12 +39,15 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
     @Metadata(required = "true")
     private TimelineType timelineType;
 
-    public TwitterTimelineEndpoint(String uri, String remaining, TwitterTimelineComponent component, TwitterConfiguration properties) {
+    private String user;
+
+    public TwitterTimelineEndpoint(String uri, String remaining, String user, TwitterTimelineComponent component, TwitterConfiguration properties) {
         super(uri, component, properties);
         if (remaining == null) {
             throw new IllegalArgumentException(String.format("The timeline type must be specified for '%s'", uri));
         }
         this.timelineType = TimelineType.valueOf(remaining.toUpperCase());
+        this.user = user;
     }
 
     @Override
@@ -72,10 +75,10 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
             handler = new RetweetsConsumerHandler(this);
             break;
         case USER:
-            if (getProperties().getUser() == null || getProperties().getUser().trim().isEmpty()) {
+            if (user == null || user.trim().isEmpty()) {
                 throw new IllegalArgumentException("Fetch type set to USER TIMELINE but no user was set.");
             } else {
-                handler = new UserConsumerHandler(this);
+                handler = new UserConsumerHandler(this, user);
                 break;
             }
         default:

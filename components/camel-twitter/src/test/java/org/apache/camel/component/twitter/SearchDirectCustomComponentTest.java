@@ -36,7 +36,7 @@ public class SearchDirectCustomComponentTest extends CamelTwitterConsumerTestSup
 
     @Override
     protected String getUri() {
-        return "my-twitter://foo?type=direct&keywords=java&";
+        return "my-twitter://java?type=direct&";
     }
 
     @Override

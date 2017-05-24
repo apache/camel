@@ -37,7 +37,7 @@ import org.apache.camel.spi.UriPath;
 @Deprecated
 @ManagedResource(description = "Managed Twitter Endpoint")
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter", title = "Twitter", syntax = "twitter:kind", consumerClass = AbstractTwitterConsumerHandler.class, label = "api,social")
-public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
+public class TwitterEndpointPolling extends DefaultPollingEndpoint implements CommonPropertiesTwitterEndpoint {
     @UriPath(description = "The kind of endpoint", enums = "directmessage,search,streaming/filter,streaming/sample,streaming/user"
             + ",timeline/home,timeline/mentions,timeline/retweetsofme,timeline/user") @Metadata(required = "true")
     private final String kind;
@@ -48,6 +48,12 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
 
     @UriParam
     private TwitterConfiguration properties;
+
+    @UriParam(description = "Username, used for user timeline consumption, direct message production, etc.")
+    private String user;
+
+    @UriParam(description = "Can be used for search and streaming/filter. Multiple values can be separated with comma.", label = "consumer,filter")
+    private String keywords;
 
     public TwitterEndpointPolling(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
@@ -86,13 +92,23 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
     }
 
     @ManagedAttribute
+    public String getUser() {
+        return user;
+    }
+
+    @ManagedAttribute
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    @ManagedAttribute
     public String getKeywords() {
-        return getProperties().getKeywords();
+        return keywords;
     }
 
     @ManagedAttribute
     public void setKeywords(String keywords) {
-        getProperties().setKeywords(keywords);
+        this.keywords = keywords;
     }
 
     @ManagedAttribute

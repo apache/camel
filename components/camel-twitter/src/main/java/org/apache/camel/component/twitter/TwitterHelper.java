@@ -66,7 +66,7 @@ public final class TwitterHelper {
     }
 
     @Deprecated
-    public static AbstractTwitterConsumerHandler createConsumer(TwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
+    public static AbstractTwitterConsumerHandler createConsumer(CommonPropertiesTwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
         String[] tokens = remaining.split("/");
         
         if (tokens.length > 0) {
@@ -74,12 +74,12 @@ public final class TwitterHelper {
             case DIRECTMESSAGE:
                 return new DirectMessageConsumerHandler(te);
             case SEARCH:
-                boolean hasNoKeywords = te.getProperties().getKeywords() == null
-                    || te.getProperties().getKeywords().trim().isEmpty();
+                boolean hasNoKeywords = te.getKeywords() == null
+                    || te.getKeywords().trim().isEmpty();
                 if (hasNoKeywords) {
                     throw new IllegalArgumentException("Type set to SEARCH but no keywords were provided.");
                 } else {
-                    return new SearchConsumerHandler(te);
+                    return new SearchConsumerHandler(te, te.getKeywords());
                 }
             case STREAMING:
                 if (tokens.length > 1) {
@@ -87,7 +87,7 @@ public final class TwitterHelper {
                     case SAMPLE:
                         return new SampleStreamingConsumerHandler(te);
                     case FILTER:
-                        return new FilterStreamingConsumerHandler(te);
+                        return new FilterStreamingConsumerHandler(te, te.getKeywords());
                     case USER:
                         return new UserStreamingConsumerHandler(te);
                     default:
@@ -105,10 +105,10 @@ public final class TwitterHelper {
                     case RETWEETSOFME:
                         return new RetweetsConsumerHandler(te);
                     case USER:
-                        if (te.getProperties().getUser() == null || te.getProperties().getUser().trim().isEmpty()) {
+                        if (te.getUser() == null || te.getUser().trim().isEmpty()) {
                             throw new IllegalArgumentException("Fetch type set to USER TIMELINE but no user was set.");
                         } else {
-                            return new UserConsumerHandler(te);
+                            return new UserConsumerHandler(te, te.getUser());
                         }
                     default:
                         break;
@@ -141,17 +141,17 @@ public final class TwitterHelper {
     }
 
     @Deprecated
-    public static Producer createProducer(TwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
+    public static Producer createProducer(CommonPropertiesTwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
         String[] tokens = remaining.split("/");
 
         if (tokens.length > 0) {
             switch (ConsumerType.fromString(tokens[0])) {
             case DIRECTMESSAGE:
-                if (te.getProperties().getUser() == null || te.getProperties().getUser().trim().isEmpty()) {
+                if (te.getUser() == null || te.getUser().trim().isEmpty()) {
                     throw new IllegalArgumentException(
                         "Producer type set to DIRECT MESSAGE but no recipient user was set.");
                 } else {
-                    return new DirectMessageProducer(te);
+                    return new DirectMessageProducer(te, te.getUser());
                 }
             case TIMELINE:
                 if (tokens.length > 1) {
@@ -164,7 +164,7 @@ public final class TwitterHelper {
                 }
                 break;
             case SEARCH:
-                return new SearchProducer(te);
+                return new SearchProducer(te, te.getKeywords());
             default:
                 break;
             }
