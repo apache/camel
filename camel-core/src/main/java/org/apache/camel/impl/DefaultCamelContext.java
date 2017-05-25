@@ -3303,8 +3303,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             log.debug("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
         }
 
+        log.debug("Using HeadersMapFactory: {}", getHeadersMapFactory());
         if (!getHeadersMapFactory().isCaseInsensitive()) {
-            log.info("HeadersMapFactory is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.");
+            log.info("HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.", getHeadersMapFactory());
         }
 
         // start routes
