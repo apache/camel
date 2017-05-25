@@ -252,7 +252,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     public Message toCamelMessage(HttpResponse response, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toCamelMessage: {}", response);
 
-        NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(),null, response);
+        NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(), null, response);
         answer.setExchange(exchange);
         if (configuration.isMapHeaders()) {
             populateCamelHeaders(response, answer.getHeaders(), exchange, configuration);

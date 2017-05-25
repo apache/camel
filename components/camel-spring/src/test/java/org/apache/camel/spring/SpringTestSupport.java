@@ -52,7 +52,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
 
         // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
         System.setProperty("CamelSedaPollTimeout", "10");
-        if(!this.useJmx()) {
+        if (!this.useJmx()) {
             this.disableJMX();
         } else {
             this.enableJMX();

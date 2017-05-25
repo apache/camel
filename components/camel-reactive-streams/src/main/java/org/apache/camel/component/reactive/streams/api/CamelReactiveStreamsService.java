@@ -20,9 +20,9 @@ import java.util.function.Function;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
-import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.spi.HasId;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
