@@ -43,4 +43,9 @@ public class HashMapHeadersMapFactory implements HeadersMapFactory {
     public boolean isInstanceOf(Map<String, Object> map) {
         return map instanceof HashMap;
     }
+
+    @Override
+    public boolean isCaseInsensitive() {
+        return false;
+    }
 }

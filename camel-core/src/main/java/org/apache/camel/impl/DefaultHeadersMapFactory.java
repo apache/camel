@@ -44,4 +44,9 @@ public class DefaultHeadersMapFactory implements HeadersMapFactory {
     public boolean isInstanceOf(Map<String, Object> map) {
         return map instanceof CaseInsensitiveMap;
     }
+
+    @Override
+    public boolean isCaseInsensitive() {
+        return true;
+    }
 }

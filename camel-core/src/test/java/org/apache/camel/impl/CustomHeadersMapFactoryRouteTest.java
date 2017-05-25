@@ -79,5 +79,10 @@ public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
         public boolean isInstanceOf(Map<String, Object> map) {
             return map instanceof HashMap;
         }
+
+        @Override
+        public boolean isCaseInsensitive() {
+            return false;
+        }
     }
 }
