@@ -130,7 +130,7 @@ public class SnmpProducer extends DefaultProducer {
             LOG.debug("Snmp: sended");
     
             if (responseEvent.getResponse() != null) {
-                exchange.getIn().setBody(new SnmpMessage(responseEvent.getResponse()));
+                exchange.getIn().setBody(new SnmpMessage(getEndpoint().getCamelContext(), responseEvent.getResponse()));
             } else {
                 throw new TimeoutException("SNMP Producer Timeout");
             }
