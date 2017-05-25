@@ -741,7 +741,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testIteratorWithMessage() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody("a,b,c");
 
         Iterator<?> it = ObjectHelper.createIterator(msg);
@@ -758,7 +758,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testIteratorWithEmptyMessage() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody("");
 
         Iterator<Object> it = ObjectHelper.createIterator(msg);
@@ -773,7 +773,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testIteratorWithNullMessage() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody(null);
 
         Iterator<Object> it = ObjectHelper.createIterator(msg);

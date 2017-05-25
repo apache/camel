@@ -29,7 +29,7 @@ public class DefaultMessageTest {
 
     @Test
     public void testAttachmentsAreSorted() {
-        DefaultMessage message = new DefaultMessage();
+        DefaultMessage message = new DefaultMessage(new DefaultCamelContext());
 
         Map<String, Attachment> attachments = message.createAttachments();
 

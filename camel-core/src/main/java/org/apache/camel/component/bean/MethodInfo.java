@@ -376,7 +376,7 @@ public class MethodInfo {
         boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
 
         if (copyNeeded) {
-            Message msg = new DefaultMessage();
+            Message msg = new DefaultMessage(exchange.getContext());
             msg.copyFromWithNewBody(old, result);
 
             // replace message on exchange

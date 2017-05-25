@@ -67,7 +67,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     @Test(expected = NullPointerException.class)
     public void testWrongBodyType() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
         in.setBody("");
 
         exchange.setIn(in);
@@ -77,7 +77,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     @Test(expected = UnsupportedOperationException.class)
     public void testNoDN() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
 
@@ -87,7 +87,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     @Test
     public void testNoDNForFunctionDrivenOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.FUNCTION, Mockito.mock(BiFunction.class));
@@ -106,7 +106,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     @Test(expected = UnsupportedOperationException.class)
     public void testEmptyDN() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, "");
@@ -117,7 +117,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     @Test(expected = UnsupportedOperationException.class)
     public void testNullDN() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, null);
@@ -128,7 +128,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     @Test(expected = UnsupportedOperationException.class)
     public void testNullOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, " ");
@@ -143,7 +143,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Integer scope = SearchControls.SUBTREE_SCOPE;
 
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, dn);
@@ -162,7 +162,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         BasicAttributes attributes = new BasicAttributes();
 
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, dn);
@@ -179,7 +179,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         String dn = "some dn";
 
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, dn);
@@ -197,7 +197,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         String password = "password";
 
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, dn);
@@ -216,7 +216,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         ModificationItem[] modificationItems = new ModificationItem[] {new ModificationItem(DirContext.ADD_ATTRIBUTE, new BasicAttribute("key", "value"))};
 
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, dn);
@@ -233,7 +233,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         String dn = "cn=dn";
 
         Exchange exchange = new DefaultExchange(context);
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, dn);

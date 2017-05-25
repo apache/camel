@@ -94,7 +94,7 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
         public void push(ServerSession remote, ServerMessage cometdMessage) throws Exception {
             Object data = null;
 
-            Message message = binding.createCamelMessage(remote, cometdMessage, data);
+            Message message = binding.createCamelMessage(endpoint.getCamelContext(), remote, cometdMessage, data);
 
             Exchange exchange = endpoint.createExchange();
             exchange.setIn(message);

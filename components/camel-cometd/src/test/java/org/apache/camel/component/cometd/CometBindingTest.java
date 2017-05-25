@@ -20,7 +20,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.BayeuxServerImpl;
@@ -56,6 +58,8 @@ public class CometBindingTest {
     @Mock
     private ServerMessage cometdMessage;
 
+    private final CamelContext camelContext = new DefaultCamelContext();
+
     @Before
     public void before() {
         testObj = new CometdBinding(bayeux);
@@ -79,7 +83,7 @@ public class CometBindingTest {
         testObj = new CometdBinding(bayeux, true);
 
         // act
-        Message result = testObj.createCamelMessage(remote, cometdMessage, null);
+        Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
 
         // assert
         assertEquals(6, result.getHeaders().size());
@@ -94,7 +98,7 @@ public class CometBindingTest {
     @Test
     public void testBindingHonorsFlagForSessionAttributtes() {
         // act
-        Message result = testObj.createCamelMessage(remote, cometdMessage, null);
+        Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
 
         // assert
         assertEquals(1, result.getHeaders().size());
@@ -114,7 +118,7 @@ public class CometBindingTest {
             .thenReturn(expectedSubscriptionInfo);
 
         // act
-        Message result = testObj.createCamelMessage(remote, cometdMessage, null);
+        Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
 
         // assert
         assertEquals(2, result.getHeaders().size());

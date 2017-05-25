@@ -30,6 +30,7 @@ import com.rabbitmq.client.Connection;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class RabbitMQProducerTest {
 
     private RabbitMQEndpoint endpoint = Mockito.mock(RabbitMQEndpoint.class);
     private Exchange exchange = Mockito.mock(Exchange.class);
-    private Message message = new DefaultMessage();
+    private Message message = new DefaultMessage(new DefaultCamelContext());
     private Connection conn = Mockito.mock(Connection.class);
 
     @Before

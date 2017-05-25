@@ -118,7 +118,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
 
             if (current != null) {
                 LOGGER.debug("Reading tarEntry {}", current.getName());
-                Message answer = new DefaultMessage();
+                Message answer = new DefaultMessage(inputMessage.getExchange().getContext());
                 answer.getHeaders().putAll(inputMessage.getHeaders());
                 answer.setHeader(TARFILE_ENTRY_NAME_HEADER, current.getName());
                 answer.setHeader(Exchange.FILE_NAME, current.getName());

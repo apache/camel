@@ -57,7 +57,7 @@ public class DefaultCxfRsBindingTest extends Assert {
         DefaultCxfRsBinding cxfRsBinding = new DefaultCxfRsBinding();
         cxfRsBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
         Exchange exchange = new DefaultExchange(context);
-        Message camelMessage = new DefaultMessage();
+        Message camelMessage = new DefaultMessage(context);
         org.apache.cxf.message.Message cxfMessage = new MessageImpl();
         Map<String, List<String>> headers = new HashMap<String, List<String>>();
         headers.put("emptyList", Collections.EMPTY_LIST);
