@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.twitter;
 
-import static org.hamcrest.core.Is.is;
-
 import java.util.Date;
 import java.util.List;
 
@@ -30,10 +28,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hamcrest.core.Is.is;
+
 /**
  * Tests posting a twitter update with the default In Message Exchange Pattern
  */
 public class UserProducerInOnlyTest extends CamelTwitterTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOnlyTest.class);
 
     @EndpointInject(uri = "mock:result")

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.twitter;
 
-import static org.apache.camel.ComponentVerifier.VerificationError.asAttribute;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +27,10 @@ import org.apache.camel.component.twitter.search.TwitterSearchComponent;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.apache.camel.ComponentVerifier.VerificationError.asAttribute;
+
 public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;

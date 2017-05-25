@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.twitter;
 
-import static org.hamcrest.core.Is.is;
-
 import java.util.Date;
 import java.util.List;
 
@@ -29,13 +27,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import twitter4j.Status;
+
+import static org.hamcrest.core.Is.is;
 
 /**
  * Tests posting a twitter update and getting the status update id from the Twitter API response
  */
 public class UserProducerInOutTest extends CamelTwitterTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOutTest.class);
 
     @EndpointInject(uri = "mock:result")
