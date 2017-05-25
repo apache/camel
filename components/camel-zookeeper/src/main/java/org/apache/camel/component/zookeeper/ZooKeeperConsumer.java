@@ -108,15 +108,15 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     }
 
     private Exchange createExchange(String path, OperationResult result, WatchedEvent watchedEvent) {
-        Exchange e = getEndpoint().createExchange();
-        ZooKeeperMessage in = new ZooKeeperMessage(path, result.getStatistics(), watchedEvent);
-        e.setIn(in);
+        Exchange exchange = getEndpoint().createExchange();
+        ZooKeeperMessage in = new ZooKeeperMessage(getEndpoint().getCamelContext(), path, result.getStatistics(), watchedEvent);
+        exchange.setIn(in);
         if (result.isOk()) {
             in.setBody(result.getResult());
         } else {
-            e.setException(result.getException());
+            exchange.setException(result.getException());
         }
-        return e;
+        return exchange;
     }
 
     private class OperationsExecutor implements Runnable {
