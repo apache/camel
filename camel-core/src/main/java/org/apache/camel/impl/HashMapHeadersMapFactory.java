@@ -16,10 +16,10 @@
  */
 package org.apache.camel.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.util.CaseInsensitiveMap;
 
 /**
  * HashMap {@link HeadersMapFactory} which uses a plain {@link java.util.HashMap}.
@@ -31,16 +31,16 @@ public class HashMapHeadersMapFactory implements HeadersMapFactory {
 
     @Override
     public Map<String, Object> newMap() {
-        return new CaseInsensitiveMap();
+        return new HashMap<>();
     }
 
     @Override
     public Map<String, Object> newMap(Map<String, Object> map) {
-        return new CaseInsensitiveMap(map);
+        return new HashMap<>(map);
     }
 
     @Override
     public boolean isInstanceOf(Map<String, Object> map) {
-        return map instanceof CaseInsensitiveMap;
+        return map instanceof HashMap;
     }
 }
