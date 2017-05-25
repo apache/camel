@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
 import quickfix.SessionSettings;
 
-public class QuickfixjComponent extends UriEndpointComponent implements StartupListener {
+public class QuickfixjComponent extends DefaultComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
     private static final String PARAMETER_LAZY_CREATE_ENGINE = "lazyCreateEngine";
 
@@ -52,7 +52,10 @@ public class QuickfixjComponent extends UriEndpointComponent implements StartupL
     private boolean lazyCreateEngines;
 
     public QuickfixjComponent() {
-        super(QuickfixjEndpoint.class);
+    }
+
+    public QuickfixjComponent(CamelContext context) {
+        super(context);
     }
 
     @Override
