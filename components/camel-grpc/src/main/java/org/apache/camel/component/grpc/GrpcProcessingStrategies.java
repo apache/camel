@@ -16,25 +16,23 @@
  */
 package org.apache.camel.component.grpc;
 
-/**
- * gRPC component constants
+/*
+ * Available values for the request and response processing strategies
  */
-public interface GrpcConstants {
+public enum GrpcProcessingStrategies {
+    
+    AGGREGATION("AGGREGATION"),
+    PROPAGATION("PROPAGATION");
 
-    String GRPC_SERVICE_CLASS_POSTFIX = "Grpc";
-    String GRPC_SERVER_IMPL_POSTFIX = "ImplBase";
-    String GRPC_SERVICE_SYNC_STUB_METHOD = "newBlockingStub";
-    String GRPC_SERVICE_ASYNC_STUB_METHOD = "newStub";
-    String GRPC_SERVICE_FUTURE_STUB_METHOD = "newFutureStub";
-    
-    /*
-     * This headers will be set after gRPC consumer method is invoked
-     */
-    String GRPC_METHOD_NAME_HEADER = "CamelGrpcMethodName";
-    String GRPC_USER_AGENT_HEADER = "CamelGrpcUserAgent";
-    String GRPC_EVENT_TYPE_HEADER = "CamelGrpcEventType";
-    
-    String GRPC_EVENT_TYPE_ON_NEXT = "onNext";
-    String GRPC_EVENT_TYPE_ON_ERROR = "onError";
-    String GRPC_EVENT_TYPE_ON_COMPLETED = "onCompleted";
+    private final String strategy;
+
+    GrpcProcessingStrategies(final String strategy) {
+        this.strategy = strategy;
+    }
+
+    @Override
+    public String toString() {
+        return strategy;
+    }
+
 }
