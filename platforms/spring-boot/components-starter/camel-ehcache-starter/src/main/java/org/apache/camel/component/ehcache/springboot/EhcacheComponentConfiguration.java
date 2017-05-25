@@ -19,7 +19,7 @@ package org.apache.camel.component.ehcache.springboot;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Generated;
-
+import org.apache.camel.component.ehcache.EhcacheComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
