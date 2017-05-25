@@ -78,6 +78,10 @@
           <groupId>log4j</groupId>
           <artifactId>apache-log4j-extras</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
