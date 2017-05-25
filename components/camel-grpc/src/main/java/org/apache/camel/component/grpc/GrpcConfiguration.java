@@ -27,23 +27,37 @@ public class GrpcConfiguration {
     @UriPath
     @Metadata(required = "true")
     private String service;
-    @UriParam
+    
+    @UriParam(label = "producer")
     private String method;
+    
     @UriParam
     private String host;
+    
     @UriParam
     private int port;
-    @UriParam
+    
+    @UriParam(label = "producer")
     private String target;
-    @UriParam(defaultValue = "true")
+    
+    @UriParam(label = "producer", defaultValue = "true")
     private Boolean usePlainText = true;
+    
+    @UriParam(label = "consumer")
+    private GrpcProcessingStrategies processingStrategy = GrpcProcessingStrategies.PROPAGATION;
+    
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean forwardOnCompleted;
+
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean forwardOnError;
 
     private String serviceName;
     private String servicePackage;
 
     /**
      * Fully qualified service name from the protocol buffer descriptor file
-     * (package dot service definition name) 
+     * (package dot service definition name)
      */
     public String getService() {
         return service;
@@ -98,7 +112,7 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The plaintext connection to the server flag
+     * The plain text connection to the server flag
      */
     public Boolean getUsePlainText() {
         return usePlainText;
@@ -106,6 +120,45 @@ public class GrpcConfiguration {
 
     public void setUsePlainText(Boolean usePlainText) {
         this.usePlainText = usePlainText;
+    }
+
+    /**
+     * This option specifies the top-level strategy for processing service
+     * requests and responses in streaming mode. If an aggregation strategy is
+     * selected, all requests will be accumulated in the list, then transferred
+     * to the flow, and the accumulated responses will be sent to the sender. If
+     * a propagation strategy is selected, request is sent to the stream, and the
+     * response will be immediately sent back to the sender.
+     */
+    public GrpcProcessingStrategies getProcessingStrategy() {
+        return processingStrategy;
+    }
+
+    public void setProcessingStrategy(GrpcProcessingStrategies processingStrategy) {
+        this.processingStrategy = processingStrategy;
+    }
+
+    /**
+     * Determines if onCompleted events should be pushed to the Camel route.
+     */
+    public void setForwardOnCompleted(boolean forwardOnCompleted) {
+        this.forwardOnCompleted = forwardOnCompleted;
+    }
+
+    public boolean isForwardOnCompleted() {
+        return forwardOnCompleted;
+    }
+
+    /**
+     * Determines if onError events should be pushed to the Camel route.
+     * Exceptions will be set as message body.
+     */
+    public void setForwardOnError(boolean forwardOnError) {
+        this.forwardOnError = forwardOnError;
+    }
+
+    public boolean isForwardOnError() {
+        return forwardOnError;
     }
 
     /**
