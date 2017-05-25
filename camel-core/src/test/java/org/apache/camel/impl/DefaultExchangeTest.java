@@ -147,6 +147,20 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("Africa", exchange.getProperty("zone", String.class));
     }
     
+    public void testRemoveAllProperties() throws Exception {
+        exchange.removeProperty("foobar");
+        assertFalse(exchange.hasProperties());
+
+        exchange.setProperty("fruit", "apple");
+        exchange.setProperty("fruit1", "banana");
+        exchange.setProperty("zone", "Africa");
+        assertTrue(exchange.hasProperties());
+
+        exchange.removeProperties("*");
+        assertFalse(exchange.hasProperties());
+        assertEquals(exchange.getProperties().size(), 0);
+    }
+
     public void testRemovePropertiesWithExclusion() throws Exception {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
