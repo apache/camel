@@ -21,8 +21,7 @@ import java.util.Map;
 import org.apache.camel.Message;
 
 /**
- * Factory to create the {@link Map} implementation to use for storing headers and properties
- * on {@link Message} and {@link org.apache.camel.Exchange}.
+ * Factory to create the {@link Map} implementation to use for storing headers on {@link Message}.
  *
  * @see org.apache.camel.impl.DefaultHeadersMapFactory
  */

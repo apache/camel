@@ -141,7 +141,7 @@ public final class DefaultExchange implements Exchange {
             return null;
         }
 
-        Map<String, Object> answer = context.getHeadersMapFactory().newMap(properties);
+        Map<String, Object> answer = createProperties();
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
@@ -253,7 +253,7 @@ public final class DefaultExchange implements Exchange {
 
     public Map<String, Object> getProperties() {
         if (properties == null) {
-            properties = new ConcurrentHashMap<String, Object>();
+            properties = createProperties();
         }
         return properties;
     }
@@ -517,7 +517,12 @@ public final class DefaultExchange implements Exchange {
         }
         return answer;
     }
-    
+
+    protected Map<String, Object> createProperties() {
+        // TODO: a concurrent map is likely not needed
+        return new ConcurrentHashMap<String, Object>();
+    }
+
     private static boolean isExcludePatternMatch(String key, String... excludePatterns) {
         for (String pattern : excludePatterns) {
             if (EndpointHelper.matchPattern(key, pattern)) {
