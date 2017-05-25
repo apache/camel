@@ -84,7 +84,8 @@ public class KafkaConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        log.info("Starting Kafka consumer");
+        log.info("Starting Kafka consumer on topic: {} with breakOnFirstError: {}",
+            endpoint.getConfiguration().getTopic(), endpoint.getConfiguration().isBreakOnFirstError());
         super.doStart();
 
         executor = endpoint.createExecutor();
@@ -97,7 +98,7 @@ public class KafkaConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        log.info("Stopping Kafka consumer");
+        log.info("Stopping Kafka consumer on topic: {}", endpoint.getConfiguration().getTopic());
 
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
@@ -246,7 +247,8 @@ public class KafkaConsumer extends DefaultConsumer {
                                     // processing failed due to an unhandled exception, what should we do
                                     if (endpoint.getConfiguration().isBreakOnFirstError()) {
                                         // we are failing and we should break out
-                                        log.warn("Error during processing {} from topic: {}. Will seek consumer to offset: {} and re-connect and start polling again.", exchange, topicName, partitionLastOffset);
+                                        log.warn("Error during processing {} from topic: {}. Will seek consumer to offset: {} and re-connect and start polling again.",
+                                            exchange, topicName, partitionLastOffset);
                                         // force commit so we resume on next poll where we failed
                                         commitOffset(offsetRepository, partition, partitionLastOffset, true);
                                         // continue to next partition
