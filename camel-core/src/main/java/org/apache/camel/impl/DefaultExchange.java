@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +142,7 @@ public final class DefaultExchange implements Exchange {
             return null;
         }
 
-        Map<String, Object> answer = createProperties();
+        Map<String, Object> answer = createProperties(properties);
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
@@ -519,8 +520,13 @@ public final class DefaultExchange implements Exchange {
     }
 
     protected Map<String, Object> createProperties() {
-        // TODO: a concurrent map is likely not needed
-        return new ConcurrentHashMap<String, Object>();
+        // TODO: likely not needed, we can use a HashMap
+        return new ConcurrentHashMap<>();
+    }
+
+    protected Map<String, Object> createProperties(Map<String, Object> properties) {
+        // TODO: likely not needed, we can use a HashMap
+        return new ConcurrentHashMap<>(properties);
     }
 
     private static boolean isExcludePatternMatch(String key, String... excludePatterns) {
