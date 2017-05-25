@@ -30,7 +30,6 @@ import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -133,7 +132,7 @@ public final class DefaultExchange implements Exchange {
             return null;
         }
 
-        return context.getHeadersMapFactory().fromMap(headers);
+        return context.getHeadersMapFactory().newMap(headers);
     }
 
     @SuppressWarnings("unchecked")
@@ -142,7 +141,7 @@ public final class DefaultExchange implements Exchange {
             return null;
         }
 
-        Map<String, Object> answer = context.getHeadersMapFactory().fromMap(properties);
+        Map<String, Object> answer = context.getHeadersMapFactory().newMap(properties);
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);

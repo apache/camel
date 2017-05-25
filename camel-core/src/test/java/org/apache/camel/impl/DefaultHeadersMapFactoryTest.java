@@ -42,7 +42,7 @@ public class DefaultHeadersMapFactoryTest extends TestCase {
         other.put("Foo", "cheese");
         other.put("bar", 123);
 
-        Map<String, Object> map = new DefaultHeadersMapFactory().fromMap(other);
+        Map<String, Object> map = new DefaultHeadersMapFactory().newMap(other);
 
         assertEquals("cheese", map.get("FOO"));
         assertEquals("cheese", map.get("foo"));
@@ -56,7 +56,7 @@ public class DefaultHeadersMapFactoryTest extends TestCase {
     public void testIsInstance() {
         Map<String, Object> map = new DefaultHeadersMapFactory().newMap();
 
-        Map<String, Object> other = new DefaultHeadersMapFactory().fromMap(map);
+        Map<String, Object> other = new DefaultHeadersMapFactory().newMap(map);
         other.put("Foo", "cheese");
         other.put("bar", 123);
 

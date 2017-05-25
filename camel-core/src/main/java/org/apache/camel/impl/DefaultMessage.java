@@ -224,7 +224,7 @@ public class DefaultMessage extends MessageSupport {
             this.headers = headers;
         } else {
             // create a new map
-            this.headers = getCamelContext().getHeadersMapFactory().fromMap(headers);
+            this.headers = getCamelContext().getHeadersMapFactory().newMap(headers);
         }
     }
 
