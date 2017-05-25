@@ -81,6 +81,7 @@ public class TrapTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.assertIsSatisfied();
+
         List<Exchange> exchanges = mock.getExchanges();
         SnmpMessage msg = (SnmpMessage) exchanges.get(0).getIn();
         PDU receivedTrap = msg.getSnmpMessage();
