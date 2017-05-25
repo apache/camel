@@ -92,7 +92,7 @@ public class SmppEndpoint extends DefaultEndpoint {
                                                             AlertNotification alertNotification) {
         Exchange exchange = createExchange(exchangePattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(getBinding().createSmppMessage(alertNotification));
+        exchange.setIn(getBinding().createSmppMessage(getCamelContext(), alertNotification));
         return exchange;
     }
 
@@ -119,7 +119,7 @@ public class SmppEndpoint extends DefaultEndpoint {
                                                     DeliverSm deliverSm) throws Exception {
         Exchange exchange = createExchange(exchangePattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(getBinding().createSmppMessage(deliverSm));
+        exchange.setIn(getBinding().createSmppMessage(getCamelContext(), deliverSm));
         return exchange;
     }
     
@@ -147,7 +147,7 @@ public class SmppEndpoint extends DefaultEndpoint {
     public Exchange createOnAcceptDataSm(ExchangePattern exchangePattern, DataSm dataSm, String smppMessageId) {
         Exchange exchange = createExchange(exchangePattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(getBinding().createSmppMessage(dataSm, smppMessageId));
+        exchange.setIn(getBinding().createSmppMessage(getCamelContext(), dataSm, smppMessageId));
         return exchange;
     }
 
