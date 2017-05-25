@@ -269,7 +269,7 @@ public final class DefaultExchange implements Exchange {
 
     public Message getIn() {
         if (in == null) {
-            in = new DefaultMessage();
+            in = new DefaultMessage(getContext());
             configureMessage(in);
         }
         return in;
@@ -297,7 +297,7 @@ public final class DefaultExchange implements Exchange {
         // lazy create
         if (out == null) {
             out = (in != null && in instanceof MessageSupport)
-                ? ((MessageSupport)in).newInstance() : new DefaultMessage();
+                ? ((MessageSupport)in).newInstance() : new DefaultMessage(getContext());
             configureMessage(out);
         }
         return out;

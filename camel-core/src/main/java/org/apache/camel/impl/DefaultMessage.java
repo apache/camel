@@ -239,9 +239,7 @@ public class DefaultMessage extends MessageSupport {
     public DefaultMessage newInstance() {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
-        DefaultMessage answer = new DefaultMessage();
-        answer.setCamelContext(getCamelContext());
-        return answer;
+        return new DefaultMessage(getCamelContext());
     }
 
     /**

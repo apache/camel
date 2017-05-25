@@ -82,7 +82,7 @@ public class MiloClientConsumer extends DefaultConsumer {
             return null;
         }
 
-        final DefaultMessage result = new DefaultMessage();
+        final DefaultMessage result = new DefaultMessage(getEndpoint().getCamelContext());
 
         Messages.fillFromDataValue(value, result);
 

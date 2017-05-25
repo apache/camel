@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Deque;
@@ -101,7 +100,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public Message toCamelMessage(HttpServerExchange httpExchange, Exchange exchange) throws Exception {
-        Message result = new DefaultMessage();
+        Message result = new DefaultMessage(exchange.getContext());
 
         populateCamelHeaders(httpExchange, result.getHeaders(), exchange);
 
@@ -137,7 +136,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public Message toCamelMessage(ClientExchange clientExchange, Exchange exchange) throws Exception {
-        Message result = new DefaultMessage();
+        Message result = new DefaultMessage(exchange.getContext());
 
         //retrieve response headers
         populateCamelHeaders(clientExchange.getResponse(), result.getHeaders(), exchange);

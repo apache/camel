@@ -84,7 +84,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (context.isAllowUseOriginalMessage()) {
             // special for JmsMessage as it can cause it to loose headers later.
             if (exchange.getIn().getClass().getName().equals("org.apache.camel.component.jms.JmsMessage")) {
-                this.originalInMessage = new DefaultMessage();
+                this.originalInMessage = new DefaultMessage(context);
                 this.originalInMessage.setBody(exchange.getIn().getBody());
                 this.originalInMessage.getHeaders().putAll(exchange.getIn().getHeaders());
             } else {

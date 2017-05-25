@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.net.URISyntaxException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ public class KafkaEndpointTest {
 
     @Test
     public void testCreatingKafkaExchangeSetsHeaders() throws URISyntaxException {
-        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent());
+        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent(new DefaultCamelContext()));
 
         ConsumerRecord<String, String> record = new ConsumerRecord<String, String>("topic", 4, 56, "somekey", "");
         Exchange exchange = endpoint.createKafkaExchange(record);
@@ -41,7 +42,7 @@ public class KafkaEndpointTest {
 
     @Test
     public void assertSingleton() throws URISyntaxException {
-        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent());
+        KafkaEndpoint endpoint = new KafkaEndpoint("kafka:mytopic?brokers=localhost", new KafkaComponent(new DefaultCamelContext()));
         endpoint.getConfiguration().setBrokers("localhost");
         assertTrue(endpoint.isSingleton());
     }

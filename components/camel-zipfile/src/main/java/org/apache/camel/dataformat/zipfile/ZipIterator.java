@@ -102,7 +102,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
 
             if (current != null) {
                 LOGGER.debug("read zipEntry {}", current.getName());
-                Message answer = new DefaultMessage();
+                Message answer = new DefaultMessage(inputMessage.getExchange().getContext());
                 answer.getHeaders().putAll(inputMessage.getHeaders());
                 answer.setHeader("zipFileName", current.getName());
                 answer.setHeader(Exchange.FILE_NAME, current.getName());

@@ -55,7 +55,7 @@ public class UnmarshalProcessorTest extends TestSupport {
 
     public void testDataFormatReturnsMessage() throws Exception {
         Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
-        Message out = new DefaultMessage();
+        Message out = new DefaultMessage(exchange.getContext());
         out.setBody(new Object());
         Processor processor = new UnmarshalProcessor(new MyDataFormat(out));
 

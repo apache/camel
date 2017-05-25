@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultHeadersMapFactory;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -52,8 +53,9 @@ public class KafkaProducerTest {
     private TypeConverter converter = Mockito.mock(TypeConverter.class);
     private CamelContext context = Mockito.mock(CamelContext.class);
     private Exchange exchange = Mockito.mock(Exchange.class);
-    private Message in = new DefaultMessage();
-    private Message out = new DefaultMessage();
+    private CamelContext camelContext = Mockito.mock(CamelContext.class);
+    private Message in = new DefaultMessage(camelContext);
+    private Message out = new DefaultMessage(camelContext);
     private AsyncCallback callback = Mockito.mock(AsyncCallback.class);
 
     @SuppressWarnings({"unchecked"})
@@ -75,6 +77,7 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getContext()).thenReturn(context);
         Mockito.when(context.getTypeConverter()).thenReturn(converter);
         Mockito.when(converter.tryConvertTo(String.class, exchange, null)).thenReturn(null);
+        Mockito.when(camelContext.getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
 
         producer.setKafkaProducer(kp);
         producer.setWorkerPool(Executors.newFixedThreadPool(1));
