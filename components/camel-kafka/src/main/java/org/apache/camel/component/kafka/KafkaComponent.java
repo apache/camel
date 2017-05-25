@@ -34,6 +34,8 @@ public class KafkaComponent extends UriEndpointComponent implements SSLContextPa
     private ExecutorService workerPool;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
+    @Metadata(label = "consumer", defaultValue = "false")
+    private boolean breakOnFirstError;
 
     public KafkaComponent() {
         super(KafkaEndpoint.class);
@@ -58,6 +60,7 @@ public class KafkaComponent extends UriEndpointComponent implements SSLContextPa
 
         endpoint.getConfiguration().setTopic(remaining);
         endpoint.getConfiguration().setWorkerPool(getWorkerPool());
+        endpoint.getConfiguration().setBreakOnFirstError(isBreakOnFirstError());
 
         // brokers can be configured on either component or endpoint level
         // and the consumer and produce is aware of this and act accordingly
@@ -126,5 +129,22 @@ public class KafkaComponent extends UriEndpointComponent implements SSLContextPa
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
+
+    public boolean isBreakOnFirstError() {
+        return breakOnFirstError;
+    }
+
+    /**
+     * This options controls what happens when a consumer is processing an exchange and it fails.
+     * If the option is <tt>false</tt> then the consumer continues to the next message and processes it.
+     * If the option is <tt>true</tt> then the consumer breaks out, and will seek back to offset of the
+     * message that caused a failure, and then re-attempt to process this message. However this can lead
+     * to endless processing of the same message if its bound to fail every time, eg a poison message.
+     * Therefore its recommended to deal with that for example by using Camel's error handler.
+     */
+    public void setBreakOnFirstError(boolean breakOnFirstError) {
+        this.breakOnFirstError = breakOnFirstError;
+    }
+
 
 }
