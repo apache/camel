@@ -22,20 +22,17 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.HeadersMapFactory;
 
-public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
-
-    private HeadersMapFactory custom = new CustomHeadersMapFactory();
+public class HashMapHeadersMapFactoryRouteTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.setHeadersMapFactory(custom);
+        context.setHeadersMapFactory(new HashMapHeadersMapFactory());
         return context;
     }
 
-    public void testCustomHeaders() throws Exception {
+    public void testHashMapHeaders() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", 123);
         getMockEndpoint("mock:result").expectedHeaderReceived("FOO", 456);
         getMockEndpoint("mock:result").expectedHeaderReceived("Bar", "yes");
@@ -48,8 +45,6 @@ public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
         template.sendBodyAndHeaders("direct:start", "Hello World", headers);
 
         assertMockEndpointsSatisfied();
-
-        assertSame(custom, context.getHeadersMapFactory());
     }
 
     @Override
@@ -63,21 +58,4 @@ public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
         };
     }
 
-    private static class CustomHeadersMapFactory implements HeadersMapFactory {
-
-        @Override
-        public Map<String, Object> newMap() {
-            return new HashMap<>();
-        }
-
-        @Override
-        public Map<String, Object> newMap(Map<String, Object> map) {
-            return new HashMap<>(map);
-        }
-
-        @Override
-        public boolean isInstanceOf(Map<String, Object> map) {
-            return map instanceof HashMap;
-        }
-    }
 }

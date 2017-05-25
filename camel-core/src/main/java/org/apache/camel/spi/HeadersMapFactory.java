@@ -44,7 +44,7 @@ public interface HeadersMapFactory {
      * @param map  existing map to copy over (must use defensive copy)
      * @return new map with the content from the existing map
      */
-    Map<String, Object> fromMap(Map<String, Object> map);
+    Map<String, Object> newMap(Map<String, Object> map);
 
     /**
      * Whether the given {@link Map} implementation is created by this factory?
