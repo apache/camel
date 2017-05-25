@@ -18,10 +18,11 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -237,18 +238,28 @@ public final class DefaultExchange implements Exchange {
             return false;
         }
 
+        // store keys to be removed as we cannot loop and remove at the same time in implementations such as HashMap
+        Set<String> toBeRemoved = new HashSet<>();
         boolean matches = false;
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            String key = entry.getKey();
+        for (String key : properties.keySet()) {
             if (EndpointHelper.matchPattern(key, pattern)) {
                 if (excludePatterns != null && isExcludePatternMatch(key, excludePatterns)) {
                     continue;
                 }
                 matches = true;
-                properties.remove(entry.getKey());
+                toBeRemoved.add(key);
             }
-
         }
+
+        if (!toBeRemoved.isEmpty()) {
+            if (toBeRemoved.size() == properties.size()) {
+                // special optimization when all should be removed
+                properties.clear();
+            } else {
+                toBeRemoved.forEach(k -> properties.remove(k));
+            }
+        }
+
         return matches;
     }
 
@@ -520,13 +531,11 @@ public final class DefaultExchange implements Exchange {
     }
 
     protected Map<String, Object> createProperties() {
-        // TODO: likely not needed, we can use a HashMap
-        return new ConcurrentHashMap<>();
+        return new HashMap<>();
     }
 
     protected Map<String, Object> createProperties(Map<String, Object> properties) {
-        // TODO: likely not needed, we can use a HashMap
-        return new ConcurrentHashMap<>(properties);
+        return new HashMap<>(properties);
     }
 
     private static boolean isExcludePatternMatch(String key, String... excludePatterns) {
