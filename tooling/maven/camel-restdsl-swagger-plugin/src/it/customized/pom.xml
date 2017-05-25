@@ -63,7 +63,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>swagger-rest-dsl-generator</artifactId>
+      <artifactId>camel-swagger-rest-dsl-generator</artifactId>
       <version>@project.version@</version>
     </dependency>
   </dependencies>
