@@ -23,6 +23,7 @@ import java.util.List;
 
 import io.grpc.Channel;
 import io.grpc.stub.StreamObserver;
+import org.apache.camel.CamelContext;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -34,12 +35,12 @@ public final class GrpcUtils {
     private GrpcUtils() {
     }
 
-    public static Object constructGrpcAsyncStub(String packageName, String serviceName, Channel channel) {
-        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_ASYNC_STUB_METHOD, channel);
+    public static Object constructGrpcAsyncStub(String packageName, String serviceName, Channel channel, final CamelContext context) {
+        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_ASYNC_STUB_METHOD, channel, context);
     }
 
-    public static Object constructGrpcBlockingStub(String packageName, String serviceName, Channel channel) {
-        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_SYNC_STUB_METHOD, channel);
+    public static Object constructGrpcBlockingStub(String packageName, String serviceName, Channel channel, final CamelContext context) {
+        return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_SYNC_STUB_METHOD, channel, context);
     }
 
     /**
@@ -49,14 +50,14 @@ public final class GrpcUtils {
      * newFutureStub - for ListenableFuture-style (not implemented yet)
      */
     @SuppressWarnings({"rawtypes"})
-    private static Object constructGrpcStubClass(String packageName, String serviceName, String stubMethod, Channel channel) {
+    private static Object constructGrpcStubClass(String packageName, String serviceName, String stubMethod, Channel channel, final CamelContext context) {
         Class[] paramChannel = new Class[1];
         paramChannel[0] = Channel.class;
         Object grpcBlockingStub = null;
 
         String serviceClassName = packageName + "." + serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX;
         try {
-            Class grpcServiceClass = Class.forName(serviceClassName);
+            Class grpcServiceClass = context.getClassResolver().resolveMandatoryClass(serviceClassName);
             Method grpcBlockingMethod = ReflectionUtils.findMethod(grpcServiceClass, stubMethod, paramChannel);
             if (grpcBlockingMethod == null) {
                 throw new IllegalArgumentException("gRPC service method not found: " + serviceClassName + "." + GrpcConstants.GRPC_SERVICE_SYNC_STUB_METHOD);
@@ -70,12 +71,12 @@ public final class GrpcUtils {
     }
     
     @SuppressWarnings("rawtypes")
-    public static Class constructGrpcImplBaseClass(String packageName, String serviceName) {
+    public static Class constructGrpcImplBaseClass(String packageName, String serviceName, final CamelContext context) {
         Class grpcServerImpl;
 
         String serverBaseImpl = packageName + "." + serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX + "$" + serviceName + GrpcConstants.GRPC_SERVER_IMPL_POSTFIX;
         try {
-            grpcServerImpl = Class.forName(serverBaseImpl);
+            grpcServerImpl = context.getClassResolver().resolveMandatoryClass(serverBaseImpl);
 
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("gRPC server base class not found: " + serverBaseImpl);
