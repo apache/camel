@@ -267,6 +267,7 @@
     <module>camel-rss-starter</module>
     <module>camel-ruby-starter</module>
     <module>camel-rx-starter</module>
+    <module>camel-rxjava2-starter</module>
     <module>camel-salesforce-starter</module>
     <module>camel-sap-netweaver-starter</module>
     <module>camel-saxon-starter</module>
