@@ -224,6 +224,17 @@ public class InfinispanProducer extends HeaderSelectorProducer {
 
         setResult(message, result);
     }
+    
+    @InvokeOnHeader("GETORDEFAULT")
+    void onGetOrDefault(Message message) {
+        final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);
+        final Object key = message.getHeader(InfinispanConstants.KEY);
+        final Object defaultValue = message.getHeader(InfinispanConstants.DEFAULT_VALUE);
+        final Object result = cache.getOrDefault(key, defaultValue);
+
+        setResult(message, result);
+    }
+
 
     @InvokeOnHeader("CONTAINSKEY")
     @InvokeOnHeader(InfinispanConstants.CONTAINS_KEY)
@@ -371,7 +382,6 @@ public class InfinispanProducer extends HeaderSelectorProducer {
     void onSize(Message message) {
         final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);
         final Object result = cache.size();
-
         setResult(message, result);
     }
 

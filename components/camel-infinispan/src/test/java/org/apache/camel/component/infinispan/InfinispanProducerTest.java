@@ -494,6 +494,42 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
 
         waitForNullValue(KEY_ONE);
     }
+    
+    @Test
+    public void getOrDefault() throws Exception {
+        template.send("direct:start", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT);
+            }
+        });
+
+        Object value = currentCache().get(KEY_ONE);
+        assertEquals(VALUE_ONE, value.toString());
+
+        Exchange exchange;
+        exchange = template.send("direct:getOrDefault", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.DEFAULT_VALUE, "defaultTest");
+            }
+        });
+        String resultGet = exchange.getIn().getBody(String.class);
+        assertEquals(VALUE_ONE, resultGet);
+        
+        exchange = template.send("direct:getOrDefault", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_TWO);
+                exchange.getIn().setHeader(InfinispanConstants.DEFAULT_VALUE, "defaultTest");
+            }
+        });
+        resultGet = exchange.getIn().getBody(String.class);
+        assertEquals("defaultTest", resultGet);
+    }
 
     @Test
     public void putOperationReturnsThePreviousValue() throws Exception {
@@ -1015,6 +1051,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                     .to("infinispan?cacheContainer=#cacheContainer&operation=PUTIFABSENT");
                 from("direct:get")
                     .to("infinispan?cacheContainer=#cacheContainer&operation=GET");
+                from("direct:getOrDefault")
+                    .to("infinispan?cacheContainer=#cacheContainer&operation=GETORDEFAULT");
                 from("direct:remove")
                     .to("infinispan?cacheContainer=#cacheContainer&operation=REMOVE");
                 from("direct:clear")

@@ -24,6 +24,7 @@ public enum InfinispanOperation {
     PUTIFABSENT,
     PUTIFABSENTASYNC,
     GET,
+    GETORDEFAULT,
     CONTAINSKEY,
     CONTAINSVALUE,
     REMOVE,
