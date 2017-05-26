@@ -118,7 +118,7 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
         if (answer == null) {
             answer = super.get(o);
         } else {
-            hits.incrementAndGet();
+            hits.increment();
         }
         return answer;
     }
