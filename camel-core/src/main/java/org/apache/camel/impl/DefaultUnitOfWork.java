@@ -116,9 +116,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         // store as property so we know that the origin exchange was redelivered
         if (exchange.getProperty(Exchange.EXTERNAL_REDELIVERED) == null) {
             Boolean redelivered = exchange.isExternalRedelivered();
-            if (redelivered != null) {
-                exchange.setProperty(Exchange.EXTERNAL_REDELIVERED, redelivered);
+            if (redelivered == null) {
+                // not from a transactional resource so mark it as false by default
+                redelivered = false;
             }
+            exchange.setProperty(Exchange.EXTERNAL_REDELIVERED, redelivered);
         }
 
         // fire event

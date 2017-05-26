@@ -429,10 +429,6 @@ public final class DefaultExchange implements Exchange {
             Message msg = getIn();
             if (msg instanceof DefaultMessage) {
                 answer = ((DefaultMessage) msg).isTransactedRedelivered();
-                if (answer != null) {
-                    // store as property to keep around
-                    setProperty(Exchange.EXTERNAL_REDELIVERED, answer);
-                }
             }
         }
 
