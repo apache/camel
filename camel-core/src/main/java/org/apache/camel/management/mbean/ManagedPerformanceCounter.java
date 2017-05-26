@@ -77,7 +77,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         super.reset();
         exchangesCompleted.reset();
         exchangesFailed.reset();
@@ -193,11 +193,11 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         this.statisticsEnabled = statisticsEnabled;
     }
 
-    public synchronized void processExchange(Exchange exchange) {
+    public void processExchange(Exchange exchange) {
         exchangesInflight.increment();
     }
 
-    public synchronized void completedExchange(Exchange exchange, long time) {
+    public void completedExchange(Exchange exchange, long time) {
         increment();
         exchangesCompleted.increment();
         exchangesInflight.decrement();
@@ -233,7 +233,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         meanProcessingTime.updateValue(mean);
     }
 
-    public synchronized void failedExchange(Exchange exchange) {
+    public void failedExchange(Exchange exchange) {
         increment();
         exchangesFailed.increment();
         exchangesInflight.decrement();

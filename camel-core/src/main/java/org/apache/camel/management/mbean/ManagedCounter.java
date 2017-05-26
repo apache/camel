@@ -36,7 +36,7 @@ public abstract class ManagedCounter implements ManagedCounterMBean {
         resetTimestamp.updateValue(new Date().getTime());
     }
 
-    public synchronized void reset() {
+    public void reset() {
         exchangesTotal.reset();
         resetTimestamp.updateValue(new Date().getTime());
     }
@@ -55,7 +55,7 @@ public abstract class ManagedCounter implements ManagedCounterMBean {
         return exchangesTotal.getValue();
     }
 
-    public synchronized void increment() {
+    public void increment() {
         exchangesTotal.increment();
     }
 }
