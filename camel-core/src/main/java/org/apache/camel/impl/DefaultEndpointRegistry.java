@@ -64,7 +64,7 @@ public class DefaultEndpointRegistry extends LRUCache<EndpointKey, Endpoint> imp
         if (answer == null) {
             answer = super.get(o);
         } else {
-            hits.incrementAndGet();
+            hits.increment();
         }
         return answer;
     }

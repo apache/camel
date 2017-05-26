@@ -82,7 +82,7 @@ public class DefaultValidatorRegistry extends LRUCache<ValidatorKey, Validator> 
         if (answer == null) {
             answer = super.get(o);
         } else {
-            hits.incrementAndGet();
+            hits.increment();
         }
         return answer;
     }
