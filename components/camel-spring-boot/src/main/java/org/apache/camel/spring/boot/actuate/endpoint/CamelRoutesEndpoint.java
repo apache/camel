@@ -25,34 +25,21 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteEndpointInfo;
+import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.actuate.endpoint.Endpoint;
 
 /**
  * {@link Endpoint} to expose {@link org.apache.camel.Route} information.
  */
-public class CamelRoutesEndpoint implements Endpoint<List<RouteEndpointInfo>> {
+public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo>> {
 
-    private static final String ENDPONT_ID = "camelroutes";
+    private static final String ENDPOINT_ID = "camelroutes";
 
     private CamelContext camelContext;
 
     public CamelRoutesEndpoint(CamelContext camelContext) {
+        super(ENDPOINT_ID);
         this.camelContext = camelContext;
-    }
-
-    @Override
-    public String getId() {
-        return ENDPONT_ID;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public boolean isSensitive() {
-        return true;
     }
 
     @Override
