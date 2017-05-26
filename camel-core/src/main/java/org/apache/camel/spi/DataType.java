@@ -20,6 +20,7 @@ import org.apache.camel.util.StringHelper;
 
 /**
  * Represents the data type URN which is used for message data type contract.
+ * <p/>
  * Java class doesn't always explain the data type completely, for example XML and JSON
  * data format is sometimes serialized as a {@code String}, {@code InputStream} or etc.
  * The {@link DataTypeAware} message stores the DataType as a part of the message to carry
@@ -30,7 +31,9 @@ import org.apache.camel.util.StringHelper;
  * or 'json:XYZOrder'. These type name other than java class name allows the message to
  * carry the name of the message data structure even if it's marshaled.
  * 
- * @see {@link DataTypeAware} {@link Transformer} {@link Validator}
+ * @see DataTypeAware
+ * @see Transformer
+ * @see Validator
  */
 public class DataType {
 
