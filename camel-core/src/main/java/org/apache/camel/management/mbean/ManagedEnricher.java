@@ -58,7 +58,7 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         super.reset();
         if (processor.getEndpointUtilizationStatistics() != null) {
             processor.getEndpointUtilizationStatistics().clear();

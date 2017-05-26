@@ -61,7 +61,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         super.reset();
         processor.reset();
     }
