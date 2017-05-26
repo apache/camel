@@ -85,7 +85,7 @@ public class GrpcConsumer extends DefaultConsumer {
         ServerInterceptor headerInterceptor = new GrpcHeaderInterceptor();
         MethodHandler methodHandler = new GrpcMethodHandler(endpoint, this);
         
-        serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(configuration.getServicePackage(), configuration.getServiceName()));
+        serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(configuration.getServicePackage(), configuration.getServiceName(), endpoint.getCamelContext()));
         try {
             bindableService = (BindableService)serviceProxy.create(new Class<?>[0], new Object[0], methodHandler);
         } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
