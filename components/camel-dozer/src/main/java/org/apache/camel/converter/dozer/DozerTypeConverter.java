@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * types. <code>DozerTypeConverter</code>s are created and installed into a
  * {@link CamelContext} by an instance of {@link DozerTypeConverterLoader}.
  * <p>
- * See <a href="http://dozer.sourceforge.net">dozer project page</a> or more information on configuring Dozer
+ * See <a href="https://github.com/DozerMapper/dozer">dozer project page</a> or more information on configuring Dozer
  *
  * @see DozerTypeConverterLoader
  */

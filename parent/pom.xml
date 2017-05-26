@@ -176,7 +176,7 @@
     <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
     <docker-java-version>3.0.9</docker-java-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
-    <dozer-version>5.5.1</dozer-version>
+    <dozer-version>6.0.0</dozer-version>
     <drools-version>6.5.0.Final</drools-version>
     <dropbox-version>1.8.2</dropbox-version>
     <easymock-version>3.4</easymock-version>
@@ -3998,8 +3998,8 @@
 
       <!-- optional dozer dependencies -->
       <dependency>
-        <groupId>net.sf.dozer</groupId>
-        <artifactId>dozer</artifactId>
+        <groupId>com.github.dozermapper</groupId>
+        <artifactId>dozer-core</artifactId>
         <version>${dozer-version}</version>
       </dependency>
 
