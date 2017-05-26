@@ -158,7 +158,6 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     @Bean
     public CamelContext camelContext() throws Exception {
         CamelContext camelContext = createCamelContext();
-        SpringCamelContext.setNoStart(true);
         setupCamelContext(camelContext);
         return camelContext;
     }

@@ -14,29 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.file;
+package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.file.FileConsumerPreMoveTest;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-public class SpringFileConsumerPreMoveTest extends FileConsumerPreMoveTest {
-    private AbstractXmlApplicationContext applicationContext;
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext(
-            "org/apache/camel/spring/file/SpringFileConsumerPreMoveTest.xml");
-        return applicationContext.getBean(CamelContext.class);
+public class StartupShutdownSpringCamelContextOrderTest extends StartupShutdownOrderBaseTest {
+    @Configuration
+    static class CamelContextConfiguration {
+        @Bean
+        CamelContext camelContext() {
+            return new SpringCamelContext();
+        }
     }
 
     @Override
-    protected void tearDown() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.stop();
-        }
-        super.tearDown();
+    ConfigurableApplicationContext createContext() {
+        final ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(
+            CamelContextConfiguration.class, Beans.class);
+        return context;
     }
 
 }
