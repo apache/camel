@@ -2,7 +2,7 @@
 Dozer Type Conversion
 ----------------------
 
-http://dozer.sourceforge.net/documentation/about.html[Dozer] is a fast
+https://github.com/DozerMapper/dozer/blob/master/docs/asciidoc/about/about.adoc[Dozer] is a fast
 and flexible framework for mapping back and forth between Java Beans.
 Coupled with Camel's automatic type conversion, it's a formidable tool
 for dealing object to object mapping headaches that crop up in
@@ -105,9 +105,8 @@ Configuring Dozer
 ~~~~~~~~~~~~~~~~~
 
 Dozer's configuration is extremely flexible and many mapping scenarios
-are covered
-http://dozer.sourceforge.net/documentation/mappings.html[here]. For our
-simple example, the configuration looks like the following.
+are covered https://github.com/DozerMapper/dozer/blob/master/docs/asciidoc/documentation/mappings.adoc[here].
+For our simple example, the configuration looks like the following.
 
 *mapping.xml*
 
