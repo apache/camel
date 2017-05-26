@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Queue;
 import java.util.regex.Pattern;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -448,14 +448,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 // process the exchange using the async consumer to support async routing engine
                 // which can be supported by this file consumer as all the done work is
                 // provided in the GenericFileOnCompletion
-                getAsyncProcessor().process(exchange, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        // noop
-                        if (log.isTraceEnabled()) {
-                            log.trace("Done processing file: {} {}", target, doneSync ? "synchronously" : "asynchronously");
-                        }
-                    }
-                });
+                getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
             }
 
         } catch (Exception e) {
