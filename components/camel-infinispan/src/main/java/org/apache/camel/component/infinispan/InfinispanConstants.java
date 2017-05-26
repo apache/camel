@@ -23,6 +23,7 @@ public interface InfinispanConstants {
     String CACHE_NAME = "CamelInfinispanCacheName";
     String KEY = "CamelInfinispanKey";
     String VALUE = "CamelInfinispanValue";
+    String DEFAULT_VALUE = "CamelInfinispanDefaultValue";
     String OLD_VALUE = "CamelInfinispanOldValue";
     String MAP = "CamelInfinispanMap";
     String OPERATION = "CamelInfinispanOperation";
