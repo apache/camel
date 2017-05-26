@@ -491,32 +491,30 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
-    public synchronized void processExchange(Exchange exchange) {
-        InFlightKey key = new InFlightKey(System.currentTimeMillis(), exchange.getExchangeId());
-        InFlightKey oldKey = exchangesInFlightKeys.putIfAbsent(exchange.getExchangeId(), key);
-        // we may already have the exchange being processed so only add to timestamp if its a new exchange
-        // for example when people call the same routes recursive
-        if (oldKey == null) {
+    public void processExchange(Exchange exchange) {
+        exchangesInFlightKeys.computeIfAbsent(exchange.getExchangeId(), id -> {
+            InFlightKey key = new InFlightKey(System.currentTimeMillis(), exchange.getExchangeId());
             exchangesInFlightStartTimestamps.put(key, key.timeStamp);
-        }
+            return key;
+        });
         super.processExchange(exchange);
     }
 
     @Override
-    public synchronized void completedExchange(Exchange exchange, long time) {
-        InFlightKey key = exchangesInFlightKeys.remove(exchange.getExchangeId());
-        if (key != null) {
+    public void completedExchange(Exchange exchange, long time) {
+        exchangesInFlightKeys.computeIfPresent(exchange.getExchangeId(), (id, key) -> {
             exchangesInFlightStartTimestamps.remove(key);
-        }
+            return null;
+        });
         super.completedExchange(exchange, time);
     }
 
     @Override
-    public synchronized void failedExchange(Exchange exchange) {
-        InFlightKey key = exchangesInFlightKeys.remove(exchange.getExchangeId());
-        if (key != null) {
+    public void failedExchange(Exchange exchange) {
+        exchangesInFlightKeys.computeIfPresent(exchange.getExchangeId(), (id, key) -> {
             exchangesInFlightStartTimestamps.remove(key);
-        }
+            return null;
+        });
         super.failedExchange(exchange);
     }
 
