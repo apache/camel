@@ -123,7 +123,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     public void start() {
         // for example from unit testing we want to start Camel later (manually)
         if (Boolean.TRUE.equals(NO_START.get())) {
-            LOG.trace("Ignoring maybeStart() as NO_START is false");
+            LOG.trace("Ignoring start() as NO_START is false");
             return;
         }
 
@@ -137,7 +137,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
             }
         } else {
             // ignore as Camel is already started
-            LOG.trace("Ignoring maybeStart() as Apache Camel is already started");
+            LOG.trace("Ignoring start() as Camel is already started");
         }
     }
 
@@ -151,7 +151,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
             }
         } else {
             // ignore as Camel is already stopped
-            LOG.trace("Ignoring maybeStop() as Apache Camel is already stopped");
+            LOG.trace("Ignoring stop() as Camel is already stopped");
         }
     }
 
@@ -325,7 +325,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
 
     @Override
     public boolean isRunning() {
-        return isStarted();
+        return !isStopping() && !isStopped();
     }
 
 }

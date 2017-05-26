@@ -33,6 +33,11 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         LOG.info("@RunWith(CamelSpringBootJUnit4ClassRunner.class) preparing: {}", testContext.getTestClass());
 
         Class<?> testClass = testContext.getTestClass();
+        // we are customizing the Camel context with
+        // CamelAnnotationsHandler so we do not want to start it
+        // automatically, which would happen when SpringCamelContext
+        // is added to Spring ApplicationContext, so we set the flag
+        // not to start it just yet
         SpringCamelContext.setNoStart(true);
         ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
 
@@ -44,6 +49,8 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         CamelAnnotationsHandler.handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
         SpringCamelContext.setNoStart(false);
         CamelContext camelContext = context.getBean(CamelContext.class);
+
+        // after our customizations we should start the CamelContext
         camelContext.start();
     }
 
