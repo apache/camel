@@ -426,11 +426,13 @@ public final class DefaultExchange implements Exchange {
             // lets avoid adding methods to the Message API, so we use the
             // DefaultMessage to allow component specific messages to extend
             // and implement the isExternalRedelivered method.
-            DefaultMessage msg = getIn(DefaultMessage.class);
-            if (msg != null) {
-                answer = msg.isTransactedRedelivered();
-                // store as property to keep around
-                setProperty(Exchange.EXTERNAL_REDELIVERED, answer);
+            Message msg = getIn();
+            if (msg instanceof DefaultMessage) {
+                answer = ((DefaultMessage) msg).isTransactedRedelivered();
+                if (answer != null) {
+                    // store as property to keep around
+                    setProperty(Exchange.EXTERNAL_REDELIVERED, answer);
+                }
             }
         }
 
