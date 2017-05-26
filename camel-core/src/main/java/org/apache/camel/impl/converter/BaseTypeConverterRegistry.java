@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -76,11 +76,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
     protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
     protected final Statistics statistics = new UtilizationStatistics();
-    protected final AtomicLong noopCounter = new AtomicLong();
-    protected final AtomicLong attemptCounter = new AtomicLong();
-    protected final AtomicLong missCounter = new AtomicLong();
-    protected final AtomicLong hitCounter = new AtomicLong();
-    protected final AtomicLong failedCounter = new AtomicLong();
+    protected final LongAdder noopCounter = new LongAdder();
+    protected final LongAdder attemptCounter = new LongAdder();
+    protected final LongAdder missCounter = new LongAdder();
+    protected final LongAdder hitCounter = new LongAdder();
+    protected final LongAdder failedCounter = new LongAdder();
 
     public BaseTypeConverterRegistry(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
         this.resolver = resolver;
@@ -137,7 +137,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
             if (statistics.isStatisticsEnabled()) {
-                failedCounter.incrementAndGet();
+                failedCounter.increment();
             }
             // if its a ExecutionException then we have rethrow it as its not due to failed conversion
             // this is special for FutureTypeConverter
@@ -156,13 +156,13 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
         if (answer == Void.TYPE) {
             if (statistics.isStatisticsEnabled()) {
-                missCounter.incrementAndGet();
+                missCounter.increment();
             }
             // Could not find suitable conversion
             return null;
         } else {
             if (statistics.isStatisticsEnabled()) {
-                hitCounter.incrementAndGet();
+                hitCounter.increment();
             }
             return (T) answer;
         }
@@ -185,7 +185,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             answer = doConvertTo(type, exchange, value, false);
         } catch (Exception e) {
             if (statistics.isStatisticsEnabled()) {
-                failedCounter.incrementAndGet();
+                failedCounter.increment();
             }
             // error occurred during type conversion
             if (e instanceof TypeConversionException) {
@@ -196,13 +196,13 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
         if (answer == Void.TYPE || value == null) {
             if (statistics.isStatisticsEnabled()) {
-                missCounter.incrementAndGet();
+                missCounter.increment();
             }
             // Could not find suitable conversion
             throw new NoTypeConversionAvailableException(value, type);
         } else {
             if (statistics.isStatisticsEnabled()) {
-                hitCounter.incrementAndGet();
+                hitCounter.increment();
             }
             return (T) answer;
         }
@@ -225,19 +225,19 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             answer = doConvertTo(type, exchange, value, true);
         } catch (Exception e) {
             if (statistics.isStatisticsEnabled()) {
-                failedCounter.incrementAndGet();
+                failedCounter.increment();
             }
             return null;
         }
         if (answer == Void.TYPE) {
             // Could not find suitable conversion
             if (statistics.isStatisticsEnabled()) {
-                missCounter.incrementAndGet();
+                missCounter.increment();
             }
             return null;
         } else {
             if (statistics.isStatisticsEnabled()) {
-                hitCounter.incrementAndGet();
+                hitCounter.increment();
             }
             return (T) answer;
         }
@@ -253,7 +253,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         if (value == null) {
             // no type conversion was needed
             if (statistics.isStatisticsEnabled()) {
-                noopCounter.incrementAndGet();
+                noopCounter.increment();
             }
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class.isAssignableFrom(type)) {
@@ -266,7 +266,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         if (type.isInstance(value)) {
             // no type conversion was needed
             if (statistics.isStatisticsEnabled()) {
-                noopCounter.incrementAndGet();
+                noopCounter.increment();
             }
             return type.cast(value);
         }
@@ -275,7 +275,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         if (ObjectHelper.isNaN(value)) {
             // no type conversion was needed
             if (statistics.isStatisticsEnabled()) {
-                noopCounter.incrementAndGet();
+                noopCounter.increment();
             }
             if (Float.class.isAssignableFrom(type)) {
                 return Float.NaN;
@@ -289,7 +289,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         // okay we need to attempt to convert
         if (statistics.isStatisticsEnabled()) {
-            attemptCounter.incrementAndGet();
+            attemptCounter.increment();
         }
 
         // check if we have tried it before and if its a miss
@@ -705,36 +705,36 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         @Override
         public long getNoopCounter() {
-            return noopCounter.get();
+            return noopCounter.longValue();
         }
 
         @Override
         public long getAttemptCounter() {
-            return attemptCounter.get();
+            return attemptCounter.longValue();
         }
 
         @Override
         public long getHitCounter() {
-            return hitCounter.get();
+            return hitCounter.longValue();
         }
 
         @Override
         public long getMissCounter() {
-            return missCounter.get();
+            return missCounter.longValue();
         }
 
         @Override
         public long getFailedCounter() {
-            return failedCounter.get();
+            return failedCounter.longValue();
         }
 
         @Override
         public void reset() {
-            noopCounter.set(0);
-            attemptCounter.set(0);
-            hitCounter.set(0);
-            missCounter.set(0);
-            failedCounter.set(0);
+            noopCounter.reset();
+            attemptCounter.reset();
+            hitCounter.reset();
+            missCounter.reset();
+            failedCounter.reset();
         }
 
         @Override
