@@ -847,6 +847,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-rxjava2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-rest-swagger</artifactId>
     </dependency>
     <dependency>
@@ -2137,6 +2141,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-reactor-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-rxjava2-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
