@@ -19,6 +19,7 @@ package org.apache.camel.spring;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -78,22 +79,24 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.Lifecycle;
+import org.springframework.context.Phased;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * CamelContext using XML configuration.
- *
- * @version 
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext>
-        implements FactoryBean<SpringCamelContext>, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener<ApplicationEvent> {
+        implements FactoryBean<SpringCamelContext>, InitializingBean, DisposableBean, ApplicationContextAware, Lifecycle,
+        Phased, ApplicationListener<ContextRefreshedEvent>, Ordered {
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
 
     @XmlAttribute(name = "depends-on")
@@ -229,7 +232,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     public Class<SpringCamelContext> getObjectType() {
         return SpringCamelContext.class;
     }
-    
+
     protected <S> S getBeanForType(Class<S> clazz) {
         S bean = null;
         String[] names = getApplicationContext().getBeanNamesForType(clazz, true, true);
@@ -346,41 +349,63 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         }
     }
 
-    public void onApplicationEvent(ApplicationEvent event) {
-        // From Spring 3.0.1, The BeanFactory applicationEventListener 
-        // and Bean's applicationEventListener will be called,
-        // So we just delegate the onApplicationEvent call here.
-
-        SpringCamelContext context = getContext(false);
-        if (context != null) {
-            // we need to defer setting up routes until Spring has done all its dependency injection
-            // which is only guaranteed to be done when it emits the ContextRefreshedEvent event.
-            if (event instanceof ContextRefreshedEvent) {
-                try {
-                    setupRoutes();
-                } catch (Exception e) {
-                    throw wrapRuntimeCamelException(e);
-                }
-            }
-            // let the spring camel context handle the events
-            context.onApplicationEvent(event);
-        } else {
-            LOG.debug("Publishing spring-event: {}", event);
-
-            if (event instanceof ContextRefreshedEvent) {
-                // now lets start the CamelContext so that all its possible
-                // dependencies are initialized
-                try {
-                    // we need to defer setting up routes until Spring has done all its dependency injection
-                    // which is only guaranteed to be done when it emits the ContextRefreshedEvent event.
-                    setupRoutes();
-                    LOG.trace("Starting the context now");
-                    getContext().start();
-                } catch (Exception e) {
-                    throw wrapRuntimeCamelException(e);
-                }
-            }
+    @Override
+    public void start() {
+        try {
+            setupRoutes();
+        } catch (Exception e) {
+            throw wrapRuntimeCamelException(e);
         }
+
+        // when the routes are setup we need to start the Camel context
+        context.start();
+    }
+
+    @Override
+    public void stop() {
+        if (context != null) {
+            context.stop();
+        }
+    }
+
+    @Override
+    public boolean isRunning() {
+        return context != null && context.isRunning();
+    }
+
+    @Override
+    public int getPhase() {
+        // the factory starts the context from
+        // onApplicationEvent(ContextRefreshedEvent) so the phase we're
+        // in only influences when the context is to be stopped, and
+        // we want the CamelContext to be first in line to get stopped
+        // if we wanted the phase to be considered while starting, we
+        // would need to implement SmartLifecycle (see
+        // DefaultLifecycleProcessor::startBeans)
+        // we use LOWEST_PRECEDENCE here as this is taken into account
+        // only when stopping and then in reversed order
+        return LOWEST_PRECEDENCE - 1;
+    }
+
+    @Override
+    public int getOrder() {
+        // CamelContextFactoryBean implements Ordered so that it's the 
+        // second to last in ApplicationListener to receive events,
+        // SpringCamelContext should be the last one, this is important
+        // for startup as we want all resources to be ready and all
+        // routes added to the context (see setupRoutes() and
+        // org.apache.camel.spring.boot.RoutesCollector)
+        return LOWEST_PRECEDENCE - 1;
+    }
+
+    @Override
+    public void onApplicationEvent(final ContextRefreshedEvent event) {
+        // start the CamelContext when the Spring ApplicationContext is
+        // done initializing, as the last step in ApplicationContext
+        // being started/refreshed, there could be a race condition with
+        // other ApplicationListeners that react to
+        // ContextRefreshedEvent but this is the best that we can do
+        start();
     }
 
     // Properties
@@ -393,6 +418,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return applicationContext;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
@@ -412,8 +438,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * Create the context
      */
     protected SpringCamelContext createContext() {
-        SpringCamelContext ctx = newCamelContext();        
-        ctx.setName(getId());        
+        SpringCamelContext ctx = newCamelContext();
+        ctx.setName(getId());
+
         return ctx;
     }
 

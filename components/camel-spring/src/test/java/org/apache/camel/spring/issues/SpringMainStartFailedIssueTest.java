@@ -17,12 +17,10 @@
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.spring.Main;
 
-/**
- * @version 
- */
 public class SpringMainStartFailedIssueTest extends TestSupport {
 
     public void testStartupFailed() throws Exception {
@@ -32,7 +30,7 @@ public class SpringMainStartFailedIssueTest extends TestSupport {
         try {
             main.run(args);
             fail("Should have thrown an exception");
-        } catch (Exception e) {
+        } catch (RuntimeCamelException e) {
             assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());
         }
 

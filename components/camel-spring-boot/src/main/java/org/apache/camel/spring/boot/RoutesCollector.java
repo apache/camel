@@ -41,20 +41,21 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 
 /**
  * Collects routes and rests from the various sources (like Spring application context beans registry or opinionated
  * classpath locations) and injects these into the Camel context.
  */
-public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent> {
+public class RoutesCollector implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
     // Static collaborators
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutesCollector.class);
 
     // Collaborators
-    
+
     private final ApplicationContext applicationContext;
 
     private final List<CamelContextConfiguration> camelContextConfigurations;
@@ -191,6 +192,18 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
         } else {
             LOG.debug("Ignore ContextRefreshedEvent: {}", event);
         }
+    }
+
+    @Override
+    public int getOrder() {
+        // RoutesCollector implements Ordered so that it's the
+        // second to last in ApplicationListener to receive events,
+        // SpringCamelContext should be the last one,
+        // CamelContextFactoryBean should be on par with
+        // RoutesCollector this is important for startup as we want
+        // all resources to be ready and all routes added to the 
+        // context
+        return LOWEST_PRECEDENCE - 1;
     }
 
     private void maybeStart(CamelContext camelContext) throws Exception {

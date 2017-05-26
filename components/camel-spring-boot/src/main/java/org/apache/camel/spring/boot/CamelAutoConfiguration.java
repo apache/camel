@@ -77,7 +77,13 @@ public class CamelAutoConfiguration {
     /**
      * Spring-aware Camel context for the application. Auto-detects and loads all routes available in the Spring context.
      */
-    @Bean
+    // We explicitly declare the destroyMethod to be "" as the Spring @Bean
+    // annotation defaults to AbstractBeanDefinition.INFER_METHOD otherwise
+    // and in that case CamelContext::shutdown or CamelContext::stop would
+    // be used for bean destruction. As SpringCamelContext is a lifecycle
+    // bean (implements Lifecycle) additional invocations of shutdown or
+    // close would be superfluous.
+    @Bean(destroyMethod = "")
     @ConditionalOnMissingBean(CamelContext.class)
     CamelContext camelContext(ApplicationContext applicationContext,
                               CamelConfigurationProperties config) {
@@ -95,7 +101,6 @@ public class CamelAutoConfiguration {
         }
 
         CamelContext camelContext = new SpringCamelContext(applicationContext);
-        SpringCamelContext.setNoStart(true);
 
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
@@ -202,11 +207,6 @@ public class CamelAutoConfiguration {
 
     @Bean
     CamelSpringBootApplicationController applicationController(ApplicationContext applicationContext, CamelContext camelContext) {
-        // CAMEL-10279: We have to call setNoStart(true) here so that if a <camelContext> is imported via
-        // @ImportResource then it does not get started before the RoutesCollector gets a chance to add any
-        // routes found in RouteBuilders.  Even if no RouteBuilders are found, the RoutesCollector will handle
-        // starting the the Camel Context.
-        SpringCamelContext.setNoStart(true);
         return new CamelSpringBootApplicationController(applicationContext, camelContext);
     }
 
@@ -220,12 +220,17 @@ public class CamelAutoConfiguration {
     /**
      * Default producer template for the bootstrapped Camel context.
      */
-    @Bean(initMethod = "", destroyMethod = "")
-    // Camel handles the lifecycle of this bean
+    // We explicitly declare the destroyMethod to be "" as the Spring @Bean
+    // annotation defaults to AbstractBeanDefinition.INFER_METHOD otherwise
+    // and in that case Service::close (ProducerTemplate implements Service)
+    // would be used for bean destruction. And we want Camel to handle the
+    // lifecycle.
+    @Bean(destroyMethod = "")
     @ConditionalOnMissingBean(ProducerTemplate.class)
     ProducerTemplate producerTemplate(CamelContext camelContext,
                                       CamelConfigurationProperties config) throws Exception {
         final ProducerTemplate producerTemplate = camelContext.createProducerTemplate(config.getProducerTemplateCacheSize());
+        // we add this producerTemplate as a Service to CamelContext so that it performs proper lifecycle (start and stop)
         camelContext.addService(producerTemplate);
         return producerTemplate;
     }
@@ -233,12 +238,17 @@ public class CamelAutoConfiguration {
     /**
      * Default consumer template for the bootstrapped Camel context.
      */
-    @Bean(initMethod = "", destroyMethod = "")
-    // Camel handles the lifecycle of this bean
+    // We explicitly declare the destroyMethod to be "" as the Spring @Bean
+    // annotation defaults to AbstractBeanDefinition.INFER_METHOD otherwise
+    // and in that case Service::close (ConsumerTemplate implements Service)
+    // would be used for bean destruction. And we want Camel to handle the
+    // lifecycle.
+    @Bean(destroyMethod = "")
     @ConditionalOnMissingBean(ConsumerTemplate.class)
     ConsumerTemplate consumerTemplate(CamelContext camelContext,
                                       CamelConfigurationProperties config) throws Exception {
         final ConsumerTemplate consumerTemplate = camelContext.createConsumerTemplate(config.getConsumerTemplateCacheSize());
+        // we add this consumerTemplate as a Service to CamelContext so that it performs proper lifecycle (start and stop)
         camelContext.addService(consumerTemplate);
         return consumerTemplate;
     }
@@ -250,8 +260,12 @@ public class CamelAutoConfiguration {
         return new SpringPropertiesParser();
     }
 
-    @Bean(initMethod = "", destroyMethod = "")
-    // Camel handles the lifecycle of this bean
+    // We explicitly declare the destroyMethod to be "" as the Spring @Bean
+    // annotation defaults to AbstractBeanDefinition.INFER_METHOD otherwise
+    // and in that case ShutdownableService::shutdown/Service::close
+    // (PropertiesComponent extends ServiceSupport) would be used for bean
+    // destruction. And we want Camel to handle the lifecycle.
+    @Bean(destroyMethod = "")
     PropertiesComponent properties(CamelContext camelContext, PropertiesParser parser) {
         if (camelContext.hasComponent("properties") != null) {
             return camelContext.getComponent("properties", PropertiesComponent.class);
