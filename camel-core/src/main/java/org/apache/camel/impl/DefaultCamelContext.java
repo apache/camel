@@ -657,7 +657,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         Endpoint answer;
         String scheme = null;
-        EndpointKey key = getEndpointKey(uri);
+        // use optimized method to get the endpoint uri
+        EndpointKey key = getEndpointKeyPreNormalized(uri);
         answer = endpoints.get(key);
         if (answer == null) {
             try {
@@ -809,6 +810,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      */
     protected EndpointKey getEndpointKey(String uri) {
         return new EndpointKey(uri);
+    }
+
+    /**
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
+     *
+     * @param uri the endpoint uri which is pre normalized
+     * @return the key
+     */
+    protected EndpointKey getEndpointKeyPreNormalized(String uri) {
+        return new EndpointKey(uri, true);
     }
 
     /**
