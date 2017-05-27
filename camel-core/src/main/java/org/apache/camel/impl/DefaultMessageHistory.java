@@ -20,7 +20,6 @@ import java.util.Date;
 
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
-import org.apache.camel.util.StopWatch;
 
 /**
  * Default {@link org.apache.camel.MessageHistory}.
@@ -31,7 +30,6 @@ public class DefaultMessageHistory implements MessageHistory {
     private final NamedNode node;
     private final String nodeId;
     private final Date timestamp;
-    private final StopWatch stopWatch;
     private long elapsed;
 
     public DefaultMessageHistory(String routeId, NamedNode node, Date timestamp) {
@@ -39,7 +37,6 @@ public class DefaultMessageHistory implements MessageHistory {
         this.node = node;
         this.nodeId = node.getId();
         this.timestamp = timestamp;
-        this.stopWatch = new StopWatch();
     }
 
     public String getRouteId() {
@@ -59,7 +56,9 @@ public class DefaultMessageHistory implements MessageHistory {
     }
 
     public void nodeProcessingDone() {
-        elapsed = stopWatch.taken();
+        if (timestamp != null) {
+            elapsed = System.currentTimeMillis() - timestamp.getTime();
+        }
     }
 
     @Override
