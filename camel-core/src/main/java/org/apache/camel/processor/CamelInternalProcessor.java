@@ -390,7 +390,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public void after(Exchange exchange, StopWatch watch) throws Exception {
             // record end time
             if (watch != null) {
-                recordTime(exchange, watch.stop());
+                recordTime(exchange, watch.taken());
             }
         }
     }
@@ -612,7 +612,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public void after(Exchange exchange, StopWatch stopWatch) throws Exception {
             if (stopWatch != null) {
-                backlogDebugger.afterProcess(exchange, target, definition, stopWatch.stop());
+                backlogDebugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
         }
 

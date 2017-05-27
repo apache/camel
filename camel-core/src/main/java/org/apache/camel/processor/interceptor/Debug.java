@@ -56,7 +56,7 @@ public class Debug implements InterceptStrategy {
 
                 return processor.process(exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
-                        long diff = watch.stop();
+                        long diff = watch.taken();
                         try {
                             debugger.afterProcess(exchange, processor, definition, diff);
                         } finally {

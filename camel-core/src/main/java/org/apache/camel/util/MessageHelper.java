@@ -562,7 +562,7 @@ public final class MessageHelper {
         long elapsed = 0;
         Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
         if (created != null) {
-            elapsed = new StopWatch(created).stop();
+            elapsed = new StopWatch(created).taken();
         }
 
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);

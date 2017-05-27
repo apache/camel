@@ -442,7 +442,7 @@ public class ProducerCache extends ServiceSupport {
             return producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, doneSync -> {
                 try {
                     if (eventNotifierEnabled && watch != null) {
-                        long timeTaken = watch.stop();
+                        long timeTaken = watch.taken();
                         // emit event that the exchange was sent to the endpoint
                         EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
                     }
@@ -541,7 +541,7 @@ public class ProducerCache extends ServiceSupport {
                 } finally {
                     // emit event that the exchange was sent to the endpoint
                     if (eventNotifierEnabled && watch != null) {
-                        long timeTaken = watch.stop();
+                        long timeTaken = watch.taken();
                         EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
                     }
                 }

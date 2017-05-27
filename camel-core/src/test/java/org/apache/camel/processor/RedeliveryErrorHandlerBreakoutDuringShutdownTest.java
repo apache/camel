@@ -44,7 +44,7 @@ public class RedeliveryErrorHandlerBreakoutDuringShutdownTest extends ContextTes
         context.stop();
 
         // should take less than 5 seconds
-        assertTrue("Should take less than 5 seconds, was {}", watch.stop() < 5000);
+        assertTrue("Should take less than 5 seconds, was {}", watch.taken() < 5000);
     }
 
     @Override

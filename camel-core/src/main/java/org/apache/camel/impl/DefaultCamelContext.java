@@ -2996,7 +2996,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
 
-            watch.stop();
             if (log.isInfoEnabled()) {
                 log.info("Resumed " + suspendedRouteServices.size() + " routes");
                 log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") resumed in " + TimeUtils.printDuration(watch.taken()));
@@ -3051,7 +3050,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
 
-            stopWatch.stop();
             if (log.isInfoEnabled()) {
                 // count how many routes are actually started
                 int started = 0;
@@ -3419,7 +3417,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // stop to clear introspection cache
         IntrospectionSupport.stop();
 
-        stopWatch.stop();
         if (log.isInfoEnabled()) {
             log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") uptime {}", getUptime());
             log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()));

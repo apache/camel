@@ -197,7 +197,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
 
                 // emit event that the exchange was sent to the endpoint
                 if (watch != null) {
-                    long timeTaken = watch.stop();
+                    long timeTaken = watch.taken();
                     EventHelper.notifyExchangeSent(resourceExchange.getContext(), resourceExchange, destination, timeTaken);
                 }
                 
@@ -248,7 +248,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
 
         // emit event that the exchange was sent to the endpoint
-        long timeTaken = watch.stop();
+        long timeTaken = watch.taken();
         EventHelper.notifyExchangeSent(resourceExchange.getContext(), resourceExchange, destination, timeTaken);
         
         if (!isAggregateOnException() && resourceExchange.isFailed()) {

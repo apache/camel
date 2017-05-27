@@ -32,6 +32,7 @@ public class DefaultMessageHistory implements MessageHistory {
     private final String nodeId;
     private final Date timestamp;
     private final StopWatch stopWatch;
+    private long elapsed;
 
     public DefaultMessageHistory(String routeId, NamedNode node, Date timestamp) {
         this.routeId = routeId;
@@ -54,11 +55,11 @@ public class DefaultMessageHistory implements MessageHistory {
     }
 
     public long getElapsed() {
-        return stopWatch.taken();
+        return elapsed;
     }
 
     public void nodeProcessingDone() {
-        stopWatch.stop();
+        elapsed = stopWatch.taken();
     }
 
     @Override
