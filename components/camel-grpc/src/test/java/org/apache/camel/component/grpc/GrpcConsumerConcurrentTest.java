@@ -41,7 +41,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
 
     private static final int GRPC_ASYNC_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
     private static final int GRPC_HEADERS_TEST_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int CONCURRENT_THREAD_COUNT = 300;
+    private static final int CONCURRENT_THREAD_COUNT = 30;
     private static final int ROUNDS_PER_THREAD_COUNT = 10;
     private static final String GRPC_TEST_PING_VALUE = "PING";
     private static final String GRPC_TEST_PONG_VALUE = "PONG";
