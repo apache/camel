@@ -32,8 +32,9 @@ public abstract class ManagedCounter implements ManagedCounterMBean {
         this.exchangesTotal = new Statistic("org.apache.camel.exchangesTotal", this, Statistic.UpdateMode.COUNTER);
         this.startTimestamp = new Statistic("org.apache.camel.startTimestamp", this, Statistic.UpdateMode.VALUE);
         this.resetTimestamp = new Statistic("org.apache.camel.resetTimestamp", this, Statistic.UpdateMode.VALUE);
-        startTimestamp.updateValue(new Date().getTime());
-        resetTimestamp.updateValue(new Date().getTime());
+        long now = new Date().getTime();
+        startTimestamp.updateValue(now);
+        resetTimestamp.updateValue(now);
     }
 
     public void reset() {
