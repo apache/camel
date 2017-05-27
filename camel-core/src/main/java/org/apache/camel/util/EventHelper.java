@@ -49,23 +49,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextStartingEvent(context);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextStartingEvent(context);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -77,23 +83,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextStartedEvent(context);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextStartedEvent(context);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -105,23 +117,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextStartupFailureEvent(context, cause);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextStartupFailureEvent(context, cause);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -133,23 +151,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextStoppingEvent(context);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextStoppingEvent(context);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -161,23 +185,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextStoppedEvent(context);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextStoppedEvent(context);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -189,23 +219,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextStopFailureEvent(context, cause);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextStopFailureEvent(context, cause);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -217,23 +253,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreServiceEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createServiceStopFailureEvent(context, service, cause);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createServiceStopFailureEvent(context, service, cause);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -245,23 +287,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreServiceEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createServiceStartupFailureEvent(context, service, cause);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createServiceStartupFailureEvent(context, service, cause);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -273,23 +321,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreRouteEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createRouteStartedEvent(route);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createRouteStartedEvent(route);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -301,23 +355,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreRouteEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createRouteStoppedEvent(route);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createRouteStoppedEvent(route);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -329,23 +389,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreRouteEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createRouteAddedEvent(route);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createRouteAddedEvent(route);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -357,23 +423,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreRouteEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createRouteRemovedEvent(route);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createRouteRemovedEvent(route);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -390,23 +462,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCreatedEvent()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createExchangeCreatedEvent(exchange);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createExchangeCreatedEvent(exchange);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -423,23 +501,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCompletedEvent()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createExchangeCompletedEvent(exchange);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createExchangeCompletedEvent(exchange);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -456,23 +540,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createExchangeFailedEvent(exchange);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createExchangeFailedEvent(exchange);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -490,23 +580,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createExchangeFailureHandlingEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createExchangeFailureHandlingEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -524,23 +620,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -557,23 +659,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createExchangeRedeliveryEvent(exchange, attempt);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createExchangeRedeliveryEvent(exchange, attempt);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -590,23 +698,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createExchangeSendingEvent(exchange, endpoint);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createExchangeSendingEvent(exchange, endpoint);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -623,23 +737,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createExchangeSentEvent(exchange, endpoint, timeTaken);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createExchangeSentEvent(exchange, endpoint, timeTaken);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -651,23 +771,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextSuspendingEvent(context);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextSuspendingEvent(context);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -679,23 +805,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextSuspendedEvent(context);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextSuspendedEvent(context);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -707,23 +839,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextResumingEvent(context);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextResumingEvent(context);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -735,23 +873,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextResumedEvent(context);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextResumedEvent(context);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
@@ -763,23 +907,29 @@ public final class EventHelper {
             return;
         }
 
+        EventFactory factory = management.getEventFactory();
+        if (factory == null) {
+            return;
+        }
+
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
 
+        EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
 
-            EventFactory factory = management.getEventFactory();
-            if (factory == null) {
-                return;
-            }
-            EventObject event = factory.createCamelContextResumeFailureEvent(context, cause);
             if (event == null) {
-                return;
+                // only create event once
+                event = factory.createCamelContextResumeFailureEvent(context, cause);
+                if (event == null) {
+                    // factory could not create event so exit
+                    return;
+                }
             }
             doNotifyEvent(notifier, event);
         }
