@@ -30,8 +30,7 @@ public class KubernetesConfiguration {
     @Metadata(required = "true")
     private String masterUrl;
 
-    @UriParam(enums = "namespaces,services,replicationControllers,pods,persistentVolumes,persistentVolumesClaims,secrets,resourcesQuota,serviceAccounts,nodes,configMaps,builds,buildConfigs")
-    @Metadata(required = "true")
+    @Deprecated
     private String category;
 
     @UriParam

@@ -120,18 +120,18 @@ public class KubernetesNamespacesConsumerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=listNamespaces",
+                from("direct:list").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=listNamespaces",
                         host, authToken);
                 from("direct:listByLabels").toF(
-                        "kubernetes://%s?oauthToken=%s&category=namespaces&operation=listNamespacesByLabels", host,
+                        "kubernetes-namespaces://%s?oauthToken=%s&operation=listNamespacesByLabels", host,
                         authToken);
-                from("direct:getNs").toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=getNamespace",
+                from("direct:getNs").toF("kubernetes-namespaces://%s?oauthToken=%s&operation=getNamespace",
                         host, authToken);
                 from("direct:createNamespace").toF(
-                        "kubernetes://%s?oauthToken=%s&category=namespaces&operation=createNamespace", host, authToken);
+                        "kubernetes-namespaces://%s?oauthToken=%s&operation=createNamespace", host, authToken);
                 from("direct:deleteNamespace").toF(
-                        "kubernetes://%s?oauthToken=%s&category=namespaces&operation=deleteNamespace", host, authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=namespaces", host, authToken).process(
+                        "kubernetes-namespaces://%s?oauthToken=%s&operation=deleteNamespace", host, authToken);
+                fromF("kubernetes-namespaces://%s?oauthToken=%s", host, authToken).process(
                         new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };

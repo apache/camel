@@ -138,19 +138,19 @@ public class KubernetesServiceAccountsProducerTest extends KubernetesTestSupport
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=listServiceAccounts",
+                        .toF("kubernetes-service-accounts://%s?oauthToken=%s&operation=listServiceAccounts",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=listServiceAccountsByLabels",
+                        .toF("kubernetes-service-accounts://%s?oauthToken=%s&operation=listServiceAccountsByLabels",
                                 host, authToken);
                 from("direct:getServices")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=getServiceAccount",
+                        .toF("kubernetes-service-accounts://%s?oauthToken=%s&operation=getServiceAccount",
                                 host, authToken);
                 from("direct:create")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=createServiceAccount",
+                        .toF("kubernetes-service-accounts://%s?oauthToken=%s&operation=createServiceAccount",
                                 host, authToken);
                 from("direct:delete")
-                        .toF("kubernetes://%s?oauthToken=%s&category=serviceAccounts&operation=deleteServiceAccount",
+                        .toF("kubernetes-service-accounts://%s?oauthToken=%s&operation=deleteServiceAccount",
                                 host, authToken);
             }
         };

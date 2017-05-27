@@ -148,19 +148,19 @@ public class KubernetesSecretsProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecrets",
+                        .toF("kubernetes-secrets://%s?oauthToken=%s&operation=listSecrets",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=listSecretsByLabels",
+                        .toF("kubernetes-secrets://%s?oauthToken=%s&operation=listSecretsByLabels",
                                 host, authToken);
                 from("direct:get")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=getSecret",
+                        .toF("kubernetes-secrets://%s?oauthToken=%s&operation=getSecret",
                                 host, authToken);
                 from("direct:create")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=createSecret",
+                        .toF("kubernetes-secrets://%s?oauthToken=%s&operation=createSecret",
                                 host, authToken);
                 from("direct:delete")
-                        .toF("kubernetes://%s?oauthToken=%s&category=secrets&operation=deleteSecret",
+                        .toF("kubernetes-secrets://%s?oauthToken=%s&operation=deleteSecret",
                                 host, authToken);
             }
         };

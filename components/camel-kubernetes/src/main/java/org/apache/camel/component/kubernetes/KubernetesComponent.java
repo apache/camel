@@ -16,22 +16,16 @@
  */
 package org.apache.camel.component.kubernetes;
 
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
+@Deprecated
+public class KubernetesComponent extends AbstractKubernetesComponent {
 
-public class KubernetesComponent extends DefaultComponent {
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesComponent.class);
 
-    protected Endpoint createEndpoint(String uri, String remaining,
-            Map<String, Object> parameters) throws Exception {
-        KubernetesConfiguration config = new KubernetesConfiguration();
-        setProperties(config, parameters);
-        config.setMasterUrl(remaining);
-        if (ObjectHelper.isEmpty(config.getMasterUrl())) {
-            throw new IllegalArgumentException("Master URL must be specified");
-        }
+    protected AbstractKubernetesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
+        LOG.warn("The syntax 'kubernetes://{}' has been deprecated. Use 'kubernetes-{}://{}' instead.", remaining, config.getCategory(), remaining);
         KubernetesEndpoint endpoint = new KubernetesEndpoint(uri, this, config);
         return endpoint;
     }

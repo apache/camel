@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 252 in 185 JAR artifacts (15 deprecated)
+Number of Components: 265 in 185 JAR artifacts (16 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -414,7 +414,46 @@ Number of Components: 252 in 185 JAR artifacts (15 deprecated)
 `krati:path` | 2.9 | The krati allows the use krati datastores and datasets inside Camel.
 
 | link:camel-kubernetes/src/main/docs/kubernetes-component.adoc[Kubernetes] (camel-kubernetes) +
-`kubernetes:masterUrl` | 2.17 | The kubernetes component allows to work with Kubernetes PaaS.
+`kubernetes:masterUrl` | 2.17 | *deprecated* Use splitted kubernetes components instead of this composite component.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-build-configs-component.adoc[Kubernetes Build Config] (camel-kubernetes) +
+`kubernetes-build-configs:masterUrl` | 2.17 | The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-builds-component.adoc[Kubernetes Builds] (camel-kubernetes) +
+`kubernetes-builds:masterUrl` | 2.17 | The Kubernetes Builds component provides a producer to execute kubernetes build operations.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) +
+`kubernetes-config-maps:masterUrl` | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-namespaces-component.adoc[Kubernetes Namespaces] (camel-kubernetes) +
+`kubernetes-namespaces:masterUrl` | 2.17 | The Kubernetes Namespaces component provides a producer to execute kubernetes namespace operations and a consumer to consume namespace events.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-nodes-component.adoc[Kubernetes Nodes] (camel-kubernetes) +
+`kubernetes-nodes:masterUrl` | 2.17 | The Kubernetes Nodes component provides a producer to execute kubernetes node operations and a consumer to consume node events.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-persistent-volumes-component.adoc[Kubernetes Persistent Volume] (camel-kubernetes) +
+`kubernetes-persistent-volumes:masterUrl` | 2.17 | The Kubernetes Persistent Volumes component provides a producer to execute kubernetes persistent volume operations.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-persistent-volumes-claims-component.adoc[Kubernetes Persistent Volume Claim] (camel-kubernetes) +
+`kubernetes-persistent-volumes-claims:masterUrl` | 2.17 | The Kubernetes Persistent Volumes Claims component provides a producer to execute kubernetes persistent volume claim operations.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-pods-component.adoc[Kubernetes Pods] (camel-kubernetes) +
+`kubernetes-pods:masterUrl` | 2.17 | The Kubernetes Pods component provides a producer to execute kubernetes pod operations and a consumer to consume pod events.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-replication-controllers-component.adoc[Kubernetes Replication Controller] (camel-kubernetes) +
+`kubernetes-replication-controllers:masterUrl` | 2.17 | The Kubernetes Replication Controllers component provides a producer to execute kubernetes replication controller operations and a consumer to consume replication controller events.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-resources-quota-component.adoc[Kubernetes Resources Quota] (camel-kubernetes) +
+`kubernetes-resources-quota:masterUrl` | 2.17 | The Kubernetes Resources Quota component provides a producer to execute kubernetes resources quota operations.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-secrets-component.adoc[Kubernetes Secrets] (camel-kubernetes) +
+`kubernetes-secrets:masterUrl` | 2.17 | The Kubernetes Secrets component provides a producer to execute kubernetes secret operations.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) +
+`kubernetes-services:masterUrl` | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service operations and a consumer to consume service events.
+
+| link:camel-kubernetes/src/main/docs/kubernetes-service-account-component.adoc[Kubernetes Servkce Account] (camel-kubernetes) +
+`kubernetes-service-account:masterUrl` | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service account operations.
 
 | link:../camel-core/src/main/docs/language-component.adoc[Language] (camel-core) +
 `language:languageName:resourceUri` | 2.5 | The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.

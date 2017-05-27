@@ -75,10 +75,10 @@ public class KubernetesBuildConfigsProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=buildConfigs&operation=listBuildConfigs",
+                        .toF("kubernetes-build-configs://%s?oauthToken=%s&operation=listBuildConfigs",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=buildConfigs&operation=listBuildConfigsByLabels",
+                        .toF("kubernetes-build-configs://%s?oauthToken=%s&operation=listBuildConfigsByLabels",
                                 host, authToken);
             }
         };
