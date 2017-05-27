@@ -44,6 +44,13 @@ public interface EventNotifier {
      */
     boolean isEnabled(EventObject event);
 
+    /**
+     * Checks whether notification is disabled for all events
+     *
+     * @return <tt>true</tt> if disabled and no events is being notified.
+     */
+    boolean isDisabled();
+
     boolean isIgnoreCamelContextEvents();
 
     void setIgnoreCamelContextEvents(boolean ignoreCamelContextEvents);

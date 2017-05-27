@@ -283,6 +283,11 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
+    public boolean isDisabled() {
+        return !enabled;
+    }
+
+    @Override
     public boolean isEnabled(EventObject event) {
         return enabled && event instanceof ExchangeCreatedEvent
                 || event instanceof ExchangeSendingEvent
