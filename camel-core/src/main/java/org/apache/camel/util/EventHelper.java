@@ -62,6 +62,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -98,6 +101,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -134,6 +140,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -170,6 +179,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -206,6 +218,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -242,6 +257,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -278,6 +296,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreServiceEvents()) {
                 continue;
             }
@@ -314,6 +335,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreServiceEvents()) {
                 continue;
             }
@@ -350,6 +374,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreRouteEvents()) {
                 continue;
             }
@@ -386,6 +413,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreRouteEvents()) {
                 continue;
             }
@@ -422,6 +452,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreRouteEvents()) {
                 continue;
             }
@@ -458,6 +491,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreRouteEvents()) {
                 continue;
             }
@@ -499,6 +535,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCreatedEvent()) {
                 continue;
             }
@@ -540,6 +579,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCompletedEvent()) {
                 continue;
             }
@@ -581,6 +623,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
@@ -623,6 +668,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
@@ -665,6 +713,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
@@ -706,6 +757,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
                 continue;
             }
@@ -747,6 +801,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
                 continue;
             }
@@ -788,6 +845,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
                 continue;
             }
@@ -824,6 +884,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -860,6 +923,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -896,6 +962,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -932,6 +1001,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
@@ -968,6 +1040,9 @@ public final class EventHelper {
         boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
+            if (notifier.isDisabled()) {
+                continue;
+            }
             if (notifier.isIgnoreCamelContextEvents()) {
                 continue;
             }
