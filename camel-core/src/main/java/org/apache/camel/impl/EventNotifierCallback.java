@@ -48,7 +48,7 @@ public class EventNotifierCallback implements AsyncCallback {
     @Override
     public void done(boolean doneSync) {
         if (watch != null) {
-            long timeTaken = watch.stop();
+            long timeTaken = watch.taken();
             EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
         }
         originalCallback.done(doneSync);

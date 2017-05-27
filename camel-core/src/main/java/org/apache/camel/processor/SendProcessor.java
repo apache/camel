@@ -154,7 +154,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                             target.setPattern(existingPattern);
                             // emit event that the exchange was sent to the endpoint
                             if (watch != null) {
-                                long timeTaken = watch.stop();
+                                long timeTaken = watch.taken();
                                 EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
                             }
                         } finally {

@@ -129,7 +129,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             throw e;
         }
 
-        long delta = stop.stop();
+        long delta = stop.taken();
         if (log.isDebugEnabled()) {
             log.debug("Took {} to poll: {}", TimeUtils.printDuration(delta), name);
         }

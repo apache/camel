@@ -254,7 +254,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         // convert to seconds as its easier to read than a big milli seconds number
-        long seconds = TimeUnit.SECONDS.convert(watch.stop(), TimeUnit.MILLISECONDS);
+        long seconds = TimeUnit.SECONDS.convert(watch.taken(), TimeUnit.MILLISECONDS);
 
         LOG.info("Graceful shutdown of " + routesOrdered.size() + " routes completed in " + seconds + " seconds");
         return true;

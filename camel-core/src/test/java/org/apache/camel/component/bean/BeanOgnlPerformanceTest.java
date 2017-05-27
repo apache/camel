@@ -47,7 +47,7 @@ public class BeanOgnlPerformanceTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        log.info("Took {} millis", watch.stop());
+        log.info("Took {} millis", watch.taken());
     }
 
     @Override

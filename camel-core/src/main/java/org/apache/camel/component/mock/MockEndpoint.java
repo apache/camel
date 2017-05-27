@@ -1411,7 +1411,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         StopWatch watch = new StopWatch();
         waitForCompleteLatch(resultWaitTime);
-        long delta = watch.stop();
+        long delta = watch.taken();
         LOG.debug("Took {} millis to complete latch", delta);
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {

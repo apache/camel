@@ -704,7 +704,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                     // okay we are done, so notify the exchange was sent
                     if (producer != null && watch != null) {
-                        long timeTaken = watch.stop();
+                        long timeTaken = watch.taken();
                         Endpoint endpoint = producer.getEndpoint();
                         // emit event that the exchange was sent to the endpoint
                         EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
@@ -851,7 +851,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
             if (producer != null && watch != null) {
                 Endpoint endpoint = producer.getEndpoint();
-                long timeTaken = watch.stop();
+                long timeTaken = watch.taken();
                 // emit event that the exchange was sent to the endpoint
                 // this is okay to do here in the finally block, as the processing is not using the async routing engine
                 //( we invoke it synchronously as parallel async routing is too hard)

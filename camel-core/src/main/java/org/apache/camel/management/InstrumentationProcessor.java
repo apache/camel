@@ -79,7 +79,7 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
                 try {
                     // record end time
                     if (watch != null) {
-                        recordTime(exchange, watch.stop());
+                        recordTime(exchange, watch.taken());
                     }
                 } finally {
                     // and let the original callback know we are done as well
