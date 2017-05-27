@@ -27,12 +27,29 @@ import org.apache.camel.Ordered;
  */
 public final class OrderedComparator implements Comparator<Object> {
 
+    private static final OrderedComparator INSTANCE = new OrderedComparator();
+    private static final OrderedComparator INSTANCE_REVERSE = new OrderedComparator(true);
+
+    public static OrderedComparator get() {
+        return INSTANCE;
+    }
+
+    public static OrderedComparator getReverse() {
+        return INSTANCE_REVERSE;
+    }
+
     private final boolean reverse;
 
+    /**
+     * Favor using the static instance {@link #get()}
+     */
     public OrderedComparator() {
         this(false);
     }
 
+    /**
+     * Favor using the static instance {@link #getReverse()}
+     */
     public OrderedComparator(boolean reverse) {
         this.reverse = reverse;
     }

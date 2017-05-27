@@ -100,7 +100,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     public void addAdvice(CamelInternalProcessorAdvice advice) {
         advices.add(advice);
         // ensure advices are sorted so they are in the order we want
-        advices.sort(new OrderedComparator());
+        advices.sort(OrderedComparator.get());
     }
 
     /**
