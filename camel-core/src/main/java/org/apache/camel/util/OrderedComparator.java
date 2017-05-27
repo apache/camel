@@ -30,14 +30,6 @@ public final class OrderedComparator implements Comparator<Object> {
     private static final OrderedComparator INSTANCE = new OrderedComparator();
     private static final OrderedComparator INSTANCE_REVERSE = new OrderedComparator(true);
 
-    public static OrderedComparator get() {
-        return INSTANCE;
-    }
-
-    public static OrderedComparator getReverse() {
-        return INSTANCE_REVERSE;
-    }
-
     private final boolean reverse;
 
     /**
@@ -52,6 +44,20 @@ public final class OrderedComparator implements Comparator<Object> {
      */
     public OrderedComparator(boolean reverse) {
         this.reverse = reverse;
+    }
+
+    /**
+     * Gets the comparator that sorts a..z
+     */
+    public static OrderedComparator get() {
+        return INSTANCE;
+    }
+
+    /**
+     * Gets the comparator that sorts z..a (reverse)
+     */
+    public static OrderedComparator getReverse() {
+        return INSTANCE_REVERSE;
     }
 
     public int compare(Object o1, Object o2) {
