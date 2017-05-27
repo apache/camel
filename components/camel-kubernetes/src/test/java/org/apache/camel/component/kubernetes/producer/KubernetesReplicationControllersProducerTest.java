@@ -288,22 +288,22 @@ public class KubernetesReplicationControllersProducerTest extends
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=listReplicationControllers",
+                        .toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllers",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=listReplicationControllersByLabels",
+                        .toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllersByLabels",
                                 host, authToken);
                 from("direct:getReplicationController")
-                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=getReplicationController",
+                        .toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=getReplicationController",
                                 host, authToken);
                 from("direct:createReplicationController")
-                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=createReplicationController",
+                        .toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=createReplicationController",
                                 host, authToken);
                 from("direct:scaleReplicationController")
-                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=scaleReplicationController",
+                        .toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=scaleReplicationController",
                                 host, authToken);
                 from("direct:deleteReplicationController")
-                        .toF("kubernetes://%s?oauthToken=%s&category=replicationControllers&operation=deleteReplicationController",
+                        .toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=deleteReplicationController",
                                 host, authToken);
             }
         };

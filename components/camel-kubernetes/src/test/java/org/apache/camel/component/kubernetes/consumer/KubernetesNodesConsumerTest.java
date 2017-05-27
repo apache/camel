@@ -107,17 +107,17 @@ public class KubernetesNodesConsumerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPods", host,
+                from("direct:list").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPods", host,
                         authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPodsByLabels", host, authToken);
-                from("direct:getPod").toF("kubernetes://%s?oauthToken=%s&category=pods&operation=getPod", host,
+                        .toF("kubernetes-pods://%s?oauthToken=%s&operation=listPodsByLabels", host, authToken);
+                from("direct:getPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=getPod", host,
                         authToken);
-                from("direct:createPod").toF("kubernetes://%s?oauthToken=%s&category=pods&operation=createPod", host,
+                from("direct:createPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host,
                         authToken);
-                from("direct:deletePod").toF("kubernetes://%s?oauthToken=%s&category=pods&operation=deletePod", host,
+                from("direct:deletePod").toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host,
                         authToken);
-                fromF("kubernetes://%s?oauthToken=%s&category=nodes&resourceName=minikube", host, authToken)
+                fromF("kubernetes-nodes://%s?oauthToken=%s&resourceName=minikube", host, authToken)
                         .process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };

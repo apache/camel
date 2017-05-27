@@ -180,19 +180,19 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPods",
+                        .toF("kubernetes-pods://%s?oauthToken=%s&operation=listPods",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=listPodsByLabels",
+                        .toF("kubernetes-pods://%s?oauthToken=%s&operation=listPodsByLabels",
                                 host, authToken);
                 from("direct:getPod")
-                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=getPod",
+                        .toF("kubernetes-pods://%s?oauthToken=%s&operation=getPod",
                                 host, authToken);
                 from("direct:createPod")
-                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=createPod",
+                        .toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod",
                                 host, authToken);
                 from("direct:deletePod")
-                        .toF("kubernetes://%s?oauthToken=%s&category=pods&operation=deletePod",
+                        .toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod",
                                 host, authToken);
             }
         };

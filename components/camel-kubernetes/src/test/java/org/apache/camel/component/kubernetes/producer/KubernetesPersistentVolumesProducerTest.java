@@ -73,10 +73,10 @@ public class KubernetesPersistentVolumesProducerTest extends KubernetesTestSuppo
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumes&operation=listPersistentVolumes",
+                        .toF("kubernetes-persistent-volumes://%s?oauthToken=%s&operation=listPersistentVolumes",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumes&operation=listPersistentVolumesByLabels",
+                        .toF("kubernetes-persistent-volumes://%s?oauthToken=%s&operation=listPersistentVolumesByLabels",
                                 host, authToken);
             }
         };
