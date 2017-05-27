@@ -121,19 +121,19 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=listResourcesQuota",
+                        .toF("kubernetes-resources-quota://%s?oauthToken=%s&operation=listResourcesQuota",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=listResourcesQuotaByLabels",
+                        .toF("kubernetes-resources-quota://%s?oauthToken=%s&operation=listResourcesQuotaByLabels",
                                 host, authToken);
                 from("direct:get")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=getResourceQuota",
+                        .toF("kubernetes-resources-quota://%s?oauthToken=%s&operation=getResourceQuota",
                                 host, authToken);
                 from("direct:create")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=createResourceQuota",
+                        .toF("kubernetes-resources-quota://%s?oauthToken=%s&operation=createResourceQuota",
                                 host, authToken);
                 from("direct:delete")
-                        .toF("kubernetes://%s?oauthToken=%s&category=resourcesQuota&operation=deleteResourceQuota",
+                        .toF("kubernetes-resources-quota://%s?oauthToken=%s&operation=deleteResourceQuota",
                                 host, authToken);
             }
         };

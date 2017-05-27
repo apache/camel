@@ -171,19 +171,19 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=listConfigMaps",
+                        .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=listConfigMaps",
                                 host, authToken);
                 from("direct:listConfigMapsByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=listConfigMapsByLabels",
+                        .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=listConfigMapsByLabels",
                                 host, authToken);
                 from("direct:getConfigMap")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=getConfigMap",
+                        .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=getConfigMap",
                                 host, authToken);
                 from("direct:createConfigMap")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=createConfigMap",
+                        .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=createConfigMap",
                                 host, authToken);
                 from("direct:deleteConfigMap")
-                        .toF("kubernetes://%s?oauthToken=%s&category=configMaps&operation=deleteConfigMap",
+                        .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=deleteConfigMap",
                                 host, authToken);
             }
         };

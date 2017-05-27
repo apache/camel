@@ -173,16 +173,16 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumesClaims&operation=listPersistentVolumesClaims",
+                        .toF("kubernetes-persistent-volumes-claims://%s?oauthToken=%s&operation=listPersistentVolumesClaims",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumesClaims&operation=listPersistentVolumesClaimsByLabels",
+                        .toF("kubernetes-persistent-volumes-claims://%s?oauthToken=%s&operation=listPersistentVolumesClaimsByLabels",
                                 host, authToken);
                 from("direct:create")
-                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumesClaims&operation=createPersistentVolumeClaim",
+                        .toF("kubernetes-persistent-volumes-claims://%s?oauthToken=%s&operation=createPersistentVolumeClaim",
                                 host, authToken);
                 from("direct:delete")
-                        .toF("kubernetes://%s?oauthToken=%s&category=persistentVolumesClaims&operation=deletePersistentVolumeClaim",
+                        .toF("kubernetes-persistent-volumes-claims://%s?oauthToken=%s&operation=deletePersistentVolumeClaim",
                                 host, authToken);
             }
         };

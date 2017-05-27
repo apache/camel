@@ -1,0 +1,149 @@
+## Kubernetes Components
+
+*Available as of Camel version 2.17*
+
+The *Kubernetes* components integrate your application with Kubernetes standalone or on top of Openshift. 
+
+The camel-kubernetes consists of 13 components:
+
+* link:kubernetes-config-maps-component.html[Kubernetes ConfigMap]
+* link:kubernetes-namespaces-component.html[Kubernetes Namespace]
+* link:kubernetes-nodes-component.html[Kubernetes Node]
+* link:kubernetes-persistent-volumes-component.html[Kubernetes Persistent Volume]
+* link:kubernetes-persistent-volumes-claims-component.html[Kubernetes Persistent Volume Claim]
+* link:kubernetes-pods-component.html[Kubernetes Pod]
+* link:kubernetes-replication-controllers-component.html[Kubernetes Replication Controller]
+* link:kubernetes-resources-quota-component.html[Kubernetes Resource Quota]
+* link:kubernetes-secrets-component.html[Kubernetes Secrets]
+* link:kubernetes-service-accounts-component.html[Kubernetes Service Account]
+* link:kubernetes-services-component.html[Kubernetes Service]
+
+In OpenShift, also:
+
+* link:kubernetes-build-configs-component.html[Kubernetes Build Config]
+* link:kubernetes-builds-component.html[Kubernetes Build]
+
+
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kubernetes</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+
+### Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|CamelKubernetesOperation |String |The Producer operation
+
+|CamelKubernetesNamespaceName |String |The Namespace name
+
+|CamelKubernetesNamespaceLabels |Map |The Namespace Labels
+
+|CamelKubernetesServiceLabels |Map |The Service labels
+
+|CamelKubernetesServiceName |String |The Service name
+
+|CamelKubernetesServiceSpec |io.fabric8.kubernetes.api.model.ServiceSpec |The Spec for a Service
+
+|CamelKubernetesReplicationControllersLabels |Map |Replication controller labels
+
+|CamelKubernetesReplicationControllerName |String |Replication controller name
+
+|CamelKubernetesReplicationControllerSpec |io.fabric8.kubernetes.api.model.ReplicationControllerSpec |The Spec for a Replication Controller
+
+|CamelKubernetesReplicationControllerReplicas |Integer |The number of replicas for a Replication Controller during the Scale operation
+
+|CamelKubernetesPodsLabels |Map |Pod labels
+
+|CamelKubernetesPodName |String |Pod name
+
+|CamelKubernetesPodSpec |io.fabric8.kubernetes.api.model.PodSpec |The Spec for a Pod
+
+|CamelKubernetesPersistentVolumesLabels |Map |Persistent Volume labels
+
+|CamelKubernetesPersistentVolumesName |String |Persistent Volume name
+
+|CamelKubernetesPersistentVolumesClaimsLabels |Map |Persistent Volume Claim labels
+
+|CamelKubernetesPersistentVolumesClaimsName |String |Persistent Volume Claim name
+
+|CamelKubernetesPersistentVolumesClaimsSpec |io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec |The Spec for a Persistent Volume claim
+
+|CamelKubernetesSecretsLabels |Map |Secret labels
+
+|CamelKubernetesSecretsName |String |Secret name
+
+|CamelKubernetesSecret |io.fabric8.kubernetes.api.model.Secret |A Secret Object
+
+|CamelKubernetesResourcesQuotaLabels |Map |Resource Quota labels
+
+|CamelKubernetesResourcesQuotaName |String |Resource Quota name
+
+|CamelKubernetesResourceQuotaSpec |io.fabric8.kubernetes.api.model.ResourceQuotaSpec |The Spec for a Resource Quota
+
+|CamelKubernetesServiceAccountsLabels |Map |Service Account labels
+
+|CamelKubernetesServiceAccountName |String |Service Account name
+
+|CamelKubernetesServiceAccount |io.fabric8.kubernetes.api.model.ServiceAccount |A Service Account object
+
+|CamelKubernetesNodesLabels |Map |Node labels
+
+|CamelKubernetesNodeName |String |Node name
+
+|CamelKubernetesBuildsLabels |Map |Openshift Build labels
+
+|CamelKubernetesBuildName |String |Openshift Build name
+
+|CamelKubernetesBuildConfigsLabels |Map |Openshift Build Config labels
+
+|CamelKubernetesBuildConfigName |String |Openshift Build Config name
+
+|CamelKubernetesEventAction |io.fabric8.kubernetes.client.Watcher.Action |Action watched by the consumer
+
+|CamelKubernetesEventTimestamp |String |Timestamp of the action watched by the consumer
+
+|CamelKubernetesConfigMapName |String |ConfigMap name
+
+|CamelKubernetesConfigMapsLabels |Map |ConfigMap labels
+
+|CamelKubernetesConfigData |Map |ConfigMap Data
+|=======================================================================
+
+
+### Usage
+
+#### Producer examples
+
+Here we show some examples of producer using camel-kubernetes.
+
+#### Create a pod
+
+[source,java]
+-------------------------------------------------------------
+from("direct:createPod")
+    .toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host, authToken);
+-------------------------------------------------------------
+
+By using the KubernetesConstants.KUBERNETES_POD_SPEC header you can specify your PodSpec and pass it to this operation.
+
+#### Delete a pod
+
+[source,java]
+-------------------------------------------------------------
+from("direct:createPod")
+    .toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host, authToken);
+-------------------------------------------------------------
+
+By using the KubernetesConstants.KUBERNETES_POD_NAME header you can specify your Pod name and pass it to this operation.

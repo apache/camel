@@ -16,34 +16,28 @@
  */
 package org.apache.camel.component.kubernetes;
 
-import java.util.concurrent.ExecutorService;
-
-import io.fabric8.kubernetes.client.Config;
-import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.kubernetes.consumer.KubernetesNamespacesConsumer;
-import org.apache.camel.component.kubernetes.consumer.KubernetesNodesConsumer;
-import org.apache.camel.component.kubernetes.consumer.KubernetesPodsConsumer;
-import org.apache.camel.component.kubernetes.consumer.KubernetesReplicationControllersConsumer;
-import org.apache.camel.component.kubernetes.consumer.KubernetesServicesConsumer;
-import org.apache.camel.component.kubernetes.producer.KubernetesBuildConfigsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesBuildsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesConfigMapsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesNamespacesProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesNodesProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesClaimsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesPersistentVolumesProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesPodsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesReplicationControllersProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesResourcesQuotaProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesSecretsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesServiceAccountsProducer;
-import org.apache.camel.component.kubernetes.producer.KubernetesServicesProducer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.component.kubernetes.build_configs.KubernetesBuildConfigsProducer;
+import org.apache.camel.component.kubernetes.builds.KubernetesBuildsProducer;
+import org.apache.camel.component.kubernetes.config_maps.KubernetesConfigMapsProducer;
+import org.apache.camel.component.kubernetes.namespaces.KubernetesNamespacesConsumer;
+import org.apache.camel.component.kubernetes.namespaces.KubernetesNamespacesProducer;
+import org.apache.camel.component.kubernetes.nodes.KubernetesNodesConsumer;
+import org.apache.camel.component.kubernetes.nodes.KubernetesNodesProducer;
+import org.apache.camel.component.kubernetes.persistent_volumes.KubernetesPersistentVolumesProducer;
+import org.apache.camel.component.kubernetes.persistent_volumes_claims.KubernetesPersistentVolumesClaimsProducer;
+import org.apache.camel.component.kubernetes.pods.KubernetesPodsConsumer;
+import org.apache.camel.component.kubernetes.pods.KubernetesPodsProducer;
+import org.apache.camel.component.kubernetes.replication_controllers.KubernetesReplicationControllersConsumer;
+import org.apache.camel.component.kubernetes.replication_controllers.KubernetesReplicationControllersProducer;
+import org.apache.camel.component.kubernetes.resources_quota.KubernetesResourcesQuotaProducer;
+import org.apache.camel.component.kubernetes.secrets.KubernetesSecretsProducer;
+import org.apache.camel.component.kubernetes.service_accounts.KubernetesServiceAccountsProducer;
+import org.apache.camel.component.kubernetes.services.KubernetesServicesConsumer;
+import org.apache.camel.component.kubernetes.services.KubernetesServicesProducer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
@@ -51,30 +45,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The kubernetes component allows to work with Kubernetes PaaS.
+ * Use splitted kubernetes components instead of this composite component.
+ * @deprecated
  */
+@Deprecated
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes", title = "Kubernetes", syntax = "kubernetes:masterUrl", label = "container,cloud,paas")
-public class KubernetesEndpoint extends DefaultEndpoint {
+public class KubernetesEndpoint extends AbstractKubernetesEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesEndpoint.class);
 
-    @UriParam
-    private KubernetesConfiguration configuration;
-
-    private transient KubernetesClient client;
+    @UriParam(enums = "namespaces,services,replicationControllers,pods,persistentVolumes,persistentVolumesClaims,secrets,resourcesQuota,serviceAccounts,nodes,configMaps,builds,buildConfigs")
+    @Metadata(required = "true")
+    private String category;
 
     public KubernetesEndpoint(String uri, KubernetesComponent component, KubernetesConfiguration config) {
-        super(uri, component);
-        this.configuration = config;
+        super(uri, component, config);
+        category = config.getCategory();
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getCategory())) {
+        if (ObjectHelper.isEmpty(category)) {
             throw new IllegalArgumentException("A producer category must be specified");
         } else {
-            String category = configuration.getCategory();
-
             switch (category) {
 
             case KubernetesCategory.NAMESPACES:
@@ -124,11 +117,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getCategory())) {
+        if (ObjectHelper.isEmpty(category)) {
             throw new IllegalArgumentException("A consumer category must be specified");
         } else {
-            String category = configuration.getCategory();
-
             switch (category) {
 
             case KubernetesCategory.PODS:
@@ -152,86 +143,15 @@ public class KubernetesEndpoint extends DefaultEndpoint {
         }
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        client = configuration.getKubernetesClient() != null ? configuration.getKubernetesClient() : createKubernetesClient();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (client != null) {
-            client.close();
-        }
-    }
-    
-    public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KubernetesConsumer", configuration.getPoolSize());
-    }
-
-    public KubernetesClient getKubernetesClient() {
-        return client;
-    }
-
     /**
-     * The kubernetes Configuration
+     * Kubernetes Producer and Consumer category
      */
-    public KubernetesConfiguration getKubernetesConfiguration() {
-        return configuration;
+    public String getCategory() {
+        return category;
     }
 
-    private KubernetesClient createKubernetesClient() {
-        LOG.debug("Create Kubernetes client with the following Configuration: " + configuration.toString());
-
-        ConfigBuilder builder = new ConfigBuilder();
-        builder.withMasterUrl(configuration.getMasterUrl());
-        if ((ObjectHelper.isNotEmpty(configuration.getUsername())
-                && ObjectHelper.isNotEmpty(configuration.getPassword()))
-                && ObjectHelper.isEmpty(configuration.getOauthToken())) {
-            builder.withUsername(configuration.getUsername());
-            builder.withPassword(configuration.getPassword());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getOauthToken())) {
-            builder.withOauthToken(configuration.getOauthToken());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getCaCertData())) {
-            builder.withCaCertData(configuration.getCaCertData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getCaCertFile())) {
-            builder.withCaCertFile(configuration.getCaCertFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientCertData())) {
-            builder.withClientCertData(configuration.getClientCertData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientCertFile())) {
-            builder.withClientCertFile(configuration.getClientCertFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getApiVersion())) {
-            builder.withApiVersion(configuration.getApiVersion());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyAlgo())) {
-            builder.withClientKeyAlgo(configuration.getClientKeyAlgo());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyData())) {
-            builder.withClientKeyData(configuration.getClientKeyData());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyFile())) {
-            builder.withClientKeyFile(configuration.getClientKeyFile());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getClientKeyPassphrase())) {
-            builder.withClientKeyPassphrase(configuration.getClientKeyPassphrase());
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getTrustCerts())) {
-            builder.withTrustCerts(configuration.getTrustCerts());
-        }
-
-        Config conf = builder.build();
-        return new DefaultKubernetesClient(conf);
+    public void setCategory(String category) {
+        this.category = category;
     }
+
 }

@@ -189,19 +189,19 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=listNamespaces",
+                        .toF("kubernetes-namespaces://%s?oauthToken=%s&operation=listNamespaces",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=listNamespacesByLabels",
+                        .toF("kubernetes-namespaces://%s?oauthToken=%s&operation=listNamespacesByLabels",
                                 host, authToken);
                 from("direct:getNs")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=getNamespace",
+                        .toF("kubernetes-namespaces://%s?oauthToken=%s&operation=getNamespace",
                                 host, authToken);
                 from("direct:createNamespace")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=createNamespace",
+                        .toF("kubernetes-namespaces://%s?oauthToken=%s&operation=createNamespace",
                                 host, authToken);
                 from("direct:deleteNamespace")
-                        .toF("kubernetes://%s?oauthToken=%s&category=namespaces&operation=deleteNamespace",
+                        .toF("kubernetes-namespaces://%s?oauthToken=%s&operation=deleteNamespace",
                                 host, authToken);
             }
         };

@@ -177,19 +177,19 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServices",
+                        .toF("kubernetes-services://%s?oauthToken=%s&operation=listServices",
                                 host, authToken);
                 from("direct:listByLabels")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=listServicesByLabels",
+                        .toF("kubernetes-services://%s?oauthToken=%s&operation=listServicesByLabels",
                                 host, authToken);
                 from("direct:getServices")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=getService",
+                        .toF("kubernetes-services://%s?oauthToken=%s&operation=getService",
                                 host, authToken);
                 from("direct:createService")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=createService",
+                        .toF("kubernetes-services://%s?oauthToken=%s&operation=createService",
                                 host, authToken);
                 from("direct:deleteService")
-                        .toF("kubernetes://%s?oauthToken=%s&category=services&operation=deleteService",
+                        .toF("kubernetes-services://%s?oauthToken=%s&operation=deleteService",
                                 host, authToken);
             }
         };
