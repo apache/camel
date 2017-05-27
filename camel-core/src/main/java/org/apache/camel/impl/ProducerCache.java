@@ -424,13 +424,19 @@ public class ProducerCache extends ServiceSupport {
 
         final Producer producer = target;
 
-        // record timing for sending the exchange using the producer
-        final StopWatch watch = eventNotifierEnabled && exchange != null ? new StopWatch() : null;
 
         try {
+            StopWatch sw = null;
             if (eventNotifierEnabled && exchange != null) {
-                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                if (sending) {
+                    sw = new StopWatch();
+                }
             }
+
+            // record timing for sending the exchange using the producer
+            final StopWatch watch = sw;
+
             // invoke the callback
             AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(producer);
             return producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, doneSync -> {
@@ -521,8 +527,10 @@ public class ProducerCache extends ServiceSupport {
                 StopWatch watch = null;
                 try {
                     if (eventNotifierEnabled) {
-                        watch = new StopWatch();
-                        EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                        boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                        if (sending) {
+                            watch = new StopWatch();
+                        }
                     }
 
                     CamelInternalProcessor internal = prepareInternalProcessor(producer, resultProcessor);

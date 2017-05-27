@@ -132,16 +132,20 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // if we have a producer then use that as its optimized
         if (producer != null) {
 
-            // record timing for sending the exchange using the producer
-            final StopWatch watch = new StopWatch();
-
             final Exchange target = configureExchange(exchange, pattern);
 
-            EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
-            LOG.debug(">>>> {} {}", destination, exchange);
+            final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
+            StopWatch sw = null;
+            if (sending) {
+                sw = new StopWatch();
+            }
+
+            // record timing for sending the exchange using the producer
+            final StopWatch watch = sw;
 
             boolean sync = true;
             try {
+                LOG.debug(">>>> {} {}", destination, exchange);
                 sync = producer.process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
@@ -149,8 +153,10 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                             // restore previous MEP
                             target.setPattern(existingPattern);
                             // emit event that the exchange was sent to the endpoint
-                            long timeTaken = watch.stop();
-                            EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
+                            if (watch != null) {
+                                long timeTaken = watch.stop();
+                                EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
+                            }
                         } finally {
                             callback.done(doneSync);
                         }

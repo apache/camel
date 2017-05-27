@@ -43,22 +43,23 @@ public final class EventHelper {
     private EventHelper() {
     }
 
-    public static void notifyCamelContextStarting(CamelContext context) {
+    public static boolean notifyCamelContextStarting(CamelContext context) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -70,29 +71,31 @@ public final class EventHelper {
                 event = factory.createCamelContextStartingEvent(context);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextStarted(CamelContext context) {
+    public static boolean notifyCamelContextStarted(CamelContext context) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -104,29 +107,31 @@ public final class EventHelper {
                 event = factory.createCamelContextStartedEvent(context);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextStartupFailed(CamelContext context, Throwable cause) {
+    public static boolean notifyCamelContextStartupFailed(CamelContext context, Throwable cause) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -138,29 +143,31 @@ public final class EventHelper {
                 event = factory.createCamelContextStartupFailureEvent(context, cause);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextStopping(CamelContext context) {
+    public static boolean notifyCamelContextStopping(CamelContext context) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -172,29 +179,31 @@ public final class EventHelper {
                 event = factory.createCamelContextStoppingEvent(context);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextStopped(CamelContext context) {
+    public static boolean notifyCamelContextStopped(CamelContext context) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -206,29 +215,31 @@ public final class EventHelper {
                 event = factory.createCamelContextStoppedEvent(context);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextStopFailed(CamelContext context, Throwable cause) {
+    public static boolean notifyCamelContextStopFailed(CamelContext context, Throwable cause) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -240,29 +251,31 @@ public final class EventHelper {
                 event = factory.createCamelContextStopFailureEvent(context, cause);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyServiceStopFailure(CamelContext context, Object service, Throwable cause) {
+    public static boolean notifyServiceStopFailure(CamelContext context, Object service, Throwable cause) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreServiceEvents()) {
@@ -274,29 +287,31 @@ public final class EventHelper {
                 event = factory.createServiceStopFailureEvent(context, service, cause);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyServiceStartupFailure(CamelContext context, Object service, Throwable cause) {
+    public static boolean notifyServiceStartupFailure(CamelContext context, Object service, Throwable cause) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreServiceEvents()) {
@@ -308,29 +323,31 @@ public final class EventHelper {
                 event = factory.createServiceStartupFailureEvent(context, service, cause);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyRouteStarted(CamelContext context, Route route) {
+    public static boolean notifyRouteStarted(CamelContext context, Route route) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreRouteEvents()) {
@@ -342,29 +359,31 @@ public final class EventHelper {
                 event = factory.createRouteStartedEvent(route);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyRouteStopped(CamelContext context, Route route) {
+    public static boolean notifyRouteStopped(CamelContext context, Route route) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreRouteEvents()) {
@@ -376,29 +395,31 @@ public final class EventHelper {
                 event = factory.createRouteStoppedEvent(route);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyRouteAdded(CamelContext context, Route route) {
+    public static boolean notifyRouteAdded(CamelContext context, Route route) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreRouteEvents()) {
@@ -410,29 +431,31 @@ public final class EventHelper {
                 event = factory.createRouteAddedEvent(route);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyRouteRemoved(CamelContext context, Route route) {
+    public static boolean notifyRouteRemoved(CamelContext context, Route route) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreRouteEvents()) {
@@ -444,34 +467,36 @@ public final class EventHelper {
                 event = factory.createRouteRemovedEvent(route);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyExchangeCreated(CamelContext context, Exchange exchange) {
+    public static boolean notifyExchangeCreated(CamelContext context, Exchange exchange) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
-            return;
+            return false;
         }
 
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCreatedEvent()) {
@@ -483,34 +508,36 @@ public final class EventHelper {
                 event = factory.createExchangeCreatedEvent(exchange);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyExchangeDone(CamelContext context, Exchange exchange) {
+    public static boolean notifyExchangeDone(CamelContext context, Exchange exchange) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
-            return;
+            return false;
         }
 
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeCompletedEvent()) {
@@ -522,34 +549,36 @@ public final class EventHelper {
                 event = factory.createExchangeCompletedEvent(exchange);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyExchangeFailed(CamelContext context, Exchange exchange) {
+    public static boolean notifyExchangeFailed(CamelContext context, Exchange exchange) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
-            return;
+            return false;
         }
 
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
@@ -561,35 +590,37 @@ public final class EventHelper {
                 event = factory.createExchangeFailedEvent(exchange);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyExchangeFailureHandling(CamelContext context, Exchange exchange, Processor failureHandler,
+    public static boolean notifyExchangeFailureHandling(CamelContext context, Exchange exchange, Processor failureHandler,
                                                      boolean deadLetterChannel, String deadLetterUri) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
-            return;
+            return false;
         }
 
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
@@ -601,35 +632,37 @@ public final class EventHelper {
                 event = factory.createExchangeFailureHandlingEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
+    public static boolean notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
                                                     boolean deadLetterChannel, String deadLetterUri) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
-            return;
+            return false;
         }
 
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
@@ -641,34 +674,36 @@ public final class EventHelper {
                 event = factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyExchangeRedelivery(CamelContext context, Exchange exchange, int attempt) {
+    public static boolean notifyExchangeRedelivery(CamelContext context, Exchange exchange, int attempt) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
-            return;
+            return false;
         }
 
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeFailedEvents()) {
@@ -680,34 +715,36 @@ public final class EventHelper {
                 event = factory.createExchangeRedeliveryEvent(exchange, attempt);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyExchangeSending(CamelContext context, Exchange exchange, Endpoint endpoint) {
+    public static boolean notifyExchangeSending(CamelContext context, Exchange exchange, Endpoint endpoint) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
-            return;
+            return false;
         }
 
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
@@ -719,34 +756,36 @@ public final class EventHelper {
                 event = factory.createExchangeSendingEvent(exchange, endpoint);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyExchangeSent(CamelContext context, Exchange exchange, Endpoint endpoint, long timeTaken) {
+    public static boolean notifyExchangeSent(CamelContext context, Exchange exchange, Endpoint endpoint, long timeTaken) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event
-            return;
+            return false;
         }
 
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreExchangeEvents() || notifier.isIgnoreExchangeSentEvents()) {
@@ -758,29 +797,31 @@ public final class EventHelper {
                 event = factory.createExchangeSentEvent(exchange, endpoint, timeTaken);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextSuspending(CamelContext context) {
+    public static boolean notifyCamelContextSuspending(CamelContext context) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -792,29 +833,31 @@ public final class EventHelper {
                 event = factory.createCamelContextSuspendingEvent(context);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextSuspended(CamelContext context) {
+    public static boolean notifyCamelContextSuspended(CamelContext context) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -826,29 +869,31 @@ public final class EventHelper {
                 event = factory.createCamelContextSuspendedEvent(context);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextResuming(CamelContext context) {
+    public static boolean notifyCamelContextResuming(CamelContext context) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -860,29 +905,31 @@ public final class EventHelper {
                 event = factory.createCamelContextResumingEvent(context);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextResumed(CamelContext context) {
+    public static boolean notifyCamelContextResumed(CamelContext context) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -894,29 +941,31 @@ public final class EventHelper {
                 event = factory.createCamelContextResumedEvent(context);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    public static void notifyCamelContextResumeFailed(CamelContext context, Throwable cause) {
+    public static boolean notifyCamelContextResumeFailed(CamelContext context, Throwable cause) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {
-            return;
+            return false;
         }
 
         EventFactory factory = management.getEventFactory();
         if (factory == null) {
-            return;
+            return false;
         }
 
         List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
-            return;
+            return false;
         }
 
+        boolean answer = false;
         EventObject event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isIgnoreCamelContextEvents()) {
@@ -928,14 +977,15 @@ public final class EventHelper {
                 event = factory.createCamelContextResumeFailureEvent(context, cause);
                 if (event == null) {
                     // factory could not create event so exit
-                    return;
+                    return false;
                 }
             }
-            doNotifyEvent(notifier, event);
+            answer |= doNotifyEvent(notifier, event);
         }
+        return answer;
     }
 
-    private static void doNotifyEvent(EventNotifier notifier, EventObject event) {
+    private static boolean doNotifyEvent(EventNotifier notifier, EventObject event) {
         // only notify if notifier is started
         boolean started = true;
         if (notifier instanceof StatefulService) {
@@ -943,12 +993,12 @@ public final class EventHelper {
         }
         if (!started) {
             LOG.debug("Ignoring notifying event {}. The EventNotifier has not been started yet: {}", event, notifier);
-            return;
+            return false;
         }
 
         if (!notifier.isEnabled(event)) {
             LOG.trace("Notifier: {} is not enabled for the event: {}", notifier, event);
-            return;
+            return false;
         }
 
         try {
@@ -956,6 +1006,8 @@ public final class EventHelper {
         } catch (Throwable e) {
             LOG.warn("Error notifying event " + event + ". This exception will be ignored. ", e);
         }
+
+        return true;
     }
 
 }

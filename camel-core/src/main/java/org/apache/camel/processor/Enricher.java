@@ -180,9 +180,13 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         final Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);
         final Endpoint destination = producer.getEndpoint();
 
-        EventHelper.notifyExchangeSending(exchange.getContext(), resourceExchange, destination);
+        StopWatch sw = null;
+        boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), resourceExchange, destination);
+        if (sending) {
+            sw = new StopWatch();
+        }
         // record timing for sending the exchange using the producer
-        final StopWatch watch = new StopWatch();
+        final StopWatch watch = sw;
         AsyncProcessor ap = AsyncProcessorConverterHelper.convert(producer);
         boolean sync = ap.process(resourceExchange, new AsyncCallback() {
             public void done(boolean doneSync) {
@@ -192,8 +196,10 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
                 }
 
                 // emit event that the exchange was sent to the endpoint
-                long timeTaken = watch.stop();
-                EventHelper.notifyExchangeSent(resourceExchange.getContext(), resourceExchange, destination, timeTaken);
+                if (watch != null) {
+                    long timeTaken = watch.stop();
+                    EventHelper.notifyExchangeSent(resourceExchange.getContext(), resourceExchange, destination, timeTaken);
+                }
                 
                 if (!isAggregateOnException() && resourceExchange.isFailed()) {
                     // copy resource exchange onto original exchange (preserving pattern)
