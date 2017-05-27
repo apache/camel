@@ -28,6 +28,23 @@ import org.apache.camel.Ordered;
  */
 public class OrderedComparatorTest extends TestCase {
 
+    public void testOrderedComparatorGet() throws Exception {
+        List<Ordered> answer = new ArrayList<Ordered>();
+        answer.add(new MyOrder(0));
+        answer.add(new MyOrder(2));
+        answer.add(new MyOrder(1));
+        answer.add(new MyOrder(5));
+        answer.add(new MyOrder(4));
+
+        answer.sort(OrderedComparator.get());
+
+        assertEquals(0, answer.get(0).getOrder());
+        assertEquals(1, answer.get(1).getOrder());
+        assertEquals(2, answer.get(2).getOrder());
+        assertEquals(4, answer.get(3).getOrder());
+        assertEquals(5, answer.get(4).getOrder());
+    }
+
     public void testOrderedComparator() throws Exception {
         List<Ordered> answer = new ArrayList<Ordered>();
         answer.add(new MyOrder(0));
@@ -43,6 +60,23 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(2, answer.get(2).getOrder());
         assertEquals(4, answer.get(3).getOrder());
         assertEquals(5, answer.get(4).getOrder());
+    }
+
+    public void testOrderedComparatorGetReverse() throws Exception {
+        List<Ordered> answer = new ArrayList<Ordered>();
+        answer.add(new MyOrder(0));
+        answer.add(new MyOrder(2));
+        answer.add(new MyOrder(1));
+        answer.add(new MyOrder(5));
+        answer.add(new MyOrder(4));
+
+        answer.sort(OrderedComparator.getReverse());
+
+        assertEquals(5, answer.get(0).getOrder());
+        assertEquals(4, answer.get(1).getOrder());
+        assertEquals(2, answer.get(2).getOrder());
+        assertEquals(1, answer.get(3).getOrder());
+        assertEquals(0, answer.get(4).getOrder());
     }
 
     public void testOrderedComparatorReverse() throws Exception {
