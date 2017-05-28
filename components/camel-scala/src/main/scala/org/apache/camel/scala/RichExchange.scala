@@ -134,4 +134,6 @@ class RichExchange(val exchange : Exchange) extends Exchange {
   def handoverCompletions(exchange : Exchange) { exchange.handoverCompletions(exchange) }
 
   def handoverCompletions = exchange.handoverCompletions
+
+  def getCreated = exchange.getCreated
 }
