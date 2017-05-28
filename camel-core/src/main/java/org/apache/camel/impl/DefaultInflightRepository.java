@@ -167,7 +167,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     private static long getExchangeDuration(Exchange exchange) {
         long duration = 0;
-        Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+        Date created = exchange.getCreated();
         if (created != null) {
             duration = System.currentTimeMillis() - created.getTime();
         }
