@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
-import org.apache.camel.component.dropbox.util.DropboxRequestHeader;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -83,7 +83,7 @@ public class DropboxProducerSearchTest extends DropboxTestSupport {
                         .to("mock:result");
 
                 from("direct:start")
-                    .setHeader(DropboxRequestHeader.REMOTE_PATH.name(), constant("/XXX"))
+                    .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
                     .to("dropbox://search?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}")
                     .to("mock:result");
             }
