@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,7 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.SharedCamelInternalProcessor;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
@@ -59,6 +57,7 @@ public class ProducerCache extends ServiceSupport {
     private final ServicePool<Endpoint, Producer> pool;
     private final Map<String, Producer> producers;
     private final Object source;
+    private final SharedCamelInternalProcessor internalProcessor;
 
     private EndpointUtilizationStatistics statistics;
     private boolean eventNotifierEnabled = true;
@@ -100,6 +99,9 @@ public class ProducerCache extends ServiceSupport {
         } else {
             this.extendedStatistics = false;
         }
+
+        // internal processor used for sending
+        internalProcessor = new SharedCamelInternalProcessor(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
     }
 
     public boolean isEventNotifierEnabled() {
@@ -486,9 +488,9 @@ public class ProducerCache extends ServiceSupport {
             if (eventNotifierEnabled) {
                 callback = new EventNotifierCallback(callback, exchange, endpoint);
             }
-            CamelInternalProcessor internal = prepareInternalProcessor(producer, resultProcessor);
-
-            return internal.process(exchange, callback);
+            AsyncProcessor target = prepareProducer(producer);
+            // invoke the asynchronous method
+            return internalProcessor.process(exchange, callback, target, resultProcessor);
         } catch (Throwable e) {
             // ensure exceptions is caught and set on the exchange
             exchange.setException(e);
@@ -533,8 +535,10 @@ public class ProducerCache extends ServiceSupport {
                         }
                     }
 
-                    CamelInternalProcessor internal = prepareInternalProcessor(producer, resultProcessor);
-                    internal.process(exchange);
+                    AsyncProcessor target = prepareProducer(producer);
+                    // invoke the synchronous method
+                    internalProcessor.process(exchange, target, resultProcessor);
+
                 } catch (Throwable e) {
                     // ensure exceptions is caught and set on the exchange
                     exchange.setException(e);
@@ -550,22 +554,8 @@ public class ProducerCache extends ServiceSupport {
         });
     }
 
-    protected CamelInternalProcessor prepareInternalProcessor(Producer producer, Processor resultProcessor) {
-        // if we have a result processor then wrap in pipeline to execute both of them in sequence
-        Processor target;
-        if (resultProcessor != null) {
-            List<Processor> processors = new ArrayList<Processor>(2);
-            processors.add(producer);
-            processors.add(resultProcessor);
-            target = Pipeline.newInstance(getCamelContext(), processors);
-        } else {
-            target = producer;
-        }
-
-        // wrap in unit of work
-        CamelInternalProcessor internal = new CamelInternalProcessor(target);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
-        return internal;
+    protected AsyncProcessor prepareProducer(Producer producer) {
+        return AsyncProcessorConverterHelper.convert(producer);
     }
 
     protected synchronized Producer doGetProducer(Endpoint endpoint, boolean pooled) {
