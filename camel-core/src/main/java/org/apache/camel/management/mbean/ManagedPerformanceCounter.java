@@ -216,7 +216,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastProcessingTime.updateValue(time);
         deltaProcessingTime.updateValue(time);
 
-        long now = new Date().getTime();
+        long now = System.currentTimeMillis();
         if (!firstExchangeCompletedTimestamp.isUpdated()) {
             firstExchangeCompletedTimestamp.updateValue(now);
         }
@@ -249,7 +249,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
             externalRedeliveries.increment();
         }
 
-        long now = new Date().getTime();
+        long now = System.currentTimeMillis();
         if (!firstExchangeFailureTimestamp.isUpdated()) {
             firstExchangeFailureTimestamp.updateValue(now);
         }
@@ -277,8 +277,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
 
         if (fullStats) {
-            sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getValue())));
-            sb.append(String.format(" resetTimestamp=\"%s\"", dateAsString(resetTimestamp.getValue())));
+            sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getTime())));
+            sb.append(String.format(" resetTimestamp=\"%s\"", dateAsString(resetTimestamp.getTime())));
             sb.append(String.format(" firstExchangeCompletedTimestamp=\"%s\"", dateAsString(firstExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" firstExchangeCompletedExchangeId=\"%s\"", nullSafe(firstExchangeCompletedExchangeId)));
             sb.append(String.format(" firstExchangeFailureTimestamp=\"%s\"", dateAsString(firstExchangeFailureTimestamp.getValue())));
