@@ -73,7 +73,7 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
 
     @Override
     protected boolean isRunAllowedOnPreparingShutdown() {
-        // allow tu run as we want to move the message eto DLC, instead of rejecting the message
+        // allow to run as we want to move the message eto DLC, instead of rejecting the message
         return true;
     }
 
