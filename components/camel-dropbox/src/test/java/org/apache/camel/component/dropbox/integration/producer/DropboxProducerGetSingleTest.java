@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
+import org.apache.camel.component.dropbox.util.DropboxRequestHeader;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -52,6 +53,28 @@ public class DropboxProducerGetSingleTest extends DropboxTestSupport {
         assertNotNull(body);
     }
 
+    @Test
+    public void testCamelDropboxWithOptionInHeader() throws Exception {
+        template.send("direct:start2", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("test", "test");
+            }
+        });
+
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        assertMockEndpointsSatisfied();
+
+        List<Exchange> exchanges = mock.getReceivedExchanges();
+        Exchange exchange = exchanges.get(0);
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILE.name());
+        Object body = exchange.getIn().getBody();
+        assertNotNull(header);
+        assertNotNull(body);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -60,6 +83,12 @@ public class DropboxProducerGetSingleTest extends DropboxTestSupport {
                         .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/XXX")
                         .to("file:///XXX?fileName=XXX")
                         .to("mock:result");
+
+                from("direct:start2")
+                    .setHeader(DropboxRequestHeader.REMOTE_PATH.name(), constant("/XXX"))
+                    .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}")
+                    .to("file:///XXX?fileName=XXX")
+                    .to("mock:result");
             }
         };
     }
