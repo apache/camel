@@ -88,6 +88,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * Contains the current redelivery data
      */
     protected class RedeliveryData {
+        // redelivery state
         Exchange original;
         boolean sync = true;
         int redeliveryCounter;
@@ -97,27 +98,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy;
-        Processor deadLetterProcessor;
         Processor failureProcessor;
         Processor onRedeliveryProcessor;
-        Processor onPrepareProcessor;
         Processor onExceptionProcessor;
         Predicate handledPredicate;
         Predicate continuedPredicate;
         boolean useOriginalInMessage;
-        boolean handleNewException;
 
         public RedeliveryData() {
             // init with values from the error handler
             this.retryWhilePredicate = retryWhilePolicy;
             this.currentRedeliveryPolicy = redeliveryPolicy;
-            this.deadLetterProcessor = deadLetter;
             this.onRedeliveryProcessor = redeliveryProcessor;
-            this.onPrepareProcessor = RedeliveryErrorHandler.this.onPrepareProcessor;
             this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
             this.handledPredicate = getDefaultHandledPredicate();
             this.useOriginalInMessage = useOriginalMessagePolicy;
-            this.handleNewException = deadLetterHandleNewException;
         }
     }
 
@@ -459,11 +454,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
                 if (deliver) {
                     // should deliver to failure processor (either from onException or the dead letter channel)
-                    target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
+                    target = data.failureProcessor != null ? data.failureProcessor : deadLetter;
                 }
                 // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
                 // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
-                boolean isDeadLetterChannel = isDeadLetterChannel() && (target == null || target == data.deadLetterProcessor);
+                boolean isDeadLetterChannel = isDeadLetterChannel() && (target == null || target == deadLetter);
                 boolean sync = deliverToFailureProcessor(target, isDeadLetterChannel, exchange, data, callback);
                 // we are breaking out
                 return sync;
@@ -647,11 +642,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             if (deliver) {
                 // should deliver to failure processor (either from onException or the dead letter channel)
-                target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
+                target = data.failureProcessor != null ? data.failureProcessor : deadLetter;
             }
             // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
             // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
-            boolean isDeadLetterChannel = isDeadLetterChannel() && target == data.deadLetterProcessor;
+            boolean isDeadLetterChannel = isDeadLetterChannel() && target == deadLetter;
             deliverToFailureProcessor(target, isDeadLetterChannel, exchange, data, callback);
             // we are breaking out
             return;
@@ -1047,7 +1042,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
 
             // fire event as we had a failure processor to handle it, which there is a event for
-            final boolean deadLetterChannel = processor == data.deadLetterProcessor;
+            final boolean deadLetterChannel = processor == deadLetter;
 
             EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
 
@@ -1141,7 +1136,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
                 // DLC is always handling the first thrown exception,
                 // but if its a new exception then use the configured option
-                boolean handled = newException == null || data.handleNewException;
+                boolean handled = newException == null || deadLetterHandleNewException;
 
                 // when using DLC then log new exception whether its being handled or not, as otherwise it may appear as
                 // the DLC swallow new exceptions by default (which is by design to ensure the DLC always complete,
