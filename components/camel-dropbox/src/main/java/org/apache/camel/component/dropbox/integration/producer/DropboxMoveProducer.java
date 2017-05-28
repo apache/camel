@@ -21,7 +21,11 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxMoveResult;
+import org.apache.camel.component.dropbox.util.DropboxHelper;
+import org.apache.camel.component.dropbox.util.DropboxRequestHeader;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
+import org.apache.camel.util.ObjectHelper;
 
 public class DropboxMoveProducer extends DropboxProducer {
 
@@ -31,13 +35,18 @@ public class DropboxMoveProducer extends DropboxProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        String remotePath = DropboxHelper.getRemotePath(configuration, exchange);
+        String newRemotePath = DropboxHelper.getNewRemotePath(configuration, exchange);
+
+        DropboxConfigurationValidator.validateMoveOp(remotePath, newRemotePath);
+
         DropboxMoveResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
-                .move(configuration.getRemotePath(), configuration.getNewRemotePath());
+                .move(remotePath, newRemotePath);
 
         exchange.getIn().setHeader(DropboxResultHeader.MOVED_PATH.name(), result.getOldPath());
         exchange.getIn().setBody(result.getNewPath());
 
-        log.debug("Moved from {} to {}", configuration.getRemotePath(), configuration.getNewRemotePath());
+        log.debug("Moved from {} to {}", remotePath, newRemotePath);
     }
 
 }

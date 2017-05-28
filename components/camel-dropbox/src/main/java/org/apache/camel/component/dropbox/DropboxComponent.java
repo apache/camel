@@ -65,8 +65,9 @@ public class DropboxComponent extends UriEndpointComponent {
             configuration.setUploadMode(DropboxUploadMode.valueOf((String)parameters.get("uploadMode")));
         }
 
+
         //pass validation test
-        DropboxConfigurationValidator.validate(configuration);
+        DropboxConfigurationValidator.validateCommonProperties(configuration);
 
         // and then override from parameters
         setProperties(configuration, parameters);
