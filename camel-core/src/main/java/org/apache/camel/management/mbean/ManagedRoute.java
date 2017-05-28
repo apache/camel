@@ -19,15 +19,12 @@ package org.apache.camel.management.mbean;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.AttributeValueExp;
@@ -37,11 +34,7 @@ import javax.management.Query;
 import javax.management.QueryExp;
 import javax.management.StringValueExp;
 
-import org.apache.camel.spi.InflightRepository;
-import org.w3c.dom.Document;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -52,12 +45,14 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 @ManagedResource(description = "Managed Route")
 public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener, ManagedRouteMBean {
@@ -70,7 +65,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     protected final String description;
     protected final ModelCamelContext context;
     private final LoadTriplet load = new LoadTriplet();
-    private final ConcurrentHashMap<String, Exchange> exchangesInFlight = new ConcurrentHashMap<String, Exchange>();
     private final String jmxDomain;
 
     public ManagedRoute(ModelCamelContext context, Route route) {
@@ -85,8 +79,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         super.init(strategy);
         boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
-
-        exchangesInFlight.clear();
     }
 
     public Route getRoute() {
@@ -467,12 +459,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     private InflightRepository.InflightExchange getOldestInflightEntry() {
-        Collection<InflightRepository.InflightExchange> list = getContext().getInflightRepository().browse(getRouteId(), 1, true);
-        if (list.size() == 1) {
-            return list.iterator().next();
-        } else {
-            return null;
-        }
+        return getContext().getInflightRepository().oldest(getRouteId());
     }
 
     public Long getOldestInflightDuration() {

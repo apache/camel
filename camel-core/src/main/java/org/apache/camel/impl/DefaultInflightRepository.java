@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -149,6 +151,34 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             }
         }
         return Collections.unmodifiableCollection(answer);
+    }
+
+    @Override
+    public InflightExchange oldest(String fromRouteId) {
+        Stream<Exchange> values;
+
+        if (fromRouteId == null) {
+            // all values
+            values = inflight.values().stream();
+        } else {
+            // only if route match
+            values = inflight.values().stream()
+                .filter(e -> fromRouteId.equals(e.getFromRouteId()));
+        }
+
+        // sort by duration and grab the first
+        Exchange first = values.sorted((e1, e2) -> {
+            long d1 = getExchangeDuration(e1);
+            long d2 = getExchangeDuration(e2);
+            // need the biggest number first
+            return -1 * Long.compare(d1, d2);
+        }).findFirst().orElse(null);
+
+        if (first != null) {
+            return new InflightExchangeEntry(first);
+        } else {
+            return null;
+        }
     }
 
     @Override
