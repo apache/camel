@@ -73,10 +73,10 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
             initializeChannel();
             if (endpoint.isSynchronous()) {
                 LOG.info("Getting synchronous method stub from channel");
-                grpcStub = GrpcUtils.constructGrpcBlockingStub(configuration.getServicePackage(), configuration.getServiceName(), channel);
+                grpcStub = GrpcUtils.constructGrpcBlockingStub(configuration.getServicePackage(), configuration.getServiceName(), channel, endpoint.getCamelContext());
             } else {
                 LOG.info("Getting asynchronous method stub from channel");
-                grpcStub = GrpcUtils.constructGrpcAsyncStub(configuration.getServicePackage(), configuration.getServiceName(), channel);
+                grpcStub = GrpcUtils.constructGrpcAsyncStub(configuration.getServicePackage(), configuration.getServiceName(), channel, endpoint.getCamelContext());
             }
         }
     }
