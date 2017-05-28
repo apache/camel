@@ -26,36 +26,36 @@ public final class DropboxHelper {
 
     public static String getRemotePath(DropboxConfiguration configuration, Exchange exchange) {
         return ObjectHelper.isNotEmpty(
-            exchange.getIn().getHeader(DropboxRequestHeader.REMOTE_PATH.name()))
-            ? exchange.getIn().getHeader(DropboxRequestHeader.REMOTE_PATH.name(), String.class).replaceAll("\\s", "+")
+            exchange.getIn().getHeader(DropboxConstants.HEADER_REMOTE_PATH))
+            ? exchange.getIn().getHeader(DropboxConstants.HEADER_REMOTE_PATH, String.class).replaceAll("\\s", "+")
             : configuration.getRemotePath();
     }
 
     public static String getNewRemotePath(DropboxConfiguration configuration, Exchange exchange) {
         return ObjectHelper.isNotEmpty(
-            exchange.getIn().getHeader(DropboxRequestHeader.NEW_REMOTE_PATH.name()))
-            ? exchange.getIn().getHeader(DropboxRequestHeader.NEW_REMOTE_PATH.name(), String.class)
+            exchange.getIn().getHeader(DropboxConstants.HEADER_NEW_REMOTE_PATH))
+            ? exchange.getIn().getHeader(DropboxConstants.HEADER_NEW_REMOTE_PATH, String.class)
             : configuration.getNewRemotePath();
     }
 
     public static String getLocalPath(DropboxConfiguration configuration, Exchange exchange) {
         return ObjectHelper.isNotEmpty(
-            exchange.getIn().getHeader(DropboxRequestHeader.LOCAL_PATH.name()))
-            ? exchange.getIn().getHeader(DropboxRequestHeader.LOCAL_PATH.name(), String.class)
+            exchange.getIn().getHeader(DropboxConstants.HEADER_LOCAL_PATH))
+            ? exchange.getIn().getHeader(DropboxConstants.HEADER_LOCAL_PATH, String.class)
             : configuration.getLocalPath();
     }
 
     public static String getQuery(DropboxConfiguration configuration, Exchange exchange) {
         return ObjectHelper.isNotEmpty(
-            exchange.getIn().getHeader(DropboxRequestHeader.QUERY.name()))
-            ? exchange.getIn().getHeader(DropboxRequestHeader.QUERY.name(), String.class)
+            exchange.getIn().getHeader(DropboxConstants.HEADER_QUERY))
+            ? exchange.getIn().getHeader(DropboxConstants.HEADER_QUERY, String.class)
             : configuration.getQuery();
     }
 
     public static DropboxUploadMode getUploadMode(DropboxConfiguration configuration, Exchange exchange) {
         return ObjectHelper.isNotEmpty(
-            exchange.getIn().getHeader(DropboxRequestHeader.UPLOAD_MODE.name()))
-            ? DropboxUploadMode.valueOf(exchange.getIn().getHeader(DropboxRequestHeader.UPLOAD_MODE.name(), String.class))
+            exchange.getIn().getHeader(DropboxConstants.HEADER_UPLOAD_MODE))
+            ? DropboxUploadMode.valueOf(exchange.getIn().getHeader(DropboxConstants.HEADER_UPLOAD_MODE, String.class))
             : configuration.getUploadMode();
     }
 

@@ -23,10 +23,8 @@ import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxSearchResult;
 import org.apache.camel.component.dropbox.util.DropboxHelper;
-import org.apache.camel.component.dropbox.util.DropboxRequestHeader;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
-import org.apache.camel.util.ObjectHelper;
 
 public class DropboxSearchProducer extends DropboxProducer {
 
