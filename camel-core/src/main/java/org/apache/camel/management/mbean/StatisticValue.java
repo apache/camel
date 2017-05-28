@@ -36,8 +36,8 @@ public class StatisticValue extends Statistic {
     }
 
     @Override
-    public long getUpdateCount() {
-        return value.get() == -1 ? 0 : 1;
+    public boolean isUpdated() {
+        return value.get() != -1;
     }
 
     public void reset() {

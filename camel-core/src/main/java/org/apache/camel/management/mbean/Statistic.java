@@ -33,6 +33,9 @@ package org.apache.camel.management.mbean;
  * <li>MINIMUM - A statistic with this update mode is a value that represents the minimum value
  * amongst the update values applied to this statistic.</li>
  * <ul>
+ * The MAXIMUM and MINIMUM modes are not 100% thread-safe as there can be a lost-update problem.
+ * This is on purpose because the performance overhead to ensure atomic updates costs to much
+ * on CPU and memory footprint. The other modes are thread-safe.
  */
 public abstract class Statistic {
 
@@ -48,10 +51,11 @@ public abstract class Statistic {
 
     public abstract long getValue();
 
-    @Deprecated
-    public long getUpdateCount() {
-        return 0;
-    }
+    /**
+     * Whether the statistic has been updated one or more times.
+     * Notice this is only working for value, maximum and minimum modes.
+     */
+    public abstract boolean isUpdated();
 
     public abstract void reset();
 
