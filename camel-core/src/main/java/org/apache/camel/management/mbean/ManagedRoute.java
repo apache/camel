@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -36,6 +37,7 @@ import javax.management.Query;
 import javax.management.QueryExp;
 import javax.management.StringValueExp;
 
+import org.apache.camel.spi.InflightRepository;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
@@ -408,14 +410,13 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         String stat = dumpStatsAsXml(fullStats);
         answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
         answer.append(" selfProcessingTime=\"").append(routeSelfTime).append("\"");
-        Exchange oldest = getOldestInflightEntry();
+        InflightRepository.InflightExchange oldest = getOldestInflightEntry();
         if (oldest == null) {
             answer.append(" oldestInflightExchangeId=\"\"");
             answer.append(" oldestInflightDuration=\"\"");
         } else {
-            long duration = System.currentTimeMillis() - oldest.getCreated().getTime();
-            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchangeId()).append("\"");
-            answer.append(" oldestInflightDuration=\"").append(duration).append("\"");
+            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
+            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
         }
         answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
@@ -465,47 +466,31 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return route.hashCode();
     }
 
-    private Exchange getOldestInflightEntry() {
-        return exchangesInFlight.values().stream().max(Comparator.comparing(Exchange::getCreated)).orElse(null);
-    }
-
-    public Long getOldestInflightDuration() {
-        Exchange exchange = getOldestInflightEntry();
-        if (exchange == null) {
-            return null;
-        }
-        Date created = exchange.getCreated();
-        if (created != null) {
-            return System.currentTimeMillis() - created.getTime();
+    private InflightRepository.InflightExchange getOldestInflightEntry() {
+        Collection<InflightRepository.InflightExchange> list = getContext().getInflightRepository().browse(getRouteId(), 1, true);
+        if (list.size() == 1) {
+            return list.iterator().next();
         } else {
             return null;
         }
     }
 
-    public String getOldestInflightExchangeId() {
-        Exchange exchange = getOldestInflightEntry();
-        if (exchange == null) {
+    public Long getOldestInflightDuration() {
+        InflightRepository.InflightExchange oldest = getOldestInflightEntry();
+        if (oldest == null) {
             return null;
+        } else {
+            return oldest.getDuration();
         }
-        return exchange.getExchangeId();
     }
 
-    @Override
-    public void processExchange(Exchange exchange) {
-        exchangesInFlight.put(exchange.getExchangeId(), exchange);
-        super.processExchange(exchange);
-    }
-
-    @Override
-    public void completedExchange(Exchange exchange, long time) {
-        exchangesInFlight.remove(exchange.getExchangeId());
-        super.completedExchange(exchange, time);
-    }
-
-    @Override
-    public void failedExchange(Exchange exchange) {
-        exchangesInFlight.remove(exchange.getExchangeId());
-        super.failedExchange(exchange);
+    public String getOldestInflightExchangeId() {
+        InflightRepository.InflightExchange oldest = getOldestInflightEntry();
+        if (oldest == null) {
+            return null;
+        } else {
+            return oldest.getExchange().getExchangeId();
+        }
     }
 
     /**

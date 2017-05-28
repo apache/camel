@@ -128,7 +128,8 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
                 public int compare(Exchange e1, Exchange e2) {
                     long d1 = getExchangeDuration(e1);
                     long d2 = getExchangeDuration(e2);
-                    return Long.compare(d1, d2);
+                    // need the biggest number first
+                    return -1 * Long.compare(d1, d2);
                 }
             });
         } else {
