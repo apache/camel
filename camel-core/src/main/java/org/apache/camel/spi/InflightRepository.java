@@ -175,4 +175,12 @@ public interface InflightRepository extends StaticService {
      */
     Collection<InflightExchange> browse(String fromRouteId, int limit, boolean sortByLongestDuration);
 
+    /**
+     * Gets the oldest {@link InflightExchange} that are currently inflight that started from the given route.
+     *
+     * @param fromRouteId  the route id, or <tt>null</tt> for all routes.
+     * @return the oldest, or <tt>null</tt> if none inflight
+     */
+    InflightExchange oldest(String fromRouteId);
+
 }
