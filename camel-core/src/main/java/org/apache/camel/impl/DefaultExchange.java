@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -84,6 +85,15 @@ public final class DefaultExchange implements Exchange {
     public String toString() {
         // do not output information about the message as it may contain sensitive information
         return String.format("Exchange[%s]", exchangeId == null ? "" : exchangeId);
+    }
+
+    @Override
+    public Date getCreated() {
+        if (hasProperties()) {
+            return getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+        } else {
+            return null;
+        }
     }
 
     public Exchange copy() {

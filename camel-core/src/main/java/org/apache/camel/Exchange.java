@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -583,5 +584,10 @@ public interface Exchange {
      * @return the on completions
      */
     List<Synchronization> handoverCompletions();
+
+    /**
+     * Gets the timestamp when this exchange was created.
+     */
+    Date getCreated();
 
 }

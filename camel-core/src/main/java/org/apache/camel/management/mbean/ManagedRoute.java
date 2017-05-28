@@ -21,12 +21,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.AttributeValueExp;
@@ -68,8 +68,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     protected final String description;
     protected final ModelCamelContext context;
     private final LoadTriplet load = new LoadTriplet();
-    private final ConcurrentSkipListMap<InFlightKey, Long> exchangesInFlightStartTimestamps = new ConcurrentSkipListMap<InFlightKey, Long>();
-    private final ConcurrentHashMap<String, InFlightKey> exchangesInFlightKeys = new ConcurrentHashMap<String, InFlightKey>();
+    private final ConcurrentHashMap<String, Exchange> exchangesInFlight = new ConcurrentHashMap<String, Exchange>();
     private final String jmxDomain;
 
     public ManagedRoute(ModelCamelContext context, Route route) {
@@ -85,8 +84,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
 
-        exchangesInFlightKeys.clear();
-        exchangesInFlightStartTimestamps.clear();
+        exchangesInFlight.clear();
     }
 
     public Route getRoute() {
@@ -410,13 +408,14 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         String stat = dumpStatsAsXml(fullStats);
         answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
         answer.append(" selfProcessingTime=\"").append(routeSelfTime).append("\"");
-        InFlightKey oldestInflightEntry = getOldestInflightEntry();
-        if (oldestInflightEntry == null) {
+        Exchange oldest = getOldestInflightEntry();
+        if (oldest == null) {
             answer.append(" oldestInflightExchangeId=\"\"");
             answer.append(" oldestInflightDuration=\"\"");
         } else {
-            answer.append(" oldestInflightExchangeId=\"").append(oldestInflightEntry.exchangeId).append("\"");
-            answer.append(" oldestInflightDuration=\"").append(System.currentTimeMillis() - oldestInflightEntry.timeStamp).append("\"");
+            long duration = System.currentTimeMillis() - oldest.getCreated().getTime();
+            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchangeId()).append("\"");
+            answer.append(" oldestInflightDuration=\"").append(duration).append("\"");
         }
         answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
 
@@ -466,109 +465,47 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return route.hashCode();
     }
 
-    private InFlightKey getOldestInflightEntry() {
-        Map.Entry<InFlightKey, Long> entry = exchangesInFlightStartTimestamps.firstEntry();
-        if (entry != null) {
-            return entry.getKey();
-        }
-        return null;
+    private Exchange getOldestInflightEntry() {
+        return exchangesInFlight.values().stream().max(Comparator.comparing(Exchange::getCreated)).orElse(null);
     }
 
     public Long getOldestInflightDuration() {
-        InFlightKey oldest = getOldestInflightEntry();
-        if (oldest == null) {
+        Exchange exchange = getOldestInflightEntry();
+        if (exchange == null) {
             return null;
         }
-        return System.currentTimeMillis() - oldest.timeStamp;
+        Date created = exchange.getCreated();
+        if (created != null) {
+            return System.currentTimeMillis() - created.getTime();
+        } else {
+            return null;
+        }
     }
 
     public String getOldestInflightExchangeId() {
-        InFlightKey oldest = getOldestInflightEntry();
-        if (oldest == null) {
+        Exchange exchange = getOldestInflightEntry();
+        if (exchange == null) {
             return null;
         }
-        return oldest.exchangeId;
+        return exchange.getExchangeId();
     }
 
     @Override
     public void processExchange(Exchange exchange) {
-        exchangesInFlightKeys.computeIfAbsent(exchange.getExchangeId(), id -> {
-            InFlightKey key = new InFlightKey(System.currentTimeMillis(), exchange.getExchangeId());
-            exchangesInFlightStartTimestamps.put(key, key.timeStamp);
-            return key;
-        });
+        exchangesInFlight.put(exchange.getExchangeId(), exchange);
         super.processExchange(exchange);
     }
 
     @Override
     public void completedExchange(Exchange exchange, long time) {
-        exchangesInFlightKeys.computeIfPresent(exchange.getExchangeId(), (id, key) -> {
-            exchangesInFlightStartTimestamps.remove(key);
-            return null;
-        });
+        exchangesInFlight.remove(exchange.getExchangeId());
         super.completedExchange(exchange, time);
     }
 
     @Override
     public void failedExchange(Exchange exchange) {
-        exchangesInFlightKeys.computeIfPresent(exchange.getExchangeId(), (id, key) -> {
-            exchangesInFlightStartTimestamps.remove(key);
-            return null;
-        });
+        exchangesInFlight.remove(exchange.getExchangeId());
         super.failedExchange(exchange);
-    }
-
-    private static class InFlightKey implements Comparable<InFlightKey> {
-
-        private final Long timeStamp;
-        private final String exchangeId;
-
-        InFlightKey(Long timeStamp, String exchangeId) {
-            this.timeStamp = timeStamp;
-            this.exchangeId = exchangeId;
-        }
-
-        @Override
-        public int compareTo(InFlightKey o) {
-            int compare = Long.compare(timeStamp, o.timeStamp);
-            if (compare == 0) {
-                return exchangeId.compareTo(o.exchangeId);
-            }
-            return compare;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            InFlightKey that = (InFlightKey) o;
-
-            if (!exchangeId.equals(that.exchangeId)) {
-                return false;
-            }
-            if (!timeStamp.equals(that.timeStamp)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = timeStamp.hashCode();
-            result = 31 * result + exchangeId.hashCode();
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return exchangeId;
-        }
     }
 
     /**
