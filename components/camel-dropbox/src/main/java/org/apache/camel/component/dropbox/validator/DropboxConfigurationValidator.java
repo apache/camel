@@ -21,10 +21,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.component.dropbox.DropboxConfiguration;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
-
-import static org.apache.camel.component.dropbox.util.DropboxConstants.DROPBOX_FILE_SEPARATOR;
 
 public final class DropboxConfigurationValidator {
 
@@ -84,14 +83,14 @@ public final class DropboxConfigurationValidator {
 
     private static void validateRemotePath(String remotePath) throws DropboxException {
 
-        if (remotePath == null || !remotePath.startsWith(DROPBOX_FILE_SEPARATOR)) {
+        if (remotePath == null || !remotePath.startsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
             throw new DropboxException("option <remotePath> is not valid!");
         }
         validatePathInUnix(remotePath);
     }
 
     private static void validateRemotePathForPut(String remotePath) throws DropboxException {
-        if (!remotePath.startsWith(DROPBOX_FILE_SEPARATOR)) {
+        if (!remotePath.startsWith(DropboxConstants.DROPBOX_FILE_SEPARATOR)) {
             throw new DropboxException("option <remotePath> is not valid!");
         }
         validatePathInUnix(remotePath);

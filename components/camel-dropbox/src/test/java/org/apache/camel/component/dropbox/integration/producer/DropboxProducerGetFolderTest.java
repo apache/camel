@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
-import org.apache.camel.component.dropbox.util.DropboxRequestHeader;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("test", "test");
-                exchange.getIn().setHeader(DropboxRequestHeader.REMOTE_PATH.name(), "/XXX");
+                exchange.getIn().setHeader(DropboxConstants.HEADER_REMOTE_PATH, "/XXX");
             }
         });
 
@@ -120,7 +120,7 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
                         .to("mock:result");
 
                 from("direct:start2")
-                    .setHeader(DropboxRequestHeader.REMOTE_PATH.name(), constant("/XXX"))
+                    .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
                     .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}")
                     .to("mock:result");
 
@@ -129,7 +129,7 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
                     .to("mock:result");
 
                 from("direct:start4")
-                    .setHeader(DropboxRequestHeader.REMOTE_PATH.name(), constant("/XXX"))
+                    .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
                     .to("dropbox://get?accessToken={{accessToken}}&clientIdentifier={{clientIdentifier}}&remotePath=/aWrongPath")
                     .to("mock:result");
 
