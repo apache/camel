@@ -217,7 +217,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         deltaProcessingTime.updateValue(time);
 
         long now = new Date().getTime();
-        if (firstExchangeCompletedTimestamp.getUpdateCount() == 0) {
+        if (!firstExchangeCompletedTimestamp.isUpdated()) {
             firstExchangeCompletedTimestamp.updateValue(now);
         }
 
@@ -228,8 +228,11 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastExchangeCompletedExchangeId = exchange.getExchangeId();
 
         // update mean
-        long count = exchangesCompleted.getUpdateCount();
-        long mean = count > 0 ? totalProcessingTime.getValue() / exchangesCompleted.getValue() : 0;
+        long mean = 0;
+        long completed = exchangesCompleted.getValue();
+        if (completed > 0) {
+            mean = totalProcessingTime.getValue() / completed;
+        }
         meanProcessingTime.updateValue(mean);
     }
 
@@ -247,7 +250,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         }
 
         long now = new Date().getTime();
-        if (firstExchangeFailureTimestamp.getUpdateCount() == 0) {
+        if (!firstExchangeFailureTimestamp.isUpdated()) {
             firstExchangeFailureTimestamp.updateValue(now);
         }
 

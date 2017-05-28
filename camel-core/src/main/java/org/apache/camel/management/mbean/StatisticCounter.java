@@ -40,7 +40,8 @@ public class StatisticCounter extends Statistic {
     }
 
     @Override
-    public long getUpdateCount() {
-        return value.get();
+    public boolean isUpdated() {
+        // this is okay
+        return true;
     }
 }

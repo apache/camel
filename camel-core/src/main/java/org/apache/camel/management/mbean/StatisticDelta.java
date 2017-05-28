@@ -37,6 +37,12 @@ public class StatisticDelta extends Statistic {
         return "" + value.get();
     }
 
+    @Override
+    public boolean isUpdated() {
+        // this is okay
+        return true;
+    }
+
     public void reset() {
         value.set(0);
         lastValue.set(0);

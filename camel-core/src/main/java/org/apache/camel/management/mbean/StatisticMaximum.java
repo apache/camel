@@ -23,18 +23,23 @@ public class StatisticMaximum extends Statistic {
     private final AtomicLong value = new AtomicLong(-1);
 
     public void updateValue(long newValue) {
-        value.updateAndGet(value -> {
-            if (value == -1 || value < newValue) {
-                return newValue;
-            } else {
-                return value;
-            }
-        });
+        // its okay its not 100% thread safe (these jmx counters are not guaranteed to be accurate for min/max values)
+        // if we use the atomic operation updateAndGet then the JVM creates a new lambda per call which creates a new object
+        // in the JVM and causes higher memory footprint
+        long current = value.get();
+        if (current == -1 || current < newValue) {
+            value.set(newValue);
+        }
     }
 
     public long getValue() {
         long num = value.get();
         return num == -1 ? 0 : num;
+    }
+
+    @Override
+    public boolean isUpdated() {
+        return value.get() != -1;
     }
 
     @Override
