@@ -16,92 +16,27 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.LongAdder;
-
 /**
- * Default implementation of {@link Statistic}
+ * Base implementation of {@link Statistic}
+ * <p/>
+ * The following modes is available:
+ * <ul>
+ * <li>VALUE - A statistic with this update mode is a simple value that is a straight forward
+ * representation of the updated value.</li>
+ * <li>DELTA - A statistic with this update mode is a value that represents the delta
+ * between the last two recorded values (or the initial value if two updates have
+ * not been recorded). This value can be negative if the delta goes up or down.</li>
+ * <li>COUNTER - A statistic with this update mode interprets updates as increments (positive values)
+ * or decrements (negative values) to the current value.</li>
+ * <li>MAXIMUM - A statistic with this update mode is a value that represents the maximum value
+ * amongst the update values applied to this statistic.</li>
+ * <li>MINIMUM - A statistic with this update mode is a value that represents the minimum value
+ * amongst the update values applied to this statistic.</li>
+ * <ul>
  */
-public class Statistic {
+public abstract class Statistic {
 
-    /**
-     * Statistics mode
-     * <ul>
-     * <li>VALUE - A statistic with this update mode is a simple value that is a straight forward
-     * representation of the updated value.</li>
-     * <li>DELTA - A statistic with this update mode is a value that represents the delta
-     * between the last two recorded values (or the initial value if two updates have
-     * not been recorded). This value can be negative if the delta goes up or down.</li>
-     * <li>COUNTER - A statistic with this update mode interprets updates as increments (positive values)
-     * or decrements (negative values) to the current value.</li>
-     * <li>MAXIMUM - A statistic with this update mode is a value that represents the maximum value
-     * amongst the update values applied to this statistic.</li>
-     * <li>MINIMUM - A statistic with this update mode is a value that represents the minimum value
-     * amongst the update values applied to this statistic.</li>
-     * <ul>
-     */
-    public enum UpdateMode {
-        VALUE, DELTA, COUNTER, MAXIMUM, MINIMUM
-    }
-
-    private final UpdateMode updateMode;
-    private final AtomicLong value = new AtomicLong();
-    private final AtomicLong lastValue;
-    private final LongAdder updateCount = new LongAdder();
-
-    /**
-     * Instantiates a new statistic.
-     *
-     * @param name  name of statistic
-     * @param owner owner
-     * @param updateMode The statistic update mode.
-     */
-    public Statistic(String name, Object owner, UpdateMode updateMode) {
-        this.updateMode = updateMode;
-        if (UpdateMode.DELTA == updateMode) {
-            this.lastValue = new AtomicLong();
-        } else {
-            this.lastValue = null;
-        }
-    }
-
-    public void updateValue(long newValue) {
-        switch (updateMode) {
-        case COUNTER:
-            value.addAndGet(newValue);
-            break;
-        case VALUE:
-            value.set(newValue);
-            break;
-        case DELTA:
-            if (updateCount.longValue() > 0) {
-                // remember previous value before updating it
-                lastValue.set(value.longValue());
-            }
-            value.set(newValue);
-            break;
-        case MAXIMUM:
-            value.updateAndGet(value -> {
-                if (updateCount.longValue() == 0 || value < newValue) {
-                    return newValue;
-                } else {
-                    return value;
-                }
-            });
-            break;
-        case MINIMUM:
-            value.updateAndGet(value -> {
-                if (updateCount.longValue() == 0 || value > newValue) {
-                    return newValue;
-                } else {
-                    return value;
-                }
-            });
-            break;
-        default:
-        }
-        updateCount.add(1);
-    }
+    public abstract void updateValue(long newValue);
 
     public void increment() {
         updateValue(1);
@@ -111,31 +46,13 @@ public class Statistic {
         updateValue(-1);
     }
 
-    public long getValue() {
-        if (updateMode == UpdateMode.DELTA) {
-            if (updateCount.longValue() == 0) {
-                return value.get();
-            } else {
-                return value.get() - lastValue.get();
-            }
-        }
-        return value.get();
-    }
+    public abstract long getValue();
 
+    @Deprecated
     public long getUpdateCount() {
-        return updateCount.longValue();
+        return 0;
     }
 
-    public void reset() {
-        value.set(0);
-        if (lastValue != null) {
-            lastValue.set(0);
-        }
-        updateCount.reset();
-    }
-
-    public String toString() {
-        return "" + value.get();
-    }
+    public abstract void reset();
 
 }

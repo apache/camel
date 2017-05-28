@@ -55,25 +55,25 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
 
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        this.exchangesCompleted = new Statistic("org.apache.camel.exchangesCompleted", this, Statistic.UpdateMode.COUNTER);
-        this.exchangesFailed = new Statistic("org.apache.camel.exchangesFailed", this, Statistic.UpdateMode.COUNTER);
-        this.exchangesInflight = new Statistic("org.apache.camel.exchangesInflight", this, Statistic.UpdateMode.COUNTER);
+        this.exchangesCompleted = new StatisticCounter();
+        this.exchangesFailed = new StatisticCounter();
+        this.exchangesInflight = new StatisticCounter();
 
-        this.failuresHandled = new Statistic("org.apache.camel.failuresHandled", this, Statistic.UpdateMode.COUNTER);
-        this.redeliveries = new Statistic("org.apache.camel.redeliveries", this, Statistic.UpdateMode.COUNTER);
-        this.externalRedeliveries = new Statistic("org.apache.camel.externalRedeliveries", this, Statistic.UpdateMode.COUNTER);
+        this.failuresHandled = new StatisticCounter();
+        this.redeliveries = new StatisticCounter();
+        this.externalRedeliveries = new StatisticCounter();
 
-        this.minProcessingTime = new Statistic("org.apache.camel.minimumProcessingTime", this, Statistic.UpdateMode.MINIMUM);
-        this.maxProcessingTime = new Statistic("org.apache.camel.maximumProcessingTime", this, Statistic.UpdateMode.MAXIMUM);
-        this.totalProcessingTime = new Statistic("org.apache.camel.totalProcessingTime", this, Statistic.UpdateMode.COUNTER);
-        this.lastProcessingTime = new Statistic("org.apache.camel.lastProcessingTime", this, Statistic.UpdateMode.VALUE);
-        this.deltaProcessingTime = new Statistic("org.apache.camel.deltaProcessingTime", this, Statistic.UpdateMode.DELTA);
-        this.meanProcessingTime = new Statistic("org.apache.camel.meanProcessingTime", this, Statistic.UpdateMode.VALUE);
+        this.minProcessingTime = new StatisticMinimum();
+        this.maxProcessingTime = new StatisticMaximum();
+        this.totalProcessingTime = new StatisticCounter();
+        this.lastProcessingTime = new StatisticValue();
+        this.deltaProcessingTime = new StatisticDelta();
+        this.meanProcessingTime = new StatisticValue();
 
-        this.firstExchangeCompletedTimestamp = new Statistic("org.apache.camel.firstExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.firstExchangeFailureTimestamp = new Statistic("org.apache.camel.firstExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.lastExchangeCompletedTimestamp = new Statistic("org.apache.camel.lastExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.lastExchangeFailureTimestamp = new Statistic("org.apache.camel.lastExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
+        this.firstExchangeCompletedTimestamp = new StatisticValue();
+        this.firstExchangeFailureTimestamp = new StatisticValue();
+        this.lastExchangeCompletedTimestamp = new StatisticValue();
+        this.lastExchangeFailureTimestamp = new StatisticValue();
     }
 
     @Override
@@ -228,8 +228,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastExchangeCompletedExchangeId = exchange.getExchangeId();
 
         // update mean
-        long count = exchangesCompleted.getValue();
-        long mean = count > 0 ? totalProcessingTime.getValue() / count : 0;
+        long count = exchangesCompleted.getUpdateCount();
+        long mean = count > 0 ? totalProcessingTime.getValue() / exchangesCompleted.getValue() : 0;
         meanProcessingTime.updateValue(mean);
     }
 
