@@ -1303,4 +1303,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return routeContext;
     }
 
+
+    // ****************************
+    // Static helpers
+    // ****************************
+
+    public static RouteDefinition fromUri(String uri) {
+        return new RouteDefinition().from(uri);
+    }
+
+    public static RouteDefinition fromEndpoint(Endpoint endpoint) {
+        return new RouteDefinition().from(endpoint);
+    }
+
 }
