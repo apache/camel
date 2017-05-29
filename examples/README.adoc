@@ -44,8 +44,6 @@ Number of Examples: 92 (9 deprecated)
 
 | link:camel-example-spring-boot/readme.adoc[Spring Boot] (camel-example-spring-boot) | Beginner | An example showing how to work with Camel and Spring Boot
 
-| link:camel-example-spring-boot-activemq/readme.adoc[Spring Boot Activemq] (camel-example-spring-boot-activemq) | Beginner | An example showing how to work with Camel, ActiveMQ and Spring Boot
-
 | link:camel-example-spring-boot-live-reload/readme.adoc[Spring Boot Live Reload] (camel-example-spring-boot-live-reload) | Beginner | An example showing how to use the live reload feature of Spring Boot with Camel
 
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
@@ -132,6 +130,8 @@ Number of Examples: 92 (9 deprecated)
 | link:camel-example-jms-file/README.md[JMS-File] (camel-example-jms-file) | Messaging | An example that persists messages from JMS to files
 
 | link:camel-example-kafka/README.adoc[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
+
+| link:camel-example-spring-boot-activemq/readme.adoc[Spring Boot Activemq] (camel-example-spring-boot-activemq) | Messaging | An example showing how to work with Camel, ActiveMQ and Spring Boot
 
 | link:camel-example-spring-jms/README.md[Spring JMS] (camel-example-spring-jms) | Messaging | An example using Spring XML to talk to the JMS server from different kind of client techniques
 
