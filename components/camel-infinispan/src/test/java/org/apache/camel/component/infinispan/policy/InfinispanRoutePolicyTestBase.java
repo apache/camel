@@ -16,40 +16,17 @@
  */
 package org.apache.camel.component.infinispan.policy;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.util.ServiceHelper;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.junit.Assert;
 import org.junit.Test;
 
-abstract class InfinispanRoutePolicyTestBase extends CamelTestSupport {
-    protected BasicCacheContainer cacheManager;
-    protected InfinispanRoutePolicy policy1;
-    protected InfinispanRoutePolicy policy2;
-
-    @Override
-    protected void doPreSetup() throws Exception {
-        this.cacheManager = createCacheManager();
-
-        this.policy1 = InfinispanRoutePolicy.withManager(cacheManager);
-        this.policy1.setLockMapName("camel-route-policy");
-        this.policy1.setLockKey("route-policy");
-        this.policy1.setLockValue("route1");
-
-        this.policy2 = InfinispanRoutePolicy.withManager(cacheManager);
-        this.policy2.setLockMapName("camel-route-policy");
-        this.policy2.setLockKey("route-policy");
-        this.policy2.setLockValue("route2");
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        if (this.cacheManager != null) {
-            this.cacheManager.stop();
-        }
-    }
+abstract class InfinispanRoutePolicyTestBase {
+    private final static String CACHE_NAME = "camel-route-policy";
+    private final static String CACHE_KEY = "route-policy";
 
     protected abstract BasicCacheContainer createCacheManager() throws Exception;
 
@@ -59,60 +36,50 @@ abstract class InfinispanRoutePolicyTestBase extends CamelTestSupport {
 
     @Test
     public void testLeadership()throws Exception {
-        context.startRoute("route1");
-        while (!policy1.isLeader()) {
-            Thread.sleep(250);
-        }
+        BasicCacheContainer cacheManager = createCacheManager();
 
-        context.startRoute("route2");
-        Thread.sleep(500);
+        InfinispanRoutePolicy policy1 = InfinispanRoutePolicy.withManager(cacheManager);
+        policy1.setLockMapName(CACHE_NAME);
+        policy1.setLockKey(CACHE_KEY);
+        policy1.setLockValue("route1");
 
-        Assert.assertTrue(policy1.isLeader());
-        Assert.assertFalse(policy2.isLeader());
+        InfinispanRoutePolicy policy2 = InfinispanRoutePolicy.withManager(cacheManager);
+        policy2.setLockMapName(CACHE_NAME);
+        policy2.setLockKey(CACHE_KEY);
+        policy2.setLockValue("route2");
 
-        context.stopRoute("route1");
-        while (!policy2.isLeader()) {
-            Thread.sleep(250);
-        }
+        CamelContext context = new DefaultCamelContext();
 
-        Assert.assertFalse(policy1.isLeader());
-        Assert.assertTrue(policy2.isLeader());
+        try {
+            context = new DefaultCamelContext();
+            context.start();
 
-        context.startRoute("route1");
-        Thread.sleep(500);
+            context.addRouteDefinition(RouteDefinition.fromUri("direct:r1").routePolicy(policy1).to("mock:p1"));
 
-        Assert.assertFalse(policy1.isLeader());
-        Assert.assertTrue(policy2.isLeader());
-
-        context.stopRoute("route2");
-        while (!policy1.isLeader()) {
-            Thread.sleep(250);
-        }
-
-        Assert.assertTrue(policy1.isLeader());
-        Assert.assertFalse(policy2.isLeader());
-    }
-
-    // *******************************************
-    //
-    // *******************************************
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:route1")
-                    .routeId("route1")
-                    .autoStartup(false)
-                    .routePolicy(policy1)
-                    .to("log:org.apache.camel.component.infinispan.policy.1?level=INFO&showAll=true");
-                from("direct:route2")
-                    .routeId("route2")
-                    .autoStartup(false)
-                    .routePolicy(policy2)
-                    .to("log:org.apache.camel.component.infinispan.policy.2?level=INFO&showAll=true");
+            for (int i=0; i < 10 && !policy1.isLeader(); i++) {
+                Thread.sleep(250);
             }
-        };
+
+            context.addRouteDefinition(RouteDefinition.fromUri("direct:r2").routePolicy(policy2).to("mock:p2"));
+
+            Assert.assertTrue(policy1.isLeader());
+            Assert.assertFalse(policy2.isLeader());
+
+            policy1.shutdown();
+
+            for (int i = 0; i < 10 && !policy2.isLeader(); i++) {
+                Thread.sleep(250);
+            }
+
+            Assert.assertFalse(policy1.isLeader());
+            Assert.assertTrue(policy2.isLeader());
+
+        } finally {
+            ServiceHelper.stopService(context);
+
+            if (cacheManager != null) {
+                cacheManager.stop();
+            }
+        }
     }
 }
