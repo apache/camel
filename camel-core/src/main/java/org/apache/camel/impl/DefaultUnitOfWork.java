@@ -63,7 +63,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private CamelContext context;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
-    private final TracedRouteNodes tracedRouteNodes;
     private Set<Object> transactedBy;
     private final Stack<RouteContext> routeContextStack = new Stack<RouteContext>();
     private Stack<DefaultSubUnitOfWork> subUnitOfWorks;
@@ -78,7 +77,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (log.isTraceEnabled()) {
             log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
         }
-        tracedRouteNodes = new DefaultTracedRouteNodes();
         context = exchange.getContext();
 
         if (context.isAllowUseOriginalMessage()) {
@@ -161,9 +159,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         // need to clean up when we are stopping to not leak memory
         if (synchronizations != null) {
             synchronizations.clear();
-        }
-        if (tracedRouteNodes != null) {
-            tracedRouteNodes.clear();
         }
         if (transactedBy != null) {
             transactedBy.clear();
@@ -298,7 +293,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public TracedRouteNodes getTracedRouteNodes() {
-        return tracedRouteNodes;
+        return null;
     }
 
     public boolean isTransacted() {
