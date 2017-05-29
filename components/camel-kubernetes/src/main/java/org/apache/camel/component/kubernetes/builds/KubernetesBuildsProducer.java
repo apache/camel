@@ -18,8 +18,10 @@ package org.apache.camel.component.kubernetes.builds;
 
 import java.util.Map;
 
+import io.fabric8.kubernetes.client.Watch;
+import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.LogWatch;
-import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildList;
@@ -30,7 +32,6 @@ import io.fabric8.openshift.client.dsl.BuildResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
-import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
@@ -48,7 +49,7 @@ public class KubernetesBuildsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -81,26 +82,24 @@ public class KubernetesBuildsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        BuildList buildList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().list();
+        BuildList buildList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inAnyNamespace().list();
         exchange.getOut().setBody(buildList.getItems());
     }
 
     protected void doListBuildByLabels(Exchange exchange, String operation) throws Exception {
         BuildList buildList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS,
-                Map.class);
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Build, BuildList, DoneableBuild, BuildResource<Build, DoneableBuild, String, LogWatch>> builds = getEndpoint().getKubernetesClient().
-                adapt(OpenShiftClient.class).builds()
-                .inNamespace(namespaceName);
+            NonNamespaceOperation<Build, BuildList, DoneableBuild, BuildResource<Build, DoneableBuild, String, LogWatch>> builds = getEndpoint().getKubernetesClient()
+                .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
             buildList = builds.list();
         } else {
-            MixedOperation<Build, BuildList, DoneableBuild, BuildResource<Build, DoneableBuild, String, LogWatch>> builds = getEndpoint().getKubernetesClient().
-                adapt(OpenShiftClient.class).builds();
+            FilterWatchListMultiDeletable<Build, BuildList, Boolean, Watch, Watcher<Build>> builds = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
+                .inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
@@ -122,9 +121,8 @@ public class KubernetesBuildsProducer extends DefaultProducer {
             LOG.error("Get a specific Build require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Build require specify a namespace name");
         }
-        build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName)
-                .withName(buildName).get();
-        
+        build = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds().inNamespace(namespaceName).withName(buildName).get();
+
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(build);
     }
