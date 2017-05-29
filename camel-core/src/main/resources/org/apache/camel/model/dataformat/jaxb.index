@@ -42,6 +42,7 @@ SoapJaxbDataFormat
 StringDataFormat
 SyslogDataFormat
 TarFileDataFormat
+ThriftDataFormat
 TidyMarkupDataFormat
 UniVocityCsvDataFormat
 UniVocityFixedWidthDataFormat
