@@ -49,6 +49,7 @@ import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
+import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
@@ -105,6 +106,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         @XmlElement(required = false, name = "string", type = StringDataFormat.class),
         @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
         @XmlElement(required = false, name = "tarfile", type = TarFileDataFormat.class),
+        @XmlElement(required = false, name = "thrift", type = ThriftDataFormat.class),
         @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
         @XmlElement(required = false, name = "univocity-csv", type = UniVocityCsvDataFormat.class),
         @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedWidthDataFormat.class),
