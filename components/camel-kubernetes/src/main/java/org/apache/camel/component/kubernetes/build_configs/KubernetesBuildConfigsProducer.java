@@ -18,6 +18,9 @@ package org.apache.camel.component.kubernetes.build_configs;
 
 import java.util.Map;
 
+import io.fabric8.kubernetes.client.Watch;
+import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.openshift.api.model.Build;
@@ -81,7 +84,7 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         BuildConfigList buildConfigsList = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class)
-                .buildConfigs().list();
+                .buildConfigs().inAnyNamespace().list();
         exchange.getOut().setBody(buildConfigsList.getItems());
     }
 
@@ -100,9 +103,8 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
             }
             buildConfigsList = buildConfigs.list();
         } else {
-            MixedOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, 
-                BuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Build>> buildConfigs; 
-            buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs();
+            FilterWatchListMultiDeletable<BuildConfig, BuildConfigList, Boolean, Watch, Watcher<BuildConfig>> buildConfigs; 
+            buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 buildConfigs.withLabel(entry.getKey(), entry.getValue());
             }
