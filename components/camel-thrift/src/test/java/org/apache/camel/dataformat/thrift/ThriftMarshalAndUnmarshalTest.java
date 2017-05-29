@@ -14,26 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.protobuf;
+package org.apache.camel.dataformat.thrift;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
-import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-
+import org.apache.camel.dataformat.thrift.generated.Operation;
+import org.apache.camel.dataformat.thrift.generated.Work;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class ProtobufMarshalAndUnmarshalSpringTest extends CamelSpringTestSupport {
+public class ThriftMarshalAndUnmarshalTest extends CamelTestSupport {
+    private static final String WORK_TEST_COMMENT = "This is a test thrift data";
+    private static final int WORK_TEST_NUM1 = 1;
+    private static final int WORK_TEST_NUM2 = 100;
+    private static final Operation WORK_TEST_OPERATION = Operation.MULTIPLY;
 
-    @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/protobuf/springDataFormat.xml");
-    }
-    
     @Test
     public void testMarshalAndUnmarshalWithDataFormat() throws Exception {
         marshalAndUnmarshal("direct:in", "direct:back");
@@ -55,7 +52,7 @@ public class ProtobufMarshalAndUnmarshalSpringTest extends CamelSpringTestSuppor
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:unmarshalC").unmarshal().protobuf(new CamelException("wrong instance")).to("mock:reverse");
+                    from("direct:unmarshalC").unmarshal().thrift(new CamelException("wrong instance")).to("mock:reverse");
                 }
             });
             fail("Expect the exception here");
@@ -66,11 +63,16 @@ public class ProtobufMarshalAndUnmarshalSpringTest extends CamelSpringTestSuppor
     }
 
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
-        AddressBookProtos.Person input = AddressBookProtos.Person.newBuilder().setName("Martin").setId(1234).build();
+        Work input = new Work();
+        
+        input.num1 = WORK_TEST_NUM1;
+        input.num2 = WORK_TEST_NUM2;
+        input.op = WORK_TEST_OPERATION;
+        input.comment = WORK_TEST_COMMENT;
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(Person.class);
+        mock.message(0).body().isInstanceOf(Work.class);
         mock.message(0).body().isEqualTo(input);
 
         Object marshalled = template.requestBody(inURI, input);
@@ -79,7 +81,28 @@ public class ProtobufMarshalAndUnmarshalSpringTest extends CamelSpringTestSuppor
 
         mock.assertIsSatisfied();
 
-        Person output = mock.getReceivedExchanges().get(0).getIn().getBody(Person.class);
-        assertEquals("Martin", output.getName());
+        Work output = mock.getReceivedExchanges().get(0).getIn().getBody(Work.class);
+        assertEquals(WORK_TEST_COMMENT, output.getComment());
+        assertEquals(WORK_TEST_OPERATION, output.getOp());
+        assertEquals(WORK_TEST_NUM2, output.getNum2());
     }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                ThriftDataFormat format = new ThriftDataFormat(new Work());
+
+                from("direct:in").marshal(format);
+                from("direct:back").unmarshal(format).to("mock:reverse");
+
+                from("direct:marshal").marshal().thrift();
+                from("direct:unmarshalA").unmarshal().thrift("org.apache.camel.dataformat.thrift.generated.Work").to("mock:reverse");
+
+                from("direct:unmarshalB").unmarshal().thrift(new Work()).to("mock:reverse");
+            }
+        };
+    }
+
 }

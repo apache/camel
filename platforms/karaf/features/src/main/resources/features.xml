@@ -1948,6 +1948,12 @@
     <bundle>mvn:org.apache.camel/camel-test/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-test-spring/${project.version}</bundle>
   </feature>
+  <feature name='camel-thrift' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${libthrift-version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-thrift/${project.version}</bundle>
+  </feature>
   <feature name='camel-tika' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.tika/tika-core/${tika-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.tika/tika-bundle/${tika-version}</bundle>
