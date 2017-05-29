@@ -24,7 +24,8 @@ import java.util.List;
 import io.grpc.Channel;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.CamelContext;
-import org.springframework.util.ReflectionUtils;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
 
 /**
  * GrpcUtils helpers are working with dynamic methods via Spring reflection
@@ -58,11 +59,11 @@ public final class GrpcUtils {
         String serviceClassName = packageName + "." + serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX;
         try {
             Class grpcServiceClass = context.getClassResolver().resolveMandatoryClass(serviceClassName);
-            Method grpcBlockingMethod = ReflectionUtils.findMethod(grpcServiceClass, stubMethod, paramChannel);
+            Method grpcBlockingMethod = ReflectionHelper.findMethod(grpcServiceClass, stubMethod, paramChannel);
             if (grpcBlockingMethod == null) {
                 throw new IllegalArgumentException("gRPC service method not found: " + serviceClassName + "." + GrpcConstants.GRPC_SERVICE_SYNC_STUB_METHOD);
             }
-            grpcBlockingStub = ReflectionUtils.invokeMethod(grpcBlockingMethod, grpcServiceClass, channel);
+            grpcBlockingStub = ObjectHelper.invokeMethod(grpcBlockingMethod, grpcServiceClass, channel);
 
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("gRPC service class not found: " + serviceClassName);
@@ -74,12 +75,12 @@ public final class GrpcUtils {
     public static void invokeAsyncMethod(Object asyncStubClass, String invokeMethod, Object request, StreamObserver responseObserver) {
         Class[] paramMethod = null;
 
-        Method method = ReflectionUtils.findMethod(asyncStubClass.getClass(), invokeMethod, paramMethod);
+        Method method = ReflectionHelper.findMethod(asyncStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
             throw new IllegalArgumentException("gRPC service method not found: " + asyncStubClass.getClass().getName() + "." + invokeMethod);
         }
         if (method.getReturnType().equals(StreamObserver.class)) {
-            StreamObserver<Object> requestObserver = (StreamObserver<Object>)ReflectionUtils.invokeMethod(method, asyncStubClass, responseObserver);
+            StreamObserver<Object> requestObserver = (StreamObserver<Object>)ObjectHelper.invokeMethod(method, asyncStubClass, responseObserver);
             if (request instanceof List) {
                 List<Object> requestList = (List<Object>)request;
                 requestList.forEach((requestItem) -> {
@@ -90,7 +91,7 @@ public final class GrpcUtils {
             }
             requestObserver.onCompleted();
         } else {
-            ReflectionUtils.invokeMethod(method, asyncStubClass, request, responseObserver);
+            ObjectHelper.invokeMethod(method, asyncStubClass, request, responseObserver);
         }
     }
 
@@ -98,19 +99,19 @@ public final class GrpcUtils {
     public static Object invokeSyncMethod(Object blockingStubClass, String invokeMethod, Object request) {
         Class[] paramMethod = null;
 
-        Method method = ReflectionUtils.findMethod(blockingStubClass.getClass(), invokeMethod, paramMethod);
+        Method method = ReflectionHelper.findMethod(blockingStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
             throw new IllegalArgumentException("gRPC service method not found: " + blockingStubClass.getClass().getName() + "." + invokeMethod);
         }
         if (method.getReturnType().equals(Iterator.class)) {
-            Iterator<Object> responseObjects = (Iterator<Object>)ReflectionUtils.invokeMethod(method, blockingStubClass, request);
+            Iterator<Object> responseObjects = (Iterator<Object>)ObjectHelper.invokeMethod(method, blockingStubClass, request);
             List<Object> objectList = new ArrayList<Object>();
             while (responseObjects.hasNext()) {
                 objectList.add(responseObjects.next());
             }
             return objectList;
         } else {
-            return ReflectionUtils.invokeMethod(method, blockingStubClass, request);
+            return ObjectHelper.invokeMethod(method, blockingStubClass, request);
         }
     }
 
