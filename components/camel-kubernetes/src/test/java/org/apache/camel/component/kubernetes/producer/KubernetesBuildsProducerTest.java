@@ -83,8 +83,4 @@ public class KubernetesBuildsProducerTest extends KubernetesTestSupport {
             }
         };
     }
-
-    private static String toUrlEncoded(String str) {
-        return str.replaceAll("=", "%3D");
-    }
 }
