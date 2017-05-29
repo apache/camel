@@ -431,7 +431,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
      * Returns the current active consumers on this endpoint
      */
     public Set<SedaConsumer> getConsumers() {
-        return new HashSet<SedaConsumer>(consumers);
+        return consumers;
     }
 
     /**
