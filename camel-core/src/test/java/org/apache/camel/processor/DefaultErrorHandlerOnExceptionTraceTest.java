@@ -24,12 +24,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Ignore;
 
 /**
  * Default error handler test with trace
  *
  * @version 
  */
+@Deprecated
+@Ignore
 public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport {
 
     @Override

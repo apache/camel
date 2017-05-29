@@ -19,7 +19,10 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
+@Deprecated
+@Ignore
 public class TraceInterceptorCustomJpaMessageTest extends TracingTestBase {
 
     @Override

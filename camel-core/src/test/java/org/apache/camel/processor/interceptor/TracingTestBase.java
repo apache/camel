@@ -21,7 +21,10 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
+@Deprecated
+@Ignore
 public abstract class TracingTestBase extends ContextTestSupport {
     protected List<StringBuilder> tracedMessages;
     private TraceTestProcessor processor = new TraceTestProcessor();

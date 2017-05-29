@@ -19,7 +19,10 @@ package org.apache.camel.processor.interceptor;
 import java.util.LinkedList;
 
 import org.apache.camel.CamelContext;
+import org.junit.Ignore;
 
+@Deprecated
+@Ignore
 public class TraceHandlerTest extends TracingTestBase {
 
     @Override
