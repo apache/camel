@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
  */
 public class InstrumentationProcessor extends DelegateAsyncProcessor {
 
+    // TODO: Would be good to get this as an advice instead
+
     private static final Logger LOG = LoggerFactory.getLogger(InstrumentationProcessor.class);
     private PerformanceCounter counter;
     private String type;
