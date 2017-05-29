@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -107,49 +106,34 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     @Override
     public Collection<InflightExchange> browse(String fromRouteId, int limit, boolean sortByLongestDuration) {
-        List<InflightExchange> answer = new ArrayList<InflightExchange>();
-
-        List<Exchange> values;
+        Stream<Exchange> values;
         if (fromRouteId == null) {
             // all values
-            values = new ArrayList<Exchange>(inflight.values());
+            values = inflight.values().stream();
         } else {
             // only if route match
-            values = new ArrayList<Exchange>();
-            for (Exchange exchange : inflight.values()) {
-                String exchangeRouteId = exchange.getFromRouteId();
-                if (fromRouteId.equals(exchangeRouteId)) {
-                    values.add(exchange);
-                }
-            }
+            values = inflight.values().stream()
+                .filter(e -> fromRouteId.equals(e.getFromRouteId()));
         }
 
         if (sortByLongestDuration) {
-            values.sort(new Comparator<Exchange>() {
-                @Override
-                public int compare(Exchange e1, Exchange e2) {
-                    long d1 = getExchangeDuration(e1);
-                    long d2 = getExchangeDuration(e2);
-                    // need the biggest number first
-                    return -1 * Long.compare(d1, d2);
-                }
+            // sort by duration and grab the first
+            values = values.sorted((e1, e2) -> {
+                long d1 = getExchangeDuration(e1);
+                long d2 = getExchangeDuration(e2);
+                // need the biggest number first
+                return -1 * Long.compare(d1, d2);
             });
         } else {
             // else sort by exchange id
-            values.sort(new Comparator<Exchange>() {
-                @Override
-                public int compare(Exchange e1, Exchange e2) {
-                    return e1.getExchangeId().compareTo(e2.getExchangeId());
-                }
-            });
+            values = values.sorted(Comparator.comparing(Exchange::getExchangeId));
         }
 
-        for (Exchange exchange : values) {
-            answer.add(new InflightExchangeEntry(exchange));
-            if (limit > 0 && answer.size() >= limit) {
-                break;
-            }
+        if (limit > 0) {
+            values = values.limit(limit);
         }
+
+        List<InflightExchange> answer = values.map(InflightExchangeEntry::new).collect(Collectors.toList());
         return Collections.unmodifiableCollection(answer);
     }
 
