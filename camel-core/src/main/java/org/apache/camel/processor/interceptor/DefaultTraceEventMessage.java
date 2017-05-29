@@ -29,6 +29,7 @@ import org.apache.camel.util.MessageHelper;
 /**
  * Default {@link TraceEventMessage}.
  */
+@Deprecated
 public final class DefaultTraceEventMessage implements Serializable, TraceEventMessage {
     private static final long serialVersionUID = -4549012920528941203L;
 

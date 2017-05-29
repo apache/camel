@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@Deprecated
 public class TraceInterceptor extends DelegateAsyncProcessor implements ExchangeFormatter {
     private static final Logger LOG = LoggerFactory.getLogger(TraceInterceptor.class);
 
