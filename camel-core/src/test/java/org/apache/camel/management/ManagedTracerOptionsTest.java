@@ -22,13 +22,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 
 /**
  * @version 
  */
-@Deprecated
-@Ignore
 public class ManagedTracerOptionsTest extends ManagementTestSupport {
 
     public void testManagedTracerOptions() throws Exception {

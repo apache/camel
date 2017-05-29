@@ -26,13 +26,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.spi.TracedRouteNodes;
-import org.junit.Ignore;
 
 /**
  * @version 
  */
-@Deprecated
-@Ignore
 public class TraceableUnitOfWorkTest extends ContextTestSupport {
 
     public void testSendingSomeMessages() throws Exception {
