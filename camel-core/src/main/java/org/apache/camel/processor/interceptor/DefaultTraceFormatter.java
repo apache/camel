@@ -28,6 +28,7 @@ import org.apache.camel.util.MessageHelper;
 /**
  * @version 
  */
+@Deprecated
 public class DefaultTraceFormatter implements TraceFormatter {
     
     protected static final String LS = System.getProperty("line.separator");

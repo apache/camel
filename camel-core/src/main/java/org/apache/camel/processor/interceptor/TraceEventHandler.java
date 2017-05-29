@@ -23,6 +23,7 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  * A handler which reacts on trace events.
  */
+@Deprecated
 public interface TraceEventHandler {
 
     /**
