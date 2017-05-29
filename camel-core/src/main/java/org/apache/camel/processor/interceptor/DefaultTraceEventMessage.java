@@ -108,8 +108,10 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private static String extractFromNode(Exchange exchange) {
         if (exchange.getUnitOfWork() != null) {
             TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-            RouteNode last = traced.getSecondLastNode();
-            return last != null ? last.getLabel(exchange) : null;
+            if (traced != null) {
+                RouteNode last = traced.getSecondLastNode();
+                return last != null ? last.getLabel(exchange) : null;
+            }
         }
         return null;
     }
@@ -117,8 +119,10 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private static String extractToNode(Exchange exchange) {
         if (exchange.getUnitOfWork() != null) {
             TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-            RouteNode last = traced.getLastNode();
-            return last != null ? last.getLabel(exchange) : null;
+            if (traced != null) {
+                RouteNode last = traced.getLastNode();
+                return last != null ? last.getLabel(exchange) : null;
+            }
         }
         return null;
     }

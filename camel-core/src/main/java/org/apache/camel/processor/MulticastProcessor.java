@@ -675,52 +675,92 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         Processor processor = pair.getProcessor();
         final Producer producer = pair.getProducer();
 
-        TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
-
-        try {
-            // prepare tracing starting from a new block
-            if (traced != null) {
-                traced.pushBlock();
+        StopWatch sw = null;
+        if (producer != null) {
+            boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
+            if (sending) {
+                sw = new StopWatch();
             }
+        }
 
-            StopWatch sw = null;
-            if (producer != null) {
-                boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
-                if (sending) {
-                    sw = new StopWatch();
+        // compute time taken if sending to another endpoint
+        final StopWatch watch = sw;
+
+        // let the prepared process it, remember to begin the exchange pair
+        AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
+        pair.begin();
+        sync = async.process(exchange, new AsyncCallback() {
+            public void done(boolean doneSync) {
+                // we are done with the exchange pair
+                pair.done();
+
+                // okay we are done, so notify the exchange was sent
+                if (producer != null && watch != null) {
+                    long timeTaken = watch.taken();
+                    Endpoint endpoint = producer.getEndpoint();
+                    // emit event that the exchange was sent to the endpoint
+                    EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
                 }
-            }
 
-            // compute time taken if sending to another endpoint
-            final StopWatch watch = sw;
+                // we only have to handle async completion of the routing slip
+                if (doneSync) {
+                    return;
+                }
 
-            // let the prepared process it, remember to begin the exchange pair
-            AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
-            pair.begin();
-            sync = async.process(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // we are done with the exchange pair
-                    pair.done();
+                // continue processing the multicast asynchronously
+                Exchange subExchange = exchange;
 
-                    // okay we are done, so notify the exchange was sent
-                    if (producer != null && watch != null) {
-                        long timeTaken = watch.taken();
-                        Endpoint endpoint = producer.getEndpoint();
-                        // emit event that the exchange was sent to the endpoint
-                        EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
+                // Decide whether to continue with the multicast or not; similar logic to the Pipeline
+                // remember to test for stop on exception and aggregate before copying back results
+                boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
+                if (stopOnException && !continueProcessing) {
+                    if (subExchange.getException() != null) {
+                        // wrap in exception to explain where it failed
+                        subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
+                    } else {
+                        // we want to stop on exception, and the exception was handled by the error handler
+                        // this is similar to what the pipeline does, so we should do the same to not surprise end users
+                        // so we should set the failed exchange as the result and be done
+                        result.set(subExchange);
                     }
+                    // and do the done work
+                    doDone(original, subExchange, pairs, callback, false, true);
+                    return;
+                }
 
-                    // we only have to handle async completion of the routing slip
-                    if (doneSync) {
+                try {
+                    if (parallelAggregate) {
+                        doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
+                    } else {
+                        doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                    }
+                } catch (Throwable e) {
+                    // wrap in exception to explain where it failed
+                    subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, e));
+                    // and do the done work
+                    doDone(original, subExchange, pairs, callback, false, true);
+                    return;
+                }
+
+                total.incrementAndGet();
+
+                // maybe there are more processors to multicast
+                while (it.hasNext()) {
+
+                    // prepare and run the next
+                    ProcessorExchangePair pair = it.next();
+                    subExchange = pair.getExchange();
+                    updateNewExchange(subExchange, total.get(), pairs, it);
+                    boolean sync = doProcessSequential(original, result, pairs, it, pair, callback, total);
+
+                    if (!sync) {
+                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
                         return;
                     }
 
-                    // continue processing the multicast asynchronously
-                    Exchange subExchange = exchange;
-
                     // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                     // remember to test for stop on exception and aggregate before copying back results
-                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
+                    continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
                     if (stopOnException && !continueProcessing) {
                         if (subExchange.getException() != null) {
                             // wrap in exception to explain where it failed
@@ -736,6 +776,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         return;
                     }
 
+                    // must catch any exceptions from aggregation
                     try {
                         if (parallelAggregate) {
                             doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
@@ -751,68 +792,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     }
 
                     total.incrementAndGet();
-
-                    // maybe there are more processors to multicast
-                    while (it.hasNext()) {
-
-                        // prepare and run the next
-                        ProcessorExchangePair pair = it.next();
-                        subExchange = pair.getExchange();
-                        updateNewExchange(subExchange, total.get(), pairs, it);
-                        boolean sync = doProcessSequential(original, result, pairs, it, pair, callback, total);
-
-                        if (!sync) {
-                            LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
-                            return;
-                        }
-
-                        // Decide whether to continue with the multicast or not; similar logic to the Pipeline
-                        // remember to test for stop on exception and aggregate before copying back results
-                        continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
-                        if (stopOnException && !continueProcessing) {
-                            if (subExchange.getException() != null) {
-                                // wrap in exception to explain where it failed
-                                subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, subExchange.getException()));
-                            } else {
-                                // we want to stop on exception, and the exception was handled by the error handler
-                                // this is similar to what the pipeline does, so we should do the same to not surprise end users
-                                // so we should set the failed exchange as the result and be done
-                                result.set(subExchange);
-                            }
-                            // and do the done work
-                            doDone(original, subExchange, pairs, callback, false, true);
-                            return;
-                        }
-
-                        // must catch any exceptions from aggregation
-                        try {
-                            if (parallelAggregate) {
-                                doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
-                            } else {
-                                doAggregate(getAggregationStrategy(subExchange), result, subExchange);
-                            }
-                        } catch (Throwable e) {
-                            // wrap in exception to explain where it failed
-                            subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, e));
-                            // and do the done work
-                            doDone(original, subExchange, pairs, callback, false, true);
-                            return;
-                        }
-
-                        total.incrementAndGet();
-                    }
-
-                    // do the done work
-                    subExchange = result.get() != null ? result.get() : null;
-                    doDone(original, subExchange, pairs, callback, false, true);
                 }
-            });
-        } finally {
-            // pop the block so by next round we have the same staring point and thus the tracing looks accurate
-            if (traced != null) {
-                traced.popBlock();
+
+                // do the done work
+                subExchange = result.get() != null ? result.get() : null;
+                doDone(original, subExchange, pairs, callback, false, true);
             }
-        }
+        });
 
         return sync;
     }
@@ -822,16 +808,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         Processor processor = pair.getProcessor();
         Producer producer = pair.getProducer();
 
-        TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
-
         // compute time taken if sending to another endpoint
         StopWatch watch = null;
         try {
-            // prepare tracing starting from a new block
-            if (traced != null) {
-                traced.pushBlock();
-            }
-
             if (producer != null) {
                 boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
                 if (sending) {
@@ -845,10 +824,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             AsyncProcessorHelper.process(async, exchange);
         } finally {
             pair.done();
-            // pop the block so by next round we have the same staring point and thus the tracing looks accurate
-            if (traced != null) {
-                traced.popBlock();
-            }
             if (producer != null && watch != null) {
                 Endpoint endpoint = producer.getEndpoint();
                 long timeTaken = watch.taken();
