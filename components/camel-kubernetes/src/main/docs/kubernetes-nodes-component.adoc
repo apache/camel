@@ -39,7 +39,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | **apiVersion** (common) | The Kubernetes API Version to use |  | String
 | **dnsDomain** (common) | The dns domain used for ServiceCall EIP |  | String
-| **kubernetesClient** (common) | Default KubernetesClient to use if provided |  | DefaultKubernetesClient
+| **kubernetesClient** (common) | Default KubernetesClient to use if provided |  | KubernetesClient
 | **portName** (common) | The port name used for ServiceCall EIP |  | String
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **labelKey** (consumer) | The Consumer Label key when watching at some resources |  | String
