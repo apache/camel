@@ -34,6 +34,8 @@ import javax.management.Query;
 import javax.management.QueryExp;
 import javax.management.StringValueExp;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
@@ -52,7 +54,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 @ManagedResource(description = "Managed Route")
 public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener, ManagedRouteMBean {
