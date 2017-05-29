@@ -35,4 +35,8 @@ public class KubernetesTestSupport extends CamelTestSupport {
         host = "https://192.168.99.100:8443";
         super.setUp();
     }
+    
+    public static String toUrlEncoded(String str) {
+        return str.replaceAll("=", "%3D");
+    }
 }

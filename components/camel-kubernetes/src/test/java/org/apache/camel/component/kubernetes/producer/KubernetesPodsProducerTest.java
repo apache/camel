@@ -126,8 +126,4 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
             }
         };
     }
-
-    private static String toUrlEncoded(String str) {
-        return str.replaceAll("=", "%3D");
-    }
 }
