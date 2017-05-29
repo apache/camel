@@ -26,8 +26,6 @@ import org.junit.Ignore;
 /**
  * @version 
  */
-@Deprecated
-@Ignore
 public class TracerTest extends ContextTestSupport {
 
     private Tracer tracer;

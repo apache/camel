@@ -122,6 +122,7 @@ public interface UnitOfWork extends Service {
      *
      * @return trace information
      */
+    @Deprecated
     TracedRouteNodes getTracedRouteNodes();
 
     /**
