@@ -19,10 +19,13 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Deprecated
+@Ignore
 public class DefaultTraceEventMessageCausedByExceptionTest extends ContextTestSupport {
 
     public void testCausedByException() throws Exception {

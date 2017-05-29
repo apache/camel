@@ -24,10 +24,13 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Deprecated
+@Ignore
 public class ManagedCamelContextTracerTest extends ManagementTestSupport {
 
     public void testCamelContextTracing() throws Exception {

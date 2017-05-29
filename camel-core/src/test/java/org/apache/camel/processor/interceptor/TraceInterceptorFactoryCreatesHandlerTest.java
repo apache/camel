@@ -23,7 +23,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
+import org.junit.Ignore;
 
+@Deprecated
+@Ignore
 public class TraceInterceptorFactoryCreatesHandlerTest extends TracingTestBase {
 
     private static class TraceInterceptorFactoryCreatesHandlerTestFactory implements TraceInterceptorFactory {

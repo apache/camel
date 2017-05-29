@@ -25,10 +25,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Deprecated
+@Ignore
 public class OnCompletionGlobalTraceTest extends ContextTestSupport {
 
     @Override

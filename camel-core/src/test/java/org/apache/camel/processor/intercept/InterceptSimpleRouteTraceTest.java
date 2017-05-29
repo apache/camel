@@ -20,10 +20,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Deprecated
+@Ignore
 public class InterceptSimpleRouteTraceTest extends ContextTestSupport {
 
     public void testIntercept() throws Exception {
