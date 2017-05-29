@@ -294,6 +294,7 @@
     <module>camel-tagsoup-starter</module>
     <module>camel-tarfile-starter</module>
     <module>camel-telegram-starter</module>
+    <module>camel-thrift-starter</module>
     <module>camel-tika-starter</module>
     <module>camel-twilio-starter</module>
     <module>camel-twitter-starter</module>
