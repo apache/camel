@@ -534,7 +534,9 @@ public final class EventHelper {
 
         boolean answer = false;
         EventObject event = null;
-        for (EventNotifier notifier : notifiers) {
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
             if (notifier.isDisabled()) {
                 continue;
             }
@@ -578,7 +580,9 @@ public final class EventHelper {
 
         boolean answer = false;
         EventObject event = null;
-        for (EventNotifier notifier : notifiers) {
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
             if (notifier.isDisabled()) {
                 continue;
             }
@@ -622,7 +626,9 @@ public final class EventHelper {
 
         boolean answer = false;
         EventObject event = null;
-        for (EventNotifier notifier : notifiers) {
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
             if (notifier.isDisabled()) {
                 continue;
             }
@@ -667,7 +673,9 @@ public final class EventHelper {
 
         boolean answer = false;
         EventObject event = null;
-        for (EventNotifier notifier : notifiers) {
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
             if (notifier.isDisabled()) {
                 continue;
             }
@@ -712,7 +720,9 @@ public final class EventHelper {
 
         boolean answer = false;
         EventObject event = null;
-        for (EventNotifier notifier : notifiers) {
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
             if (notifier.isDisabled()) {
                 continue;
             }
@@ -756,7 +766,9 @@ public final class EventHelper {
 
         boolean answer = false;
         EventObject event = null;
-        for (EventNotifier notifier : notifiers) {
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
             if (notifier.isDisabled()) {
                 continue;
             }
@@ -800,7 +812,9 @@ public final class EventHelper {
 
         boolean answer = false;
         EventObject event = null;
-        for (EventNotifier notifier : notifiers) {
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
             if (notifier.isDisabled()) {
                 continue;
             }
@@ -844,7 +858,9 @@ public final class EventHelper {
 
         boolean answer = false;
         EventObject event = null;
-        for (EventNotifier notifier : notifiers) {
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
             if (notifier.isDisabled()) {
                 continue;
             }

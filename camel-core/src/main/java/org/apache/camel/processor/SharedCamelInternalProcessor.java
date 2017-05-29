@@ -126,7 +126,9 @@ public class SharedCamelInternalProcessor {
         }
 
         final List<Object> states = new ArrayList<Object>(advices.size());
-        for (CamelInternalProcessorAdvice task : advices) {
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < advices.size(); i++) {
+            CamelInternalProcessorAdvice task = advices.get(i);
             try {
                 Object state = task.before(exchange);
                 states.add(state);
@@ -216,6 +218,7 @@ public class SharedCamelInternalProcessor {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void done(boolean doneSync) {
             // NOTE: if you are debugging Camel routes, then all the code in the for loop below is internal only
             // so you can step straight to the finally block and invoke the callback
