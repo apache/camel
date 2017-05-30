@@ -16,13 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
@@ -37,7 +36,7 @@ import org.apache.camel.spi.TracedRouteNodes;
  */
 @Deprecated
 public class DefaultTracedRouteNodes implements TracedRouteNodes {
-    private final Deque<List<RouteNode>> routeNodes = new ArrayDeque<>();
+    private final Stack<List<RouteNode>> routeNodes = new Stack<List<RouteNode>>();
     private final Map<ProcessorDefinition<?>, AtomicInteger> nodeCounter = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
 
     public DefaultTracedRouteNodes() {

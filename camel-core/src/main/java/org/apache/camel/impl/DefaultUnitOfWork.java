@@ -16,14 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
@@ -66,8 +65,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private Message originalInMessage;
     private TracedRouteNodes tracedRouteNodes;
     private Set<Object> transactedBy;
-    private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
-    private Deque<DefaultSubUnitOfWork> subUnitOfWorks;
+    private final Stack<RouteContext> routeContextStack = new Stack<RouteContext>();
+    private Stack<DefaultSubUnitOfWork> subUnitOfWorks;
     private final transient Logger log;
     
     public DefaultUnitOfWork(Exchange exchange) {
@@ -363,7 +362,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         if (subUnitOfWorks == null) {
-            subUnitOfWorks = new ArrayDeque<>();
+            subUnitOfWorks = new Stack<DefaultSubUnitOfWork>();
         }
         subUnitOfWorks.push(new DefaultSubUnitOfWork());
     }

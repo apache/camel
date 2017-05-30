@@ -17,14 +17,13 @@
 package org.apache.camel.util;
 
 import java.math.BigInteger;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Stack;
 
 /**
  * A simple util to test Camel versions.
@@ -345,7 +344,7 @@ public final class CamelVersionHelper {
 
             ListItem list = items;
 
-            Deque<Item> stack = new ArrayDeque<>();
+            Stack<Item> stack = new Stack<>();
             stack.push(list);
 
             boolean isDigit = false;

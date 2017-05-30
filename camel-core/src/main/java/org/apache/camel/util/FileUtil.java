@@ -21,11 +21,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -303,7 +302,7 @@ public final class FileUtil {
         // preserve starting slash if given in input path
         boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
         
-        Deque<String> stack = new ArrayDeque<>();
+        Stack<String> stack = new Stack<String>();
 
         // separator can either be windows or unix style
         String separatorRegex = "\\\\|/";
