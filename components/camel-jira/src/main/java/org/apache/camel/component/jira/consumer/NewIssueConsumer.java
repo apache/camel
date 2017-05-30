@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.jira.consumer;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 import com.atlassian.jira.rest.client.domain.BasicIssue;
 
@@ -52,9 +53,9 @@ public class NewIssueConsumer extends AbstractJIRAConsumer {
 
     @Override
     protected int poll() throws Exception {
-        Stack<BasicIssue> newIssues = new Stack<BasicIssue>();
+        Deque<BasicIssue> newIssues = new ArrayDeque<>();
         getNewIssues(0, newIssues);
-        while (!newIssues.empty()) {
+        while (!newIssues.isEmpty()) {
             BasicIssue newIssue = newIssues.pop();
             Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newIssue);
@@ -64,7 +65,7 @@ public class NewIssueConsumer extends AbstractJIRAConsumer {
     }
 
     // In the end, we want *new* issues oldest to newest.
-    private void getNewIssues(int start, Stack<BasicIssue> stack) {
+    private void getNewIssues(int start, Deque<BasicIssue> stack) {
         // grab only the top
         List<BasicIssue> issues = getIssues(jql, start, 1, 1);
         // in case there aren't any issues...

@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.github.consumer;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -61,7 +62,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     protected int poll() throws Exception {
         List<RepositoryCommit> commits = commitService.getCommits(getRepository());
         // In the end, we want tags oldest to newest.
-        Stack<RepositoryCommit> newCommits = new Stack<RepositoryCommit>();
+        Deque<RepositoryCommit> newCommits = new ArrayDeque<>();
         for (RepositoryCommit commit : commits) {
             if (!commitHashes.contains(commit.getSha())) {
                 newCommits.push(commit);
@@ -69,7 +70,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
             }
         }
         
-        while (!newCommits.empty()) {
+        while (!newCommits.isEmpty()) {
             RepositoryCommit newCommit = newCommits.pop();
             Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newCommit);
