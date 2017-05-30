@@ -16,7 +16,8 @@
  */
 package org.apache.camel.zipkin;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import com.github.kristofa.brave.ServerSpan;
 import com.twitter.zipkin.gen.Span;
@@ -33,15 +34,15 @@ public final class ZipkinState {
 
     public static final String KEY = "CamelZipkinState";
 
-    private final Stack<Span> clientSpans = new Stack<>();
-    private final Stack<ServerSpan> serverSpans = new Stack<>();
+    private final Deque<Span> clientSpans = new ArrayDeque<>();
+    private final Deque<ServerSpan> serverSpans = new ArrayDeque<>();
 
     public void pushClientSpan(Span span) {
         clientSpans.push(span);
     }
 
     public Span popClientSpan() {
-        if (!clientSpans.empty()) {
+        if (!clientSpans.isEmpty()) {
             return clientSpans.pop();
         } else {
             return null;
@@ -53,7 +54,7 @@ public final class ZipkinState {
     }
 
     public ServerSpan popServerSpan() {
-        if (!serverSpans.empty()) {
+        if (!serverSpans.isEmpty()) {
             return serverSpans.pop();
         } else {
             return null;
@@ -61,7 +62,7 @@ public final class ZipkinState {
     }
 
     public ServerSpan peekServerSpan() {
-        if (!serverSpans.empty()) {
+        if (!serverSpans.isEmpty()) {
             return serverSpans.peek();
         } else {
             return null;
