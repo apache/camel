@@ -379,6 +379,7 @@
 	* [Groovy DSL](groovy-dsl.adoc)
 	* [Guice](guice.adoc)
 	* [HawtDB](hawtdb.adoc)
+	* [Headersmap](headersmap.adoc)
 	* [Hystrix](hystrix.adoc)
 	* [Jasypt](jasypt.adoc)
 	* [Kura](kura.adoc)

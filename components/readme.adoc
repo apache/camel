@@ -975,7 +975,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (14 deprecated)
+Number of Miscellaneous Components: 38 in 38 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -996,6 +996,8 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (14 deprecated)
 | link:camel-guice/src/main/docs/guice.adoc[Guice] (camel-guice) | 1.5 | *deprecated* Using Camel with Guice
 
 | link:camel-hawtdb/src/main/docs/hawtdb.adoc[HawtDB] (camel-hawtdb) | 2.3 | *deprecated* Using HawtDB as persistent EIP store
+
+| link:camel-headersmap/src/main/docs/headersmap.adoc[Headersmap] (camel-headersmap) | 2.20 | Fast case-insensitive headers map implementation
 
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 
