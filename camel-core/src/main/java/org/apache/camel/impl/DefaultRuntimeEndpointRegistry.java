@@ -190,10 +190,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             outputs = new HashMap<String, Map<String, String>>();
         }
         if (getCamelContext().getManagementStrategy().getManagementAgent() != null) {
-            Boolean isEnabled = getCamelContext().getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
-            boolean isExtended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
-            // extended mode is either if we use Extended statistics level or the option is explicit enabled
-            extended = isExtended || isEnabled != null && isEnabled;
+            extended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         }
         if (extended) {
             inputUtilization = new DefaultEndpointUtilizationStatistics(limit);
