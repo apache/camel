@@ -17,9 +17,8 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Iterator;
+import java.util.Stack;
 
 import org.apache.camel.Component;
 import org.apache.camel.util.FileUtil;
@@ -61,7 +60,7 @@ public final class FtpUtils {
         // preserve starting slash if given in input path
         boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
 
-        Deque<String> stack = new ArrayDeque<>();
+        Stack<String> stack = new Stack<String>();
 
         String separatorRegex = File.separator;
         if (FileUtil.isWindows()) {
