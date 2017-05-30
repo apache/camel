@@ -28,15 +28,6 @@ import org.apache.camel.impl.SimpleRegistry;
  */
 public class SimpleMockSampleTest extends ContextTestSupport {
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        // use simple register which is faster than jndi
-        CamelContext context = new DefaultCamelContext(new SimpleRegistry());
-        // can be used to optimise camel
-        context.getRuntimeEndpointRegistry().setEnabled(false);
-        return context;
-    }
-
     public void testSimpleThousandMessages() throws Exception {
         int count = 1000;
         MockEndpoint mock = getMockEndpoint("mock:result");

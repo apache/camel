@@ -80,7 +80,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean createConnector = false;
     private Boolean onlyRegisterProcessorWithCustomId = false;
     private Boolean loadStatisticsEnabled = false;
-    private Boolean endpointRuntimeStatisticsEnabled = true;
+    private Boolean endpointRuntimeStatisticsEnabled;
     private Boolean registerAlways = false;
     private Boolean registerNewRoutes = true;
     private Boolean mask = true;

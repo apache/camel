@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementTestSupport {
 
-    private int services = 11;
+    private int services = 10;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
