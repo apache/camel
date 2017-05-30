@@ -289,9 +289,9 @@ public class CamelConfigurationProperties {
      * or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage().
      * Turning this off can optimize performance, as defensive copy of the original message is not needed.
      *
-     * Default is true.
+     * Default is false.
      */
-    private boolean allowUseOriginalMessage = true;
+    private boolean allowUseOriginalMessage;
 
     /**
      * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
