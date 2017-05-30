@@ -19,7 +19,8 @@ package org.apache.camel.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
@@ -119,7 +120,7 @@ public final class XmlLineNumberParser {
         final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
         doc = docBuilder.newDocument();
 
-        final Stack<Element> elementStack = new Stack<Element>();
+        final Deque<Element> elementStack = new ArrayDeque<>();
         final StringBuilder textBuffer = new StringBuilder();
         final DefaultHandler handler = new DefaultHandler() {
             private Locator locator;

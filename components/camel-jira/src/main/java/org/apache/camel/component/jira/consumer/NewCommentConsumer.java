@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.jira.consumer;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 import com.atlassian.jira.rest.client.domain.BasicIssue;
 import com.atlassian.jira.rest.client.domain.Comment;
@@ -51,8 +52,8 @@ public class NewCommentConsumer extends AbstractJIRAConsumer {
 
     @Override
     protected int poll() throws Exception {
-        Stack<Comment> newComments = getComments();
-        while (!newComments.empty()) {
+        Deque<Comment> newComments = getComments();
+        while (!newComments.isEmpty()) {
             Comment newComment = newComments.pop();
             Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(newComment);
@@ -62,8 +63,8 @@ public class NewCommentConsumer extends AbstractJIRAConsumer {
     }
 
     // In the end, we want *new* comments oldest to newest.
-    private Stack<Comment> getComments() {
-        Stack<Comment> newComments = new Stack<Comment>();
+    private Deque<Comment> getComments() {
+        Deque<Comment> newComments = new ArrayDeque<>();
         List<BasicIssue> issues = getIssues();
         for (BasicIssue issue : issues) {
             Issue fullIssue = client().getIssueClient().getIssue(issue.getKey(), null);
