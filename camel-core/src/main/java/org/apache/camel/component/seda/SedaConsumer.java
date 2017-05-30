@@ -155,13 +155,15 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             doRun();
         } finally {
             taskCount.decrementAndGet();
+            latch.countDown();
+            LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
         }
     }
 
     protected void doRun() {
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         // loop while we are allowed, or if we are stopping loop until the queue is empty
-        while (queue != null && (isRunAllowed())) {
+        while (queue != null && isRunAllowed()) {
 
             // do not poll during CamelContext is starting, as we should only poll when CamelContext is fully started
             if (getEndpoint().getCamelContext().getStatus().isStarting()) {
@@ -236,9 +238,6 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                 }
             }
         }
-
-        latch.countDown();
-        LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
     }
 
     /**
