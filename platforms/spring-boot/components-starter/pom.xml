@@ -155,6 +155,7 @@
     <module>camel-hbase-starter</module>
     <module>camel-hdfs-starter</module>
     <module>camel-hdfs2-starter</module>
+    <module>camel-headersmap-starter</module>
     <module>camel-hessian-starter</module>
     <module>camel-hipchat-starter</module>
     <module>camel-hl7-starter</module>

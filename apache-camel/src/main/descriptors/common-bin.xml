@@ -112,6 +112,7 @@
         <include>org.apache.camel:camel-hbase</include>
         <include>org.apache.camel:camel-hdfs</include>
         <include>org.apache.camel:camel-hdfs2</include>
+        <include>org.apache.camel:camel-headersmap</include>
         <include>org.apache.camel:camel-hessian</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-http</include>
@@ -392,8 +393,9 @@
         <include>org.apache.camel:camel-hawtdb-starter</include>
         <include>org.apache.camel:camel-hazelcast-starter</include>
         <include>org.apache.camel:camel-hbase-starter</include>
-        <include>org.apache.camel:camel-hdfs2-starter</include>
         <include>org.apache.camel:camel-hdfs-starter</include>
+        <include>org.apache.camel:camel-hdfs2-starter</include>
+        <include>org.apache.camel:camel-headersmap-starter</include>
         <include>org.apache.camel:camel-hessian-starter</include>
         <include>org.apache.camel:camel-hipchat-starter</include>
         <include>org.apache.camel:camel-hl7-starter</include>
