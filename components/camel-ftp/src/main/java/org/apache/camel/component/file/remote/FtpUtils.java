@@ -85,7 +85,7 @@ public final class FtpUtils {
             sb.append(File.separator);
         }
 
-        for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
+        for (Iterator<String> it = stack.iterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append(File.separator);
