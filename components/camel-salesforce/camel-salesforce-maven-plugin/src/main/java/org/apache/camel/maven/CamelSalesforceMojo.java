@@ -25,18 +25,19 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -732,7 +733,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private static final List<String> BLACKLISTED_PROPERTIES = Arrays.asList("PicklistValues", "ChildRelationships");
         private boolean useStringsForPicklists;
         private final Map<String, AtomicInteger> varNames = new HashMap<>();
-        private Stack<String> stack;
+        private Deque<String> stack;
 
         public GeneratorUtility(Boolean useStringsForPicklists) {
             this.useStringsForPicklists = Boolean.TRUE.equals(useStringsForPicklists);
@@ -895,7 +896,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         public void start(final String initial) {
-            stack = new Stack<>();
+            stack = new ArrayDeque<>();
             stack.push(initial);
             varNames.clear();
         }
