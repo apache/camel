@@ -328,7 +328,7 @@ public interface ManagementAgent extends Service {
     void setEndpointRuntimeStatisticsEnabled(Boolean flag);
 
     /**
-     * Gets whether load statistics is enabled
+     * Gets whether endpoint runtime statistics is enabled
      *
      * @return <tt>true</tt> if enabled
      */

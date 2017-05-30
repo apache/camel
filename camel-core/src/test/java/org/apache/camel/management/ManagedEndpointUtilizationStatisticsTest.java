@@ -18,6 +18,8 @@ package org.apache.camel.management;
 
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 
@@ -25,6 +27,14 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
  * @version 
  */
 public class ManagedEndpointUtilizationStatisticsTest extends ManagementTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        // turn on extended mode
+        camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Extended);
+        return camelContext;
+    }
 
     public void testManageEndpointUtilizationStatistics() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
