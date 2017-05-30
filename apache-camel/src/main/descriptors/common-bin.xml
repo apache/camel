@@ -33,6 +33,7 @@
         <include>org.apache.camel:camel-atmos</include>
         <include>org.apache.camel:camel-atmosphere-websocket</include>
         <include>org.apache.camel:camel-atom</include>
+        <include>org.apache.camel:camel-atomix</include>
         <include>org.apache.camel:camel-aws</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-avro</include>
@@ -327,6 +328,7 @@
         <include>org.apache.camel:camel-atmosphere-websocket-starter</include>
         <include>org.apache.camel:camel-atmos-starter</include>
         <include>org.apache.camel:camel-atom-starter</include>
+        <include>org.apache.camel:camel-atomix-starter</include>
         <include>org.apache.camel:camel-avro-starter</include>
         <include>org.apache.camel:camel-aws-starter</include>
         <include>org.apache.camel:camel-bam-starter</include>
