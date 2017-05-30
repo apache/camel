@@ -236,7 +236,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<RoutePolicyFactory>();
     private Set<LogListener> logListeners = new LinkedHashSet<>();
-    private HeadersMapFactory headersMapFactory;
+    private HeadersMapFactory headersMapFactory = new DefaultHeadersMapFactory();
 
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
@@ -3312,10 +3312,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             log.debug("AllowUseOriginalMessage enabled because UseOriginalMessage is in use");
         }
 
-        if (headersMapFactory == null) {
-            // use resolver to find the headers map factory to be used
-            headersMapFactory = new HeadersMapFactoryResolver().resolve(this);
-        }
+        // use resolver to find the headers map factory to be used
+        headersMapFactory = new HeadersMapFactoryResolver().resolve(this);
 
         log.debug("Using HeadersMapFactory: {}", headersMapFactory);
         if (!getHeadersMapFactory().isCaseInsensitive()) {
