@@ -21,6 +21,9 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.DoneableServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccountList;
+import io.fabric8.kubernetes.client.Watch;
+import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -91,7 +94,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        ServiceAccountList saList = getEndpoint().getKubernetesClient().serviceAccounts()
+        ServiceAccountList saList = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace()
                 .list();
         exchange.getOut().setBody(saList.getItems());
     }
@@ -112,8 +115,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             }
             saList = serviceAccounts.list();
         } else {
-            MixedOperation<ServiceAccount, ServiceAccountList, DoneableServiceAccount, Resource<ServiceAccount, DoneableServiceAccount>> serviceAccounts; 
-            serviceAccounts = getEndpoint().getKubernetesClient().serviceAccounts();
+            FilterWatchListMultiDeletable<ServiceAccount, ServiceAccountList, Boolean, Watch, Watcher<ServiceAccount>> serviceAccounts; 
+            serviceAccounts = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 serviceAccounts.withLabel(entry.getKey(), entry.getValue());
             }

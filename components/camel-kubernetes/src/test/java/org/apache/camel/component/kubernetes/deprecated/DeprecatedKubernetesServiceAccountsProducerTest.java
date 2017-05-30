@@ -32,8 +32,10 @@ import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.kubernetes.producer.KubernetesServiceAccountsProducerTest;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.codec.binary.Base64;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 @Deprecated
 public class DeprecatedKubernetesServiceAccountsProducerTest extends KubernetesServiceAccountsProducerTest {
 
