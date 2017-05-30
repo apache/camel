@@ -21,6 +21,9 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.DoneableSecret;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretList;
+import io.fabric8.kubernetes.client.Watch;
+import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -91,7 +94,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange, String operation) throws Exception {
-        SecretList secretsList = getEndpoint().getKubernetesClient().secrets()
+        SecretList secretsList = getEndpoint().getKubernetesClient().secrets().inAnyNamespace()
                 .list();
         exchange.getOut().setBody(secretsList.getItems());
     }
@@ -112,8 +115,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             }
             secretsList = secrets.list();
         } else {
-            MixedOperation<Secret, SecretList, DoneableSecret, Resource<Secret, DoneableSecret>> secrets; 
-            secrets = getEndpoint().getKubernetesClient().secrets();
+            FilterWatchListMultiDeletable<Secret, SecretList, Boolean, Watch, Watcher<Secret>> secrets; 
+            secrets = getEndpoint().getKubernetesClient().secrets().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 secrets.withLabel(entry.getKey(), entry.getValue());
             }

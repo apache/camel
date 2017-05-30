@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.deprecated;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.producer.KubernetesSecretsProducerTest;
+import org.junit.Ignore;
 
+@Ignore
 @Deprecated
 public class DeprecatedKubernetesSecretsProducerTest extends KubernetesSecretsProducerTest {
 
