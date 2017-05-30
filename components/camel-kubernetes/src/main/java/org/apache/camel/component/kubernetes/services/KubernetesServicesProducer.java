@@ -23,6 +23,9 @@ import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
+import io.fabric8.kubernetes.client.Watch;
+import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -99,7 +102,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
             servicesList = getEndpoint().getKubernetesClient().services()
                     .inNamespace(namespaceName).list();
         } else {
-            servicesList = getEndpoint().getKubernetesClient().services()
+            servicesList = getEndpoint().getKubernetesClient().services().inAnyNamespace()
                     .list();
         }
         exchange.getOut().setBody(servicesList.getItems());
@@ -121,8 +124,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
             }
             servicesList = services.list();
         } else {
-            MixedOperation<Service, ServiceList, DoneableService, Resource<Service, DoneableService>> services; 
-            services = getEndpoint().getKubernetesClient().services();
+            FilterWatchListMultiDeletable<Service, ServiceList, Boolean, Watch, Watcher<Service>> services; 
+            services = getEndpoint().getKubernetesClient().services().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 services.withLabel(entry.getKey(), entry.getValue());
             }
