@@ -325,7 +325,7 @@ public final class FileUtil {
             sb.append(separator);
         }
         
-        for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
+        for (Iterator<String> it = stack.iterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append(separator);
