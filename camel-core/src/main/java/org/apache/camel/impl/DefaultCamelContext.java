@@ -284,7 +284,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private InterceptStrategy defaultBacklogDebugger;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
     private AsyncProcessorAwaitManager asyncProcessorAwaitManager = new DefaultAsyncProcessorAwaitManager();
-    private RuntimeEndpointRegistry runtimeEndpointRegistry = new DefaultRuntimeEndpointRegistry();
+    private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
     // start auto assigning route ids using numbering 1000 and upwards
     private int defaultRouteStartupOrder = 1000;
@@ -3260,6 +3260,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         validatorRegistry = new DefaultValidatorRegistry(this, validators);
         addService(validatorRegistry, true, true);
 
+        // optimised to not include runtimeEndpointRegistry unless its enabled or JMX statis is in extended mode
+        if (runtimeEndpointRegistry == null && getManagementStrategy() != null && getManagementStrategy().getManagementAgent() != null) {
+            Boolean isEnabled = getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
+            boolean isExtended = getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
+            // extended mode is either if we use Extended statistics level or the option is explicit enabled
+            boolean extended = isExtended || isEnabled != null && isEnabled;
+            if (extended) {
+                runtimeEndpointRegistry = new DefaultRuntimeEndpointRegistry();
+            }
+        }
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
                 getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
@@ -3912,7 +3922,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         getLanguageResolver();
         getTypeConverterRegistry();
         getTypeConverter();
-        getRuntimeEndpointRegistry();
 
         if (isTypeConverterStatisticsEnabled() != null) {
             getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());

@@ -198,6 +198,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         }
         if (extended) {
             log.info("Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})", limit);
+        } else {
+            log.info("Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})", limit);
         }
         ServiceHelper.startServices(inputUtilization, outputUtilization);
     }

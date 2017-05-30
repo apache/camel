@@ -296,9 +296,9 @@ public class CamelConfigurationProperties {
     /**
      * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
      *
-     * The default value is true.
+     * The default value is false.
      */
-    private boolean endpointRuntimeStatisticsEnabled = true;
+    private boolean endpointRuntimeStatisticsEnabled;
 
     /**
      * Sets the JMX statistics level

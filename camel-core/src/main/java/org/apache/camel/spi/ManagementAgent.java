@@ -321,9 +321,9 @@ public interface ManagementAgent extends Service {
     /**
      * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
      * <p/>
-     * The default value is <tt>true</tt>
+     * The default value is <tt>false</tt>
      *
-     * @param flag <tt>false</tt> to disable endpoint runtime statistics
+     * @param flag <tt>true</tt> to enable endpoint runtime statistics
      */
     void setEndpointRuntimeStatisticsEnabled(Boolean flag);
 
