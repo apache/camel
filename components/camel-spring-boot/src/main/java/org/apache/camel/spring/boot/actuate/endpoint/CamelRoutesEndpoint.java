@@ -67,17 +67,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
         private final long uptimeMillis;
 
-        private Boolean started;
-
-        private Boolean starting;
-
-        private Boolean stopped;
-
-        private Boolean stopping;
-
-        private Boolean suspended;
-
-        private Boolean suspending;
+        private String serviceStatus;
 
         public RouteEndpointInfo(Route route) {
             this.id = route.getId();
@@ -86,13 +76,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
             this.uptimeMillis = route.getUptimeMillis();
 
             if (route instanceof StatefulService) {
-                StatefulService statefulService = (StatefulService) route;
-                this.started = statefulService.isStarted();
-                this.starting = statefulService.isStarting();
-                this.stopped = statefulService.isStopped();
-                this.stopping = statefulService.isStopping();
-                this.suspended = statefulService.isSuspended();
-                this.suspending = statefulService.isSuspending();
+                this.serviceStatus = ((StatefulService) route).getStatus().name();
             }
         }
 
@@ -112,30 +96,9 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
             return uptimeMillis;
         }
 
-        public Boolean getStarted() {
-            return started;
+        public String getServiceStatus() {
+            return serviceStatus;
         }
-
-        public Boolean getStarting() {
-            return starting;
-        }
-
-        public Boolean getStopped() {
-            return stopped;
-        }
-
-        public Boolean getStopping() {
-            return stopping;
-        }
-
-        public Boolean getSuspended() {
-            return suspended;
-        }
-
-        public Boolean getSuspending() {
-            return suspending;
-        }
-
     }
 
 }
