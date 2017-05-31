@@ -16,10 +16,12 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Expression;
@@ -321,7 +323,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * graph of nodes which represent the input expression.
      */
     private void prepareBinaryExpressions() {
-        Stack<SimpleNode> stack = new Stack<SimpleNode>();
+        Deque<SimpleNode> stack = new ArrayDeque<>();
 
         SimpleNode left = null;
         for (int i = 0; i < nodes.size(); i++) {
@@ -366,6 +368,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         nodes.clear();
         nodes.addAll(stack);
+        // must reverse as it was added from a stack that is reverse
+        Collections.reverse(nodes);
     }
 
     /**
@@ -380,7 +384,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * graph of nodes which represent the input expression.
      */
     private void prepareLogicalExpressions() {
-        Stack<SimpleNode> stack = new Stack<SimpleNode>();
+        Deque<SimpleNode> stack = new ArrayDeque<>();
 
         SimpleNode left = null;
         for (int i = 0; i < nodes.size(); i++) {
@@ -425,6 +429,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         nodes.clear();
         nodes.addAll(stack);
+        // must reverse as it was added from a stack that is reverse
+        Collections.reverse(nodes);
     }
 
     /**

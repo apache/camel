@@ -16,9 +16,11 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.camel.language.simple.ast.Block;
 import org.apache.camel.language.simple.ast.BlockEnd;
@@ -115,7 +117,7 @@ public abstract class BaseSimpleParser {
      */
     protected void prepareBlocks() {
         List<SimpleNode> answer = new ArrayList<SimpleNode>();
-        Stack<Block> stack = new Stack<Block>();
+        Deque<Block> stack = new ArrayDeque<>();
 
         for (SimpleNode token : nodes) {
             if (token instanceof BlockStart) {
@@ -169,7 +171,7 @@ public abstract class BaseSimpleParser {
      * has a linked and prepared graph of nodes which represent the input expression.
      */
     protected void prepareUnaryExpressions() {
-        Stack<SimpleNode> stack = new Stack<SimpleNode>();
+        Deque<SimpleNode> stack = new ArrayDeque<>();
 
         for (SimpleNode node : nodes) {
             if (node instanceof UnaryExpression) {
@@ -191,6 +193,8 @@ public abstract class BaseSimpleParser {
         // replace nodes from the stack
         nodes.clear();
         nodes.addAll(stack);
+        // must reverse as it was added from a stack that is reverse
+        Collections.reverse(nodes);
     }
 
     // --------------------------------------------------------------
