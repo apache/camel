@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
+import org.apache.camel.StatefulService;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteEndpointInfo;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.actuate.endpoint.Endpoint;
@@ -66,11 +67,33 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
         private final long uptimeMillis;
 
+        private Boolean started;
+
+        private Boolean starting;
+
+        private Boolean stopped;
+
+        private Boolean stopping;
+
+        private Boolean suspended;
+
+        private Boolean suspending;
+
         public RouteEndpointInfo(Route route) {
             this.id = route.getId();
             this.description = route.getDescription();
             this.uptime = route.getUptime();
             this.uptimeMillis = route.getUptimeMillis();
+
+            if (route instanceof StatefulService) {
+                StatefulService statefulService = (StatefulService) route;
+                this.started = statefulService.isStarted();
+                this.starting = statefulService.isStarting();
+                this.stopped = statefulService.isStopped();
+                this.stopping = statefulService.isStopping();
+                this.suspended = statefulService.isSuspended();
+                this.suspending = statefulService.isSuspending();
+            }
         }
 
         public String getId() {
@@ -87,6 +110,30 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
         public long getUptimeMillis() {
             return uptimeMillis;
+        }
+
+        public Boolean getStarted() {
+            return started;
+        }
+
+        public Boolean getStarting() {
+            return starting;
+        }
+
+        public Boolean getStopped() {
+            return stopped;
+        }
+
+        public Boolean getStopping() {
+            return stopping;
+        }
+
+        public Boolean getSuspended() {
+            return suspended;
+        }
+
+        public Boolean getSuspending() {
+            return suspending;
         }
 
     }
