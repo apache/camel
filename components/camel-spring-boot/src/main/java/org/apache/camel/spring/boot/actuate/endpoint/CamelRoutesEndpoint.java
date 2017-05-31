@@ -67,7 +67,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
         private final long uptimeMillis;
 
-        private String serviceStatus;
+        private String status;
 
         public RouteEndpointInfo(Route route) {
             this.id = route.getId();
@@ -76,7 +76,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
             this.uptimeMillis = route.getUptimeMillis();
 
             if (route instanceof StatefulService) {
-                this.serviceStatus = ((StatefulService) route).getStatus().name();
+                this.status = ((StatefulService) route).getStatus().name();
             }
         }
 
@@ -96,8 +96,8 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
             return uptimeMillis;
         }
 
-        public String getServiceStatus() {
-            return serviceStatus;
+        public String getStatus() {
+            return status;
         }
     }
 
