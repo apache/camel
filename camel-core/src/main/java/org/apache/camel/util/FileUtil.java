@@ -21,10 +21,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Random;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,7 +303,7 @@ public final class FileUtil {
         // preserve starting slash if given in input path
         boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
         
-        Stack<String> stack = new Stack<String>();
+        Deque<String> stack = new ArrayDeque<>();
 
         // separator can either be windows or unix style
         String separatorRegex = "\\\\|/";
@@ -324,8 +325,9 @@ public final class FileUtil {
         if (startsWithSlash) {
             sb.append(separator);
         }
-        
-        for (Iterator<String> it = stack.iterator(); it.hasNext();) {
+
+        // now we build back using FIFO so need to use descending
+        for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append(separator);
