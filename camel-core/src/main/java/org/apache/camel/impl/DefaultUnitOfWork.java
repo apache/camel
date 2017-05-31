@@ -16,11 +16,14 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Predicate;
@@ -65,7 +68,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private Message originalInMessage;
     private TracedRouteNodes tracedRouteNodes;
     private Set<Object> transactedBy;
-    private final Stack<RouteContext> routeContextStack = new Stack<RouteContext>();
+    private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
     private Stack<DefaultSubUnitOfWork> subUnitOfWorks;
     private final transient Logger log;
     
@@ -174,11 +177,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (transactedBy != null) {
             transactedBy.clear();
         }
-        synchronized (routeContextStack) {
-            if (!routeContextStack.isEmpty()) {
-                routeContextStack.clear();
-            }
-        }
+        routeContextStack.clear();
         if (subUnitOfWorks != null) {
             subUnitOfWorks.clear();
         }
@@ -324,27 +323,20 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public RouteContext getRouteContext() {
-        synchronized (routeContextStack) {
-            if (routeContextStack.isEmpty()) {
-                return null;
-            }
-            return routeContextStack.peek();
-        }
+        return routeContextStack.peek();
     }
 
     public void pushRouteContext(RouteContext routeContext) {
-        synchronized (routeContextStack) {
-            routeContextStack.add(routeContext);
-        }
+        routeContextStack.push(routeContext);
     }
 
     public RouteContext popRouteContext() {
-        synchronized (routeContextStack) {
-            if (routeContextStack.isEmpty()) {
-                return null;
-            }
+        try {
             return routeContextStack.pop();
+        } catch (NoSuchElementException e) {
+            // ignore and return null
         }
+        return null;
     }
 
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
