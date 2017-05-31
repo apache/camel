@@ -16,7 +16,8 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -58,12 +59,12 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
         final String id = routeIdExpression().evaluate(exchange, String.class);
 
         // prevent endless looping if we end up coming back to ourself
-        Stack<String> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Stack.class);
+        Deque<String> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Deque.class);
         if (fatals == null) {
-            fatals = new Stack<>();
+            fatals = new ArrayDeque<>();
             exchange.setProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, fatals);
         }
-        if (fatals.search(id) > -1) {
+        if (fatals.contains(id)) {
             LOG.warn("Circular error-handler detected at route: {} - breaking out processing Exchange: {}", id, exchange);
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
@@ -142,9 +143,9 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                     }
                 } finally {
                     // no longer running under this fatal fallback error handler
-                    Stack<String> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Stack.class);
+                    Deque<String> fatals = exchange.getProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, null, Deque.class);
                     if (fatals != null) {
-                        fatals.remove(id);
+                        fatals.removeLastOccurrence(id);
                     }
                     callback.done(doneSync);
                 }
