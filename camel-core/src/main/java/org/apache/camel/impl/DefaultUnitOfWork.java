@@ -25,7 +25,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Stack;
 import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
@@ -69,7 +68,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private TracedRouteNodes tracedRouteNodes;
     private Set<Object> transactedBy;
     private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
-    private Stack<DefaultSubUnitOfWork> subUnitOfWorks;
+    private Deque<DefaultSubUnitOfWork> subUnitOfWorks;
     private final transient Logger log;
     
     public DefaultUnitOfWork(Exchange exchange) {
@@ -354,7 +353,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         if (subUnitOfWorks == null) {
-            subUnitOfWorks = new Stack<DefaultSubUnitOfWork>();
+            subUnitOfWorks = new ArrayDeque<>();
         }
         subUnitOfWorks.push(new DefaultSubUnitOfWork());
     }
@@ -370,8 +369,13 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         // pop last sub unit of work as its now ended
-        SubUnitOfWork subUoW = subUnitOfWorks.pop();
-        if (subUoW.isFailed()) {
+        SubUnitOfWork subUoW = null;
+        try {
+            subUoW = subUnitOfWorks.pop();
+        } catch (NoSuchElementException e) {
+            // ignore
+        }
+        if (subUoW != null && subUoW.isFailed()) {
             // the sub unit of work failed so set an exception containing all the caused exceptions
             // and mark the exchange for rollback only
 
@@ -408,10 +412,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             return parent.getSubUnitOfWorkCallback();
         }
 
-        if (subUnitOfWorks == null || subUnitOfWorks.isEmpty()) {
-            return null;
-        }
-        return subUnitOfWorks.peek();
+        return subUnitOfWorks != null ? subUnitOfWorks.peek() : null;
     }
 
     private Set<Object> getTransactedBy() {
