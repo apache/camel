@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.ha;
+package org.apache.camel.impl.ha;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +22,33 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
-public abstract class AbstractCamelClusterView implements CamelClusterView {
+import org.apache.camel.CamelContext;
+import org.apache.camel.ha.CamelCluster;
+import org.apache.camel.ha.CamelClusterView;
+import org.apache.camel.support.ServiceSupport;
+
+public abstract class AbstractCamelClusterView extends ServiceSupport implements CamelClusterView {
     private final CamelCluster cluster;
     private final String namespace;
     private final List<FilteringConsumer> consumers;
     private final StampedLock lock;
+    private CamelContext camelContext;
 
     protected AbstractCamelClusterView(CamelCluster cluster, String namespace) {
         this.cluster = cluster;
         this.namespace = namespace;
         this.consumers = new ArrayList<>();
         this.lock = new StampedLock();
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return null;
     }
 
     @Override
@@ -61,7 +77,7 @@ public abstract class AbstractCamelClusterView implements CamelClusterView {
         long stamp = lock.writeLock();
 
         try {
-            this.consumers.add(new FilteringConsumer(predicate, consumer));
+            consumers.add(new FilteringConsumer(predicate, consumer));
         } finally {
             lock.unlockWrite(stamp);
         }
@@ -87,7 +103,7 @@ public abstract class AbstractCamelClusterView implements CamelClusterView {
 
         try {
             for (int i = 0; i < consumers.size(); i++) {
-                consumers.get(0).accept(event, payload);
+                consumers.get(i).accept(event, payload);
             }
         } finally {
             lock.unlockRead(stamp);
