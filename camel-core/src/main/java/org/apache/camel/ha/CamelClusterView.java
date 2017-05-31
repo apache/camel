@@ -20,10 +20,13 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Service;
+
 /**
  * Represents the View of the cluster at some given period of time.
  */
-public interface CamelClusterView {
+public interface CamelClusterView extends Service, CamelContextAware {
 
     enum Event {
         KEEP_ALIVE,

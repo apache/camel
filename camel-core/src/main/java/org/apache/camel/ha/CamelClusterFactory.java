@@ -14,32 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atomix.ha;
+package org.apache.camel.ha;
 
-import io.atomix.group.DistributedGroup;
-import io.atomix.group.GroupMember;
-import org.apache.camel.ha.CamelClusterMember;
+import org.apache.camel.CamelContext;
 
-class AtomixClusterMember<M extends GroupMember> implements CamelClusterMember {
-    private final DistributedGroup group;
-    private final M member;
-
-    AtomixClusterMember(DistributedGroup group, M member) {
-        this.group = group;
-        this.member = member;
-    }
-
-    @Override
-    public String getId() {
-        return member.id();
-    }
-
-    @Override
-    public boolean isMaster() {
-        return group.election().term().leader().equals(member);
-    }
-
-    M getGroupMember() {
-      return member;
-    }
+@FunctionalInterface
+public interface CamelClusterFactory {
+    /**
+     * Creates an instance of a cluster.
+     */
+    CamelCluster newInstance(CamelContext camelContext) throws Exception;
 }
