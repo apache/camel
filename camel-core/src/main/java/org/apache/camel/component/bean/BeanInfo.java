@@ -1226,7 +1226,7 @@ public class BeanInfo {
     }
 
     /**
-     * Gets the list of methods sorted by A..Z method name.
+     * Gets the list of methods (unsorted)
      *
      * @return the methods.
      */
@@ -1239,13 +1239,20 @@ public class BeanInfo {
         for (Collection<MethodInfo> col : operations.values()) {
             methods.addAll(col);
         }
+        return methods;
+    }
 
-        // sort the methods by name A..Z
-        methods.sort(new Comparator<MethodInfo>() {
-            public int compare(MethodInfo o1, MethodInfo o2) {
-                return o1.getMethod().getName().compareTo(o2.getMethod().getName());
-            }
-        });
+    /**
+     * Gets the list of methods sorted by A..Z method name.
+     *
+     * @return the methods.
+     */
+    public List<MethodInfo> getSortedMethods() {
+        List<MethodInfo> methods = getMethods();
+        if (methods.size() > 1) {
+            // sort the methods by name A..Z
+            methods.sort(Comparator.comparing(o -> o.getMethod().getName()));
+        }
         return methods;
     }
 
