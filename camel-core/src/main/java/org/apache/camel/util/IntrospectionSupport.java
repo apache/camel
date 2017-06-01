@@ -63,8 +63,6 @@ import static org.apache.camel.util.ObjectHelper.isAssignableFrom;
 public final class IntrospectionSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
-    private static final Pattern GETTER_PATTERN = Pattern.compile("(get|is)[A-Z].*");
-    private static final Pattern SETTER_PATTERN = Pattern.compile("set[A-Z].*");
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     // use a cache to speedup introspecting for known classes during startup
     // use a weak cache as we dont want the cache to keep around as it reference classes
@@ -146,16 +144,17 @@ public final class IntrospectionSupport {
         Class<?> type = method.getReturnType();
         Class<?> params[] = method.getParameterTypes();
 
-        if (!GETTER_PATTERN.matcher(name).matches()) {
-            return false;
+        // is it a getXXX method
+        if (name.startsWith("get") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
+            return params.length == 0 && !type.equals(Void.TYPE);
         }
 
         // special for isXXX boolean
-        if (name.startsWith("is")) {
+        if (name.startsWith("is") && name.length() >= 3 && Character.isUpperCase(name.charAt(2))) {
             return params.length == 0 && type.getSimpleName().equalsIgnoreCase("boolean");
         }
 
-        return params.length == 0 && !type.equals(Void.TYPE);
+        return false;
     }
 
     public static String getGetterShorthandName(Method method) {
@@ -194,11 +193,12 @@ public final class IntrospectionSupport {
         Class<?> type = method.getReturnType();
         Class<?> params[] = method.getParameterTypes();
 
-        if (!SETTER_PATTERN.matcher(name).matches()) {
-            return false;
+        // is it a getXXX method
+        if (name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
+            return params.length == 1 && (type.equals(Void.TYPE) || (allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type)));
         }
 
-        return params.length == 1 && (type.equals(Void.TYPE) || (allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type)));
+        return false;
     }
     
     public static boolean isSetter(Method method) {
