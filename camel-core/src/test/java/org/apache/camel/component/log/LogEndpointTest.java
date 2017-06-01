@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.log;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,9 +33,9 @@ public class LogEndpointTest extends ContextTestSupport {
     private static class MyLogger extends CamelLogProcessor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
-            super.process(exchange);
+        public boolean process(Exchange exchange, AsyncCallback callback) {
             logged = exchange;
+            return super.process(exchange, callback);
         }
 
         @Override
