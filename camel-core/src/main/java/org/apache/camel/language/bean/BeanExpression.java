@@ -31,6 +31,7 @@ import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -190,7 +191,7 @@ public class BeanExpression implements Expression, Predicate {
         }
         try {
             // copy the original exchange to avoid side effects on it
-            Exchange resultExchange = exchange.copy();
+            Exchange resultExchange = ExchangeHelper.createCopy(exchange, true);
             // remove any existing exception in case we do OGNL on the exception
             resultExchange.setException(null);
 
@@ -230,7 +231,7 @@ public class BeanExpression implements Expression, Predicate {
         Object result = beanHolder.getBean();
 
         // copy the original exchange to avoid side effects on it
-        Exchange resultExchange = exchange.copy();
+        Exchange resultExchange = ExchangeHelper.createCopy(exchange, true);
         // remove any existing exception in case we do OGNL on the exception
         resultExchange.setException(null);
         // force to use InOut to retrieve the result on the OUT message
