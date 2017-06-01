@@ -20,41 +20,51 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import io.atomix.Atomix;
 import io.atomix.group.DistributedGroup;
 import io.atomix.group.GroupMember;
 import io.atomix.group.LocalMember;
+import io.atomix.group.election.Term;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.impl.ha.AbstractCamelClusterView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AtomixClusterView extends AbstractCamelClusterView {
+public final class AtomixClusterView extends AbstractCamelClusterView {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClusterView.class);
 
-    private final DistributedGroup group;
+    private final Atomix atomix;
     private final AtomixLocalMember localMember;
+    private DistributedGroup group;
 
-    AtomixClusterView(AtomixCluster cluster, String namespace, DistributedGroup group) {
+    AtomixClusterView(AtomixCluster cluster, String namespace, Atomix atomix) {
         super(cluster, namespace);
 
-        this.group = group;
-        this.localMember = new AtomixLocalMember(group);
+        this.atomix = atomix;
+        this.localMember = new AtomixLocalMember();
     }
 
     @Override
     public CamelClusterMember getMaster() {
-        return asCamelClusterMember(this.group.election().term().leader());
+        if (group == null) {
+            throw new IllegalStateException("The view has not yet joined the cluster");
+        }
+
+        return asCamelClusterMember(group.election().term().leader());
     }
 
     @Override
     public CamelClusterMember getLocalMember() {
-        return this.localMember;
+        return localMember;
     }
 
     @Override
     public List<CamelClusterMember> getMembers() {
-        // TODO: Dummy implementation for testing purpose
+        if (group == null) {
+            throw new IllegalStateException("The view has not yet joined the cluster");
+        }
+
         return this.group.members().stream()
             .map(this::asCamelClusterMember)
             .collect(Collectors.toList());
@@ -66,11 +76,15 @@ public class AtomixClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStart() throws Exception {
-        if (!this.localMember.hasJoined()) {
-            this.localMember.join();
-            this.group.election().onElection(
-                t -> fireEvent(CamelClusterView.Event.LEADERSHIP_CHANGED, asCamelClusterMember(t.leader()))
-            );
+        if (!localMember.hasJoined()) {
+            LOGGER.debug("Get group {}", getNamespace());
+            group = this.atomix.getGroup(getNamespace()).get();
+
+            LOGGER.debug("Join group {}", getNamespace());
+            localMember.join();
+
+            LOGGER.debug("Listen election events");
+            group.election().onElection(this::onElection);
         }
     }
 
@@ -79,22 +93,24 @@ public class AtomixClusterView extends AbstractCamelClusterView {
         localMember.leave();
     }
 
+    private void onElection(Term term) {
+        fireEvent(CamelClusterView.Event.LEADERSHIP_CHANGED, asCamelClusterMember(term.leader()));
+    }
+
     // ***********************************************
     //
     // ***********************************************
 
     class AtomixLocalMember implements CamelClusterMember {
-        private final DistributedGroup group;
         private LocalMember member;
 
-        AtomixLocalMember(DistributedGroup group) {
-            this.group = group;
+        AtomixLocalMember() {
         }
 
         @Override
         public String getId() {
             if (member == null) {
-                throw new IllegalStateException("Cluster not yet joined");
+                throw new IllegalStateException("The view has not yet joined the cluster");
             }
 
             return member.id();
@@ -114,9 +130,9 @@ public class AtomixClusterView extends AbstractCamelClusterView {
         }
 
         AtomixLocalMember join() throws ExecutionException, InterruptedException {
-            if (member == null) {
+            if (member == null && group != null) {
                 LOGGER.debug("Joining group {}", group);
-                member = this.group.join().get();
+                member = group.join().join();
             }
 
             return this;

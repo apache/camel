@@ -12,17 +12,14 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
  */
-package org.apache.camel.component.atomix.ha;
+package org.apache.camel.component.atomix.client;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ha.CamelCluster;
-import org.apache.camel.ha.CamelClusterFactory;
+import org.apache.camel.component.atomix.AtomixConfiguration;
+import org.apache.camel.spi.UriParams;
 
-public class AtomixClusterFactory implements CamelClusterFactory {
-    @Override
-    public CamelCluster newInstance(CamelContext camelContext) throws Exception {
-        throw new UnsupportedOperationException("Not yet implemented");
+@UriParams
+public class AtomixClientConfiguration extends AtomixConfiguration {
+    public AtomixClientConfiguration() {
     }
 }
