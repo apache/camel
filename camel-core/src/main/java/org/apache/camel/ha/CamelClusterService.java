@@ -16,12 +16,16 @@
  */
 package org.apache.camel.ha;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Service;
 
-@FunctionalInterface
-public interface CamelClusterFactory {
+public interface CamelClusterService extends Service {
     /**
-     * Creates an instance of a cluster.
+     * Get the {@linke CamelCluster} instance managed by the service
      */
-    CamelCluster newInstance(CamelContext camelContext) throws Exception;
+    CamelCluster getCluster() throws Exception;
+
+    /**
+     * Create a {@linke CamelClusterView} for the given namespace
+     */
+    CamelClusterView createView(String namespace) throws Exception;
 }

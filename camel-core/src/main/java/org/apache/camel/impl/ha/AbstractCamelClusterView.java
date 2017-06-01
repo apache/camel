@@ -48,12 +48,12 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
 
     @Override
     public CamelContext getCamelContext() {
-        return null;
+        return camelContext;
     }
 
     @Override
     public CamelCluster getCluster() {
-        return  this.cluster;
+        return this.cluster;
     }
 
     @Override
