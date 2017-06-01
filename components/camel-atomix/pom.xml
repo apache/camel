@@ -34,9 +34,14 @@
   <description>Camel Atomix support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.atomix.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>
+      org.apache.camel.component.atomix.*,
+      org.apache.camel.component.atomix.client.*,
+      org.apache.camel.component.atomix.cluster.*
+    </camel.osgi.export.pkg>
     <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=atomix
+      org.apache.camel.spi.ComponentResolver;component=atomix-client,
+      org.apache.camel.spi.ComponentResolver;component=atomix-cluster,
     </camel.osgi.export.service>
   </properties>
 

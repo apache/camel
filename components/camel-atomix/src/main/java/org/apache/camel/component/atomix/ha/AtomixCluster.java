@@ -16,32 +16,53 @@
  */
 package org.apache.camel.component.atomix.ha;
 
-import io.atomix.Atomix;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import io.atomix.AtomixReplica;
+import io.atomix.catalyst.transport.Address;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.ha.AbstractCamelCluster;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * TODO: Dummy implementation for testing purpose
- */
-public class AtomixCluster extends AbstractCamelCluster<AtomixClusterView> {
-    private final Atomix atomix;
+public final class AtomixCluster extends AbstractCamelCluster<AtomixClusterView> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixCluster.class);
 
-    public AtomixCluster(Atomix atomix) {
-       this(null, atomix);
+    private final AtomixReplica atomix;
+    private final List<Address> addresses;
+
+    public AtomixCluster(AtomixReplica atomix) {
+        this(null, atomix, Collections.emptyList());
     }
 
-    public AtomixCluster(CamelContext camelContext, Atomix atomix) {
+    public AtomixCluster(AtomixReplica atomix, List<Address> addresses) {
+       this(null, atomix, addresses);
+    }
+
+    public AtomixCluster(CamelContext camelContext, AtomixReplica atomix, List<Address> addresses) {
         super("camel-atomix", camelContext);
 
         this.atomix = atomix;
+        this.addresses = new ArrayList<>(addresses);
     }
 
     @Override
-    public AtomixClusterView doCreateView(String namespace) throws Exception {
-        return new AtomixClusterView(
-            this,
-            namespace,
-            atomix.getGroup(namespace).join()
-        );
+    protected void doStart() throws Exception {
+        // Assume that if addresses are provided the cluster needs be bootstrapped.
+        if (ObjectHelper.isNotEmpty(addresses)) {
+            LOGGER.debug("Bootstrap cluster for nodes: {}", addresses);
+            this.atomix.bootstrap(addresses).join();
+            LOGGER.debug("Bootstrap cluster done");
+        }
+
+        super.doStart();
+    }
+
+    @Override
+    protected AtomixClusterView doCreateView(String namespace) throws Exception {
+        return new AtomixClusterView(this, namespace, atomix);
     }
 }
