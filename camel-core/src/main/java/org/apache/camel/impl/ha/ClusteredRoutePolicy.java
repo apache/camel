@@ -247,10 +247,13 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // ****************************************************
 
     public static ClusteredRoutePolicy forNamespace(CamelCluster cluster, String namespace) throws Exception {
-        return new ClusteredRoutePolicy(cluster.createView(namespace));
+        return forView(cluster.createView(namespace));
     }
 
     public static ClusteredRoutePolicy forView(CamelClusterView view) throws Exception  {
-        return new ClusteredRoutePolicy(view);
+        ClusteredRoutePolicy policy = new ClusteredRoutePolicy(view);
+        policy.setCamelContext(view.getCamelContext());
+
+        return policy;
     }
 }
