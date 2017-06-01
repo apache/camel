@@ -26,8 +26,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.component.bean.BeanExpressionProcessor;
 import org.apache.camel.component.bean.BeanHolder;
-import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.RegistryBean;
@@ -197,7 +197,7 @@ public class BeanExpression implements Expression, Predicate {
         }
 
         public void process(Exchange exchange) throws Exception {
-            BeanProcessor processor = new BeanProcessor(beanHolder);
+            BeanExpressionProcessor processor = new BeanExpressionProcessor(beanHolder);
             if (methodName != null) {
                 processor.setMethod(methodName);
                 // enable OGNL like invocation
