@@ -143,10 +143,9 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             // record timing for sending the exchange using the producer
             final StopWatch watch = sw;
 
-            boolean sync = true;
             try {
                 LOG.debug(">>>> {} {}", destination, exchange);
-                sync = producer.process(exchange, new AsyncCallback() {
+                return producer.process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
                         try {
@@ -164,10 +163,10 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
                 });
             } catch (Throwable throwable) {
                 exchange.setException(throwable);
-                callback.done(sync);
+                callback.done(true);
             }
 
-            return sync;
+            return true;
         }
 
         // send the exchange to the destination using the producer cache for the non optimized producers

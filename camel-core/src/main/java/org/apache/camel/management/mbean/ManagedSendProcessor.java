@@ -92,7 +92,6 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 
             // we only have 1 endpoint
-
             CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();
             String url = getDestination();
             Long hits = processor.getCounter();
