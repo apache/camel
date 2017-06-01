@@ -142,16 +142,16 @@ public final class IntrospectionSupport {
     public static boolean isGetter(Method method) {
         String name = method.getName();
         Class<?> type = method.getReturnType();
-        Class<?> params[] = method.getParameterTypes();
+        int parameterCount = method.getParameterCount();
 
         // is it a getXXX method
         if (name.startsWith("get") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
-            return params.length == 0 && !type.equals(Void.TYPE);
+            return parameterCount == 0 && !type.equals(Void.TYPE);
         }
 
         // special for isXXX boolean
         if (name.startsWith("is") && name.length() >= 3 && Character.isUpperCase(name.charAt(2))) {
-            return params.length == 0 && type.getSimpleName().equalsIgnoreCase("boolean");
+            return parameterCount == 0 && type.getSimpleName().equalsIgnoreCase("boolean");
         }
 
         return false;
@@ -191,11 +191,11 @@ public final class IntrospectionSupport {
     public static boolean isSetter(Method method, boolean allowBuilderPattern) {
         String name = method.getName();
         Class<?> type = method.getReturnType();
-        Class<?> params[] = method.getParameterTypes();
+        int parameterCount = method.getParameterCount();
 
         // is it a getXXX method
         if (name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
-            return params.length == 1 && (type.equals(Void.TYPE) || (allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type)));
+            return parameterCount == 1 && (type.equals(Void.TYPE) || (allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type)));
         }
 
         return false;

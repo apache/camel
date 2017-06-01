@@ -1427,18 +1427,20 @@ public final class ObjectHelper {
         }
 
         // must have same number of parameter types
-        if (source.getParameterTypes().length != target.getParameterTypes().length) {
+        if (source.getParameterCount() != target.getParameterCount()) {
             return false;
         }
 
+        Class<?>[] sourceTypes = source.getParameterTypes();
+        Class<?>[] targetTypes = target.getParameterTypes();
         // test if parameter types is the same as well
-        for (int i = 0; i < source.getParameterTypes().length; i++) {
+        for (int i = 0; i < source.getParameterCount(); i++) {
             if (exact) {
-                if (!(source.getParameterTypes()[i].equals(target.getParameterTypes()[i]))) {
+                if (!(sourceTypes[i].equals(targetTypes[i]))) {
                     return false;
                 }
             } else {
-                if (!(source.getParameterTypes()[i].isAssignableFrom(target.getParameterTypes()[i]))) {
+                if (!(sourceTypes[i].isAssignableFrom(targetTypes[i]))) {
                     boolean b1 = source.isBridge();
                     boolean b2 = target.isBridge();
                     // must not be bridge methods
@@ -1608,7 +1610,7 @@ public final class ObjectHelper {
      */
     public static String getPropertyName(Method method) {
         String propertyName = method.getName();
-        if (propertyName.startsWith("set") && method.getParameterTypes().length == 1) {
+        if (propertyName.startsWith("set") && method.getParameterCount() == 1) {
             propertyName = propertyName.substring(3, 4).toLowerCase(Locale.ENGLISH) + propertyName.substring(4);
         }
         return propertyName;
@@ -1708,7 +1710,7 @@ public final class ObjectHelper {
     public static boolean hasDefaultPublicNoArgConstructor(Class<?> type) {
         // getConstructors() returns only public constructors
         for (Constructor<?> ctr : type.getConstructors()) {
-            if (ctr.getParameterTypes().length == 0) {
+            if (ctr.getParameterCount() == 0) {
                 return true;
             }
         }

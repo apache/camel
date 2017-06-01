@@ -509,7 +509,7 @@ public class BeanInfo {
 
     protected List<Annotation>[] collectParameterAnnotations(Class<?> c, Method m) {
         @SuppressWarnings("unchecked")
-        List<Annotation>[] annotations = new List[m.getParameterTypes().length];
+        List<Annotation>[] annotations = new List[m.getParameterCount()];
         for (int i = 0; i < annotations.length; i++) {
             annotations[i] = new ArrayList<Annotation>();
         }
@@ -1070,7 +1070,7 @@ public class BeanInfo {
         // is it a method with no parameters
         boolean noParameters = methodName.endsWith("()");
         if (noParameters) {
-            return method.getParameterTypes().length == 0;
+            return method.getParameterCount() == 0;
         }
 
         // match qualifier types which is used to select among overloaded methods
@@ -1078,10 +1078,14 @@ public class BeanInfo {
         if (ObjectHelper.isNotEmpty(types)) {
             // we must qualify based on types to match method
             String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',');
+            Class<?>[] parameterTypes = null;
             Iterator<?> it = ObjectHelper.createIterator(parameters);
-            for (int i = 0; i < method.getParameterTypes().length; i++) {
+            for (int i = 0; i < method.getParameterCount(); i++) {
                 if (it.hasNext()) {
-                    Class<?> parameterType = method.getParameterTypes()[i];
+                    if (parameterTypes == null) {
+                        parameterTypes = method.getParameterTypes();
+                    }
+                    Class<?> parameterType = parameterTypes[i];
 
                     String qualifyType = (String) it.next();
                     if (ObjectHelper.isEmpty(qualifyType)) {
