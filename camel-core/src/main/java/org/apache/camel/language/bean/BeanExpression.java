@@ -110,7 +110,7 @@ public class BeanExpression implements Expression, Predicate {
 
         if (OgnlHelper.isValidOgnlExpression(method)) {
             // okay the method is an ognl expression
-            OgnlInvokeProcessor ognl = new OgnlInvokeProcessor(beanHolder, method);
+            OgnlInvokeProcessor ognl = new OgnlInvokeProcessor(beanHolder, beanName, method);
             try {
                 ognl.process(exchange);
                 return ognl.getResult();
@@ -122,7 +122,7 @@ public class BeanExpression implements Expression, Predicate {
             }
         } else {
             // regular non ognl invocation
-            InvokeProcessor invoke = new InvokeProcessor(beanHolder, method);
+            InvokeProcessor invoke = new InvokeProcessor(beanHolder, beanName, method);
             try {
                 invoke.process(exchange);
                 return invoke.getResult();
@@ -183,15 +183,17 @@ public class BeanExpression implements Expression, Predicate {
     /**
      * Invokes a given bean holder. The method name is optional.
      */
-    private final class InvokeProcessor implements Processor {
+    private static final class InvokeProcessor implements Processor {
 
-        private BeanHolder beanHolder;
-        private String methodName;
+        private final BeanHolder beanHolder;
+        private final String methodName;
+        private final String beanName;
         private Object result;
 
-        private InvokeProcessor(BeanHolder beanHolder, String methodName) {
+        private InvokeProcessor(BeanHolder beanHolder, String beanName, String methodName) {
             this.beanHolder = beanHolder;
             this.methodName = methodName;
+            this.beanName = beanName;
         }
 
         public void process(Exchange exchange) throws Exception {
@@ -240,14 +242,16 @@ public class BeanExpression implements Expression, Predicate {
      * For more advanced OGNL you may have to look for a real framework such as OGNL, Mvel or dynamic
      * programming language such as Groovy, JuEL, JavaScript.
      */
-    private final class OgnlInvokeProcessor implements Processor {
+    private static final class OgnlInvokeProcessor implements Processor {
 
         private final String ognl;
         private final BeanHolder beanHolder;
+        private final String beanName;
         private Object result;
 
-        OgnlInvokeProcessor(BeanHolder beanHolder, String ognl) {
+        private OgnlInvokeProcessor(BeanHolder beanHolder, String beanName, String ognl) {
             this.beanHolder = beanHolder;
+            this.beanName = beanName;
             this.ognl = ognl;
             // we must start with having bean as the result
             this.result = beanHolder.getBean();
@@ -319,7 +323,7 @@ public class BeanExpression implements Expression, Predicate {
 
                 // only invoke if we have a method name to use to invoke
                 if (methodName != null) {
-                    InvokeProcessor invoke = new InvokeProcessor(holder, methodName);
+                    InvokeProcessor invoke = new InvokeProcessor(holder, beanName, methodName);
                     invoke.process(resultExchange);
 
                     // check for exception and rethrow if we failed
