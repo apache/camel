@@ -266,10 +266,8 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
         // don't allow if any of the methods has a @Handler annotation
         // as the @Handler annotation takes precedence and is supposed to trigger invocation
         // of the given method
-        for (MethodInfo method : info.getMethods()) {
-            if (method.hasHandlerAnnotation()) {
-                return false;
-            }
+        if (info.hasAnyMethodHandlerAnnotation()) {
+            return false;
         }
 
         // fallback and allow using the processor

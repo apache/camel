@@ -1230,6 +1230,7 @@ public class BeanInfo {
      *
      * @return the methods.
      */
+    @Deprecated
     public List<MethodInfo> getMethods() {
         if (operations.isEmpty()) {
             return Collections.emptyList();
@@ -1247,6 +1248,7 @@ public class BeanInfo {
      *
      * @return the methods.
      */
+    @Deprecated
     public List<MethodInfo> getSortedMethods() {
         List<MethodInfo> methods = getMethods();
         if (methods.size() > 1) {
@@ -1254,6 +1256,20 @@ public class BeanInfo {
             methods.sort(Comparator.comparing(o -> o.getMethod().getName()));
         }
         return methods;
+    }
+
+    /**
+     * Does any of the methods have a Canel @Handler annotation.
+     */
+    public boolean hasAnyMethodHandlerAnnotation() {
+        for (List<MethodInfo> list : operations.values()) {
+            for (MethodInfo mi : list) {
+                if (mi.hasHandlerAnnotation()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
