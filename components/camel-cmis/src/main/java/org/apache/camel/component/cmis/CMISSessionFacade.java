@@ -182,8 +182,11 @@ public class CMISSessionFacade {
 
     public InputStream getContentStreamFor(QueryResult item) {
         Document document = getDocument(item);
-        if (document != null && document.getContentStream() != null) {
-            return document.getContentStream().getStream();
+        if(document != null) {
+            ContentStream contentStream = document.getContentStream();
+            if (contentStream != null) {
+                return contentStream.getStream();
+            }
         }
         return null;
     }
