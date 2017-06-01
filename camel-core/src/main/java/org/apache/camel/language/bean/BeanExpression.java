@@ -122,10 +122,8 @@ public class BeanExpression implements Expression, Predicate {
             }
         } else {
             // regular non ognl invocation
-            InvokeProcessor invoke = new InvokeProcessor(beanHolder, beanName, method);
             try {
-                invoke.process(exchange);
-                return invoke.getResult();
+                return invokeBean(beanHolder, beanName, method, exchange);
             } catch (Exception e) {
                 if (e instanceof RuntimeBeanExpressionException) {
                     throw (RuntimeBeanExpressionException) e;
@@ -181,59 +179,46 @@ public class BeanExpression implements Expression, Predicate {
     }
 
     /**
-     * Invokes a given bean holder. The method name is optional.
+     * Invokes the bean and returns the result. If an exception was thrown while invoking the bean, then the
+     * exception is set on the exchange.
      */
-    private static final class InvokeProcessor implements Processor {
+    private static Object invokeBean(BeanHolder beanHolder, String beanName, String methodName, Exchange exchange) {
+        Object result;
 
-        private final BeanHolder beanHolder;
-        private final String methodName;
-        private final String beanName;
-        private Object result;
-
-        private InvokeProcessor(BeanHolder beanHolder, String beanName, String methodName) {
-            this.beanHolder = beanHolder;
-            this.methodName = methodName;
-            this.beanName = beanName;
+        BeanExpressionProcessor processor = new BeanExpressionProcessor(beanHolder);
+        if (methodName != null) {
+            processor.setMethod(methodName);
+            // enable OGNL like invocation
+            processor.setShorthandMethod(true);
         }
+        try {
+            // copy the original exchange to avoid side effects on it
+            Exchange resultExchange = exchange.copy();
+            // remove any existing exception in case we do OGNL on the exception
+            resultExchange.setException(null);
 
-        public void process(Exchange exchange) throws Exception {
-            BeanExpressionProcessor processor = new BeanExpressionProcessor(beanHolder);
-            if (methodName != null) {
-                processor.setMethod(methodName);
-                // enable OGNL like invocation
-                processor.setShorthandMethod(true);
+            // force to use InOut to retrieve the result on the OUT message
+            resultExchange.setPattern(ExchangePattern.InOut);
+            processor.process(resultExchange);
+            result = resultExchange.getOut().getBody();
+
+            // propagate properties and headers from result
+            if (resultExchange.hasProperties()) {
+                exchange.getProperties().putAll(resultExchange.getProperties());
             }
-            try {
-                // copy the original exchange to avoid side effects on it
-                Exchange resultExchange = exchange.copy();
-                // remove any existing exception in case we do OGNL on the exception
-                resultExchange.setException(null);
-
-                // force to use InOut to retrieve the result on the OUT message
-                resultExchange.setPattern(ExchangePattern.InOut);
-                processor.process(resultExchange);
-                result = resultExchange.getOut().getBody();
-
-                // propagate properties and headers from result
-                if (resultExchange.hasProperties()) {
-                    exchange.getProperties().putAll(resultExchange.getProperties());
-                }
-                if (resultExchange.getOut().hasHeaders()) {
-                    exchange.getIn().getHeaders().putAll(resultExchange.getOut().getHeaders());
-                }
-
-                // propagate exceptions
-                if (resultExchange.getException() != null) {
-                    exchange.setException(resultExchange.getException());
-                }
-            } catch (Exception e) {
-                throw new RuntimeBeanExpressionException(exchange, beanName, methodName, e);
+            if (resultExchange.getOut().hasHeaders()) {
+                exchange.getIn().getHeaders().putAll(resultExchange.getOut().getHeaders());
             }
+
+            // propagate exceptions
+            if (resultExchange.getException() != null) {
+                exchange.setException(resultExchange.getException());
+            }
+        } catch (Throwable e) {
+            throw new RuntimeBeanExpressionException(exchange, beanName, methodName, e);
         }
 
-        public Object getResult() {
-            return result;
-        }
+        return result;
     }
 
     /**
@@ -323,15 +308,14 @@ public class BeanExpression implements Expression, Predicate {
 
                 // only invoke if we have a method name to use to invoke
                 if (methodName != null) {
-                    InvokeProcessor invoke = new InvokeProcessor(holder, beanName, methodName);
-                    invoke.process(resultExchange);
+                    Object newResult = invokeBean(holder, beanName, methodName, resultExchange);
 
                     // check for exception and rethrow if we failed
                     if (resultExchange.getException() != null) {
                         throw new RuntimeBeanExpressionException(exchange, beanName, methodName, resultExchange.getException());
                     }
 
-                    result = invoke.getResult();
+                    result = newResult;
                 }
 
                 // if there was a key then we need to lookup using the key
