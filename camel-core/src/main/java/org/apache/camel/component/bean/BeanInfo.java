@@ -328,7 +328,7 @@ public class BeanInfo {
             methods.addAll(extraMethods);
         }
 
-        Set<Method> overriddenMethods = new HashSet<Method>();
+        Set<Method> overrides = new HashSet<Method>();
 
         // do not remove duplicates form class from the Java itself as they have some "duplicates" we need
         boolean javaClass = clazz.getName().startsWith("java.") || clazz.getName().startsWith("javax.");
@@ -348,12 +348,12 @@ public class BeanInfo {
                     }
                     // skip duplicates which may be assign compatible (favor keep first added method when duplicate)
                     if (ObjectHelper.isOverridingMethod(getType(), source, target, false)) {
-                        overriddenMethods.add(target);
+                        overrides.add(target);
                     }
                 }
             }
-            methods.removeAll(overriddenMethods);
-            overriddenMethods.clear();
+            methods.removeAll(overrides);
+            overrides.clear();
         }
 
         // now introspect the methods and filter non valid methods
