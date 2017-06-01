@@ -33,7 +33,7 @@ public final class StopWatch {
      * Starts the stop watch
      */
     public StopWatch() {
-        this(true);
+        this.start = System.currentTimeMillis();
     }
 
     /**
