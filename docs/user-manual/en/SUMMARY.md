@@ -347,6 +347,7 @@
 	* [String Template](string-template-component.adoc)
 	* [Telegram](telegram-component.adoc)
 	* [Tika](tika-component.adoc)
+	* [Twilio](twilio-component.adoc)
 	* [Twitter](twitter-component.adoc)
 	* [Twitter Direct Message](twitter-directmessage-component.adoc)
 	* [Twitter Search](twitter-search-component.adoc)
