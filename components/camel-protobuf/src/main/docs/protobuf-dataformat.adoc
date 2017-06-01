@@ -7,19 +7,18 @@ Protobuf - Protocol Buffers
 
 "Protocol Buffers - Google's data interchange format"
 
-Camel provides a link:data-format.html[Data Format] to serialse between
+Camel provides a link:data-format.html[Data Format] to serialize between
 Java and the Protocol Buffer protocol. The project's site details why
 you may wish to
-https://developers.google.com/protocol-buffers/docs/overview[choose
-this format over xml]. Protocol Buffer is language-neutral and
+https://developers.google.com/protocol-buffers/docs/overview[choose this format over xml].
+Protocol Buffer is language-neutral and
 platform-neutral, so messages produced by your Camel routes may be
 consumed by other language implementations.
 
 https://developers.google.com/protocol-buffers/docs/reference/java/[API Site] +
 https://github.com/google/protobuf[Protobuf Implementation] +
 
-https://developers.google.com/protocol-buffers/docs/javatutorial[Protobuf
-Java Tutorial]
+https://developers.google.com/protocol-buffers/docs/javatutorial[Protobuf Java Tutorial]
 
 ### Protobuf Options
 
@@ -55,8 +54,7 @@ from("direct:marshal")
 ### Protobuf overview
 
 This quick overview of how to use Protobuf. For more detail see the
-http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[complete
-tutorial]
+http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[complete tutorial]
 
 ### Defining the proto format
 
@@ -145,7 +143,7 @@ You can also run the compiler for any additional supported languages you require
 This will generate a single Java class named AddressBookProtos which
 contains inner classes for Person and AddressBook. Builders are also
 implemented for you. The generated classes implement
-com.google.protobuf.Message which is required by the serialisation
+com.google.protobuf.Message which is required by the serialization
 mechanism. For this reason it important that only these classes are used
 in the body of your exchanges. Camel will throw an exception on route
 creation if you attempt to tell the link:data-format.html[Data Format]
@@ -156,7 +154,7 @@ domain classes.
 ### Java DSL
 
 You can use create the ProtobufDataFormat instance and pass it to Camel
-DataFormat marshal and unmarsha API like this.
+DataFormat marshal and unmarshal API like this.
 
 [source,java]
 -----------------------------------------------------------------------------------
@@ -173,9 +171,9 @@ default instance class name like this.
 --------------------------------------------------------------------------------------------------
    // You don't need to specify the default instance for protobuf marshaling               
    from("direct:marshal").marshal().protobuf();
-   from("direct:unmarshalA").unmarshal().
-       protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person").
-       to ("mock:reverse");
+   from("direct:unmarshalA").unmarshal()
+       .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person")
+       .to("mock:reverse");
                 
    from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
 --------------------------------------------------------------------------------------------------
