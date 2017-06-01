@@ -46,11 +46,11 @@ public final class StopWatch {
     /**
      * Creates the stop watch
      *
-     * @param started whether it should start immediately
+     * @param start whether it should start immediately
      */
-    public StopWatch(boolean started) {
-        if (started) {
-            restart();
+    public StopWatch(boolean start) {
+        if (start) {
+            this.start = System.currentTimeMillis();
         }
     }
 
