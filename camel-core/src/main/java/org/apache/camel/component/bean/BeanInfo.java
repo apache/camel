@@ -552,83 +552,124 @@ public class BeanInfo {
 
         // must use defensive copy, to avoid altering the shared lists
         // and we want to remove unwanted operations from these local lists
-        final List<MethodInfo> localOperationsWithBody = new ArrayList<MethodInfo>(operationsWithBody);
-        final List<MethodInfo> localOperationsWithNoBody = new ArrayList<MethodInfo>(operationsWithNoBody);
-        final List<MethodInfo> localOperationsWithCustomAnnotation = new ArrayList<MethodInfo>(operationsWithCustomAnnotation);
-        final List<MethodInfo> localOperationsWithHandlerAnnotation = new ArrayList<MethodInfo>(operationsWithHandlerAnnotation);
+        List<MethodInfo> localOperationsWithBody = null;
+        if (!operationsWithBody.isEmpty()) {
+            localOperationsWithBody = new ArrayList<>(operationsWithBody);
+        }
+        List<MethodInfo> localOperationsWithNoBody = null;
+        if (!operationsWithNoBody.isEmpty()) {
+            localOperationsWithNoBody = new ArrayList<>(operationsWithNoBody);
+        }
+        List<MethodInfo> localOperationsWithCustomAnnotation = null;
+        if (!operationsWithCustomAnnotation.isEmpty()) {
+            localOperationsWithCustomAnnotation = new ArrayList<>(operationsWithCustomAnnotation);
+        }
+        List<MethodInfo> localOperationsWithHandlerAnnotation = null;
+        if (!operationsWithHandlerAnnotation.isEmpty()) {
+            localOperationsWithHandlerAnnotation = new ArrayList<>(operationsWithHandlerAnnotation);
+        }
 
         // remove all abstract methods
-        removeAllAbstractMethods(localOperationsWithBody);
-        removeAllAbstractMethods(localOperationsWithNoBody);
-        removeAllAbstractMethods(localOperationsWithCustomAnnotation);
-        removeAllAbstractMethods(localOperationsWithHandlerAnnotation);
+        if (localOperationsWithBody != null) {
+            removeAllAbstractMethods(localOperationsWithBody);
+        }
+        if (localOperationsWithNoBody != null) {
+            removeAllAbstractMethods(localOperationsWithNoBody);
+        }
+        if (localOperationsWithCustomAnnotation != null) {
+            removeAllAbstractMethods(localOperationsWithCustomAnnotation);
+        }
+        if (localOperationsWithHandlerAnnotation != null) {
+            removeAllAbstractMethods(localOperationsWithHandlerAnnotation);
+        }
 
         if (name != null) {
             // filter all lists to only include methods with this name
-            removeNonMatchingMethods(localOperationsWithHandlerAnnotation, name);
-            removeNonMatchingMethods(localOperationsWithCustomAnnotation, name);
-            removeNonMatchingMethods(localOperationsWithBody, name);
-            removeNonMatchingMethods(localOperationsWithNoBody, name);
+            if (localOperationsWithHandlerAnnotation != null) {
+                removeNonMatchingMethods(localOperationsWithHandlerAnnotation, name);
+            }
+            if (localOperationsWithCustomAnnotation != null) {
+                removeNonMatchingMethods(localOperationsWithCustomAnnotation, name);
+            }
+            if (localOperationsWithBody != null) {
+                removeNonMatchingMethods(localOperationsWithBody, name);
+            }
+            if (localOperationsWithNoBody != null) {
+                removeNonMatchingMethods(localOperationsWithNoBody, name);
+            }
         } else {
             // remove all getter/setter as we do not want to consider these methods
-            removeAllSetterOrGetterMethods(localOperationsWithHandlerAnnotation);
-            removeAllSetterOrGetterMethods(localOperationsWithCustomAnnotation);
-            removeAllSetterOrGetterMethods(localOperationsWithBody);
-            removeAllSetterOrGetterMethods(localOperationsWithNoBody);
+            if (localOperationsWithHandlerAnnotation != null) {
+                removeAllSetterOrGetterMethods(localOperationsWithHandlerAnnotation);
+            }
+            if (localOperationsWithCustomAnnotation != null) {
+                removeAllSetterOrGetterMethods(localOperationsWithCustomAnnotation);
+            }
+            if (localOperationsWithBody != null) {
+                removeAllSetterOrGetterMethods(localOperationsWithBody);
+            }
+            if (localOperationsWithNoBody != null) {
+                removeAllSetterOrGetterMethods(localOperationsWithNoBody);
+            }
         }
 
-        if (localOperationsWithHandlerAnnotation.size() > 1) {
+        if (localOperationsWithHandlerAnnotation != null && localOperationsWithHandlerAnnotation.size() > 1) {
             // if we have more than 1 @Handler then its ambiguous
             throw new AmbiguousMethodCallException(exchange, localOperationsWithHandlerAnnotation);
         }
 
-        if (localOperationsWithHandlerAnnotation.size() == 1) {
+        if (localOperationsWithHandlerAnnotation != null && localOperationsWithHandlerAnnotation.size() == 1) {
             // methods with handler should be preferred
             return localOperationsWithHandlerAnnotation.get(0);
-        } else if (localOperationsWithCustomAnnotation.size() == 1) {
+        } else if (localOperationsWithCustomAnnotation != null && localOperationsWithCustomAnnotation.size() == 1) {
             // if there is one method with an annotation then use that one
             return localOperationsWithCustomAnnotation.get(0);
         }
 
         // named method and with no parameters
         boolean noParameters = name != null && name.endsWith("()");
-        if (noParameters && localOperationsWithNoBody.size() == 1) {
+        if (noParameters && localOperationsWithNoBody != null && localOperationsWithNoBody.size() == 1) {
             // if there was a method name configured and it has no parameters, then use the method with no body (eg no parameters)
             return localOperationsWithNoBody.get(0);
-        } else if (!noParameters && localOperationsWithBody.size() == 1 && localOperationsWithCustomAnnotation.isEmpty()) {
+        } else if (!noParameters && (localOperationsWithBody != null && localOperationsWithBody.size() == 1 && localOperationsWithCustomAnnotation == null)) {
             // if there is one method with body then use that one
             return localOperationsWithBody.get(0);
         }
 
-        Collection<MethodInfo> possibleOperations = new ArrayList<MethodInfo>();
-        possibleOperations.addAll(localOperationsWithBody);
-        possibleOperations.addAll(localOperationsWithCustomAnnotation);
+        if (localOperationsWithBody != null || localOperationsWithCustomAnnotation != null) {
+            Collection<MethodInfo> possibleOperations = new ArrayList<>();
+            if (localOperationsWithBody != null) {
+                possibleOperations.addAll(localOperationsWithBody);
+            }
+            if (localOperationsWithCustomAnnotation != null) {
+                possibleOperations.addAll(localOperationsWithCustomAnnotation);
+            }
 
-        if (!possibleOperations.isEmpty()) {
+            if (!possibleOperations.isEmpty()) {
+                MethodInfo answer = null;
 
-            MethodInfo answer = null;
-
-            if (name != null) {
-                // do we have hardcoded parameters values provided from the method name then use that for matching
-                String parameters = ObjectHelper.between(name, "(", ")");
-                if (parameters != null) {
-                    // special as we have hardcoded parameters, so we need to choose method that matches those parameters the best
-                    LOG.trace("Choosing best matching method matching parameters: {}", parameters);
-                    answer = chooseMethodWithMatchingParameters(exchange, parameters, possibleOperations);
+                if (name != null) {
+                    // do we have hardcoded parameters values provided from the method name then use that for matching
+                    String parameters = StringHelper.between(name, "(", ")");
+                    if (parameters != null) {
+                        // special as we have hardcoded parameters, so we need to choose method that matches those parameters the best
+                        LOG.trace("Choosing best matching method matching parameters: {}", parameters);
+                        answer = chooseMethodWithMatchingParameters(exchange, parameters, possibleOperations);
+                    }
                 }
-            }
-            if (answer == null) {
-                // multiple possible operations so find the best suited if possible
-                answer = chooseMethodWithMatchingBody(exchange, possibleOperations, localOperationsWithCustomAnnotation);
-            }
-            if (answer == null && possibleOperations.size() > 1) {
-                answer = getSingleCovariantMethod(possibleOperations);
-            }
-            
-            if (answer == null) {
-                throw new AmbiguousMethodCallException(exchange, possibleOperations);
-            } else {
-                return answer;
+                if (answer == null) {
+                    // multiple possible operations so find the best suited if possible
+                    answer = chooseMethodWithMatchingBody(exchange, possibleOperations, localOperationsWithCustomAnnotation);
+                }
+                if (answer == null && possibleOperations.size() > 1) {
+                    answer = getSingleCovariantMethod(possibleOperations);
+                }
+
+                if (answer == null) {
+                    throw new AmbiguousMethodCallException(exchange, possibleOperations);
+                } else {
+                    return answer;
+                }
             }
         }
 
@@ -753,8 +794,8 @@ public class BeanInfo {
                 LOG.trace("Matching for method with a single parameter that matches type: {}", bodyType.getCanonicalName());
             }
 
-            List<MethodInfo> possibles = new ArrayList<MethodInfo>();
-            List<MethodInfo> possiblesWithException = new ArrayList<MethodInfo>();
+            List<MethodInfo> possibles = new ArrayList<>();
+            List<MethodInfo> possiblesWithException = null;
             for (MethodInfo methodInfo : operationList) {
                 // test for MEP pattern matching
                 boolean out = exchange.getPattern().isOutCapable();
@@ -768,6 +809,9 @@ public class BeanInfo {
                     LOG.trace("Found a possible method: {}", methodInfo);
                     if (methodInfo.hasExceptionParameter()) {
                         // methods with accepts exceptions
+                        if (possiblesWithException == null) {
+                            possiblesWithException = new ArrayList<>();
+                        }
                         possiblesWithException.add(methodInfo);
                     } else {
                         // regular methods with no exceptions
@@ -790,7 +834,7 @@ public class BeanInfo {
         throws AmbiguousMethodCallException {
 
         Exception exception = ExpressionBuilder.exchangeExceptionExpression().evaluate(exchange, Exception.class);
-        if (exception != null && possiblesWithException.size() == 1) {
+        if (exception != null && possiblesWithException != null && possiblesWithException.size() == 1) {
             LOG.trace("Exchange has exception set so we prefer method that also has exception as parameter");
             // prefer the method that accepts exception in case we have an exception also
             return possiblesWithException.get(0);
@@ -833,7 +877,7 @@ public class BeanInfo {
             }
         } else {
             // if we only have a single method with custom annotations, let's use that one
-            if (possibleWithCustomAnnotation.size() == 1) {
+            if (possibleWithCustomAnnotation != null && possibleWithCustomAnnotation.size() == 1) {
                 MethodInfo answer = possibleWithCustomAnnotation.get(0);
                 LOG.trace("There are only one method with annotations so we choose it: {}", answer);
                 return answer;
