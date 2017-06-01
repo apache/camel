@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.ExchangeHelper;
 
 public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
     private GenericFileRenamer<T> beginRenamer;
@@ -56,7 +57,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
 
             if (failureRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-                Exchange copy = exchange.copy();
+                Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 file.bindToExchange(copy);
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
@@ -78,7 +79,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         try {
             if (commitRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-                Exchange copy = exchange.copy();
+                Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 file.bindToExchange(copy);
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
