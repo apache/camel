@@ -125,13 +125,14 @@ public class SharedCamelInternalProcessor {
             return true;
         }
 
-        final List<Object> states = new ArrayList<Object>(advices.size());
+        // optimise to use object array for states
+        final Object[] states = new Object[advices.size()];
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < advices.size(); i++) {
             CamelInternalProcessorAdvice task = advices.get(i);
             try {
                 Object state = task.before(exchange);
-                states.add(state);
+                states[i] = state;
             } catch (Throwable e) {
                 exchange.setException(e);
                 callback.done(true);
@@ -205,12 +206,12 @@ public class SharedCamelInternalProcessor {
      */
     private final class InternalCallback implements AsyncCallback {
 
-        private final List<Object> states;
+        private final Object[] states;
         private final Exchange exchange;
         private final AsyncCallback callback;
         private final Processor resultProcessor;
 
-        private InternalCallback(List<Object> states, Exchange exchange, AsyncCallback callback, Processor resultProcessor) {
+        private InternalCallback(Object[] states, Exchange exchange, AsyncCallback callback, Processor resultProcessor) {
             this.states = states;
             this.exchange = exchange;
             this.callback = callback;
@@ -235,7 +236,7 @@ public class SharedCamelInternalProcessor {
             try {
                 for (int i = advices.size() - 1; i >= 0; i--) {
                     CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = states.get(i);
+                    Object state = states[i];
                     try {
                         task.after(exchange, state);
                     } catch (Throwable e) {

@@ -50,9 +50,15 @@ public class BeanInfoTest extends TestCase {
 
         List<MethodInfo> operations = info.getMethods();
         assertEquals(3, operations.size());
-        assertEquals("inOnlyMethod", operations.get(0).getMethod().getName());
-        assertEquals("inOutMethod", operations.get(1).getMethod().getName());
-        assertEquals("robustInOnlyMethod", operations.get(2).getMethod().getName());
+
+        long size = operations.stream().filter(m -> m.getMethod().getName().equals("inOnlyMethod")).count();
+        assertEquals(1, size);
+
+        size = operations.stream().filter(m -> m.getMethod().getName().equals("inOutMethod")).count();
+        assertEquals(1, size);
+
+        size = operations.stream().filter(m -> m.getMethod().getName().equals("robustInOnlyMethod")).count();
+        assertEquals(1, size);
     }
 
     public void testMethodPatternUsingMethodAnnotations() throws Exception {
