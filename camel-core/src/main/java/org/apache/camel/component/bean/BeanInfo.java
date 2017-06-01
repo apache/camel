@@ -1262,14 +1262,7 @@ public class BeanInfo {
      * Does any of the methods have a Canel @Handler annotation.
      */
     public boolean hasAnyMethodHandlerAnnotation() {
-        for (List<MethodInfo> list : operations.values()) {
-            for (MethodInfo mi : list) {
-                if (mi.hasHandlerAnnotation()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return !operationsWithHandlerAnnotation.isEmpty();
     }
 
     /**
@@ -1284,7 +1277,7 @@ public class BeanInfo {
     private List<MethodInfo> getOperations(String methodName) {
         // do not use qualifier for name
         if (methodName.contains("(")) {
-            methodName = ObjectHelper.before(methodName, "(");
+            methodName = StringHelper.before(methodName, "(");
         }
 
         List<MethodInfo> answer = operations.get(methodName);
