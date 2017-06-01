@@ -633,18 +633,23 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
         private final RouteContext routeContext;
-        private final String routeId;
+        private String routeId;
 
         public UnitOfWorkProcessorAdvice(RouteContext routeContext) {
             this.routeContext = routeContext;
-            this.routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+            if (routeContext != null) {
+                this.routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+            }
         }
 
         @Override
         public UnitOfWork before(Exchange exchange) throws Exception {
             // if the exchange doesn't have from route id set, then set it if it originated
             // from this unit of work
-            if (routeContext != null && exchange.getFromRouteId() == null && routeId != null) {
+            if (routeContext != null && exchange.getFromRouteId() == null) {
+                if (routeId == null) {
+                    routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                }
                 exchange.setFromRouteId(routeId);
             }
 
