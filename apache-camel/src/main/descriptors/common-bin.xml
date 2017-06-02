@@ -266,6 +266,7 @@
         <include>org.apache.camel:camel-test-karaf</include>
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-testng</include>
+        <include>org.apache.camel:camel-thrift</include>
         <include>org.apache.camel:camel-tika</include>
         <include>org.apache.camel:camel-twilio</include>
         <include>org.apache.camel:camel-twitter</include>
@@ -536,6 +537,8 @@
         <include>org.apache.camel:camel-tagsoup-starter</include>
         <include>org.apache.camel:camel-tarfile-starter</include>
         <include>org.apache.camel:camel-telegram-starter</include>
+        <include>org.apache.camel:camel-thrift-starter</include>
+        <include>org.apache.camel:camel-tika-starter</include>
         <include>org.apache.camel:camel-twilio-starter</include>
         <include>org.apache.camel:camel-twitter-starter</include>
         <include>org.apache.camel:camel-undertow-starter</include>
