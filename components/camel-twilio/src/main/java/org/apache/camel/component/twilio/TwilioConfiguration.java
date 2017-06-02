@@ -63,7 +63,6 @@ public class TwilioConfiguration implements Cloneable {
      * @return the API Name
      */
     public TwilioApiName getApiName() {
-
         return apiName;
     }
 
