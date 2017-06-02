@@ -639,14 +639,11 @@ public class MethodInfo {
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             Object body = exchange.getIn().getBody();
-            boolean multiParameterArray = false;
-            if (exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) != null) {
-                multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, Boolean.class);
-                if (multiParameterArray) {
-                    // Just change the message body to an Object array
-                    if (!(body instanceof Object[])) {
-                        body = exchange.getIn().getBody(Object[].class);
-                    }
+            boolean multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, false, boolean.class);
+            if (multiParameterArray) {
+                // Just change the message body to an Object array
+                if (!(body instanceof Object[])) {
+                    body = exchange.getIn().getBody(Object[].class);
                 }
             }
 
@@ -668,7 +665,9 @@ public class MethodInfo {
             // we need to do this before the expressions gets evaluated as it may contain
             // a @Bean expression which would by mistake read these headers. So the headers
             // must be removed at this point of time
-            exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
+            if (multiParameterArray) {
+                exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
+            }
             exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
 
             Object[] answer = evaluateParameterExpressions(exchange, body, multiParameterArray, it);

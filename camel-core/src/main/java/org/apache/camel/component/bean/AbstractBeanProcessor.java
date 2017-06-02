@@ -146,15 +146,15 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
         }
 
         // set temporary header which is a hint for the bean info that introspect the bean
-        if (in.getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) == null) {
-            in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, isMultiParameterArray());
+        if (isMultiParameterArray()) {
+            in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, Boolean.TRUE);
         }
-
-        MethodInvocation invocation;
         // set explicit method name to invoke as a header, which is how BeanInfo can detect it
         if (explicitMethodName != null) {
             in.setHeader(Exchange.BEAN_METHOD_NAME, explicitMethodName);
         }
+
+        MethodInvocation invocation;
         try {
             invocation = beanInfo.createInvocation(bean, exchange);
         } catch (Throwable e) {
@@ -163,8 +163,12 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
             return true;
         } finally {
             // must remove headers as they were provisional
-            in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
-            in.removeHeader(Exchange.BEAN_METHOD_NAME);
+            if (isMultiParameterArray()) {
+                in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
+            }
+            if (explicitMethodName != null) {
+                in.removeHeader(Exchange.BEAN_METHOD_NAME);
+            }
         }
 
         if (invocation == null) {
