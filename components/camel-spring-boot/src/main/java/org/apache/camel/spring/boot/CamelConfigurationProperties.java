@@ -301,6 +301,11 @@ public class CamelConfigurationProperties {
     private boolean endpointRuntimeStatisticsEnabled;
 
     /**
+     * Set whether breadcrumb is enabled.
+     */
+    private boolean useBreadcrumb = true;
+
+    /**
      * Sets the JMX statistics level
      * The level can be set to Extended to gather additional information
      *
@@ -690,6 +695,14 @@ public class CamelConfigurationProperties {
 
     public void setEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+    }
+
+    public boolean isUseBreadcrumb() {
+        return useBreadcrumb;
+    }
+
+    public void setUseBreadcrumb(boolean useBreadcrumb) {
+        this.useBreadcrumb = useBreadcrumb;
     }
 
     public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
