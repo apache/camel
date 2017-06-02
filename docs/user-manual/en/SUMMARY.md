@@ -448,6 +448,7 @@
 	* [String Encoding](string-dataformat.adoc)
 	* [Syslog](syslog-dataformat.adoc)
 	* [Tar File](tarfile-dataformat.adoc)
+	* [Thrift](thrift-dataformat.adoc)
 	* [TidyMarkup](tidyMarkup-dataformat.adoc)
 	* [uniVocity CSV](univocity-csv-dataformat.adoc)
 	* [uniVocity Fixed Length](univocity-fixed-dataformat.adoc)

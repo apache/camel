@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 265 in 185 JAR artifacts (16 deprecated)
+Number of Components: 266 in 186 JAR artifacts (16 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -743,6 +743,9 @@ Number of Components: 265 in 185 JAR artifacts (16 deprecated)
 | link:../camel-core/src/main/docs/timer-component.adoc[Timer] (camel-core) +
 `timer:timerName` | 1.0 | The timer component is used for generating message exchanges when a timer fires.
 
+| link:camel-twilio/src/main/docs/twilio-component.adoc[Twilio] (camel-twilio) +
+`twilio:apiName/methodName` | 2.20 | Represents a Twilio endpoint.
+
 | link:camel-twitter/src/main/docs/twitter-component.adoc[Twitter] (camel-twitter) +
 `twitter:kind` | 2.10 | *deprecated* Use twitter-directmessage twitter-search twitter-streaming and twitter-timeline instead of this component.
 
@@ -811,7 +814,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 45 in 36 JAR artifacts (0 deprecated)
+Number of Data Formats: 46 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -882,6 +885,8 @@ Number of Data Formats: 45 in 36 JAR artifacts (0 deprecated)
 | link:camel-syslog/src/main/docs/syslog-dataformat.adoc[Syslog] (camel-syslog) | 2.6 | Camel Syslog support
 
 | link:camel-tarfile/src/main/docs/tarfile-dataformat.adoc[Tar File] (camel-tarfile) | 2.16 | Camel Tar file support
+
+| link:camel-thrift/src/main/docs/thrift-dataformat.adoc[Thrift] (camel-thrift) | 2.20 | Camel Apache Thrift data format and RPC support
 
 | link:camel-tagsoup/src/main/docs/tidyMarkup-dataformat.adoc[TidyMarkup] (camel-tagsoup) | 2.0 | Camel TagSoup support
 
