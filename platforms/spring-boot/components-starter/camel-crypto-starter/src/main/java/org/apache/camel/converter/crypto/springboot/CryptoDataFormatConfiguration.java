@@ -35,7 +35,7 @@ public class CryptoDataFormatConfiguration
      * The JCE algorithm name indicating the cryptographic algorithm that will
      * be used. Is by default DES/CBC/PKCS5Padding.
      */
-    private String algorithm;
+    private String algorithm = "DES/CBC/PKCS5Padding";
     /**
      * The name of the JCE Security Provider that should be used.
      */
@@ -62,7 +62,7 @@ public class CryptoDataFormatConfiguration
     /**
      * The JCE algorithm name indicating the Message Authentication algorithm.
      */
-    private String macAlgorithm;
+    private String macAlgorithm = "HmacSHA1";
     /**
      * Flag indicating that a Message Authentication Code should be calculated
      * and appended to the encrypted data.

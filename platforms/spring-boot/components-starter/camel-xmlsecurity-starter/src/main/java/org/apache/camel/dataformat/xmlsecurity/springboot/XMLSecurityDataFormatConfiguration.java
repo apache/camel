@@ -39,7 +39,7 @@ public class XMLSecurityDataFormatConfiguration
      * XMLCipher.SEED_128 XMLCipher.CAMELLIA_128 XMLCipher.CAMELLIA_192
      * XMLCipher.CAMELLIA_256 The default value is MLCipher.TRIPLEDES
      */
-    private String xmlCipherAlgorithm;
+    private String xmlCipherAlgorithm = "TRIPLEDES";
     /**
      * A String used as passPhrase to encrypt/decrypt content. The passPhrase
      * has to be provided. If no passPhrase is specified a default passPhrase is
@@ -66,7 +66,7 @@ public class XMLSecurityDataFormatConfiguration
      * XMLCipher.RSA_OAEP XMLCipher.RSA_OAEP_11 The default value is
      * XMLCipher.RSA_OAEP
      */
-    private String keyCipherAlgorithm;
+    private String keyCipherAlgorithm = "RSA_OAEP";
     /**
      * The key alias to be used when retrieving the recipient's public or
      * private key from a KeyStore when performing asymmetric key encryption or
@@ -89,14 +89,14 @@ public class XMLSecurityDataFormatConfiguration
      * choices are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default
      * value is XMLCipher.SHA1
      */
-    private String digestAlgorithm;
+    private String digestAlgorithm = "SHA1";
     /**
      * The MGF Algorithm to use with the RSA OAEP algorithm. The available
      * choices are: EncryptionConstants.MGF1_SHA1
      * EncryptionConstants.MGF1_SHA256 EncryptionConstants.MGF1_SHA512 The
      * default value is EncryptionConstants.MGF1_SHA1
      */
-    private String mgfAlgorithm;
+    private String mgfAlgorithm = "MGF1_SHA1";
     /**
      * Whether to add the public key used to encrypt the session key as a
      * KeyValue in the EncryptedKey structure or not.

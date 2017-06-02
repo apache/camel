@@ -34,7 +34,7 @@ public class MimeMultipartDataFormatConfiguration
     /**
      * Specify the subtype of the MIME Multipart. Default is mixed.
      */
-    private String multipartSubType;
+    private String multipartSubType = "mixed";
     /**
      * Defines whether a message without attachment is also marshaled into a
      * MIME Multipart (with only one body part). Default is false.

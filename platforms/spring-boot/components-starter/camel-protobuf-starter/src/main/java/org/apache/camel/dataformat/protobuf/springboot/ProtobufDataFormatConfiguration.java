@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.protobuf.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.dataformat.protobuf.ProtobufDataFormat;
 import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -42,7 +41,7 @@ public class ProtobufDataFormatConfiguration
      * native or json for either native protobuf or json fields representation.
      * The default value is native.
      */
-    private String contentTypeFormat;
+    private String contentTypeFormat = "native";
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
