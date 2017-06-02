@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.SimpleTokenType;
@@ -31,6 +32,9 @@ public final class SimpleTokenizer {
 
     // use CopyOnWriteArrayList so we can modify it in the for loop when changing function start/end tokens
     private static final List<SimpleTokenType> KNOWN_TOKENS = new CopyOnWriteArrayList<SimpleTokenType>();
+
+    // optimise to be able to quick check for start functions
+    private static final String[] FUNCTION_START = new String[]{"${", "$simple{"};
 
     static {
         // add known tokens
@@ -93,16 +97,7 @@ public final class SimpleTokenizer {
      */
     public static boolean hasFunctionStartToken(String expression) {
         if (expression != null) {
-            for (SimpleTokenType type : KNOWN_TOKENS) {
-                if (type.getType() == TokenType.functionStart) {
-                    if (expression.contains(type.getValue())) {
-                        return true;
-                    }
-                } else {
-                    // function start are always first
-                    return false;
-                }
-            }
+            return expression.contains(FUNCTION_START[0]) || expression.contains(FUNCTION_START[1]);
         }
         return false;
     }
@@ -117,8 +112,18 @@ public final class SimpleTokenizer {
             }
         }
 
+        if (startToken.length > 2) {
+            throw new IllegalArgumentException("At most 2 start tokens is allowed");
+        }
+
+        // reset
+        FUNCTION_START[0] = "";
+        FUNCTION_START[1] = "";
+
         // add in start of list as its a more common token to be used
-        for (String token : startToken) {
+        for (int i = 0; i < startToken.length; i++) {
+            String token = startToken[i];
+            FUNCTION_START[i] = token;
             KNOWN_TOKENS.add(0, new SimpleTokenType(TokenType.functionStart, token));
         }
     }
