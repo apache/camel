@@ -507,8 +507,8 @@ public class BeanInfo {
         return new MethodInfo(camelContext, clazz, method, parameters, bodyParameters, hasCustomAnnotation, hasHandlerAnnotation);
     }
 
+    @SuppressWarnings("unchecked")
     protected List<Annotation>[] collectParameterAnnotations(Class<?> c, Method m) {
-        @SuppressWarnings("unchecked")
         List<Annotation>[] annotations = new List[m.getParameterCount()];
         for (int i = 0; i < annotations.length; i++) {
             annotations[i] = new ArrayList<Annotation>();
@@ -883,7 +883,7 @@ public class BeanInfo {
                 return answer;
             }
             // try to choose among multiple methods with annotations
-            MethodInfo chosen = chooseMethodWithCustomAnnotations(exchange, possibles);
+            MethodInfo chosen = chooseMethodWithCustomAnnotations(possibles);
             if (chosen != null) {
                 return chosen;
             }
@@ -953,8 +953,7 @@ public class BeanInfo {
         return null;
     }
 
-    private MethodInfo chooseMethodWithCustomAnnotations(Exchange exchange, Collection<MethodInfo> possibles)
-        throws AmbiguousMethodCallException {
+    private MethodInfo chooseMethodWithCustomAnnotations(Collection<MethodInfo> possibles) {
         // if we have only one method with custom annotations let's choose that
         MethodInfo chosen = null;
         for (MethodInfo possible : possibles) {
@@ -1043,9 +1042,7 @@ public class BeanInfo {
 
         while (clazz != null && !clazz.equals(Object.class)) {
             for (Class<?> interfaceClazz : clazz.getInterfaces()) {
-                for (Method interfaceMethod : interfaceClazz.getDeclaredMethods()) {
-                    answer.add(interfaceMethod);
-                }
+                Collections.addAll(answer, interfaceClazz.getDeclaredMethods());
             }
             clazz = clazz.getSuperclass();
         }
@@ -1068,14 +1065,8 @@ public class BeanInfo {
     }
 
     private void removeNonMatchingMethods(List<MethodInfo> methods, String name) {
-        Iterator<MethodInfo> it = methods.iterator();
-        while (it.hasNext()) {
-            MethodInfo info = it.next();
-            if (!matchMethod(info.getMethod(), name)) {
-                // method does not match so remove it
-                it.remove();
-            }
-        }
+        // method does not match so remove it
+        methods.removeIf(info -> !matchMethod(info.getMethod(), name));
     }
 
     private void removeAllAbstractMethods(List<MethodInfo> methods) {
@@ -1103,7 +1094,7 @@ public class BeanInfo {
         // do not use qualifier for name matching
         String name = methodName;
         if (name.contains("(")) {
-            name = ObjectHelper.before(name, "(");
+            name = StringHelper.before(name, "(");
         }
 
         // must match name
@@ -1118,7 +1109,7 @@ public class BeanInfo {
         }
 
         // match qualifier types which is used to select among overloaded methods
-        String types = ObjectHelper.between(methodName, "(", ")");
+        String types = StringHelper.between(methodName, "(", ")");
         if (ObjectHelper.isNotEmpty(types)) {
             // we must qualify based on types to match method
             String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',');
@@ -1226,11 +1217,10 @@ public class BeanInfo {
     }
 
     /**
-     * Gets the list of methods (unsorted)
+     * Gets the list of methods sorted by A..Z method name.
      *
      * @return the methods.
      */
-    @Deprecated
     public List<MethodInfo> getMethods() {
         if (operations.isEmpty()) {
             return Collections.emptyList();
@@ -1240,17 +1230,7 @@ public class BeanInfo {
         for (Collection<MethodInfo> col : operations.values()) {
             methods.addAll(col);
         }
-        return methods;
-    }
 
-    /**
-     * Gets the list of methods sorted by A..Z method name.
-     *
-     * @return the methods.
-     */
-    @Deprecated
-    public List<MethodInfo> getSortedMethods() {
-        List<MethodInfo> methods = getMethods();
         if (methods.size() > 1) {
             // sort the methods by name A..Z
             methods.sort(Comparator.comparing(o -> o.getMethod().getName()));
