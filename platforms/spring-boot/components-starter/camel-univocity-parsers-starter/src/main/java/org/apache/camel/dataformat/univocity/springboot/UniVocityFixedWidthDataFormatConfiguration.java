@@ -89,11 +89,11 @@ public class UniVocityFixedWidthDataFormatConfiguration
     /**
      * The normalized line separator of the files The default value is \n
      */
-    private String normalizedLineSeparator;
+    private String normalizedLineSeparator = "\\n";
     /**
      * The comment symbol. The default value is
      */
-    private String comment;
+    private String comment = "#";
     /**
      * Whether the unmarshalling should produce an iterator that reads the lines
      * on the fly or if all the lines must be read at one. The default value is

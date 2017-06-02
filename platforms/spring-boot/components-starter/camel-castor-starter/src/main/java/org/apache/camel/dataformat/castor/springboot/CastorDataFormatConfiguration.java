@@ -42,7 +42,7 @@ public class CastorDataFormatConfiguration
     /**
      * Encoding to use when marshalling an Object to XML. Is by default UTF-8
      */
-    private String encoding;
+    private String encoding = "UTF-8";
     /**
      * Add additional packages to Castor XmlContext
      */

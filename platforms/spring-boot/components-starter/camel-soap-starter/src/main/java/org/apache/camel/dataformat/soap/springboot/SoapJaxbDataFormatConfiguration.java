@@ -62,7 +62,7 @@ public class SoapJaxbDataFormatConfiguration
     /**
      * SOAP version should either be 1.1 or 1.2. Is by default 1.1
      */
-    private String version;
+    private String version = "1.1";
     /**
      * When marshalling using JAXB or SOAP then the JAXB implementation will
      * automatic assign namespace prefixes such as ns2 ns3 ns4 etc. To control
