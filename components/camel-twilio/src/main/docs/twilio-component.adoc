@@ -148,14 +148,14 @@ would override a *`CamelTwilio.option`* header.
 
 Endpoint can be one of:
 
-[width="100%",cols="50%,50%",options="header"]
+[width="100%",cols="20%,20%,60%",options="header"]
 |=======================================================================
-| Endpoint  | Shorthand Alias
-| *creator* | create
-| *deleter* | delete
-| *fetcher* | fetch
-| *reader*  | read
-| *updater* | update
+| Endpoint  | Shorthand Alias | Description
+| *creator* | create          | Make the request to the Twilio API to perform the create
+| *deleter* | delete          | Make the request to the Twilio API to perform the delete
+| *fetcher* | fetch           | Make the request to the Twilio API to perform the fetch
+| *reader*  | read            | Make the request to the Twilio API to perform the read
+| *updater* | update          | Make the request to the Twilio API to perform the update
 |=======================================================================
 
 Available endpoints differ depending on the endpoint prefixes.
