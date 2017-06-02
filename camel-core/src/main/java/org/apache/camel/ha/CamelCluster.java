@@ -22,11 +22,11 @@ import org.apache.camel.spi.HasId;
 
 public interface CamelCluster extends Service, CamelContextAware, HasId {
     /**
-     * Creates a view of the cluster bound to a namespace.
+     * Get a view of the cluster bound to a namespace creating it if needed.
      *
      * @param namespace the namespace the view refer to.
-     * @return the cluster view.
+     * @return the view.
      * @throws Exception if the view can't be created.
      */
-    CamelClusterView createView(String namespace) throws Exception;
+    CamelClusterView getView(String namespace) throws Exception;
 }
