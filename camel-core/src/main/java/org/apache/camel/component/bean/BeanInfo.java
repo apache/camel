@@ -211,14 +211,14 @@ public class BeanInfo {
             // do not use qualifier for name
             String name = methodName;
             if (methodName.contains("(")) {
-                name = ObjectHelper.before(methodName, "(");
+                name = StringHelper.before(methodName, "(");
                 // the must be a ending parenthesis
                 if (!methodName.endsWith(")")) {
                     throw new IllegalArgumentException("Method should end with parenthesis, was " + methodName);
                 }
                 // and there must be an even number of parenthesis in the syntax
                 // (we can use betweenOuterPair as it return null if the syntax is invalid)
-                if (ObjectHelper.betweenOuterPair(methodName, '(', ')') == null) {
+                if (StringHelper.betweenOuterPair(methodName, '(', ')') == null) {
                     throw new IllegalArgumentException("Method should have even pair of parenthesis, was " + methodName);
                 }
             }
@@ -284,8 +284,8 @@ public class BeanInfo {
             }
         }
 
-        if (methodInfo == null) {
-            // no name or type
+        if (methodInfo == null && methodMap.size() >= 2) {
+            // only try to choose if there is at least 2 methods
             methodInfo = chooseMethod(pojo, exchange, null);
         }
         if (methodInfo == null) {
