@@ -246,8 +246,17 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // Static helpers
     // ****************************************************
 
+    public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, String namespace) throws Exception {
+        CamelCluster cluster = camelContext.hasService(CamelCluster.class);
+        if (cluster == null) {
+            throw new IllegalStateException("CamelCluster service not found");
+        }
+
+        return forNamespace(cluster, namespace);
+    }
+
     public static ClusteredRoutePolicy forNamespace(CamelCluster cluster, String namespace) throws Exception {
-        return forView(cluster.createView(namespace));
+        return forView(cluster.getView(namespace));
     }
 
     public static ClusteredRoutePolicy forView(CamelClusterView view) throws Exception  {

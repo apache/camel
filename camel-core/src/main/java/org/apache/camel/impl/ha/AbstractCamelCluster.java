@@ -50,6 +50,16 @@ public abstract class AbstractCamelCluster<T extends CamelClusterView> extends S
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+
+        long stamp = lock.writeLock();
+
+        try {
+            for (T view : views.values()) {
+                view.setCamelContext(camelContext);
+            }
+        } finally {
+            lock.unlockWrite(stamp);
+        }
     }
 
     @Override
@@ -84,14 +94,14 @@ public abstract class AbstractCamelCluster<T extends CamelClusterView> extends S
     }
 
     @Override
-    public CamelClusterView createView(String namespace) throws Exception {
+    public CamelClusterView getView(String namespace) throws Exception {
         long stamp = lock.writeLock();
 
         try {
             T view = views.get(namespace);
 
             if (view == null) {
-                view = doCreateView(namespace);
+                view = createView(namespace);
                 view.setCamelContext(this.camelContext);
 
                 views.put(namespace, view);
@@ -111,5 +121,5 @@ public abstract class AbstractCamelCluster<T extends CamelClusterView> extends S
     // Implementation
     // **********************************
 
-    protected abstract T doCreateView(String namespace) throws Exception;
+    protected abstract T createView(String namespace) throws Exception;
 }
