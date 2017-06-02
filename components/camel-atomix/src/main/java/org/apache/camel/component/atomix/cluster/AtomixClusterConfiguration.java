@@ -17,12 +17,13 @@ package org.apache.camel.component.atomix.cluster;
 
 import io.atomix.AtomixReplica;
 import io.atomix.copycat.server.storage.StorageLevel;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.atomix.AtomixConfiguration;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
-public class AtomixClusterConfiguration extends AtomixConfiguration {
+public class AtomixClusterConfiguration extends AtomixConfiguration implements Cloneable {
 
     @UriParam
     private String storagePath;
@@ -81,5 +82,17 @@ public class AtomixClusterConfiguration extends AtomixConfiguration {
      */
     public void setReplica(AtomixReplica replica) {
         this.replica = replica;
+    }
+
+    // ****************************************
+    // Copy
+    // ****************************************
+
+    public AtomixClusterConfiguration copy() {
+        try {
+            return (AtomixClusterConfiguration) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

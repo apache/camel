@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.atomix.ha;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.atomix.catalyst.transport.Address;
 import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.ha.CamelClusterService;
-import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ha.ClusteredRoutePolicy;
-import org.apache.camel.spi.RoutePolicy;
-import org.apache.camel.util.FileUtil;
+import org.apache.camel.impl.ha.ClusteredRoutePolicyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,58 +31,42 @@ public final class AtomixRoutePolicyMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtomixRoutePolicyMain.class);
 
     public static void main(final String[] args) throws Exception {
-        String[] addresses = System.getProperty("atomix.cluster").split(",");
+        final Integer index = Integer.getInteger("atomix.index");
+        final String[] addresses = System.getProperty("atomix.cluster").split(",");
 
-        List<Address> cluster = new ArrayList<>();
+        List<Address> nodes = new ArrayList<>();
         for (int i = 0; i < addresses.length; i++) {
             String[] parts = addresses[i].split(":");
-            cluster.add(new Address(parts[0], Integer.valueOf(parts[1])));
+            nodes.add(new Address(parts[0], Integer.valueOf(parts[1])));
         }
 
-        final String id = String.format("atomix-%d", cluster.get(0).port());
-        final File path = new File("target", id);
-
-        // Cleanup
-        FileUtil.removeDir(path);
-
-        AtomixClusterService service = new AtomixClusterService();
-        service.setStoragePath(path.getAbsolutePath());
-        service.setStorageLevel(StorageLevel.DISK);
-        service.setAddress(cluster.get(0));
-        service.setNodes(cluster);
+        AtomixCluster cluster = new AtomixCluster();
+        cluster.setStorageLevel(StorageLevel.MEMORY);
+        cluster.setAddress(nodes.get(index));
+        cluster.setNodes(nodes);
 
         DefaultCamelContext context = new DefaultCamelContext();
-        context.addService(service);
+        context.addService(cluster);
+        context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                CamelClusterService cluster = getContext().hasService(AtomixClusterService.class);
-                CamelClusterView view = cluster.createView("my-view");
-                RoutePolicy policy = ClusteredRoutePolicy.forView(view);
-
-                fromF("timer:%s-1?period=2s", id)
-                    .routeId(id + "-1")
-                    .routePolicy(policy)
+                fromF("timer:atomix-%d-1?period=2s", nodes.get(index).port())
                     .log("${routeId} (1)");
-                fromF("timer:%s-2?period=5s", id)
-                    .routeId(id + "-2")
-                    .routePolicy(policy)
+                fromF("timer:atomix-%d-2?period=5s", nodes.get(index).port())
                     .log("${routeId} (2)");
             }
         });
 
         context.start();
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                try {
-                    context.stop();
-                } catch (Exception e) {
-                    LOGGER.warn("", e);
-                }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                context.stop();
+            } catch (Exception e) {
+                LOGGER.warn("", e);
             }
-        });
+        }));
 
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             Thread.sleep(1000);

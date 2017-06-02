@@ -6,22 +6,9 @@ The camel atomix component allows you to work with Atomix, a fault-tolerant dist
 
 
 mvn \
+    -Dexec.mainClass=org.apache.camel.component.atomix.ha.AtomixRoutePolicyMain \
+    -Dexec.classpathScope=test \
+    test-compile \
+    exec:java \
     -Datomix.cluster="127.0.0.1:9001,127.0.0.1:9002,127.0.0.1:9003" \
-    -Dexec.mainClass=org.apache.camel.component.atomix.ha.AtomixRoutePolicyMain \
-    -Dexec.classpathScope=test \
-    test-compile \
-    exec:java
-
-mvn \
-    -Datomix.cluster="127.0.0.1:9002,127.0.0.1:9001,127.0.0.1:9003" \
-    -Dexec.mainClass=org.apache.camel.component.atomix.ha.AtomixRoutePolicyMain \
-    -Dexec.classpathScope=test \
-    test-compile \
-    exec:java
-
-mvn \
-    -Datomix.cluster="127.0.0.1:9003,127.0.0.1:9001,127.0.0.1:9002" \
-    -Dexec.mainClass=org.apache.camel.component.atomix.ha.AtomixRoutePolicyMain \
-    -Dexec.classpathScope=test \
-    test-compile \
-    exec:java
+    -Datomix.index="0"
