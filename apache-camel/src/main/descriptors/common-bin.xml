@@ -75,7 +75,7 @@
         <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-drill</include>
-	    <include>org.apache.camel:camel-dropbox</include>
+        <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
@@ -536,6 +536,7 @@
         <include>org.apache.camel:camel-tagsoup-starter</include>
         <include>org.apache.camel:camel-tarfile-starter</include>
         <include>org.apache.camel:camel-telegram-starter</include>
+        <include>org.apache.camel:camel-twilio-starter</include>
         <include>org.apache.camel:camel-twitter-starter</include>
         <include>org.apache.camel:camel-undertow-starter</include>
         <include>org.apache.camel:camel-univocity-parsers-starter</include>
