@@ -198,7 +198,7 @@ public class BeanInfo {
             for (List<MethodInfo> infos : operations.values()) {
                 for (MethodInfo info : infos) {
                     if (explicitMethod.equals(info.getMethod())) {
-                        return info.createMethodInvocation(pojo, exchange);
+                        return info.createMethodInvocation(pojo, info.hasParameters(), exchange);
                     }
                 }
             }
@@ -293,7 +293,7 @@ public class BeanInfo {
         }
         if (methodInfo != null) {
             LOG.trace("Chosen method to invoke: {} on bean: {}", methodInfo, pojo);
-            return methodInfo.createMethodInvocation(pojo, exchange);
+            return methodInfo.createMethodInvocation(pojo, methodInfo.hasParameters(), exchange);
         }
 
         LOG.debug("Cannot find suitable method to invoke on bean: {}", pojo);

@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -243,8 +244,14 @@ public class MethodInfo {
         return method.toString();
     }
 
-    public MethodInvocation createMethodInvocation(final Object pojo, final Exchange exchange) {
-        final Object[] arguments = parametersExpression.evaluate(exchange, Object[].class);
+    public MethodInvocation createMethodInvocation(final Object pojo, boolean hasParameters, final Exchange exchange) {
+        final Object[] arguments;
+        if (hasParameters) {
+             arguments = parametersExpression.evaluate(exchange, Object[].class);
+        } else {
+            arguments = null;
+        }
+
         return new MethodInvocation() {
             public Method getMethod() {
                 return method;
