@@ -744,7 +744,7 @@ Number of Components: 266 in 186 JAR artifacts (16 deprecated)
 `timer:timerName` | 1.0 | The timer component is used for generating message exchanges when a timer fires.
 
 | link:camel-twilio/src/main/docs/twilio-component.adoc[Twilio] (camel-twilio) +
-`twilio:apiName/methodName` | 2.20 | Represents a Twilio endpoint.
+`twilio:apiName/methodName` | 2.20 | The Twilio component allows you to interact with the Twilio REST APIs using Twilio Java SDK.
 
 | link:camel-twitter/src/main/docs/twitter-component.adoc[Twitter] (camel-twitter) +
 `twitter:kind` | 2.10 | *deprecated* Use twitter-directmessage twitter-search twitter-streaming and twitter-timeline instead of this component.
