@@ -156,6 +156,7 @@ public class CamelAutoConfiguration {
         camelContext.setHandleFault(config.isHandleFault());
         camelContext.setAutoStartup(config.isAutoStartup());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
+        camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());
