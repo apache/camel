@@ -649,7 +649,7 @@ public class MethodInfo {
 
             // if there was an explicit method name to invoke, then we should support using
             // any provided parameter values in the method name
-            String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, "", String.class);
+            String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
             // the parameter values is between the parenthesis
             String methodParameters = StringHelper.betweenOuterPair(methodName, '(', ')');
             // use an iterator to walk the parameter values
@@ -668,7 +668,9 @@ public class MethodInfo {
             if (multiParameterArray) {
                 exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
             }
-            exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
+            if (methodName != null) {
+                exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
+            }
 
             Object[] answer = evaluateParameterExpressions(exchange, body, multiParameterArray, it);
             return (T) answer;
