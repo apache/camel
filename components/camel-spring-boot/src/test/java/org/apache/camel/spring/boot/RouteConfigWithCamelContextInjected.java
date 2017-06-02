@@ -32,7 +32,7 @@ public class RouteConfigWithCamelContextInjected {
 
     @Bean
     public RoutesBuilder routeCreatedWithInjectedCamelContext() {
-        Assert.notNull(camelContext);
+        Assert.notNull(camelContext, "camelContext must not be null");
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
