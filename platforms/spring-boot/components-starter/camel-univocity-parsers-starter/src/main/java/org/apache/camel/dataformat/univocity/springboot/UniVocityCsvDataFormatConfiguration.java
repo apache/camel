@@ -38,15 +38,15 @@ public class UniVocityCsvDataFormatConfiguration
     /**
      * The quote symbol.
      */
-    private String quote;
+    private String quote = "\"";
     /**
      * The quote escape symbol
      */
-    private String quoteEscape;
+    private String quoteEscape = "\"";
     /**
      * The delimiter of values
      */
-    private String delimiter;
+    private String delimiter = ",";
     /**
      * The string representation of a null value. The default value is null
      */
@@ -92,11 +92,11 @@ public class UniVocityCsvDataFormatConfiguration
     /**
      * The normalized line separator of the files The default value is \n
      */
-    private String normalizedLineSeparator;
+    private String normalizedLineSeparator = "\\n";
     /**
      * The comment symbol. The default value is
      */
-    private String comment;
+    private String comment = "#";
     /**
      * Whether the unmarshalling should produce an iterator that reads the lines
      * on the fly or if all the lines must be read at one. The default value is

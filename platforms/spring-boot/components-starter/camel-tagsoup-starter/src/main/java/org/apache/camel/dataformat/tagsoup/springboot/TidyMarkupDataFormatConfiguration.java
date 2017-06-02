@@ -35,7 +35,7 @@ public class TidyMarkupDataFormatConfiguration
      * What data type to unmarshal as can either be org.w3c.dom.Node or
      * java.lang.String. Is by default org.w3c.dom.Node
      */
-    private String dataObjectType;
+    private String dataObjectType = "org.w3c.dom.Node";
     /**
      * When returning a String do we omit the XML declaration in the top.
      */

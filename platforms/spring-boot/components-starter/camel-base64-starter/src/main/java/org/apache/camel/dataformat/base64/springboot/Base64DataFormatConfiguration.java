@@ -39,7 +39,7 @@ public class Base64DataFormatConfiguration
     /**
      * The line separators to use. By default \r\n is used.
      */
-    private String lineSeparator;
+    private String lineSeparator = "\\r\\n";
     /**
      * Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe
      * is only applied to encode operations. Decoding seamlessly handles both

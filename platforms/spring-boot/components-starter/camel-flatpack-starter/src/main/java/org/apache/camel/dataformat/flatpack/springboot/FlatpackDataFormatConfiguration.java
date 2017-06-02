@@ -52,11 +52,11 @@ public class FlatpackDataFormatConfiguration
     /**
      * If the text is qualified with a char such as "
      */
-    private String textQualifier;
+    private String textQualifier = "\"";
     /**
      * The delimiter char (could be ; or similar)
      */
-    private String delimiter;
+    private String delimiter = ",";
     /**
      * Allows for lines to be shorter than expected and ignores the extra
      * characters
