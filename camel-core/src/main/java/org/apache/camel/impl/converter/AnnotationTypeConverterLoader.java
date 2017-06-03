@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -61,11 +62,12 @@ import org.slf4j.LoggerFactory;
  * Likewise the procedure for scanning using {@link PackageScanClassResolver} may require custom implementations
  * to work in various containers such as JBoss, OSGi, etc.
  *
- * @version 
+ * @version
  */
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
+    private static final Charset UTF8 = Charset.forName("UTF-8");
     protected PackageScanClassResolver resolver;
     protected Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
     protected Set<String> visitedURIs = new HashSet<String>();
@@ -161,11 +163,11 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         // try to load it as a class first
         for (String name : packageNames) {
             // must be a FQN class name by having an upper case letter
-            if (StringHelper.hasUpperCase(name)) {
+            if (StringHelper.isClassName(name)) {
                 Class<?> clazz = null;
                 for (ClassLoader loader : resolver.getClassLoaders()) {
                     try {
-                        clazz = loader.loadClass(name);
+                        clazz = ObjectHelper.loadClass(name, loader);
                         LOG.trace("Loaded {} as class {}", name, clazz);
                         classes.add(clazz);
                         // class founder, so no need to load it with another class loader
@@ -214,7 +216,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 // remember we have visited this uri so we wont read it twice
                 visitedURIs.add(path);
                 LOG.debug("Loading file {} to retrieve list of packages, from url: {}", META_INF_SERVICES, url);
-                BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream()));
+                BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), UTF8));
                 try {
                     while (true) {
                         String line = reader.readLine();
@@ -283,7 +285,19 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 loadConverterMethods(registry, superclass);
             }
         } catch (NoClassDefFoundError e) {
-            LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+            boolean ignore = false;
+            // does the class allow to ignore the type converter when having load errors
+            if (ObjectHelper.hasAnnotation(type, Converter.class, true)) {
+                if (type.getAnnotation(Converter.class) != null) {
+                    ignore = type.getAnnotation(Converter.class).ignoreOnLoadError();
+                }
+            }
+            // if we should ignore then only log at debug level
+            if (ignore) {
+                LOG.debug("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+            } else {
+                LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -7,15 +8,15 @@
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+         http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
--->
 
+-->
 <!-- START SNIPPET: e1 -->
 <!-- this is a spring XML file where we have Camel embedded -->
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -29,7 +30,7 @@
 	<!-- Here we define Camel, notice the namespace it uses -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 	  <!-- Camel route to feed the ActiveMQ inbox queue once per second -->
-	  <route>
+	  <route id="timerToInRoute">
 		  <from uri="timer:foo?period=1s"/>
 		  <transform>
 			  <simple>Message at ${date:now:yyyy-MM-dd HH:mm:ss}</simple>
@@ -38,7 +39,7 @@
 	  </route>
 
 	  <!-- Camel route to move messages from the ActiveMQ inbox to its outbox queue -->
-	  <route>
+	  <route id="inToOutRoute">
 		  <from uri="activemq:queue:inbox"/>
 		  <log message="Routing message from inbox to outbox queue with data ${body}"/>
 		  <to uri="activemq:queue:outbox"/>

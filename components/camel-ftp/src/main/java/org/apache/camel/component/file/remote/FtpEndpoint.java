@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.FailedToCreateConsumerException;
@@ -24,28 +25,41 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.PlatformHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
- * FTP endpoint
+ * The ftp component is used for uploading or downloading files from FTP servers.
  */
+@UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP",
+        syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName",
+        consumerClass = FtpConsumer.class, label = "file")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
-
-    protected FTPClient ftpClient;
-    protected FTPClientConfig ftpClientConfig;
-    protected Map<String, Object> ftpClientParameters;
-    protected Map<String, Object> ftpClientConfigParameters;
     protected int soTimeout;
     protected int dataTimeout;
+
+    @UriParam
+    protected FtpConfiguration configuration;
+    @UriParam(label = "advanced")
+    protected FTPClientConfig ftpClientConfig;
+    @UriParam(label = "advanced", prefix = "ftpClientConfig.", multiValue = true)
+    protected Map<String, Object> ftpClientConfigParameters;
+    @UriParam(label = "advanced", prefix = "ftpClient.", multiValue = true)
+    protected Map<String, Object> ftpClientParameters;
+    @UriParam(label = "advanced")
+    protected FTPClient ftpClient;
 
     public FtpEndpoint() {
     }
 
-    public FtpEndpoint(String uri, RemoteFileComponent<FTPFile> component, RemoteFileConfiguration configuration) {
+    public FtpEndpoint(String uri, RemoteFileComponent<FTPFile> component, FtpConfiguration configuration) {
         super(uri, component, configuration);
+        this.configuration = configuration;
     }
 
     @Override
@@ -79,6 +93,10 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             client = createFtpClient();
         }
 
+        // use configured buffer size which is larger and therefore faster (as the default is no buffer)
+        if (getConfiguration().getReceiveBufferSize() > 0) {
+            client.setBufferSize(getConfiguration().getReceiveBufferSize());
+        }
         // set any endpoint configured timeouts
         if (getConfiguration().getConnectTimeout() > -1) {
             client.setConnectTimeout(getConfiguration().getConnectTimeout());
@@ -88,19 +106,32 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
         dataTimeout = getConfiguration().getTimeout();
 
+        if (getConfiguration().getActivePortRange() != null) {
+            // parse it as min-max
+            String[] parts = getConfiguration().getActivePortRange().split("-");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("The option activePortRange should have syntax: min-max");
+            }
+            int min = getCamelContext().getTypeConverter().mandatoryConvertTo(int.class, parts[0]);
+            int max = getCamelContext().getTypeConverter().mandatoryConvertTo(int.class, parts[1]);
+            log.debug("Using active port range: {}-{}", min, max);
+            client.setActivePortRange(min, max);
+        }
+
         // then lookup ftp client parameters and set those
         if (ftpClientParameters != null) {
+            Map<String, Object> localParameters = new HashMap<String, Object>(ftpClientParameters);
             // setting soTimeout has to be done later on FTPClient (after it has connected)
-            Object timeout = ftpClientParameters.remove("soTimeout");
+            Object timeout = localParameters.remove("soTimeout");
             if (timeout != null) {
                 soTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
             }
             // and we want to keep data timeout so we can log it later
-            timeout = ftpClientParameters.remove("dataTimeout");
+            timeout = localParameters.remove("dataTimeout");
             if (timeout != null) {
                 dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
             }
-            IntrospectionSupport.setProperties(client, ftpClientParameters);
+            setProperties(client, localParameters);
         }
         
         if (ftpClientConfigParameters != null) {
@@ -108,7 +139,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             if (ftpClientConfig == null) {
                 ftpClientConfig = new FTPClientConfig();
             }
-            IntrospectionSupport.setProperties(ftpClientConfig, ftpClientConfigParameters);
+            Map<String, Object> localConfigParameters = new HashMap<String, Object>(ftpClientConfigParameters);
+            setProperties(ftpClientConfig, localConfigParameters);
         }
 
         if (dataTimeout > 0) {
@@ -116,8 +148,10 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Created FTPClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}]: {}", 
-                    new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client});
+            log.debug("Created FTPClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+                            + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
+                    new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
+                            client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client});
         }
 
         FtpOperations operations = new FtpOperations(client, getFtpClientConfig());
@@ -126,7 +160,20 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     protected FTPClient createFtpClient() throws Exception {
-        return new FTPClient();
+        FTPClient client = new FTPClient();
+        // If we're in an OSGI environment, set the parser factory to
+        // OsgiParserFactory, because commons-net uses Class.forName in their
+        // default ParserFactory
+        if (isOsgi()) {
+            ClassResolver cr = getCamelContext().getClassResolver();
+            OsgiParserFactory opf = new OsgiParserFactory(cr);
+            client.setParserFactory(opf);
+        }
+        return client;
+    }
+
+    private boolean isOsgi() {
+        return PlatformHelper.isOsgiContext(getCamelContext());
     }
 
     @Override
@@ -134,25 +181,26 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         if (configuration == null) {
             configuration = new FtpConfiguration();
         }
-        return (FtpConfiguration)configuration;
+        return configuration;
     }
 
     @Override
     public void setConfiguration(GenericFileConfiguration configuration) {
-        setConfiguration((FtpConfiguration)configuration);
-    }
-
-    public void setConfiguration(FtpConfiguration configuration) {
         if (configuration == null) {
             throw new IllegalArgumentException("FtpConfiguration expected");
         }
-        this.configuration = configuration;
+        // need to set on both
+        this.configuration = (FtpConfiguration) configuration;
+        super.setConfiguration(configuration);
     }
 
     public FTPClient getFtpClient() {
         return ftpClient;
     }
 
+    /**
+     * To use a custom instance of FTPClient
+     */
     public void setFtpClient(FTPClient ftpClient) {
         this.ftpClient = ftpClient;
     }
@@ -161,6 +209,9 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         return ftpClientConfig;
     }
 
+    /**
+     * To use a custom instance of FTPClientConfig to configure the FTP client the endpoint should use.
+     */
     public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
         this.ftpClientConfig = ftpClientConfig;
     }
@@ -176,7 +227,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
      * Used by FtpComponent to provide additional parameters for the FTPClientConfig
      */
     void setFtpClientConfigParameters(Map<String, Object> ftpClientConfigParameters) {
-        this.ftpClientConfigParameters = ftpClientConfigParameters;
+        this.ftpClientConfigParameters = new HashMap<String, Object>(ftpClientConfigParameters);
     }
 
     public int getSoTimeout() {
@@ -184,12 +235,21 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     }
 
     /**
-     * Sets the soTimeout option.
-     * <p/>
-     * Used by FTPClient
+     * Sets the soTimeout on the FTP client.
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
+    }
+
+    public int getDataTimeout() {
+        return dataTimeout;
+    }
+
+    /**
+     * Sets the data timeout on the FTP client.
+     */
+    public void setDataTimeout(int dataTimeout) {
+        this.dataTimeout = dataTimeout;
     }
 
     @Override

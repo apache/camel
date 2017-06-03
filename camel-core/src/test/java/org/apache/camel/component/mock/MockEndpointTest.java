@@ -549,8 +549,8 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) == 444"
-                    + " evaluated as: 234 == 444 on Exchange[Message: Hello World]", e.getMessage());
+            String s = "Assertion error at index 1 on mock mock://result with predicate: header(bar) == 444 evaluated as: 234 == 444";
+            assertTrue(e.getMessage().startsWith(s));
         }
     }
 
@@ -567,8 +567,8 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) is null"
-                    + " evaluated as: 234 is null on Exchange[Message: Hello World]", e.getMessage());
+            String s = "Assertion error at index 1 on mock mock://result with predicate: header(bar) is null evaluated as: 234 is null";
+            assertTrue(e.getMessage().startsWith(s));
         }
     }
 
@@ -585,8 +585,8 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) instanceof"
-                    + " java.lang.String on Exchange[Message: Hello World]", e.getMessage());
+            String s = "Assertion error at index 1 on mock mock://result with predicate: header(bar) instanceof java.lang.String";
+            assertTrue(e.getMessage().startsWith(s));
         }
     }
 

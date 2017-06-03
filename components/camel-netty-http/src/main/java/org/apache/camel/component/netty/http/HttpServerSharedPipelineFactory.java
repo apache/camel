@@ -82,7 +82,7 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
             pipeline.addLast("ssl", sslHandler);
         }
 
-        pipeline.addLast("decoder", new HttpRequestDecoder());
+        pipeline.addLast("decoder", new HttpRequestDecoder(4096, configuration.getMaxHeaderSize(), 8192));
         if (configuration.isChunked()) {
             pipeline.addLast("aggregator", new HttpChunkAggregator(configuration.getChunkedMaxContentLength()));
         }
@@ -151,6 +151,10 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(false);
             engine.setNeedClientAuth(configuration.isNeedClientAuth());
+            if (configuration.getSslContextParameters() == null) {
+                // just set the enabledProtocols if the SslContextParameter doesn't set
+                engine.setEnabledProtocols(configuration.getEnabledProtocols().split(","));
+            }
             return new SslHandler(engine);
         }
 

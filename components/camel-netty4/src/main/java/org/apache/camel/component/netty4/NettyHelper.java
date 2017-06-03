@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.DefaultAddressedEnvelope;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,12 +93,16 @@ public final class NettyHelper {
             if (log.isDebugEnabled()) {
                 log.debug("Channel: {} remote address: {} writing body: {}", new Object[]{channel, remoteAddress, body});
             }
-            future = channel.write(body, remoteAddress);
+            // Need to create AddressedEnvelope to setup the address information here
+            DefaultAddressedEnvelope<Object, InetSocketAddress> ae =
+                new DefaultAddressedEnvelope<Object, InetSocketAddress>(body, (InetSocketAddress)remoteAddress);
+            future = channel.writeAndFlush(ae);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Channel: {} writing body: {}", new Object[]{channel, body});
             }
-            future = channel.write(body);
+            // In netty4 we need to call channel flush to send out the message 
+            future = channel.writeAndFlush(body);
         }
 
         if (listener != null) {
@@ -110,8 +117,11 @@ public final class NettyHelper {
      */
     public static void close(Channel channel) {
         if (channel != null) {
-            LOG.trace("Closing channel: {}", channel);
-            channel.close();
+            channel.close().addListener(new ChannelFutureListener() {
+                public void operationComplete(ChannelFuture future) {
+                    LOG.trace("Channel closed: {}", future.channel());
+                }
+            });
         }
     }
 

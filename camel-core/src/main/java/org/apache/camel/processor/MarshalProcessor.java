@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.io.ByteArrayOutputStream;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -25,8 +23,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
-import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -38,7 +37,8 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version
  */
-public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, Traceable, CamelContextAware {
+public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, Traceable, CamelContextAware, IdAware {
+    private String id;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
 
@@ -55,15 +55,7 @@ public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, 
 
         // if stream caching is enabled then use that so we can stream accordingly
         // for example to overflow to disk for big streams
-        CachedOutputStream cos;
-        ByteArrayOutputStream os;
-        if (exchange.getContext().getStreamCachingStrategy().isEnabled()) {
-            cos = new CachedOutputStream(exchange);
-            os = null;
-        } else {
-            cos = null;
-            os = new ByteArrayOutputStream();
-        }
+        OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
         Message in = exchange.getIn();
         Object body = in.getBody();
@@ -74,15 +66,9 @@ public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, 
         out.copyFrom(in);
 
         try {
-            if (cos != null) {
-                dataFormat.marshal(exchange, body, cos);
-                out.setBody(cos.newStreamCache());
-            } else {
-                dataFormat.marshal(exchange, body, os);
-                byte[] data = os.toByteArray();
-                out.setBody(data);
-            }
-        } catch (Exception e) {
+            dataFormat.marshal(exchange, body, osb);
+            out.setBody(osb.build());
+        } catch (Throwable e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
             exchange.setException(e);
@@ -101,6 +87,14 @@ public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, 
         return "marshal[" + dataFormat + "]";
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -115,11 +109,14 @@ public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, 
         if (dataFormat instanceof CamelContextAware) {
             ((CamelContextAware) dataFormat).setCamelContext(camelContext);
         }
-        ServiceHelper.startService(dataFormat);
+        // add dataFormat as service which will also start the service
+        // (false => we handle the lifecycle of the dataFormat)
+        getCamelContext().addService(dataFormat, false, true);
     }
 
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(dataFormat);
+        getCamelContext().removeService(dataFormat);
     }
 }

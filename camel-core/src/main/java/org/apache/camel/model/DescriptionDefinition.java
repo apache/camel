@@ -22,23 +22,30 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
+import org.apache.camel.spi.Metadata;
+
 /**
- * Represents a description element which can be used on any element in the EIP route
+ * To provide comments about the node.
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "description")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DescriptionDefinition {
     @XmlAttribute
     private String lang;
     @XmlAttribute
+    @Deprecated
     private Double layoutX;
     @XmlAttribute
+    @Deprecated
     private Double layoutY;
     @XmlAttribute
+    @Deprecated
     private Double layoutWidth;
     @XmlAttribute
+    @Deprecated
     private Double layoutHeight;
     @XmlValue
     private String text;
@@ -47,6 +54,9 @@ public class DescriptionDefinition {
         return lang;
     }
 
+    /**
+     * Language, such as en for english.
+     */
     public void setLang(String lang) {
         this.lang = lang;
     }
@@ -55,6 +65,9 @@ public class DescriptionDefinition {
         return text;
     }
 
+    /**
+     * The description as human readable text
+     */
     public void setText(String text) {
         this.text = text;
     }
@@ -63,6 +76,10 @@ public class DescriptionDefinition {
         return layoutHeight;
     }
 
+    /**
+     * Layout height
+     */
+    @Deprecated
     public void setLayoutHeight(Double layoutHeight) {
         this.layoutHeight = layoutHeight;
     }
@@ -71,6 +88,10 @@ public class DescriptionDefinition {
         return layoutWidth;
     }
 
+    /**
+     * Layout width
+     */
+    @Deprecated
     public void setLayoutWidth(Double layoutWidth) {
         this.layoutWidth = layoutWidth;
     }
@@ -79,6 +100,10 @@ public class DescriptionDefinition {
         return layoutX;
     }
 
+    /**
+     * Layout position X
+     */
+    @Deprecated
     public void setLayoutX(Double layoutX) {
         this.layoutX = layoutX;
     }
@@ -87,6 +112,10 @@ public class DescriptionDefinition {
         return layoutY;
     }
 
+    /**
+     * Layout position Y
+     */
+    @Deprecated
     public void setLayoutY(Double layoutY) {
         this.layoutY = layoutY;
     }

@@ -18,6 +18,8 @@ package org.apache.camel.component.jcr;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -37,13 +39,18 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/repository");
         super.setUp();
 
         Session session = openSession();
         Node node = session.getRootNode().addNode("home").addNode("test");
         node.setProperty("content.approved", APPROVED);
         node.setProperty("my.contents.property", CONTENT);
+        
+        
+        ValueFactory valFact = session.getValueFactory();
+        Value[] vals = new Value[] {valFact.createValue("value-1"), valFact.createValue("value-2")};
+        node.setProperty("my.multi.valued", vals);
+        
         identifier = node.getIdentifier();
 
         session.save();
@@ -53,8 +60,8 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
     @Test
     public void testJcrProducer() throws Exception {
         result.expectedMessageCount(1);
-        result.expectedPropertyReceived("my.contents.property", CONTENT);
-        result.expectedPropertyReceived("content.approved", APPROVED);
+        result.expectedHeaderReceived("my.contents.property", CONTENT);
+        result.expectedHeaderReceived("content.approved", APPROVED);
 
         Exchange exchange = createExchangeWithBody(identifier);
         template.send("direct:a", exchange);

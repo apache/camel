@@ -16,37 +16,23 @@
  */
 package org.apache.camel.component.netty4;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.File;
 
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.util.IOHelper;
+
 import org.junit.Test;
 
 public class NettyUDPAsyncTest extends BaseNettyTest {
 
-    @EndpointInject(uri = "mock:result")
-    protected MockEndpoint resultEndpoint;
-
     private void sendFile(String uri) throws Exception {
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                // Read from an input stream
-                InputStream is = IOHelper.buffered(new FileInputStream("src/test/resources/test.txt"));
-
-                byte buffer[] = IOConverter.toBytes(is);
-                is.close();
-
-                // Set the property of the charset encoding
-                exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
-                Message in = exchange.getIn();
-                in.setBody(buffer);
+                byte[] buffer = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, new File("src/test/resources/test.txt"));
+                exchange.setProperty(Exchange.CHARSET_NAME, "ASCII");
+                exchange.getIn().setBody(buffer);
             }
         });
     }
@@ -55,7 +41,10 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
     public void testUDPInOnlyWithNettyConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.message(0).body().startsWith("Song Of A Dream".getBytes());
+
         sendFile("netty4:udp://localhost:{{port}}?sync=false");
+
         mock.assertIsSatisfied();
     }
 

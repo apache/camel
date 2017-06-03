@@ -39,7 +39,7 @@ public class SpringIdempotentConsumerNoSkipDuplicateFilterTest extends SpringTes
         mock.expectedBodiesReceived("one", "two", "three");
 
         getMockEndpoint("mock:duplicate").expectedBodiesReceived("one", "two", "one");
-        getMockEndpoint("mock:duplicate").allMessages().property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        getMockEndpoint("mock:duplicate").allMessages().exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
 
         sendMessage("1", "one");
         sendMessage("2", "two");

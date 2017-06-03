@@ -30,6 +30,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringJmxRecipientListTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxRecipientListTest.xml");
     }
@@ -54,21 +59,21 @@ public class SpringJmxRecipientListTest extends SpringTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // this endpoint is part of the route and should be registered
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"direct://a\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"direct://a\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(name));
 
         // endpoints added after routes has been started is by default not registered
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://x\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://x\"");
         assertFalse("Should not be registered", mbeanServer.isRegistered(name));
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://y\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://y\"");
         assertFalse("Should not be registered", mbeanServer.isRegistered(name));
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://z\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://z\"");
         assertFalse("Should not be registered", mbeanServer.isRegistered(name));
 
         // however components is always registered
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=components,name=\"mock\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"mock\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(name));
     }
 

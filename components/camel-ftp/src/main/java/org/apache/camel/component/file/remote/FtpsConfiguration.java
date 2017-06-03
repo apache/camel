@@ -18,17 +18,26 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+
 /**
  * FTP Secure (FTP over SSL/TLS) configuration
  * 
  * @version 
  */
+@UriParams
 public class FtpsConfiguration extends FtpConfiguration {
 
+    @UriParam(defaultValue = "TLS", label = "security")
     private String securityProtocol = "TLS";
+    @UriParam(label = "security")
     private boolean isImplicit;
+    @UriParam(label = "security")
     private boolean disableSecureDataChannelDefaults;
+    @UriParam(label = "security")
     private String execProt;
+    @UriParam(label = "security")
     private Long execPbsz;
 
     public FtpsConfiguration() {

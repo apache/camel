@@ -35,7 +35,7 @@ public class BeanLookupUsingJndiRegistryIssueTest extends TestCase {
         camel.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").beanRef("foo");
+                from("direct:start").bean("foo");
             }
         });
         camel.start();

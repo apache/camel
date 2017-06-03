@@ -58,6 +58,11 @@ public @interface KeyValuePairField {
     String pattern() default "";
 
     /**
+     * @return String timezone ID
+     */
+    String timezone() default "";
+
+    /**
      * Position of the field in the message generated
      * 
      * @return int

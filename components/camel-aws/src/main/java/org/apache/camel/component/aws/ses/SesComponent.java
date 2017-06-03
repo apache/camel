@@ -20,18 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Defines the <a href="http://aws.amazon.com/ses/">AWS SES component</a> 
- */
-public class SesComponent extends DefaultComponent {
+public class SesComponent extends UriEndpointComponent {
 
     public SesComponent() {
+        super(SesEndpoint.class);
     }
 
     public SesComponent(CamelContext context) {
-        super(context);
+        super(context, SesEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -43,8 +41,8 @@ public class SesComponent extends DefaultComponent {
         }
         configuration.setFrom(remaining);
 
-        if (configuration.getAmazonSESClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonSESClient or accessKey and secretKey must be specified");
+        if (configuration.getAmazonSESClient() == null) {
+            throw new IllegalArgumentException("AmazonSESClient must be specified");
         }
 
         return new SesEndpoint(uri, this, configuration);

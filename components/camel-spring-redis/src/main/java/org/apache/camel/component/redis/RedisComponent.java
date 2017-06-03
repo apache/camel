@@ -19,12 +19,18 @@ package org.apache.camel.component.redis;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link RedisEndpoint}.
  */
-public class RedisComponent extends DefaultComponent {
+public class RedisComponent extends UriEndpointComponent {
+
+    private final ExchangeConverter exchangeConverter = new ExchangeConverter();
+
+    public RedisComponent() {
+        super(RedisEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
         throws Exception {
@@ -43,5 +49,9 @@ public class RedisComponent extends DefaultComponent {
         if (hostAndPort.length > 1 && hostAndPort[1].length() > 0) {
             configuration.setPort(Integer.parseInt(hostAndPort[1]));
         }
+    }
+
+    public ExchangeConverter getExchangeConverter() {
+        return exchangeConverter;
     }
 }

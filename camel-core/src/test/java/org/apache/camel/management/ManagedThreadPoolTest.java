@@ -34,7 +34,7 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=\"threads1(threads)\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"threads1(threads)\"");
 
         Boolean shutdown = (Boolean) mbeanServer.getAttribute(on, "Shutdown");
         assertEquals(false, shutdown.booleanValue());
@@ -50,6 +50,9 @@ public class ManagedThreadPoolTest extends ManagementTestSupport {
 
         Long keepAlive = (Long) mbeanServer.getAttribute(on, "KeepAliveTime");
         assertEquals(60, keepAlive.intValue());
+
+        Boolean allow = (Boolean) mbeanServer.getAttribute(on, "AllowCoreThreadTimeout");
+        assertEquals(false, allow.booleanValue());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");

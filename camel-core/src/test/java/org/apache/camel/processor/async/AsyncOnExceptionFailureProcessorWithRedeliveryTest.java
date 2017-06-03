@@ -40,7 +40,7 @@ public class AsyncOnExceptionFailureProcessorWithRedeliveryTest extends ContextT
             fail("Should throw exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertEquals("Simulated error at attempt 1. Exchange[Message: Hello Camel]", cause.getMessage());
+            assertTrue(cause.getMessage().startsWith("Simulated error at attempt 1."));
         }
 
         assertMockEndpointsSatisfied();

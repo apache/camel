@@ -19,7 +19,7 @@ package org.apache.camel.dataformat.bindy.fixed.headerfooter;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 
-@FixedLengthRecord(isFooter = true)
+@FixedLengthRecord
 public class OrderFooter {
     
     @DataField(pos = 1, length = 1)

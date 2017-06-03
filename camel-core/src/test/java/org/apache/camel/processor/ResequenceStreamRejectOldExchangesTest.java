@@ -70,6 +70,8 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
         template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
 
+        Thread.sleep(500);
+
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
         template.sendBodyAndHeader("direct:start", "F", "seqno", 6);

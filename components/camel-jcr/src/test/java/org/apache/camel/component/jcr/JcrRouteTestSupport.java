@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jcr;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -33,12 +36,16 @@ import org.junit.Before;
  */
 public abstract class JcrRouteTestSupport extends CamelTestSupport {
 
+    protected static final String CONFIG_FILE = "target/test-classes/repository-simple-security.xml";
+
+    protected static final String REPO_PATH = "target/repository-simple-security";
+
     private Repository repository;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/repository");
+        deleteDirectory(REPO_PATH);
         super.setUp();
     }
 
@@ -52,8 +59,13 @@ public abstract class JcrRouteTestSupport extends CamelTestSupport {
 
     @Override
     protected Context createJndiContext() throws Exception {
+        File config = new File(CONFIG_FILE);
+        if (!config.exists()) {
+            throw new FileNotFoundException("Missing config file: " + config.getPath());
+        }
+        
         Context context = super.createJndiContext();
-        repository = new TransientRepository("target/repository.xml", "target/repository");
+        repository = new TransientRepository(CONFIG_FILE, REPO_PATH);
         context.bind("repository", repository);
         return context;
     }

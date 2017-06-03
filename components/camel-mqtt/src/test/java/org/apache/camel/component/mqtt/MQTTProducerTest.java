@@ -34,6 +34,7 @@ public class MQTTProducerTest extends MQTTBaseTest {
     @Test
     public void testProduce() throws Exception {
         MQTT mqtt = new MQTT();
+        mqtt.setHost(MQTTTestSupport.getHostForMQTTEndpoint());
         final BlockingConnection subscribeConnection = mqtt.blockingConnection();
         subscribeConnection.connect();
         Topic topic = new Topic(TEST_TOPIC, QoS.AT_MOST_ONCE);
@@ -70,7 +71,7 @@ public class MQTTProducerTest extends MQTTBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:foo").to("mqtt:boo?publishTopicName=" + TEST_TOPIC);
+                from("direct:foo").to("mqtt:boo?publishTopicName=" + TEST_TOPIC + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
             }
         };
     }

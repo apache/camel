@@ -18,6 +18,10 @@ package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.AcknowledgmentCode;
 
+/**
+ * @deprecated use {@link ca.uhn.hl7v2.AcknowledgmentCode}
+ */
+@Deprecated
 public enum AckCode {
     AA(false), CA(false), AR(true), CR(true), AE(true), CE(true);
 

@@ -16,37 +16,27 @@
  */
 package org.apache.camel.karaf.commands;
 
-import java.util.Set;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
+import org.apache.camel.commands.RouteResetStatsCommand;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.spi.ManagementAgent;
-import org.apache.felix.gogo.commands.Command;
+@Command(scope = "camel", name = "route-reset-stats", description = "Reset route performance stats from a CamelContext")
+@Service
+public class RouteResetStats extends CamelControllerImpl implements Action {
 
-/**
- * Command to reset route stats.
- */
-@Command(scope = "camel", name = "route-reset-stats", description = "Reset performance stats on a route or group of routes")
-public class RouteResetStats extends AbstractRouteCommand {
+    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
+    @Completion(CamelContextCompleter.class)
+    String context;
 
     @Override
-    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
-        ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
-        if (agent != null) {
-            MBeanServer mBeanServer = agent.getMBeanServer();
-
-            // reset route mbeans
-            ObjectName query = ObjectName.getInstance(agent.getMBeanObjectDomainName() + ":type=routes,*");
-            Set<ObjectName> set = mBeanServer.queryNames(query, null);
-            for (ObjectName routeMBean : set) {
-                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
-                if (camelId != null && camelId.equals(camelContext.getName())) {
-                    mBeanServer.invoke(routeMBean, "reset", new Object[]{true}, new String[]{"boolean"});
-                }
-            }
-        }
+    public Object execute() throws Exception {
+        RouteResetStatsCommand command = new RouteResetStatsCommand(context);
+        return command.execute(this, System.out, System.err);
     }
 
 }

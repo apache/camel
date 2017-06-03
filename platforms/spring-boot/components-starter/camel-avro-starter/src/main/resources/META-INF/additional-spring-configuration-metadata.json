@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.avro.enabled",
+      "description": "Enable avro component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.avro.enabled",
+      "description": "Enable avro dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -20,24 +20,31 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.CamelLogger;
 
 /**
- * A factory of {@link MockEndpoint} instances
+ * The <a href="http://camel.apache.org/mock.html">Mock Component</a> provides mock endpoints for testing.
  *
  * @version 
  */
-public class MockComponent extends DefaultComponent {
+public class MockComponent extends UriEndpointComponent {
+
+    public MockComponent() {
+        super(MockEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MockEndpoint endpoint = new MockEndpoint(uri, this);
+        endpoint.setName(remaining);
+
         Integer value = getAndRemoveParameter(parameters, "reportGroup", Integer.class);
         if (value != null) {
             Processor reporter = new ThroughputLogger(new CamelLogger("org.apache.camel.component.mock:" + remaining), value);
             endpoint.setReporter(reporter);
+            endpoint.setReportGroup(value);
         }
         return endpoint;
     }

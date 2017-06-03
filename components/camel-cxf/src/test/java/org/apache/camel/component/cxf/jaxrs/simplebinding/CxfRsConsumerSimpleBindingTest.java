@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,19 +36,19 @@ import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Order;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Product;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
@@ -62,17 +61,17 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceResource&bindingStyle=SimpleConsumer";
     
     private JAXBContext jaxb;
-    private HttpClient httpclient;
+    private CloseableHttpClient httpclient;
     
     public void setUp() throws Exception {
         super.setUp();
-        httpclient = new DefaultHttpClient();
+        httpclient = HttpClientBuilder.create().build();
         jaxb = JAXBContext.newInstance(CustomerList.class, Customer.class, Order.class, Product.class);
     }
     
     public void tearDown() throws Exception {
         super.tearDown();
-        httpclient.getConnectionManager().shutdown();
+        httpclient.close();
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -295,27 +294,27 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     @Test
     public void testMultipartPostWithParametersAndPayload() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/multipart/123?query=abcd");
-        MultipartEntity multipart = new MultipartEntity(HttpMultipartMode.STRICT);
-        multipart.addPart("part1", new FileBody(new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), "java.jpg"));
-        multipart.addPart("part2", new FileBody(new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), "java.jpg"));
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.STRICT);
+        builder.addBinaryBody("part1", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), ContentType.create("image/jpeg"), "java.jpg");
+        builder.addBinaryBody("part2", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), ContentType.create("image/jpeg"), "java.jpg");
         StringWriter sw = new StringWriter();
         jaxb.createMarshaller().marshal(new Customer(123, "Raul"), sw);
-        multipart.addPart("body", new StringBody(sw.toString(), "text/xml", Charset.forName("UTF-8")));
-        post.setEntity(multipart);
+        builder.addTextBody("body", sw.toString(), ContentType.create("text/xml", Consts.UTF_8));
+        post.setEntity(builder.build());
         HttpResponse response = httpclient.execute(post);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
     
     @Test
     public void testMultipartPostWithoutParameters() throws Exception {
-        HttpPost post = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/multipart");
-        MultipartEntity multipart = new MultipartEntity(HttpMultipartMode.STRICT);
-        multipart.addPart("part1", new FileBody(new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), "java.jpg"));
-        multipart.addPart("part2", new FileBody(new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), "java.jpg"));
+        HttpPost post = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/multipart/withoutParameters");
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.STRICT);
+        builder.addBinaryBody("part1", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), ContentType.create("image/jpeg"), "java.jpg");
+        builder.addBinaryBody("part2", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), ContentType.create("image/jpeg"), "java.jpg");
         StringWriter sw = new StringWriter();
         jaxb.createMarshaller().marshal(new Customer(123, "Raul"), sw);
-        multipart.addPart("body", new StringBody(sw.toString(), "text/xml", Charset.forName("UTF-8")));
-        post.setEntity(multipart);
+        builder.addTextBody("body", sw.toString(), ContentType.create("text/xml", Consts.UTF_8));
+        post.setEntity(builder.build());
         HttpResponse response = httpclient.execute(post);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }

@@ -81,7 +81,7 @@ public class JcloudsBlobStoreConsumer extends ScheduledBatchPollingConsumer {
                         Exchange exchange = endpoint.createExchange();
                         CachedOutputStream cos = new CachedOutputStream(exchange);
                         IOHelper.copy(body, cos);
-                        exchange.getIn().setBody(cos.getStreamCache());
+                        exchange.getIn().setBody(cos.newStreamCache());
                         exchange.setProperty(JcloudsConstants.BLOB_NAME, blobName);
                         queue.add(exchange);
                     }

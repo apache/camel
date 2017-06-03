@@ -51,8 +51,7 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
         notify.matchesMockWaitTime();
 
         assertTrue("Expected only 1 calls to process() (1 failure) but encountered "
-                   + getConditionalExceptionProcessor().getCount() + "."
-                   , getConditionalExceptionProcessor().getCount() == 1);
+                   + getConditionalExceptionProcessor().getCount() + ".", getConditionalExceptionProcessor().getCount() == 1);
     }
     
 }

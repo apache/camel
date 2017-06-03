@@ -23,13 +23,16 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * A processor which sets the body on the IN or OUT message with an {@link Expression}
  */
-public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
+public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+    private String id;
     private final Expression expression;
 
     public SetBodyProcessor(Expression expression) {
@@ -45,20 +48,31 @@ public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, 
         try {
             Object newBody = expression.evaluate(exchange, Object.class);
 
+            if (exchange.getException() != null) {
+                // the expression threw an exception so we should break-out
+                callback.done(true);
+                return true;
+            }
+
             boolean out = exchange.hasOut();
             Message old = out ? exchange.getOut() : exchange.getIn();
 
             // create a new message container so we do not drag specialized message objects along
-            Message msg = new DefaultMessage();
-            msg.copyFrom(old);
-            msg.setBody(newBody);
+            // but that is only needed if the old message is a specialized message
+            boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
 
-            if (out) {
-                exchange.setOut(msg);
+            if (copyNeeded) {
+                Message msg = new DefaultMessage(exchange.getContext());
+                msg.copyFromWithNewBody(old, newBody);
+
+                // replace message on exchange
+                ExchangeHelper.replaceMessage(exchange, msg, false);
             } else {
-                exchange.setIn(msg);
+                // no copy needed so set replace value directly
+                old.setBody(newBody);
             }
-        } catch (Exception e) {
+
+        } catch (Throwable e) {
             exchange.setException(e);
         }
 
@@ -73,6 +87,18 @@ public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public String getTraceLabel() {
         return "setBody[" + expression + "]";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     @Override

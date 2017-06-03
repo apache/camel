@@ -57,7 +57,7 @@ public class RedisKeyTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteDEL() throws Exception {
-        Collection<String> keys = new HashSet<String>();
+        Collection<String> keys = new HashSet<>();
         keys.add("key1");
         keys.add("key2");
         sendHeaders(
@@ -109,7 +109,7 @@ public class RedisKeyTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteKEYS() throws Exception {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key1");
         keys.add("key2");
         when(redisTemplate.keys(anyString())).thenReturn(keys);
@@ -211,7 +211,7 @@ public class RedisKeyTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSORT() throws Exception {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         list.add(5);
         when(redisTemplate.sort(any(SortQuery.class))).thenReturn(list);
 

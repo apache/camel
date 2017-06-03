@@ -20,13 +20,17 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * For Ruby expressions and predicates
  *
  * @version 
  */
+@Metadata(firstVersion = "1.0.0", label = "language,script", title = "Ruby")
 @XmlRootElement(name = "ruby")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class RubyExpression extends ExpressionDefinition {
 
     public RubyExpression() {

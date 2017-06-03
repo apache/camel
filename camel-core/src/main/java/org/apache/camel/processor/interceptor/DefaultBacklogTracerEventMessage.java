@@ -91,7 +91,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         sb.append(prefix).append("  <uid>").append(uid).append("</uid>\n");
         String ts = new SimpleDateFormat(TIMESTAMP_FORMAT).format(timestamp);
         sb.append(prefix).append("  <timestamp>").append(ts).append("</timestamp>\n");
-        sb.append(prefix).append("  <routeId>").append(routeId).append("</routeId>\n");
+        // route id is optional and we then use an empty value for no route id
+        sb.append(prefix).append("  <routeId>").append(routeId != null ? routeId : "").append("</routeId>\n");
         if (toNode != null) {
             sb.append(prefix).append("  <toNode>").append(toNode).append("</toNode>\n");
         } else {

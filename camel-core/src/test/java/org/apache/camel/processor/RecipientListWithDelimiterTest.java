@@ -52,6 +52,23 @@ public class RecipientListWithDelimiterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testRecipientListWithDelimiterDisabled() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:a").recipientList(header("myHeader"), "false");
+            }
+        });
+        context.start();
+
+        MockEndpoint xyz = getMockEndpoint("mock:falseDelimiterTest");
+        xyz.expectedBodiesReceived("answer");
+
+        template.sendBodyAndHeader("direct:a", "answer", "myHeader", "mock:falseDelimiterTest");
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testRecipientListWithTokenizer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

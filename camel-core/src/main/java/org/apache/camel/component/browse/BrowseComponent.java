@@ -19,16 +19,24 @@ package org.apache.camel.component.browse;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * The <a href="http://camel.apache.org/browse.html">browse</a> component.
+ * The <a href="http://camel.apache.org/browse.html">Browse Component</a> provides a simple
+ * <a href="http://camel.apache.org/browsableendpoint.html">BrowsableEndpoint</a> for testing visualization or debugging.
  *
  * @version 
  */
-public class BrowseComponent extends DefaultComponent {
+public class BrowseComponent extends UriEndpointComponent {
+
+    public BrowseComponent() {
+        super(BrowseEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new BrowseEndpoint(uri, this);
+        BrowseEndpoint endpoint = new BrowseEndpoint(uri, this);
+        endpoint.setName(remaining);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 }

@@ -41,6 +41,8 @@ public class PredicateBuilderConcurrentTest extends ContextTestSupport {
     }
 
     public void testPredicateBuilderConcurrent() throws Exception {
+        context.start();
+
         List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
 
         ExecutorService pool = Executors.newFixedThreadPool(10);

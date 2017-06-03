@@ -37,7 +37,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion()
+                onCompletion().parallelProcessing()
                     .to("mock:before")
                     .delay(1000)
                     .setBody(simple("OnComplete:${body}"))
@@ -67,7 +67,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion()
+                onCompletion().parallelProcessing()
                     .to("mock:before")
                     .delay(1000)
                     .setBody(simple("OnComplete:${body}"))
@@ -101,7 +101,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion().useOriginalBody()
+                onCompletion().useOriginalBody().parallelProcessing()
                     .to("mock:before")
                     .delay(1000)
                     .setBody(simple("OnComplete:${body}"))
@@ -131,7 +131,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion().useOriginalBody()
+                onCompletion().useOriginalBody().parallelProcessing()
                     .to("mock:before")
                     .delay(1000)
                     .setBody(simple("OnComplete:${body}"))
@@ -166,7 +166,7 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion()
+                onCompletion().parallelProcessing()
                     .to("mock:before")
                     .delay(1000)
                     .setBody(simple("OnComplete:${body}"))

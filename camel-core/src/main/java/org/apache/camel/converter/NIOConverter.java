@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public final class NIOConverter {
+
     private static final Logger LOG = LoggerFactory.getLogger(NIOConverter.class);
 
     /**
@@ -47,12 +48,14 @@ public final class NIOConverter {
 
     @Converter
     public static byte[] toByteArray(ByteBuffer buffer) {
-        return buffer.array();
+        byte[] bArray = new byte[buffer.limit()];
+        buffer.get(bArray);
+        return bArray;
     }
 
     @Converter
     public static String toString(ByteBuffer buffer, Exchange exchange) throws IOException {
-        return IOConverter.toString(buffer.array(), exchange);
+        return IOConverter.toString(toByteArray(buffer), exchange);
     }
 
     @Converter
@@ -97,6 +100,7 @@ public final class NIOConverter {
             bytes = value.getBytes();
         }
         buf.put(bytes);
+        buf.flip();
         return buf;
     }
 
@@ -104,6 +108,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Short value) {
         ByteBuffer buf = ByteBuffer.allocate(2);
         buf.putShort(value);
+        buf.flip();
         return buf;
     }
 
@@ -111,6 +116,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Integer value) {
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putInt(value);
+        buf.flip();
         return buf;
     }
 
@@ -118,6 +124,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Long value) {
         ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putLong(value);
+        buf.flip();
         return buf;
     }
 
@@ -125,6 +132,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Float value) {
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putFloat(value);
+        buf.flip();
         return buf;
     }
 
@@ -132,6 +140,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Double value) {
         ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putDouble(value);
+        buf.flip();
         return buf;
     }
 

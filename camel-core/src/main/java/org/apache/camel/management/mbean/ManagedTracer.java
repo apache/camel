@@ -59,6 +59,14 @@ public class ManagedTracer implements NotificationSenderAware, ManagedTracerMBea
         return tracer;
     }
 
+    public String getCamelId() {
+        return camelContext.getName();
+    }
+
+    public String getCamelManagementName() {
+        return camelContext.getManagementName();
+    }
+
     public boolean getEnabled() {
         return tracer.isEnabled();
     }
@@ -257,6 +265,21 @@ public class ManagedTracer implements NotificationSenderAware, ManagedTracerMBea
         tracer.getDefaultTraceFormatter().setShowProperties(showProperties);
     }
 
+    public boolean getFormatterMultiline() {
+        if (tracer.getDefaultTraceFormatter() == null) {
+            return false;
+        }
+        return tracer.getDefaultTraceFormatter().isMultiline();
+    }
+
+    public void setFormatterMultiline(boolean multiline) {
+        if (tracer.getDefaultTraceFormatter() == null) {
+            return;
+        }
+        tracer.getDefaultTraceFormatter().setMultiline(multiline);
+    }
+
+    
     public boolean getFormatterShowNode() {
         if (tracer.getDefaultTraceFormatter() == null) {
             return false;

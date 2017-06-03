@@ -17,6 +17,7 @@
 package org.apache.camel.component.jcr;
 
 import java.io.File;
+
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.security.AccessControlList;
@@ -29,7 +30,6 @@ import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.TransientRepository;
-
 import org.junit.Before;
 
 /**
@@ -40,27 +40,22 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
 
     protected static final String BASE_REPO_PATH = "/home/test";
 
-    private static final String CONFIG_FILE = "target/test-classes/repository_with_auth.xml";
+    protected static final String REPO_PATH = "target/repository";
 
     private Repository repository;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/repository");
+        deleteDirectory(REPO_PATH);
         super.setUp();
     }
 
     @Override
     protected Context createJndiContext() throws Exception {
         Context context = super.createJndiContext();
-
-        File config = new File(CONFIG_FILE);
-        if (!config.exists()) {
-            throw new Exception("missing config file: " + config.getPath());
-        }
-        repository = new TransientRepository(CONFIG_FILE,
-                "target/repository_with_auth");
+        
+        repository = new TransientRepository(new File(REPO_PATH));
 
         // set up a user to authenticate
         SessionImpl session = (SessionImpl) repository
@@ -71,20 +66,19 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
             user = userManager.createUser("test", "quatloos");
         }
         // set up permissions
-        String permissionsPath = session.getRootNode().getPath();
+        String path = session.getRootNode().getPath();
         AccessControlManager accessControlManager = session
                 .getAccessControlManager();
         AccessControlPolicyIterator acls = accessControlManager
-                .getApplicablePolicies(permissionsPath);
+                .getApplicablePolicies(path);
+        AccessControlList acl = null;
         if (acls.hasNext()) {
-            AccessControlList acl = (AccessControlList) acls.nextAccessControlPolicy();
-            acl.addAccessControlEntry(user.getPrincipal(), accessControlManager
-                    .getSupportedPrivileges(permissionsPath));
-            accessControlManager.setPolicy(permissionsPath, acl);
+            acl = (AccessControlList) acls.nextAccessControlPolicy();
         } else {
-            throw new Exception("could not set access control for path "
-                    + permissionsPath);
+            acl = (AccessControlList) accessControlManager.getPolicies(path)[0];
         }
+        acl.addAccessControlEntry(user.getPrincipal(), accessControlManager.getSupportedPrivileges(path));
+        accessControlManager.setPolicy(path, acl);
 
         session.save();
         session.logout();

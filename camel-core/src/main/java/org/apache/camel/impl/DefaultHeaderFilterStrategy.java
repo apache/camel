@@ -25,15 +25,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
- * The default header filtering strategy.  Users can configure filter by 
- * setting filter set and/or setting a regular expression.  Subclass can 
+ * The default header filtering strategy. Users can configure filter by
+ * setting filter set and/or setting a regular expression. Subclass can
  * add extended filter logic in 
  * {@link #extendedFilter(org.apache.camel.spi.HeaderFilterStrategy.Direction, String, Object, org.apache.camel.Exchange)}
  * 
- * Filters are associated with directions (in or out).  "In" direction is 
- * referred to propagating headers "to" Camel message.  The "out" direction
+ * Filters are associated with directions (in or out). "In" direction is
+ * referred to propagating headers "to" Camel message. The "out" direction
  * is opposite which is referred to propagating headers from Camel message
- * to a native message like JMS and CXF message.  You can see example of
+ * to a native message like JMS and CXF message. You can see example of
  * DefaultHeaderFilterStrategy are being extended and invoked in camel-jms 
  * and camel-cxf components.
  *
@@ -49,6 +49,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     private boolean lowerCase;
     private boolean allowNullValues;
+    private boolean caseInsensitive;
     
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
         return doFiltering(Direction.OUT, headerName, headerValue, exchange);
@@ -59,7 +60,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Gets the "out" direction filter set.  The "out" direction is referred to 
+     * Gets the "out" direction filter set. The "out" direction is referred to
      * copying headers from a Camel message to an external message.
      * 
      * @return a set that contains header names that should be excluded.
@@ -73,7 +74,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the "out" direction filter set.  The "out" direction is referred to 
+     * Sets the "out" direction filter set. The "out" direction is referred to
      * copying headers from a Camel message to an external message.
      *
      * @param value  the filter
@@ -83,9 +84,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Gets the "out" direction filter regular expression {@link Pattern}.  The
+     * Gets the "out" direction filter regular expression {@link Pattern}. The
      * "out" direction is referred to copying headers from Camel message to
-     * an external message.  If the pattern matches a header, the header will 
+     * an external message. If the pattern matches a header, the header will
      * be filtered out. 
      * 
      * @return regular expression filter pattern
@@ -95,9 +96,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the "out" direction filter regular expression {@link Pattern}.  The
+     * Sets the "out" direction filter regular expression {@link Pattern}. The
      * "out" direction is referred to copying headers from Camel message to
-     * an external message.  If the pattern matches a header, the header will 
+     * an external message. If the pattern matches a header, the header will
      * be filtered out. 
      * 
      * @param value regular expression filter pattern
@@ -111,7 +112,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
     
     /**
-     * Gets the "in" direction filter set.  The "in" direction is referred to 
+     * Gets the "in" direction filter set. The "in" direction is referred to
      * copying headers from an external message to a Camel message.
      * 
      * @return a set that contains header names that should be excluded.
@@ -124,7 +125,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Sets the "in" direction filter set.  The "in" direction is referred to 
+     * Sets the "in" direction filter set. The "in" direction is referred to
      * copying headers from an external message to a Camel message.
      *
      * @param value the filter
@@ -134,9 +135,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Gets the "in" direction filter regular expression {@link Pattern}.  The
+     * Gets the "in" direction filter regular expression {@link Pattern}. The
      * "in" direction is referred to copying headers from an external message
-     * to a Camel message.  If the pattern matches a header, the header will 
+     * to a Camel message. If the pattern matches a header, the header will
      * be filtered out. 
      * 
      * @return regular expression filter pattern
@@ -146,9 +147,9 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
     
     /**
-     * Sets the "in" direction filter regular expression {@link Pattern}.  The
+     * Sets the "in" direction filter regular expression {@link Pattern}. The
      * "in" direction is referred to copying headers from an external message
-     * to a Camel message.  If the pattern matches a header, the header will 
+     * to a Camel message. If the pattern matches a header, the header will
      * be filtered out. 
      * 
      * @param value regular expression filter pattern
@@ -163,8 +164,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Gets the isLowercase property which is a boolean to determine
-     * whether header names should be converted to lowercase before
-     * checking it the filter Set.  It does not affect filtering using
+     * whether header names should be converted to lower case before
+     * checking it with the filter Set. It does not affect filtering using
      * regular expression pattern.
      */
     public boolean isLowerCase() {
@@ -173,12 +174,36 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     
     /**
      * Sets the isLowercase property which is a boolean to determine
-     * whether header names should be converted to lowercase before
-     * checking it the filter Set.  It does not affect filtering using
+     * whether header names should be converted to lower case before
+     * checking it with the filter Set. It does not affect filtering using
      * regular expression pattern.
      */
     public void setLowerCase(boolean value) {
         lowerCase = value;
+    }
+
+    /**
+     * Gets the caseInsensitive property which is a boolean to determine
+     * whether header names should be case insensitive when checking it 
+     * with the filter set.
+     * It does not affect filtering using regular expression pattern.
+     * 
+     * @return <tt>true</tt> if header names is case insensitive. 
+     */
+    public boolean isCaseInsensitive() {
+        return caseInsensitive;
+    }
+
+    /**
+     * Sets the caseInsensitive property which is a boolean to determine
+     * whether header names should be case insensitive when checking it 
+     * with the filter set.
+     * It does not affect filtering using regular expression pattern,
+     * 
+     * @param caseInsensitive <tt>true</tt> if header names is case insensitive.
+     */
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
     }
     
     public boolean isAllowNullValues() {
@@ -218,7 +243,13 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         }
             
         if (filter != null) {
-            if (isLowerCase()) {
+            if (isCaseInsensitive()) {
+                for (String filterString : filter) {
+                    if (filterString.equalsIgnoreCase(headerName)) {
+                        return true;
+                    }
+                }
+            } else if (isLowerCase()) {
                 if (filter.contains(headerName.toLowerCase(Locale.ENGLISH))) {
                     return true;
                 }
@@ -228,12 +259,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
                 }
             }
         }
-            
-        if (extendedFilter(direction, headerName, headerValue, exchange)) {
-            return true;
-        }
-            
-        return false;
+
+        return extendedFilter(direction, headerName, headerValue, exchange);
     }
 
 }

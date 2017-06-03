@@ -18,7 +18,6 @@ package org.apache.camel.builder.xml;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,7 +50,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
@@ -79,7 +77,7 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  * <p/>
  * This implementation is thread safe by using thread locals and pooling to allow concurrency.
  * <p/>
- * <b>Important:</b> After configuring the {@link XPathBuilder} its adviced to invoke {@link #start()}
+ * <b>Important:</b> After configuring the {@link XPathBuilder} its advised to invoke {@link #start()}
  * to prepare the builder before using; though the builder will auto-start on first use.
  *
  * @see XPathConstants#NODESET
@@ -87,6 +85,7 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
 public class XPathBuilder extends ServiceSupport implements Expression, Predicate, NamespaceAware {
     private static final Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
+    private static final String SAXON_FACTORY_CLASS_NAME = "net.sf.saxon.xpath.XPathFactoryImpl";
     private static final String OBTAIN_ALL_NS_XPATH = "//*/namespace::*";
 
     private static volatile XPathFactory defaultXPathFactory;
@@ -106,6 +105,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     private volatile Class<?> resultType;
     private volatile QName resultQName = XPathConstants.NODESET;
     private volatile String objectModelUri;
+    private volatile String factoryClassName;
     private volatile DefaultNamespaceContext namespaceContext;
     private volatile boolean logNamespaces;
     private volatile XPathFunctionResolver functionResolver;
@@ -137,7 +137,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     }
 
     /**
-     * @param text The XPath expression
+     * @param text       The XPath expression
      * @param resultType The result type that the XPath expression will return.
      * @return A new XPathBuilder object
      */
@@ -196,6 +196,13 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
 
     /**
      * Evaluates the given xpath using the provided body.
+     * <p/>
+     * The evaluation uses by default {@link javax.xml.xpath.XPathConstants#NODESET} as the type
+     * used during xpath evaluation. The output from xpath is then afterwards type converted
+     * using Camel's type converter to the given type.
+     * <p/>
+     * If you want to evaluate xpath using a different type, then call {@link #setResultType(Class)}
+     * prior to calling this evaluate method.
      *
      * @param context the camel context
      * @param body    the body
@@ -232,6 +239,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         dummy.getIn().setBody(body);
 
         setResultQName(XPathConstants.STRING);
+        setResultType(String.class);
         try {
             return evaluate(dummy, String.class);
         } finally {
@@ -294,7 +302,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     }
 
     /**
-     * Sets the expression result type to the given {@code resultType} 
+     * Sets the expression result type to the given {@code resultType}
      *
      * @return the current builder
      */
@@ -316,6 +324,18 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return this;
     }
 
+
+    /**
+     * Sets the factory class name to use
+     *
+     * @return the current builder
+     */
+    public XPathBuilder factoryClassName(String factoryClassName) {
+        this.factoryClassName = factoryClassName;
+        return this;
+    }
+
+
     /**
      * Configures to use Saxon as the XPathFactory which allows you to use XPath 2.0 functions
      * which may not be part of the build in JDK XPath parser.
@@ -324,6 +344,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
      */
     public XPathBuilder saxon() {
         this.objectModelUri = SAXON_OBJECT_MODEL_URI;
+        this.factoryClassName = SAXON_FACTORY_CLASS_NAME;
         return this;
     }
 
@@ -469,8 +490,8 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     public String getHeaderName() {
         return headerName;
     }
-    
-    public void setHeaderName(String headerName) { 
+
+    public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
 
@@ -503,6 +524,10 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         this.namespaces.putAll(namespaces);
     }
 
+    public Map<String, String> getNamespaces() {
+        return namespaces;
+    }
+
     /**
      * Gets the {@link XPathFunction} for getting the input message body.
      * <p/>
@@ -519,9 +544,6 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return new XPathFunction() {
             @SuppressWarnings("rawtypes")
             public Object evaluate(List list) throws XPathFunctionException {
-                if (exchange == null) {
-                    return null;
-                }
                 return exchange.get().getIn().getBody();
             }
         };
@@ -547,7 +569,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return new XPathFunction() {
             @SuppressWarnings("rawtypes")
             public Object evaluate(List list) throws XPathFunctionException {
-                if (exchange != null && !list.isEmpty()) {
+                if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
                         String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
@@ -639,7 +661,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return new XPathFunction() {
             @SuppressWarnings("rawtypes")
             public Object evaluate(List list) throws XPathFunctionException {
-                if (exchange != null && !list.isEmpty()) {
+                if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
                         String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
@@ -678,7 +700,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return new XPathFunction() {
             @SuppressWarnings("rawtypes")
             public Object evaluate(List list) throws XPathFunctionException {
-                if (exchange != null && !list.isEmpty()) {
+                if (!list.isEmpty()) {
                     Object value = list.get(0);
                     if (value != null) {
                         String text = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
@@ -724,20 +746,30 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return logNamespaces;
     }
 
-    public String getObjectModelUri() {
-        return objectModelUri;
-    }
-
     /**
      * Enables Saxon on this particular XPath expression, as {@link #saxon()} sets the default static XPathFactory which may have already been initialised
      * by previous XPath expressions
      */
     public void enableSaxon() {
         this.setObjectModelUri(SAXON_OBJECT_MODEL_URI);
+        this.setFactoryClassName(SAXON_FACTORY_CLASS_NAME);
+
+    }
+
+    public String getObjectModelUri() {
+        return objectModelUri;
     }
 
     public void setObjectModelUri(String objectModelUri) {
         this.objectModelUri = objectModelUri;
+    }
+
+    public String getFactoryClassName() {
+        return factoryClassName;
+    }
+
+    public void setFactoryClassName(String factoryClassName) {
+        this.factoryClassName = factoryClassName;
     }
 
     // Implementation methods
@@ -861,9 +893,9 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         InputStream is = null;
         try {
             Object document;
-           
+
             // Check if we need to apply the XPath expression to a header
-            if (ObjectHelper.isNotEmpty(getHeaderName())) {         
+            if (ObjectHelper.isNotEmpty(getHeaderName())) {
                 String headerName = getHeaderName();
                 // only convert to input stream if really needed
                 if (isInputStreamNeeded(exchange, headerName)) {
@@ -883,7 +915,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
                     document = getDocument(exchange, body);
                 }
             }
-                    
+
             if (resultQName != null) {
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource) document;
@@ -996,7 +1028,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
                 }
                 if (answer == null) {
                     if (isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), IN_NAMESPACE)
-                        || isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), DEFAULT_NAMESPACE)) {
+                            || isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), DEFAULT_NAMESPACE)) {
                         String localPart = qName.getLocalPart();
                         if (localPart.equals("body") && argumentCount == 0) {
                             return getBodyFunction();
@@ -1042,7 +1074,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         Object body = exchange.getIn().getBody();
         return isInputStreamNeededForObject(exchange, body);
     }
-    
+
     /**
      * Checks whether we need an {@link InputStream} to access the message header.
      * <p/>
@@ -1082,7 +1114,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         // input stream is not needed otherwise
         return false;
     }
-    
+
     /**
      * Strategy method to extract the document from the exchange.
      */
@@ -1113,25 +1145,6 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
             } catch (Exception e) {
                 // we want to store the caused exception, if we could not convert
                 cause = e;
-            }
-        }
-
-        // okay we can try to remedy the failed conversion by some special types
-        if (answer == null) {
-            // let's try coercing some common types into something JAXP work with the best for special types
-            if (body instanceof WrappedFile) {
-                // special for files so we can work with them out of the box
-                InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, body);
-                answer = new InputSource(is);
-            } else if (body instanceof BeanInvocation) {
-                // if its a null bean invocation then handle that specially
-                BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, exchange, body);
-                if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
-                    // its a null argument from the bean invocation so use null as answer
-                    answer = null;
-                }
-            } else if (body instanceof String) {
-                answer = new InputSource(new StringReader((String) body));
             }
         }
 
@@ -1195,42 +1208,47 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
 
     protected synchronized XPathFactory createXPathFactory() throws XPathFactoryConfigurationException {
         if (objectModelUri != null) {
-            xpathFactory = XPathFactory.newInstance(objectModelUri);
+            String xpathFactoryClassName = factoryClassName;
+            if (objectModelUri.equals(SAXON_OBJECT_MODEL_URI) && ObjectHelper.isEmpty(xpathFactoryClassName)) {
+                xpathFactoryClassName = SAXON_FACTORY_CLASS_NAME;
+            }
+
+            xpathFactory = ObjectHelper.isEmpty(xpathFactoryClassName)
+                ? XPathFactory.newInstance(objectModelUri)
+                : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
+
             LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", xpathFactory);
             return xpathFactory;
         }
 
         if (defaultXPathFactory == null) {
-            initDefaultXPathFactory();
+            defaultXPathFactory = createDefaultXPathFactory();
         }
         return defaultXPathFactory;
     }
 
-    protected void initDefaultXPathFactory() throws XPathFactoryConfigurationException {
-        if (defaultXPathFactory == null) {
-            if (objectModelUri != null) {
-                defaultXPathFactory = XPathFactory.newInstance(objectModelUri);
-                LOG.info("Using objectModelUri " + objectModelUri + " when created default XPathFactory {}", defaultXPathFactory);
-            }
+    protected static XPathFactory createDefaultXPathFactory() throws XPathFactoryConfigurationException {
+        XPathFactory factory = null;
 
-            if (defaultXPathFactory == null) {
-                // read system property and see if there is a factory set
-                Properties properties = System.getProperties();
-                for (Map.Entry<Object, Object> prop : properties.entrySet()) {
-                    String key = (String) prop.getKey();
-                    if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
-                        String uri = ObjectHelper.after(key, ":");
-                        if (uri != null) {
-                            defaultXPathFactory = XPathFactory.newInstance(uri);
-                            LOG.info("Using system property {} with value {} when created default XPathFactory {}", new Object[]{key, uri, defaultXPathFactory});
-                        }
-                    }
+        // read system property and see if there is a factory set
+        Properties properties = System.getProperties();
+        for (Map.Entry<Object, Object> prop : properties.entrySet()) {
+            String key = (String) prop.getKey();
+            if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
+                String uri = ObjectHelper.after(key, ":");
+                if (uri != null) {
+                    factory = XPathFactory.newInstance(uri);
+                    LOG.info("Using system property {} with value {} when created default XPathFactory {}", new Object[]{key, uri, factory});
                 }
             }
-
-            defaultXPathFactory = XPathFactory.newInstance();
-            LOG.info("Created default XPathFactory {}", defaultXPathFactory);
         }
+
+        if (factory == null) {
+            factory = XPathFactory.newInstance();
+            LOG.info("Created default XPathFactory {}", factory);
+        }
+
+        return factory;
     }
 
 }

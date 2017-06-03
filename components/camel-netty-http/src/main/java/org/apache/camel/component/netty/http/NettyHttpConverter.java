@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
+import org.apache.camel.component.netty.NettyConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
@@ -88,7 +88,7 @@ public final class NettyHttpConverter {
 
     @Converter
     public static String toString(HttpResponse response, Exchange exchange) {
-        String contentType = response.getHeader(Exchange.CONTENT_TYPE);
+        String contentType = response.headers().get(Exchange.CONTENT_TYPE);
         String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
         if (charset == null && exchange != null) {
             charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
@@ -102,13 +102,12 @@ public final class NettyHttpConverter {
 
     @Converter
     public static byte[] toBytes(HttpResponse response, Exchange exchange) {
-        return response.getContent().toByteBuffer().array();
+        return NettyConverter.toByteArray(response.getContent(), exchange);
     }
 
     @Converter
     public static InputStream toInputStream(HttpResponse response, Exchange exchange) {
-        byte[] bytes = toBytes(response, exchange);
-        return new ByteArrayInputStream(bytes);
+        return NettyConverter.toInputStream(response.getContent(), exchange);
     }
 
 }

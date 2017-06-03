@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.sjms-batch.enabled",
+      "description": "Enable sjms-batch component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.sjms.enabled",
+      "description": "Enable sjms component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

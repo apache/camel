@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.reactive-streams.enabled",
+      "description": "Enable reactive-streams component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

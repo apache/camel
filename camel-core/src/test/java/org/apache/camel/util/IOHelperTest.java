@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
@@ -96,7 +97,7 @@ public class IOHelperTest extends TestCase {
     private File tempFile(String testname) throws Exception {
         return File.createTempFile(testname, "");
     }
-
+ 
     private void write(File file, String text) throws Exception {
         PrintWriter out = new PrintWriter(file);
         out.print(text);
@@ -104,7 +105,7 @@ public class IOHelperTest extends TestCase {
     }
 
     public void testCharsetName() throws Exception {
-        Exchange exchange = new DefaultExchange((CamelContext) null);
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
         assertNull(IOHelper.getCharsetName(exchange, false));
 
@@ -114,5 +115,14 @@ public class IOHelperTest extends TestCase {
         exchange.getIn().removeHeader(Exchange.CHARSET_NAME);
         exchange.setProperty(Exchange.CHARSET_NAME, "iso-8859-1");
         assertEquals("iso-8859-1", IOHelper.getCharsetName(exchange, false));
+        
+    }
+    
+    public void testGetCharsetNameFromContentType() throws Exception {
+        String charsetName = IOHelper.getCharsetNameFromContentType("text/html; charset=iso-8859-1");
+        assertEquals("iso-8859-1", charsetName);
+        
+        charsetName = IOHelper.getCharsetNameFromContentType("text/html");
+        assertEquals("UTF-8", charsetName);
     }
 }

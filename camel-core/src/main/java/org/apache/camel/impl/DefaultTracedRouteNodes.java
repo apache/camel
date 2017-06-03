@@ -24,13 +24,17 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.TracedRouteNodes;
 
 /**
- * @version 
+ * Default {@link org.apache.camel.spi.TracedRouteNodes}
+ *
+ * @deprecated use {@link Exchange#MESSAGE_HISTORY} instead.
  */
+@Deprecated
 public class DefaultTracedRouteNodes implements TracedRouteNodes {
     private final Stack<List<RouteNode>> routeNodes = new Stack<List<RouteNode>>();
     private final Map<ProcessorDefinition<?>, AtomicInteger> nodeCounter = new HashMap<ProcessorDefinition<?>, AtomicInteger>();

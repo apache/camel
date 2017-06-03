@@ -20,12 +20,15 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.javaconfig.test.JavaConfigContextLoader;
+import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
+import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.autowire.AutowiringContextConfig", loader = JavaConfigContextLoader.class)
+@RunWith(CamelSpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {AutowiringContextConfig.class}, loader = CamelSpringDelegatingTestContextLoader.class)
 public class AutodetectingConfigTest extends AbstractJUnit4SpringContextTests {
 
     @EndpointInject(uri = "mock:autowire")

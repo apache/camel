@@ -41,7 +41,7 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"seda://start\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"seda://start\"");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("seda://start", uri);
 
@@ -50,6 +50,9 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
 
         Integer size = (Integer) mbeanServer.getAttribute(name, "CurrentQueueSize");
         assertEquals(0, size.intValue());
+
+        Boolean singleton = (Boolean) mbeanServer.getAttribute(name, "Singleton");
+        assertEquals(true, singleton.booleanValue());
 
         // stop route
         context.stopRoute("foo");
@@ -64,6 +67,11 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
         assertEquals(1, size2.longValue());
 
         String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
+        assertNotNull(out);
+        // message body is not dumped when browsing exchange
+        assertFalse(out.contains("Hi World"));
+
+        out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{0}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
         assertTrue(out.contains("Hi World"));
 

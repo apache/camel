@@ -19,7 +19,6 @@ package org.apache.camel.component.http;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,13 +28,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class HttpGetTest extends CamelTestSupport {
     protected String expectedText = "activemq";
     
     @Test
-    @Ignore("ignore online tests, will be improved in Camel 2.3")
+    @Ignore("ignore online tests")
     public void testHttpGet() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
@@ -64,7 +62,6 @@ public class HttpGetTest extends CamelTestSupport {
 
     protected void checkHeaders(Map<String, Object> headers) {
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
-        
     }
 
     @Override
@@ -73,7 +70,7 @@ public class HttpGetTest extends CamelTestSupport {
             public void configure() {
                 getContext().addComponent("http2", new HttpComponent());
                 from("direct:start").setHeader(Exchange.HTTP_QUERY, constant("hl=en&q=activemq"))
-                    .to("http2://http://www.google.com/search").to("mock:results");
+                    .to("http2://www.google.com/search").to("mock:results");
             }
         };
     }

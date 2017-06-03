@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
  * which are annotated with {@link org.apache.camel.spi.UriEndpoint} to use the {@link UriParam} and {@link UriParams} annotations
  * to denote its parameters which can be specified via URI query parameters.
  */
+@Deprecated
 public class UriEndpointConfiguration implements EndpointConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(UriEndpointConfiguration.class);
 
@@ -76,17 +77,17 @@ public class UriEndpointConfiguration implements EndpointConfiguration {
         // lets try get the property regardless of if this maps to a valid property name
         // then if the introspection fails we will get a valid error otherwise
         // lets raise a warning afterwards that we should update the metadata on the endpoint class
-        T answer;
         try {
-            answer = (T)IntrospectionSupport.getProperty(endpoint, name);
+            @SuppressWarnings("unchecked")
+            T answer = (T)IntrospectionSupport.getProperty(endpoint, name);
+            if (config == null) {
+                warnMissingUriParamOnProperty(name);
+            }
+            return answer;
         } catch (Exception e) {
             throw new RuntimeCamelException(
                     "Failed to get property '" + name + "' on " + endpoint + " due " + e.getMessage(), e);
         }
-        if (config == null) {
-            warnMissingUriParamOnProperty(name);
-        }
-        return answer;
     }
 
     protected void warnMissingUriParamOnProperty(String name) {

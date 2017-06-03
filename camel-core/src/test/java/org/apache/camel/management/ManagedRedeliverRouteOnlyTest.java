@@ -44,7 +44,7 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
 
         Long num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, num.longValue());
@@ -61,7 +61,7 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.getManagementStrategy().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
+                context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
 
                 onException(Exception.class).handled(true)
                     .maximumRedeliveries(4).logStackTrace(false)

@@ -43,8 +43,10 @@ public class ManagementExampleTest extends CamelSpringTestSupport {
 
         // Find the endpoints
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
+        
         // now there is no managed endpoint for the dead queue
-        assertEquals(5, set.size()); 
+        // CAMEL-7076 there is no spring-event:default endpoint any more
+        assertEquals(4, set.size()); 
         
         // Find the routes
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);

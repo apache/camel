@@ -1,21 +1,22 @@
 <?xml version="1.0"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
@@ -23,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tooling</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.20.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-manual</artifactId>
@@ -38,7 +39,51 @@
       </dependency>
   </dependencies>
 
+  <profiles>
+     <profile>
+         <id>fastinstall</id>
+         <properties>
+             <generate.manual.skip.exec>true</generate.manual.skip.exec>
+             <skip.attach.manual>true</skip.attach.manual>
+         </properties>
+     </profile>
+  </profiles>
+
+  <properties>
+      <generate.manual.skip.exec>false</generate.manual.skip.exec>
+      <skip.attach.manual>false</skip.attach.manual>
+  </properties>
+
   <build>
+    <pluginManagement>
+        <plugins>
+            <!-- Eclipse m2e Lifecycle Management -->
+            <plugin>
+                <groupId>org.eclipse.m2e</groupId>
+                <artifactId>lifecycle-mapping</artifactId>
+                <version>${lifecycle-mapping-version}</version>
+                <configuration>
+                    <lifecycleMappingMetadata>
+                        <pluginExecutions>
+                            <pluginExecution>
+                                <pluginExecutionFilter>
+                                    <groupId>org.codehaus.mojo</groupId>
+                                    <artifactId>exec-maven-plugin</artifactId>
+                                    <versionRange>${exec-maven-plugin-version}</versionRange>
+                                    <goals>
+                                        <goal>java</goal>
+                                    </goals>
+                                </pluginExecutionFilter>
+                                <action>
+                                    <ignore />
+                                </action>
+                            </pluginExecution>
+                        </pluginExecutions>
+                    </lifecycleMappingMetadata>
+                </configuration>
+            </plugin>
+        </plugins>
+    </pluginManagement>
     <plugins>
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -66,7 +111,7 @@
                                 }
                                 }
                                 </style>
-                                
+
                                 <link href='http://camel.apache.org/styles/highlighter/styles/shCoreCamel.css' rel='stylesheet' type='text/css' />
                                 <link href='http://camel.apache.org/styles/highlighter/styles/shThemeCamel.css' rel='stylesheet' type='text/css' />
                                 <script src='http://camel.apache.org/styles/highlighter/scripts/shCore.js' type='text/javascript'></script>
@@ -74,13 +119,14 @@
                                 <script src='http://camel.apache.org/styles/highlighter/scripts/shBrushJava.js' type='text/javascript'></script>
                                 <script src='http://camel.apache.org/styles/highlighter/scripts/shBrushXml.js' type='text/javascript'></script>
                                 <script src='http://camel.apache.org/styles/highlighter/scripts/shBrushPlain.js' type='text/javascript'></script>
-                                
+
                                 <script type="text/javascript">
                                 SyntaxHighlighter.defaults['toolbar'] = false;
                                 SyntaxHighlighter.all();
                                 </script>
                             ]]></argument>
                             <argument>${project.build.directory}</argument>
+                            <argument>${generate.manual.skip.exec}</argument>
                         </arguments>
                     </configuration>
                 </execution>
@@ -97,6 +143,7 @@
               <goal>attach-artifact</goal>
             </goals>
             <configuration>
+              <skipAttach>${skip.attach.manual}</skipAttach>
               <artifacts>
                 <artifact>
                   <file>${project.build.directory}/site/manual/camel-manual-${project.version}.html</file>
@@ -106,7 +153,7 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>      
+      </plugin>
     </plugins>
   </build>
 

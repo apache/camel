@@ -43,7 +43,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
+        mock.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -64,7 +64,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
+        mock.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -82,7 +82,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
+        mock.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:result");
 
@@ -100,15 +100,15 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
+        mock.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
 
         MockEndpoint a = getMockEndpoint("mock:a");
         a.expectedMessageCount(1);
-        a.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://a");
+        a.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://a");
 
         MockEndpoint b = getMockEndpoint("mock:b");
         b.expectedMessageCount(1);
-        b.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://b");
+        b.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://b");
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:a,mock:b,mock:result");
 
@@ -126,11 +126,11 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
+        mock.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
 
         MockEndpoint tap = getMockEndpoint("mock:tap");
         tap.expectedMessageCount(1);
-        tap.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://tap");
+        tap.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://tap");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -156,8 +156,8 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
-        result.message(0).property(Exchange.FAILURE_ENDPOINT).isNull();
-        result.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
+        result.message(0).exchangeProperty(Exchange.FAILURE_ENDPOINT).isNull();
+        result.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://result");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -179,8 +179,8 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         MockEndpoint dead = getMockEndpoint("mock:dead");
-        dead.message(0).property(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://foo");
-        dead.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://dead");
+        dead.message(0).exchangeProperty(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://foo");
+        dead.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://dead");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -204,8 +204,8 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         MockEndpoint dead = getMockEndpoint("mock:dead");
-        dead.message(0).property(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://foo");
-        dead.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://dead");
+        dead.message(0).exchangeProperty(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://foo");
+        dead.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://dead");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -230,8 +230,8 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         MockEndpoint dead = getMockEndpoint("mock:dead");
-        dead.message(0).property(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://b");
-        dead.message(0).property(Exchange.TO_ENDPOINT).isEqualTo("mock://dead");
+        dead.message(0).exchangeProperty(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://b");
+        dead.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://dead");
 
         template.sendBody("direct:start", "Hello World");
 

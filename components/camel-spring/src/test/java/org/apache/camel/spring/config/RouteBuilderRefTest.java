@@ -17,6 +17,7 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,7 +33,7 @@ public class RouteBuilderRefTest extends XmlConfigTestSupport {
         assertValidContext(context);
 
         // we're done so let's properly close the application context
-        applicationContext.close();
+        IOHelper.close(applicationContext);
     }
 
 }

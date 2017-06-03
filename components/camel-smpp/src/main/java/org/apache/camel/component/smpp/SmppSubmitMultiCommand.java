@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jsmpp.bean.Address;
-import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
 import org.jsmpp.bean.MessageMode;
@@ -72,7 +72,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
                         submitMulti.getValidityPeriod(),
                         new RegisteredDelivery(submitMulti.getRegisteredDelivery()),
                         new ReplaceIfPresentFlag(submitMulti.getReplaceIfPresentFlag()),
-                        DataCoding.newInstance(submitMulti.getDataCoding()),
+                        DataCodings.newInstance(submitMulti.getDataCoding()),
                         submitMulti.getSmDefaultMsgId(),
                         submitMulti.getShortMessage(),
                         submitMulti.getOptionalParameters());
@@ -119,9 +119,8 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         }
     }
 
-    protected SubmitMulti[] createSubmitMulti(Exchange exchange) {
-        SmppSplitter splitter = createSplitter(exchange.getIn());
-        byte[][] segments = splitter.split(getShortMessage(exchange.getIn()));
+    protected SubmitMulti[] createSubmitMulti(Exchange exchange) throws SmppException {
+        byte[][] segments = splitBody(exchange.getIn());
 
         ESMClass esmClass;
         // multipart message
@@ -152,6 +151,8 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
 
         if (in.getHeaders().containsKey(SmppConstants.DATA_CODING)) {
             submitMulti.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, Byte.class));
+        } else if (in.getHeaders().containsKey(SmppConstants.ALPHABET)) {
+            submitMulti.setDataCoding(in.getHeader(SmppConstants.ALPHABET, Byte.class));
         } else {
             submitMulti.setDataCoding(config.getDataCoding());
         }

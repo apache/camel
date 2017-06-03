@@ -30,7 +30,6 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 
 import org.w3c.dom.Node;
-
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -38,35 +37,48 @@ import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
 import org.apache.camel.component.xmlsecurity.util.SameDocumentUriDereferencer;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test for the ECDSA algorithm.
+ * Test for the ECDSA algorithms
  */
 public class ECDSASignatureTest extends CamelTestSupport {
     
-    private static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    private static String payload;
+    private boolean canTest = true;
     
-    private boolean ibmJDK;
+    static {
+        boolean includeNewLine = true;
+        if (TestSupport.getJavaMajorVersion() >= 9) {
+            includeNewLine = false;
+        }
+        payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + (includeNewLine ? "\n" : "")
+            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    }
 
     public ECDSASignatureTest() throws Exception {
+        try {
+            // BouncyCastle is required for some algorithms
+            if (Security.getProvider("BC") == null) {
+                Constructor<?> cons;
+                Class<?> c = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
+                cons = c.getConstructor(new Class[] {});
 
-        // BouncyCastle is required for ECDSA support for JDK 1.6
-        if (isJava16()
-            && Security.getProvider("BC") == null) {
-            Constructor<?> cons = null;
-            Class<?> c = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
-            cons = c.getConstructor(new Class[] {});
-            
-            Provider provider = (java.security.Provider)cons.newInstance();
-            Security.insertProviderAt(provider, 2);
-        }
-        
-        // This test fails with the IBM JDK
-        if (isJavaVendor("IBM")) {
-            ibmJDK = true;
+                Provider provider = (java.security.Provider)cons.newInstance();
+                Security.insertProviderAt(provider, 2);
+            }
+
+            // This test fails with the IBM JDK
+            if (isJavaVendor("IBM")) {
+                canTest = false;
+            }
+        } catch (Exception e) {
+            System.err.println("Cannot test due " + e.getMessage());
+            log.warn("Cannot test due " + e.getMessage(), e);
+            canTest = false;
         }
     }
 
@@ -74,28 +86,80 @@ public class ECDSASignatureTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        registry.bind("accessor", getKeyAccessor());
-        registry.bind("selector", 
-                      KeySelector.singletonKeySelector(getCertificateFromKeyStore().getPublicKey()));
-        registry.bind("uriDereferencer", getSameDocumentUriDereferencer());
+        // This test fails with the IBM JDK
+        if (canTest) {
+            registry.bind("accessor", getKeyAccessor());
+            registry.bind("selector", KeySelector.singletonKeySelector(getCertificateFromKeyStore().getPublicKey()));
+            registry.bind("uriDereferencer", getSameDocumentUriDereferencer());
+        }
 
         return registry;
     }
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        if (ibmJDK) {
+        if (!canTest) {
             return new RouteBuilder[] {};
         }
         
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: ecdsa signature algorithm
-                from("direct:ecdsa")
-                    .to("xmlsecurity:sign://ecdsa?keyAccessor=#accessor"
+                from("direct:ecdsa_sha1")
+                    .to("xmlsecurity:sign:ecdsa_sha1?keyAccessor=#accessor"
                         + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1")
                         // .log("Body: + ${body}")
-                        .to("xmlsecurity:verify://ecdsa?keySelector=#selector")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_sha224")
+                    .to("xmlsecurity:sign:ecdsa_sha224?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_sha256")
+                    .to("xmlsecurity:sign:ecdsa_sha256?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_sha384")
+                    .to("xmlsecurity:sign:ecdsa_sha384?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_sha512")
+                    .to("xmlsecurity:sign:ecdsa_sha512?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
+                    .to("mock:result");
+                // END SNIPPET: ecdsa signature algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: ecdsa signature algorithm
+                from("direct:ecdsa_ripemd160")
+                    .to("xmlsecurity:sign:ecdsa_ripemd160?keyAccessor=#accessor"
+                        + "&signatureAlgorithm=http://www.w3.org/2007/05/xmldsig-more#ecdsa-ripemd160")
+                        .to("xmlsecurity:verify:ecdsa?keySelector=#selector")
                     .to("mock:result");
                 // END SNIPPET: ecdsa signature algorithm
             }
@@ -106,11 +170,61 @@ public class ECDSASignatureTest extends CamelTestSupport {
 
     @Test
     public void testECDSASHA1() throws Exception {
-        if (ibmJDK) {
+        if (!canTest) {
             return;
         }
         setupMock();
-        sendBody("direct:ecdsa", payload);
+        sendBody("direct:ecdsa_sha1", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSASHA224() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_sha224", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSASHA256() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_sha256", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSASHA384() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_sha384", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSASHA512() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_sha512", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testECDSARIPEMD160() throws Exception {
+        if (!canTest) {
+            return;
+        }
+        setupMock();
+        sendBody("direct:ecdsa_ripemd160", payload);
         assertMockEndpointsSatisfied();
     }
 
@@ -127,7 +241,13 @@ public class ECDSASignatureTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         disableJMX();
-        super.setUp();
+        try {
+            super.setUp();
+        } catch (Exception e) {
+            System.err.println("Cannot test due " + e.getMessage());
+            log.warn("Cannot test due " + e.getMessage(), e);
+            canTest = false;
+        }
     }
 
     private static KeyStore loadKeystore() throws Exception {

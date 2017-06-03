@@ -45,8 +45,7 @@ public class MustacheLetterTest extends CamelTestSupport {
     public void testMustacheLetter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Dear Ibsen, Claus\n\nThanks for the order of Camel in Action."
-                + "\n\nRegards Camel Riders Bookstore\nPS: Next beer is on me, James");
+        mock.message(0).body().contains("Thanks for the order of Camel in Action");
 
         template.send("direct:a", createLetter());
 

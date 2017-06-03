@@ -51,6 +51,17 @@ public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport
         assertEquals(cxf2, endpoint.getBus());
         assertEquals("snarf", endpoint.getBus().getProperty("foo"));
         
+        
+    }
+    
+    @Test
+    public void testBusInjectionOnURI() throws Exception {
+        CamelContext camelContext = (CamelContext) ctx.getBean("camel");
+        CxfEndpoint endpoint = camelContext.getEndpoint("cxf:bean:serviceEndpoint?bus=#cxf1", CxfEndpoint.class);
+        assertEquals(ctx.getBean("cxf1"), endpoint.getBus());
+        
+        endpoint = camelContext.getEndpoint("cxf:http://localhost:" + port1 + "/CxfEndpointBeanBusSettingTest/router1?bus=#cxf1", CxfEndpoint.class);
+        assertEquals(ctx.getBean("cxf1"), endpoint.getBus());
     }
     
 

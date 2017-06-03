@@ -28,9 +28,11 @@ import javax.xml.bind.annotation.XmlType;
  * @version 
  */
 @XmlType
-@XmlEnum(String.class)
+@XmlEnum
 public enum ExchangePattern {
     InOnly, RobustInOnly, InOut, InOptionalOut, OutOnly, RobustOutOnly, OutIn, OutOptionalIn;
+
+    // TODO: We should deprecate and only support InOnly, InOut, and InOptionalOut
 
     protected static final Map<String, ExchangePattern> MAP = new HashMap<String, ExchangePattern>();
 
@@ -42,7 +44,7 @@ public enum ExchangePattern {
         case InOnly:
             return "http://www.w3.org/ns/wsdl/in-only";
         case InOptionalOut:
-            return "http://www.w3.org/ns/wsdl/in-optional-out";
+            return "http://www.w3.org/ns/wsdl/in-opt-out";
         case InOut:
             return "http://www.w3.org/ns/wsdl/in-out";
         case OutIn:
@@ -50,7 +52,7 @@ public enum ExchangePattern {
         case OutOnly:
             return "http://www.w3.org/ns/wsdl/out-only";
         case OutOptionalIn:
-            return "http://www.w3.org/ns/wsdl/out-optional_in";
+            return "http://www.w3.org/ns/wsdl/out-opt-in";
         case RobustInOnly:
             return "http://www.w3.org/ns/wsdl/robust-in-only";
         case RobustOutOnly:

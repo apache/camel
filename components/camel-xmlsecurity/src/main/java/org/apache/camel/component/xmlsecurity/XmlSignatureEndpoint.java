@@ -17,19 +17,60 @@
 package org.apache.camel.component.xmlsecurity;
 
 import java.util.Map;
-
 import javax.xml.crypto.URIDereferencer;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignatureConfiguration;
+import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
+import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
+/**
+ * Used to sign and verify exchanges using the XML signature specification.
+ */
+@UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity", title = "XML Security", syntax = "xmlsecurity:command:name", producerOnly = true, label = "security,transformation")
 public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
+
+    @UriPath @Metadata(required = "true")
+    private XmlCommand command;
+    @UriPath @Metadata(required = "true")
+    private String name;
+    // to include both kind of configuration params
+    @UriParam
+    private XmlSignerConfiguration signerConfiguration;
+    @UriParam
+    private XmlVerifierConfiguration verifierConfiguration;
 
     public XmlSignatureEndpoint(String uri, XmlSignatureComponent component) {
         super(uri, component);
+    }
+
+    public XmlCommand getCommand() {
+        return command;
+    }
+
+    /**
+     * Whether to sign or verify.
+     */
+    public void setCommand(XmlCommand command) {
+        this.command = command;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * The name part in the URI can be chosen by the user to distinguish between different signer/verifier endpoints within the camel context.
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -94,4 +135,21 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
     public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
         getConfiguration().setOmitXmlDeclaration(omitXmlDeclaration);
     }
+    
+    public String getSchemaResourceUri() {
+        return getConfiguration().getSchemaResourceUri();
+    }
+
+    public void setSchemaResourceUri(String schemaResourceUri) {
+        getConfiguration().setSchemaResourceUri(schemaResourceUri);
+    }
+    
+    public String getOutputXmlEncoding() {
+        return getConfiguration().getOutputXmlEncoding();
+    }
+    
+    public void setOutputXmlEncoding(String encoding) {
+        getConfiguration().setOutputXmlEncoding(encoding);
+    }
+    
 }

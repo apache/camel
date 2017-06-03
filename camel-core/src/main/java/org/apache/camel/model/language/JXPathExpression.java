@@ -24,14 +24,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.Metadata;
 
 /**
- * For <a href="http://commons.apache.org/jxpath/">JXPath</a> expressions and predicates
+ * For JXPath expressions and predicates
  *
  * @version 
  */
+@Metadata(firstVersion = "1.3.0", label = "language,java", title = "JXPath")
 @XmlRootElement(name = "jxpath")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class JXPathExpression extends ExpressionDefinition {
 
     @XmlAttribute
@@ -52,6 +55,13 @@ public class JXPathExpression extends ExpressionDefinition {
         return lenient;
     }
 
+    /**
+     * Allows to turn lenient on the JXPathContext.
+     * When turned on this allows the JXPath expression to evaluate against expressions and message bodies which may
+     * be invalid / missing data.
+     * <p/>
+     * This option is by default false
+     */
     public void setLenient(Boolean lenient) {
         this.lenient = lenient;
     }

@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -53,14 +54,22 @@ public class SplitterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        Set<String> ids = new HashSet<String>();
+        Set<String> ids2 = new HashSet<String>();
+
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (int i = 0; i < 4; i++) {
             Exchange exchange = list.get(i);
             Message in = exchange.getIn();
+            ids.add(in.getMessageId());
+            ids2.add(exchange.getExchangeId());
             assertNotNull("The in message should not be null.", in);
             assertProperty(exchange, Exchange.SPLIT_INDEX, i);
             assertProperty(exchange, Exchange.SPLIT_SIZE, 4);
         }
+
+        assertEquals("The sub messages should have unique message ids", 4, ids.size());
+        assertEquals("The sub messages should have unique exchange ids", 4, ids2.size());
     }
 
     public void testSplitterWithAggregationStrategy() throws Exception {
@@ -164,6 +173,26 @@ public class SplitterTest extends ContextTestSupport {
         assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
     }
     
+    public void testSplitterParallelAggregate() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(5);
+        resultEndpoint.expectedBodiesReceivedInAnyOrder("James", "Guillaume", "Hiram", "Rob", "Roman");
+
+        Exchange result = template.request("direct:parallelAggregate", new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody("James,Guillaume,Hiram,Rob,Roman");
+                in.setHeader("foo", "bar");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        Message out = result.getOut();
+
+        assertMessageHeader(out, "foo", "bar");
+        // we aggregate parallel and therefore its not thread-safe when setting values
+    }
+
     public void testSplitterWithStreamingAndFileBody() throws Exception {
         URL url = this.getClass().getResource("/org/apache/camel/processor/simple.txt");
         assertNotNull("We should find this simple file here.", url);
@@ -250,6 +279,7 @@ public class SplitterTest extends ContextTestSupport {
 
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
                 from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().to("mock:result");
+                from("direct:parallelAggregate").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().parallelAggregate().to("mock:result");
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
                 from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().streaming().to("mock:result");
                 from("direct:exception")

@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.twitter.data;
 
-public enum EndpointType {
+import org.apache.camel.component.twitter.TwitterHelper;
 
+public enum EndpointType {
     POLLING, DIRECT, EVENT;
 
-    public static EndpointType fromUri(String uri) {
-        for (EndpointType endpointType : EndpointType.values()) {
-            if (endpointType.name().equalsIgnoreCase(uri)) {
-                return endpointType;
-            }
-        }
-        return EndpointType.DIRECT;
+    private static final EndpointType[] VALUES = values();
+
+    public static EndpointType fromString(String uri) {
+        return TwitterHelper.enumFromString(VALUES, uri, EndpointType.DIRECT);
     }
 }

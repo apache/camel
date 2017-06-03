@@ -72,7 +72,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
                 Map<String, Object> requestContext = new HashMap<String, Object>();
                 requestContext.put(Message.ENDPOINT_ADDRESS, getSimpleServerAddress());
                 exchange.getIn().setBody(params);
-                exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
+                exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
                 exchange.getIn().setHeader("requestObject", new DefaultCxfBinding());
@@ -92,7 +92,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
                 Map<String, Object> requestContext = new HashMap<String, Object>();
                 requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getJaxWsServerAddress());
                 exchange.getIn().setBody(params);
-                exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
+                exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
             }

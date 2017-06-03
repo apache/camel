@@ -120,12 +120,30 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         }
 
         for (FileStatus status : fileStatuses) {
+
             if (normalFileIsDirectoryNoSuccessFile(status, info)) {
                 continue;
             }
+
+            if (config.getOwner() != null) {
+                // must match owner
+                if (!config.getOwner().equals(status.getOwner())) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping file: {} as not matching owner: {}", status.getPath().toString(), config.getOwner());
+                    }
+                    continue;
+                }
+            }
+
             try {
                 this.rwlock.writeLock().lock();
                 this.istream = HdfsInputStream.createInputStream(status.getPath().toString(), this.config);
+                if (!this.istream.isOpened()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping file: {} because it doesn't exist anymore", status.getPath().toString());
+                    }
+                    continue;
+                }
             } finally {
                 this.rwlock.writeLock().unlock();
             }
@@ -133,11 +151,12 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             try {
                 Holder<Object> key = new Holder<Object>();
                 Holder<Object> value = new Holder<Object>();
-                while (this.istream.next(key, value) != 0) {
+                while (this.istream.next(key, value) >= 0) {
                     Exchange exchange = this.getEndpoint().createExchange();
-                    Message message = new DefaultMessage();
+                    Message message = new DefaultMessage(this.getEndpoint().getCamelContext());
                     String fileName = StringUtils.substringAfterLast(status.getPath().toString(), "/");
                     message.setHeader(Exchange.FILE_NAME, fileName);
+                    message.setHeader(Exchange.FILE_PATH, status.getPath().toString());
                     if (key.value != null) {
                         message.setHeader(HdfsHeader.KEY.name(), key.value);
                     }

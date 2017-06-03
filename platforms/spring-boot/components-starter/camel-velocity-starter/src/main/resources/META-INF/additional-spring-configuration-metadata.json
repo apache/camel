@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.velocity.enabled",
+      "description": "Enable velocity component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

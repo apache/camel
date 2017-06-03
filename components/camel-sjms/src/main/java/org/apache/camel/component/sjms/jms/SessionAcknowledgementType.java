@@ -20,20 +20,19 @@ import javax.jms.Session;
 
 /**
  * Session acknowledge enum keys
- * 
  */
 public enum SessionAcknowledgementType {
-    AUTO_ACKNOWLEDGE(Session.AUTO_ACKNOWLEDGE), 
-    CLIENT_ACKNOWLEDGE(Session.CLIENT_ACKNOWLEDGE), 
-    DUPS_OK_ACKNOWLEDGE(Session.DUPS_OK_ACKNOWLEDGE), 
+    AUTO_ACKNOWLEDGE(Session.AUTO_ACKNOWLEDGE),
+    CLIENT_ACKNOWLEDGE(Session.CLIENT_ACKNOWLEDGE),
+    DUPS_OK_ACKNOWLEDGE(Session.DUPS_OK_ACKNOWLEDGE),
     SESSION_TRANSACTED(Session.SESSION_TRANSACTED);
-    
+
     private int intValue = -1;
-    
-    private SessionAcknowledgementType(int intValue) {
+
+    SessionAcknowledgementType(int intValue) {
         this.intValue = intValue;
     }
-    
+
     public int intValue() {
         return intValue;
     }

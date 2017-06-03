@@ -26,13 +26,13 @@ public class AnnotatedRoute extends SpringRouteBuilder {
     public void configure() throws Exception {
         from("direct:okay").
                 transacted().
-                setBody(constant("Tiger in Action")).beanRef("bookService").
-                setBody(constant("Elephant in Action")).beanRef("bookService");
+                setBody(constant("Tiger in Action")).bean("bookService").
+                setBody(constant("Elephant in Action")).bean("bookService");
 
         from("direct:fail").
                 transacted().
-                setBody(constant("Tiger in Action")).beanRef("bookService").
-                setBody(constant("Donkey in Action")).beanRef("bookService");
+                setBody(constant("Tiger in Action")).bean("bookService").
+                setBody(constant("Donkey in Action")).bean("bookService");
     }
 
 }

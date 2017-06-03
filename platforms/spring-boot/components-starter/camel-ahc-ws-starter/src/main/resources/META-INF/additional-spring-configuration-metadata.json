@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.ahc-ws.enabled",
+      "description": "Enable ahc-ws component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

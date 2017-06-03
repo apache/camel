@@ -16,11 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link org.apache.camel.spi.UuidGenerator} which is a fast implementation based on
- * how <a href="http://activemq.apache.org/>Apache ActiveMQ</a> generates its UUID.
+ * how <a href="http://activemq.apache.org/">Apache ActiveMQ</a> generates its UUID.
  * <p/>
  * This implementation is not synchronized but it leverages API which may not be accessible
  * in the cloud (such as Google App Engine).
@@ -39,7 +39,10 @@ import org.slf4j.LoggerFactory;
 public class ActiveMQUuidGenerator implements UuidGenerator {
 
     // use same JVM property name as ActiveMQ
+    public static final String PROPERTY_IDGENERATOR_HOSTNAME = "activemq.idgenerator.hostname";
+    public static final String PROPERTY_IDGENERATOR_LOCALPORT = "activemq.idgenerator.localport";
     public static final String PROPERTY_IDGENERATOR_PORT = "activemq.idgenerator.port";
+
     private static final Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGenerator.class);
     private static final String UNIQUE_STUB;
     private static int instanceCount;
@@ -61,35 +64,37 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
         }
 
         if (canAccessSystemProps) {
+            hostName = System.getProperty(PROPERTY_IDGENERATOR_HOSTNAME);
+            int localPort = Integer.parseInt(System.getProperty(PROPERTY_IDGENERATOR_LOCALPORT, "0"));
+
             int idGeneratorPort = 0;
             ServerSocket ss = null;
             try {
-                idGeneratorPort = Integer.parseInt(System.getProperty(PROPERTY_IDGENERATOR_PORT, "0"));
-                LOG.trace("Using port {}", idGeneratorPort);
-                hostName = InetAddressUtil.getLocalHostName();
-                ss = new ServerSocket(idGeneratorPort);
-                stub = "-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
-                Thread.sleep(100);
-            } catch (Exception ioe) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, ioe);
+                if (hostName == null) {
+                    hostName = InetAddressUtil.getLocalHostName();
+                }
+                if (localPort == 0) {
+                    idGeneratorPort = Integer.parseInt(System.getProperty(PROPERTY_IDGENERATOR_PORT, "0"));
+                    LOG.trace("Using port {}", idGeneratorPort);
+                    ss = new ServerSocket(idGeneratorPort);
+                    localPort = ss.getLocalPort();
+                    stub = "-" + localPort + "-" + System.currentTimeMillis() + "-";
+                    Thread.sleep(100);
                 } else {
-                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + ioe.getMessage());
+                    stub = "-" + localPort + "-" + System.currentTimeMillis() + "-";
+                }
+            } catch (Exception e) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, e);
+                } else {
+                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + e.getMessage());
+                }
+                // Restore interrupted state so higher level code can deal with it.
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
                 }
             } finally {
-                // some environments, such as a PaaS may not allow us to create the ServerSocket
-                if (ss != null) {
-                    try {
-                        // TODO: replace the following line with IOHelper.close(ss) when Java 6 support is dropped
-                        ss.close();
-                    } catch (IOException ioe) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Closing the server socket failed", ioe);
-                        } else {
-                            LOG.warn("Closing the server socket failed" + " due " + ioe.getMessage());
-                        }
-                    }
-                }
+                IOHelper.close(ss);
             }
         }
 
@@ -97,6 +102,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
         if (hostName == null) {
             hostName = "localhost";
         }
+        hostName = sanitizeHostName(hostName);
 
         if (ObjectHelper.isEmpty(stub)) {
             stub = "-1-" + System.currentTimeMillis() + "-";
@@ -125,6 +131,28 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
      */
     public static String getHostName() {
         return hostName;
+    }
+
+    public static String sanitizeHostName(String hostName) {
+        boolean changed = false;
+
+        StringBuilder sb = new StringBuilder();
+        for (char ch : hostName.toCharArray()) {
+            // only include ASCII chars
+            if (ch < 127) {
+                sb.append(ch);
+            } else {
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            String newHost = sb.toString();
+            LOG.info("Sanitized hostname from: {} to: {}", hostName, newHost);
+            return newHost;
+        } else {
+            return hostName;
+        }
     }
 
     public String generateUuid() {

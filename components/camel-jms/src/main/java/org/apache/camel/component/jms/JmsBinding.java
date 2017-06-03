@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -57,6 +56,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 import static org.apache.camel.component.jms.JmsMessageType.Bytes;
 import static org.apache.camel.component.jms.JmsMessageType.Map;
@@ -74,24 +74,34 @@ public class JmsBinding {
     private final JmsEndpoint endpoint;
     private final HeaderFilterStrategy headerFilterStrategy;
     private final JmsKeyFormatStrategy jmsKeyFormatStrategy;
+    private final MessageCreatedStrategy messageCreatedStrategy;
 
     public JmsBinding() {
         this.endpoint = null;
-        headerFilterStrategy = new JmsHeaderFilterStrategy(false);
-        jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+        this.headerFilterStrategy = new JmsHeaderFilterStrategy(false);
+        this.jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+        this.messageCreatedStrategy = null;
     }
 
     public JmsBinding(JmsEndpoint endpoint) {
         this.endpoint = endpoint;
         if (endpoint.getHeaderFilterStrategy() != null) {
-            headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+            this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         } else {
-            headerFilterStrategy = new JmsHeaderFilterStrategy(endpoint.isIncludeAllJMSXProperties());
+            this.headerFilterStrategy = new JmsHeaderFilterStrategy(endpoint.isIncludeAllJMSXProperties());
         }
         if (endpoint.getJmsKeyFormatStrategy() != null) {
-            jmsKeyFormatStrategy = endpoint.getJmsKeyFormatStrategy();
+            this.jmsKeyFormatStrategy = endpoint.getJmsKeyFormatStrategy();
         } else {
-            jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+            this.jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+        }
+        if (endpoint.getMessageCreatedStrategy() != null) {
+            this.messageCreatedStrategy = endpoint.getMessageCreatedStrategy();
+        } else if (endpoint.getComponent() != null) {
+            // fallback and use from component
+            this.messageCreatedStrategy = endpoint.getComponent().getMessageCreatedStrategy();
+        } else {
+            this.messageCreatedStrategy = null;
         }
     }
 
@@ -157,6 +167,7 @@ public class JmsBinding {
             // lets populate the standard JMS message headers
             try {
                 map.put("JMSCorrelationID", jmsMessage.getJMSCorrelationID());
+                map.put("JMSCorrelationIDAsBytes", JmsMessageHelper.getJMSCorrelationIDAsBytes(jmsMessage));
                 map.put("JMSDeliveryMode", jmsMessage.getJMSDeliveryMode());
                 map.put("JMSDestination", jmsMessage.getJMSDestination());
                 map.put("JMSExpiration", jmsMessage.getJMSExpiration());
@@ -169,8 +180,8 @@ public class JmsBinding {
                 map.put("JMSType", JmsMessageHelper.getJMSType(jmsMessage));
 
                 // this works around a bug in the ActiveMQ property handling
-                map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
-                map.put("JMSXUserID", jmsMessage.getStringProperty("JMSXUserID"));
+                map.put(JMS_X_GROUP_ID, JmsMessageHelper.getStringProperty(jmsMessage, JMS_X_GROUP_ID));
+                map.put("JMSXUserID", JmsMessageHelper.getStringProperty(jmsMessage, "JMSXUserID"));
             } catch (JMSException e) {
                 throw new RuntimeCamelException(e);
             }
@@ -233,7 +244,11 @@ public class JmsBinding {
      * @throws JMSException if the message could not be created
      */
     public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
-        return makeJmsMessage(exchange, exchange.getIn(), session, null);
+        Message answer = makeJmsMessage(exchange, exchange.getIn(), session, null);
+        if (answer != null && messageCreatedStrategy != null) {
+            messageCreatedStrategy.onMessageCreated(answer, session, exchange, null);
+        }
+        return answer;
     }
 
     /**
@@ -285,11 +300,14 @@ public class JmsBinding {
             } else {
                 ObjectHelper.notNull(camelMessage, "message");
                 // create regular jms message using the camel message body
-                answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, exchange.getContext());
+                answer = createJmsMessage(exchange, camelMessage, session, exchange.getContext());
                 appendJmsProperties(answer, exchange, camelMessage);
             }
         }
 
+        if (answer != null && messageCreatedStrategy != null) {
+            messageCreatedStrategy.onMessageCreated(answer, session, exchange, null);
+        }
         return answer;
     }
 
@@ -319,8 +337,9 @@ public class JmsBinding {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
                 if (headerValue instanceof String) {
-                    // if the value is a String we must normalize it first
-                    headerValue = normalizeDestinationName((String) headerValue);
+                    // if the value is a String we must normalize it first, and must include the prefix
+                    // as ActiveMQ requires that when converting the String to a javax.jms.Destination type
+                    headerValue = normalizeDestinationName((String) headerValue, true);
                 }
                 Destination replyTo = ExchangeHelper.convertToType(exchange, Destination.class, headerValue);
                 JmsMessageHelper.setJMSReplyTo(jmsMessage, replyTo);
@@ -431,13 +450,24 @@ public class JmsBinding {
         return answer;
     }
 
+    protected Message createJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, CamelContext context) throws JMSException {
+        Message answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, context);
+
+        // special for transferFault
+        boolean isFault = camelMessage.isFault();
+        if (answer != null && isFault && endpoint != null && endpoint.isTransferFault()) {
+            answer.setBooleanProperty(JmsConstants.JMS_TRANSFER_FAULT, true);
+        }
+        return answer;
+    }
+
     protected Message createJmsMessage(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {
-        JmsMessageType type = null;
+        JmsMessageType type;
 
         // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
             LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
-            Serializable holder = DefaultExchangeHolder.marshal(exchange);
+            Serializable holder = DefaultExchangeHolder.marshal(exchange, false, endpoint.isAllowSerializedHeaders());
             Message answer = session.createObjectMessage(holder);
             // ensure default delivery mode is used by default
             answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);

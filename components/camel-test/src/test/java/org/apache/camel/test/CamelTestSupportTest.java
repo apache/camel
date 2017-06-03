@@ -14,21 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test;
 
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 public class CamelTestSupportTest extends CamelTestSupport {
 
+    private volatile boolean called;
+
     @Override
     @Before
     public void setUp() throws Exception {
+        called = false;
         replaceRouteFromWith("routeId", "direct:start");
         super.setUp();
     }
@@ -56,6 +59,21 @@ public class CamelTestSupportTest extends CamelTestSupport {
     public void autoCreateNoneExisting() {
         MockEndpoint mock = getMockEndpoint("mock:bogus2", true);
         assertNotNull(mock);
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        called = true;
+
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("beer", "yes");
+        return jndi;
+    }
+
+    @Test
+    public void testCreateRegistry() {
+        assertTrue("Should call createRegistry", called);
+        assertEquals("yes", context.getRegistry().lookupByName("beer"));
     }
 
     @Override

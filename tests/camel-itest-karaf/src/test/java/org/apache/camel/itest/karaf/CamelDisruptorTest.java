@@ -16,26 +16,19 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith(JUnit4TestRunner.class)
-@Ignore("disruptor requries sun.misc package")
-public class CamelDisruptorTest extends AbstractFeatureTest {
+@RunWith(PaxExam.class)
+public class CamelDisruptorTest extends BaseKarafTest {
+
+    public static final String COMPONENT = extractName(CamelDisruptorTest.class);
 
     @Test
     public void test() throws Exception {
-        testComponent("disruptor");
-        testComponent("disruptor-vm");
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure("disruptor");
+        testComponent(COMPONENT, "disruptor");
+        testComponent(COMPONENT, "disruptor-vm");
     }
 
 }

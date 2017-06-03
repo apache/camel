@@ -22,9 +22,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.camel.converter.jaxb.JaxbXmlStreamWriterWrapper;
 
-/**
- * @author <a href="http://christianposta.com/blog">Christian Posta</a>
- */
 public class TestXmlStreamWriter implements JaxbXmlStreamWriterWrapper {
     @Override
     public XMLStreamWriter wrapWriter(final XMLStreamWriter writer) {

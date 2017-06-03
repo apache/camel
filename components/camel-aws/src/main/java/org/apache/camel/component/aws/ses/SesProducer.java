@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws.ses;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,11 +27,16 @@ import com.amazonaws.services.simpleemail.model.Content;
 import com.amazonaws.services.simpleemail.model.Destination;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
+import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
+import com.amazonaws.services.simpleemail.model.SendRawEmailResult;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.URISupport;
+
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 
 /**
  * A Producer which sends messages to the Amazon Simple Email Service
@@ -36,19 +44,28 @@ import org.apache.camel.util.URISupport;
  */
 public class SesProducer extends DefaultProducer {
     
+    private transient String sesProducerToString;
+    
     public SesProducer(Endpoint endpoint) {
         super(endpoint);
     }
 
     public void process(Exchange exchange) throws Exception {
-        SendEmailRequest request = createMailRequest(exchange);
-        log.trace("Sending request [{}] from exchange [{}]...", request, exchange);
-        
-        SendEmailResult result = getEndpoint().getSESClient().sendEmail(request);
-
-        log.trace("Received result [{}]", result);
-        Message message = getMessageForResponse(exchange);
-        message.setHeader(SesConstants.MESSAGE_ID, result.getMessageId());
+        if (!(exchange.getIn().getBody() instanceof javax.mail.Message)) {
+            SendEmailRequest request = createMailRequest(exchange);
+            log.trace("Sending request [{}] from exchange [{}]...", request, exchange);            
+            SendEmailResult result = getEndpoint().getSESClient().sendEmail(request);
+            log.trace("Received result [{}]", result);
+            Message message = getMessageForResponse(exchange);
+            message.setHeader(SesConstants.MESSAGE_ID, result.getMessageId());
+        } else {
+            SendRawEmailRequest request = createRawMailRequest(exchange);
+            log.trace("Sending request [{}] from exchange [{}]...", request, exchange);            
+            SendRawEmailResult result = getEndpoint().getSESClient().sendRawEmail(request);
+            log.trace("Received result [{}]", result);
+            Message message = getMessageForResponse(exchange);
+            message.setHeader(SesConstants.MESSAGE_ID, result.getMessageId());
+        }
     }
 
     private SendEmailRequest createMailRequest(Exchange exchange) {
@@ -61,11 +78,40 @@ public class SesProducer extends DefaultProducer {
 
         return request;
     }
+    
+    private SendRawEmailRequest createRawMailRequest(Exchange exchange) throws Exception {
+        SendRawEmailRequest request = new SendRawEmailRequest();
+        request.setSource(determineFrom(exchange));
+        request.setDestinations(determineRawTo(exchange));
+        request.setRawMessage(createRawMessage(exchange));
+        return request;
+    }
 
     private com.amazonaws.services.simpleemail.model.Message createMessage(Exchange exchange) {
         com.amazonaws.services.simpleemail.model.Message message = new com.amazonaws.services.simpleemail.model.Message();
-        message.setBody(new Body(new Content(exchange.getIn().getBody(String.class))));
+        Boolean isHtmlEmail = exchange.getIn().getHeader(SesConstants.HTML_EMAIL, false, Boolean.class);
+        String content = exchange.getIn().getBody(String.class);
+        if (isHtmlEmail) {
+            message.setBody(new Body().withHtml(new Content().withData(content)));
+        } else {
+            message.setBody(new Body().withText(new Content().withData(content)));
+        }
         message.setSubject(new Content(determineSubject(exchange)));
+        return message;
+    }
+    
+    private com.amazonaws.services.simpleemail.model.RawMessage createRawMessage(Exchange exchange) throws Exception {
+        com.amazonaws.services.simpleemail.model.RawMessage message = new com.amazonaws.services.simpleemail.model.RawMessage();
+        javax.mail.Message content = exchange.getIn().getBody(javax.mail.Message.class);
+        OutputStream byteOutput = new ByteArrayOutputStream();
+        try {
+            content.writeTo(byteOutput);
+        } catch (Exception e) {
+            log.error("Cannot write to byte Array");
+            throw e;
+        }
+        byte[] messageByteArray = ((ByteArrayOutputStream)byteOutput).toByteArray();
+        message.setData(ByteBuffer.wrap(messageByteArray));
         return message;
     }
     
@@ -94,6 +140,15 @@ public class SesProducer extends DefaultProducer {
         }
         return new Destination(to);
     }
+    
+    @SuppressWarnings("unchecked")
+    private List determineRawTo(Exchange exchange) {
+        List<String> to = exchange.getIn().getHeader(SesConstants.TO, List.class);
+        if (to == null) {
+            to = getConfiguration().getTo();
+        }
+        return to;
+    }
 
     private String determineFrom(Exchange exchange) {
         String from = exchange.getIn().getHeader(SesConstants.FROM, String.class);
@@ -111,22 +166,16 @@ public class SesProducer extends DefaultProducer {
         return subject;
     }
 
-    private Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
-    }
-
     protected SesConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
 
     @Override
     public String toString() {
-        return "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (sesProducerToString == null) {
+            sesProducerToString = "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return sesProducerToString;
     }
 
     @Override

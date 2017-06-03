@@ -24,15 +24,18 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType implements CamelContextAware {
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(description = "Id of CamelContext to use if there are multiple CamelContexts in the same JVM")
     private String camelContextId;
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private Boolean customId;
 
     public abstract T getObject() throws Exception;
 
@@ -80,6 +83,14 @@ public abstract class AbstractCamelFactoryBean<T> extends IdentifiedType impleme
 
     public void setCamelContextId(String camelContextId) {
         this.camelContextId = camelContextId;
+    }
+
+    public Boolean getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(Boolean customId) {
+        this.customId = customId;
     }
 
     public boolean isSingleton() {

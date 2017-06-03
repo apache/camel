@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
@@ -26,6 +27,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.spi.DataFormat;
 
 /**
@@ -117,6 +119,28 @@ public class ZipDataFormatTest extends ContextTestSupport {
         result.expectedBodiesReceived(TEXT);
         sendText();
         result.assertIsSatisfied();
+        List<Exchange> exchangeList = result.getExchanges();
+        assertTrue(exchangeList.get(0).getIn().getBody() instanceof byte[]);
+    }
+
+    public void testStreamCacheUnzip() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start")
+                    .streamCaching()
+                    .marshal().zip()
+                    .unmarshal().zip()
+                    .to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
+        result.expectedBodiesReceived(TEXT);
+        sendText();
+        result.assertIsSatisfied();
+        List<Exchange> exchangeList = result.getExchanges();
+        assertTrue(exchangeList.get(0).getIn().getBody() instanceof InputStreamCache);
     }
 
     private void sendText() throws Exception {

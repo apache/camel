@@ -21,9 +21,18 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
+/**
+ * The spring-ws component is used for SOAP WebServices using Spring WebServices.
+ */
+@UriEndpoint(firstVersion = "2.6.0", scheme = "spring-ws", title = "Spring WebService",
+        syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
+        consumerClass = SpringWebserviceConsumer.class, label = "soap,webservice")
 public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
+    @UriParam
     private SpringWebserviceConfiguration configuration;
 
     public SpringWebserviceEndpoint(Component component, String uri, SpringWebserviceConfiguration configuration) {

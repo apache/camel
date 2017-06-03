@@ -26,7 +26,8 @@ import net.spy.memcached.FailureMode;
 import net.spy.memcached.MemcachedClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,10 +35,9 @@ import org.slf4j.LoggerFactory;
  * Camel component which offers queueing over the Memcached protocol
  * as supported by Kestrel.
  */
-public class KestrelComponent extends DefaultComponent {
+public class KestrelComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(KestrelComponent.class);
 
-    private KestrelConfiguration configuration;
     private ConnectionFactory memcachedConnectionFactory;
 
     /**
@@ -45,16 +45,20 @@ public class KestrelComponent extends DefaultComponent {
      */
     private final Map<String, MemcachedClient> memcachedClientCache = new HashMap<String, MemcachedClient>();
 
+    @Metadata(label = "advanced")
+    private KestrelConfiguration configuration;
+
     public KestrelComponent() {
-        configuration = new KestrelConfiguration();
+        this(new KestrelConfiguration());
     }
 
     public KestrelComponent(KestrelConfiguration configuration) {
+        super(KestrelEndpoint.class);
         this.configuration = configuration;
     }
 
     public KestrelComponent(CamelContext context) {
-        super(context);
+        super(context, KestrelEndpoint.class);
         configuration = new KestrelConfiguration();
     }
 
@@ -76,6 +80,9 @@ public class KestrelComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * To use a shared configured configuration as base for creating new endpoints.
+     */
     public void setConfiguration(KestrelConfiguration configuration) {
         this.configuration = configuration;
     }

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<archetype-descriptor xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd" name="camel-archetype-api-component"
+    xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <requiredProperties>
+    <requiredProperty key="name"/>
+    <requiredProperty key="scheme"/>
+    <requiredProperty key="camel-version">
+      <defaultValue>${project.version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="log4j-version">
+      <defaultValue>${log4j-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="maven-compiler-plugin-version">
+      <defaultValue>${maven-compiler-plugin-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="maven-resources-plugin-version">
+      <defaultValue>${maven-resources-plugin-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="maven-bundle-plugin-version">
+      <defaultValue>${maven-bundle-plugin-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="maven-javadoc-plugin-version">
+      <defaultValue>${maven-javadoc-plugin-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="build-helper-maven-plugin-version">
+      <defaultValue>${build-helper-maven-plugin-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="slf4j-version">
+      <defaultValue>${slf4j-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="log4j-version">
+      <defaultValue>${log4j-version}</defaultValue>
+    </requiredProperty>
+  </requiredProperties>
+
+  <fileSets>
+
+    <!-- root pom.xml -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory></directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+
+    <!-- component directories -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>__artifactId__-component/</directory>
+      <includes>
+        <include>ReadMe.txt</include>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>__artifactId__-component/src/main/java</directory>
+      <includes>
+        <include>**/*.java</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>__artifactId__-component/src/main/resources</directory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>__artifactId__-component/src/test/java</directory>
+      <includes>
+        <include>**/*.java</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>__artifactId__-component/src/test/resources</directory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+    <fileSet encoding="UTF-8">
+      <directory>__artifactId__-component/signatures</directory>
+      <includes>
+        <include>**/*.txt</include>
+      </includes>
+    </fileSet>
+
+    <!-- api directories -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>__artifactId__-api/</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>__artifactId__-api/src/main/java</directory>
+      <includes>
+        <include>**/*.java</include>
+      </includes>
+    </fileSet>
+
+  </fileSets>
+
+</archetype-descriptor>

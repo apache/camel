@@ -95,7 +95,9 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         final Date now = new Date();
         final Map<String, String> userMetadata = new HashMap<String, String>();
         userMetadata.put("CamelName", "Camel");
-        
+        final Map<String, String> s3Headers = new HashMap<String, String>();
+        s3Headers.put("x-aws-s3-header", "extra");
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.STORAGE_CLASS, "STANDARD");
@@ -108,7 +110,8 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
                 exchange.getIn().setHeader(S3Constants.CONTENT_MD5, "TWF");
                 exchange.getIn().setHeader(S3Constants.LAST_MODIFIED, now);
                 exchange.getIn().setHeader(S3Constants.USER_METADATA, userMetadata);
-                
+                exchange.getIn().setHeader(S3Constants.S3_HEADERS, s3Headers);
+
                 exchange.getIn().setBody("This is my bucket content.");
             }
         });
@@ -128,7 +131,8 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         assertEquals("TWF", putObjectRequest.getMetadata().getContentMD5());
         assertEquals(now, putObjectRequest.getMetadata().getLastModified());
         assertEquals(userMetadata, putObjectRequest.getMetadata().getUserMetadata());
-        
+        assertEquals("extra", putObjectRequest.getMetadata().getRawMetadataValue("x-aws-s3-header"));
+
         assertResponseMessage(exchange.getIn());
     }
     
@@ -147,6 +151,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_MD5));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CACHE_CONTROL));
         assertNull(resultExchange.getIn().getHeader(S3Constants.USER_METADATA));
+        assertEquals(0, resultExchange.getIn().getHeader(S3Constants.S3_HEADERS, Map.class).size());
     }
     
     private void assertResponseMessage(Message message) {

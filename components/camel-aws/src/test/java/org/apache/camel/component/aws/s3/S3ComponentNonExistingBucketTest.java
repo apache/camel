@@ -18,6 +18,8 @@ package org.apache.camel.component.aws.s3;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
@@ -91,7 +93,9 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
     public void sendCustomHeaderValues() throws Exception {
         result.expectedMessageCount(1);
         final Date now = new Date();
-        
+        final Map<String, String> s3Headers = new HashMap<String, String>();
+        s3Headers.put("x-aws-s3-header", "extra");
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.STORAGE_CLASS, "STANDARD");
@@ -103,7 +107,8 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
                 exchange.getIn().setHeader(S3Constants.CONTENT_ENCODING, "gzip");
                 exchange.getIn().setHeader(S3Constants.CONTENT_MD5, "TWF");
                 exchange.getIn().setHeader(S3Constants.LAST_MODIFIED, now);
-                
+                exchange.getIn().setHeader(S3Constants.S3_HEADERS, s3Headers);
+
                 exchange.getIn().setBody("This is my bucket content.");
             }
         });
@@ -122,7 +127,8 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
         assertEquals("gzip", putObjectRequest.getMetadata().getContentEncoding());
         assertEquals("TWF", putObjectRequest.getMetadata().getContentMD5());
         assertEquals(now, putObjectRequest.getMetadata().getLastModified());
-        
+        assertEquals("extra", putObjectRequest.getMetadata().getRawMetadataValue("x-aws-s3-header"));
+
         assertResponseMessage(exchange.getIn());
     }
     
@@ -140,6 +146,7 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_DISPOSITION));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_MD5));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CACHE_CONTROL));
+        assertEquals(0, resultExchange.getIn().getHeader(S3Constants.S3_HEADERS, Map.class).size());
     }
     
     private void assertResponseMessage(Message message) {

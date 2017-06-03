@@ -46,7 +46,7 @@ public class OnCompletionUseOriginalBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion().useOriginalBody()
+                onCompletion().useOriginalBody().parallelProcessing()
                     .to("mock:before")
                     .delay(1000)
                     .setBody(simple("OnComplete:${body}"))

@@ -79,7 +79,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertEquals("Could not find 1 consumers: " + s, 1, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=producers,*"), null);
-        assertEquals("Could not find 2 producers: " + s, 0, s.size());
+        assertEquals("Could not find 1 producers: " + s, 1, s.size());
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
         assertEquals("Could not find 1 route: " + s, 1, s.size());

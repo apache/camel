@@ -33,7 +33,11 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 public class CxfBeanComponent extends HeaderFilterStrategyComponent {
 
     private Map<String, CxfBeanEndpoint> endpoints = new HashMap<String, CxfBeanEndpoint>();
-        
+
+    public CxfBeanComponent() {
+        super(CxfBeanEndpoint.class);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining,
             Map<String, Object> parameters) throws Exception {

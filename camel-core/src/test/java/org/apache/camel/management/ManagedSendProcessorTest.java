@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -47,7 +48,7 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mysend\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mysend\"");
 
         // should be on route1
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
@@ -64,6 +65,20 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
 
         String pattern = (String) mbeanServer.getAttribute(on, "MessageExchangePattern");
         assertNull(pattern);
+
+        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
+        assertNotNull(data);
+        assertEquals(2, data.size());
+
+        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
+        assertNotNull(data);
+        assertEquals(5, data.size());
+
+        String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
+        assertNotNull(json);
+        assertTrue(json.contains("\"description\": \"Sends the message to a static endpoint\""));
+        assertTrue(json.contains(" \"uri\": { \"kind\": \"attribute\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
+                + " \"deprecated\": \"false\", \"value\": \"mock:result\""));
     }
 
     @Override

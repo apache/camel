@@ -40,11 +40,11 @@ public final class DateTimeConverter {
     
     @Converter
     public static Date toDate(Long l) {
-        return l != null ? new Date(l) : null;
+        return new Date(l);
     }
     
     @Converter
     public static Long toLong(Date date) {
-        return date != null ? date.getTime() : null;
+        return date.getTime();
     }
 }

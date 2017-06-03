@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://wadl.dev.java.net/2009/02"
+  xmlns:tns="http://wadl.dev.java.net/2009/02"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
+  elementFormDefault="qualified">
+
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+    schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+
+  <xs:element name="application">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:grammars" minOccurs="0"/>
+        <xs:element ref="tns:resources" minOccurs="0"
+          maxOccurs="unbounded"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="tns:resource_type"/>
+          <xs:element ref="tns:method"/>
+          <xs:element ref="tns:representation"/>
+          <xs:element ref="tns:param"/>
+        </xs:choice>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="doc">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="title" type="xs:string"/>
+      <xs:attribute ref="xml:lang"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="grammars">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="tns:include"/>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="resources">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:resource" maxOccurs="unbounded"/>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="base" type="xs:anyURI"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="resource">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:param" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="tns:method"/>
+          <xs:element ref="tns:resource"/>
+        </xs:choice>
+        <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other"
+          processContents="lax"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="type" type="tns:resource_type_list"/>
+      <xs:attribute name="queryType" type="xs:string"
+        default="application/x-www-form-urlencoded"/>
+      <xs:attribute name="path" type="xs:string"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="resource_type_list">
+    <xs:list itemType="xs:anyURI"/>
+  </xs:simpleType>
+
+  <xs:element name="resource_type">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:param" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="tns:method"/>
+          <xs:element ref="tns:resource"/>
+        </xs:choice>
+        <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other"
+          processContents="lax"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="method">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:request" minOccurs="0"/>
+        <xs:element ref="tns:response" minOccurs="0"
+          maxOccurs="unbounded"/>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="name" type="tns:Method"/>
+      <xs:attribute name="href" type="xs:anyURI"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="Method">
+    <xs:union memberTypes="tns:HTTPMethods xs:NMTOKEN"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="HTTPMethods">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="GET"/>
+      <xs:enumeration value="POST"/>
+      <xs:enumeration value="PUT"/>
+      <xs:enumeration value="HEAD"/>
+      <xs:enumeration value="DELETE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="include">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="href" type="xs:anyURI"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="request">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:param" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:representation" minOccurs="0"
+          maxOccurs="unbounded"/>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="response">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:param" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:representation" minOccurs="0"
+          maxOccurs="unbounded"/>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="status" type="tns:statusCodeList"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="uriList">
+    <xs:list itemType="xs:anyURI"/>
+  </xs:simpleType>
+
+  <xs:element name="representation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:param" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="element" type="xs:QName"/>
+      <xs:attribute name="mediaType" type="xs:string"/>
+      <xs:attribute name="href" type="xs:anyURI"/>
+      <xs:attribute name="profile" type="tns:uriList"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="statusCodeList">
+    <xs:list itemType="xs:unsignedInt"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="ParamStyle">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="plain"/>
+      <xs:enumeration value="query"/>
+      <xs:enumeration value="matrix"/>
+      <xs:enumeration value="header"/>
+      <xs:enumeration value="template"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="param">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:option" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tns:link" minOccurs="0"/>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="href" type="xs:anyURI"/>
+      <xs:attribute name="name" type="xs:NMTOKEN"/>
+      <xs:attribute name="style" type="tns:ParamStyle"/>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="type" type="xs:QName" default="xs:string"/>
+      <xs:attribute name="default" type="xs:string"/>
+      <xs:attribute name="required" type="xs:boolean" default="false"/>
+      <xs:attribute name="repeating" type="xs:boolean" default="false"/>
+      <xs:attribute name="fixed" type="xs:string"/>
+      <xs:attribute name="path" type="xs:string"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="option">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="value" type="xs:string" use="required"/>
+      <xs:attribute name="mediaType" type="xs:string"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="link">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tns:doc" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:any namespace="##other" processContents="lax" minOccurs="0"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="resource_type" type="xs:anyURI"/>
+      <xs:attribute name="rel" type="xs:token"/>
+      <xs:attribute name="rev" type="xs:token"/>
+      <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

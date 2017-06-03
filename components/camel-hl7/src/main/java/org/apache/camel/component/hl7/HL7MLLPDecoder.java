@@ -27,15 +27,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HL7MLLPDecoder that is aware that a HL7 message can span several TCP packets.
+ * HL7MLLPDecoder that is aware that a HL7 message can span several buffers.
  * In addition, it avoids rescanning packets by keeping state in the IOSession.
  */
 class HL7MLLPDecoder extends CumulativeProtocolDecoder {
 
     private static final Logger LOG = LoggerFactory.getLogger(HL7MLLPDecoder.class);
-
-    private static final String CHARSET_DECODER = HL7MLLPDecoder.class.getName() + ".charsetdecoder";
     private static final String DECODER_STATE = HL7MLLPDecoder.class.getName() + ".STATE";
+    private static final String CHARSET_DECODER = HL7MLLPDecoder.class.getName() + ".charsetdecoder";
 
     private HL7MLLPConfig config;
 
@@ -44,132 +43,187 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
     }
 
     @Override
-    protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) {
+    protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
 
-        // Scan the buffer of start and/or end bytes
-        boolean foundEnd = scan(session, in);
-
-        // Write HL7 string or wait until message end arrives or buffer ends
-        if (foundEnd) {
-            writeString(session, in, out);
-        } else {
-            LOG.debug("No complete message in this packet");
-        }
-
-        return foundEnd;
-    }
-
-    private void writeString(IoSession session, IoBuffer in, ProtocolDecoderOutput out) {
+        // Get the state of the current message and
+        // Skip what we have already scanned before
         DecoderState state = decoderState(session);
-        if (state.posStart == 0) {
-            LOG.warn("No start byte found, reading from beginning of data");
-        }
-        // start reading from the buffer after the start markers
-        in.position(state.posStart);
-        try {
-            String body = in.getString(state.length(), charsetDecoder(session));
-            LOG.debug("Decoded HL7 from byte stream of length {} to String of length {}", state.length(), body.length());
-            if (config.isConvertLFtoCR()) {
-                body = body.replace('\n', '\r');
-            }
-            out.write(body);
-            // Avoid redelivery of scanned message
-            state.reset();
-        } catch (CharacterCodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+        in.position(state.current());
 
-    private CharsetDecoder charsetDecoder(IoSession session) {
-        // convert to string using the charset decoder
-        CharsetDecoder decoder = (CharsetDecoder) session.getAttribute(CHARSET_DECODER);
-        if (decoder == null) {
-            decoder = config.getCharset().newDecoder();
-            session.setAttribute(CHARSET_DECODER, decoder);
-        }
-        return decoder;
-    }
+        LOG.debug("Received data, checking from position {} to {}", in.position(), in.limit());
+        boolean messageDecoded = false;
 
-    /**
-     * Scans the buffer for start and end bytes and stores its position in the
-     * session state object.
-     *
-     * @return <code>true</code> if the end bytes were found, <code>false</code>
-     *         otherwise
-     */
-    private boolean scan(IoSession session, IoBuffer in) {
-        DecoderState state = decoderState(session);
-        // Start scanning where we left
-        in.position(state.current);
-        LOG.debug("Start scanning buffer at position {}", in.position());
         while (in.hasRemaining()) {
-            byte b = in.get();
-            // Check start byte
-            if (b == config.getStartByte()) {
-                if (state.posStart > 0 || state.waitingForEndByte2) {
-                    LOG.warn("Ignoring message start at position {} before previous message has ended.", in.position());
+
+            int previousPosition = in.position();
+            byte current = in.get();
+
+            // Check if we are at the end of an HL7 message
+            if (current == config.getEndByte2() && state.previous() == config.getEndByte1()) {
+                if (state.isStarted()) {
+                    // Save the current buffer pointers and reset them to surround the identifier message
+                    int currentPosition = in.position();
+                    int currentLimit = in.limit();
+                    LOG.debug("Message ends at position {} with length {}", previousPosition, previousPosition - state.start() + 1);
+                    in.position(state.start());
+                    in.limit(currentPosition);
+                    LOG.debug("Set start to position {} and limit to {}", in.position(), in.limit());
+
+                    // Now create string or byte[] from this part of the buffer and restore the buffer pointers
+                    try {
+                        out.write(config.isProduceString()
+                                ? parseMessageToString(in.slice(), charsetDecoder(session))
+                                : parseMessageToByteArray(in.slice()));
+                        messageDecoded = true;
+                    } finally {
+                        LOG.debug("Resetting to position {} and limit to {}", currentPosition, currentLimit);
+                        in.position(currentPosition);
+                        in.limit(currentLimit);
+                        state.reset();
+                    }
                 } else {
-                    state.posStart = in.position();
-                    state.waitingForEndByte2 = false;
-                    LOG.debug("Message starts at position {}", state.posStart);
+                    LOG.warn("Ignoring message end at position {} until start byte has been seen.", previousPosition);
                 }
-            }
-            // Check end byte1 
-            if (b == config.getEndByte1()) {
-                if (!state.waitingForEndByte2 && state.posStart > 0) {
-                    state.waitingForEndByte2 = true;
+            } else {
+                // Check if we are at the start of an HL7 message
+                if (current == config.getStartByte()) {
+                    state.markStart(previousPosition);
                 } else {
-                    LOG.warn("Ignoring unexpected 1st end byte {}. Expected 2nd endpoint {}", b, config.getEndByte2());
+                    // Remember previous byte in state object because the buffer could
+                    // be theoretically exhausted right between the two end bytes
+                    state.markPrevious(current);
                 }
-            }
-            // Check end byte2 
-            if (b == config.getEndByte2() && state.waitingForEndByte2) {
-                state.posEnd = in.position() - 2; // use -2 to skip these
-                // last 2 end markers
-                state.waitingForEndByte2 = false;
-                LOG.debug("Message ends at position {}", state.posEnd);
-                break;
+                messageDecoded = false;
             }
         }
-        // Remember where we are
-        state.current = in.position();
-        in.rewind();
-        return state.posEnd > 0;
+
+        if (!messageDecoded) {
+            // Could not find a complete message in the buffer.
+            // Reset to the initial position (just as nothing had been read yet)
+            // and return false so that this method is called again with more data.
+            LOG.debug("No complete message yet at position {} ", in.position());
+            state.markCurrent(in.position());
+            in.position(0);
+        }
+        return messageDecoded;
     }
 
-    private DecoderState decoderState(IoSession session) {
-        DecoderState decoderState = (DecoderState) session.getAttribute(DECODER_STATE);
-        if (decoderState == null) {
-            decoderState = new DecoderState();
-            session.setAttribute(DECODER_STATE, decoderState);
+    // Make a defensive byte copy (the buffer will be reused)
+    // and omit the start and the two end bytes of the MLLP message
+    // returning a byte array
+    private Object parseMessageToByteArray(IoBuffer buf) throws CharacterCodingException {
+        int len = buf.limit() - 3;
+        LOG.debug("Making byte array of length {}", len);
+        byte[] dst = new byte[len];
+        buf.skip(1); // skip start byte
+        buf.get(dst, 0, len);
+        buf.skip(2); // skip end bytes
+
+        // Only do this if conversion is enabled
+        if (config.isConvertLFtoCR()) {
+            LOG.debug("Replacing LF by CR");
+            for (int i = 0; i < dst.length; i++) {
+                if (dst[i] == (byte) '\n') {
+                    dst[i] = (byte) '\r';
+                }
+            }
         }
-        return decoderState;
+        return dst;
+    }
+
+    // Make a defensive byte copy (the buffer will be reused)
+    // and omit the start and the two end bytes of the MLLP message
+    // returning a String
+    private Object parseMessageToString(IoBuffer buf, CharsetDecoder decoder) throws CharacterCodingException {
+        int len = buf.limit() - 3;
+        LOG.debug("Making string of length {} using charset {}", len, decoder.charset());
+        buf.skip(1); // skip start byte
+        String message = buf.getString(len, decoder);
+        buf.skip(2); // skip end bytes
+
+        // Only do this if conversion is enabled
+        if (config.isConvertLFtoCR()) {
+            LOG.debug("Replacing LF by CR");
+            message = message.replace('\n', '\r');
+        }
+        return message;
     }
 
     @Override
     public void dispose(IoSession session) throws Exception {
-        session.removeAttribute(CHARSET_DECODER);
         session.removeAttribute(DECODER_STATE);
+        session.removeAttribute(CHARSET_DECODER);
+    }
+
+    private CharsetDecoder charsetDecoder(IoSession session) {
+        synchronized (session) {
+            CharsetDecoder decoder = (CharsetDecoder) session.getAttribute(CHARSET_DECODER);
+            if (decoder == null) {
+                decoder = config.getCharset().newDecoder()
+                    .onMalformedInput(config.getMalformedInputErrorAction())
+                    .onUnmappableCharacter(config.getUnmappableCharacterErrorAction());
+                session.setAttribute(CHARSET_DECODER, decoder);
+            }
+            return decoder;
+        }
+    }
+
+    private DecoderState decoderState(IoSession session) {
+        synchronized (session) {
+            DecoderState decoderState = (DecoderState) session.getAttribute(DECODER_STATE);
+            if (decoderState == null) {
+                decoderState = new DecoderState();
+                session.setAttribute(DECODER_STATE, decoderState);
+            }
+            return decoderState;
+        }
     }
 
     /**
      * Holds the state of the decoding process
      */
     private static class DecoderState {
-        int posStart;
-        int posEnd;
-        int current;
-        boolean waitingForEndByte2;
-
-        int length() {
-            return posEnd - posStart;
-        }
+        private int startPos = -1;
+        private int currentPos;
+        private byte previousByte;
 
         void reset() {
-            posStart = 0;
-            posEnd = 0;
-            waitingForEndByte2 = false;
+            startPos = -1;
+            currentPos = 0;
+            previousByte = 0;
+        }
+
+        void markStart(int position) {
+            if (isStarted()) {
+                LOG.warn("Ignoring message start at position {} before previous message has ended.", position);
+            } else {
+                startPos = position;
+                LOG.debug("Message starts at position {}", startPos);
+            }
+        }
+
+        void markCurrent(int position) {
+            currentPos = position;
+        }
+
+        void markPrevious(byte previous) {
+            previousByte = previous;
+        }
+
+        public int start() {
+            return startPos;
+        }
+
+        public int current() {
+            return currentPos;
+        }
+
+        public byte previous() {
+            return previousByte;
+        }
+
+        public boolean isStarted() {
+            return startPos >= 0;
         }
     }
-
 }

@@ -66,7 +66,7 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
                         .process(new MyLittleProcessor());
 
                 from("direct:b")
-                    .beanRef("myLittleBean", "bye");
+                    .bean("myLittleBean", "bye");
             }
         };
     }

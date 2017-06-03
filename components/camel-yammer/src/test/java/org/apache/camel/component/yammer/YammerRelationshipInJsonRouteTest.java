@@ -23,8 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class YammerRelationshipInJsonRouteTest extends YammerComponentTestSupport {
-
-    @SuppressWarnings("unchecked")
+   
     @Test
     public void testConsumeAllUsers() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

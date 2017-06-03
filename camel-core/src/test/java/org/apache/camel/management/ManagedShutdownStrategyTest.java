@@ -39,7 +39,7 @@ public class ManagedShutdownStrategyTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
 
         Long timeout = (Long) mbeanServer.getAttribute(on, "Timeout");
         assertEquals(300, timeout.longValue());

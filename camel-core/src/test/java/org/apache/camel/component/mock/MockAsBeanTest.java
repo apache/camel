@@ -67,7 +67,7 @@ public class MockAsBeanTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     // send to foo bean
-                    .beanRef("foo")
+                    .bean("foo")
                     // and then to result mock
                     .to("mock:result");
             }

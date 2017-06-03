@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 import rx.Observer;
-import rx.util.functions.Func1;
+import rx.functions.Func1;
 
 /**
  * A {@link Processor} which invokes an underling {@link Observer} as messages
@@ -29,9 +29,9 @@ import rx.util.functions.Func1;
  */
 public class ProcessorToObserver<T> implements Processor {
     private final Func1<Exchange, T> func;
-    private final Observer<T> observer;
+    private final Observer<? super T> observer;
 
-    public ProcessorToObserver(Func1<Exchange, T> func, Observer<T> observer) {
+    public ProcessorToObserver(Func1<Exchange, T> func, Observer<? super T> observer) {
         this.func = func;
         this.observer = observer;
     }

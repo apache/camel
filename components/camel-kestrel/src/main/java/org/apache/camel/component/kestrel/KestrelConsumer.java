@@ -106,7 +106,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
     }
 
     @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // Signal to our threads that shutdown is happening
         shutdownPending = true;
 

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+                http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
+                http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+    <property-placeholder persistent-id="MllpTcpClientProducer" update-strategy="reload" xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0" >
+        <default-properties>
+            <property name="sourceUri" value="direct://source" />
+            <property name="acknowledgedUri" value="mock://acknowledged" />
+            <property name="timeoutUri" value="mock://timeout-ex" />
+            <property name="frameErrorUri" value="mock://frame-ex" />
+            <property name="errorAcknowledgementUri" value="mock://ae-ack" />
+            <property name="rejectAcknowledgementUri" value="mock://ar-ack" />
+            <property name="mllp.host" value="localhost" />
+            <property name="mllp.port" value="7777" />
+        </default-properties>
+    </property-placeholder>
+
+
+    <errorHandler id="DefaultErrorHandler" type="DefaultErrorHandler" xmlns="http://camel.apache.org/schema/blueprint">
+        <redeliveryPolicy allowRedeliveryWhileStopping="false"/>
+    </errorHandler>
+
+    <camelContext id="mllp-tcp-client-producer-test" xmlns="http://camel.apache.org/schema/blueprint"
+                        useMDCLogging="true" trace="false"
+                        >
+
+        <onException>
+            <exception>java.net.ConnectException</exception>
+            <redeliveryPolicy
+                    allowRedeliveryWhileStopping="false"
+                    redeliveryDelay="500"
+                    maximumRedeliveryDelay="30000"
+                    backOffMultiplier="2"
+                    useExponentialBackOff="true"
+                    maximumRedeliveries="-1"
+                    logRetryAttempted="true"
+                    retryAttemptedLogLevel="WARN"
+            />
+        </onException>
+
+        <onException>
+            <exception>org.apache.camel.component.mllp.MllpFrameException</exception>
+            <redeliveryPolicy logHandled="true"/>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <to uri="{{frameErrorUri}}"/>
+        </onException>
+
+        <onException>
+            <exception>org.apache.camel.component.mllp.MllpTimeoutException</exception>
+            <redeliveryPolicy logHandled="true"/>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <to uri="{{timeoutUri}}"/>
+        </onException>
+
+        <onException>
+            <exception>org.apache.camel.component.mllp.MllpApplicationErrorAcknowledgementException</exception>
+            <redeliveryPolicy logHandled="true" logRetryAttempted="true" retryAttemptedLogLevel="WARN" logExhausted="true" retriesExhaustedLogLevel="ERROR"
+                    allowRedeliveryWhileStopping="false"
+                    maximumRedeliveries="10"
+                    redeliveryDelay="1000"
+                    useExponentialBackOff="true"
+                    maximumRedeliveryDelay="15000"
+            />
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <to uri="{{errorAcknowledgementUri}}" />
+        </onException>
+
+        <onException>
+            <exception>org.apache.camel.component.mllp.MllpApplicationRejectAcknowledgementException</exception>
+            <redeliveryPolicy logHandled="true" />
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <to uri="{{rejectAcknowledgementUri}}" />
+        </onException>
+
+        <route id="direct-to-mllp">
+            <from uri="{{sourceUri}}" />
+            <log loggingLevel="DEBUG" message="sending message: $simple{header[CamelMllpMessageControlId]}" />
+            <to uri="mllp://{{mllp.host}}:{{mllp.port}}"/>
+            <to uri="{{acknowledgedUri}}"/>
+            <log loggingLevel="DEBUG" message="message sent: $simple{header[CamelMllpMessageControlId]}" />
+            <to uri="log:direct-to-mllp?level=INFO&amp;groupSize=50" />
+        </route>
+    </camelContext>
+
+</blueprint>

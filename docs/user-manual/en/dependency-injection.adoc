@@ -1,0 +1,17 @@
+[[DependencyInjection-DependencyInjection]]
+Dependency Injection
+~~~~~~~~~~~~~~~~~~~~
+
+_Dependency Injection_ or _Inversion of Control_ is a pattern where
+dependencies of an object are injected into the object without the
+object being too aware of how the injection is performed. The two most
+popular Dependency Injection libraries available at the time of writing
+are
+
+* link:spring.html[Spring]
+* link:guice.html[Guice]
+* link:cdi.html[CDI]
+
+Camel is developed such that any Dependency Injection framework can be
+used easily - though we've tried hard to optimise Camel for both
+link:spring.html[Spring],link:cdi.html[CDI] and link:guice.html[Guice]

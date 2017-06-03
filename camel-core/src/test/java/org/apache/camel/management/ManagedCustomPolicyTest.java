@@ -52,13 +52,13 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
         assertEquals(3, set.size());
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"foo\"");
         assertTrue("Should be registered: foo",  mbeanServer.isRegistered(on));
 
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"result\"");
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"result\"");
         assertTrue("Should be registered: result",  mbeanServer.isRegistered(on));
 
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"bar\"");
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"bar\"");
         assertTrue("Should be registered: bar",  mbeanServer.isRegistered(on));
     }
 

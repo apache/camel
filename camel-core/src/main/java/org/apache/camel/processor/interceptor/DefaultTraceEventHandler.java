@@ -33,6 +33,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class DefaultTraceEventHandler implements TraceEventHandler, Service {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTraceEventHandler.class);
     

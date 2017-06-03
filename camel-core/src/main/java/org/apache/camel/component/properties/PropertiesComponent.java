@@ -17,23 +17,29 @@
 package org.apache.camel.component.properties;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The <a href="http://camel.apache.org/properties">properties</a> component.
- *
- * @version 
+ * The <a href="http://camel.apache.org/properties">Properties Component</a> allows you to use property placeholders when defining Endpoint URIs
  */
-public class PropertiesComponent extends DefaultComponent {
+public class PropertiesComponent extends UriEndpointComponent {
 
     /**
      * The default prefix token.
@@ -60,6 +66,24 @@ public class PropertiesComponent extends DefaultComponent {
     public static final String SUFFIX_TOKEN = DEFAULT_SUFFIX_TOKEN;
 
     /**
+     *  Never check system properties.
+     */
+    public static final int SYSTEM_PROPERTIES_MODE_NEVER = 0;
+
+    /**
+     * Check system properties if not resolvable in the specified properties.
+     */
+    public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
+
+    /**
+     * Check system properties first, before trying the specified properties.
+     * This allows system properties to override any other property source.
+     * <p/>
+     * This is the default.
+     */
+    public static final int SYSTEM_PROPERTIES_MODE_OVERRIDE = 2;
+
+    /**
      * Key for stores special override properties that containers such as OSGi can store
      * in the OSGi service registry
      */
@@ -67,73 +91,124 @@ public class PropertiesComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
-    private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
-    private PropertiesParser propertiesParser = new DefaultPropertiesParser();
-    private String[] locations;
+    private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
+    private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
+    private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
+    private boolean isDefaultCreated;
+    private List<PropertiesLocation> locations = Collections.emptyList();
+
     private boolean ignoreMissingLocation;
+    private String encoding;
+    @Metadata(defaultValue = "true")
     private boolean cache = true;
     private String propertyPrefix;
+    private String propertyPrefixResolved;
     private String propertySuffix;
+    private String propertySuffixResolved;
+    @Metadata(defaultValue = "true")
     private boolean fallbackToUnaugmentedProperty = true;
+    @Metadata(defaultValue = "true")
+    private boolean defaultFallbackEnabled = true;
+    @Metadata(defaultValue = DEFAULT_PREFIX_TOKEN)
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
+    @Metadata(defaultValue = DEFAULT_SUFFIX_TOKEN)
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
+    private Properties initialProperties;
     private Properties overrideProperties;
-    
+    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE)
+    private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
+
     public PropertiesComponent() {
+        super(PropertiesEndpoint.class);
+        // include out of the box functions
+        addFunction(new EnvPropertiesFunction());
+        addFunction(new SysPropertiesFunction());
+        addFunction(new ServicePropertiesFunction());
+        addFunction(new ServiceHostPropertiesFunction());
+        addFunction(new ServicePortPropertiesFunction());
     }
-    
+
+    public PropertiesComponent(boolean isDefaultCreated) {
+        this();
+        this.isDefaultCreated = isDefaultCreated;
+    }
+
     public PropertiesComponent(String location) {
+        this();
         setLocation(location);
     }
 
     public PropertiesComponent(String... locations) {
+        this();
         setLocations(locations);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String[] paths = locations;
+        List<PropertiesLocation> paths = locations;
 
-        // override default locations
-        String locations = getAndRemoveParameter(parameters, "locations", String.class);
         Boolean ignoreMissingLocationLoc = getAndRemoveParameter(parameters, "ignoreMissingLocation", Boolean.class);
-        if (locations != null) {
-            LOG.trace("Overriding default locations with location: {}", locations);
-            paths = locations.split(",");
-        }
         if (ignoreMissingLocationLoc != null) {
             ignoreMissingLocation = ignoreMissingLocationLoc;
         }
 
+        // override default locations
+        String locations = getAndRemoveParameter(parameters, "locations", String.class);
+        if (locations != null) {
+            LOG.trace("Overriding default locations with location: {}", locations);
+            paths = Arrays.stream(locations.split(",")).map(PropertiesLocation::new).collect(Collectors.toList());
+        }
+
         String endpointUri = parseUri(remaining, paths);
         LOG.debug("Endpoint uri parsed as: {}", endpointUri);
-        return getCamelContext().getEndpoint(endpointUri);
+
+        Endpoint delegate = getCamelContext().getEndpoint(endpointUri);
+        PropertiesEndpoint answer = new PropertiesEndpoint(uri, delegate, this);
+
+        setProperties(answer, parameters);
+        return answer;
     }
 
     public String parseUri(String uri) throws Exception {
         return parseUri(uri, locations);
     }
 
-    public String parseUri(String uri, String... paths) throws Exception {
-        Properties prop = null;
+    public String parseUri(String uri, String... uris) throws Exception {
+        return parseUri(
+            uri,
+            uris != null
+                ? Arrays.stream(uris).map(PropertiesLocation::new).collect(Collectors.toList())
+                : Collections.emptyList());
+    }
+
+    public String parseUri(String uri, List<PropertiesLocation> paths) throws Exception {
+        Properties prop = new Properties();
+
+        // use initial properties
+        if (null != initialProperties) {
+            prop.putAll(initialProperties);
+        }
+
+        // use locations
         if (paths != null) {
             // location may contain JVM system property or OS environment variables
             // so we need to parse those
-            String[] locations = parseLocations(paths);
-    
+            List<PropertiesLocation> locations = parseLocations(paths);
+
             // check cache first
             CacheKey key = new CacheKey(locations);
-            prop = cache ? cacheMap.get(key) : null;
-            if (prop == null) {
-                prop = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
+            Properties locationsProp = cache ? cacheMap.get(key) : null;
+            if (locationsProp == null) {
+                locationsProp = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
                 if (cache) {
-                    cacheMap.put(key, prop);
+                    cacheMap.put(key, locationsProp);
                 }
             }
+            prop.putAll(locationsProp);
         }
 
         // use override properties
-        if (prop != null && overrideProperties != null) {
+        if (overrideProperties != null) {
             // make a copy to avoid affecting the original properties
             Properties override = new Properties();
             override.putAll(prop);
@@ -152,29 +227,100 @@ public class PropertiesComponent extends DefaultComponent {
         LOG.trace("Parsing uri {} with properties: {}", uri, prop);
         
         if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
-            return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(uri, prop, prefixToken, suffixToken,
-                                                                                            propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
+            return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(
+                uri,
+                prop,
+                prefixToken,
+                suffixToken,
+                propertyPrefixResolved,
+                propertySuffixResolved,
+                fallbackToUnaugmentedProperty,
+                defaultFallbackEnabled);
         } else {
             return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
         }
     }
 
-    public String[] getLocations() {
+    /**
+     * Is this component created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
+     */
+    public boolean isDefaultCreated() {
+        return isDefaultCreated;
+    }
+
+    public List<PropertiesLocation> getLocations() {
         return locations;
     }
 
-    public void setLocations(String[] locations) {
-        this.locations = locations;
+    /**
+     * A list of locations to load properties.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    public void setLocations(List<PropertiesLocation> locations) {
+        this.locations = Collections.unmodifiableList(locations);
     }
 
+    /**
+     * A list of locations to load properties.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    public void setLocations(String[] locationStrings) {
+        List<PropertiesLocation> locations = new ArrayList<>();
+        if (locationStrings != null) {
+            for (String locationString : locationStrings) {
+                locations.add(new PropertiesLocation(locationString));
+            }
+        }
+
+        setLocations(locations);
+    }
+
+    /**
+     * A list of locations to load properties.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    public void setLocations(Collection<String> locationStrings) {
+        List<PropertiesLocation> locations = new ArrayList<>();
+        if (locationStrings != null) {
+            for (String locationString : locationStrings) {
+                locations.add(new PropertiesLocation(locationString));
+            }
+        }
+
+        setLocations(locations);
+    }
+
+    /**
+     * A list of locations to load properties. You can use comma to separate multiple locations.
+     * This option will override any default locations and only use the locations from this option.
+     */
     public void setLocation(String location) {
-        setLocations(location.split(","));
+        if (location != null) {
+            setLocations(location.split(","));
+        }
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    /**
+     * Encoding to use when loading properties file from the file system or classpath.
+     * <p/>
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
+     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     */
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     public PropertiesResolver getPropertiesResolver() {
         return propertiesResolver;
     }
 
+    /**
+     * To use a custom PropertiesResolver
+     */
     public void setPropertiesResolver(PropertiesResolver propertiesResolver) {
         this.propertiesResolver = propertiesResolver;
     }
@@ -183,6 +329,9 @@ public class PropertiesComponent extends DefaultComponent {
         return propertiesParser;
     }
 
+    /**
+     * To use a custom PropertiesParser
+     */
     public void setPropertiesParser(PropertiesParser propertiesParser) {
         this.propertiesParser = propertiesParser;
     }
@@ -191,6 +340,9 @@ public class PropertiesComponent extends DefaultComponent {
         return cache;
     }
 
+    /**
+     * Whether or not to cache loaded properties. The default value is true.
+     */
     public void setCache(boolean cache) {
         this.cache = cache;
     }
@@ -199,30 +351,62 @@ public class PropertiesComponent extends DefaultComponent {
         return propertyPrefix;
     }
 
+    /**
+     * Optional prefix prepended to property names before resolution.
+     */
     public void setPropertyPrefix(String propertyPrefix) {
         this.propertyPrefix = propertyPrefix;
+        this.propertyPrefixResolved = propertyPrefix;
+        if (ObjectHelper.isNotEmpty(this.propertyPrefix)) {
+            this.propertyPrefixResolved = FilePathResolver.resolvePath(this.propertyPrefix);
+        }
     }
 
     public String getPropertySuffix() {
         return propertySuffix;
     }
 
+    /**
+     * Optional suffix appended to property names before resolution.
+     */
     public void setPropertySuffix(String propertySuffix) {
         this.propertySuffix = propertySuffix;
+        this.propertySuffixResolved = propertySuffix;
+        if (ObjectHelper.isNotEmpty(this.propertySuffix)) {
+            this.propertySuffixResolved = FilePathResolver.resolvePath(this.propertySuffix);
+        }
     }
 
     public boolean isFallbackToUnaugmentedProperty() {
         return fallbackToUnaugmentedProperty;
     }
 
+    /**
+     * If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix
+     * before falling back the plain property name specified. If false, only the augmented property name is searched.
+     */
     public void setFallbackToUnaugmentedProperty(boolean fallbackToUnaugmentedProperty) {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
+    }
+
+    public boolean isDefaultFallbackEnabled() {
+        return defaultFallbackEnabled;
+    }
+
+    /**
+     * If false, the component does not attempt to find a default for the key by looking after the colon separator.
+     */
+    public void setDefaultFallbackEnabled(boolean defaultFallbackEnabled) {
+        this.defaultFallbackEnabled = defaultFallbackEnabled;
     }
 
     public boolean isIgnoreMissingLocation() {
         return ignoreMissingLocation;
     }
 
+    /**
+     * Whether to silently ignore if a location cannot be located, such as a properties file not found.
+     */
     public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
     }
@@ -259,6 +443,19 @@ public class PropertiesComponent extends DefaultComponent {
         }
     }
 
+    public Properties getInitialProperties() {
+        return initialProperties;
+    }
+
+    /**
+     * Sets initial properties which will be used before any locations are resolved.
+     *
+     * @param initialProperties properties that are added first
+     */
+    public void setInitialProperties(Properties initialProperties) {
+        this.initialProperties = initialProperties;
+    }
+
     public Properties getOverrideProperties() {
         return overrideProperties;
     }
@@ -273,25 +470,96 @@ public class PropertiesComponent extends DefaultComponent {
         this.overrideProperties = overrideProperties;
     }
 
+    /**
+     * Gets the functions registered in this properties component.
+     */
+    public Map<String, PropertiesFunction> getFunctions() {
+        return functions;
+    }
+
+    /**
+     * Registers the {@link org.apache.camel.component.properties.PropertiesFunction} as a function to this component.
+     */
+    public void addFunction(PropertiesFunction function) {
+        this.functions.put(function.getName(), function);
+    }
+
+    /**
+     * Is there a {@link org.apache.camel.component.properties.PropertiesFunction} with the given name?
+     */
+    public boolean hasFunction(String name) {
+        return functions.containsKey(name);
+    }
+
+    public int getSystemPropertiesMode() {
+        return systemPropertiesMode;
+    }
+
+    /**
+     * Sets the system property mode.
+     *
+     * @see #SYSTEM_PROPERTIES_MODE_NEVER
+     * @see #SYSTEM_PROPERTIES_MODE_FALLBACK
+     * @see #SYSTEM_PROPERTIES_MODE_OVERRIDE
+     */
+    public void setSystemPropertiesMode(int systemPropertiesMode) {
+        this.systemPropertiesMode = systemPropertiesMode;
+    }
+
+    @Override
+    public boolean isResolvePropertyPlaceholders() {
+        // its chicken and egg, we cannot resolve placeholders on ourselves
+        return false;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
+                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
+                && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            throw new IllegalArgumentException("Option systemPropertiesMode has invalid value: " + systemPropertiesMode);
+        }
+
+        // inject the component to the parser
+        if (propertiesParser instanceof DefaultPropertiesParser) {
+            ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
+        }
+    }
+
     @Override
     protected void doStop() throws Exception {
         cacheMap.clear();
         super.doStop();
     }
 
-    private String[] parseLocations(String[] locations) {
-        String[] answer = new String[locations.length];
+    private List<PropertiesLocation> parseLocations(List<PropertiesLocation> locations) {
+        List<PropertiesLocation> answer = new ArrayList<>();
 
-        for (int i = 0; i < locations.length; i++) {
-            String location = locations[i];
+        for (PropertiesLocation location : locations) {
             LOG.trace("Parsing location: {} ", location);
 
-            location = FilePathResolver.resolvePath(location);
-
-            LOG.debug("Parsed location: {} ", location);
-            answer[i] = location;
+            try {
+                String path = FilePathResolver.resolvePath(location.getPath());
+                LOG.debug("Parsed location: {} ", path);
+                if (ObjectHelper.isNotEmpty(path)) {
+                    answer.add(new PropertiesLocation(
+                        location.getResolver(),
+                        path,
+                        location.isOptional())
+                    );
+                }
+            } catch (IllegalArgumentException e) {
+                if (!ignoreMissingLocation && !location.isOptional()) {
+                    throw e;
+                } else {
+                    LOG.debug("Ignored missing location: {}", location);
+                }
+            }
         }
 
+        // must return a not-null answer
         return answer;
     }
 
@@ -300,10 +568,10 @@ public class PropertiesComponent extends DefaultComponent {
      */
     private static final class CacheKey implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final String[] locations;
+        private final List<PropertiesLocation> locations;
 
-        private CacheKey(String[] locations) {
-            this.locations = locations;
+        private CacheKey(List<PropertiesLocation> locations) {
+            this.locations = new ArrayList<>(locations);
         }
 
         @Override
@@ -317,21 +585,17 @@ public class PropertiesComponent extends DefaultComponent {
 
             CacheKey that = (CacheKey) o;
 
-            if (!Arrays.equals(locations, that.locations)) {
-                return false;
-            }
-
-            return true;
+            return locations.equals(that.locations);
         }
 
         @Override
         public int hashCode() {
-            return locations != null ? Arrays.hashCode(locations) : 0;
+            return locations != null ? locations.hashCode() : 0;
         }
 
         @Override
         public String toString() {
-            return "LocationKey[" + Arrays.asList(locations).toString() + "]";
+            return "LocationKey[" + locations.toString() + "]";
         }
     }
 

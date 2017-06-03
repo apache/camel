@@ -20,6 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 
+/**
+ * To adapt {@link Predicate} as an {@link org.apache.camel.Expression}
+ */
 public final class PredicateToExpressionAdapter implements Expression {
     private final Predicate predicate;
 

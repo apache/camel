@@ -25,12 +25,12 @@ public class MemoryWebsocketStore extends ConcurrentHashMap<String, DefaultWebso
 
     @Override
     public void add(DefaultWebsocket ws) {
-        super.put(ws.getConnectionKey(), ws);
+        super.put(getKey(ws), ws);
     }
 
     @Override
     public void remove(DefaultWebsocket ws) {
-        super.remove(ws.getConnectionKey());
+        super.remove(getKey(ws));
     }
 
     @Override
@@ -56,5 +56,20 @@ public class MemoryWebsocketStore extends ConcurrentHashMap<String, DefaultWebso
     @Override
     public void stop() throws Exception {
         clear();
+    }
+    
+    private String getKey(DefaultWebsocket ws) {
+        StringBuilder sb = new StringBuilder();
+        if (ws.getConnectionKey() == null && ws.getPathSpec() == null) {
+            return null;
+        } else {
+            if (ws.getConnectionKey() != null) {
+                sb.append(ws.getConnectionKey());
+            }
+            if (ws.getPathSpec() != null) {
+                sb.append(ws.getPathSpec());
+            }
+        }
+        return sb.toString();
     }
 }

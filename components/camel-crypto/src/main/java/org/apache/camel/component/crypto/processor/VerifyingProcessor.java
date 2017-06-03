@@ -61,9 +61,9 @@ public class VerifyingProcessor extends DigitalSignatureProcessor {
     }
 
     private byte[] getSignatureFromExchange(Exchange exchange) throws Exception {
-        String encodedSignature = ExchangeHelper.getMandatoryHeader(exchange, config.getSignatureHeader(), String.class);
+        String encodedSignature = ExchangeHelper.getMandatoryHeader(exchange, config.getSignatureHeaderName(), String.class);
         if (encodedSignature == null) {
-            throw new IllegalStateException("Cannot verify exchange as no " + config.getSignatureHeader() + " header is present.");
+            throw new IllegalStateException("Cannot verify exchange as no " + config.getSignatureHeaderName() + " header is present.");
         }
         return new Base64().decode(encodedSignature);
     }

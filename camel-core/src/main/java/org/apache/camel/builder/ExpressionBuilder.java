@@ -19,16 +19,22 @@ package org.apache.camel.builder;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -37,37 +43,86 @@ import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.language.bean.BeanLanguage;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.TokenPairExpressionIterator;
 import org.apache.camel.support.TokenXMLExpressionIterator;
+import org.apache.camel.support.XMLTokenExpressionIterator;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.GroupIterator;
+import org.apache.camel.util.GroupTokenIterator;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.SkipIterator;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
  *
- * @version 
+ * @version
  */
 public final class ExpressionBuilder {
+
+    private static final Pattern OFFSET_PATTERN = Pattern.compile("([+-])([^+-]+)");
 
     /**
      * Utility classes should not have a public constructor.
      */
     private ExpressionBuilder() {
     }
-    
+
+    /**
+     * Returns an expression for the inbound message attachments
+     *
+     * @return an expression object which will return the inbound message attachments
+     */
+    public static Expression attachmentObjectsExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getAttachmentObjects();
+            }
+
+            @Override
+            public String toString() {
+                return "attachmentObjects";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for the inbound message attachments
+     *
+     * @return an expression object which will return the inbound message attachments
+     */
+    public static Expression attachmentObjectValuesExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getAttachmentObjects().values();
+            }
+
+            @Override
+            public String toString() {
+                return "attachmentObjects";
+            }
+        };
+    }
+
     /**
      * Returns an expression for the inbound message attachments
      *
@@ -115,10 +170,11 @@ public final class ExpressionBuilder {
     public static Expression headerExpression(final String headerName) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Object header = exchange.getIn().getHeader(headerName);
+                String name = simpleExpression(headerName).evaluate(exchange, String.class);
+                Object header = exchange.getIn().getHeader(name);
                 if (header == null) {
                     // fall back on a property
-                    header = exchange.getProperty(headerName);
+                    header = exchange.getProperty(name);
                 }
                 return header;
             }
@@ -142,10 +198,11 @@ public final class ExpressionBuilder {
     public static <T> Expression headerExpression(final String headerName, final Class<T> type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Object header = exchange.getIn().getHeader(headerName, type);
+                String name = simpleExpression(headerName).evaluate(exchange, String.class);
+                Object header = exchange.getIn().getHeader(name, type);
                 if (header == null) {
                     // fall back on a property
-                    header = exchange.getProperty(headerName, type);
+                    header = exchange.getProperty(name, type);
                 }
                 return header;
             }
@@ -163,30 +220,32 @@ public final class ExpressionBuilder {
      * Will fallback and look in properties if not found in headers.
      *
      * @param headerName the name of the header the expression will return
-     * @param name the type to convert to as a FQN class name
+     * @param typeName the type to convert to as a FQN class name
      * @return an expression object which will return the header value
      */
-    public static Expression headerExpression(final String headerName, final String name) {
+    public static Expression headerExpression(final String headerName, final String typeName) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Class<?> type;
                 try {
-                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(name);
+                    String text = simpleExpression(typeName).evaluate(exchange, String.class);
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
                     throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                 }
 
-                Object header = exchange.getIn().getHeader(headerName, type);
+                String text = simpleExpression(headerName).evaluate(exchange, String.class);
+                Object header = exchange.getIn().getHeader(text, type);
                 if (header == null) {
                     // fall back on a property
-                    header = exchange.getProperty(headerName, type);
+                    header = exchange.getProperty(text, type);
                 }
                 return header;
             }
 
             @Override
             public String toString() {
-                return "headerAs(" + headerName + ", " + name + ")";
+                return "headerAs(" + headerName + ", " + typeName + ")";
             }
         };
     }
@@ -201,7 +260,8 @@ public final class ExpressionBuilder {
         return new KeyedOgnlExpressionAdapter(ognl, "headerOgnl(" + ognl + ")",
             new KeyedOgnlExpressionAdapter.KeyedEntityRetrievalStrategy() {
                 public Object getKeyedEntity(Exchange exchange, String key) {
-                    return exchange.getIn().getHeader(key);
+                    String text = simpleExpression(key).evaluate(exchange, String.class);
+                    return exchange.getIn().getHeader(text);
                 }
             });
     }
@@ -239,11 +299,12 @@ public final class ExpressionBuilder {
                     return null;
                 }
 
+                String text = simpleExpression(headerName).evaluate(exchange, String.class);
                 Message out = exchange.getOut();
-                Object header = out.getHeader(headerName);
+                Object header = out.getHeader(text);
                 if (header == null) {
                     // let's try the exchange header
-                    header = exchange.getProperty(headerName);
+                    header = exchange.getProperty(text);
                 }
                 return header;
             }
@@ -296,8 +357,8 @@ public final class ExpressionBuilder {
                 return "exchangePattern";
             }
         };
-    }   
-    
+    }
+
     /**
      * Returns an expression for an exception set on the exchange
      *
@@ -347,7 +408,7 @@ public final class ExpressionBuilder {
             }
         };
     }
-    
+
     /**
      * Returns the expression for the exchanges exception invoking methods defined
      * in a simple OGNL notation
@@ -361,10 +422,13 @@ public final class ExpressionBuilder {
                 if (exception == null) {
                     exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                 }
-                
+
                 if (exception == null) {
                     return null;
                 }
+
+                // ognl is able to evaluate method name if it contains nested functions
+                // so we should not eager evaluate ognl as a string
                 return new MethodCallExpression(exception, ognl).evaluate(exchange);
             }
 
@@ -419,7 +483,8 @@ public final class ExpressionBuilder {
     public static Expression refExpression(final String ref) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getContext().getRegistry().lookupByName(ref);
+                String text = simpleExpression(ref).evaluate(exchange, String.class);
+                return exchange.getContext().getRegistry().lookupByName(text);
             }
 
             @Override
@@ -523,20 +588,43 @@ public final class ExpressionBuilder {
      *
      * @param propertyName the name of the property the expression will return
      * @return an expression object which will return the property value
+     * @deprecated use {@link #exchangePropertyExpression(String)} instead
      */
+    @Deprecated
     public static Expression propertyExpression(final String propertyName) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getProperty(propertyName);
+                String text = simpleExpression(propertyName).evaluate(exchange, String.class);
+                return exchange.getProperty(text);
             }
 
             @Override
             public String toString() {
-                return "property(" + propertyName + ")";
+                return "exchangeProperty(" + propertyName + ")";
             }
         };
     }
-    
+
+    /**
+     * Returns an expression for the property value of exchange with the given name
+     *
+     * @param propertyName the name of the property the expression will return
+     * @return an expression object which will return the property value
+     */
+    public static Expression exchangePropertyExpression(final String propertyName) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(propertyName).evaluate(exchange, String.class);
+                return exchange.getProperty(text);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeProperty(" + propertyName + ")";
+            }
+        };
+    }
+
     /**
      * Returns an expression for the property value of exchange with the given name invoking methods defined
      * in a simple OGNL notation
@@ -547,7 +635,8 @@ public final class ExpressionBuilder {
         return new KeyedOgnlExpressionAdapter(ognl, "propertyOgnl(" + ognl + ")",
             new KeyedOgnlExpressionAdapter.KeyedEntityRetrievalStrategy() {
                 public Object getKeyedEntity(Exchange exchange, String key) {
-                    return exchange.getProperty(key);
+                    String text = simpleExpression(key).evaluate(exchange, String.class);
+                    return exchange.getProperty(text);
                 }
             });
     }
@@ -556,8 +645,19 @@ public final class ExpressionBuilder {
      * Returns an expression for the properties of exchange
      *
      * @return an expression object which will return the properties
+     * @deprecated use {@link #exchangeExceptionExpression()} instead
      */
+    @Deprecated
     public static Expression propertiesExpression() {
+        return exchangeExceptionExpression();
+    }
+
+    /**
+     * Returns an expression for the exchange properties of exchange
+     *
+     * @return an expression object which will return the exchange properties
+     */
+    public static Expression exchangePropertiesExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getProperties();
@@ -565,11 +665,11 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "properties";
+                return "exchangeProperties";
             }
         };
     }
-    
+
     /**
      * Returns an expression for the properties of the camel context
      *
@@ -578,7 +678,7 @@ public final class ExpressionBuilder {
     public static Expression camelContextPropertiesExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getContext().getProperties();
+                return exchange.getContext().getGlobalOptions();
             }
 
             @Override
@@ -587,7 +687,7 @@ public final class ExpressionBuilder {
             }
         };
     }
-    
+
     /**
      * Returns an expression for the property value of the camel context with the given name
      *
@@ -597,7 +697,8 @@ public final class ExpressionBuilder {
     public static Expression camelContextPropertyExpression(final String propertyName) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getContext().getProperty(propertyName);
+                String text = simpleExpression(propertyName).evaluate(exchange, String.class);
+                return exchange.getContext().getGlobalOption(text);
             }
 
             @Override
@@ -628,7 +729,9 @@ public final class ExpressionBuilder {
                                                       final String defaultValue) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return System.getProperty(propertyName, defaultValue);
+                String text = simpleExpression(propertyName).evaluate(exchange, String.class);
+                String text2 = simpleExpression(defaultValue).evaluate(exchange, String.class);
+                return System.getProperty(text, text2);
             }
 
             @Override
@@ -659,9 +762,11 @@ public final class ExpressionBuilder {
                                                          final String defaultValue) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                String answer = System.getenv(propertyName);
+                String text = simpleExpression(propertyName).evaluate(exchange, String.class);
+                String answer = System.getenv(text);
                 if (answer == null) {
-                    answer = defaultValue;
+                    String text2 = simpleExpression(defaultValue).evaluate(exchange, String.class);
+                    answer = text2;
                 }
                 return answer;
             }
@@ -693,6 +798,40 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for evaluating the expression/predicate using the given language
+     *
+     * @param expression  the expression or predicate
+     * @return an expression object which will evaluate the expression/predicate using the given language
+     */
+    public static Expression languageExpression(final String language, final String expression) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Language lan = exchange.getContext().resolveLanguage(language);
+                if (lan != null) {
+                    return lan.createExpression(expression).evaluate(exchange, Object.class);
+                } else {
+                    throw new NoSuchLanguageException(language);
+                }
+            }
+
+            @Override
+            public boolean matches(Exchange exchange) {
+                Language lan = exchange.getContext().resolveLanguage(language);
+                if (lan != null) {
+                    return lan.createPredicate(expression).matches(exchange);
+                } else {
+                    throw new NoSuchLanguageException(language);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "language[" + language + ":" + expression + "]";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for a type value
      *
      * @param name the type name
@@ -702,22 +841,23 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // it may refer to a class type
-                Class<?> type = exchange.getContext().getClassResolver().resolveClass(name);
+                String text = simpleExpression(name).evaluate(exchange, String.class);
+                Class<?> type = exchange.getContext().getClassResolver().resolveClass(text);
                 if (type != null) {
                     return type;
                 }
 
-                int pos = name.lastIndexOf(".");
+                int pos = text.lastIndexOf(".");
                 if (pos > 0) {
-                    String before = name.substring(0, pos);
-                    String after = name.substring(pos + 1);
+                    String before = text.substring(0, pos);
+                    String after = text.substring(pos + 1);
                     type = exchange.getContext().getClassResolver().resolveClass(before);
                     if (type != null) {
                         return ObjectHelper.lookupConstantFieldValue(type, after);
                     }
                 }
 
-                throw ObjectHelper.wrapCamelExecutionException(exchange, new ClassNotFoundException("Cannot find type " + name));
+                throw ObjectHelper.wrapCamelExecutionException(exchange, new ClassNotFoundException("Cannot find type " + text));
             }
 
             @Override
@@ -771,6 +911,80 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns a functional expression for the exchanges inbound message body
+     */
+    public static Expression bodyExpression(final Function<Object, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody()
+                );
+            }
+
+            @Override
+            public String toString() {
+                return "bodyExpression";
+            }
+        };
+    }
+
+    /**
+     * Returns a functional expression for the exchanges inbound message body and headers
+     */
+    public static Expression bodyExpression(final BiFunction<Object, Map<String, Object>, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody(),
+                    exchange.getIn().getHeaders()
+                );
+            }
+
+            @Override
+            public String toString() {
+                return "bodyExpression";
+            }
+        };
+    }
+
+    /**
+     * Returns a functional expression for the exchanges inbound message body converted to a desired type
+     */
+    public static <T> Expression bodyExpression(final Class<T> bodyType, final Function<T, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody(bodyType)
+                );
+            }
+
+            @Override
+            public String toString() {
+                return "bodyExpression (" + bodyType + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns a functional expression for the exchanges inbound message body converted to a desired type and headers
+     */
+    public static <T> Expression bodyExpression(final Class<T> bodyType, final BiFunction<T, Map<String, Object>, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(
+                    exchange.getIn().getBody(bodyType),
+                    exchange.getIn().getHeaders()
+                );
+            }
+
+            @Override
+            public String toString() {
+                return "bodyExpression (" + bodyType + ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges inbound message body invoking methods defined
      * in a simple OGNL notation
      *
@@ -783,6 +997,8 @@ public final class ExpressionBuilder {
                 if (body == null) {
                     return null;
                 }
+                // ognl is able to evaluate method name if it contains nested functions
+                // so we should not eager evaluate ognl as a string
                 return new MethodCallExpression(body, ognl).evaluate(exchange);
             }
 
@@ -794,10 +1010,35 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for invoking a method (support OGNL syntax) on the given expression
+     *
+     * @param exp   the expression to evaluate and invoke the method on its result
+     * @param ognl  methods to invoke on the evaluated expression in a simple OGNL syntax
+     */
+    public static Expression ognlExpression(final Expression exp, final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object value = exp.evaluate(exchange, Object.class);
+                if (value == null) {
+                    return null;
+                }
+                // ognl is able to evaluate method name if it contains nested functions
+                // so we should not eager evaluate ognl as a string
+                return new MethodCallExpression(value, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "ognl(" + exp + ", " + ognl + ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges camelContext invoking methods defined
      * in a simple OGNL notation
      *
-     * @param ognl  methods to invoke on the body in a simple OGNL syntax
+     * @param ognl  methods to invoke on the context in a simple OGNL syntax
      */
     public static Expression camelContextOgnlExpression(final String ognl) {
         return new ExpressionAdapter() {
@@ -806,12 +1047,35 @@ public final class ExpressionBuilder {
                 if (context == null) {
                     return null;
                 }
+                // ognl is able to evaluate method name if it contains nested functions
+                // so we should not eager evaluate ognl as a string
                 return new MethodCallExpression(context, ognl).evaluate(exchange);
             }
 
             @Override
             public String toString() {
                 return "camelContextOgnl(" + ognl + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchange invoking methods defined
+     * in a simple OGNL notation
+     *
+     * @param ognl  methods to invoke on the exchange in a simple OGNL syntax
+     */
+    public static Expression exchangeOgnlExpression(final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // ognl is able to evaluate method name if it contains nested functions
+                // so we should not eager evaluate ognl as a string
+                return new MethodCallExpression(exchange, ognl).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeOgnl(" + ognl + ")";
             }
         };
     }
@@ -840,9 +1104,10 @@ public final class ExpressionBuilder {
     public static Expression bodyExpression(final String name) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(name).evaluate(exchange, String.class);
                 Class<?> type;
                 try {
-                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(name);
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
                     throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                 }
@@ -858,14 +1123,49 @@ public final class ExpressionBuilder {
 
     /**
      * Returns the expression for the exchanges inbound message body converted
+     * to the given type and invoking methods on the converted body defined in a simple OGNL notation
+     */
+    public static Expression bodyOgnlExpression(final String name, final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(name).evaluate(exchange, String.class);
+                Class<?> type;
+                try {
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
+                } catch (ClassNotFoundException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+                Object body = exchange.getIn().getBody(type);
+                if (body != null) {
+                    // ognl is able to evaluate method name if it contains nested functions
+                    // so we should not eager evaluate ognl as a string
+                    MethodCallExpression call = new MethodCallExpression(exchange, ognl);
+                    // set the instance to use
+                    call.setInstance(body);
+                    return call.evaluate(exchange);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "bodyOgnlAs[" + name + "](" + ognl + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges inbound message body converted
      * to the given type
      */
     public static Expression mandatoryBodyExpression(final String name) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(name).evaluate(exchange, String.class);
                 Class<?> type;
                 try {
-                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(name);
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
                     throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                 }
@@ -884,6 +1184,41 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the exchanges inbound message body converted
+     * to the given type and invoking methods on the converted body defined in a simple OGNL notation
+     */
+    public static Expression mandatoryBodyOgnlExpression(final String name, final String ognl) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(name).evaluate(exchange, String.class);
+                Class<?> type;
+                try {
+                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
+                } catch (ClassNotFoundException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+                Object body;
+                try {
+                    body = exchange.getIn().getMandatoryBody(type);
+                } catch (InvalidPayloadException e) {
+                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                }
+                // ognl is able to evaluate method name if it contains nested functions
+                // so we should not eager evaluate ognl as a string
+                MethodCallExpression call = new MethodCallExpression(exchange, ognl);
+                // set the instance to use
+                call.setInstance(body);
+                return call.evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "mandatoryBodyAs[" + name + "](" + ognl + ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the current thread name
      */
     public static Expression threadNameExpression() {
@@ -895,6 +1230,22 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "threadName";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the {@code null} value
+     */
+    public static Expression nullExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "null";
             }
         };
     }
@@ -926,9 +1277,14 @@ public final class ExpressionBuilder {
                     }
 
                     // if its a bean invocation then if it has no arguments then it should be threaded as null body allowed
-                    BeanInvocation bi = exchange.getIn().getBody(BeanInvocation.class);
-                    if (bi != null && (bi.getArgs() == null || bi.getArgs().length == 0 || bi.getArgs()[0] == null)) {
-                        return null;
+                    if (exchange.getIn().getBody() instanceof BeanInvocation) {
+                        // BeanInvocation would be stored directly as the message body
+                        // do not force any type conversion attempts as it would just be unnecessary and cost a bit performance
+                        // so a regular instanceof check is sufficient
+                        BeanInvocation bi = (BeanInvocation) exchange.getIn().getBody();
+                        if (bi.getArgs() == null || bi.getArgs().length == 0 || bi.getArgs()[0] == null) {
+                            return null;
+                        }
                     }
                 }
 
@@ -1009,7 +1365,8 @@ public final class ExpressionBuilder {
     public static Expression faultBodyExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getOut().isFault() ? exchange.getOut().getBody() : null;
+                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                return msg.isFault() ? msg.getBody() : null;
             }
 
             @Override
@@ -1026,7 +1383,8 @@ public final class ExpressionBuilder {
     public static <T> Expression faultBodyExpression(final Class<T> type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getOut().isFault() ? exchange.getOut().getBody(type) : null;
+                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                return msg.isFault() ? msg.getBody(type) : null;
             }
 
             @Override
@@ -1053,6 +1411,36 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns a functional expression for the exchange
+     */
+    public static Expression exchangeExpression(final Function<Exchange, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeExpression";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the IN message
+     */
+    public static Expression messageExpression() {
+        return inMessageExpression();
+    }
+
+    /**
+     * Returns a functional expression for the IN message
+     */
+    public static Expression messageExpression(final Function<Message, Object> function) {
+        return inMessageExpression(function);
+    }
+
+    /**
      * Returns the expression for the IN message
      */
     public static Expression inMessageExpression() {
@@ -1069,6 +1457,22 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns a functional expression for the IN message
+     */
+    public static Expression inMessageExpression(final Function<Message, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getIn());
+            }
+
+            @Override
+            public String toString() {
+                return "inMessageExpression";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the OUT message
      */
     public static Expression outMessageExpression() {
@@ -1080,6 +1484,22 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "outMessage";
+            }
+        };
+    }
+
+    /**
+     * Returns a functional expression for the OUT message
+     */
+    public static Expression outMessageExpression(final Function<Message, Object> function) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return function.apply(exchange.getOut());
+            }
+
+            @Override
+            public String toString() {
+                return "outMessageExpression";
             }
         };
     }
@@ -1134,15 +1554,40 @@ public final class ExpressionBuilder {
                                                 final String token) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(token).evaluate(exchange, String.class);
                 Object value = expression.evaluate(exchange, Object.class);
                 Scanner scanner = ObjectHelper.getScanner(exchange, value);
-                scanner.useDelimiter(token);
+                scanner.useDelimiter(text);
                 return scanner;
             }
 
             @Override
             public String toString() {
                 return "tokenize(" + expression + ", " + token + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression that skips the first element
+     */
+    public static Expression skipFirstExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Object value = expression.evaluate(exchange, Object.class);
+                Iterator it = exchange.getContext().getTypeConverter().tryConvertTo(Iterator.class, exchange, value);
+                if (it != null) {
+                    // skip first
+                    it.next();
+                    return it;
+                } else {
+                    return value;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "skipFirst(" + expression + ")";
             }
         };
     }
@@ -1159,25 +1604,17 @@ public final class ExpressionBuilder {
      */
     public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
         ObjectHelper.notEmpty(tagName, "tagName");
-
-        // must be XML tokens
-        if (!tagName.startsWith("<")) {
-            tagName = "<" + tagName;
-        }
-        if (!tagName.endsWith(">")) {
-            tagName = tagName + ">";
-        }
-
-        if (inheritNamespaceTagName != null) {
-            if (!inheritNamespaceTagName.startsWith("<")) {
-                inheritNamespaceTagName = "<" + inheritNamespaceTagName;
-            }
-            if (!inheritNamespaceTagName.endsWith(">")) {
-                inheritNamespaceTagName = inheritNamespaceTagName + ">";
-            }
-        }
-
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
+    }
+
+    public static Expression tokenizeXMLAwareExpression(String path, char mode) {
+        ObjectHelper.notEmpty(path, "path");
+        return new XMLTokenExpressionIterator(path, mode);
+    }
+
+    public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
+        ObjectHelper.notEmpty(path, "path");
+        return new XMLTokenExpressionIterator(path, mode, group);
     }
 
     /**
@@ -1202,18 +1639,55 @@ public final class ExpressionBuilder {
         };
     }
 
-    public static Expression groupIteratorExpression(final Expression expression, final String token, final int group) {
+    public static Expression groupXmlIteratorExpression(final Expression expression, final int group) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
-                return new GroupIterator(exchange.getContext(), it, token, group);
+                // must use GroupTokenIterator in xml mode as we want to concat the xml parts into a single message
+                return new GroupTokenIterator(exchange, it, null, group, false);
             }
 
             @Override
             public String toString() {
                 return "group " + expression + " " + group + " times";
+            }
+        };
+    }
+
+    public static Expression groupIteratorExpression(final Expression expression, final String token, final int group, final boolean skipFirst) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // evaluate expression as iterator
+                Iterator<?> it = expression.evaluate(exchange, Iterator.class);
+                ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                if (token != null) {
+                    return new GroupTokenIterator(exchange, it, token, group, skipFirst);
+                } else {
+                    return new GroupIterator(exchange, it, group, skipFirst);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "group " + expression + " " + group + " times";
+            }
+        };
+    }
+
+    public static Expression skipIteratorExpression(final Expression expression, final int skip) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // evaluate expression as iterator
+                Iterator<?> it = expression.evaluate(exchange, Iterator.class);
+                ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                return new SkipIterator(exchange, it, skip);
+            }
+
+            @Override
+            public String toString() {
+                return "skip " + expression + " " + skip + " times";
             }
         };
     }
@@ -1228,7 +1702,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 List<?> list = expression.evaluate(exchange, List.class);
-                Collections.sort(list, comparator);
+                list.sort(comparator);
                 return list;
             }
 
@@ -1335,10 +1809,10 @@ public final class ExpressionBuilder {
      * expressions
      *
      * @param expressions the expression to be concatenated dynamically
-     * @param expression the text description of the expression
+     * @param desription the text description of the expression
      * @return an expression which when evaluated will return the concatenated values
      */
-    public static Expression concatExpression(final Collection<Expression> expressions, final String expression) {
+    public static Expression concatExpression(final Collection<Expression> expressions, final String desription) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 StringBuilder buffer = new StringBuilder();
@@ -1353,8 +1827,8 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                if (expression != null) {
-                    return expression;
+                if (desription != null) {
+                    return desription;
                 } else {
                     return "concat" + expressions;
                 }
@@ -1420,9 +1894,30 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression dateExpression(final String command) {
+        return dateExpression(command, null, null);
+    }
+
     public static Expression dateExpression(final String command, final String pattern) {
+        return dateExpression(command, null, pattern);
+    }
+
+    public static Expression dateExpression(final String commandWithOffsets, final String timezone, final String pattern) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                // Capture optional time offsets
+                String command = commandWithOffsets.split("[+-]", 2)[0].trim();
+                List<Long> offsets = new ArrayList<>();
+                Matcher offsetMatcher = OFFSET_PATTERN.matcher(commandWithOffsets);
+                while (offsetMatcher.find()) {
+                    try {
+                        long value = exchange.getContext().getTypeConverter().mandatoryConvertTo(long.class, exchange, offsetMatcher.group(2).trim());
+                        offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
+                    } catch (NoTypeConversionAvailableException e) {
+                        throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    }
+                }
+
                 Date date;
                 if ("now".equals(command)) {
                     date = new Date();
@@ -1441,7 +1936,7 @@ public final class ExpressionBuilder {
                 } else if ("file".equals(command)) {
                     Long num = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class);
                     if (num != null && num > 0) {
-                        date = new Date(num.longValue());
+                        date = new Date(num);
                     } else {
                         date = exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Date.class);
                         if (date == null) {
@@ -1452,13 +1947,27 @@ public final class ExpressionBuilder {
                     throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
                 }
 
-                SimpleDateFormat df = new SimpleDateFormat(pattern);
-                return df.format(date);
+                // Apply offsets
+                long dateAsLong = date.getTime();
+                for (long offset : offsets) {
+                    dateAsLong += offset;
+                }
+                date = new Date(dateAsLong);
+
+                if (pattern != null && !pattern.isEmpty()) {
+                    SimpleDateFormat df = new SimpleDateFormat(pattern);
+                    if (timezone != null && !timezone.isEmpty()) {
+                        df.setTimeZone(TimeZone.getTimeZone(timezone));
+                    }
+                    return df.format(date);
+                } else {
+                    return date;
+                }
             }
 
             @Override
             public String toString() {
-                return "date(" + command + ":" + pattern + ")";
+                return "date(" + commandWithOffsets + ":" + pattern + ":" + timezone + ")";
             }
         };
     }
@@ -1466,11 +1975,15 @@ public final class ExpressionBuilder {
     public static Expression simpleExpression(final String expression) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                // resolve language using context to have a clear separation of packages
-                // must call evaluate to return the nested language evaluate when evaluating
-                // stacked expressions
-                Language language = exchange.getContext().resolveLanguage("simple");
-                return language.createExpression(expression).evaluate(exchange, Object.class);
+                if (SimpleLanguage.hasSimpleFunction(expression)) {
+                    // resolve language using context to have a clear separation of packages
+                    // must call evaluate to return the nested language evaluate when evaluating
+                    // stacked expressions
+                    Language language = exchange.getContext().resolveLanguage("simple");
+                    return language.createExpression(expression).evaluate(exchange, Object.class);
+                } else {
+                    return expression;
+                }
             }
 
             @Override
@@ -1479,10 +1992,12 @@ public final class ExpressionBuilder {
             }
         };
     }
-   
+
     public static Expression beanExpression(final String expression) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                // bean is able to evaluate method name if it contains nested functions
+                // so we should not eager evaluate expression as a string
                 // resolve language using context to have a clear separation of packages
                 // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
@@ -1496,13 +2011,13 @@ public final class ExpressionBuilder {
             }
         };
     }
-    
+
     public static Expression beanExpression(final Class<?> beanType, final String methodName) {
-        return BeanLanguage.bean(beanType, methodName);        
+        return BeanLanguage.bean(beanType, methodName);
     }
 
     public static Expression beanExpression(final Object bean, final String methodName) {
-        return BeanLanguage.bean(bean, methodName);        
+        return BeanLanguage.bean(bean, methodName);
     }
 
     public static Expression beanExpression(final String beanRef, final String methodName) {
@@ -1519,9 +2034,10 @@ public final class ExpressionBuilder {
     public static Expression toExpression(final String uri) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Endpoint endpoint = exchange.getContext().getEndpoint(uri);
+                String text = simpleExpression(uri).evaluate(exchange, String.class);
+                Endpoint endpoint = exchange.getContext().getEndpoint(text);
                 if (endpoint == null) {
-                    throw new NoSuchEndpointException(uri);
+                    throw new NoSuchEndpointException(text);
                 }
 
                 Producer producer;
@@ -1594,6 +2110,20 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression fileNameNoExtensionSingleExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                return FileUtil.stripExt(name, true);
+            }
+
+            @Override
+            public String toString() {
+                return "file:name.noext.single";
+            }
+        };
+    }
+
     public static Expression fileOnlyNameNoExtensionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -1608,20 +2138,44 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression fileOnlyNameNoExtensionSingleExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = fileOnlyNameExpression().evaluate(exchange, String.class);
+                return FileUtil.stripExt(name, true);
+            }
+
+            @Override
+            public String toString() {
+                return "file:onlyname.noext.single";
+            }
+        };
+    }
+
     public static Expression fileExtensionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-                if (name != null) {
-                    return name.substring(name.lastIndexOf('.') + 1);
-                } else {
-                    return null;
-                }
+                return FileUtil.onlyExt(name);
             }
 
             @Override
             public String toString() {
                 return "file:ext";
+            }
+        };
+    }
+
+    public static Expression fileExtensionSingleExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+                return FileUtil.onlyExt(name, true);
+            }
+
+            @Override
+            public String toString() {
+                return "file:ext.single";
             }
         };
     }
@@ -1704,32 +2258,48 @@ public final class ExpressionBuilder {
         };
     }
 
-    public static Expression propertiesComponentExpression(final String key, final String locations) {
+    /**
+     * Returns Simple expression or fallback to Constant expression if expression str is not Simple expression.
+     */
+    public static Expression parseSimpleOrFallbackToConstantExpression(String str, CamelContext camelContext) {
+        if (StringHelper.hasStartToken(str, "simple")) {
+            return camelContext.resolveLanguage("simple").createExpression(str);
+        }
+        return constantExpression(str);
+    }
+
+    public static Expression propertiesComponentExpression(final String key, final String locations, final String defaultValue) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                String text = simpleExpression(key).evaluate(exchange, String.class);
+                String text2 = simpleExpression(locations).evaluate(exchange, String.class);
                 try {
-                    if (locations != null) {
+                    if (text2 != null) {
                         // the properties component is optional as we got locations
                         // getComponent will create a new component if none already exists
                         Component component = exchange.getContext().getComponent("properties");
                         PropertiesComponent pc = exchange.getContext().getTypeConverter()
-                                .mandatoryConvertTo(PropertiesComponent.class, component);
+                            .mandatoryConvertTo(PropertiesComponent.class, component);
                         // enclose key with {{ }} to force parsing
-                        String[] paths = locations.split(",");
-                        return pc.parseUri(pc.getPrefixToken() + key + pc.getSuffixToken(), paths);
+                        String[] paths = text2.split(",");
+                        return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken(), paths);
                     } else {
                         // the properties component is mandatory if no locations provided
                         Component component = exchange.getContext().hasComponent("properties");
                         if (component == null) {
                             throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                                    + " in CamelContext to support property placeholders in expressions");
+                                + " in CamelContext to support property placeholders in expressions");
                         }
                         PropertiesComponent pc = exchange.getContext().getTypeConverter()
-                                .mandatoryConvertTo(PropertiesComponent.class, component);
+                            .mandatoryConvertTo(PropertiesComponent.class, component);
                         // enclose key with {{ }} to force parsing
-                        return pc.parseUri(pc.getPrefixToken() + key + pc.getSuffixToken());
+                        return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
                     }
                 } catch (Exception e) {
+                    // property with key not found, use default value if provided
+                    if (defaultValue != null) {
+                        return defaultValue;
+                    }
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
             }
@@ -1742,6 +2312,137 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns a random number between 0 and upperbound (exclusive)
+     */
+    public static Expression randomExpression(final int upperbound) {
+        return randomExpression(0, upperbound);
+    }
+
+    /**
+     * Returns a random number between min and max
+     */
+    public static Expression randomExpression(final int min, final int max) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Random random = new Random();
+                int randomNum = random.nextInt(max - min) + min;
+                return randomNum;
+            }
+
+            @Override
+            public String toString() {
+                return "random";
+            }
+        };
+    }
+
+    /**
+     * Returns a random number between min and max
+     */
+    public static Expression randomExpression(final String min, final String max) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                int num1 = simpleExpression(min).evaluate(exchange, Integer.class);
+                int num2 = simpleExpression(max).evaluate(exchange, Integer.class);
+                Random random = new Random();
+                int randomNum = random.nextInt(num2 - num1) + num1;
+                return randomNum;
+            }
+
+            @Override
+            public String toString() {
+                return "random";
+            }
+        };
+    }
+
+    /**
+     * Returns an iterator to skip (iterate) the given expression
+     */
+    public static Expression skipExpression(final String expression, final int number) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // use simple language
+                Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
+                return ExpressionBuilder.skipIteratorExpression(exp, number).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "skip(" + expression + "," + number + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an iterator to collate (iterate) the given expression
+     */
+    public static Expression collateExpression(final String expression, final int group) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // use simple language
+                Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
+                return ExpressionBuilder.groupIteratorExpression(exp, null, group, false).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "collate(" + expression + "," + group + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the message history (including exchange details or not)
+     */
+    public static Expression messageHistoryExpression(final boolean detailed) {
+        return new ExpressionAdapter() {
+
+            private ExchangeFormatter formatter;
+
+            public Object evaluate(Exchange exchange) {
+                ExchangeFormatter ef = null;
+                if (detailed) {
+                    // use the exchange formatter to log exchange details
+                    ef = getOrCreateExchangeFormatter(exchange.getContext());
+                }
+                return MessageHelper.dumpMessageHistoryStacktrace(exchange, ef, false);
+            }
+
+            private ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
+                if (formatter == null) {
+                    Set<ExchangeFormatter> formatters = camelContext.getRegistry().findByType(ExchangeFormatter.class);
+                    if (formatters != null && formatters.size() == 1) {
+                        formatter = formatters.iterator().next();
+                    } else {
+                        // setup exchange formatter to be used for message history dump
+                        DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+                        def.setShowExchangeId(true);
+                        def.setMultiline(true);
+                        def.setShowHeaders(true);
+                        def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+                        try {
+                            Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                            if (maxChars != null) {
+                                def.setMaxChars(maxChars);
+                            }
+                        } catch (Exception e) {
+                            throw ObjectHelper.wrapRuntimeCamelException(e);
+                        }
+                        formatter = def;
+                    }
+                }
+                return formatter;
+            }
+
+            @Override
+            public String toString() {
+                return "messageHistory(" + detailed + ")";
+            }
+        };
+    }
+
+    /**
      * Expression adapter for OGNL expression from Message Header or Exchange property
      */
     private static class KeyedOgnlExpressionAdapter extends ExpressionAdapter {
@@ -1749,8 +2450,8 @@ public final class ExpressionBuilder {
         private final String toStringValue;
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
 
-        public KeyedOgnlExpressionAdapter(String ognl, String toStringValue, 
-                                          KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
+        KeyedOgnlExpressionAdapter(String ognl, String toStringValue,
+                                   KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
             this.ognl = ognl;
             this.toStringValue = toStringValue;
             this.keyedEntityRetrievalStrategy = keyedEntityRetrievalStrategy;
@@ -1763,19 +2464,29 @@ public final class ExpressionBuilder {
                 return property;
             }
 
+
             // Split ognl except when this is not a Map, Array
             // and we would like to keep the dots within the key name
             List<String> methods = OgnlHelper.splitOgnl(ognl);
 
+            String key = methods.get(0);
+            String keySuffix = "";
+            // if ognl starts with a key inside brackets (eg: [foo.bar])
+            // remove starting and ending brackets from key
+            if (key.startsWith("[") && key.endsWith("]")) {
+                key = StringHelper.removeLeadingAndEndingQuotes(key.substring(1, key.length() - 1));
+                keySuffix = StringHelper.after(methods.get(0), key);
+            }
             // remove any OGNL operators so we got the pure key name
-            String key = OgnlHelper.removeOperators(methods.get(0));
+            key = OgnlHelper.removeOperators(key);
+
 
             property = keyedEntityRetrievalStrategy.getKeyedEntity(exchange, key);
             if (property == null) {
                 return null;
             }
             // the remainder is the rest of the ognl without the key
-            String remainder = ObjectHelper.after(ognl, key);
+            String remainder = ObjectHelper.after(ognl, key + keySuffix);
             return new MethodCallExpression(property, remainder).evaluate(exchange);
         }
 
@@ -1790,6 +2501,6 @@ public final class ExpressionBuilder {
         public interface KeyedEntityRetrievalStrategy {
             Object getKeyedEntity(Exchange exchange, String key);
         }
-    };
+    }
 
 }

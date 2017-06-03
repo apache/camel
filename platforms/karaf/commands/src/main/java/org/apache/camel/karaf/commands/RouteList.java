@@ -16,60 +16,26 @@
  */
 package org.apache.camel.karaf.commands;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.apache.camel.commands.RouteListCommand;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ServiceStatus;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
-
-/**
- * Command to list all Camel routes.
- */
 @Command(scope = "camel", name = "route-list", description = "List Camel routes.")
-public class RouteList extends OsgiCommandSupport {
-
-    protected static final String HEADER_FORMAT = "%-20s %-20s %-20s";
-    protected static final String OUTPUT_FORMAT = "[%-18s] [%-18s] [%-18s]";
-    protected static final String UNKNOWN = "Unknown";
-    protected static final String ROUTE_ID = "Route Id";
-    protected static final String CONTEXT_ID = "Context Name";
-    protected static final String STATUS = "Status";
+@Service
+public class RouteList extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the route", required = false, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String name;
 
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
-
-    protected Object doExecute() throws Exception {
-        System.out.println(String.format(HEADER_FORMAT, ROUTE_ID, CONTEXT_ID, STATUS));
-
-        List<CamelContext> camelContexts = new LinkedList<CamelContext>();
-        if (name != null && camelController.getCamelContext(name) != null) {
-            camelContexts.add(camelController.getCamelContext(name));
-        } else {
-            camelContexts = camelController.getCamelContexts();
-        }
-
-        for (CamelContext camelContext : camelContexts) {
-            List<RouteDefinition> routeDefinitions = camelController.getRouteDefinitions(camelContext.getName());
-            if (routeDefinitions != null && !routeDefinitions.isEmpty()) {
-                for (RouteDefinition routeDefinition : routeDefinitions) {
-                    String contextName = camelContext.getName();
-                    ServiceStatus status = camelContext.getRouteStatus(routeDefinition.getId());
-                    System.out.println(String.format(OUTPUT_FORMAT, routeDefinition.getId(), contextName, status != null ? status.name() : UNKNOWN));
-                }
-            }
-        }
-
-        return null;
+    public Object execute() throws Exception {
+        RouteListCommand command = new RouteListCommand(name);
+        return command.execute(this, System.out, System.err);
     }
 
 }

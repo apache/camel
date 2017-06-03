@@ -18,7 +18,6 @@ package org.apache.camel.component.bean.validator;
 
 import java.lang.annotation.ElementType;
 import java.util.Locale;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
@@ -27,12 +26,7 @@ import javax.validation.Path.Node;
 import javax.validation.TraversableResolver;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.hibernate.validator.internal.engine.ValidatorImpl;
-import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
-import org.hibernate.validator.internal.engine.resolver.DefaultTraversableResolver;
-import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.junit.Test;
 
 /**
@@ -70,14 +64,8 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
             return;
         }
 
-        ProcessorEndpoint endpoint = context.getEndpoint("bean-validator://x", ProcessorEndpoint.class);
-        BeanValidator processor = (BeanValidator) endpoint.getProcessor();
-
-        assertNull(processor.getGroup());
-        assertTrue(processor.getValidator() instanceof ValidatorImpl);
-        assertTrue(processor.getMessageInterpolator() instanceof ResourceBundleMessageInterpolator);
-        assertTrue(processor.getTraversableResolver() instanceof DefaultTraversableResolver);
-        assertTrue(processor.getConstraintValidatorFactory() instanceof ConstraintValidatorFactoryImpl);
+        BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator://x", BeanValidatorEndpoint.class);
+        assertNull(endpoint.getGroup());
     }
     
     @Test
@@ -87,18 +75,16 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
             return;
         }
 
-        ProcessorEndpoint endpoint = context.getEndpoint("bean-validator://x"
+        BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator://x"
                 + "?group=org.apache.camel.component.bean.validator.OptionalChecks"
                 + "&messageInterpolator=#myMessageInterpolator"
                 + "&traversableResolver=#myTraversableResolver"
-                + "&constraintValidatorFactory=myConstraintValidatorFactory", ProcessorEndpoint.class);
-        BeanValidator processor = (BeanValidator) endpoint.getProcessor();
+                + "&constraintValidatorFactory=#myConstraintValidatorFactory", BeanValidatorEndpoint.class);
 
-        assertEquals("org.apache.camel.component.bean.validator.OptionalChecks", processor.getGroup().getName());
-        assertTrue(processor.getValidator() instanceof ValidatorImpl);
-        assertSame(processor.getMessageInterpolator(), this.messageInterpolator);
-        assertSame(processor.getTraversableResolver(), this.traversableResolver);
-        assertSame(processor.getConstraintValidatorFactory(), this.constraintValidatorFactory);
+        assertEquals("org.apache.camel.component.bean.validator.OptionalChecks", endpoint.getGroup());
+        assertSame(endpoint.getMessageInterpolator(), this.messageInterpolator);
+        assertSame(endpoint.getTraversableResolver(), this.traversableResolver);
+        assertSame(endpoint.getConstraintValidatorFactory(), this.constraintValidatorFactory);
     }
 
     class MyMessageInterpolator implements MessageInterpolator {

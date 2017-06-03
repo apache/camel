@@ -89,7 +89,7 @@ public class BindySimpleCsvUnmarshallPositionModifiedTest extends AbstractJUnit4
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition");
+        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
 
         public void configure() {
 

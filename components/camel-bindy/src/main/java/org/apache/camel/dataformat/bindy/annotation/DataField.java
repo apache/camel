@@ -40,7 +40,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface DataField {
 
     /**
-     * Position of the data in the record, must start from 1 (mandatory).
+     * Position of the data in the input record, must start from 1 (mandatory).
      */
     int pos();
 
@@ -58,6 +58,11 @@ public @interface DataField {
      * Pattern that the formatter will use to transform the data (optional)
      */
     String pattern() default "";
+
+    /**
+     * @return String timezone ID
+     */
+    String timezone() default "";
 
     /**
      * Length of the data block if the record is set to a fixed length
@@ -85,7 +90,9 @@ public @interface DataField {
     int precision() default 0;
 
     /**
-     * Position of the field in the message generated (should start from 1)
+     * Position of the field in the output message generated (should start from 1)
+     *
+     * @see #pos()
      */
     int position() default 0;
 
@@ -118,4 +125,25 @@ public @interface DataField {
      * Indicates if there is a decimal point implied at a specified location
      */
     boolean impliedDecimalSeparator() default false;
+
+    /**
+     * Decimal Separator to be used with BigDecimal number
+     */
+    String decimalSeparator() default "";
+
+    /**
+     * Grouping Separator to be used with BigDecimal number
+     * when we would like to format/parse to number with grouping
+     * e.g. 123,456.789
+     */
+    String groupingSeparator() default "";
+
+    /**
+     * Round mode to be used to round/scale a BigDecimal
+     * Values : UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN,HALF_EVEN, UNNECESSARY
+     * e.g : Number = 123456.789, Precision = 2, Rounding =  CEILING
+     * Result : 123456.79
+     */
+     String rounding() default "CEILING";
+
 }

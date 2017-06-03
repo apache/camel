@@ -51,14 +51,14 @@ public class TransactionalClientDataSourceHandledTest extends TransactionalClien
                 from("direct:okay")
                     // mark this route as transacted
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
                     // mark this route as transacted
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Donkey in Action")).bean("bookService");
                 // END SNIPPET: e1
             }
         };

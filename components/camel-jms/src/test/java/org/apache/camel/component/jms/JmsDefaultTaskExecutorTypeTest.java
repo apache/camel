@@ -124,7 +124,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
         jmsComponent.getConfiguration().setConcurrentConsumers(3);
         jmsComponent.getConfiguration().setMaxConcurrentConsumers(10);
         jmsComponent.getConfiguration().setReceiveTimeout(50);
-        if ("testDefaultTaskExecutorThreadPoolAtComponentConfig".equals(testName.getMethodName())) {
+        if ("testDefaultTaskExecutorThreadPoolAtComponentConfig".equals(getTestMethodName())) {
             jmsComponent.getConfiguration().setDefaultTaskExecutorType(DefaultTaskExecutorType.ThreadPool);
         }
         camelContext.addComponent("activemq", jmsComponent);

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.netty4;
 
-import org.jboss.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler;
 
 /**
  * Factory for creating new {@link ChannelHandler} used for non shareable

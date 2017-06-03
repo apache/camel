@@ -44,6 +44,9 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
 
         context.suspendRoute("foo");
 
+        // need to give seda consumer thread time to idle
+        Thread.sleep(500);
+
         template.sendBody("seda:foo", "B");
         template.sendBody("direct:bar", "C");
 

@@ -28,7 +28,9 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509KeyManager;
 
+import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,6 +94,12 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * standard protocol names.
      */
     private String secureSocketProtocol;    
+    
+    /**
+     * An optional certificate alias to use. This is useful when the keystore has multiple 
+     * certificates.
+     */
+    private String certAlias;
 
     public KeyManagersParameters getKeyManagers() {
         return keyManagers;
@@ -213,22 +221,74 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         this.secureSocketProtocol = secureSocketProtocol;
     }
     
-    ////////////////////////////////////////////
+    public String getCertAlias() {
+        return certAlias;
+    }
+
+    /**
+     * An optional certificate alias to use. This is useful when the keystore has multiple 
+     * certificates.
+     * @param certAlias an optional certificate alias to use
+     */
+    public void setCertAlias(String certAlias) {
+        this.certAlias = certAlias;
+    }
     
+    ////////////////////////////////////////////
+
     /**
      * Creates an {@link SSLContext} based on the related configuration options
      * of this instance. Namely, {@link #keyManagers}, {@link #trustManagers}, and
      * {@link #secureRandom}, but also respecting the chosen provider and secure
      * socket protocol as well.
-     * 
+     *
+     * @return a newly configured instance
+     *
+     * @throws GeneralSecurityException if there is a problem in this instances
+     *             configuration or that of its nested configuration options
+     * @throws IOException if there is an error reading a key/trust store
+     * @deprecated use {@link #configureSSLContext(SSLContext)}
+     */
+    @Deprecated
+    public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
+        return createSSLContext(null);
+    }
+
+    /**
+     * Creates an {@link SSLContext} based on the related configuration options
+     * of this instance. Namely, {@link #keyManagers}, {@link #trustManagers}, and
+     * {@link #secureRandom}, but also respecting the chosen provider and secure
+     * socket protocol as well.
+     *
+     * @param camelContext  The camel context
+     *
      * @return a newly configured instance
      *
      * @throws GeneralSecurityException if there is a problem in this instances
      *             configuration or that of its nested configuration options
      * @throws IOException if there is an error reading a key/trust store
      */
-    public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
-        
+    public SSLContext createSSLContext(CamelContext camelContext) throws GeneralSecurityException, IOException {
+        if (camelContext != null) {
+            // setup CamelContext before creating SSLContext
+            setCamelContext(camelContext);
+            if (keyManagers != null) {
+                keyManagers.setCamelContext(camelContext);
+            }
+            if (trustManagers != null) {
+                trustManagers.setCamelContext(camelContext);
+            }
+            if (secureRandom != null) {
+                secureRandom.setCamelContext(camelContext);
+            }
+            if (clientParameters != null) {
+                clientParameters.setCamelContext(camelContext);
+            }
+            if (serverParameters != null) {
+                serverParameters.setCamelContext(camelContext);
+            }
+        }
+
         LOG.trace("Creating SSLContext from SSLContextParameters [{}].", this);
         
         LOG.info("Available providers: {}.", Security.getProviders());
@@ -243,6 +303,19 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         } else {
             context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()),
                                              this.parsePropertyValue(this.getProvider()));
+        }
+        
+        if (this.getCertAlias() != null && keyManagers != null) {
+            for (int idx = 0; idx < keyManagers.length; idx++) {
+                if (keyManagers[idx] instanceof X509KeyManager) {
+                    try {
+                        keyManagers[idx] = new AliasedX509ExtendedKeyManager(this.getCertAlias(),
+                                                                             (X509KeyManager)keyManagers[idx]);
+                    } catch (Exception e) {
+                        throw new GeneralSecurityException(e);
+                    }
+                }
+            }
         }
         
         LOG.debug("SSLContext [{}], initialized from [{}], is using provider [{}], protocol [{}], key managers {}, trust managers {}, and secure random [{}].",
@@ -340,7 +413,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("SSLContextParameters [keyManagers=");
+        builder.append("SSLContextParameters[keyManagers=");
         builder.append(keyManagers);
         builder.append(", trustManagers=");
         builder.append(trustManagers);
@@ -354,6 +427,8 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         builder.append(provider);
         builder.append(", secureSocketProtocol=");
         builder.append(secureSocketProtocol);
+        builder.append(", certAlias=");
+        builder.append(certAlias);
         builder.append(", getCipherSuites()=");
         builder.append(getCipherSuites());
         builder.append(", getCipherSuitesFilter()=");
@@ -364,9 +439,8 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }
+
 }

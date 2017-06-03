@@ -19,26 +19,28 @@ package org.apache.camel.component.jclouds;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import javax.xml.transform.stream.StreamSource;
+
+import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.jclouds.io.Payload;
-import org.jclouds.io.payloads.ByteArrayPayload;
-import org.jclouds.io.payloads.FilePayload;
+import org.jclouds.io.payloads.ByteSourcePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
-import org.jclouds.io.payloads.StringPayload;
 
 @Converter
 public final class JcloudsPayloadConverter {
@@ -49,17 +51,21 @@ public final class JcloudsPayloadConverter {
 
     @Converter
     public static Payload toPayload(byte[] bytes) {
-        return new ByteArrayPayload(bytes);
+        return new ByteSourcePayload(ByteSource.wrap(bytes));
     }
 
     @Converter
-    public static Payload toPayload(String str) {
-        return new StringPayload(str);
+    public static Payload toPayload(String str, Exchange ex) throws UnsupportedEncodingException {
+        return toPayload(str.getBytes(IOHelper.getCharsetName(ex)));
+    }
+    
+    public static Payload toPayload(String str) throws UnsupportedEncodingException {
+        return toPayload(str, null);
     }
 
     @Converter
     public static Payload toPayload(File file) {
-        return new FilePayload(file);
+        return new ByteSourcePayload(Files.asByteSource(file));
     }
     
     protected static Payload setContentMetadata(Payload payload, Exchange exchange) {
@@ -97,18 +103,20 @@ public final class JcloudsPayloadConverter {
     }
 
     @Converter
-    public static Payload toPayload(InputStream is, Exchange exchange) throws IOException {
+    public static Payload toPayload(final InputStream is, Exchange exchange) throws IOException {
+        InputStreamPayload payload = new InputStreamPayload(is);
+        // only set the contentlength if possible
         if (is.markSupported()) {
-            InputStreamPayload payload = new InputStreamPayload(is);
-            long contentLength = ByteStreams.length(payload);
+            long contentLength = ByteStreams.length(new InputSupplier<InputStream>() {
+                @Override
+                public InputStream getInput() throws IOException {
+                    return is;
+                }
+            });
             is.reset();
             payload.getContentMetadata().setContentLength(contentLength);
-            return payload;
-        } else {
-            CachedOutputStream cos = new CachedOutputStream(exchange);
-            IOHelper.copy(is, cos);
-            return toPayload(cos.getWrappedInputStream(), exchange);
         }
+        return payload;
     }
 
     @Converter

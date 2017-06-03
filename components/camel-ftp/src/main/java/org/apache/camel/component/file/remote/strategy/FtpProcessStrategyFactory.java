@@ -111,6 +111,10 @@ public final class FtpProcessStrategyFactory {
                 if (checkInterval != null) {
                     readLockStrategy.setCheckInterval(checkInterval);
                 }
+                Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
+                if (readLockMarkerFile != null) {
+                    readLockStrategy.setMarkerFiler(readLockMarkerFile);
+                }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
                 FtpChangedExclusiveReadLockStrategy readLockStrategy = new FtpChangedExclusiveReadLockStrategy();
@@ -126,9 +130,17 @@ public final class FtpProcessStrategyFactory {
                 if (minLength != null) {
                     readLockStrategy.setMinLength(minLength);
                 }
+                Long minAge = (Long) params.get("readLockMinAge");
+                if (null != minAge) {
+                    readLockStrategy.setMinAge(minAge);
+                }
                 Boolean fastExistsCheck = (Boolean) params.get("fastExistsCheck");
                 if (fastExistsCheck != null) {
                     readLockStrategy.setFastExistsCheck(fastExistsCheck);
+                }
+                Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
+                if (readLockMarkerFile != null) {
+                    readLockStrategy.setMarkerFiler(readLockMarkerFile);
                 }
                 return readLockStrategy;
             }

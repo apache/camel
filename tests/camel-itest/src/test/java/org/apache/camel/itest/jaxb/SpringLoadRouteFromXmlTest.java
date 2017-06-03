@@ -20,7 +20,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.Constants;
+import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class SpringLoadRouteFromXmlTest extends CamelSpringTestSupport {
         foo.assertIsSatisfied();
 
         // load bar route from classpath using JAXB
-        JAXBContext jaxb = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES);
+        JAXBContext jaxb = new DefaultModelJAXBContextFactory().newJAXBContext();
         Unmarshaller unmarshaller = jaxb.createUnmarshaller();
 
         Resource rs = new ClassPathResource("org/apache/camel/itest/jaxb/BarRoute.xml");

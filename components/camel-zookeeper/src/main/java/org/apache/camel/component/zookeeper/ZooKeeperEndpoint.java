@@ -25,12 +25,16 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
- * <code>ZooKeeperEndpoint</code>
+ * The zookeeper component allows interaction with a ZooKeeper cluster.
  */
 @ManagedResource(description = "ZooKeeper Endpoint")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "zookeeper", title = "ZooKeeper", syntax = "zookeeper:serverUrls/path", consumerClass = ZooKeeperConsumer.class, label = "clustering")
 public class ZooKeeperEndpoint extends DefaultEndpoint {
+    @UriParam
     private ZooKeeperConfiguration configuration;
     private ZooKeeperConnectionManager connectionManager;
 
@@ -41,7 +45,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new ZookeeperProducer(this);
+        return new ZooKeeperProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -66,17 +70,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return connectionManager;
     }
 
-    @ManagedAttribute(description = "Session Password", mask = true)
-    public byte[] getSessionPassword() {
-        return getConfiguration().getSessionPassword();
-    }
-
-    @ManagedAttribute
-    public int getSessionId() {
-        return getConfiguration().getSessionId();
-    }
-
-    @ManagedAttribute
     public void setPath(String path) {
         getConfiguration().setPath(path);
     }
@@ -91,17 +84,15 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return getConfiguration().getTimeout();
     }
 
-    @ManagedAttribute
     public void setTimeout(int timeout) {
         getConfiguration().setTimeout(timeout);
     }
 
     @ManagedAttribute
     public boolean getRepeat() {
-        return getConfiguration().shouldRepeat();
+        return getConfiguration().isRepeat();
     }
 
-    @ManagedAttribute
     public void setRepeat(boolean shouldRepeat) {
         getConfiguration().setRepeat(shouldRepeat);
     }
@@ -111,27 +102,24 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return getConfiguration().getServers();
     }
 
-    @ManagedAttribute
     public void setServers(List<String> servers) {
         getConfiguration().setServers(servers);
     }
 
     @ManagedAttribute
-    public boolean getListChildren() {
-        return getConfiguration().listChildren();
+    public boolean isListChildren() {
+        return getConfiguration().isListChildren();
     }
 
-    @ManagedAttribute
     public void setListChildren(boolean listChildren) {
         getConfiguration().setListChildren(listChildren);
     }
 
     @ManagedAttribute
     public boolean getCreate() {
-        return getConfiguration().shouldCreate();
+        return getConfiguration().isCreate();
     }
 
-    @ManagedAttribute
     public void setCreate(boolean shouldCreate) {
         getConfiguration().setCreate(shouldCreate);
     }
@@ -141,7 +129,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return getConfiguration().getBackoff();
     }
 
-    @ManagedAttribute
     public void setBackoff(long backoff) {
         getConfiguration().setBackoff(backoff);
     }
@@ -150,7 +137,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
      * @deprecated The usage of this property has no effect at all.
      */
     @Deprecated
-    @ManagedAttribute
     public boolean getAwaitExistence() {
         return getConfiguration().shouldAwaitExistence();
     }
@@ -159,7 +145,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
      * @deprecated The usage of this property has no effect at all.
      */
     @Deprecated
-    @ManagedAttribute
     public void setAwaitExistence(boolean awaitExistence) {
         getConfiguration().setAwaitExistence(awaitExistence);
     }
@@ -174,18 +159,21 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         getConfiguration().getServers().clear();
     }
 
-    public Object getManagedObject(ZooKeeperEndpoint arg0) {
-        return this;
-    }
-
     @ManagedAttribute
     public boolean isSendEmptyMessageOnDelete() {
         return getConfiguration().isSendEmptyMessageOnDelete();
     }
 
-    @ManagedAttribute
     public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
         getConfiguration().setSendEmptyMessageOnDelete(sendEmptyMessageOnDelete);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (connectionManager != null) {
+            // It releases the zookeeper connection when calling the shutdown method
+            connectionManager.shutdown();
+        }
     }
 
 }

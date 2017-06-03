@@ -61,9 +61,9 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
     
     @Test
     public void testSuccessfulAuthorization() throws Exception {        
-        // The user john has role sec-level2 with permission set as zone1:*
+        // The user george has role sec-level2 with permission set as zone1:*
         // Since the required permission incorporates zone1:readwrite:*, this request should successfully pass authorization
-        ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("john", "lennon");
+        ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("george", "harrison");
         TestShiroSecurityTokenInjector shiroSecurityTokenInjector = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
         
         successEndpoint.expectedMessageCount(1);
@@ -91,15 +91,68 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
         failureEndpoint.assertIsSatisfied();
     }
     
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        List<Permission> permissionsList = new ArrayList<Permission>();
-        Permission permission = new WildcardPermission("zone1:readwrite:*");
-        permissionsList.add(permission);
+    @Test
+    public void testSuccessfulAuthorizationAny() throws Exception {        
+        // The user ringo has role sec-level1 with permission set as zone1:readonly:*
+        // This permission is allowed and so this should work
+        ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
         
-        final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase, true, permissionsList);
+        successEndpoint.expectedMessageCount(1);
+        failureEndpoint.expectedMessageCount(0);
         
-        return new RouteBuilder() {
+        template.send("direct:secureAnyEndpoint", shiroSecurityTokenInjector);
+        
+        successEndpoint.assertIsSatisfied();
+        failureEndpoint.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testFailureAuthorizationAll() throws Exception {        
+        // The user ringo has role sec-level1 with permission set as zone1:readonly:*
+        // However, ringo does not have a permission of "zone1:writeonly:*" and so authorization fails
+        ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
+        
+        successEndpoint.expectedMessageCount(0);
+        failureEndpoint.expectedMessageCount(1);
+        
+        template.send("direct:secureAllEndpoint", shiroSecurityTokenInjector);
+        
+        successEndpoint.assertIsSatisfied();
+        failureEndpoint.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testSuccessfulAuthorizationAll() throws Exception {        
+        // The user george has role sec-level2 with permission set as zone1:*
+        // Since the required permission incorporates all permissions, this request should successfully pass authorization
+        ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("george", "harrison");
+        TestShiroSecurityTokenInjector shiroSecurityTokenInjector = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
+        
+        successEndpoint.expectedMessageCount(1);
+        failureEndpoint.expectedMessageCount(0);
+        
+        template.send("direct:secureAllEndpoint", shiroSecurityTokenInjector);
+        
+        successEndpoint.assertIsSatisfied();
+        failureEndpoint.assertIsSatisfied();
+    }
+    
+    
+    @Override
+    protected RouteBuilder[] createRouteBuilders() throws Exception {
+    
+        return new RouteBuilder[] {new RouteBuilder() {
             public void configure() {
+                
+                List<Permission> permissionsList = new ArrayList<Permission>();
+                Permission permission = new WildcardPermission("zone1:readwrite:*");
+                permissionsList.add(permission);
+                
+                final ShiroSecurityPolicy securityPolicy = 
+                    new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase, true, permissionsList);
+                
                 onException(CamelAuthorizationException.class).
                     to("mock:authorizationException");
                 
@@ -108,13 +161,54 @@ public class ShiroAuthorizationTest extends CamelTestSupport {
                     to("log:incoming payload").
                     to("mock:success");
             }
+        }, new RouteBuilder() {
+            public void configure() {
+                
+                List<Permission> permissionsList = new ArrayList<Permission>();
+                Permission permission = new WildcardPermission("zone1:readonly:*");
+                permissionsList.add(permission);
+                permission = new WildcardPermission("zone1:writeonly:*");
+                permissionsList.add(permission);
+                
+                final ShiroSecurityPolicy securityPolicy = 
+                    new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase, true, permissionsList);
+                
+                onException(CamelAuthorizationException.class).
+                    to("mock:authorizationException");
+                
+                from("direct:secureAnyEndpoint").
+                    policy(securityPolicy).
+                    to("log:incoming payload").
+                    to("mock:success");
+            }
+        }, new RouteBuilder() {
+            public void configure() {
+                
+                List<Permission> permissionsList = new ArrayList<Permission>();
+                Permission permission = new WildcardPermission("zone1:readonly:*");
+                permissionsList.add(permission);
+                permission = new WildcardPermission("zone1:writeonly:*");
+                permissionsList.add(permission);
+                
+                final ShiroSecurityPolicy securityPolicy = 
+                    new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase, true, permissionsList);
+                securityPolicy.setAllPermissionsRequired(true);
+                
+                onException(CamelAuthorizationException.class).
+                    to("mock:authorizationException");
+                
+                from("direct:secureAllEndpoint").
+                    policy(securityPolicy).
+                    to("log:incoming payload").
+                    to("mock:success");
+            }
+        }
         };
     }
-
     
     private static class TestShiroSecurityTokenInjector extends ShiroSecurityTokenInjector {
 
-        public TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
+        TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
             super(shiroSecurityToken, bytes);
         }
         

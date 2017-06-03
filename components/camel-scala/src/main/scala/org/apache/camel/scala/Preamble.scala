@@ -18,10 +18,11 @@ package org.apache.camel
 package scala
 
 import processor.aggregate.AggregationStrategy
+import org.apache.camel.builder.ExchangeBuilder.anExchange
+import org.apache.camel.scala.Preamble.FnAggregationStrategy.exchangeWrappingAggregator
 
-object Preamble extends Preamble
 /**
- * Trait containing common implicit conversion definitions
+ * Trait containing common implicit conversion definitions.
  */
 trait Preamble {
 
@@ -33,6 +34,7 @@ trait Preamble {
 
   implicit def enrichFnAny(f: Exchange => Any) = new ScalaPredicate(f)
   implicit def enrichAggr(f: (Exchange, Exchange) => Exchange) = new FnAggregationStrategy(f)
+  implicit def enrichWrappingAggregator[T <: Any](f: (Exchange, Exchange) => T) = exchangeWrappingAggregator(f)
 
   /**
    * process { in(classOf[String]) { _+"11" } .toIn }
@@ -124,4 +126,26 @@ trait Preamble {
     override def aggregate(original: Exchange, resource: Exchange): Exchange = aggregator(original, resource)
   }
 
+  object FnAggregationStrategy {
+
+    def exchangeWrappingAggregator[T <: Any](aggregator: (Exchange, Exchange) => T) = {
+      val wrappingAggregator =
+        (oldExch: Exchange, newExch: Exchange) => newExch match {
+          case null => oldExch
+          case _ => anExchange(newExch.getContext).withBody(aggregator(oldExch, newExch)).build
+      }
+      new FnAggregationStrategy(wrappingAggregator)
+    }
+
+  }
+
 }
+
+/**
+ * Object globally exposing [[org.apache.camel.scala.Preamble]] trait. Useful to import explicit conversions
+ * without extending trait. For example:
+ *
+ * `import org.apache.camel.scala.Preamble._`
+ *
+ */
+object Preamble extends Preamble

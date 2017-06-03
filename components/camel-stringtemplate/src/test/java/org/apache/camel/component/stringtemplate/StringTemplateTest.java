@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.stringtemplate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
@@ -43,6 +46,28 @@ public class StringTemplateTest extends CamelTestSupport {
         assertEquals("org/apache/camel/component/stringtemplate/template.tm", response.getOut().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
         assertEquals("Christian", response.getOut().getHeader("name"));
         assertSame(dataHandler, response.getOut().getAttachment("item"));
+    }
+    
+    @Test
+    public void testVelocityContext() throws Exception {
+        Exchange exchange = template.request("direct:a", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("");
+                exchange.getIn().setHeader("name", "Christian");
+                Map<String, Object> variableMap = new HashMap<String, Object>();
+                Map<String, Object> headersMap = new HashMap<String, Object>();
+                headersMap.put("name", "Willem");
+                variableMap.put("headers", headersMap);
+                variableMap.put("body", "Monday");
+                variableMap.put("exchange", exchange);
+                exchange.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, variableMap);
+                exchange.setProperty("item", "7");
+            }
+        });
+
+        assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getOut().getBody());
+        assertEquals("Christian", exchange.getOut().getHeader("name"));
     }
 
     protected RouteBuilder createRouteBuilder() {

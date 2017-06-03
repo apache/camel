@@ -24,7 +24,6 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.Message;
 
-
 /**
  * Returns the key selector and the optional KeyInfo instance for signing an XML
  * document. There is a default implementation {@link DefaultKeySelector}.
@@ -55,6 +54,10 @@ public interface KeyAccessor {
      * Returns the optional key info to be incorporated into the XML signature.
      * If <code>null</code> is returned, no key info element is created. You can
      * create a key info instance via the key info factory.
+     * <p>
+     * This method will be called several times if several signatures shall be
+     * created for the XML document; for each signature a call is executed. This
+     * allows you to create different key info IDs.
      * 
      * @param message
      *            incoming message, from which you can read headers, for

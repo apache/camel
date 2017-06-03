@@ -34,15 +34,15 @@ public class TransactionalClientDataSourceMixedTransactedRedeliveryTest extends 
                 from("direct:okay")
                     // mark this route as transacted
                     .errorHandler(transactionErrorHandler().maximumRedeliveries(3))
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Elephant in Action")).bean("bookService")
+                    .setBody(constant("Donkey in Action")).bean("bookService");
 
                 from("direct:fail")
                     // and this route is not transacted
                     .errorHandler(defaultErrorHandler())
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

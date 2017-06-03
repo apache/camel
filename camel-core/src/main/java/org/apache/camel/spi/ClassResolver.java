@@ -119,10 +119,18 @@ public interface ClassResolver {
     URL loadResourceAsURL(String uri);
 
     /**
-     * Loads the given resources as a URL
+     * Loads the given resources as a URL from the current bundle/classloader
      *
      * @param uri the uri of the resource
      * @return the URLs found on the classpath
      */
     Enumeration<URL> loadResourcesAsURL(String uri);
+
+    /**
+     * Loads the given resources as a URL from all bundles/classloaders
+     *
+     * @param uri the uri of the resource
+     * @return the URLs found on the classpath
+     */
+    Enumeration<URL> loadAllResourcesAsURL(String uri);
 }

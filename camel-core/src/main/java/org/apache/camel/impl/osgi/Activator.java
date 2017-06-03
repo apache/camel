@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,10 +62,15 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
-
+import org.osgi.framework.wiring.BundleCapability;
+import org.osgi.framework.wiring.BundleWire;
+import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
 
 public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
@@ -74,15 +80,24 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public static final String META_INF_DATAFORMAT = "META-INF/services/org/apache/camel/dataformat/";
     public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
     public static final String META_INF_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
+    public static final String EXTENDER_NAMESPACE = "osgi.extender";
+    public static final String CAMEL_EXTENDER = "org.apache.camel";
 
     private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
     private BundleTracker tracker;
-    private Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();
+    private final Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();
+    private long bundleId;
+    
+    // Map from package name to the capability we export for this package
+    private final Map<String, BundleCapability> packageCapabilities = new HashMap<String, BundleCapability>();
 
     public void start(BundleContext context) throws Exception {
         LOG.info("Camel activator starting");
-        tracker = new BundleTracker(context, Bundle.ACTIVE, this);
+        cachePackageCapabilities(context);
+        bundleId = context.getBundle().getBundleId();
+        BundleContext systemBundleContext = context.getBundle(0).getBundleContext();
+        tracker = new BundleTracker(systemBundleContext, Bundle.ACTIVE, this);
         tracker.open();
         LOG.info("Camel activator started");
     }
@@ -90,21 +105,57 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public void stop(BundleContext context) throws Exception {
         LOG.info("Camel activator stopping");
         tracker.close();
+        packageCapabilities.clear();
         LOG.info("Camel activator stopped");
+    }
+    
+    /**
+     * Caches the package capabilities that are needed for a set of interface classes
+     */
+    private void cachePackageCapabilities(BundleContext context) {
+        BundleWiring ourWiring = context.getBundle().adapt(BundleWiring.class);
+        List<BundleCapability> ourExports = ourWiring.getCapabilities(PACKAGE_NAMESPACE);
+        for (BundleCapability ourExport : ourExports) {
+            String ourPkgName = (String) ourExport.getAttributes().get(PACKAGE_NAMESPACE);
+            packageCapabilities.put(ourPkgName, ourExport);
+        }
     }
 
     public Object addingBundle(Bundle bundle, BundleEvent event) {
         LOG.debug("Bundle started: {}", bundle.getSymbolicName());
-        List<BaseService> r = new ArrayList<BaseService>();
-        registerComponents(bundle, r);
-        registerLanguages(bundle, r);
-        registerDataFormats(bundle, r);
-        registerTypeConverterLoader(bundle, r);
-        for (BaseService service : r) {
-            service.register();
+        if (extenderCapabilityWired(bundle)) {
+            List<BaseService> r = new ArrayList<BaseService>();
+            registerComponents(bundle, r);
+            registerLanguages(bundle, r);
+            registerDataFormats(bundle, r);
+            registerTypeConverterLoader(bundle, r);
+            for (BaseService service : r) {
+                service.register();
+            }
+            resolvers.put(bundle.getBundleId(), r);
         }
-        resolvers.put(bundle.getBundleId(), r);
+
         return bundle;
+    }
+
+    private boolean extenderCapabilityWired(Bundle bundle) {
+        BundleWiring wiring = bundle.adapt(BundleWiring.class);
+        if (wiring == null) {
+            return true;
+        }
+        List<BundleWire> requiredWires = wiring.getRequiredWires(EXTENDER_NAMESPACE);
+        for (BundleWire requiredWire : requiredWires) {
+            if (CAMEL_EXTENDER.equals(requiredWire.getCapability().getAttributes().get(EXTENDER_NAMESPACE))) {
+                if (this.bundleId == requiredWire.getProviderWiring().getBundle().getBundleId()) {
+                    LOG.debug("Camel extender requirement of bundle {} correctly wired to this implementation", bundle.getBundleId());
+                    return true;
+                } else {
+                    LOG.info("Not processing bundle {} as it requires a camel extender but is not wired to the this implementation", bundle.getBundleId());
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void modifiedBundle(Bundle bundle, BundleEvent event, Object object) {
@@ -121,7 +172,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     protected void registerComponents(Bundle bundle, List<BaseService> resolvers) {
-        if (checkCompat(bundle, Component.class)) {
+        if (canSee(bundle, Component.class)) {
             Map<String, String> components = new HashMap<String, String>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_COMPONENT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
@@ -136,7 +187,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     protected void registerLanguages(Bundle bundle, List<BaseService> resolvers) {
-        if (checkCompat(bundle, Language.class)) {
+        if (canSee(bundle, Language.class)) {
             Map<String, String> languages = new HashMap<String, String>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_LANGUAGE); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
@@ -157,7 +208,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     protected void registerDataFormats(Bundle bundle, List<BaseService> resolvers) {
-        if (checkCompat(bundle, DataFormat.class)) {
+        if (canSee(bundle, DataFormat.class)) {
             Map<String, String> dataformats = new HashMap<String, String>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_DATAFORMAT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
@@ -172,13 +223,60 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     protected void registerTypeConverterLoader(Bundle bundle, List<BaseService> resolvers) {
-        if (checkCompat(bundle, TypeConverter.class)) {
+        if (canSee(bundle, TypeConverter.class)) {
             URL url1 = bundle.getEntry(META_INF_TYPE_CONVERTER);
             URL url2 = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
             if (url1 != null || url2 != null) {
-                resolvers.add(new BundleTypeConverterLoader(bundle));
+                LOG.debug("Found TypeConverter in bundle {}", bundle.getSymbolicName());
+                resolvers.add(new BundleTypeConverterLoader(bundle, url2 != null));
             }
         }
+    }
+    
+    /**
+     * Check if bundle can see the given class
+     */
+    protected boolean canSee(Bundle bundle, Class<?> clazz) {
+        if (bundle.getBundleId() == bundleId) {
+            // Need extra handling of camel core as it does not import the api
+            return true;
+        }
+        BundleCapability packageCap = packageCapabilities.get(clazz.getPackage().getName());
+        if (packageCap != null) {
+            BundleWiring wiring = bundle.adapt(BundleWiring.class);
+            List<BundleWire> imports = wiring.getRequiredWires(PACKAGE_NAMESPACE);
+            for (BundleWire importWire : imports) {
+                if (packageCap.equals(importWire.getCapability())) {
+                    return true;
+                }
+            }
+        }
+
+        // it may be running outside real OSGi container such as when unit testing with camel-test-blueprint
+        // then we need to use a different canSee algorithm that works outside real OSGi
+        if (bundle.getBundleId() > 0) {
+            Bundle root = bundle.getBundleContext().getBundle(0);
+            if (root != null && "org.apache.felix.connect".equals(root.getSymbolicName())) {
+                return checkCompat(bundle, clazz);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if bundle can see the given class used by camel-test-blueprint
+     */
+    protected static boolean checkCompat(Bundle bundle, Class<?> clazz) {
+        // Check bundle compatibility
+        try {
+            if (bundle.loadClass(clazz.getName()) != clazz) {
+                return false;
+            }
+        } catch (Throwable t) {
+            return false;
+        }
+        return true;
     }
 
     protected static class BundleComponentResolver extends BaseResolver<Component> implements ComponentResolver {
@@ -247,7 +345,18 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             this.dataformats = dataformats;
         }
 
+        @Override
         public DataFormat resolveDataFormat(String name, CamelContext context) {
+            DataFormat dataFormat = createInstance(name, dataformats.get(name), context);
+            if (dataFormat == null) {
+                dataFormat = createDataFormat(name, context);
+            }
+
+            return dataFormat;
+        }
+
+        @Override
+        public DataFormat createDataFormat(String name, CamelContext context) {
             return createInstance(name, dataformats.get(name), context);
         }
 
@@ -255,6 +364,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             return null;
         }
 
+        @Override
         public void register() {
             doRegister(DataFormatResolver.class, "dataformat", dataformats.keySet());
         }
@@ -264,11 +374,13 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
         private final AnnotationTypeConverterLoader loader = new Loader();
         private final Bundle bundle;
+        private final boolean hasFallbackTypeConverter;
 
-        public BundleTypeConverterLoader(Bundle bundle) {
+        public BundleTypeConverterLoader(Bundle bundle, boolean hasFallbackTypeConverter) {
             super(bundle, TypeConverter.class);
             ObjectHelper.notNull(bundle, "bundle");
             this.bundle = bundle;
+            this.hasFallbackTypeConverter = hasFallbackTypeConverter;
         }
 
         public synchronized void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
@@ -282,7 +394,13 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         }
 
         public void register() {
-            doRegister(TypeConverterLoader.class);
+            if (hasFallbackTypeConverter) {
+                // The FallbackTypeConverter should have a higher ranking
+                doRegister(TypeConverterLoader.class, Constants.SERVICE_RANKING, 100);
+            } else {
+                // The default service ranking is Integer(0);
+                doRegister(TypeConverterLoader.class);
+            }
         }
 
         class Loader extends AnnotationTypeConverterLoader {
@@ -314,14 +432,12 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
                 for (String pkg : packages) {
 
-                    if (StringHelper.hasUpperCase(pkg)) {
+                    if (StringHelper.isClassName(pkg)) {
                         // its a FQN class name so load it directly
                         LOG.trace("Loading {} class", pkg);
                         try {
                             Class<?> clazz = bundle.loadClass(pkg);
-                            if (test.matches(clazz)) {
-                                classes.add(clazz);
-                            }
+                            classes.add(clazz);
                             // the class could be found and loaded so continue to next
                             continue;
                         } catch (Throwable t) {
@@ -360,6 +476,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 // register fallback converters
                 URL fallbackUrl = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
                 if (fallbackUrl != null) {
+                    LOG.debug("Found {} to load the FallbackTypeConverter", META_INF_FALLBACK_TYPE_CONVERTER);
                     TypeConverter tc = createInstance("FallbackTypeConverter", fallbackUrl, registry.getInjector());
                     registry.addFallbackTypeConverter(tc, false);
                 }
@@ -387,7 +504,32 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             }
             URL url = bundle.getEntry(path);
             LOG.trace("The entry {}'s url is {}", name, url);
-            return createInstance(name, url, context.getInjector());
+            //Setup the TCCL with Camel context application class loader
+            ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                ClassLoader newClassLoader = context.getApplicationContextClassLoader();
+                if (newClassLoader != null) {
+                    Thread.currentThread().setContextClassLoader(newClassLoader);
+                }
+                T answer = createInstance(name, url, context.getInjector());
+                if (answer != null) {
+                    initBundleContext(answer);
+                }
+                return answer;
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldClassLoader);
+            }
+        }
+
+        private void initBundleContext(T answer) {
+            try {
+                Method method = answer.getClass().getMethod("setBundleContext", BundleContext.class);
+                if (method != null) {
+                    method.invoke(answer, bundle.getBundleContext());
+                }
+            } catch (Exception e) {
+                // ignore
+            }
         }
 
         @SuppressWarnings("unchecked")
@@ -410,7 +552,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     protected abstract static class BaseService {
 
         protected final Bundle bundle;
-        private ServiceRegistration reg;
+        private ServiceRegistration<?> reg;
 
         protected BaseService(Bundle bundle) {
             this.bundle = bundle;
@@ -454,19 +596,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         }
         return properties;
     }
-
-    protected static boolean checkCompat(Bundle bundle, Class<?> clazz) {
-        // Check bundle compatibility
-        try {
-            if (bundle.loadClass(clazz.getName()) != clazz) {
-                return false;
-            }
-        } catch (Throwable t) {
-            return false;
-        }
-        return true;
-    }
-
+    
     protected static Set<String> getConverterPackages(URL resource) {
         Set<String> packages = new LinkedHashSet<String>();
         if (resource != null) {
@@ -500,4 +630,5 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
 }
+
 

@@ -24,6 +24,7 @@ import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ErrorHandlerDefinitionParserTest extends TestCase {
@@ -34,7 +35,7 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
     }
 
     public void tearDown() throws Exception {
-        ctx.close();        
+        IOHelper.close(ctx);
     }
     
     public void testLoggingErrorHandler() {

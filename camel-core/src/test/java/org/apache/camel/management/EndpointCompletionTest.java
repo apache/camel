@@ -40,7 +40,7 @@ public class EndpointCompletionTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance(
-                "org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+                "org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -62,7 +62,7 @@ public class EndpointCompletionTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance(
-                "org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+                "org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 

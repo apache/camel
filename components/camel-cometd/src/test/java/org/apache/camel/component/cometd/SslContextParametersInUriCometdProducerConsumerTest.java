@@ -79,9 +79,7 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable(23500);
         uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
-                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2&"
-                + "sslContextParameters=#sslContextParameters";
-
+                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
         super.setUp();
     }
 
@@ -90,6 +88,10 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // setup SSL on the component
+                CometdComponent cometds = context.getComponent("cometds", CometdComponent.class);
+                cometds.setSslContextParameters(context.getRegistry().lookupByNameAndType("sslContextParameters", SSLContextParameters.class));
+
                 from("direct:input").to(uri);
 
                 from(uri).to("mock:test");

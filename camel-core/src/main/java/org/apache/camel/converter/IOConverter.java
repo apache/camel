@@ -39,7 +39,12 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -55,6 +60,9 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public final class IOConverter {
+
+    static Supplier<Charset> defaultCharset = Charset::defaultCharset;
+
     private static final Logger LOG = LoggerFactory.getLogger(IOConverter.class);
 
     /**
@@ -76,17 +84,30 @@ public final class IOConverter {
     public static InputStream toInputStream(File file, String charset) throws IOException {
         if (charset != null) {
             final BufferedReader reader = toReader(file, charset);
+            final Charset defaultStreamCharset = defaultCharset.get();
             return new InputStream() {
+                private ByteBuffer bufferBytes;
+                private CharBuffer bufferedChars = CharBuffer.allocate(4096);
+
                 @Override
                 public int read() throws IOException {
-                    return reader.read();
+                    if (bufferBytes == null || bufferBytes.remaining() <= 0) {
+                        bufferedChars.clear();
+                        int len = reader.read(bufferedChars);
+                        bufferedChars.flip();
+                        if (len == -1) {
+                            return -1;
+                        }
+                        bufferBytes = defaultStreamCharset.encode(bufferedChars);
+                    }
+                    return bufferBytes.get();
                 }
-                
+
                 @Override
                 public void close() throws IOException {
                     reader.close();
                 }
-                
+
                 @Override
                 public void reset() throws IOException {
                     reader.reset();
@@ -116,7 +137,7 @@ public final class IOConverter {
     }
 
     @Converter
-    public static File toFile(String name) throws FileNotFoundException {
+    public static File toFile(String name) {
         return new File(name);
     }
 
@@ -291,10 +312,6 @@ public final class IOConverter {
 
     @Converter
     public static String toString(BufferedReader reader) throws IOException {
-        if (reader == null) {
-            return null;
-        }
-
         StringBuilder sb = new StringBuilder(1024);
         char[] buf = new char[1024];
         try {
@@ -334,7 +351,7 @@ public final class IOConverter {
 
     @Converter
     public static byte[] toByteArray(String value, Exchange exchange) throws IOException {
-        return value != null ? value.getBytes(IOHelper.getCharsetName(exchange)) : null;
+        return value.getBytes(IOHelper.getCharsetName(exchange));
     }
 
     /**
@@ -427,6 +444,33 @@ public final class IOConverter {
         return new ByteArrayInputStream(os.toByteArray());
     }
 
+    @Converter
+    public static Properties toProperties(File file) throws IOException {
+        return toProperties(new FileInputStream(file));
+    }
+
+    @Converter
+    public static Properties toProperties(InputStream is) throws IOException {
+        Properties prop = new Properties();
+        try {
+            prop.load(is);
+        } finally {
+            IOHelper.close(is);
+        }
+        return prop;
+    }
+
+    @Converter
+    public static Properties toProperties(Reader reader) throws IOException {
+        Properties prop = new Properties();
+        try {
+            prop.load(reader);
+        } finally {
+            IOHelper.close(reader);
+        }
+        return prop;
+    }
+
     /**
      * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}.
      *
@@ -455,7 +499,7 @@ public final class IOConverter {
          * @param in file to read
          * @param charset character set to use
          */
-        public EncodingFileReader(FileInputStream in, String charset)
+        EncodingFileReader(FileInputStream in, String charset)
             throws FileNotFoundException, UnsupportedEncodingException {
             super(in, charset);
             this.in = in;
@@ -482,7 +526,7 @@ public final class IOConverter {
          * @param out file to write
          * @param charset character set to use
          */
-        public EncodingFileWriter(FileOutputStream out, String charset)
+        EncodingFileWriter(FileOutputStream out, String charset)
             throws FileNotFoundException, UnsupportedEncodingException {
             super(out, charset);
             this.out = out;
@@ -510,5 +554,5 @@ public final class IOConverter {
     public static void validateCharset(String charset) throws UnsupportedCharsetException {
         IOHelper.validateCharset(charset);
     }
-    
+
 }

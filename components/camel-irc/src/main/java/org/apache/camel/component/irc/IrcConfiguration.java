@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -35,31 +39,59 @@ import org.schwering.irc.lib.ssl.SSLTrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class IrcConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(IrcConfiguration.class);
 
-    private List<IrcChannel> channels = new ArrayList<IrcChannel>();
-    private String hostname;
-    private String password;
-    private String nickname;
-    private String realname;
-    private String username;
-    private SSLTrustManager trustManager = new SSLDefaultTrustManager();
     private boolean usingSSL;
-    private boolean persistent = true;
-    private boolean colors = true;
-    private boolean onNick = true;
-    private boolean onQuit = true;
-    private boolean onJoin = true;
-    private boolean onKick = true;
-    private boolean onMode = true;
-    private boolean onPart = true;
-    private boolean onReply;
-    private boolean onTopic = true;
-    private boolean onPrivmsg = true;
-    private boolean autoRejoin = true;
+    private List<IrcChannel> channels = new ArrayList<IrcChannel>();
+
+    @UriPath @Metadata(required = "true")
+    private String hostname;
+    @UriPath
+    private int port;
     private int[] ports = {6667, 6668, 6669};
+    @UriParam(label = "security", secret = true)
+    private String password;
+    @UriParam
+    private String nickname;
+    @UriParam
+    private String realname;
+    @UriParam(label = "security", secret = true)
+    private String username;
+    @UriParam(label = "security")
+    private SSLTrustManager trustManager = new SSLDefaultTrustManager();
+    @UriParam(defaultValue = "true")
+    @Deprecated
+    private boolean persistent = true;
+    @UriParam(defaultValue = "true", label = "advanced")
+    private boolean colors = true;
+    @UriParam(defaultValue = "true", label = "filter")
+    private boolean onNick = true;
+    @UriParam(defaultValue = "true", label = "filter")
+    private boolean onQuit = true;
+    @UriParam(defaultValue = "true", label = "filter")
+    private boolean onJoin = true;
+    @UriParam(defaultValue = "true", label = "filter")
+    private boolean onKick = true;
+    @UriParam(defaultValue = "true", label = "filter")
+    private boolean onMode = true;
+    @UriParam(defaultValue = "true", label = "filter")
+    private boolean onPart = true;
+    @UriParam(label = "filter")
+    private boolean onReply;
+    @UriParam(defaultValue = "true", label = "filter")
+    private boolean onTopic = true;
+    @UriParam(defaultValue = "true", label = "filter")
+    private boolean onPrivmsg = true;
+    @UriParam(defaultValue = "true")
+    private boolean autoRejoin = true;
+    @UriParam
+    private boolean namesOnJoin;
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", secret = true)
+    private String nickPassword;
 
     public IrcConfiguration() {
     }
@@ -135,6 +167,7 @@ public class IrcConfiguration implements Cloneable {
         
         if (uri.getPort() != -1) {
             setPorts(new int[] {uri.getPort()});
+            setPort(uri.getPort());
         }
         
         setNickname(username);
@@ -172,6 +205,9 @@ public class IrcConfiguration implements Cloneable {
         return null;
     }
 
+    /**
+     * The trust manager used to verify the SSL server's certificate.
+     */
     public void setTrustManager(SSLTrustManager trustManager) {
         this.trustManager = trustManager;
     }
@@ -192,6 +228,9 @@ public class IrcConfiguration implements Cloneable {
         return hostname;
     }
 
+    /**
+     * Hostname for the IRC chat server
+     */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -200,6 +239,9 @@ public class IrcConfiguration implements Cloneable {
         return password;
     }
 
+    /**
+     * The IRC server password.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -208,6 +250,9 @@ public class IrcConfiguration implements Cloneable {
         return nickname;
     }
 
+    /**
+     * The nickname used in chat.
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -216,6 +261,9 @@ public class IrcConfiguration implements Cloneable {
         return realname;
     }
 
+    /**
+     * The IRC user's actual name.
+     */
     public void setRealname(String realname) {
         this.realname = realname;
     }
@@ -224,6 +272,9 @@ public class IrcConfiguration implements Cloneable {
         return username;
     }
 
+    /**
+     * The IRC server user name.
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -232,14 +283,33 @@ public class IrcConfiguration implements Cloneable {
         return ports;
     }
 
+    /**
+     * Port numbers for the IRC chat server
+     */
     public void setPorts(int[] ports) {
         this.ports = ports;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * Port number for the IRC chat server. If no port is configured then a default port of either 6667, 6668 or 6669 is used.
+     */
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public boolean isPersistent() {
         return persistent;
     }
 
+    /**
+     * Use persistent messages.
+     * @deprecated not in use
+     */
+    @Deprecated
     public void setPersistent(boolean persistent) {
         this.persistent = persistent;
     }
@@ -248,6 +318,9 @@ public class IrcConfiguration implements Cloneable {
         return colors;
     }
 
+    /**
+     * Whether or not the server supports color codes.
+     */
     public void setColors(boolean colors) {
         this.colors = colors;
     }
@@ -256,6 +329,9 @@ public class IrcConfiguration implements Cloneable {
         return onNick;
     }
 
+    /**
+     * Handle nickname change events.
+     */
     public void setOnNick(boolean onNick) {
         this.onNick = onNick;
     }
@@ -264,6 +340,9 @@ public class IrcConfiguration implements Cloneable {
         return onQuit;
     }
 
+    /**
+     * Handle user quit events.
+     */
     public void setOnQuit(boolean onQuit) {
         this.onQuit = onQuit;
     }
@@ -272,6 +351,9 @@ public class IrcConfiguration implements Cloneable {
         return onJoin;
     }
 
+    /**
+     * Handle user join events.
+     */
     public void setOnJoin(boolean onJoin) {
         this.onJoin = onJoin;
     }
@@ -280,6 +362,9 @@ public class IrcConfiguration implements Cloneable {
         return onKick;
     }
 
+    /**
+     * Handle kick events.
+     */
     public void setOnKick(boolean onKick) {
         this.onKick = onKick;
     }
@@ -288,6 +373,9 @@ public class IrcConfiguration implements Cloneable {
         return onMode;
     }
 
+    /**
+     * Handle mode change events.
+     */
     public void setOnMode(boolean onMode) {
         this.onMode = onMode;
     }
@@ -296,6 +384,9 @@ public class IrcConfiguration implements Cloneable {
         return onPart;
     }
 
+    /**
+     * Handle user part events.
+     */
     public void setOnPart(boolean onPart) {
         this.onPart = onPart;
     }
@@ -304,6 +395,9 @@ public class IrcConfiguration implements Cloneable {
         return onReply;
     }
 
+    /**
+     * Whether or not to handle general responses to commands or informational messages.
+     */
     public void setOnReply(boolean onReply) {
         this.onReply = onReply;
     }
@@ -312,6 +406,9 @@ public class IrcConfiguration implements Cloneable {
         return onTopic;
     }
 
+    /**
+     * Handle topic change events.
+     */
     public void setOnTopic(boolean onTopic) {
         this.onTopic = onTopic;
     }
@@ -320,6 +417,9 @@ public class IrcConfiguration implements Cloneable {
         return onPrivmsg;
     }
 
+    /**
+     * Handle private message events.
+     */
     public void setOnPrivmsg(boolean onPrivmsg) {
         this.onPrivmsg = onPrivmsg;
     }
@@ -328,6 +428,9 @@ public class IrcConfiguration implements Cloneable {
         return autoRejoin;
     }
 
+    /**
+     * Whether to auto re-join when being kicked
+     */
     public void setAutoRejoin(boolean autoRejoin) {
         this.autoRejoin = autoRejoin;
     }
@@ -336,12 +439,43 @@ public class IrcConfiguration implements Cloneable {
         return sslContextParameters;
     }
 
+    /**
+     * Used for configuring security using SSL.
+     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry.
+     * This reference overrides any configured SSLContextParameters at the component level.
+     * Note that this setting overrides the trustManager option.
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 
+    /**
+     * Your IRC server nickname password.
+     */
+    public String getNickPassword() {
+        return nickPassword;
+    }
+
+    public void setNickPassword(String nickPassword) {
+        this.nickPassword = nickPassword;
+    }
+    
+    public boolean isNamesOnJoin() {
+        return namesOnJoin;
+    }
+
+    /**
+     * Sends <code>NAMES</code> command to channel after joining it.<br>
+     * {@link #onReply} has to be <code>true</code> in order to process the
+     * result which will have the header value <code>irc.num = '353'</code>.
+     */
+    public void setNamesOnJoin(boolean namesOnJoin) {
+        this.namesOnJoin = namesOnJoin;
+    }
+
     public String toString() {
-        return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username + "]";
+        return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username
+                + "]";
     }
     
     private static IrcChannel createChannel(String channelInfo) {

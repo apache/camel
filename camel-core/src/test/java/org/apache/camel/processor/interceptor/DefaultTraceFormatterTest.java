@@ -149,6 +149,9 @@ public class DefaultTraceFormatterTest extends ContextTestSupport {
 
         formatter.setShowProperties(true);
         assertEquals(true, formatter.isShowProperties());
+        
+        formatter.setMultiline(true);
+        assertEquals(true, formatter.isMultiline());
 
         formatter.setShowShortExchangeId(true);
         assertEquals(true, formatter.isShowShortExchangeId());

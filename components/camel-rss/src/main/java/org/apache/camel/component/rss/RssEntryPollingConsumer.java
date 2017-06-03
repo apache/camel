@@ -23,6 +23,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Consumer to poll RSS feeds and return each entry from the feed step by step.
@@ -32,11 +33,11 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
     public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
         super(endpoint, processor, filter, lastUpdate, throttleEntries);
     }
-    
+
     @Override
     protected void populateList(Object feed) throws Exception {
         if (list == null) {
-            list = ((SyndFeed)feed).getEntries();
+            list = ((SyndFeed) feed).getEntries();
             if (endpoint.isSortEntries()) {
                 sortEntries();
             }
@@ -51,14 +52,18 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 
     @Override
     protected Object createFeed() throws Exception {
-        return RssUtils.createFeed(endpoint.getFeedUri());
+        if (ObjectHelper.isEmpty(endpoint.getUsername()) || ObjectHelper.isEmpty(endpoint.getPassword())) {
+            return RssUtils.createFeed(endpoint.getFeedUri(), RssEntryPollingConsumer.class.getClassLoader());
+        } else {
+            return RssUtils.createFeed(endpoint.getFeedUri(), endpoint.getUsername(), endpoint.getPassword(), RssEntryPollingConsumer.class.getClassLoader());
+        }
     }
 
     @Override
     protected void resetList() {
-        list = null;    
+        list = null;
     }
-    
+
     protected EntryFilter createEntryFilter(Date lastUpdate) {
         return new UpdatedDateFilter(lastUpdate);
     }

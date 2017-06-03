@@ -34,9 +34,8 @@ public class NoopCookieStore implements CookieStore {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Cookie> getCookies() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override

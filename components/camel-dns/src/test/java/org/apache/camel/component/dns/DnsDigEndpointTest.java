@@ -35,12 +35,16 @@ import org.xbill.DNS.Section;
 /**
  * Tests for the dig endpoint.
  */
+@Ignore("Wikipedia service is broken now")
 public class DnsDigEndpointTest extends CamelTestSupport {
 
-    private static final String RESPONSE_MONKEY = "\"A monkey is a nonhuman " + "primate mammal with the exception usually of the lemurs and "
-        + "tarsiers. More specifically, the term monkey refers to a subset " + "of monkeys: any of the smaller longer-tailed catarrhine or "
-        + "platyrrhine primates as contrasted with the apes.\" " + "\" http://en.wikipedia.org/wiki/Monkey\"";
-
+    private static final String RESPONSE_MONKEY = "\"A Macaque, an old world species of "
+                + "monkey native to Southeast Asia|thumb]A monkey is a primate of the "
+                + "Haplorrhini suborder and simian infraorder, either an Old World monkey "
+                + "or a New World monkey, but excluding apes. There are about 260 known "
+                + "living specie\" \"s of monkey. Many are arboreal, although there are "
+                + "species that live primarily on the ground, such as baboons... "
+                + "http://en.wikipedia.org/wiki/Monkey\""; 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
 
@@ -48,15 +52,15 @@ public class DnsDigEndpointTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        RouteBuilder routeBuilder = super.createRouteBuilder();
-
-        routeBuilder.from("direct:start").to("dns:dig").to("mock:result");
-
-        return routeBuilder;
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("dns:dig").to("mock:result");
+            }
+        };
     }
 
     @Test
-    @Ignore("Testing behind nat produces timeouts")
     public void testDigForMonkey() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {

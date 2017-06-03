@@ -1,0 +1,79 @@
+## Ribbon Component
+
+*Available as of Camel version 2.18*
+
+The ribbon component provides use of Netflix Ribbon for client side load balancing.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ribbon</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+This component helps applying load balancing feature at the client side when using http://camel.apache.org/servicecall-eip.html[ServiceCall EIP].
+
+### Configuration
+
+* *Programmatic*
++
+[source,java]
+----
+RibbonConfiguration configuration = new RibbonConfiguration();
+configuration.addProperties("ServerListRefreshInterval", "250");
+
+RibbonLoadBalancer loadBalancer = new RibbonLoadBalancer(configuration);
+
+from("direct:start")
+    .serviceCall()
+        .name("myService")
+        .loadBalancer(loadBalancer)
+        .consulServiceDiscovery()
+        .end()
+    .to("mock:result");
+----
+
+* *Spring Boot*
++
+[source,properties]
+.application.properties
+----
+camel.cloud.ribbon.properties[ServerListRefreshInterval] = 250
+----
++
+[source,java]
+.routes
+----
+from("direct:start")
+    .serviceCall()
+        .name("myService")
+        .ribbonLoadBalancer()
+        .consulServiceDiscovery()
+        .end()
+    .to("mock:result");
+----
+
+* *XML*
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <serviceCall name="myService">
+        <!-- enable ribbon load balancer -->
+        <ribbonLoadBalancer>
+            <properties key="ServerListRefreshInterval" value="250"/>
+        </ribbonLoadBalancer>
+    </serviceCall>
+</route>
+----
+
+### See Also
+
+* link:http://camel.apache.org/servicecall-eip.html[ServiceCall EIP]

@@ -25,6 +25,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -74,8 +75,6 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
     }
 }

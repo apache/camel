@@ -35,11 +35,11 @@ public class ManagedEndpointTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"seda://test\"");
-        mbeanServer.isRegistered(on);
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"seda://test\"");
+        assertTrue(mbeanServer.isRegistered(on));
 
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
-        mbeanServer.isRegistered(on);
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
+        assertTrue(mbeanServer.isRegistered(on));
     }
 
     @Override

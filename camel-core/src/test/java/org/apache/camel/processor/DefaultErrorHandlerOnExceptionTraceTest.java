@@ -96,7 +96,7 @@ public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport 
 
                 onException(IllegalArgumentException.class).handled(true).to("log:boom").to("mock:boom");
 
-                from("direct:start").processRef("myProcessor").to("mock:result");
+                from("direct:start").process("myProcessor").to("mock:result");
             }
         };
     }

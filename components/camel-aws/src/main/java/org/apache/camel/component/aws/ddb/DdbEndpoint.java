@@ -17,18 +17,18 @@
 package org.apache.camel.component.aws.ddb;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodb.model.CreateTableRequest;
-import com.amazonaws.services.dynamodb.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodb.model.KeySchema;
-import com.amazonaws.services.dynamodb.model.KeySchemaElement;
-import com.amazonaws.services.dynamodb.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodb.model.ResourceNotFoundException;
-import com.amazonaws.services.dynamodb.model.TableDescription;
-import com.amazonaws.services.dynamodb.model.TableStatus;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
+import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
+import com.amazonaws.services.dynamodbv2.model.TableDescription;
+import com.amazonaws.services.dynamodbv2.model.TableStatus;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -36,16 +36,24 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://aws.amazon.com/dynamodb/">AWS DynamoDB endpoint</a>
+ * The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
  */
+@UriEndpoint(firstVersion = "2.10.0", scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
 public class DdbEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DdbEndpoint.class);
+
+    @UriParam
     private DdbConfiguration configuration;
+
+    private AmazonDynamoDB ddbClient;
 
     @Deprecated
     public DdbEndpoint(String uri, CamelContext context, DdbConfiguration configuration) {
@@ -74,7 +82,13 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        AmazonDynamoDB ddbClient = getDdbClient();
+        ddbClient = configuration.getAmazonDDBClient() != null ? configuration.getAmazonDDBClient()
+            : createDdbClient();
+        
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonDdbEndpoint())) {
+            ddbClient.setEndpoint(configuration.getAmazonDdbEndpoint());
+        }
+        
         String tableName = getConfiguration().getTableName();
         LOG.trace("Querying whether table [{}] already exists...", tableName);
 
@@ -101,10 +115,10 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
 
     private TableDescription createTable(String tableName) {
         CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
-                .withKeySchema(new KeySchema(
+                .withKeySchema(
                         new KeySchemaElement().withAttributeName(
                                 configuration.getKeyAttributeName())
-                                .withAttributeType(configuration.getKeyAttributeType())))
+                                .withKeyType(configuration.getKeyAttributeType()))
                 .withProvisionedThroughput(
                         new ProvisionedThroughput().withReadCapacityUnits(configuration.getReadCapacity())
                                 .withWriteCapacityUnits(configuration.getWriteCapacity()));
@@ -116,18 +130,33 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     }
 
     public AmazonDynamoDB getDdbClient() {
-        return configuration.getAmazonDDBClient() != null ? configuration.getAmazonDDBClient()
-                : createDdbClient();
+        return ddbClient;
     }
 
     AmazonDynamoDB createDdbClient() {
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(),
-                configuration.getSecretKey());
-        AmazonDynamoDB client = new AmazonDynamoDBClient(credentials);
-        if (configuration.getAmazonDdbEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonDdbEndpoint());
+        AmazonDynamoDB client = null;
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            isClientConfigFound = true;
         }
-        configuration.setAmazonDDBClient(client);
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonDynamoDBClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonDynamoDBClient(credentials);
+            }
+        } else {
+            if (isClientConfigFound) {
+                client = new AmazonDynamoDBClient();
+            } else {
+                client = new AmazonDynamoDBClient(clientConfiguration);
+            }
+        }
         return client;
     }
 

@@ -94,7 +94,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:typo").beanRef("myBean", "ups").to("mock:result");
+                    from("direct:typo").bean("myBean", "ups").to("mock:result");
                 }
             });
             fail("Should throw an exception");
@@ -134,13 +134,13 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:echo").beanRef("myBean", "echo").to("mock:result");
+                from("direct:echo").bean("myBean", "echo").to("mock:result");
 
-                from("direct:hi").beanRef("myBean", "hi").to("mock:result");
+                from("direct:hi").bean("myBean", "hi").to("mock:result");
                 
-                from("direct:mixed").beanRef("myBean", "echo").beanRef("myBean", "hi").to("mock:result");
+                from("direct:mixed").bean("myBean", "echo").bean("myBean", "hi").to("mock:result");
 
-                from("direct:fail").beanRef("myBean").to("mock:result");
+                from("direct:fail").bean("myBean").to("mock:result");
             }
         };
     }

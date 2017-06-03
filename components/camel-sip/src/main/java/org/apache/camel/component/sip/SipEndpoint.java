@@ -21,8 +21,15 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
+/**
+ * To send and receive messages using the SIP protocol (used in telco and mobile).
+ */
+@UriEndpoint(firstVersion = "2.5.0", scheme = "sip,sips", title = "SIP", syntax = "sip:uri", label = "mobile")
 public class SipEndpoint extends DefaultEndpoint {
+    @UriParam
     private SipConfiguration configuration;
 
     public SipEndpoint(String endpointUri, Component component, SipConfiguration configuration) {

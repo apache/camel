@@ -16,34 +16,27 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
+import org.apache.camel.commands.ContextStopCommand;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-/**
- * Command to stop a Camel context.
- */
-@Command(scope = "camel", name = "context-stop", description = "Stop a Camel context.")
-public class ContextStop extends OsgiCommandSupport {
+@Command(scope = "camel", name = "context-stop", description = "Stop a Camel context. It becomes unavailable and can not be started again.")
+@Service
+public class ContextStop extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String context;
 
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
-
-    public Object doExecute() throws Exception {
-        CamelContext camelContext = camelController.getCamelContext(context);
-        if (camelContext == null) {
-            System.err.println("The Camel context " + camelContext + " is not found.");
-            return null;
-        }
-        camelContext.stop();
-        return null;
+    @Override
+    public Object execute() throws Exception {
+        ContextStopCommand command = new ContextStopCommand(context);
+        return command.execute(this, System.out, System.err);
     }
 
 }

@@ -25,10 +25,12 @@ import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
+import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
@@ -37,14 +39,13 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -63,24 +64,25 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
 /**
- * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
+ * The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
  *
- * @version
+ * This component uses Spring JMS.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(scheme = "jms", consumerClass = JmsConsumer.class)
-public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
+public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
-    @UriParam
-    private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
+    @UriPath(defaultValue = "queue", enums = "queue,topic,temp-queue,temp-topic", description = "The kind of destination to use")
+    private String destinationType;
+    @UriPath(description = "Name of the queue or topic to use as destination")
+    @Metadata(required = "true")
     private String destinationName;
-    @UriPath
     private Destination destination;
-    @UriParam
-    private String selector;
+    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
     private JmsConfiguration configuration;
 
@@ -91,6 +93,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public JmsEndpoint(Topic destination) throws JMSException {
         this("jms:topic:" + destination.getTopicName(), null);
         this.destination = destination;
+        this.destinationType = "topic";
     }
 
     public JmsEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain, JmsConfiguration configuration) {
@@ -98,6 +101,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.configuration = configuration;
         this.destinationName = destinationName;
         this.pubSubDomain = pubSubDomain;
+        if (pubSubDomain) {
+            this.destinationType = "topic";
+        } else {
+            this.destinationType = "queue";
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -107,11 +115,21 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.configuration = configuration;
         this.destinationName = destinationName;
         this.pubSubDomain = pubSubDomain;
+        if (pubSubDomain) {
+            this.destinationType = "topic";
+        } else {
+            this.destinationType = "queue";
+        }
     }
 
     public JmsEndpoint(String endpointUri, String destinationName, boolean pubSubDomain) {
         this(UnsafeUriCharactersEncoder.encode(endpointUri), null, new JmsConfiguration(), destinationName, pubSubDomain);
         this.binding = new JmsBinding(this);
+        if (pubSubDomain) {
+            this.destinationType = "topic";
+        } else {
+            this.destinationType = "queue";
+        }
     }
 
     /**
@@ -168,10 +186,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
         if (destinationName != null) {
             listenerContainer.setDestinationName(destinationName);
-            log.debug("Using destinationName: {} on listenerContainer: ", destinationName, listenerContainer);
+            log.debug("Using destinationName: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else if (destination != null) {
             listenerContainer.setDestination(destination);
-            log.debug("Using destination: {} on listenerContainer: ", destinationName, listenerContainer);
+            log.debug("Using destination: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else {
             DestinationResolver resolver = getDestinationResolver();
             if (resolver != null) {
@@ -179,7 +197,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else {
                 throw new IllegalArgumentException("Neither destination, destinationName or destinationResolver are specified on this endpoint!");
             }
-            log.debug("Using destinationResolver: {} on listenerContainer: ", resolver, listenerContainer);
+            log.debug("Using destinationResolver: {} on listenerContainer: {}", resolver, listenerContainer);
         }
         listenerContainer.setPubSubDomain(pubSubDomain);
 
@@ -210,8 +228,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         } else {
             // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
-            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}", 
-                    listenerContainer, configuration.getDefaultTaskExecutorType());
+            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
+                    listenerContainer, getDefaultTaskExecutorType());
         }
 
         // set a default transaction name if none provided
@@ -261,22 +279,21 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        JmsOperations template = createInOnlyTemplate();
-        JmsPollingConsumer answer = new JmsPollingConsumer(this, template);
+        JmsPollingConsumer answer = new JmsPollingConsumer(this);
         configurePollingConsumer(answer);
         return answer;
     }
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        Exchange exchange = new DefaultExchange(this, pattern);
+        Exchange exchange = super.createExchange(pattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
         return exchange;
     }
 
-    public Exchange createExchange(Message message) {
+    public Exchange createExchange(Message message, Session session) {
         Exchange exchange = createExchange(getExchangePattern());
-        exchange.setIn(new JmsMessage(message, getBinding()));
+        exchange.setIn(new JmsMessage(message, session, getBinding()));
         return exchange;
     }
 
@@ -302,7 +319,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public String getThreadName() {
         return "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
     }
-    
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -318,31 +335,53 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
 
     public JmsBinding getBinding() {
         if (binding == null) {
-            binding = new JmsBinding(this);
+            binding = createBinding();
         }
         return binding;
     }
 
     /**
+     * Creates the {@link org.apache.camel.component.jms.JmsBinding} to use.
+     */
+    protected JmsBinding createBinding() {
+        return new JmsBinding(this);
+    }
+
+    /**
      * Sets the binding used to convert from a Camel message to and from a JMS
      * message
-     *
-     * @param binding the binding to use
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
+    }
+
+    public String getDestinationType() {
+        return destinationType;
+    }
+
+    /**
+     * The kind of destination to use
+     */
+    public void setDestinationType(String destinationType) {
+        this.destinationType = destinationType;
     }
 
     public String getDestinationName() {
         return destinationName;
     }
 
+    /**
+     * Name of the queue or topic to use as destination
+     */
     public void setDestinationName(String destinationName) {
         this.destinationName = destinationName;
     }
@@ -366,18 +405,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.configuration = configuration;
     }
 
-    public String getSelector() {
-        return selector;
-    }
-
-    /**
-     * Sets the JMS selector to use
-     */
-    public void setSelector(String selector) {
-        this.selector = selector;
-    }
-
-    @ManagedAttribute
     public boolean isSingleton() {
         return true;
     }
@@ -441,7 +468,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         runningMessageListeners.incrementAndGet();
     }
 
-    public void onListenerConstainerStopped(AbstractMessageListenerContainer container) {
+    public void onListenerContainerStopped(AbstractMessageListenerContainer container) {
         runningMessageListeners.decrementAndGet();
     }
 
@@ -509,6 +536,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getConcurrentConsumers();
     }
 
+    @ManagedAttribute
+    public int getReplyToConcurrentConsumers() {
+        return getConfiguration().getReplyToConcurrentConsumers();
+    }
+
     public ConnectionFactory getConnectionFactory() {
         return getConfiguration().getConnectionFactory();
     }
@@ -529,11 +561,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public ErrorHandler getErrorHandler() {
         return getConfiguration().getErrorHandler();
     }
-    
+
     public LoggingLevel getErrorHandlerLoggingLevel() {
         return getConfiguration().getErrorHandlerLoggingLevel();
     }
-   
+
     @ManagedAttribute
     public boolean isErrorHandlerLogStackTrace() {
         return getConfiguration().isErrorHandlerLogStackTrace();
@@ -568,6 +600,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public int getReplyToMaxConcurrentConsumers() {
+        return getConfiguration().getReplyToMaxConcurrentConsumers();
+    }
+
+    @ManagedAttribute
+    public int getReplyToOnTimeoutMaxConcurrentConsumers() {
+        return getConfiguration().getReplyToOnTimeoutMaxConcurrentConsumers();
+    }
+
+    @ManagedAttribute
     public int getMaxMessagesPerTask() {
         return getConfiguration().getMaxMessagesPerTask();
     }
@@ -598,6 +640,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public String getReplyTo() {
         return getConfiguration().getReplyTo();
+    }
+
+    @ManagedAttribute
+    public String getReplyToOverride() {
+        return getConfiguration().getReplyToOverride();
+    }
+
+    @ManagedAttribute
+    public boolean isReplyToSameDestinationAllowed() {
+        return getConfiguration().isReplyToSameDestinationAllowed();
     }
 
     @ManagedAttribute
@@ -647,6 +699,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().isAcceptMessagesWhileStopping();
     }
 
+    @ManagedAttribute
+    public boolean isAllowReplyManagerQuickStop() {
+        return getConfiguration().isAllowReplyManagerQuickStop();
+    }
+    
     @ManagedAttribute
     public boolean isAlwaysCopyMessage() {
         return getConfiguration().isAlwaysCopyMessage();
@@ -745,6 +802,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
+        getConfiguration().setAllowReplyManagerQuickStop(allowReplyManagerQuickStop);
+    }
+    
+    @ManagedAttribute
     public void setAcknowledgementMode(int consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);
     }
@@ -787,6 +849,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setConcurrentConsumers(int concurrentConsumers) {
         getConfiguration().setConcurrentConsumers(concurrentConsumers);
+    }
+
+    @ManagedAttribute
+    public void setReplyToConcurrentConsumers(int concurrentConsumers) {
+        getConfiguration().setReplyToConcurrentConsumers(concurrentConsumers);
     }
 
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
@@ -864,6 +931,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public void setReplyToMaxConcurrentConsumers(int maxConcurrentConsumers) {
+        getConfiguration().setReplyToMaxConcurrentConsumers(maxConcurrentConsumers);
+    }
+
+    @ManagedAttribute
     public void setMaxMessagesPerTask(int maxMessagesPerTask) {
         getConfiguration().setMaxMessagesPerTask(maxMessagesPerTask);
     }
@@ -918,6 +990,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setReplyTo(String replyToDestination) {
         getConfiguration().setReplyTo(replyToDestination);
+    }
+
+    @ManagedAttribute
+    public void setReplyToOverride(String replyToDestination) {
+        getConfiguration().setReplyToOverride(replyToDestination);
+    }
+
+    @ManagedAttribute
+    public void setReplyToSameDestinationAllowed(boolean replyToSameDestinationAllowed) {
+        getConfiguration().setReplyToSameDestinationAllowed(replyToSameDestinationAllowed);
     }
 
     @ManagedAttribute
@@ -1005,6 +1087,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setJmsKeyFormatStrategy(jmsHeaderStrategy);
     }
 
+    public MessageCreatedStrategy getMessageCreatedStrategy() {
+        return getConfiguration().getMessageCreatedStrategy();
+    }
+
+    public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
+        getConfiguration().setMessageCreatedStrategy(messageCreatedStrategy);
+    }
+
     @ManagedAttribute
     public boolean isTransferExchange() {
         return getConfiguration().isTransferExchange();
@@ -1016,6 +1106,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public boolean isAllowSerializedHeaders() {
+        return getConfiguration().isAllowSerializedHeaders();
+    }
+
+    @ManagedAttribute
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        getConfiguration().setAllowSerializedHeaders(allowSerializedHeaders);
+    }
+
+    @ManagedAttribute
     public boolean isTransferException() {
         return getConfiguration().isTransferException();
     }
@@ -1023,6 +1123,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setTransferException(boolean transferException) {
         getConfiguration().setTransferException(transferException);
+    }
+
+    @ManagedAttribute
+    public void setTransferFault(boolean transferFault) {
+        getConfiguration().setTransferFault(transferFault);
+    }
+
+    @ManagedAttribute
+    public boolean isTransferFault() {
+        return getConfiguration().isTransferFault();
     }
 
     @ManagedAttribute
@@ -1148,30 +1258,38 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         configuration.setReplyToType(type);
     }
 
-    @ManagedAttribute(description = "Camel id")
-    public String getCamelId() {
-        return getCamelContext().getName();
-    }
-
-    @ManagedAttribute(description = "Endpoint Uri", mask = true)
-    @Override
-    public String getEndpointUri() {
-        return super.getEndpointUri();
-    }
-
-    @ManagedAttribute(description = "Service State")
-    public String getState() {
-        ServiceStatus status = this.getStatus();
-        // if no status exists then its stopped
-        if (status == null) {
-            status = ServiceStatus.Stopped;
-        }
-        return status.name();
-    }
-
     @ManagedAttribute(description = "Number of running message listeners")
     public int getRunningMessageListeners() {
         return runningMessageListeners.get();
+    }
+
+    @ManagedAttribute
+    public String getSelector() {
+        return configuration.getSelector();
+    }
+
+    public void setSelector(String selector) {
+        configuration.setSelector(selector);
+    }
+
+    @ManagedAttribute
+    public int getWaitForProvisionCorrelationToBeUpdatedCounter() {
+        return configuration.getWaitForProvisionCorrelationToBeUpdatedCounter();
+    }
+
+    @ManagedAttribute
+    public void setWaitForProvisionCorrelationToBeUpdatedCounter(int counter) {
+        configuration.setWaitForProvisionCorrelationToBeUpdatedCounter(counter);
+    }
+
+    @ManagedAttribute
+    public long getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime() {
+        return configuration.getWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime();
+    }
+
+    @ManagedAttribute
+    public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
+        configuration.setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(sleepingTime);
     }
 
     // Implementation methods

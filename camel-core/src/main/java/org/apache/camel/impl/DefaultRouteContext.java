@@ -28,13 +28,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
@@ -59,6 +62,8 @@ public class DefaultRouteContext implements RouteContext {
     private boolean routeAdded;
     private Boolean trace;
     private Boolean messageHistory;
+    private Boolean logMask;
+    private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
     private Boolean handleFault;
     private Long delay;
@@ -123,6 +128,12 @@ public class DefaultRouteContext implements RouteContext {
             if (!this.getCamelContext().equals(endpoint.getCamelContext())) {
                 throw new NoSuchEndpointException("ref:" + ref, "make sure the endpoint has the same camel context as the route does.");
             }
+            try {
+                // need add the endpoint into service
+                getCamelContext().addService(endpoint);
+            } catch (Exception ex) {
+                throw new RuntimeCamelException(ex);
+            }
         }
         if (endpoint == null) {
             throw new IllegalArgumentException("Either 'uri' or 'ref' must be specified on: " + this);
@@ -149,14 +160,12 @@ public class DefaultRouteContext implements RouteContext {
         if (!eventDrivenProcessors.isEmpty()) {
             Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
 
+            // force creating the route id so its known ahead of the route is started
             String routeId = route.idOrCreate(getCamelContext().getNodeIdFactory());
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             CamelInternalProcessor internal = new CamelInternalProcessor(target);
-            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
-
-            // and then in route context so we can keep track which route this is at runtime
-            internal.addAdvice(new CamelInternalProcessor.RouteContextAdvice(this));
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(this));
 
             // and then optionally add route policy processor if a custom policy is set
             List<RoutePolicy> routePolicyList = getRoutePolicyList();
@@ -182,18 +191,54 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in JMX instrumentation processor that is used for performance stats
             internal.addAdvice(new CamelInternalProcessor.InstrumentationAdvice("route"));
 
+            // wrap in route lifecycle
+            internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
+
+            // wrap in REST binding
+            if (route.getRestBindingDefinition() != null) {
+                try {
+                    internal.addAdvice(route.getRestBindingDefinition().createRestBindingAdvice(this));
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+            }
+
+            // wrap in contract
+            if (route.getInputType() != null || route.getOutputType() != null) {
+                Contract contract = new Contract();
+                if (route.getInputType() != null) {
+                    contract.setInputType(route.getInputType().getUrn());
+                    contract.setValidateInput(route.getInputType().isValidate());
+                }
+                if (route.getOutputType() != null) {
+                    contract.setOutputType(route.getOutputType().getUrn());
+                    contract.setValidateOutput(route.getOutputType().isValidate());
+                }
+                internal.addAdvice(new ContractAdvice(contract));
+            }
+
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
+            edcr.getProperties().put(Route.DESCRIPTION_PROPERTY, route.getDescriptionText());
             if (route.getGroup() != null) {
                 edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());
             }
+            String rest = "false";
+            if (route.isRest() != null && route.isRest()) {
+                rest = "true";
+            }
+            edcr.getProperties().put(Route.REST_PROPERTY, rest);
 
             // after the route is created then set the route on the policy processor so we get hold of it
             CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);
             if (task != null) {
                 task.setRoute(edcr);
+            }
+            CamelInternalProcessor.RouteLifecycleAdvice task2 = internal.getAdvice(CamelInternalProcessor.RouteLifecycleAdvice.class);
+            if (task2 != null) {
+                task2.setRoute(edcr);
             }
 
             // invoke init on route policy
@@ -265,6 +310,32 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    public void setLogMask(Boolean logMask) {
+        this.logMask = logMask;
+    }
+
+    public Boolean isLogMask() {
+        if (logMask != null) {
+            return logMask;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isLogMask();
+        }
+    }
+
+    public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
+    }
+
+    public Boolean isLogExhaustedMessageBody() {
+        if (logExhaustedMessageBody != null) {
+            return logExhaustedMessageBody;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isLogExhaustedMessageBody();
+        }
+    }
+
     public void setStreamCaching(Boolean cache) {
         this.streamCache = cache;
     }
@@ -320,6 +391,16 @@ public class DefaultRouteContext implements RouteContext {
         this.shutdownRoute = shutdownRoute;
     }
 
+    public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
+        // can only be configured on CamelContext
+        getCamelContext().setAllowUseOriginalMessage(allowUseOriginalMessage);
+    }
+
+    public Boolean isAllowUseOriginalMessage() {
+        // can only be configured on CamelContext
+        return getCamelContext().isAllowUseOriginalMessage();
+    }
+
     public ShutdownRoute getShutdownRoute() {
         if (shutdownRoute != null) {
             return shutdownRoute;
@@ -358,4 +439,5 @@ public class DefaultRouteContext implements RouteContext {
     public List<RoutePolicy> getRoutePolicyList() {
         return routePolicyList;
     }
+
 }

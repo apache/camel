@@ -17,31 +17,46 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
+
 /**
  * @version 
  */
 public class JpaProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
-    private final EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
     private final Expression expression;
+    private String query;
+    private String namedQuery;
+    private String nativeQuery;
+    private Map<String, Object> parameters;
+    private Class<?> resultClass;
+    private QueryFactory queryFactory;
+    private Boolean useExecuteUpdate;
 
     public JpaProducer(JpaEndpoint endpoint, Expression expression) {
         super(endpoint);
         this.expression = expression;
-        this.entityManager = endpoint.createEntityManager();
+        this.entityManagerFactory = endpoint.getEntityManagerFactory();
         this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
@@ -50,34 +65,185 @@ public class JpaProducer extends DefaultProducer {
         return (JpaEndpoint) super.getEndpoint();
     }
 
-    public void process(final Exchange exchange) {
-        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
+    public QueryFactory getQueryFactory() {
+        if (queryFactory == null) {
+            if (query != null) {
+                queryFactory = QueryBuilder.query(query);
+            } else if (namedQuery != null) {
+                queryFactory = QueryBuilder.namedQuery(namedQuery);
+            } else if (nativeQuery != null) {
+                if (resultClass != null) {
+                    queryFactory = QueryBuilder.nativeQuery(nativeQuery, resultClass);
+                } else {
+                    queryFactory = QueryBuilder.nativeQuery(nativeQuery);
+                }
+            }
+        }
+        return queryFactory;
+    }
 
+    public void setQueryFactory(QueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
+
+    public void setParameters(Map<String, Object> params) {
+        this.parameters = params;
+    }
+    
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public String getNamedQuery() {
+        return namedQuery;
+    }
+
+    public void setNamedQuery(String namedQuery) {
+        this.namedQuery = namedQuery;
+    }
+
+    public String getNativeQuery() {
+        return nativeQuery;
+    }
+
+    public void setNativeQuery(String nativeQuery) {
+        this.nativeQuery = nativeQuery;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+    
+    public Class<?> getResultClass() {
+        return resultClass;
+    }
+
+    public void setResultClass(Class<?> resultClass) {
+        this.resultClass = resultClass;
+    }
+
+    public void setUseExecuteUpdate(Boolean executeUpdate) {
+        this.useExecuteUpdate = executeUpdate;
+    }
+
+    public boolean isUseExecuteUpdate() {
+        if (useExecuteUpdate == null) {
+            if (query != null) {
+                if (query.regionMatches(true, 0, "select", 0, 6)) {
+                    useExecuteUpdate = false;
+                } else {
+                    useExecuteUpdate = true;
+                }
+            } else if (nativeQuery != null) {
+                if (nativeQuery.regionMatches(true, 0, "select", 0, 6)) {
+                    useExecuteUpdate = false;
+                } else {
+                    useExecuteUpdate = true;
+                }
+            } else {
+                useExecuteUpdate = false;
+            }
+        }
+        return useExecuteUpdate;
+    }
+
+    public void process(final Exchange exchange) {
+        // resolve the entity manager before evaluating the expression
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
+                getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
+
+        if (getQueryFactory() != null) {
+            processQuery(exchange, entityManager);
+        } else {
+            processEntity(exchange, entityManager);
+        }
+    }
+
+    protected void processQuery(Exchange exchange, EntityManager entityManager) {
+        Query query = getQueryFactory().createQuery(entityManager);
+        configureParameters(query, exchange);
+
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+                if (getEndpoint().isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
+
+                Object answer = isUseExecuteUpdate() ? query.executeUpdate() : query.getResultList();
+                Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
+                target.setBody(answer);
+
+                if (getEndpoint().isFlushOnSend()) {
+                    entityManager.flush();
+                }
+
+                return null;
+            }
+        });
+    }
+
+    private void configureParameters(Query query, Exchange exchange) {
+        int maxResults = getEndpoint().getMaximumResults();
+        if (maxResults > 0) {
+            query.setMaxResults(maxResults);
+        }
+        // setup the parameter
+        if (parameters != null) {
+            parameters.forEach((key, value) -> {
+                Object resolvedValue = value;
+                if (value instanceof String) {
+                    resolvedValue = SimpleLanguage.expression((String)value).evaluate(exchange, Object.class);
+                }
+                query.setParameter(key, resolvedValue);
+            });
+        }
+    }
+
+    protected void processEntity(Exchange exchange, EntityManager entityManager) {
         final Object values = expression.evaluate(exchange, Object.class);
+
         if (values != null) {
             transactionTemplate.execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(TransactionStatus status) {
-                    entityManager.joinTransaction();
+                    if (getEndpoint().isJoinTransaction()) {
+                        entityManager.joinTransaction();
+                    }
+
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
-                        for (int index = 0; index < array.length; index++) {
-                            save(array[index], entityManager);
+                        for (Object element : array) {
+                            if (!getEndpoint().isRemove()) {
+                                save(element);
+                            } else {
+                                remove(element);
+                            }
                         }
                     } else if (values instanceof Collection) {
                         Collection<?> collection = (Collection<?>)values;
                         for (Object entity : collection) {
-                            save(entity, entityManager);
+                            if (!getEndpoint().isRemove()) {
+                                save(entity);
+                            } else {
+                                remove(entity);
+                            }
                         }
                     } else {
-                        Object managedEntity = save(values, entityManager);
+                        Object managedEntity = null;
+                        if (!getEndpoint().isRemove()) {
+                            managedEntity = save(values);
+                        } else {
+                            managedEntity = remove(values);
+                        }
                         if (!getEndpoint().isUsePersist()) {
                             exchange.getIn().setBody(managedEntity);
                         }
                     }
 
                     if (getEndpoint().isFlushOnSend()) {
-                        // there may be concurrency so need to join tx before flush
-                        entityManager.joinTransaction();
                         entityManager.flush();
                     }
 
@@ -85,12 +251,12 @@ public class JpaProducer extends DefaultProducer {
                 }
 
                 /**
-                 * save the given entity end return the managed entity
+                 * Save the given entity end return the managed entity
+                 *
                  * @return the managed entity
                  */
-                private Object save(final Object entity, EntityManager entityManager) {
-                    // there may be concurrency so need to join tx before persist/merge
-                    entityManager.joinTransaction();
+                private Object save(final Object entity) {
+                    LOG.debug("save: {}", entity);
                     if (getEndpoint().isUsePersist()) {
                         entityManager.persist(entity);
                         return entity;
@@ -98,15 +264,30 @@ public class JpaProducer extends DefaultProducer {
                         return entityManager.merge(entity);
                     }
                 }
+                
+                /**
+                 * Remove the given entity end return the managed entity
+                 *
+                 * @return the managed entity
+                 */
+                private Object remove(final Object entity) {
+                    LOG.debug("remove: {}", entity);
+
+                    Object managedEntity;
+
+                    // First check if entity is attached to the persistence context
+                    if (entityManager.contains(entity)) {
+                        managedEntity = entity;
+                    } else {
+                        // If not, merge entity state into context before removing it
+                        managedEntity = entityManager.merge(entity);
+                    }
+
+                    entityManager.remove(managedEntity);
+                    return managedEntity;
+                }
             });
         }
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        entityManager.close();
-        LOG.trace("closed the EntityManager {} on {}", entityManager, this);
     }
 
 }

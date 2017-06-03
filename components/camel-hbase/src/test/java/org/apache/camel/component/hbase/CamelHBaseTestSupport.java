@@ -24,10 +24,18 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseTestingUtility;
-import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.TableExistsException;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Table;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
@@ -40,20 +48,21 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
     protected static final String PERSON_TABLE = "person";
     protected static final String INFO_FAMILY = "info";
 
+    private static final Logger LOG = LoggerFactory.getLogger(CamelHBaseTestSupport.class);
+
     protected String[] key = {"1", "2", "3"};
     protected final String[] family = {"info", "birthdate", "address"};
-    //comlumn[family][column]
     protected final String[][] column = {
-        {"firstName", "middleName", "lastName"},
+        {"id", "firstName", "lastName"},
         {"day", "month", "year"},
         {"street", "number", "zip"}
     };
 
     //body[row][family][column]
     protected final String[][][] body = {
-        {{"Ioannis", "D.", "Canellos"}, {"09", "03", "1980"}, {"Awesome Street", "23", "15344"}},
-        {{"John", "", "Dow"}, {"01", "01", "1979"}, {"Unknown Street", "1", "1010"}},
-        {{"Jane", "", "Dow"}, {"09", "01", "1979"}, {"Another Unknown Street", "14", "2020"}}
+        {{"1", "Ioannis", "Canellos"}, {"09", "03", "1980"}, {"Awesome Street", "23", "15344"}},
+        {{"2", "John", "Dow"}, {"01", "01", "1979"}, {"Unknown Street", "1", "1010"}},
+        {{"3", "Christian", "Mueller"}, {"09", "01", "1979"}, {"Another Unknown Street", "14", "2020"}}
     };
 
     protected final byte[][] families = {
@@ -66,6 +75,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
         try {
             hbaseUtil.startMiniCluster(numServers);
         } catch (Exception e) {
+            LOG.warn("couldn't start HBase cluster. Test is not started, but passed!", e);
             systemReady = false;
         }
     }
@@ -74,6 +84,27 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
     public static void tearDownClass() throws Exception {
         if (systemReady) {
             hbaseUtil.shutdownMiniCluster();
+        }
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        if (systemReady) {
+            try {
+                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), families);
+            } catch (TableExistsException ex) {
+                //Ignore if table exists
+            }
+
+            super.setUp();
+        }
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (systemReady) {
+            hbaseUtil.deleteTable(PERSON_TABLE.getBytes());
+            super.tearDown();
         }
     }
 
@@ -88,10 +119,12 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
     protected void putMultipleRows() throws IOException {
         Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-        HTable table = new HTable(configuration, PERSON_TABLE.getBytes());
+        Connection connection = ConnectionFactory.createConnection(configuration);
+        Table table = connection.getTable(TableName.valueOf(PERSON_TABLE.getBytes()));
+
         for (int r = 0; r < key.length; r++) {
             Put put = new Put(key[r].getBytes());
-            put.add(family[0].getBytes(), column[0][0].getBytes(), body[r][0][0].getBytes());
+            put.addColumn(family[0].getBytes(), column[0][0].getBytes(), body[r][0][0].getBytes());
             table.put(put);
         }
 

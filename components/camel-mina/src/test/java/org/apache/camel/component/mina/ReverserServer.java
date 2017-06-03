@@ -30,7 +30,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
  * clients.
  */
 public class ReverserServer {
-    protected int port = 6321;
+    protected final int port;
     private IoAcceptor acceptor;
 
     public ReverserServer(int port) {

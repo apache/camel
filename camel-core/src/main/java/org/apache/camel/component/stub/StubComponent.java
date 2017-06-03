@@ -17,16 +17,23 @@
 package org.apache.camel.component.stub;
 
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
+import org.apache.camel.Component;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.vm.VmComponent;
 
 /**
+ * The <a href="http://camel.apache.org/stub.html">Stub Component</a> is for stubbing out endpoints while developing or testing.
+ *
  * Allows you to easily stub out a middleware transport by prefixing the URI with "stub:" which is
  * handy for testing out routes, or isolating bits of middleware.
  */
 public class StubComponent extends VmComponent {
 
     public StubComponent() {
+        super(StubEndpoint.class);
     }
 
     @Override
@@ -37,6 +44,16 @@ public class StubComponent extends VmComponent {
     @Override
     protected void validateParameters(String uri, Map<String, Object> parameters, String optionPrefix) {
         // Don't validate so we can stub any URI
+    }
+
+    @Override
+    protected StubEndpoint createEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+        return new StubEndpoint(endpointUri, component, queueFactory, concurrentConsumers);
+    }
+
+    @Override
+    protected StubEndpoint createEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
+        return new StubEndpoint(endpointUri, component, queue, concurrentConsumers);
     }
 
 }

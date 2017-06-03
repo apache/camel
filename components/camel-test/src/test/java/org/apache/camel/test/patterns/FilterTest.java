@@ -30,6 +30,7 @@ import org.junit.Test;
  * @version 
  */
 // START SNIPPET: example
+// tag::example[]
 public class FilterTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -37,6 +38,11 @@ public class FilterTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
+
+    @Override
+    public boolean isDumpRouteCoverage() {
+        return true;
+    }
 
     @Test
     public void testSendMatchingMessage() throws Exception {
@@ -67,4 +73,5 @@ public class FilterTest extends CamelTestSupport {
         };
     }
 }
+// end::example[]
 // END SNIPPET: example

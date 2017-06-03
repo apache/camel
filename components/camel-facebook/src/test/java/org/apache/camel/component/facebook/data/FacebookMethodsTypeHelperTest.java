@@ -77,11 +77,6 @@ public class FacebookMethodsTypeHelperTest {
             assertFalse("No candidate methods for " + name, candidates.isEmpty());
 
             if (!name.equals(shortName) && !"search".equals(name)) {
-                if (!getExcludes.contains(shortName)) {
-                    candidates = FacebookMethodsTypeHelper.getCandidateMethods(
-                        FacebookMethodsTypeHelper.convertToGetMethod(shortName), new String[0]);
-                    assertFalse("No candidate get methods for " + shortName, candidates.isEmpty());
-                }
 
                 if (searchIncludes.contains(shortName)) {
                     candidates = FacebookMethodsTypeHelper.getCandidateMethods(
@@ -127,6 +122,10 @@ public class FacebookMethodsTypeHelperTest {
     public void testGetType() throws Exception {
         for (Field field : FacebookEndpointConfiguration.class.getDeclaredFields()) {
             Class<?> expectedType = field.getType();
+            // skip readingOptions
+            if ("readingOptions".equals(field.getName())) {
+                continue;
+            }
             final Class<?> actualType = FacebookMethodsTypeHelper.getType(field.getName());
             // test for auto boxing, un-boxing
             if (actualType.isPrimitive()) {

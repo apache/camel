@@ -19,18 +19,16 @@ package org.apache.camel.component.aws.ddb;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodb.model.AttributeAction;
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.AttributeValueUpdate;
-import com.amazonaws.services.dynamodb.model.ExpectedAttributeValue;
-import com.amazonaws.services.dynamodb.model.Key;
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class UpdateItemCommandTest {
@@ -51,7 +49,8 @@ public class UpdateItemCommandTest {
 
     @Test
     public void execute() {
-        Key key = new Key(new AttributeValue("Key_1"));
+        Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        key.put("1", new AttributeValue("Key_1"));
         exchange.getIn().setHeader(DdbConstants.KEY, key);
 
         Map<String, AttributeValueUpdate> attributeMap = new HashMap<String, AttributeValueUpdate>();

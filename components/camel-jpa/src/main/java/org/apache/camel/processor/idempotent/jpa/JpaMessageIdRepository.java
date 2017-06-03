@@ -17,6 +17,7 @@
 package org.apache.camel.processor.idempotent.jpa;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -24,33 +25,42 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.ExchangeIdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
+
 /**
- * @version 
+ * @version
  */
 @ManagedResource(description = "JPA based message id repository")
-public class JpaMessageIdRepository extends ServiceSupport implements IdempotentRepository<String> {
+public class JpaMessageIdRepository extends ServiceSupport implements ExchangeIdempotentRepository<String> {
     protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
+    protected static final String QUERY_CLEAR_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
+    private static final Logger LOG = LoggerFactory.getLogger(JpaMessageIdRepository.class);
     private final String processorName;
-    private final EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
+    private boolean joinTransaction = true;
+    private boolean sharedEntityManager;
 
     public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, String processorName) {
         this(entityManagerFactory, createTransactionTemplate(entityManagerFactory), processorName);
     }
 
     public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, TransactionTemplate transactionTemplate, String processorName) {
-        this.entityManager = entityManagerFactory.createEntityManager();
+        this.entityManagerFactory = entityManagerFactory;
         this.processorName = processorName;
         this.transactionTemplate = transactionTemplate;
     }
@@ -71,13 +81,22 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     }
 
     @ManagedOperation(description = "Adds the key to the store")
-    public boolean add(final String messageId) {
+    public boolean add(String messageId) {
+        return add(null, messageId);
+    }
+
+    @Override
+    public boolean add(final Exchange exchange, final String messageId) {
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus arg0) {
-                entityManager.joinTransaction();
+            public Boolean doInTransaction(TransactionStatus status) {
+                if (isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
 
-                List<?> list = query(messageId);
+                List<?> list = query(entityManager, messageId);
                 if (list.isEmpty()) {
                     MessageProcessed processed = new MessageProcessed();
                     processed.setProcessorName(processorName);
@@ -91,17 +110,28 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                 }
             }
         });
-        return rc.booleanValue();
+
+        LOG.debug("add {} -> {}", messageId, rc);
+        return rc;
     }
 
     @ManagedOperation(description = "Does the store contain the given key")
-    public boolean contains(final String messageId) {
+    public boolean contains(String messageId) {
+        return contains(null, messageId);
+    }
+
+    @Override
+    public boolean contains(final Exchange exchange, final String messageId) {
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus arg0) {
-                entityManager.joinTransaction();
+            public Boolean doInTransaction(TransactionStatus status) {
+                if (isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
 
-                List<?> list = query(messageId);
+                List<?> list = query(entityManager, messageId);
                 if (list.isEmpty()) {
                     return Boolean.FALSE;
                 } else {
@@ -109,39 +139,90 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                 }
             }
         });
-        return rc.booleanValue();
+
+        LOG.debug("contains {} -> {}", messageId, rc);
+        return rc;
     }
 
     @ManagedOperation(description = "Remove the key from the store")
-    public boolean remove(final String messageId) {
-        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus arg0) {
-                entityManager.joinTransaction();
+    public boolean remove(String messageId) {
+        return remove(null, messageId);
+    }
 
-                List<?> list = query(messageId);
+    @Override
+    public boolean remove(final Exchange exchange, final String messageId) {
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
+
+        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
+                if (isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
+
+                List<?> list = query(entityManager, messageId);
                 if (list.isEmpty()) {
                     return Boolean.FALSE;
                 } else {
-                    MessageProcessed processed = (MessageProcessed)list.get(0);
+                    MessageProcessed processed = (MessageProcessed) list.get(0);
                     entityManager.remove(processed);
                     entityManager.flush();
                     return Boolean.TRUE;
                 }
             }
         });
-        return rc.booleanValue();
+
+        LOG.debug("remove {}", messageId);
+        return rc;
     }
-    
-    private List<?> query(final String messageId) {
+
+    @Override
+    public boolean confirm(String messageId) {
+        return confirm(null, messageId);
+    }
+
+    @Override
+    public boolean confirm(final Exchange exchange, String messageId) {
+        LOG.debug("confirm {} -> true", messageId);
+        return true;
+    }
+
+    @ManagedOperation(description = "Clear the store")
+    public void clear() {
+        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);
+
+        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
+                if (isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
+
+                List<?> list = queryClear(entityManager);
+                if (!list.isEmpty()) {
+                    Iterator it = list.iterator();
+                    while (it.hasNext()) {
+                        Object item = it.next();
+                        entityManager.remove(item);
+                    }
+                    entityManager.flush();
+                }
+                return Boolean.TRUE;
+            }
+        });
+
+        LOG.debug("clear the store {}", MessageProcessed.class.getName());        
+    }
+
+    private List<?> query(final EntityManager entityManager, final String messageId) {
         Query query = entityManager.createQuery(QUERY_STRING);
         query.setParameter(1, processorName);
         query.setParameter(2, messageId);
         return query.getResultList();
     }
-
-    public boolean confirm(String s) {
-        // noop
-        return true;
+    
+    private List<?> queryClear(final EntityManager entityManager) {
+        Query query = entityManager.createQuery(QUERY_CLEAR_STRING);
+        query.setParameter(1, processorName);
+        return query.getResultList();
     }
 
     @ManagedAttribute(description = "The processor name")
@@ -149,12 +230,32 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         return processorName;
     }
 
+    @ManagedAttribute(description = "Whether to join existing transaction")
+    public boolean isJoinTransaction() {
+        return joinTransaction;
+    }
+
+    public void setJoinTransaction(boolean joinTransaction) {
+        this.joinTransaction = joinTransaction;
+    }
+
+    @ManagedAttribute(description = "Whether to use shared EntityManager")
+    public boolean isSharedEntityManager() {
+        return sharedEntityManager;
+    }
+
+    public void setSharedEntityManager(boolean sharedEntityManager) {
+        this.sharedEntityManager = sharedEntityManager;
+    }
+    
     @Override
     protected void doStart() throws Exception {
+        // noop
     }
 
     @Override
     protected void doStop() throws Exception {
-        entityManager.close();
+        // noop
     }
+
 }

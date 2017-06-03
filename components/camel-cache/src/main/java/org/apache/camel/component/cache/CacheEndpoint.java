@@ -28,19 +28,31 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The cache component enables you to perform caching operations using EHCache as the Cache Implementation.
+ *
+ * The cache itself is created on demand or if a cache of that name already exists then it is simply utilized with its original settings.
+ * This component supports producer and event based consumer endpoints.
+ * The Cache consumer is an event based consumer and can be used to listen and respond to specific cache activities.
+ * If you need to perform selections from a pre-existing cache, use the processors defined for the cache component.
+ */
+@UriEndpoint(firstVersion = "2.1.0", scheme = "cache", title = "EHCache", syntax = "cache:cacheName", consumerClass = CacheConsumer.class, label = "cache")
 public class CacheEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CacheEndpoint.class);
+    @UriParam
     private CacheConfiguration config;
+    @UriParam(label = "advanced")
     private CacheManagerFactory cacheManagerFactory;
-
-    private String operation;
+    @UriParam
     private String key;
+    @UriParam
+    private String operation;
 
     public CacheEndpoint() {
     }
@@ -82,19 +94,21 @@ public class CacheEndpoint extends DefaultEndpoint {
         return cacheManagerFactory;
     }
 
+    /**
+     * To use a custom CacheManagerFactory for creating the CacheManager to be used by this endpoint.
+     * <p/>
+     * By default the CacheManagerFactory configured on the component is used.
+     */
     public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
     }
 
-    public Exchange createCacheExchange(String operation, String key,
-            Object value) {
-        Exchange exchange = new DefaultExchange(this.getCamelContext(),
-                getExchangePattern());
-        Message message = new DefaultMessage();
+    public Exchange createCacheExchange(String operation, String key, Object value) {
+        Exchange exchange = super.createExchange();
+        Message message = exchange.getIn();
         message.setHeader(CacheConstants.CACHE_OPERATION, operation);
         message.setHeader(CacheConstants.CACHE_KEY, key);
         message.setBody(value);
-        exchange.setIn(message);
         return exchange;
     }
 
@@ -156,6 +170,11 @@ public class CacheEndpoint extends DefaultEndpoint {
         return operation;
     }
 
+
+    /**
+     * The default cache operation to use.
+     * If an operation in the message header, then the operation from the header takes precedence.
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -164,6 +183,10 @@ public class CacheEndpoint extends DefaultEndpoint {
         return key;
     }
 
+    /**
+     * The default key to use.
+     * If a key is provided in the message header, then the key from the header takes precedence.
+     */
     public void setKey(String key) {
         this.key = key;
     }

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.kestrel.enabled",
+      "description": "Enable kestrel component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

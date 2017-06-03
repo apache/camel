@@ -37,6 +37,16 @@ public class CompositePerformanceCounter implements PerformanceCounter {
     }
 
     @Override
+    public void processExchange(Exchange exchange) {
+        if (counter1.isStatisticsEnabled()) {
+            counter1.processExchange(exchange);
+        }
+        if (counter2.isStatisticsEnabled()) {
+            counter2.processExchange(exchange);
+        }
+    }
+
+    @Override
     public void completedExchange(Exchange exchange, long time) {
         if (counter1.isStatisticsEnabled()) {
             counter1.completedExchange(exchange, time);

@@ -37,7 +37,7 @@ import org.codehaus.mojo.exec.AbstractExecMojo;
  *
  * @goal embedded
  * @requiresDependencyResolution compile+runtime
- * @execute phase="test-compile"
+ * @execute phase="prepare-package"
  */
 public class EmbeddedMojo extends AbstractExecMojo {
 
@@ -46,35 +46,11 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * A value <= 0 will run forever. 
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
-     * @parameter property="-1"
-     * @readonly
+     * @parameter property="camel.duration"
+     *            default-value="-1"
      */
     protected String duration;
     
-    /**
-     * The DOT File name used to generate the DOT diagram of the route definitions
-     *
-     * @parameter default-value="${project.build.directory}/site/cameldoc/routes.dot"
-     * @readonly
-     */
-    protected String outputDirectory;
-    
-    /**
-     * Allows the DOT file generation to be disabled
-     *
-     * @parameter property="true"
-     * @readonly
-     */
-    protected boolean dotEnabled;
-    
-    /**
-     * Allows the routes from multiple contexts to be aggregated into one DOT file (in addition to the individual files)
-     *
-     * @parameter property="false"
-     * @readonly
-     */
-    protected boolean dotAggregationEnabled;
-
     /**
      * The classpath based application context uri that spring wants to get.
      *
@@ -133,24 +109,6 @@ public class EmbeddedMojo extends AbstractExecMojo {
     // Properties
     //-------------------------------------------------------------------------
 
-    /**
-     * Getter for property output directory.
-     *
-     * @return The value of output directory.
-     */
-    public String getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    /**
-     * Setter for the output directory.
-     *
-     * @param inOutputDirectory The value of output directory.
-     */
-    public void setOutputDirectory(String inOutputDirectory) {
-        this.outputDirectory = inOutputDirectory;
-    }
-
     public List<?> getClasspathElements() {
         return classpathElements;
     }
@@ -159,28 +117,12 @@ public class EmbeddedMojo extends AbstractExecMojo {
         this.classpathElements = classpathElements;
     }
 
-    public boolean isDotEnabled() {
-        return dotEnabled;
-    }
-
-    public void setDotEnabled(boolean dotEnabled) {
-        this.dotEnabled = dotEnabled;
-    }
-
     public String getDuration() {
         return duration;
     }
 
     public void setDuration(String duration) {
         this.duration = duration;
-    }
-
-    public boolean isDotAggregationEnabled() {
-        return dotAggregationEnabled;
-    }
-
-    public void setDotAggregationEnabled(boolean dotAggregationEnabled) {
-        this.dotAggregationEnabled = dotAggregationEnabled;
     }
 
     public String getApplicationContextUri() {
@@ -230,15 +172,6 @@ public class EmbeddedMojo extends AbstractExecMojo {
     protected String[] createArguments() {
 
         List<String> args = new ArrayList<String>(5);
-        if (isDotEnabled()) {
-            args.add("-outdir");
-            args.add(getOutputDirectory());
-        }
-
-        if (isDotAggregationEnabled()) {
-            args.add("-aggregate-dot");
-            args.add("true");
-        }
 
         if (applicationContextUri != null) {
             args.add("-applicationContext");

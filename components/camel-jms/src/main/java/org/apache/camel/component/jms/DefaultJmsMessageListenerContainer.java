@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -34,15 +35,47 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerContainer {
 
     private final JmsEndpoint endpoint;
+    private final boolean allowQuickStop;
+    private volatile TaskExecutor taskExecutor;
 
     public DefaultJmsMessageListenerContainer(JmsEndpoint endpoint) {
+        this(endpoint, true);
+    }
+
+    public DefaultJmsMessageListenerContainer(JmsEndpoint endpoint, boolean allowQuickStop) {
         this.endpoint = endpoint;
+        this.allowQuickStop = allowQuickStop;
+    }
+
+    /**
+     * Whether this {@link DefaultMessageListenerContainer} allows the {@link #runningAllowed()} to quick stop
+     * in case {@link JmsConfiguration#isAcceptMessagesWhileStopping()} is enabled, and {@link org.apache.camel.CamelContext}
+     * is currently being stopped.
+     */
+    protected boolean isAllowQuickStop() {
+        return allowQuickStop;
     }
 
     @Override
     protected boolean runningAllowed() {
-        // do not run if we have been stopped
-        return endpoint.isRunning();
+        // we can stop quickly if CamelContext is being stopped, and we do not accept messages while stopping
+        // this allows a more cleanly shutdown of the message listener
+        boolean quickStop = false;
+        if (isAllowQuickStop() && !endpoint.isAcceptMessagesWhileStopping()) {
+            quickStop = endpoint.getCamelContext().getStatus().isStopping();
+        }
+
+        if (quickStop) {
+            // log at debug level so its quicker to see we are stopping quicker from the logs
+            logger.debug("runningAllowed() -> false due CamelContext is stopping and endpoint configured to not accept messages while stopping");
+            return false;
+        } else {
+            // otherwise we only run if the endpoint is running
+            boolean answer = endpoint.isRunning();
+            // log at trace level as otherwise this can be noisy during normal operation
+            logger.trace("runningAllowed() -> " + answer);
+            return answer;
+        }
     }
 
     /**
@@ -62,23 +95,65 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
         String pattern = endpoint.getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         String beanName = getBeanName() == null ? endpoint.getThreadName() : getBeanName();
 
+        TaskExecutor answer;
+
         if (endpoint.getDefaultTaskExecutorType() == DefaultTaskExecutorType.ThreadPool) {
-            ThreadPoolTaskExecutor answer = new ThreadPoolTaskExecutor();
-            answer.setBeanName(beanName);
-            answer.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
-            answer.setCorePoolSize(endpoint.getConcurrentConsumers());
+            ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+            executor.setBeanName(beanName);
+            executor.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+            executor.setCorePoolSize(endpoint.getConcurrentConsumers());
             // Direct hand-off mode. Do not queue up tasks: assign it to a thread immediately.
             // We set no upper-bound on the thread pool (no maxPoolSize) as it's already implicitly constrained by
             // maxConcurrentConsumers on the DMLC itself (i.e. DMLC will only grow up to a level of concurrency as
             // defined by maxConcurrentConsumers).
-            answer.setQueueCapacity(0);
-            answer.initialize();
-            return answer;
+            executor.setQueueCapacity(0);
+            executor.initialize();
+            answer = executor;
         } else {
-            SimpleAsyncTaskExecutor answer = new SimpleAsyncTaskExecutor(beanName);
-            answer.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
-            return answer;
+            SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor(beanName);
+            executor.setThreadFactory(new CamelThreadFactory(pattern, beanName, true));
+            answer = executor;
+        }
+
+        taskExecutor = answer;
+        return answer;
+    }
+
+    @Override
+    public void stop() throws JmsException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Stopping listenerContainer: " + this + " with cacheLevel: " + getCacheLevel()
+                    + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
+        }
+        super.stop();
+
+        if (taskExecutor instanceof ThreadPoolTaskExecutor) {
+            ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) taskExecutor;
+            executor.destroy();
         }
     }
-    
+
+    @Override
+    public void destroy() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Destroying listenerContainer: " + this + " with cacheLevel: " + getCacheLevel()
+                    + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
+        }
+        super.destroy();
+
+        if (taskExecutor instanceof ThreadPoolTaskExecutor) {
+            ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) taskExecutor;
+            executor.destroy();
+        }
+    }
+
+    @Override
+    protected void stopSharedConnection() {
+        if (logger.isDebugEnabled()) {
+            if (sharedConnectionEnabled()) {
+                logger.debug("Stopping shared connection on listenerContainer: " + this);
+            }
+        }
+        super.stopSharedConnection();
+    }
 }

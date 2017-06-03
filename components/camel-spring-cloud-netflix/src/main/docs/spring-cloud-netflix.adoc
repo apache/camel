@@ -1,0 +1,46 @@
+=== Spring Cloud Netflix
+
+*Available as of Camel 2.19*
+
+The Spring Cloud Netflix component bridges Camel Cloud and Spring Cloud Netflix so you can leverage Spring Cloud Netflix service discovery and load balance features in Camel and/or you can use Camel Service Discovery implementations as ServerList source for Spring Cloud Netflix's Ribbon load balabncer.
+
+Maven users will need to add the following dependency to their `pom.xml` in order to use this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-cloud-netflix</artifactId>
+    <version>${camel.version}</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+`camel-spring-cloud-netflix` jar comes with the `spring.factories` file, so as soon as you add that dependency into your classpath, Spring Boot will automatically auto-configure Camel for you.
+
+You can disable Camel Spring Cloud Netflix with the following properties:
+
+[source,properties]
+----
+# Enable/Disable the whole integration, default true
+camel.cloud.netflix = true
+
+# Enable/Disable the integration with Ribbon, default true
+camel.cloud.netflix.ribbon = true
+----
+
+=== Spring Cloud Netflix Starter
+
+*Available as of Camel 2.19*
+
+To use the starter, add the following to your spring boot pom.xml file:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-cloud-netflix-starter</artifactId>
+    <version>${camel.version}</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----

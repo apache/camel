@@ -40,8 +40,8 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                    // will use a a custom thread pool with 0 in core and 2 max
-                        .threads(0, 2).to("mock:result");
+                    // will use a a custom thread pool with -1 in core and 2 max
+                        .threads(-1, 2).to("mock:result");
                 }
             });
             fail("Expect FailedToCreateRouteException exception here");

@@ -128,6 +128,18 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
             // expected
         }
     }
+    
+    public void testAliasedKeyManager() throws Exception {
+        KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
+        
+        KeyManager[] kms = kmp.createKeyManagers();
+        assertEquals(1, kms.length);
+        assertTrue(kms[0] instanceof X509KeyManager);
+        
+        kms[0] = new AliasedX509ExtendedKeyManager("server", (X509KeyManager)kms[0]);
+        AliasedX509ExtendedKeyManager km = (AliasedX509ExtendedKeyManager) kms[0];
+        assertNotNull(km.getPrivateKey("server"));
+    }
 
     protected void validateKeyManagers(KeyManager[] kms) {
         assertEquals(1, kms.length);

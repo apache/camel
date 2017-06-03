@@ -25,20 +25,21 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.spi.Required;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Base class for sending to an endpoint with an optional {@link ExchangePattern}
+ * Sends the message to an endpoint
  *
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> {
-    @XmlAttribute
+public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> implements EndpointRequiredDefinition {
+    @XmlAttribute @Metadata(required = "true")
     protected String uri;
     @XmlAttribute
+    @Deprecated
     protected String ref;
     @XmlTransient
     protected Endpoint endpoint;
@@ -64,12 +65,27 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         }
     }
 
+    @Override
+    public String getEndpointUri() {
+        if (uri != null) {
+            return uri;
+        }
+        return null;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
     public String getRef() {
         return ref;
     }
 
+    /**
+     * Sets the reference of the endpoint to send to.
+     *
+     * @param ref the reference of the endpoint
+     * @deprecated use uri with ref:uri instead
+     */
+    @Deprecated
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -78,7 +94,11 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         return uri;
     }
 
-    @Required
+    /**
+     * Sets the uri of the endpoint to send to.
+     *
+     * @param uri the uri of the endpoint
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }

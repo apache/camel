@@ -17,25 +17,40 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
+
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.component.rabbitmq.pool.PoolableChannelFactory;
+import org.apache.camel.component.rabbitmq.reply.ReplyManager;
+import org.apache.camel.component.rabbitmq.reply.TemporaryQueueReplyManager;
+import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.pool.ObjectPool;
+import org.apache.commons.pool.impl.GenericObjectPool;
 
-public class RabbitMQProducer extends DefaultProducer {
+public class RabbitMQProducer extends DefaultAsyncProducer {
+    private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";
 
-    private final Connection conn;
-    private final Channel channel;
+    private Connection conn;
+    private ObjectPool<Channel> channelPool;
+    private ExecutorService executorService;
+    private int closeTimeout = 30 * 1000;
+    private final AtomicBoolean started = new AtomicBoolean(false);
+
+    private ReplyManager replyManager;
 
     public RabbitMQProducer(RabbitMQEndpoint endpoint) throws IOException {
         super(endpoint);
-        this.conn = endpoint.connect(Executors.newSingleThreadExecutor());
-        this.channel = conn.createChannel();
     }
 
     @Override
@@ -43,95 +58,307 @@ public class RabbitMQProducer extends DefaultProducer {
         return (RabbitMQEndpoint) super.getEndpoint();
     }
 
-    public void shutdown() throws IOException {
-        conn.close();
+    /**
+     * Channel callback (similar to Spring JDBC ConnectionCallback)
+     */
+    private interface ChannelCallback<T> {
+        T doWithChannel(Channel channel) throws Exception;
+    }
+
+    /**
+     * Do something with a pooled channel (similar to Spring JDBC TransactionTemplate#execute)
+     */
+    private <T> T execute(ChannelCallback<T> callback) throws Exception {
+        Channel channel;
+        try {
+            channel = channelPool.borrowObject();
+        } catch (IllegalStateException e) {
+            // Since this method is not synchronized its possible the
+            // channelPool has been cleared by another thread
+            checkConnectionAndChannelPool();
+            channel = channelPool.borrowObject();
+        }
+        if (!channel.isOpen()) {
+            log.warn("Got a closed channel from the pool");
+            // Reconnect if another thread hasn't yet
+            checkConnectionAndChannelPool();
+            channel = channelPool.borrowObject();
+        }
+        try {
+            return callback.doWithChannel(channel);
+        } finally {
+            channelPool.returnObject(channel);
+        }
+    }
+
+    /**
+     * Open connection and initialize channel pool
+     * @throws Exception
+     */
+    private synchronized void openConnectionAndChannelPool() throws Exception {
+        log.trace("Creating connection...");
+        this.conn = getEndpoint().connect(executorService);
+        log.debug("Created connection: {}", conn);
+
+        log.trace("Creating channel pool...");
+        channelPool = new GenericObjectPool<Channel>(new PoolableChannelFactory(this.conn), getEndpoint().getChannelPoolMaxSize(),
+                GenericObjectPool.WHEN_EXHAUSTED_BLOCK, getEndpoint().getChannelPoolMaxWait());
+        if (getEndpoint().isDeclare()) {
+            execute(new ChannelCallback<Void>() {
+                @Override
+                public Void doWithChannel(Channel channel) throws Exception {
+                    getEndpoint().declareExchangeAndQueue(channel);
+                    return null;
+                }
+            });
+        }
+    }
+
+    /**
+     * This will reconnect only if the connection is closed.
+     * @throws Exception
+     */
+    private synchronized void checkConnectionAndChannelPool() throws Exception {
+        if (this.conn == null || !this.conn.isOpen()) {
+            log.info("Reconnecting to RabbitMQ");
+            try {
+                closeConnectionAndChannel();
+            } catch (Exception e) {
+                // no op
+            }
+            openConnectionAndChannelPool();
+        }
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        String exchangeName = exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
-        if (exchangeName == null) {
+    protected void doStart() throws Exception {
+        this.executorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "CamelRabbitMQProducer[" + getEndpoint().getQueue() + "]");
+        try {
+            openConnectionAndChannelPool();
+        } catch (IOException e) {
+            log.warn("Failed to create connection. It will attempt to connect again when publishing a message.", e);
+        }
+    }
+
+    /**
+     * If needed, close Connection and Channel
+     * @throws IOException
+     */
+    private synchronized void closeConnectionAndChannel() throws IOException {
+        if (channelPool != null) {
+            try {
+                channelPool.close();
+                channelPool = null;
+            } catch (Exception e) {
+                throw new IOException("Error closing channelPool", e);
+            }
+        }
+        if (conn != null) {
+            log.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
+            conn.close(closeTimeout);
+            conn = null;
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        unInitReplyManager();
+        closeConnectionAndChannel();
+        if (executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            executorService = null;
+        }
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        // deny processing if we are not started
+        if (!isRunAllowed()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException());
+            }
+            // we cannot process so invoke callback
+            callback.done(true);
+            return true;
+        }
+
+        try {
+            if (exchange.getPattern().isOutCapable()) {
+                // in out requires a bit more work than in only
+                return processInOut(exchange, callback);
+            } else {
+                // in only
+                return processInOnly(exchange, callback);
+            }
+        } catch (Throwable e) {
+            // must catch exception to ensure callback is invoked as expected
+            // to let Camel error handling deal with this
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
+    }
+
+    protected boolean processInOut(final Exchange exchange, final AsyncCallback callback) throws Exception {
+        final org.apache.camel.Message in = exchange.getIn();
+
+        initReplyManager();
+
+        // the request timeout can be overruled by a header otherwise the endpoint configured value is used
+        final long timeout = exchange.getIn().getHeader(RabbitMQConstants.REQUEST_TIMEOUT, getEndpoint().getRequestTimeout(), long.class);
+
+        final String originalCorrelationId = in.getHeader(RabbitMQConstants.CORRELATIONID, String.class);
+
+        // we append the 'Camel-' prefix to know it was generated by us
+        String correlationId = GENERATED_CORRELATION_ID_PREFIX + getEndpoint().getCamelContext().getUuidGenerator().generateUuid();
+        in.setHeader(RabbitMQConstants.CORRELATIONID, correlationId);
+
+        in.setHeader(RabbitMQConstants.REPLY_TO, replyManager.getReplyTo());
+
+        String exchangeName = in.getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
+        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_NAME
+        if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
         }
-        if (ObjectHelper.isEmpty(exchangeName)) {
-            throw new IllegalArgumentException("ExchangeName is not provided in header " + RabbitMQConstants.EXCHANGE_NAME);
+
+        String key = in.getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
+        // we just need to make sure RoutingKey option take effect if it is not BridgeEndpoint
+        if (key == null || getEndpoint().isBridgeEndpoint()) {
+            key = getEndpoint().getRoutingKey() == null ? "" : getEndpoint().getRoutingKey();
+        }
+        if (ObjectHelper.isEmpty(key) && ObjectHelper.isEmpty(exchangeName)) {
+            throw new IllegalArgumentException("ExchangeName and RoutingKey is not provided in the endpoint: " + getEndpoint());
+        }
+        log.debug("Registering reply for {}", correlationId);
+
+        replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+        try {
+            basicPublish(exchange, exchangeName, key);
+        } catch (Exception e) {
+            replyManager.cancelCorrelationId(correlationId);
+            exchange.setException(e);
+            return true;
+        }
+        // continue routing asynchronously (reply will be processed async when its received)
+        return false;
+    }
+
+    private boolean processInOnly(Exchange exchange, AsyncCallback callback) throws Exception {
+        String exchangeName = getEndpoint().getExchangeName(exchange.getIn());
+
+        String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, String.class);
+        // we just need to make sure RoutingKey option take effect if it is not BridgeEndpoint
+        if (key == null || getEndpoint().isBridgeEndpoint()) {
+            key = getEndpoint().getRoutingKey() == null ? "" : getEndpoint().getRoutingKey();
+        }
+        if (ObjectHelper.isEmpty(key) && ObjectHelper.isEmpty(exchangeName)) {
+            throw new IllegalArgumentException("ExchangeName and RoutingKey is not provided in the endpoint: " + getEndpoint());
         }
 
-        String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, "", String.class);
-        byte[] messageBodyBytes = exchange.getIn().getMandatoryBody(byte[].class);
-        AMQP.BasicProperties.Builder properties = buildProperties(exchange);
+        basicPublish(exchange, exchangeName, key);
+        callback.done(true);
+        return true;
+    }
 
-        channel.basicPublish(exchangeName, key, properties.build(), messageBodyBytes);
+    /**
+     * Send a message borrowing a channel from the pool.
+     */
+    private void basicPublish(final Exchange camelExchange, final String rabbitExchange, final String routingKey) throws Exception {
+        if (channelPool == null) {
+            // Open connection and channel lazily if another thread hasn't
+            checkConnectionAndChannelPool();
+        }
+        execute(new ChannelCallback<Void>() {
+            @Override
+            public Void doWithChannel(Channel channel) throws Exception {
+                getEndpoint().publishExchangeToChannel(camelExchange, channel, routingKey);
+                return null;
+            }
+        });
     }
 
     AMQP.BasicProperties.Builder buildProperties(Exchange exchange) {
-        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
+        return getEndpoint().getMessageConverter().buildProperties(exchange);
+    }
 
-        final Object contentType = exchange.getIn().getHeader(RabbitMQConstants.CONTENT_TYPE);
-        if (contentType != null) {
-            properties.contentType(contentType.toString());
-        }
-        
-        final Object priority = exchange.getIn().getHeader(RabbitMQConstants.PRIORITY);
-        if (priority != null) {
-            properties.priority(Integer.parseInt(priority.toString()));
-        }
+    public int getCloseTimeout() {
+        return closeTimeout;
+    }
 
-        final Object messageId = exchange.getIn().getHeader(RabbitMQConstants.MESSAGE_ID);
-        if (messageId != null) {
-            properties.messageId(messageId.toString());
-        }
+    public void setCloseTimeout(int closeTimeout) {
+        this.closeTimeout = closeTimeout;
+    }
 
-        final Object clusterId = exchange.getIn().getHeader(RabbitMQConstants.CLUSTERID);
-        if (clusterId != null) {
-            properties.clusterId(clusterId.toString());
-        }
+    protected void initReplyManager() {
+        if (!started.get()) {
+            synchronized (this) {
+                if (started.get()) {
+                    return;
+                }
+                log.debug("Starting reply manager");
+                // must use the classloader from the application context when creating reply manager,
+                // as it should inherit the classloader from app context and not the current which may be
+                // a different classloader
+                ClassLoader current = Thread.currentThread().getContextClassLoader();
+                ClassLoader ac = getEndpoint().getCamelContext().getApplicationContextClassLoader();
+                try {
+                    if (ac != null) {
+                        Thread.currentThread().setContextClassLoader(ac);
+                    }
+                    // validate that replyToType and replyTo is configured accordingly
+                    if (getEndpoint().getReplyToType() != null) {
+                        // setting temporary with a fixed replyTo is not supported
+                        if (getEndpoint().getReplyTo() != null && getEndpoint().getReplyToType().equals(ReplyToType.Temporary.name())) {
+                            throw new IllegalArgumentException("ReplyToType " + ReplyToType.Temporary
+                                            + " is not supported when replyTo " + getEndpoint().getReplyTo() + " is also configured.");
+                        }
+                    }
 
-        final Object replyTo = exchange.getIn().getHeader(RabbitMQConstants.REPLY_TO);
-        if (replyTo != null) {
-            properties.replyTo(replyTo.toString());
+                    if (getEndpoint().getReplyTo() != null) {
+                        // specifying reply queues is not currently supported
+                        throw new IllegalArgumentException("Specifying replyTo " + getEndpoint().getReplyTo() + " is currently not supported.");
+                    } else {
+                        replyManager = createReplyManager();
+                        log.debug("Using RabbitMQReplyManager: {} to process replies from temporary queue", replyManager);
+                    }
+                } catch (Exception e) {
+                    throw new FailedToCreateProducerException(getEndpoint(), e);
+                } finally {
+                    if (ac != null) {
+                        Thread.currentThread().setContextClassLoader(current);
+                    }
+                }
+                started.set(true);
+            }
         }
+    }
 
-        final Object correlationId = exchange.getIn().getHeader(RabbitMQConstants.CORRELATIONID);
-        if (correlationId != null) {
-            properties.correlationId(correlationId.toString());
+    protected void unInitReplyManager() {
+        try {
+            if (replyManager != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Stopping JmsReplyManager: {} from processing replies from: {}", replyManager,
+                                    getEndpoint().getReplyTo() != null ? getEndpoint().getReplyTo() : "temporary queue");
+                }
+                ServiceHelper.stopService(replyManager);
+            }
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } finally {
+            started.set(false);
         }
+    }
 
-        final Object deliveryMode = exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_MODE);
-        if (deliveryMode != null) {
-            properties.deliveryMode(Integer.parseInt(deliveryMode.toString()));
-        }
+    protected ReplyManager createReplyManager() throws Exception {
+        // use a temporary queue
+        ReplyManager replyManager = new TemporaryQueueReplyManager(getEndpoint().getCamelContext());
+        replyManager.setEndpoint(getEndpoint());
 
-        final Object userId = exchange.getIn().getHeader(RabbitMQConstants.USERID);
-        if (userId != null) {
-            properties.userId(userId.toString());
-        }
+        String name = "RabbitMQReplyManagerTimeoutChecker[" + getEndpoint().getExchangeName() + "]";
+        ScheduledExecutorService replyManagerExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
+        replyManager.setScheduledExecutorService(replyManagerExecutorService);
+        log.info("Starting reply manager service " + name);
+        ServiceHelper.startService(replyManager);
 
-        final Object type = exchange.getIn().getHeader(RabbitMQConstants.TYPE);
-        if (type != null) {
-            properties.type(type.toString());
-        }
-
-        final Object contentEncoding = exchange.getIn().getHeader(RabbitMQConstants.CONTENT_ENCODING);
-        if (contentEncoding != null) {
-            properties.contentEncoding(contentEncoding.toString());
-        }
-
-        final Object expiration = exchange.getIn().getHeader(RabbitMQConstants.EXPIRATION);
-        if (expiration != null) {
-            properties.expiration(expiration.toString());
-        }
-
-        final Object appId = exchange.getIn().getHeader(RabbitMQConstants.APP_ID);
-        if (appId != null) {
-            properties.appId(appId.toString());
-        }
-
-        final Object timestamp = exchange.getIn().getHeader(RabbitMQConstants.TIMESTAMP);
-        if (timestamp != null) {
-            properties.timestamp(new Date(Long.parseLong(timestamp.toString())));
-        }
-
-        return properties;
+        return replyManager;
     }
 }

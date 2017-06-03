@@ -27,10 +27,10 @@ case class SEnrichDefinition(override val target: EnrichDefinition)(implicit val
   
   def aggregationStrategy(strategy: AggregationStrategy) = wrap(target.setAggregationStrategy(strategy))
   def aggregationStrategyRef(ref: String) = wrap(target.setAggregationStrategyRef(ref))
-  
-  def resourceRef(ref: String) = wrap(target.setResourceRef(ref))
-  def resourceUri(resourceUri: String) = wrap(target.setResourceUri(resourceUri))
-  
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SEnrichDefinition]
+  def aggregationStrategyMethodName(name: String) = wrap(target.setAggregationStrategyMethodName(name))
+  def aggregationStrategyMethodAllowNull(allowNull: Boolean) = wrap(target.setAggregationStrategyMethodAllowNull(allowNull))
+  def aggregateOnException(aggregateOnException: Boolean) = wrap(target.setAggregateOnException(aggregateOnException))
+  def shareUnitOfWork() = wrap(target.setShareUnitOfWork(true))
+  def cacheSize(size: Integer) = wrap(target.setCacheSize(size))
 
 }

@@ -38,6 +38,9 @@ import org.apache.camel.model.ProcessorDefinition;
  */
 public interface Breakpoint {
 
+    /**
+     * State of the breakpoint as either active or suspended.
+     */
     enum State {
         Active, Suspended
     }

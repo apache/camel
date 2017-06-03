@@ -36,7 +36,6 @@ import org.apache.directory.server.annotations.CreateTransport;
 import org.apache.directory.server.core.annotations.ApplyLdifFiles;
 import org.apache.directory.server.core.integ.AbstractLdapTestUnit;
 import org.apache.directory.server.core.integ.FrameworkRunner;
-import org.apache.directory.server.ldap.LdapServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +54,6 @@ import static org.junit.Assert.assertTrue;
 @ApplyLdifFiles("org/apache/camel/component/ldap/LdapRouteTest.ldif")
 public class LdapRouteTest extends AbstractLdapTestUnit {
 
-    public static LdapServer ldapServer;
     private CamelContext camel;
     private ProducerTemplate template;
     private int port;
@@ -63,7 +61,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
     @Before
     public void setup() throws Exception {
         // you can assign port number in the @CreateTransport annotation
-        port = ldapServer.getPort();
+        port = super.getLdapServer().getPort();
 
         LdapContext ctx = getWiredContext(ldapServer);
 
@@ -77,7 +75,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
     public void tearDown() throws Exception {
         camel.stop();
     }
-
+    
     @Test
     public void testLdapRouteStandard() throws Exception {
         camel.addRoutes(createRouteBuilder("ldap:localhost:" + port + "?base=ou=system"));

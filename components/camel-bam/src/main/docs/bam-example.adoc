@@ -1,0 +1,89 @@
+## Business Activity Monitor (BAM) Example
+
+The link:bam.html[BAM] (Business Activity Monitor) example shows how to
+monitor your transaction flows using Camel.
+
+In this example we will use Camel to monitor a business process
+consisting of
+
+* purchase orders
+* invoices
+
+Then we will check to see that for every purchase order created by
+system A, that system B will generate an invoice within the specified
+amount of time (2 seconds in this example). If an invoice is not
+generated within the allowed amount of time and error is generated and
+sent to an link:endpoint.html[Endpoint].
+
+### Overview
+
+This example lives in the _examples/camel-example-bam_ directory. It
+will poll the following directories
+
+* the child _src/data/purchaseOrders_ directory for XML purchase orders
+* the child _src/data/invoices_ directory for XML invoices
+
+The
+http://svn.apache.org/repos/asf/camel/trunk/examples/camel-example-bam/src/main/java/org/apache/camel/example/bam/MyActivities.java[MyActivities]
+class defines the link:bam.html[BAM] activities; that is
+
+* the input sources (the two directories above) which could be any of
+the supported camel link:uris.html[URIs]
+* how the activities relate to each other - namely the
+link:correlation-identifier.html[Correlation Identifier] pattern
+* the maixmum amount of time allowed from the time a purchase order is
+received when if an invoice is not received an error should be raised.
+
+There is also a spring configuration file in
+http://svn.apache.org/repos/asf/camel/trunk/examples/camel-example-bam/src/main/resources/META-INF/spring/camel-context.xml[src/resources/META-INF/services/camel-context.xml]
+which defines the JPA `EntityManagerFactory` and tells Camel to look in
+the *org.apache.camel.example.bam* package to find its routes.
+
+### Using BAM
+
+So lets start with the activities definition in
+http://svn.apache.org/repos/asf/camel/trunk/examples/camel-example-bam/src/main/java/org/apache/camel/example/bam/MyActivities.java[MyActivities]
+
+The first two lines of code sets up the inputs for the
+link:bam.html[BAM] activities via the *activity()* method which defines
+
+* the link:uris.html[URIs] of the inputs (which could come from any of
+the Camel link:components.html[Components]
+* the link:correlation-identifier.html[Correlation Identifier] used to
+correlate together the purchase order and invoice messages which can be
+any link:expression.html[Expression] via any of the
+link:languages-supported.html[Languages Supported]. In this case we are
+using link:xpath.html[XPath].
+
+Then the final line of code defines the temporal rules to use; namely
+that it is considered to be an error if an invoice is not received
+within 2 seconds of a purchase order being received. When a failure
+occurs in this example we just send it to the link:log.html[Log]
+component to log out an error level message to commons-logging / log4j.
+You could change this to use some of the other
+link:components.html[Components] such as link:activemq.html[ActiveMQ],
+link:jms.html[JMS], link:irc.html[IRC], link:mail.html[Mail],
+link:xmpp.html[XMPP] etc.
+
+### Running the example
+
+To run the example we use the link:camel-maven-plugin.html[Camel Maven
+Plugin]. For example from the source or binary distribution the
+following should work
+
+[source,java]
+-----------------------------
+cd examples/camel-example-bam
+mvn camel:run
+-----------------------------
+
+If you prefer you can just run the Main directly using
+
+[source,java]
+---------------------
+mvn compile exec:java
+---------------------
+
+Failing that you can run the Main from inside your IDE if you prefer.
+Follow the link:building.html[Building] instructions to create an
+Eclipse/IDEA project to import

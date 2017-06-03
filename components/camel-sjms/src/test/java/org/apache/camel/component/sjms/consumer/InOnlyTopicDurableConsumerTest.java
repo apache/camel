@@ -29,7 +29,7 @@ import org.junit.Test;
 public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
     
     private static final String CONNECTION_ID = "test-connection-1";
-    private static final String BROKER_URI = "vm://durable.broker?broker.persistent=false&broker.useJmx=true";
+    private static final String BROKER_URI = "vm://durable.broker?broker.persistent=false&broker.useJmx=false";
     
     @Override
     protected boolean useJmx() {
@@ -78,10 +78,10 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sjms:topic:foo?durableSubscriptionId=bar")
+                from("sjms:topic:foo?durableSubscriptionId=bar1")
                     .to("mock:result");
 
-                from("sjms:topic:foo?durableSubscriptionId=bar")
+                from("sjms:topic:foo?durableSubscriptionId=bar2")
                     .to("mock:result2");
             }
         };

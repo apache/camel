@@ -23,88 +23,75 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Endpoint;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;enrich/&gt; element
+ * Enriches a message with data from a secondary resource
  *
  * @see Enricher
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> {
-    @XmlAttribute(name = "uri")
-    private String resourceUri;
-    // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
-    @XmlAttribute(name = "ref")
-    private String resourceRef;
+public class EnrichDefinition extends NoOutputExpressionNode {
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;
     @XmlAttribute(name = "strategyMethodName")
     private String aggregationStrategyMethodName;
     @XmlAttribute(name = "strategyMethodAllowNull")
     private Boolean aggregationStrategyMethodAllowNull;
+    @XmlAttribute
+    private Boolean aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
-    
+    @XmlAttribute
+    private Boolean shareUnitOfWork;
+    @XmlAttribute
+    private Integer cacheSize;
+    @XmlAttribute
+    private Boolean ignoreInvalidEndpoint;
+
     public EnrichDefinition() {
-        this(null, null);
+        this(null);
     }
 
-    public EnrichDefinition(String resourceUri) {
-        this(null, resourceUri);
-    }
-    
-    public EnrichDefinition(AggregationStrategy aggregationStrategy, String resourceUri) {
+    public EnrichDefinition(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
-        this.resourceUri = resourceUri;
     }
     
     @Override
     public String toString() {
-        return "Enrich[" + description() + " " + aggregationStrategy + "]";
-    }
-    
-    protected String description() {
-        return FromDefinition.description(resourceUri, resourceRef, (Endpoint) null);
+        return "Enrich[" + getExpression() + "]";
     }
     
     @Override
     public String getLabel() {
-        return "enrich[" + description() + "]";
-    }
-
-    @Override
-    public String getShortName() {
-        return "enrich";
+        return "enrich[" + getExpression() + "]";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (ObjectHelper.isEmpty(resourceUri) && ObjectHelper.isEmpty(resourceRef)) {
-            throw new IllegalArgumentException("Either uri or ref must be provided for resource endpoint");
-        }
 
-        // lookup endpoint
-        Endpoint endpoint;
-        if (resourceUri != null) {
-            endpoint = routeContext.resolveEndpoint(resourceUri);
-        } else {
-            endpoint = routeContext.resolveEndpoint(null, resourceRef);
-        }
+        Expression exp = getExpression().createExpression(routeContext);
+        boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
+        boolean isIgnoreInvalidEndpoint = getIgnoreInvalidEndpoint() != null && getIgnoreInvalidEndpoint();
 
-        Enricher enricher = new Enricher(null, endpoint.createProducer());
+        Enricher enricher = new Enricher(exp);
+        enricher.setShareUnitOfWork(isShareUnitOfWork);
+        enricher.setIgnoreInvalidEndpoint(isIgnoreInvalidEndpoint);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
-        if (strategy == null) {
-            enricher.setDefaultAggregationStrategy();
-        } else {
+        if (strategy != null) {
             enricher.setAggregationStrategy(strategy);
+        }
+        if (aggregateOnException != null) {
+            enricher.setAggregateOnException(aggregateOnException);
         }
         return enricher;
     }
@@ -134,20 +121,98 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> {
         return strategy;
     }
 
-    public String getResourceUri() {
-        return resourceUri;
+    // Fluent API
+    // -------------------------------------------------------------------------
+
+    /**
+     * Sets the AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
+     * By default Camel will use the reply from the external service as outgoing message.
+     */
+    public EnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
+        return this;
     }
 
-    public void setResourceUri(String resourceUri) {
-        this.resourceUri = resourceUri;
+    /**
+     * Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message.
+     * By default Camel will use the reply from the external service as outgoing message.
+     */
+    public EnrichDefinition aggregationStrategyRef(String aggregationStrategyRef) {
+        setAggregationStrategyRef(aggregationStrategyRef);
+        return this;
     }
 
-    public String getResourceRef() {
-        return resourceRef;
+    /**
+     * This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy.
+     */
+    public EnrichDefinition aggregationStrategyMethodName(String aggregationStrategyMethodName) {
+        setAggregationStrategyMethodName(aggregationStrategyMethodName);
+        return this;
     }
 
-    public void setResourceRef(String resourceRef) {
-        this.resourceRef = resourceRef;
+    /**
+     * If this option is false then the aggregate method is not used if there was no data to enrich.
+     * If this option is true then null values is used as the oldExchange (when no data to enrich),
+     * when using POJOs as the AggregationStrategy.
+     */
+    public EnrichDefinition aggregationStrategyMethodAllowNull(boolean aggregationStrategyMethodAllowNull) {
+        setAggregationStrategyMethodAllowNull(aggregationStrategyMethodAllowNull);
+        return this;
+    }
+
+    /**
+     * If this option is false then the aggregate method is not used if there was an exception thrown while trying
+     * to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what
+     * to do if there was an exception in the aggregate method. For example to suppress the exception
+     * or set a custom message body etc.
+     */
+    public EnrichDefinition aggregateOnException(boolean aggregateOnException) {
+        setAggregateOnException(aggregateOnException);
+        return this;
+    }
+
+    /**
+     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and the resource exchange.
+     * Enrich will by default not share unit of work between the parent exchange and the resource exchange.
+     * This means the resource exchange has its own individual unit of work.
+     */
+    public EnrichDefinition shareUnitOfWork() {
+        setShareUnitOfWork(true);
+        return this;
+    }
+
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * to cache and reuse producer when uris are reused.
+     *
+     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public EnrichDefinition cacheSize(int cacheSize) {
+        setCacheSize(cacheSize);
+        return this;
+    }
+
+    /**
+     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     *
+     * @return the builder
+     */
+    public EnrichDefinition ignoreInvalidEndpoint() {
+        setIgnoreInvalidEndpoint(true);
+        return this;
+    }
+
+    // Properties
+    // -------------------------------------------------------------------------
+
+    /**
+     * Expression that computes the endpoint uri to use as the resource endpoint to enrich from
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
     }
 
     public String getAggregationStrategyRef() {
@@ -180,5 +245,37 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> {
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public Boolean getAggregateOnException() {
+        return aggregateOnException;
+    }
+
+    public void setAggregateOnException(Boolean aggregateOnException) {
+        this.aggregateOnException = aggregateOnException;
+    }
+
+    public Boolean getShareUnitOfWork() {
+        return shareUnitOfWork;
+    }
+
+    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
+    }
+
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
+    public Boolean getIgnoreInvalidEndpoint() {
+        return ignoreInvalidEndpoint;
+    }
+
+    public void setIgnoreInvalidEndpoint(Boolean ignoreInvalidEndpoint) {
+        this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 }

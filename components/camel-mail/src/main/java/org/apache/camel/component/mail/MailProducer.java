@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -38,7 +39,13 @@ public class MailProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
+            ClassLoader applicationClassLoader = getEndpoint().getCamelContext().getApplicationContextClassLoader();
+            if (applicationClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(applicationClassLoader);
+            }
+
             MimeMessage mimeMessage;
 
             final Object body = exchange.getIn().getBody();
@@ -60,6 +67,8 @@ public class MailProducer extends DefaultProducer {
             exchange.setException(e);
         } catch (IOException e) {
             exchange.setException(e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 

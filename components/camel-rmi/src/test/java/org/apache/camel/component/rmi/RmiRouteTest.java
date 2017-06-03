@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.rmi;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.rmi.registry.LocateRegistry;
 
 import org.apache.camel.CamelContext;
@@ -25,23 +23,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class RmiRouteTest extends TestSupport {
+public class RmiRouteTest extends RmiRouteTestSupport {
 
-    private int port;
-
-    protected int getPort() {
-        if (port == 0) {
-            port = AvailablePortFinder.getNextAvailable(37502);
-        }
-        return port;
+    protected int getStartPort() {
+        return 37503;
     }
     
     @Test
@@ -66,7 +57,7 @@ public class RmiRouteTest extends TestSupport {
 
         // START SNIPPET: invoke
         Endpoint endpoint = camelContext.getEndpoint("direct:hello");
-        ISay proxy = ProxyHelper.createProxy(endpoint, ISay.class);
+        ISay proxy = ProxyHelper.createProxy(endpoint, false, ISay.class);
         String rc = proxy.say();
         assertEquals("Good Bye!", rc);
         // END SNIPPET: invoke
@@ -90,24 +81,5 @@ public class RmiRouteTest extends TestSupport {
             // END SNIPPET: route
         };
     }
-
-    private boolean classPathHasSpaces() {
-        ClassLoader cl = getClass().getClassLoader();
-        if (cl instanceof URLClassLoader) {
-            URLClassLoader ucl = (URLClassLoader)cl;
-            URL[] urls = ucl.getURLs();
-            for (URL url : urls) {
-                if (url.getPath().contains(" ")) {
-                    log.error("=======================================================================");
-                    log.error(" TEST Skipped: " + this.getClass().getName());
-                    log.error("   Your probably on windows.  We detected that the classpath");
-                    log.error("   has a space in it.  Try running maven with the following option: ");
-                    log.error("   -Dmaven.repo.local=C:\\DOCUME~1\\userid\\.m2\\repository");
-                    log.error("=======================================================================");
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    
 }

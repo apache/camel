@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.hessian.enabled",
+      "description": "Enable hessian dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -312,6 +312,9 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
             template.receiveNoWait(e);
         }
 
+        // the eviction is async so force cleanup
+        template.cleanUp();
+
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();
 
@@ -329,6 +332,9 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
             template.receiveNoWait(e);
         }
+
+        // the eviction is async so force cleanup
+        template.cleanUp();
 
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();

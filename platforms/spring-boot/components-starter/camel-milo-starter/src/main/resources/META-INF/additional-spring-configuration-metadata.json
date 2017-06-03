@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.milo-server.enabled",
+      "description": "Enable milo-server component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.milo-client.enabled",
+      "description": "Enable milo-client component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

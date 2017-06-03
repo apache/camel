@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -41,13 +42,16 @@ public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        // to create a dynamic endpoint
+        template.sendBody("log:foo", "Hello World");
+
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
         List<ObjectName> list = new ArrayList<ObjectName>(set);
         ObjectName on = null;
         for (ObjectName name : list) {
-            if (name.getCanonicalName().contains("EndpointRegistry")) {
+            if (name.getCanonicalName().contains("DefaultEndpointRegistry")) {
                 on = name;
                 break;
             }
@@ -59,17 +63,35 @@ public class ManagedEndpointRegistryTest extends ManagementTestSupport {
         assertEquals(1000, max.intValue());
 
         Integer current = (Integer) mbeanServer.getAttribute(on, "Size");
+        assertEquals(3, current.intValue());
+
+        current = (Integer) mbeanServer.getAttribute(on, "StaticSize");
         assertEquals(2, current.intValue());
+
+        current = (Integer) mbeanServer.getAttribute(on, "DynamicSize");
+        assertEquals(1, current.intValue());
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertTrue(source.startsWith("EndpointRegistry"));
         assertTrue(source.endsWith("capacity: 1000"));
 
+        TabularData data = (TabularData) mbeanServer.invoke(on, "listEndpoints", null, null);
+        assertEquals(3, data.size());
+
         // purge
         mbeanServer.invoke(on, "purge", null, null);
 
-        current = (Integer) mbeanServer.getAttribute(on, "Size");
+        current = (Integer) mbeanServer.getAttribute(on, "DynamicSize");
         assertEquals(0, current.intValue());
+
+        current = (Integer) mbeanServer.getAttribute(on, "StaticSize");
+        assertEquals(2, current.intValue());
+
+        current = (Integer) mbeanServer.getAttribute(on, "Size");
+        assertEquals(2, current.intValue());
+
+        data = (TabularData) mbeanServer.invoke(on, "listEndpoints", null, null);
+        assertEquals(2, data.size());
     }
 
     @Override

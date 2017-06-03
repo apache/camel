@@ -42,7 +42,7 @@ public class RestletRequestAndResponseAPITest extends RestletTestSupport {
         headers.put("id", 123);
         headers.put("beverage.beer", "Carlsberg");
 
-        Object out = template.requestBodyAndHeaders("direct:start", null, headers);
+        String out = template.requestBodyAndHeaders("direct:start", null, headers, String.class);
         assertEquals("<response>Beer is Good</response>", out);
     }
 
@@ -61,9 +61,9 @@ public class RestletRequestAndResponseAPITest extends RestletTestSupport {
         assertNotNull(out);
         assertEquals("text/xml", out.getOut().getHeader(Exchange.CONTENT_TYPE));
         assertEquals(200, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("<response>Beer is Good</response>", out.getOut().getBody());
+        assertEquals("<response>Beer is Good</response>", out.getOut().getBody(String.class));
 
-        // the restlet response should be accessible if neeeded
+        // the restlet response should be accessible if needed
         Response response = out.getOut().getHeader(RestletConstants.RESTLET_RESPONSE, Response.class);
         assertNotNull(response);
         assertEquals(200, response.getStatus().getCode());
@@ -80,7 +80,7 @@ public class RestletRequestAndResponseAPITest extends RestletTestSupport {
                 from("restlet:http://localhost:" + portNum + "/users/{id}/like/{beer}")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            // the Restlet request should be available if neeeded
+                            // the Restlet request should be available if needed
                             Request request = exchange.getIn().getHeader(RestletConstants.RESTLET_REQUEST, Request.class);
                             assertNotNull("Restlet Request", request);
 

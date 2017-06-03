@@ -61,13 +61,15 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param retryWhile              retry while
      * @param executorService         the {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
      * @param rollbackLoggingLevel    logging level to use for logging transaction rollback occurred
+     * @param onExceptionOccurredProcessor  a custom {@link org.apache.camel.Processor} to process the {@link org.apache.camel.Exchange} just after an exception was thrown.
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, 
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
             TransactionTemplate transactionTemplate, Predicate retryWhile, ScheduledExecutorService executorService,
-            LoggingLevel rollbackLoggingLevel) {
+            LoggingLevel rollbackLoggingLevel, Processor onExceptionOccurredProcessor) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, retryWhile, executorService);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, false, retryWhile,
+                executorService, null, onExceptionOccurredProcessor);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
         this.rollbackLoggingLevel = rollbackLoggingLevel;
@@ -93,7 +95,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     public void process(Exchange exchange) throws Exception {
         // we have to run this synchronously as Spring Transaction does *not* support
         // using multiple threads to span a transaction
-        if (exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
+        if (transactionTemplate.getPropagationBehavior() != TransactionDefinition.PROPAGATION_REQUIRES_NEW && exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
             // already transacted by this transaction template
             // so lets just let the error handler process it
             processByErrorHandler(exchange);
@@ -225,7 +227,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
             @Override
             public String toString() {
-                return "Done " + this;
+                return "Done " + TransactionErrorHandler.this.toString();
             }
         });
         if (!sync) {

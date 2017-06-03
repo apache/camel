@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- *
+ * 
  */
 public class XsltTransformingExceptionTest extends ContextTestSupport {
     private static final String GOOD_XML_STRING = "<name>Camel</name>";
@@ -36,17 +36,22 @@ public class XsltTransformingExceptionTest extends ContextTestSupport {
             fail("Except a camel Execution exception here");
         } catch (CamelExecutionException ex) {
             assertTrue(ex.getCause() instanceof javax.xml.transform.TransformerException);
-            assertTrue(ex.getCause().getCause() instanceof IllegalArgumentException);
         }
         // we should not get any message from the result endpoint
         assertMockEndpointsSatisfied();
     }
 
+    // As the transformer is turned into security processing mode,
+    // This test behavior is changed.
     public void testXsltWithoutException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.message(0).body().contains("Camel");
-        template.sendBody("direct:start", GOOD_XML_STRING);
+        mock.expectedMessageCount(0);
+        try {
+            template.sendBody("direct:start", GOOD_XML_STRING);
+            fail("Except a camel Execution exception here");
+        } catch (CamelExecutionException ex) {
+            assertTrue(ex.getCause() instanceof javax.xml.transform.TransformerException);
+        }
         assertMockEndpointsSatisfied();
     }
 

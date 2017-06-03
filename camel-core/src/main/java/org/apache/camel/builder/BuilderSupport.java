@@ -27,9 +27,8 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.MethodCallExpression;
-import org.apache.camel.model.language.PropertyExpression;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Base class for implementation inheritance for different clauses in the <a
  * href="http://camel.apache.org/dsl.html">Java DSL</a>
  *
- * @version 
+ * @version
  */
 public abstract class BuilderSupport {
     private ModelCamelContext context;
@@ -48,7 +47,7 @@ public abstract class BuilderSupport {
     }
 
     protected BuilderSupport(CamelContext context) {
-        this.context = (ModelCamelContext)context;
+        this.context = context != null ? context.adapt(ModelCamelContext.class) : null;
     }
 
     // Builder methods
@@ -58,18 +57,29 @@ public abstract class BuilderSupport {
      * Returns a value builder for the given header
      */
     public ValueBuilder header(String name) {
-        HeaderExpression expression = new HeaderExpression(name);
-        return new ValueBuilder(expression);
+        Expression exp = new HeaderExpression(name);
+        return new ValueBuilder(exp);
     }
 
     /**
-     * Returns a value builder for the given property
+     *
+     * Returns a value builder for the given exchange property
+     * @deprecated use {@link #exchangeProperty(String)} instead
      */
+    @Deprecated
     public ValueBuilder property(String name) {
-        PropertyExpression expression = new PropertyExpression(name);
-        return new ValueBuilder(expression);
+        Expression exp = new ExchangePropertyExpression(name);
+        return new ValueBuilder(exp);
     }
-    
+
+    /**
+     * Returns a value builder for the given exchange property
+     */
+    public ValueBuilder exchangeProperty(String name) {
+        Expression exp = new ExchangePropertyExpression(name);
+        return new ValueBuilder(exp);
+    }
+
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
@@ -80,15 +90,29 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the inbound message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public <T> ValueBuilder body(Class<T> type) {
+        return bodyAs(type);
+    }
+
+    /**
+     * Returns a predicate and value builder for the inbound message body as a
+     * specific type
+     */
+    public <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
     }
 
     /**
      * Returns a predicate and value builder for the outbound body on an
      * exchange
+     *
+     * @deprecated use {@link #body()}
      */
+    @Deprecated
     public ValueBuilder outBody() {
         return Builder.outBody();
     }
@@ -96,7 +120,10 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public <T> ValueBuilder outBody(Class<T> type) {
         return Builder.outBodyAs(type);
     }
@@ -112,11 +139,14 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the fault message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public <T> ValueBuilder faultBodyAs(Class<T> type) {
         return Builder.faultBodyAs(type);
     }
-                             
+
     /**
      * Returns a value builder for the given system property
      */
@@ -137,19 +167,40 @@ public abstract class BuilderSupport {
     public ValueBuilder constant(Object value) {
         return Builder.constant(value);
     }
-    
+
+    /**
+     * Returns a language expression value builder
+     */
+    public ValueBuilder language(String language, String expression) {
+        return Builder.language(language, expression);
+    }
+
     /**
      * Returns a simple expression value builder
      */
     public SimpleBuilder simple(String value) {
         return SimpleBuilder.simple(value);
     }
-    
+
     /**
      * Returns a simple expression value builder
      */
     public SimpleBuilder simple(String value, Class<?> resultType) {
         return SimpleBuilder.simple(value, resultType);
+    }
+
+    /**
+     * Returns a simple expression value builder, using String.format style
+     */
+    public SimpleBuilder simpleF(String format, Object...values) {
+        return SimpleBuilder.simpleF(format, values);
+    }
+
+    /**
+     * Returns a simple expression value builder, using String.format style
+     */
+    public SimpleBuilder simpleF(String format, Class<?> resultType, Object...values) {
+        return SimpleBuilder.simpleF(format, resultType, values);
     }
 
     /**
@@ -160,7 +211,7 @@ public abstract class BuilderSupport {
     public XPathBuilder xpath(String value) {
         return XPathBuilder.xpath(value);
     }
-    
+
     /**
      * Returns a xpath expression value builder
      * @param value The XPath expression
@@ -185,7 +236,7 @@ public abstract class BuilderSupport {
     public ValueBuilder bean(Object beanOrBeanRef) {
         return bean(beanOrBeanRef, null);
     }
-    
+
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
@@ -199,13 +250,7 @@ public abstract class BuilderSupport {
      */
     @Deprecated
     public ValueBuilder bean(Object beanOrBeanRef, String method) {
-        MethodCallExpression expression;
-        if (beanOrBeanRef instanceof String) {
-            expression = new MethodCallExpression((String) beanOrBeanRef, method);
-        } else {
-            expression = new MethodCallExpression(beanOrBeanRef, method);
-        }
-        return new ValueBuilder(expression);
+        return Builder.bean(beanOrBeanRef, method);
     }
 
     /**
@@ -218,10 +263,9 @@ public abstract class BuilderSupport {
      */
     @Deprecated
     public ValueBuilder bean(Class<?> beanType) {
-        MethodCallExpression expression = new MethodCallExpression(beanType);
-        return new ValueBuilder(expression);
+        return Builder.bean(beanType);
     }
-    
+
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
@@ -233,8 +277,7 @@ public abstract class BuilderSupport {
      */
     @Deprecated
     public ValueBuilder bean(Class<?> beanType, String method) {
-        MethodCallExpression expression = new MethodCallExpression(beanType, method);
-        return new ValueBuilder(expression);
+        return Builder.bean(beanType, method);
     }
 
     /**
@@ -261,13 +304,7 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public ValueBuilder method(Object beanOrBeanRef, String method) {
-        MethodCallExpression expression;
-        if (beanOrBeanRef instanceof String) {
-            expression = new MethodCallExpression((String) beanOrBeanRef, method);
-        } else {
-            expression = new MethodCallExpression(beanOrBeanRef, method);
-        }
-        return new ValueBuilder(expression);
+        return Builder.bean(beanOrBeanRef, method);
     }
 
     /**
@@ -278,8 +315,7 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public ValueBuilder method(Class<?> beanType) {
-        MethodCallExpression expression = new MethodCallExpression(beanType);
-        return new ValueBuilder(expression);
+        return Builder.bean(beanType);
     }
 
     /**
@@ -291,8 +327,7 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public ValueBuilder method(Class<?> beanType, String method) {
-        MethodCallExpression expression = new MethodCallExpression(beanType, method);
-        return new ValueBuilder(expression);
+        return Builder.bean(beanType, method);
     }
 
     /**
@@ -300,13 +335,15 @@ public abstract class BuilderSupport {
      *
      * @param uri endpoint uri to send the exchange to
      * @return the builder
+     * @deprecated not in use, and not available in XML DSL
      */
+    @Deprecated
     public ValueBuilder sendTo(String uri) {
         return Builder.sendTo(uri);
     }
 
     /**
-     * Returns an expression value builder that replaces all occurrences of the 
+     * Returns an expression value builder that replaces all occurrences of the
      * regular expression with the given replacement
      */
     public ValueBuilder regexReplaceAll(Expression content, String regex, String replacement) {
@@ -314,13 +351,13 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns an expression value builder that replaces all occurrences of the 
+     * Returns an expression value builder that replaces all occurrences of the
      * regular expression with the given replacement
      */
     public ValueBuilder regexReplaceAll(Expression content, String regex, Expression replacement) {
         return Builder.regexReplaceAll(content, regex, replacement);
-    }    
-    
+    }
+
     /**
      * Returns a exception expression value builder
      */
@@ -412,7 +449,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler() {
         return new LoggingErrorHandlerBuilder();
     }
@@ -422,7 +461,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler(String log) {
         return loggingErrorHandler(LoggerFactory.getLogger(log));
     }
@@ -432,7 +473,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler(Logger log) {
         return new LoggingErrorHandlerBuilder(log);
     }
@@ -442,7 +485,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler(Logger log, LoggingLevel level) {
         return new LoggingErrorHandlerBuilder(log, level);
     }
@@ -475,13 +520,14 @@ public abstract class BuilderSupport {
     public ModelCamelContext getContext() {
         return context;
     }
-    
-    @Deprecated
+
     public void setContext(CamelContext context) {
-        this.context = (ModelCamelContext)context;
+        ObjectHelper.notNull(context, "CamelContext", this);
+        this.context = context.adapt(ModelCamelContext.class);
     }
 
     public void setContext(ModelCamelContext context) {
+        ObjectHelper.notNull(context, "CamelContext", this);
         this.context = context;
     }
 

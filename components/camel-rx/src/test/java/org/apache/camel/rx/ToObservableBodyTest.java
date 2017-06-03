@@ -22,11 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rx.Observable;
-import rx.util.functions.Action1;
-import rx.util.functions.Func1;
 
-/**
- */
 public class ToObservableBodyTest extends RxTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ToObservableBodyTest.class);
 
@@ -37,26 +33,13 @@ public class ToObservableBodyTest extends RxTestSupport {
 
         // lets consume, filter and map events
         Observable<Order> observable = reactiveCamel.toObservable("seda:orders", Order.class);
-        Observable<String> largeOrderIds = observable.filter(new Func1<Order, Boolean>() {
-            public Boolean call(Order order) {
-                return order.getAmount() > 100.0;
-            }
-        }).map(new Func1<Order, String>() {
-            public String call(Order order) {
-                return order.getId();
-            }
-        });
-
+        Observable<String> largeOrderIds = observable.filter(order -> order.getAmount() > 100.0).map(order -> order.getId());
 
         // lets route the largeOrderIds to the mock endpoint for testing
-        largeOrderIds.take(2).subscribe(new Action1<String>() {
-            @Override
-            public void call(String body) {
-                LOG.info("Processing  " + body);
-                producerTemplate.sendBody(mockEndpoint, body);
-            }
+        largeOrderIds.take(2).subscribe(body -> {
+            LOG.info("Processing  " + body);
+            producerTemplate.sendBody(mockEndpoint, body);
         });
-
 
         // now lets send some orders in
         Order[] orders = {new Order("a", 49.95), new Order("b", 125.50), new Order("c", 22.95),

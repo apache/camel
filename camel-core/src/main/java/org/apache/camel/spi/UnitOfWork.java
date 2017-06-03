@@ -16,10 +16,13 @@
  */
 package org.apache.camel.spi;
 
+import java.util.function.Predicate;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 
 /**
@@ -52,7 +55,6 @@ public interface UnitOfWork extends Service {
     boolean containsSynchronization(Synchronization synchronization);
 
     /**
-    /**
      * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
      * <p/>
      * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
@@ -64,11 +66,39 @@ public interface UnitOfWork extends Service {
     void handoverSynchronization(Exchange target);
 
     /**
+     * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
+     * <p/>
+     * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
+     * is continued and routed in the async thread should do the on completion callbacks instead of the
+     * original synchronous thread.
+     *
+     * @param target the target exchange
+     * @param filter optional filter to only handover if filter returns <tt>true</tt>
+     */
+    void handoverSynchronization(Exchange target, Predicate<Synchronization> filter);
+
+    /**
      * Invoked when this unit of work has been completed, whether it has failed or completed
      *
      * @param exchange the current exchange
      */
     void done(Exchange exchange);
+
+    /**
+     * Invoked when this unit of work is about to be routed by the given route.
+     *
+     * @param exchange the current exchange
+     * @param route    the route
+     */
+    void beforeRoute(Exchange exchange, Route route);
+
+    /**
+     * Invoked when this unit of work is done being routed by the given route.
+     *
+     * @param exchange the current exchange
+     * @param route    the route
+     */
+    void afterRoute(Exchange exchange, Route route);
 
     /**
      * Returns the unique ID of this unit of work, lazily creating one if it does not yet have one
@@ -80,10 +110,10 @@ public interface UnitOfWork extends Service {
     /**
      * Gets the original IN {@link Message} this Unit of Work was started with.
      * <p/>
-     * <b>Important: </b> This is subject for change in a later Camel release, where we plan to only
-     * support getting the original IN message if you have enabled this option explicit.
+     * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
+     * is enabled. If its disabled, then <tt>null</tt> is returned.
      *
-     * @return the original IN {@link Message}, may return <tt>null</tt> in a later Camel release (see important note).
+     * @return the original IN {@link Message}, or <tt>null</tt> if using original message is disabled.
      */
     Message getOriginalInMessage();
 
@@ -92,6 +122,7 @@ public interface UnitOfWork extends Service {
      *
      * @return trace information
      */
+    @Deprecated
     TracedRouteNodes getTracedRouteNodes();
 
     /**

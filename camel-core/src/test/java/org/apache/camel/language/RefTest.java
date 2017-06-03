@@ -39,7 +39,7 @@ public class RefTest extends LanguageTestSupport {
             assertExpression("foo", "Hello World");
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Cannot find expression in registry with ref: foo", e.getMessage());
+            assertEquals("Cannot find expression or predicate in registry with ref: foo", e.getMessage());
         }
     }
 

@@ -16,19 +16,17 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class ZipSplitterRouteTest extends CamelTestSupport {
-    
 
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");
-        processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola");
+        processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "another_chiau", "another_hi");
         assertMockEndpointsSatisfied();
     }
 
@@ -38,10 +36,13 @@ public class ZipSplitterRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // Unzip file and Split it according to FileEntry
-                from("file:src/test/resources/org/apache/camel/dataformat/zipfile?consumer.delay=1000&noop=true")
-                        .log("Start processing big file: ${header.CamelFileName}").split(new ZipSplitter())
-                        .streaming().convertBodyTo(String.class).to("mock:processZipEntry")
-                        .end().log("Done processing big file: ${header.CamelFileName}");
+                from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data?consumer.delay=1000&noop=true")
+                    .log("Start processing big file: ${header.CamelFileName}")
+                    .split(new ZipSplitter()).streaming()
+                        .to("log:entry")
+                        .convertBodyTo(String.class).to("mock:processZipEntry")
+                    .end()
+                    .log("Done processing big file: ${header.CamelFileName}");
             }
         };
 

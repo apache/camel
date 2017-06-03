@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+	
+	<bean id="hazelcastLifecycle" class="com.hazelcast.core.LifecycleService"
+          factory-bean="hazelcastInstance" factory-method="getLifecycleService"
+          destroy-method="shutdown" />
+          
+	<bean id="config" class="com.hazelcast.config.Config" />
+
+	<bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+          <constructor-arg type="com.hazelcast.config.Config" ref="config"/>
+	</bean>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route id="testHazelcastInstanceBeanRefPut">
+            <from uri="direct:testHazelcastInstanceBeanRefPut"/>
+            <setHeader headerName="CamelHazelcastOperationType">
+                <constant>put</constant>
+            </setHeader>
+            <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
+        </route>
+
+        <route id="testHazelcastInstanceBeanRefGet">
+            <from uri="direct:testHazelcastInstanceBeanRefGet" />
+            <setHeader headerName="CamelHazelcastOperationType">
+                <constant>get</constant>
+            </setHeader>
+            <to uri="hazelcast-map:testmap?hazelcastInstance=#hazelcastInstance"/>
+            <to uri="seda:out" />
+        </route>
+    </camelContext>
+
+</beans>

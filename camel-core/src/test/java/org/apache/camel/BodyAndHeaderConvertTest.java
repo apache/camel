@@ -26,6 +26,7 @@ import org.w3c.dom.Element;
 
 import junit.framework.TestCase;
 
+import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
@@ -55,6 +56,8 @@ public class BodyAndHeaderConvertTest extends TestCase {
     public void testConversionOfMessageAttachments() throws Exception {
         DataHandler handler = exchange.getIn().getAttachment("att");
         assertNotNull("attachment got lost", handler);
+        Attachment attachment = exchange.getIn().getAttachmentObject("att");
+        assertNotNull("attachment got lost", attachment);
     }
 
     @Override
@@ -65,6 +68,6 @@ public class BodyAndHeaderConvertTest extends TestCase {
         Message message = exchange.getIn();
         message.setBody("<hello>world!</hello>");
         message.setHeader("bar", 567);
-        message.addAttachment("att", new DataHandler(new URLDataSource(new URL("http://camel.apache.org/message.html"))));
+        message.addAttachmentObject("att", new DefaultAttachment(new URLDataSource(new URL("http://camel.apache.org/message.html"))));
     }
 }

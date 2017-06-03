@@ -17,8 +17,11 @@
 package org.apache.camel.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.Arrays;
 
 /**
  * Helper for working with reflection on classes.
@@ -83,6 +86,9 @@ public final class ReflectionHelper {
     /**
      * Perform the given callback operation on all matching methods of the given
      * class and superclasses (or given interface and super-interfaces).
+     * <p/>
+     * <b>Important:</b> This method does not take the
+     * {@link java.lang.reflect.Method#isBridge() bridge methods} into account.
      *
      * @param clazz class to start looking at
      * @param mc the callback to invoke for each method
@@ -91,6 +97,11 @@ public final class ReflectionHelper {
         // Keep backing up the inheritance hierarchy.
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
+            if (method.isBridge()) {
+                // skip the bridge methods which in Java 8 leads to problems with inheritance
+                // see https://bugs.openjdk.java.net/browse/JDK-6695379
+                continue;
+            }
             try {
                 mc.doWith(method);
             } catch (IllegalAccessException ex) {
@@ -104,6 +115,32 @@ public final class ReflectionHelper {
                 doWithMethods(superIfc, mc);
             }
         }
+    }
+    
+    /**
+     * Attempt to find a {@link Method} on the supplied class with the supplied name
+     * and parameter types. Searches all superclasses up to {@code Object}.
+     * <p>Returns {@code null} if no {@link Method} can be found.
+     * @param clazz the class to introspect
+     * @param name the name of the method
+     * @param paramTypes the parameter types of the method
+     * (may be {@code null} to indicate any signature)
+     * @return the Method object, or {@code null} if none found
+     */
+    public static Method findMethod(Class<?> clazz, String name, Class<?>... paramTypes) {
+        ObjectHelper.notNull(clazz, "Class must not be null");
+        ObjectHelper.notNull(name, "Method name must not be null");
+        Class<?> searchType = clazz;
+        while (searchType != null) {
+            Method[] methods = searchType.isInterface() ? searchType.getMethods() : searchType.getDeclaredMethods();
+            for (Method method : methods) {
+                if (name.equals(method.getName()) && (paramTypes == null || Arrays.equals(paramTypes, method.getParameterTypes()))) {
+                    return method;
+                }
+            }
+            searchType = searchType.getSuperclass();
+        }
+        return null;
     }
 
     public static void setField(Field f, Object instance, Object value) {

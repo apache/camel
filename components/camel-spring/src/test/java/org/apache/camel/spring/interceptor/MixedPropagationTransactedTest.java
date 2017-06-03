@@ -135,16 +135,16 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
             public void configure() throws Exception {
                 from("direct:required")
                     .transacted("PROPATATION_REQUIRED")
-                    .beanRef("bookService");
+                    .bean("bookService");
 
                 from("direct:required2")
                     .transacted("PROPATATION_REQUIRED")
-                    .beanRef("bookService")
-                    .beanRef("bookService");
+                    .bean("bookService")
+                    .bean("bookService");
 
                 from("direct:new")
                     .transacted("PROPAGATION_REQUIRES_NEW")
-                    .beanRef("bookService");
+                    .bean("bookService");
 
                 from("direct:requiredAndNew").to("direct:required", "direct:new");
 

@@ -24,15 +24,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
+import org.jivesoftware.smack.packet.DefaultExtensionElement;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
+import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
+import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link XmppMessage} to and from a
  * XMPP {@link Message}
- *
- * @version 
  */
 public class XmppBinding {
 
@@ -70,8 +74,8 @@ public class XmppBinding {
                     message.setLanguage(language);
                 } else {
                     try {
-                        message.setProperty(name, value);
-                        LOG.trace("Added property name: {} value: {}", name, value.toString());
+                        JivePropertiesManager.addProperty(message, name, value);
+                        LOG.trace("Added property name: {} value: {}", name, value);
                     } catch (IllegalArgumentException iae) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Cannot add property " + name + " to XMPP message due: ", iae);
@@ -80,38 +84,97 @@ public class XmppBinding {
                 }
             }
         }
-        
+
         String id = exchange.getExchangeId();
         if (id != null) {
-            message.setProperty("exchangeId", id);
+            JivePropertiesManager.addProperty(message, "exchangeId", id);
         }
     }
 
     /**
-     * Extracts the body from the XMPP message
+     * Populates the given XMPP stanza from the inbound exchange
      */
-    public Object extractBodyFromXmpp(Exchange exchange, Message message) {
-        return message.getBody();
+    public void populateXmppStanza(Stanza stanza, Exchange exchange) {
+        Set<Map.Entry<String, Object>> entries = exchange.getIn().getHeaders().entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value, exchange)) {
+                try {
+                    JivePropertiesManager.addProperty(stanza, name, value);
+                    LOG.debug("Added property name: " + name + " value: " + value);
+                } catch (IllegalArgumentException iae) {
+                    LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
+                }
+            }
+        }
+        String id = exchange.getExchangeId();
+        if (id != null) {
+            JivePropertiesManager.addProperty(stanza, "exchangeId", id);
+        }
     }
 
-    public Map<String, Object> extractHeadersFromXmpp(Message xmppMessage, Exchange exchange) {
+
+    /**
+     * Extracts the body from the XMPP message
+     */
+    public Object extractBodyFromXmpp(Exchange exchange, Stanza stanza) {
+        return (stanza instanceof Message) ? getMessageBody((Message) stanza) : stanza;
+    }
+
+    private Object getMessageBody(Message message) {
+        String messageBody = message.getBody();
+        if (messageBody == null) {
+            //probably a pubsub message
+            return message;
+        }
+        return messageBody;
+    }
+
+    public Map<String, Object> extractHeadersFromXmpp(Stanza stanza, Exchange exchange) {
         Map<String, Object> answer = new HashMap<String, Object>();
 
-        for (String name : xmppMessage.getPropertyNames()) {
-            Object value = xmppMessage.getProperty(name);
+        ExtensionElement jpe = stanza.getExtension(JivePropertiesExtension.NAMESPACE);
+        if (jpe != null && jpe instanceof JivePropertiesExtension) {
+            extractHeadersFrom((JivePropertiesExtension)jpe, exchange, answer);
+        }
+        if (jpe != null && jpe instanceof DefaultExtensionElement) {
+            extractHeadersFrom((DefaultExtensionElement)jpe, exchange, answer);
+        }
 
+        if (stanza instanceof Message) {
+            Message xmppMessage = (Message) stanza;
+            answer.put(XmppConstants.MESSAGE_TYPE, xmppMessage.getType());
+            answer.put(XmppConstants.SUBJECT, xmppMessage.getSubject());
+            answer.put(XmppConstants.THREAD_ID, xmppMessage.getThread());
+        } else if (stanza instanceof PubSub) {
+            PubSub pubsubPacket = (PubSub) stanza;
+            answer.put(XmppConstants.MESSAGE_TYPE, pubsubPacket.getType());
+        }
+        answer.put(XmppConstants.FROM, stanza.getFrom());
+        answer.put(XmppConstants.PACKET_ID, stanza.getStanzaId());
+        answer.put(XmppConstants.STANZA_ID, stanza.getStanzaId());
+        answer.put(XmppConstants.TO, stanza.getTo());
+
+        return answer;
+    }
+
+    private void extractHeadersFrom(JivePropertiesExtension jpe, Exchange exchange, Map<String, Object> answer) {
+        for (String name : jpe.getPropertyNames()) {
+            Object value = jpe.getProperty(name);
             if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                 answer.put(name, value);
             }
         }
-
-        answer.put(XmppConstants.MESSAGE_TYPE, xmppMessage.getType());
-        answer.put(XmppConstants.SUBJECT, xmppMessage.getSubject());
-        answer.put(XmppConstants.THREAD_ID, xmppMessage.getThread());
-        answer.put(XmppConstants.FROM, xmppMessage.getFrom());
-        answer.put(XmppConstants.PACKET_ID, xmppMessage.getPacketID());
-        answer.put(XmppConstants.TO, xmppMessage.getTo());
-                
-        return answer;
     }
+
+    private void extractHeadersFrom(DefaultExtensionElement jpe, Exchange exchange, Map<String, Object> answer) {
+        for (String name : jpe.getNames()) {
+            Object value = jpe.getValue(name);
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                answer.put(name, value);
+            }
+        }
+    }
+
 }

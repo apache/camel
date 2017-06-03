@@ -22,14 +22,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class NettyUDPSyncTest extends BaseNettyTest {
+    private static final String RESPONSE = "Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.";
+    private static final String REQUEST = "After the Battle of Thermopylae in 480 BC - Simonides of Ceos (c. 556 BC-468 BC), Greek lyric poet wrote ";
 
     @Test
     public void testUDPStringInOutWithNettyConsumer() throws Exception {
         for (int i = 0; i < 5; i++) {
             String response = template.requestBody(
                 "netty4:udp://localhost:{{port}}?sync=true",
-                "After the Battle of Thermopylae in 480 BC - Simonides of Ceos (c. 556 BC-468 BC), Greek lyric poet wrote ?", String.class);        
-            assertEquals("Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.", response);
+                REQUEST, String.class);        
+            assertEquals(RESPONSE, response);
         }
     }
     
@@ -41,7 +43,7 @@ public class NettyUDPSyncTest extends BaseNettyTest {
                 from("netty4:udp://localhost:{{port}}?sync=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.");                           
+                            exchange.getOut().setBody(RESPONSE);                           
                         }
                     });
             }

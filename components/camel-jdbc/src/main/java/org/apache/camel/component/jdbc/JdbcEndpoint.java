@@ -17,7 +17,6 @@
 package org.apache.camel.component.jdbc;
 
 import java.util.Map;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
@@ -25,22 +24,45 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
- * @version
+ * The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
  */
+@UriEndpoint(firstVersion = "1.2.0", scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true, label = "database,sql")
 public class JdbcEndpoint extends DefaultEndpoint {
-    private int readSize;
-    private boolean transacted;
-    private boolean resetAutoCommit = true;
+
     private DataSource dataSource;
+
+    @UriPath
+    @Metadata(required = "true")
+    private String dataSourceName;
+    @UriParam
+    private int readSize;
+    @UriParam
+    private boolean transacted;
+    @UriParam(defaultValue = "true")
+    private boolean resetAutoCommit = true;
+    @UriParam(prefix = "statement.", multiValue = true)
     private Map<String, Object> parameters;
+    @UriParam(defaultValue = "true")
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
+    @UriParam
+    private boolean useGetBytesForBlob;
+    @UriParam(label = "advanced")
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
+    @UriParam(defaultValue = "true")
     private boolean allowNamedParameters = true;
+    @UriParam
     private boolean useHeadersAsParameters;
+    @UriParam(defaultValue = "SelectList")
     private JdbcOutputType outputType = JdbcOutputType.SelectList;
+    @UriParam
     private String outputClass;
+    @UriParam(label = "advanced")
     private BeanRowMapper beanRowMapper = new DefaultBeanRowMapper();
 
     public JdbcEndpoint() {
@@ -63,10 +85,24 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return new JdbcProducer(this, dataSource, readSize, parameters);
     }
 
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    /**
+     * Name of DataSource to lookup in the Registry.
+     */
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
+
     public int getReadSize() {
         return readSize;
     }
 
+    /**
+     * The default maximum number of rows that can be read by a polling query. The default value is 0.
+     */
     public void setReadSize(int readSize) {
         this.readSize = readSize;
     }
@@ -75,6 +111,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return transacted;
     }
 
+    /**
+     * Whether transactions are in use.
+     */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
     }
@@ -83,6 +122,12 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return resetAutoCommit;
     }
 
+    /**
+     * Camel will set the autoCommit on the JDBC connection to be false, commit the change after executed the statement and reset
+     * the autoCommit flag of the connection at the end, if the resetAutoCommit is true. If the JDBC connection doesn't support
+     * to reset the autoCommit flag, you can set the resetAutoCommit flag to be false, and Camel will not try to reset the autoCommit flag.
+     * When used with XA transactions you most likely need to set it to false so that the transaction manager is in charge of committing this tx.
+     */
     public void setResetAutoCommit(boolean resetAutoCommit) {
         this.resetAutoCommit = resetAutoCommit;
     }
@@ -91,6 +136,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return dataSource;
     }
 
+    /**
+     * The data source to use
+     */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -123,8 +171,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
      * <p/>
      * This option is default <tt>true</tt>.
      *
-     * @param useJDBC4ColumnNameAndLabelSemantics
-     *         <tt>true</tt> to use JDBC 4.0 semantics, <tt>false</tt> to use JDBC 3.0.
+     * @param useJDBC4ColumnNameAndLabelSemantics <tt>true</tt> to use JDBC 4.0 semantics, <tt>false</tt> to use JDBC 3.0.
      */
     public void setUseJDBC4ColumnNameAndLabelSemantics(boolean useJDBC4ColumnNameAndLabelSemantics) {
         this.useJDBC4ColumnNameAndLabelSemantics = useJDBC4ColumnNameAndLabelSemantics;
@@ -134,6 +181,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return prepareStatementStrategy;
     }
 
+    /**
+     * Allows to plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement.
+     */
     public void setPrepareStatementStrategy(JdbcPrepareStatementStrategy prepareStatementStrategy) {
         this.prepareStatementStrategy = prepareStatementStrategy;
     }
@@ -142,6 +192,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return allowNamedParameters;
     }
 
+    /**
+     * Whether to allow using named parameters in the queries.
+     */
     public void setAllowNamedParameters(boolean allowNamedParameters) {
         this.allowNamedParameters = allowNamedParameters;
     }
@@ -150,6 +203,10 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return useHeadersAsParameters;
     }
 
+    /**
+     * Set this option to true to use the prepareStatementStrategy with named parameters.
+     * This allows to define queries with named placeholders, and use headers with the dynamic values for the query placeholders.
+     */
     public void setUseHeadersAsParameters(boolean useHeadersAsParameters) {
         this.useHeadersAsParameters = useHeadersAsParameters;
     }
@@ -158,6 +215,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return outputType;
     }
 
+    /**
+     * Determines the output the producer should use.
+     */
     public void setOutputType(JdbcOutputType outputType) {
         this.outputType = outputType;
     }
@@ -166,6 +226,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return outputClass;
     }
 
+    /**
+     * Specify the full package and class name to use as conversion when outputType=SelectOne or SelectList.
+     */
     public void setOutputClass(String outputClass) {
         this.outputClass = outputClass;
     }
@@ -174,12 +237,29 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return beanRowMapper;
     }
 
+    /**
+     * To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass.
+     * The default implementation will lower case the row names and skip underscores, and dashes. For example "CUST_ID" is mapped as "custId".
+     */
     public void setBeanRowMapper(BeanRowMapper beanRowMapper) {
         this.beanRowMapper = beanRowMapper;
     }
 
+    public boolean isUseGetBytesForBlob() {
+        return this.useGetBytesForBlob;
+    }
+
+    /**
+     * To read BLOB columns as bytes instead of string data.
+     * <p/>
+     * This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes.
+     */
+    public void setUseGetBytesForBlob(boolean useGetBytesForBlob) {
+        this.useGetBytesForBlob = useGetBytesForBlob;
+    }
+
     @Override
     protected String createEndpointUri() {
-        return "jdbc";
+        return dataSourceName != null ? "jdbc:" + dataSourceName : "jdbc";
     }
 }

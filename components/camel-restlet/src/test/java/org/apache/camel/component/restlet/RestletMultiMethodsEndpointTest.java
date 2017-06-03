@@ -16,14 +16,19 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.Locale;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.junit.Test;
+import org.restlet.data.Status;
 
 /**
  * This unit test verifies a single route can service multiple methods.
@@ -51,6 +56,21 @@ public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
         HttpResponse response = doExecute(new HttpGet("http://localhost:" + portNum + "/users/homer"));
 
         assertHttpResponse(response, 200, "text/plain", "GET");
+    }
+
+    @Test
+    public void testDeleteMethod() throws Exception {
+        HttpResponse response = doExecute(new HttpDelete("http://localhost:" + portNum + "/users/homer"));
+
+        // delete is not allowed so we return 405
+        assertEquals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode(), response.getStatusLine().getStatusCode());
+
+        Header header = response.getFirstHeader("Allow");
+        assertNotNull(header);
+        String value = header.getValue().toUpperCase(Locale.US);
+        assertTrue("POST should be allowed", value.contains("POST"));
+        assertTrue("GET should be allowed", value.contains("GET"));
+        assertTrue("PUT should be allowed", value.contains("PUT"));
     }
 
     protected RouteBuilder createRouteBuilder() {

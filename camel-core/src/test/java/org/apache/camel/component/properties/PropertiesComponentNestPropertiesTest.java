@@ -47,13 +47,18 @@ public class PropertiesComponentNestPropertiesTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").setBody(simple("${properties:someproperty}${body}"))
                 .to("mock:result");
+                
+                from("direct:start2").setBody(simple("{json:{value:${properties:someproperty}}}"))
+                .to("mock:result2");
             }
         });
         context.start();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("junitTest");
+        getMockEndpoint("mock:result2").expectedBodiesReceived("{json:{value:junit}}");
 
         template.sendBody("direct:start", "Test");
+        template.sendBody("direct:start2", "Test");
 
         assertMockEndpointsSatisfied();
     }

@@ -31,6 +31,7 @@ public class AhcProduceGetHeadersTest extends BaseAhcTest {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", 123);
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", "cool");
         getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.HTTP_RESPONSE_CODE, 200);
+        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.HTTP_RESPONSE_TEXT, "OK");
         getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.CONTENT_LENGTH, 9);
 
         Map<String, Object> headers = new HashMap<String, Object>();
@@ -52,6 +53,8 @@ public class AhcProduceGetHeadersTest extends BaseAhcTest {
                     .to("mock:result");
 
                 from(getTestServerEndpointUri())
+                        // Remove the message header here
+                        .removeHeaders("*")
                         .transform(constant("Bye World"));
             }
         };

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote.strategy;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -36,6 +37,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     private long checkInterval = 5000;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
     private long minLength = 1;
+    private long minAge;
     private boolean fastExistsCheck;
 
     @Override
@@ -51,6 +53,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
         long lastModified = Long.MIN_VALUE;
         long length = Long.MIN_VALUE;
         StopWatch watch = new StopWatch();
+        long startTime = new Date().getTime();
 
         while (!exclusive) {
             // timeout check
@@ -66,29 +69,55 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
 
             long newLastModified = 0;
             long newLength = 0;
+
             List<FTPFile> files;
             if (fastExistsCheck) {
                 // use the absolute file path to only pickup the file we want to check, this avoids expensive
                 // list operations if we have a lot of files in the directory
-                LOG.trace("Using fast exists to update file information for {}", file);
-                files = operations.listFiles(file.getAbsoluteFilePath());
+                String path = file.getAbsoluteFilePath();
+                if (path.equals("/") || path.equals("\\")) {
+                    // special for root (= home) directory
+                    LOG.trace("Using fast exists to update file information in home directory");
+                    files = operations.listFiles();
+                } else {
+                    LOG.trace("Using fast exists to update file information for {}", path);
+                    files = operations.listFiles(path);
+                }
             } else {
-                LOG.trace("Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.", file);
                 // fast option not enabled, so list the directory and filter the file name
-                files = operations.listFiles(file.getParent());
+                String path = file.getParent();
+                if (path.equals("/") || path.equals("\\")) {
+                    // special for root (= home) directory
+                    LOG.trace("Using full directory listing in home directory to update file information. Consider enabling fastExistsCheck option.");
+                    files = operations.listFiles();
+                } else {
+                    LOG.trace("Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.", path);
+                    files = operations.listFiles(path);
+                }
             }
             LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.size());
             for (FTPFile f : files) {
-                if (f.getName().equals(file.getFileNameOnly())) {
-                    newLastModified = f.getTimestamp().getTimeInMillis();
+                boolean match;
+                if (fastExistsCheck) {
+                    // uses the absolute file path as well
+                    match = f.getName().equals(file.getAbsoluteFilePath()) || f.getName().equals(file.getFileNameOnly());
+                } else {
+                    match = f.getName().equals(file.getFileNameOnly());
+                }
+                if (match) {
                     newLength = f.getSize();
+                    if (f.getTimestamp() != null) {
+                        newLastModified = f.getTimestamp().getTimeInMillis();
+                    }
                 }
             }
 
             LOG.trace("Previous last modified: " + lastModified + ", new last modified: " + newLastModified);
             LOG.trace("Previous length: " + length + ", new length: " + newLength);
+            long newOlderThan = startTime + watch.taken() - minAge;
+            LOG.trace("New older than threshold: {}", newOlderThan);
 
-            if (length >= minLength && (newLastModified == lastModified && newLength == length)) {
+            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length) || (minAge != 0 && newLastModified < newOlderThan))) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {
@@ -119,7 +148,17 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     @Override
-    public void releaseExclusiveReadLock(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
         // noop
     }
 
@@ -146,12 +185,30 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
         this.readLockLoggingLevel = readLockLoggingLevel;
     }
 
+    @Override
+    public void setMarkerFiler(boolean markerFiler) {
+        // noop - not supported by ftp
+    }
+
+    @Override
+    public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
+        // noop - not supported by ftp
+    }
+
     public long getMinLength() {
         return minLength;
     }
 
     public void setMinLength(long minLength) {
         this.minLength = minLength;
+    }
+
+    public long getMinAge() {
+        return minAge;
+    }
+
+    public void setMinAge(long minAge) {
+        this.minAge = minAge;
     }
 
     public boolean isFastExistsCheck() {

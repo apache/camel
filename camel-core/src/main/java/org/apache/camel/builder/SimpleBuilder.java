@@ -21,6 +21,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * Creates an {@link org.apache.camel.language.Simple} language builder.
@@ -28,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  * This builder is available in the Java DSL from the {@link RouteBuilder} which means that using
  * simple language for {@link Expression}s or {@link Predicate}s is very easy with the help of this builder.
  *
- * @version 
+ * @version
  */
 public class SimpleBuilder implements Predicate, Expression {
 
@@ -50,6 +51,14 @@ public class SimpleBuilder implements Predicate, Expression {
         SimpleBuilder answer = simple(text);
         answer.setResultType(resultType);
         return answer;
+    }
+
+    public static SimpleBuilder simpleF(String formatText, Object...values) {
+        return simple(String.format(formatText, values));
+    }
+
+    public static SimpleBuilder simpleF(String formatText, Class<?> resultType, Object...values) {
+        return simple(String.format(formatText, values), resultType);
     }
 
     public String getText() {
@@ -85,9 +94,11 @@ public class SimpleBuilder implements Predicate, Expression {
 
     private Predicate createPredicate(Exchange exchange) {
         SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
-        // resolve property placeholders
         try {
+            // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
+            // and optional it be refer to an external script on the file/classpath
+            resolve = ResourceHelper.resolveOptionalExternalScript(exchange.getContext(), resolve);
             return simple.createPredicate(resolve);
         } catch (Exception e) {
             throw ObjectHelper.wrapCamelExecutionException(exchange, e);
@@ -96,14 +107,12 @@ public class SimpleBuilder implements Predicate, Expression {
 
     private Expression createExpression(Exchange exchange) {
         SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
-        // resolve property placeholders
         try {
+            // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
-            Expression exp = simple.createExpression(resolve);
-            if (resultType != null) {
-                exp = ExpressionBuilder.convertToExpression(exp, resultType);
-            }
-            return exp;
+            // and optional it be refer to an external script on the file/classpath
+            resolve = ResourceHelper.resolveOptionalExternalScript(exchange.getContext(), resolve);
+            return simple.createExpression(resolve, resultType);
         } catch (Exception e) {
             throw ObjectHelper.wrapCamelExecutionException(exchange, e);
         }

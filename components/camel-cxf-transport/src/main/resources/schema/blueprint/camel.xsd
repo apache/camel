@@ -25,9 +25,9 @@
   xmlns:camel-blueprint="http://camel.apache.org/schema/blueprint"
   targetNamespace="http://cxf.apache.org/transports/camel/blueprint" 
   elementFormDefault="qualified" attributeFormDefault="unqualified"
-  xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+  xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
     
-  <xsd:import namespace="http://www.osgi.org/xmlns/blueprint/v1.0.0" schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd"/>
+  <xsd:import namespace="http://www.osgi.org/xmlns/blueprint/v1.0.0" schemaLocation="https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd"/>
   <xsd:import namespace="http://cxf.apache.org/configuration/beans" schemaLocation="http://cxf.apache.org/schemas/configuration/cxf-beans.xsd"/>
 
     <xsd:element name="destination">

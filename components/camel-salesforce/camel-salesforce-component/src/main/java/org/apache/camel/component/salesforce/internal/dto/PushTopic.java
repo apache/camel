@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.salesforce.internal.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 //CHECKSTYLE:OFF
 /**
@@ -46,6 +46,14 @@ public class PushTopic extends AbstractSObjectBase {
     private NotifyForOperationsEnum NotifyForOperations;
 
     private String Description;
+
+    private Boolean NotifyForOperationCreate;
+
+    private Boolean NotifyForOperationUpdate;
+
+    private Boolean NotifyForOperationDelete;
+
+    private Boolean NotifyForOperationUndelete;
 
     @JsonProperty("Query")
     public String getQuery() {
@@ -106,6 +114,45 @@ public class PushTopic extends AbstractSObjectBase {
     public void setDescription(String description) {
         this.Description = description;
     }
+
+    @JsonProperty("NotifyForOperationCreate")
+    public Boolean getNotifyForOperationCreate() {
+        return this.NotifyForOperationCreate;
+    }
+
+    @JsonProperty("NotifyForOperationCreate")
+    public void setNotifyForOperationCreate(Boolean notifyForOperationCreate) {
+        this.NotifyForOperationCreate = notifyForOperationCreate;
+    }
+
+    @JsonProperty("NotifyForOperationUpdate")
+    public Boolean getNotifyForOperationUpdate() {
+        return this.NotifyForOperationUpdate;
+    }
+
+    @JsonProperty("NotifyForOperationUpdate")
+    public void setNotifyForOperationUpdate(Boolean notifyForOperationUpdate) {
+        this.NotifyForOperationUpdate = notifyForOperationUpdate;
+    }
+
+    @JsonProperty("NotifyForOperationDelete")
+    public Boolean getNotifyForOperationDelete() {
+        return this.NotifyForOperationDelete;
+    }
+
+    @JsonProperty("NotifyForOperationDelete")
+    public void setNotifyForOperationDelete(Boolean notifyForOperationDelete) {
+        this.NotifyForOperationDelete = notifyForOperationDelete;
+    }
+
+    @JsonProperty("NotifyForOperationUndelete")
+    public Boolean getNotifyForOperationUndelete() {
+        return this.NotifyForOperationUndelete;
+    }
+
+    @JsonProperty("NotifyForOperationUndelete")
+    public void setNotifyForOperationUndelete(Boolean notifyForOperationUndelete) {
+        this.NotifyForOperationUndelete = notifyForOperationUndelete;
+    }
 }
 //CHECKSTYLE:ON
-

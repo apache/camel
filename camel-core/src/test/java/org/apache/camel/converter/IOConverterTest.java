@@ -30,6 +30,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
+import java.util.Properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -53,11 +54,6 @@ public class IOConverterTest extends ContextTestSupport {
         // should contain Hello World!
         String s = new String(data);
         assertTrue("Should contain Hello World!", s.contains("Hello World"));
-    }
-
-    public void testToByteArray() throws Exception {
-        String val = null;
-        assertNull(IOConverter.toByteArray(val, null));
     }
 
     public void testCopy() throws Exception {
@@ -187,21 +183,18 @@ public class IOConverterTest extends ContextTestSupport {
     }
 
     public void testToInputStreamUrl() throws Exception {
-        URL url = ObjectHelper.loadResourceAsURL("log4j.properties");
+        URL url = ObjectHelper.loadResourceAsURL("log4j2.properties");
         InputStream is = IOConverter.toInputStream(url);
         assertIsInstanceOf(BufferedInputStream.class, is);
     }
 
     public void testStringUrl() throws Exception {
-        URL url = ObjectHelper.loadResourceAsURL("log4j.properties");
+        URL url = ObjectHelper.loadResourceAsURL("log4j2.properties");
         String s = IOConverter.toString(url, null);
         assertNotNull(s);
     }
 
     public void testStringByBufferedReader() throws Exception {
-        BufferedReader reader = null;
-        assertNull(IOConverter.toString(reader));
-
         BufferedReader br = IOHelper.buffered(new StringReader("Hello World"));
         assertEquals("Hello World", IOConverter.toString(br));
     }
@@ -220,6 +213,24 @@ public class IOConverterTest extends ContextTestSupport {
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
         String result = IOConverter.toString(is, exchange);
         assertEquals("Get a wrong result", data, result);
+    }
+
+    public void testToPropertiesFromReader() throws Exception {
+        Reader br = IOHelper.buffered(new StringReader("foo=123\nbar=456"));
+        Properties p = IOConverter.toProperties(br);
+        assertNotNull(p);
+        assertEquals(2, p.size());
+        assertEquals("123", p.get("foo"));
+        assertEquals("456", p.get("bar"));
+    }
+
+    public void testToPropertiesFromFile() throws Exception {
+        Properties p = IOConverter.toProperties(new File("src/test/resources/log4j2.properties"));
+        assertNotNull(p);
+        assertTrue("Should be 8 or more properties, was " + p.size(), p.size() >= 8);
+        String root = (String) p.get("rootLogger.level");
+        assertNotNull(root);
+        assertTrue(root.contains("INFO"));
     }
 
 }

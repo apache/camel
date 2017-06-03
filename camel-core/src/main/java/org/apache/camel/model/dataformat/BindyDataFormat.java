@@ -25,21 +25,21 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the Bindy {@link org.apache.camel.spi.DataFormat}
+ * Bindy data format
  *
  * @version 
  */
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,csv", title = "Bindy")
 @XmlRootElement(name = "bindy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BindyDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private BindyType type;
-    @XmlAttribute
-    private String[] packages;
     @XmlAttribute
     private String classType;
     @XmlAttribute
@@ -48,32 +48,34 @@ public class BindyDataFormat extends DataFormatDefinition {
     private Class<?> clazz;
 
     public BindyDataFormat() {
+        super("bindy");
     }
 
     public BindyType getType() {
         return type;
     }
 
+    /**
+     * Whether to use csv, fixed or key value pairs mode.
+     */
     public void setType(BindyType type) {
         this.type = type;
-    }
-
-    public String[] getPackages() {
-        return packages;
-    }
-
-    public void setPackages(String[] packages) {
-        this.packages = packages;
     }
 
     public String getClassType() {
         return classType;
     }
 
+    /**
+     * Name of model class to use.
+     */
     public void setClassType(String classType) {
         this.classType = classType;
     }
 
+    /**
+     * Type of model class to use.
+     */
     public void setClassType(Class<?> classType) {
         this.clazz = classType;
     }
@@ -82,16 +84,18 @@ public class BindyDataFormat extends DataFormatDefinition {
         return locale;
     }
 
+    /**
+     * To configure a default locale to use, such as <tt>us</tt> for united states.
+     * <p/>
+     * To use the JVM platform default locale then use the name <tt>default</tt>
+     */
     public void setLocale(String locale) {
         this.locale = locale;
     }
 
     protected DataFormat createDataFormat(RouteContext routeContext) {
-        if (packages == null && (classType == null && clazz == null)) {
+        if (classType == null && clazz == null) {
             throw new IllegalArgumentException("Either packages or classType must be specified");
-        }
-        if (packages != null && (classType != null || clazz != null)) {
-            throw new IllegalArgumentException("Only one of packages and classType must be specified");
         }
 
         if (type == BindyType.Csv) {
@@ -114,7 +118,6 @@ public class BindyDataFormat extends DataFormatDefinition {
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        setProperty(camelContext, dataFormat, "packages", packages);
         setProperty(camelContext, dataFormat, "locale", locale);
         setProperty(camelContext, dataFormat, "classType", clazz);
     }

@@ -37,6 +37,14 @@ public class RestletHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // The "CamelAcceptContentType" header is not added to the outgoing HTTP 
         // headers but it will be going out as "Accept.
         getOutFilter().add(Exchange.ACCEPT_CONTENT_TYPE);
+        
+        // As we don't set the transfer_encoding protocol header for the restlet service
+        // we need to remove the transfer_encoding which could let the client wait forever
+        getOutFilter().add(Exchange.TRANSFER_ENCODING);
+        
+        //Don't add the content-length it's added automatically
+        getOutFilter().add(Exchange.CONTENT_LENGTH);
+        setCaseInsensitive(true);
     }
 
 }

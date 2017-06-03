@@ -78,7 +78,7 @@ public class SqlDataSourceTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:simple")
-                    .to("sql:select * from projects where license = # order by id?dataSource=dataSource")
+                    .to("sql:select * from projects where license = # order by id?dataSource=#dataSource")
                     .to("mock:result");
             }
         };

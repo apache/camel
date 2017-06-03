@@ -53,6 +53,8 @@ public class KeyValueHolder<K, V> {
 
         if (key != null ? !key.equals(that.key) : that.key != null) {
             return false;
+        } else if (value != null ? !value.equals(that.value) : that.value != null) {
+            return false;
         }
 
         return true;

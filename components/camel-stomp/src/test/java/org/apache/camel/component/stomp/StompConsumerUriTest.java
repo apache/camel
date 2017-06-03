@@ -34,7 +34,14 @@ public class StompConsumerUriTest extends StompBaseTest {
 
     @Test
     public void testConsume() throws Exception {
-        Stomp stomp = new Stomp("tcp://localhost:" + getPort());
+        if (!canTest()) {
+            return;
+        }
+
+        context.addRoutes(createRouteBuilder());
+        context.start();
+
+        Stomp stomp = createStompClient();
         final BlockingConnection producerConnection = stomp.connectBlocking();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -55,9 +62,9 @@ public class StompConsumerUriTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("stomp:queue:test?brokerURL=tcp://localhost:" + getPort())
-                        .transform(body().convertToString())
-                        .to("mock:result");
+                fromF("stomp:queue:test?brokerURL=tcp://localhost:%d", getPort())
+                    .transform(body().convertToString())
+                    .to("mock:result");
             }
         };
     }

@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
  * many tasks and thus this option mostly applies to this kind of consumer.
  */
 @XmlType
-@XmlEnum(String.class)
+@XmlEnum
 public enum ShutdownRunningTask {
 
     CompleteCurrentTaskOnly, CompleteAllTasks

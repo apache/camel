@@ -26,7 +26,7 @@ import org.junit.Test;
  * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
  */
 public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
-    
+
     @Test
     public void testConsumeIdleMessages() throws Exception {
         Thread.sleep(110);
@@ -36,13 +36,13 @@ public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&consumer.delay=50&consumer.initialDelay=0"
-                     + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
-                    .to("mock:result");
+                        + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
+                        .to("mock:result");
             }
         };
     }

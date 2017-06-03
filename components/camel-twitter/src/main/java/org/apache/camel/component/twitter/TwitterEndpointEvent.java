@@ -19,23 +19,27 @@ package org.apache.camel.component.twitter;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.direct.DirectEndpoint;
-import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
+import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerEvent;
 import org.apache.camel.component.twitter.data.EndpointType;
+import org.apache.camel.impl.DefaultEndpoint;
 
-public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpoint {
+@Deprecated
+public class TwitterEndpointEvent extends DefaultEndpoint implements TwitterEndpoint {
+    private final String kind;
 
+    // only TwitterEndpointPolling is annotated
     private TwitterConfiguration properties;
 
-    public TwitterEndpointEvent(String uri, TwitterComponent component, TwitterConfiguration properties) {
+    public TwitterEndpointEvent(String uri, String remaining, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
+        this.kind = remaining;
         this.properties = properties;
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
+        AbstractTwitterConsumerHandler twitter4jConsumer = TwitterHelper.createConsumer(this, getEndpointUri(), kind);
         return new TwitterConsumerEvent(this, processor, twitter4jConsumer);
     }
 
@@ -48,9 +52,18 @@ public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpo
         return properties;
     }
 
+    public void setProperties(TwitterConfiguration properties) {
+        this.properties = properties;
+    }
+
     @Override
     public EndpointType getEndpointType() {
         return EndpointType.EVENT;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
     }
 
     @Override
@@ -60,11 +73,4 @@ public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpo
             properties.getTwitterStream().shutdown();
         }
     }
-
-    @Override
-    public void shutdown() throws Exception {
-        super.shutdown();
-        properties.getTwitter().shutdown();
-    }
-
 }

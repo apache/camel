@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.slack.enabled",
+      "description": "Enable slack component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

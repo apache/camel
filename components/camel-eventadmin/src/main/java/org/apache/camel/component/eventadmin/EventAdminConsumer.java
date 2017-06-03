@@ -33,7 +33,6 @@ public class EventAdminConsumer extends DefaultConsumer implements EventHandler 
     private static final Logger LOG = LoggerFactory.getLogger(EventAdminConsumer.class);
     private final EventAdminEndpoint endpoint;
     private ServiceRegistration<?> registration;
-    
 
     public EventAdminConsumer(EventAdminEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

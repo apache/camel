@@ -51,9 +51,9 @@ class CamelOutputStream extends CachedOutputStream {
     private MessageObserver observer;
     private boolean hasLoggedAsyncWarning;
 
-    public CamelOutputStream(String targetCamelEndpointUri, Producer producer, 
-                             HeaderFilterStrategy headerFilterStrategy, MessageObserver observer, 
-                             Message m) {
+    CamelOutputStream(String targetCamelEndpointUri, Producer producer,
+                      HeaderFilterStrategy headerFilterStrategy, MessageObserver observer,
+                      Message m) {
         this.targetCamelEndpointUri = targetCamelEndpointUri;
         this.producer = producer;
         this.headerFilterStrategy = headerFilterStrategy;
@@ -89,7 +89,7 @@ class CamelOutputStream extends CachedOutputStream {
         exchange.setProperty(Exchange.TO_ENDPOINT, this.targetCamelEndpointUri);
         CachedOutputStream outputStream = (CachedOutputStream) outMessage.getContent(OutputStream.class);
         // Send out the request message here, copy the protocolHeader back
-        CxfHeaderHelper.propagateCxfToCamel(this.headerFilterStrategy, outMessage, exchange.getIn().getHeaders(), exchange);
+        CxfHeaderHelper.propagateCxfToCamel(this.headerFilterStrategy, outMessage, exchange.getIn(), exchange);
 
         // TODO support different encoding
         exchange.getIn().setBody(outputStream.getInputStream());

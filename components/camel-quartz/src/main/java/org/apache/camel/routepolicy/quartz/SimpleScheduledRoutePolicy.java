@@ -103,7 +103,7 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
         
         return trigger;
     }
-
+    
     public Date getRouteStartDate() {
         return routeStartDate;
     }

@@ -57,11 +57,87 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
 
         mbeanServer.invoke(on, "updateRouteFromXml", new Object[]{xml}, new String[]{"java.lang.String"});
 
+        assertEquals(1, context.getRoutes().size());
+
         getMockEndpoint("mock:changed").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Bye World");
 
         assertMockEndpointsSatisfied();
+    }
+
+    public void testUpdateRouteFromXmlWithoutRouteId() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getRouteObjectName(mbeanServer);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // should be started
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("myRoute", routeId);
+
+        String xml =
+                  "<route xmlns=\"http://camel.apache.org/schema/spring\">"
+                + "  <from uri=\"direct:start\"/>"
+                + "  <log message=\"This is a changed route saying ${body}\"/>"
+                + "  <to uri=\"mock:changed\"/>"
+                + "</route>";
+
+        mbeanServer.invoke(on, "updateRouteFromXml", new Object[]{xml}, new String[]{"java.lang.String"});
+
+        assertEquals(1, context.getRoutes().size());
+
+        getMockEndpoint("mock:changed").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testUpdateRouteFromXmlMismatchRouteId() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getRouteObjectName(mbeanServer);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // should be started
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("myRoute", routeId);
+
+        String xml =
+                  "<route id=\"foo\" xmlns=\"http://camel.apache.org/schema/spring\">"
+                + "  <from uri=\"direct:start\"/>"
+                + "  <log message=\"This is a changed route saying ${body}\"/>"
+                + "  <to uri=\"mock:changed\"/>"
+                + "</route>";
+
+        try {
+            mbeanServer.invoke(on, "updateRouteFromXml", new Object[]{xml}, new String[]{"java.lang.String"});
+            fail("Should have thrown exception");
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Cannot update route from XML as routeIds does not match. routeId: myRoute, routeId from XML: foo", e.getCause().getMessage());
+        }
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {

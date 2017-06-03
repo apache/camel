@@ -68,7 +68,7 @@ public class KratiConsumer extends ScheduledBatchPollingConsumer {
 
         // did we cap at max?
         if (index == max && keyIterator.hasNext()) {
-            log.debug("Limiting to maximum messages to poll {} as there was more messages in this poll.", max);
+            log.debug("Limiting to maximum messages to poll {} as there were more messages in this poll.", max);
         }
 
         return queue.isEmpty() ? 0 : processBatch(CastUtils.cast(queue));

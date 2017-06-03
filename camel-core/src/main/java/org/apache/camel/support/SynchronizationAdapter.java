@@ -18,7 +18,9 @@ package org.apache.camel.support;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Ordered;
+import org.apache.camel.Route;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.SynchronizationRouteAware;
 import org.apache.camel.spi.SynchronizationVetoable;
 
 /**
@@ -27,7 +29,7 @@ import org.apache.camel.spi.SynchronizationVetoable;
  *
  * @version 
  */
-public class SynchronizationAdapter implements SynchronizationVetoable, Ordered {
+public class SynchronizationAdapter implements SynchronizationVetoable, Ordered, SynchronizationRouteAware {
 
     public void onComplete(Exchange exchange) {
         onDone(exchange);
@@ -49,5 +51,13 @@ public class SynchronizationAdapter implements SynchronizationVetoable, Ordered 
     public int getOrder() {
         // no particular order by default
         return 0;
+    }
+
+    public void onBeforeRoute(Route route, Exchange exchange) {
+        // noop
+    }
+
+    public void onAfterRoute(Route route, Exchange exchange) {
+        // noop
     }
 }

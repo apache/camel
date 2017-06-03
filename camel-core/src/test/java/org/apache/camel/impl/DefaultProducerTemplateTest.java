@@ -198,6 +198,9 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         out = producer.requestBodyAndHeaders("Hello", headers);
         assertEquals("Bye Bye World", out);
 
+        out = producer.requestBodyAndHeaders("Hello", null);
+        assertEquals("Bye Bye World", out);
+
         producer.stop();
     }
 
@@ -267,6 +270,9 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
             template.sendBody(e, "Hello");
         }
 
+        // the eviction is async so force cleanup
+        template.cleanUp();
+
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();
 
@@ -284,6 +290,9 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
             Endpoint e = context.getEndpoint("seda:queue:" + i);
             template.sendBody(e, "Hello");
         }
+
+        // the eviction is async so force cleanup
+        template.cleanUp();
 
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();

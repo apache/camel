@@ -64,6 +64,18 @@ public class TokenizeLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testSendMixedClosingTagInsideMessageToTokenize() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+            "<child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></child>",
+            "<child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></child>");
+
+        template.sendBody("direct:start",
+            "<parent><child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></child>"
+            + "<child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></child></parent>");
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testSendNamespacedChildMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
             "<c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child>", "<c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' />");
@@ -80,6 +92,17 @@ public class TokenizeLanguageTest extends ContextTestSupport {
         
         template.sendBody("direct:start",
             "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'/></c:parent>");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSendMoreParentsMessageToTokenize() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+            "<c:child some_attr='a' anotherAttr='a' xmlns:c='urn:c' xmlns:d=\"urn:d\"></c:child>", "<c:child some_attr='b' anotherAttr='b' xmlns:c='urn:c' xmlns:d=\"urn:d\"/>");
+
+        template.sendBody("direct:start",
+            "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+            + "<c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'/></c:parent></grandparent></g:greatgrandparent>");
 
         assertMockEndpointsSatisfied();
     }

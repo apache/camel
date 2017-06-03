@@ -18,12 +18,13 @@ package org.apache.camel.component.netty4;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NettyConsumer extends DefaultConsumer {
+public class NettyConsumer extends DefaultConsumer implements Suspendable {
     private static final Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
     private CamelContext context;
     private NettyConfiguration configuration;
@@ -50,16 +51,20 @@ public class NettyConsumer extends DefaultConsumer {
 
         if (nettyServerBootstrapFactory == null) {
             // setup pipeline factory
-            ServerPipelineFactory pipelineFactory;
-            ServerPipelineFactory factory = configuration.getServerPipelineFactory();
+            ServerInitializerFactory pipelineFactory;
+            ServerInitializerFactory factory = configuration.getServerInitializerFactory();
             if (factory != null) {
                 pipelineFactory = factory.createPipelineFactory(this);
             } else {
-                pipelineFactory = new DefaultServerPipelineFactory(this);
+                pipelineFactory = new DefaultServerInitializerFactory(this);
             }
 
             if (isTcp()) {
-                nettyServerBootstrapFactory = new SingleTCPNettyServerBootstrapFactory();
+                if (configuration.isClientMode()) {
+                    nettyServerBootstrapFactory = new ClientModeTCPNettyServerBootstrapFactory();
+                } else {
+                    nettyServerBootstrapFactory = new SingleTCPNettyServerBootstrapFactory();
+                }
             } else {
                 nettyServerBootstrapFactory = new SingleUDPNettyServerBootstrapFactory();
             }
@@ -80,6 +85,18 @@ public class NettyConsumer extends DefaultConsumer {
         LOG.info("Netty consumer unbound from: " + configuration.getAddress());
 
         super.doStop();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        ServiceHelper.suspendService(nettyServerBootstrapFactory);
+        super.doSuspend();
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        ServiceHelper.resumeService(nettyServerBootstrapFactory);
+        super.doResume();
     }
 
     public CamelContext getContext() {

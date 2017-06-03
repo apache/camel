@@ -24,21 +24,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.spi.Required;
+import org.apache.camel.processor.SetHeaderProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;setHeader/&gt; element
+ * Sets the value of a message header
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeaderDefinition extends NoOutputExpressionNode {
     @XmlAttribute(required = true)
     private String headerName;
-    
+
     public SetHeaderDefinition() {
     }
 
@@ -49,22 +50,17 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
 
     public SetHeaderDefinition(String headerName, Expression expression) {
         super(expression);
-        setHeaderName(headerName);        
+        setHeaderName(headerName);
     }
 
     public SetHeaderDefinition(String headerName, String value) {
         super(ExpressionBuilder.constantExpression(value));
-        setHeaderName(headerName);        
-    }   
-    
-    @Override
-    public String toString() {
-        return "SetHeader[" + getHeaderName() + ", " + getExpression() + "]";
+        setHeaderName(headerName);
     }
 
     @Override
-    public String getShortName() {
-        return "setHeader";
+    public String toString() {
+        return "SetHeader[" + getHeaderName() + ", " + getExpression() + "]";
     }
 
     @Override
@@ -76,10 +72,25 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(headerName, "headerName");
         Expression expr = getExpression().createExpression(routeContext);
-        return ProcessorBuilder.setHeader(getHeaderName(), expr);
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(getHeaderName(), routeContext.getCamelContext());
+        return new SetHeaderProcessor(nameExpr, expr);
     }
 
-    @Required
+    /**
+     * Expression to return the value of the header
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
+    /**
+     * Name of message header to set a new value
+     * <p/>
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used.
+     * Otherwise a constant name will be used.
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
@@ -87,5 +98,5 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     public String getHeaderName() {
         return headerName;
     }
-    
+
 }

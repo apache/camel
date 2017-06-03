@@ -24,24 +24,37 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timer;
 
-public class NettyComponent extends DefaultComponent {
+public class NettyComponent extends UriEndpointComponent implements SSLContextParametersAware {
     // use a shared timer for Netty (see javadoc for HashedWheelTimer)
-    private static volatile Timer timer;
+    private Timer timer;
+    private volatile OrderedMemoryAwareThreadPoolExecutor executorService;
+
+    @Metadata(label = "advanced")
     private NettyConfiguration configuration;
-    private OrderedMemoryAwareThreadPoolExecutor executorService;
+    @Metadata(label = "advanced", defaultValue = "16")
+    private int maximumPoolSize = 16;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public NettyComponent() {
+        super(NettyEndpoint.class);
+    }
+
+    public NettyComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
     }
 
     public NettyComponent(CamelContext context) {
-        super(context);
+        super(context, NettyEndpoint.class);
     }
 
     @Override
@@ -61,6 +74,10 @@ public class NettyComponent extends DefaultComponent {
             if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
                 IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
             }
+        }
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
 
         // validate config
@@ -86,11 +103,40 @@ public class NettyComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * To use the NettyConfiguration as configuration when creating endpoints.
+     */
     public void setConfiguration(NettyConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public static Timer getTimer() {
+    public int getMaximumPoolSize() {
+        return maximumPoolSize;
+    }
+
+    /**
+     * The core pool size for the ordered thread pool, if its in use.
+     * <p/>
+     * The default value is 16.
+     */
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        this.maximumPoolSize = maximumPoolSize;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public Timer getTimer() {
         return timer;
     }
 
@@ -104,7 +150,9 @@ public class NettyComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         if (timer == null) {
-            timer = new HashedWheelTimer();
+            HashedWheelTimer hashedWheelTimer = new HashedWheelTimer();
+            hashedWheelTimer.start();
+            timer = hashedWheelTimer;
         }
 
         if (configuration == null) {
@@ -122,17 +170,23 @@ public class NettyComponent extends DefaultComponent {
         // replies in the expected order. eg this is required by TCP.
         // and use a Camel thread factory so we have consistent thread namings
         // we should use a shared thread pool as recommended by Netty
+        
+        // NOTE: if we don't specify the MaxChannelMemorySize and MaxTotalMemorySize, the thread pool
+        // could eat up all the heap memory when the tasks are added very fast
+        
         String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         ThreadFactory factory = new CamelThreadFactory(pattern, "NettyOrderedWorker", true);
-        return new OrderedMemoryAwareThreadPoolExecutor(configuration.getMaximumPoolSize(),
-                0L, 0L, 30, TimeUnit.SECONDS, factory);
+        return new OrderedMemoryAwareThreadPoolExecutor(getMaximumPoolSize(),
+                configuration.getMaxChannelMemorySize(), configuration.getMaxTotalMemorySize(),
+                30, TimeUnit.SECONDS, factory);
     }
 
     @Override
     protected void doStop() throws Exception {
-        timer.stop();
-        timer = null;
-
+        if (timer != null) {
+            timer.stop();
+            timer = null;
+        }
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;

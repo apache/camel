@@ -23,10 +23,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.WebFault;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -73,19 +77,25 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
             exception = exchange.getIn().getHeader(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         }
 
-        final List<JAXBElement<?>> bodyContent;
-        List<JAXBElement<?>> headerContent = new ArrayList<JAXBElement<?>>();
+        final List<Object> bodyContent;
+        List<Object> headerContent = new ArrayList<Object>();
         if (exception != null) {
-            bodyContent = new ArrayList<JAXBElement<?>>();
+            bodyContent = new ArrayList<Object>();
             bodyContent.add(createFaultFromException(exception));
         } else {
+            if (!dataFormat.isIgnoreUnmarshalledHeaders()) {
+                List<Object> inboundSoapHeaders = (List<Object>) exchange.getIn().getHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
+                if (null != inboundSoapHeaders) {
+                    headerContent.addAll(inboundSoapHeaders);
+                }
+            }
             bodyContent = getDataFormat().createContentFromObject(inputObject, soapAction, headerContent);
         }
 
-        for (JAXBElement<?> elem : bodyContent) {
+        for (Object elem : bodyContent) {
             body.getAny().add(elem);
         }
-        for (JAXBElement<?> elem : headerContent) {
+        for (Object elem : headerContent) {
             header.getAny().add(elem);
         }
         Envelope envelope = new Envelope();
@@ -184,35 +194,50 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
      * Creates an exception and eventually an embedded bean that contains the
      * fault detail. The exception class is determined by using the
      * elementNameStrategy. The qName of the fault detail should match the
-     * WebFault annotation of the Exception class. If no fault detail is set the
-     * a RuntimeCamelException is created.
+     * WebFault annotation of the Exception class. If no fault detail is set
+     * a {@link javax.xml.ws.soap.SOAPFaultException} is created.
      * 
      * @param fault Soap fault
      * @return created Exception
      */
     private Exception createExceptionFromFault(Fault fault) {
-        List<Object> detailList = fault.getDetail().getAny();
         StringBuilder sb = new StringBuilder();
         for (Reasontext text : fault.getReason().getText()) {
-            sb.append(text);
+            sb.append(text.getValue());
         }
         String message = sb.toString();
 
-        if (detailList.size() == 0) {
-            return new RuntimeCamelException(message);
+        Detail faultDetail = fault.getDetail();
+        if (faultDetail == null || faultDetail.getAny().size() == 0) {
+            try {
+                return new SOAPFaultException(SOAPFactory.newInstance().createFault(message, fault.getCode().getValue()));
+            } catch (SOAPException e) {
+                throw new RuntimeCamelException(e);
+            }
         }
-        JAXBElement<?> detailEl = (JAXBElement<?>) detailList.get(0);
+
+        Object detailObj = faultDetail.getAny().get(0);
+
+        if (!(detailObj instanceof JAXBElement)) {
+            try {
+                return new SOAPFaultException(SOAPFactory.newInstance().createFault(message, fault.getCode().getValue()));
+            } catch (SOAPException e) {
+                throw new RuntimeCamelException(e);
+            }
+        }
+
+        JAXBElement<?> detailEl = (JAXBElement<?>) detailObj;
         Class<? extends Exception> exceptionClass = getDataFormat().getElementNameStrategy().findExceptionForFaultName(detailEl.getName());
         Constructor<? extends Exception> messageConstructor;
         Constructor<? extends Exception> constructor;
 
         try {
-            messageConstructor = exceptionClass.getConstructor(String.class);
             Object detail = JAXBIntrospector.getValue(detailEl);
             try {
                 constructor = exceptionClass.getConstructor(String.class, detail.getClass());
                 return constructor.newInstance(message, detail);
             } catch (NoSuchMethodException e) {
+                messageConstructor = exceptionClass.getConstructor(String.class);
                 return messageConstructor.newInstance(message);
             }
         } catch (Exception e) {

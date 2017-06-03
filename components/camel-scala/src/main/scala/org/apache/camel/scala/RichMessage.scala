@@ -16,29 +16,75 @@
  */
 package org.apache.camel.scala
 
+import org.apache.camel.Attachment
 import org.apache.camel.Message
-import java.util.Map
-import java.lang.{Class, String}
 import javax.activation.DataHandler
+import java.util
+import java.util.function.Supplier
 
 class RichMessage(val message: Message) extends Message {
 
   // Delegate methods
   //-------------------------------------------------------------------------
 
-  def setMessageId(messageId: String) { message.setMessageId(messageId) }
+  def addAttachment(id: String, content: DataHandler) = message.addAttachment(id, content)
 
-  def setHeaders(headers: Map[String, Object]) { message.setHeaders(headers) }
+  def addAttachmentObject(id: String, content: Attachment) = message.addAttachmentObject(id, content)
 
-  def setHeader(name: String, value: Any) { message.setHeader(name, value) }
+  def copy = new RichMessage(message.copy)
 
-  def setFault(fault: Boolean) { message.setFault(fault) }
+  def copyAttachments(other: Message) = message.copyAttachments(other)
 
-  def setBody[T](body: Any, bodyType : Class[T]) { message.setBody(body, bodyType) }
+  def copyFrom(other: Message) = message.copyFrom(other)
 
-  def setBody(body: Any) {message.setBody()}
+  def copyFromWithNewBody(other: Message, newBody: Any) = message.copyFromWithNewBody(other, newBody)
 
-  def setAttachments(attachments: Map[String, DataHandler]) { message.setAttachments(attachments) }
+  @Deprecated
+  def createExchangeId = message.createExchangeId
+
+  def getAttachment(id: String) = message.getAttachment(id)
+
+  def getAttachmentObject(id: String) = message.getAttachmentObject(id)
+
+  def getAttachmentNames = message.getAttachmentNames
+
+  def getAttachments = message.getAttachments
+
+  def getAttachmentObjects = message.getAttachmentObjects
+
+  def getBody = message.getBody
+
+  def getBody[T](bodyType: Class[T]) = message.getBody(bodyType)
+
+  def getExchange = message.getExchange
+
+  def getHeader(name: String) = message.getHeader(name)
+
+  def getHeader(name: String, defaultValue: Any) = message.getHeader(name, defaultValue)
+
+  def getHeader(name: String, defaultValueSupplier: Supplier[Object]) = message.getHeader(name, defaultValueSupplier)
+
+  def getHeader[T](name: String, defaultValue: Any, headerType: Class[T]) = message.getHeader(name, defaultValue, headerType)
+
+  def getHeader[T](name: String, defaultValueSupplier: Supplier[Object], headerType: Class[T]) = message.getHeader(name, defaultValueSupplier, headerType)
+
+  def getHeader[T](name: String, headerType: Class[T]) = message.getHeader(name, headerType)
+
+  def getHeaders = message.getHeaders
+
+  def getMandatoryBody = message.getMandatoryBody
+
+  def getMandatoryBody[T](bodyType: Class[T]) = message.getMandatoryBody(bodyType)
+
+  def getMessageId = message.getMessageId
+
+  def hasAttachments = message.hasAttachments
+
+  def hasHeaders = message.hasHeaders
+
+  def isFault = message.isFault
+
+  def removeAttachment(id: String) = message.removeAttachment(id)
 
   def removeHeader(name: String) = message.removeHeader(name)
 
@@ -46,48 +92,19 @@ class RichMessage(val message: Message) extends Message {
 
   def removeHeaders(pattern: String, excludePatterns: String*) = message.removeHeaders(pattern, excludePatterns: _*)
 
-  def removeAttachment(id: String) { message.removeAttachment(id) }
+  def setAttachments(attachments: util.Map[String, DataHandler]) = message.setAttachments(attachments)
 
-  def isFault = message.isFault
+  def setAttachmentObjects(attachments: util.Map[String, Attachment]) = message.setAttachmentObjects(attachments)
 
-  def hasHeaders = message.hasHeaders
+  def setBody(body: Any) = message.setBody(body)
 
-  def hasAttachments = message.hasAttachments
+  def setBody[T](body: Any, bodyType: Class[T]) = message.setBody(body, bodyType)
 
-  def getMessageId = message.getMessageId
+  def setFault(fault: Boolean) = message.setFault(fault)
 
-  def getMandatoryBody[T](bodyType : Class[T]) = message.getMandatoryBody(bodyType)
+  def setHeader(name: String, value: Any) = message.setHeader(name, value)
 
-  def getMandatoryBody = message.getMandatoryBody
+  def setHeaders(headers: util.Map[String, Object]) = message.setHeaders(headers)
 
-  def getHeaders = message.getHeaders
-
-  def getHeader[T](name: String, headerType : Class[T]) = message.getHeader(name, headerType)
-
-  def getHeader[T](name: String, defaultValue: Any, headerType : Class[T]) = message.getHeader(name, defaultValue, headerType)
-
-  def getHeader(name: String, defaultValue: Any) = message.getHeader(name, defaultValue)
-
-  def getHeader(name: String) = message.getHeader(name)
-
-  def getExchange = message.getExchange
-
-  def getBody[T](bodyType : Class[T]) = message.getBody(bodyType)
-
-  def getBody = message.getBody
-
-  def getAttachments = message.getAttachments
-
-  def getAttachmentNames = message.getAttachmentNames
-
-  def getAttachment(id: String) = message.getAttachment(id)
-
-  @Deprecated
-  def createExchangeId = message.createExchangeId
-
-  def copyFrom(message: Message) {message.copyFrom(message)}
-
-  def copy = new RichMessage(message.copy)
-
-  def addAttachment(id: String, content: DataHandler) { message.addAttachment(id, content) }
+  def setMessageId(messageId: String) = message.setMessageId(messageId)
 }

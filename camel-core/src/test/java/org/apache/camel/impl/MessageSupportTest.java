@@ -61,7 +61,7 @@ public class MessageSupportTest extends ContextTestSupport {
     }
     
     public void testGetMessageIdWithoutAnExchange() {
-        Message in = new DefaultMessage();
+        Message in = new DefaultMessage(context);
         
         assertNotNull(in.getMessageId());
     }
@@ -73,7 +73,7 @@ public class MessageSupportTest extends ContextTestSupport {
         Map<String, Object> headers = in.getHeaders();
         headers.put("foo", 123);
 
-        Message out = new DefaultMessage();
+        Message out = new DefaultMessage(context);
         out.setBody("Bye World");
         out.setHeaders(headers);
 

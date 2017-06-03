@@ -22,5 +22,5 @@ package org.apache.camel.component.netty;
  * @version 
  */
 public enum TextLineDelimiter {
-    LINE, NULL;
+    LINE, NULL
 }

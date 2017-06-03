@@ -21,6 +21,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -69,7 +70,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFlagResult");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithFlag", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithFlag", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
         Exchange received = mockEndpoint.getExchanges().get(0);
@@ -86,7 +87,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFactoryResult");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithFactory", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithFactory", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
         Exchange received = mockEndpoint.getExchanges().get(0);
@@ -94,6 +95,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         assertEquals("Hello", body);
     }
 
+    @Ignore("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testSpringDSLXPathObjectModel() throws Exception {
         if (!jvmAdequate) {
@@ -103,7 +105,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithObjectModelResult");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithObjectModel", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithObjectModel", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
         Exchange received = mockEndpoint.getExchanges().get(0);
@@ -120,7 +122,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFlagResultPredicate");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithFlagPredicate", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithFlagPredicate", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
     }
@@ -134,11 +136,12 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithFactoryResultPredicate");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithFactoryPredicate", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithFactoryPredicate", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Ignore("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testSpringDSLXPathObjectModelPredicate() throws Exception {
         if (!jvmAdequate) {
@@ -148,7 +151,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:testSaxonWithObjectModelResultPredicate");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("seda:testSaxonWithObjectModelPredicate", "<a>Hello|there|Camel</a>");
+        template.sendBody("direct:testSaxonWithObjectModelPredicate", "<a>Hello|there|Camel</a>");
 
         assertMockEndpointsSatisfied();
     }

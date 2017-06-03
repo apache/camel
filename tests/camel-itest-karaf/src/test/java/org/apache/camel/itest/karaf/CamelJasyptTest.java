@@ -16,27 +16,19 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith(JUnit4TestRunner.class)
-@Ignore("Does not work on JDK 1.5")
-public class CamelJasyptTest extends AbstractFeatureTest {
+@RunWith(PaxExam.class)
+public class CamelJasyptTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelJasyptTest.class);
 
     @Test
     public void test() throws Exception {
-        // not a component
+        installCamelFeature(COMPONENT);
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
 
 }

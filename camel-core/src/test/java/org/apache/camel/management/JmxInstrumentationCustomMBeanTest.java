@@ -43,9 +43,6 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
         context.addComponent("custom", new CustomComponent());
 
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
         return context;
     }
 

@@ -65,7 +65,7 @@ class SMulticastParallelTest extends MulticastParallelTest with RouteBuilderSupp
     }
 
     "direct:start" ==> {
-      multicast.strategy(appendBodies).parallel {
+      multicast.strategy(appendBodies).parallelProcessing {
         to("direct:a")
         to("direct:b")
       }

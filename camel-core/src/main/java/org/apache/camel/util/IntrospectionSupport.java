@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -34,14 +35,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.isAssignableFrom;
 
 /**
  * Helper for introspections of beans.
@@ -57,8 +63,6 @@ import org.slf4j.LoggerFactory;
 public final class IntrospectionSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
-    private static final Pattern GETTER_PATTERN = Pattern.compile("(get|is)[A-Z].*");
-    private static final Pattern SETTER_PATTERN = Pattern.compile("set[A-Z].*");
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     // use a cache to speedup introspecting for known classes during startup
     // use a weak cache as we dont want the cache to keep around as it reference classes
@@ -138,18 +142,19 @@ public final class IntrospectionSupport {
     public static boolean isGetter(Method method) {
         String name = method.getName();
         Class<?> type = method.getReturnType();
-        Class<?> params[] = method.getParameterTypes();
+        int parameterCount = method.getParameterCount();
 
-        if (!GETTER_PATTERN.matcher(name).matches()) {
-            return false;
+        // is it a getXXX method
+        if (name.startsWith("get") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
+            return parameterCount == 0 && !type.equals(Void.TYPE);
         }
 
         // special for isXXX boolean
-        if (name.startsWith("is")) {
-            return params.length == 0 && type.getSimpleName().equalsIgnoreCase("boolean");
+        if (name.startsWith("is") && name.length() >= 3 && Character.isUpperCase(name.charAt(2))) {
+            return parameterCount == 0 && type.getSimpleName().equalsIgnoreCase("boolean");
         }
 
-        return params.length == 0 && !type.equals(Void.TYPE);
+        return false;
     }
 
     public static String getGetterShorthandName(Method method) {
@@ -186,19 +191,36 @@ public final class IntrospectionSupport {
     public static boolean isSetter(Method method, boolean allowBuilderPattern) {
         String name = method.getName();
         Class<?> type = method.getReturnType();
-        Class<?> params[] = method.getParameterTypes();
+        int parameterCount = method.getParameterCount();
 
-        if (!SETTER_PATTERN.matcher(name).matches()) {
-            return false;
+        // is it a getXXX method
+        if (name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
+            return parameterCount == 1 && (type.equals(Void.TYPE) || (allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type)));
         }
 
-        return params.length == 1 && (type.equals(Void.TYPE) || (allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type)));
+        return false;
     }
     
     public static boolean isSetter(Method method) {
         return isSetter(method, false);
     }
 
+    /**
+     * Will inspect the target for properties.
+     * <p/>
+     * Notice a property must have both a getter/setter method to be included.
+     * Notice all <tt>null</tt> values won't be included.
+     *
+     * @param target         the target bean
+     * @return the map with found properties
+     */
+    public static Map<String, Object> getNonNullProperties(Object target) {
+        Map<String, Object> properties = new HashMap<>();
+
+        getProperties(target, properties, null, false);
+
+        return properties;
+    }
 
     /**
      * Will inspect the target for properties.
@@ -421,10 +443,15 @@ public final class IntrospectionSupport {
     }
 
     public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix) throws Exception {
+        ObjectHelper.notEmpty(optionPrefix, "optionPrefix");
         return setProperties(target, properties, optionPrefix, false);
     }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
+        return extractProperties(properties, optionPrefix, true);
+    }
+
+    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
         ObjectHelper.notNull(properties, "properties");
 
         Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
@@ -436,27 +463,48 @@ public final class IntrospectionSupport {
                 Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
                 rc.put(name, value);
-                it.remove();
+
+                if (remove) {
+                    it.remove();
+                }
             }
         }
 
         return rc;
     }
 
-    public static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
+    public static Map<String, String> extractStringProperties(Map<String, Object> properties) {
+        ObjectHelper.notNull(properties, "properties");
+
+        Map<String, String> rc = new LinkedHashMap<String, String>(properties.size());
+
+        for (Entry<String, Object> entry : properties.entrySet()) {
+            String name = entry.getKey();
+            String value = entry.getValue().toString();
+            rc.put(name, value);
+        }
+
+        return rc;
+    }
+
+    public static boolean setProperties(CamelContext context, TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
         for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, Object> entry = iter.next();
-            if (setProperty(typeConverter, target, entry.getKey(), entry.getValue())) {
+            if (setProperty(context, typeConverter, target, entry.getKey(), entry.getValue())) {
                 iter.remove();
                 rc = true;
             }
         }
 
         return rc;
+    }
+    
+    public static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
+        return setProperties(null, typeConverter, target, properties);
     }
 
     public static boolean setProperties(Object target, Map<String, Object> properties) throws Exception {
@@ -496,20 +544,25 @@ public final class IntrospectionSupport {
             Object ref = value;
             // try and lookup the reference based on the method
             if (context != null && refName != null && ref == null) {
-                ref = CamelContextHelper.lookup(context, refName.replaceAll("#", ""));
+                String s = StringHelper.replaceAll(refName, "#", "");
+                ref = CamelContextHelper.lookup(context, s);
                 if (ref == null) {
                     // try the next method if nothing was found
                     continue;
-                } else if (!parameterType.isAssignableFrom(ref.getClass())) {
+                } else {
                     // setter method has not the correct type
-                    continue;
+                    // (must use ObjectHelper.isAssignableFrom which takes primitive types into account)
+                    boolean assignable = isAssignableFrom(parameterType, ref.getClass());
+                    if (!assignable) {
+                        continue;
+                    }
                 }
             }
 
             try {
                 try {
                     // If the type is null or it matches the needed type, just use the value directly
-                    if (value == null || parameterType.isAssignableFrom(ref.getClass())) {
+                    if (value == null || isAssignableFrom(parameterType, ref.getClass())) {
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, ref);
@@ -553,7 +606,7 @@ public final class IntrospectionSupport {
             }
         }
 
-        if (typeConversionFailed != null) {
+        if (typeConversionFailed != null && !isPropertyPlaceholder(context, value)) {
             // we did not find a setter method to use, and if we did try to use a type converter then throw
             // this kind of exception as the caused by will hint this error
             throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
@@ -564,6 +617,34 @@ public final class IntrospectionSupport {
         }
     }
 
+    private static boolean isPropertyPlaceholder(CamelContext context, Object value) {
+        if (context != null) {
+            Component component = context.hasComponent("properties");
+            if (component != null) {
+                PropertiesComponent pc;
+                try {
+                    pc = context.getTypeConverter().mandatoryConvertTo(PropertiesComponent.class, component);
+                } catch (Exception e) {
+                    return false;
+                }
+                if (value.toString().contains(pc.getPrefixToken()) && value.toString().contains(pc.getSuffixToken())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
+        // allow build pattern as a setter as well
+        return setProperty(context, context != null ? context.getTypeConverter() : null, target, name, value, null, true);
+    }
+
+    public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
+        // allow build pattern as a setter as well
+        return setProperty(context, typeConverter, target, name, value, null, true);
+    }
+    
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(null, typeConverter, target, name, value, null, true);

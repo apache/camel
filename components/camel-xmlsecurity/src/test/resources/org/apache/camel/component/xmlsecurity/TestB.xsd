@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://testB"
+    xmlns:tns="http://testB" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    <import namespace="http://www.w3.org/2000/09/xmldsig#"
+        schemaLocation="xmldsig-core-schema.xsd" />
+    <element name="B">
+        <complexType>
+            <sequence>
+                <element name="C">
+                    <complexType>
+                        <sequence>
+                            <element name="D" type="string" />
+                        </sequence>
+                        <attribute name="ID" type="ID" use="required" />
+                    </complexType>
+                </element>
+                <element ref="ds:Signature" minOccurs="0" />
+            </sequence>
+        </complexType>
+    </element>
+</schema>

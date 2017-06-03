@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.Date;
 
 import org.apache.camel.ContextTestSupport;
@@ -68,11 +70,24 @@ public class DefaultTraceEventMessageTest extends ContextTestSupport {
         assertEquals("String", em.getOutBodyType());
         assertEquals("{cheese=789}", em.getOutHeaders());
     }
-
+    
+    public void testDefaultTraceEventMessageBody() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new File("target/test"));
+        DefaultTraceEventMessage em = new DefaultTraceEventMessage(new Date(), null, exchange);
+        
+        assertEquals("Get a wrong body string", "[Body is file based: target" + File.separator + "test]", em.getBody());
+        
+        exchange.getIn().setBody(new ByteArrayInputStream("target/test".getBytes()));
+        em = new DefaultTraceEventMessage(new Date(), null, exchange);
+        
+        assertEquals("Get a wrong body string", "[Body is instance of java.io.InputStream]", em.getBody());
+    }
+ 
     public void testDefaultTraceEventMessageOptions() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         DefaultTraceEventMessage em = new DefaultTraceEventMessage(new Date(), null, exchange);
-
+        
         em.setBody("Hello World");
         assertEquals("Hello World", em.getBody());
 

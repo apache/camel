@@ -21,13 +21,14 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class WebsocketRouteExampleTest extends CamelTestSupport {
 
     @Test
     public void testWSHttpCall() throws Exception {
-        AsyncHttpClient c = new AsyncHttpClient();
+        AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
             new WebSocketUpgradeHandler.Builder()
@@ -56,10 +57,6 @@ public class WebsocketRouteExampleTest extends CamelTestSupport {
                         received.add(message);
                         log.info("received --> " + message);
                         latch.countDown();
-                    }
-
-                    @Override
-                    public void onFragment(String fragment, boolean last) {
                     }
 
                     @Override
@@ -76,7 +73,7 @@ public class WebsocketRouteExampleTest extends CamelTestSupport {
                     }
                 }).build()).get();
 
-        websocket.sendTextMessage("Beer");
+        websocket.sendMessage("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(1, received.size());
@@ -92,6 +89,8 @@ public class WebsocketRouteExampleTest extends CamelTestSupport {
             public void configure() {
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setPort(port);
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(20);
 
                 // START SNIPPET: e1
                 // expose a echo websocket client, that sends back an echo

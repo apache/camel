@@ -27,7 +27,6 @@ import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 
 import org.junit.Test;
@@ -49,8 +48,8 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mc1 = JmsObjectFactory.createQueueConsumer(getSession(), TEST_DESTINATION_NAME + ".request");
-        mc2 = JmsObjectFactory.createQueueConsumer(getSession(), TEST_DESTINATION_NAME + ".request");
+        mc1 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");
+        mc2 = createQueueConsumer(TEST_DESTINATION_NAME + ".request");
         mc1.setMessageListener(new MyMessageListener());
         mc2.setMessageListener(new MyMessageListener());
     }

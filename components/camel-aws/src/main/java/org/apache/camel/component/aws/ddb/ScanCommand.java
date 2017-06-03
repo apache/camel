@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.model.Condition;
-import com.amazonaws.services.dynamodb.model.ScanRequest;
-import com.amazonaws.services.dynamodb.model.ScanResult;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.Condition;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 
 import org.apache.camel.Exchange;
 
 public class ScanCommand extends AbstractDdbCommand {
+
     public ScanCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration, Exchange exchange) {
         super(ddbClient, configuration, exchange);
     }
@@ -36,11 +38,13 @@ public class ScanCommand extends AbstractDdbCommand {
                 .withTableName(determineTableName())
                 .withScanFilter(determineScanFilter()));
 
-        addToResult(DdbConstants.ITEMS, result.getItems());
-        addToResult(DdbConstants.LAST_EVALUATED_KEY, result.getLastEvaluatedKey());
-        addToResult(DdbConstants.CONSUMED_CAPACITY, result.getConsumedCapacityUnits());
-        addToResult(DdbConstants.COUNT, result.getCount());
-        addToResult(DdbConstants.SCANNED_COUNT, result.getScannedCount());
+        Map tmp = new HashMap<>();
+        tmp.put(DdbConstants.ITEMS, result.getItems());
+        tmp.put(DdbConstants.LAST_EVALUATED_KEY, result.getLastEvaluatedKey());
+        tmp.put(DdbConstants.CONSUMED_CAPACITY, result.getConsumedCapacity());
+        tmp.put(DdbConstants.COUNT, result.getCount());
+        tmp.put(DdbConstants.SCANNED_COUNT, result.getScannedCount());
+        addToResults(tmp);
     }
 
     @SuppressWarnings("unchecked")

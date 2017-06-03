@@ -49,7 +49,6 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     public void testInclude() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result1");
         mock.expectedBodiesReceivedInAnyOrder("Hello World");
-        mock.setExpectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/files/ant-path-1/x/y/z", "Hello World", Exchange.FILE_NAME, "report.txt");
         template.sendBodyAndHeader("file://target/files/ant-path-1/x/y/z", "Hello World 2", Exchange.FILE_NAME, "b.TXT");
@@ -60,7 +59,6 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     public void testExclude() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 3", "Hello World 4");
-        mock.setExpectedMessageCount(3);
 
         template.sendBodyAndHeader("file://target/files/ant-path-2/x/y/z", "Hello World 1", Exchange.FILE_NAME, "report.bak");
         template.sendBodyAndHeader("file://target/files/ant-path-2/x/y/z", "Hello World 2", Exchange.FILE_NAME, "report.txt");
@@ -73,7 +71,6 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     public void testIncludesAndExcludes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result3");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 4");
-        mock.setExpectedMessageCount(2);
 
         template.sendBodyAndHeader("file://target/files/ant-path-3/x/y/z", "Hello World 1", Exchange.FILE_NAME, "a.pdf");
         template.sendBodyAndHeader("file://target/files/ant-path-3/x/y/z", "Hello World 2", Exchange.FILE_NAME, "m.pdf");
@@ -94,7 +91,6 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     public void testIncludesAndExcludesAndFilter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result4");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 3");
-        mock.setExpectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/files/ant-path-4/x/y/z", "Hello World 1", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader("file://target/files/ant-path-4/x/y/z", "Hello World 2", Exchange.FILE_NAME, "b.txt");
@@ -108,7 +104,6 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     public void testIncludeAndAntFilterNotCaseSensitive() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result5");
         mock.expectedBodiesReceivedInAnyOrder("Hello World");
-        mock.setExpectedMessageCount(1);
 
         template.sendBodyAndHeader("file://target/files/ant-path-5/x/y/z", "Hello World", Exchange.FILE_NAME, "report.TXT");
 
@@ -118,7 +113,6 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     public void testExcludeAndAntFilterNotCaseSensitive() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result6");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 4");
-        mock.setExpectedMessageCount(2);
 
         template.sendBodyAndHeader("file://target/files/ant-path-6/x/y/z", "Hello World 1", Exchange.FILE_NAME, "report.bak");
         template.sendBodyAndHeader("file://target/files/ant-path-6/x/y/z", "Hello World 2", Exchange.FILE_NAME, "report.txt");
@@ -131,7 +125,6 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     public void testIncludesAndExcludesAndAntFilterNotCaseSensitive() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result7");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 2", "Hello World 4", "Hello World 8", "Hello World 10");
-        mock.setExpectedMessageCount(4);
 
         template.sendBodyAndHeader("file://target/files/ant-path-7/x/y/z", "Hello World 1", Exchange.FILE_NAME, "a.pdf");
         template.sendBodyAndHeader("file://target/files/ant-path-7/x/y/z", "Hello World 2", Exchange.FILE_NAME, "m.pdf");
@@ -152,7 +145,6 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
     public void testIncludesAndExcludesAndFilterAndAntFilterNotCaseSensitive() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result8");
         mock.expectedBodiesReceivedInAnyOrder("Hello World 3", "Hello World 4");
-        mock.setExpectedMessageCount(2);
 
         template.sendBodyAndHeader("file://target/files/ant-path-8/x/y/z", "Hello World 1", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader("file://target/files/ant-path-8/x/y/z", "Hello World 2", Exchange.FILE_NAME, "b.txt");
@@ -177,10 +169,6 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
 
                 from("file://target/files/ant-path-4?recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#filter").convertBodyTo(String.class).to("mock:result4");
                 from("file://target/files/ant-path-8?recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#caseInsensitiveFilter").convertBodyTo(String.class).to("mock:result8");
-
-
-
-
             }
         };
     }

@@ -53,7 +53,7 @@ public class Mina2TransferExchangeOptionTest extends BaseMina2Test {
     private Exchange sendExchange(boolean setException) throws Exception {
         Endpoint endpoint = context.getEndpoint(String.format("mina2:tcp://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()));
         Producer producer = endpoint.createProducer();
-        Exchange exchange = producer.createExchange();
+        Exchange exchange = endpoint.createExchange();
         //Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();

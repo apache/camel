@@ -77,7 +77,9 @@ public class DebugSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new GenericApplicationContext();
+        GenericApplicationContext applicationContext = new GenericApplicationContext();
+        applicationContext.refresh();
+        return applicationContext;
     }
 
 }

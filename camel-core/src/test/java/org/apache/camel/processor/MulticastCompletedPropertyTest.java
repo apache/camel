@@ -29,15 +29,15 @@ public class MulticastCompletedPropertyTest extends ContextTestSupport {
     public void testMulticastCompleted() throws Exception {
         MockEndpoint a = getMockEndpoint("mock:a");
         a.expectedMessageCount(1);
-        a.message(0).property(Exchange.MULTICAST_COMPLETE).isEqualTo(false);
+        a.message(0).exchangeProperty(Exchange.MULTICAST_COMPLETE).isEqualTo(false);
 
         MockEndpoint b = getMockEndpoint("mock:b");
         b.expectedMessageCount(1);
-        b.message(0).property(Exchange.MULTICAST_COMPLETE).isEqualTo(false);
+        b.message(0).exchangeProperty(Exchange.MULTICAST_COMPLETE).isEqualTo(false);
 
         MockEndpoint c = getMockEndpoint("mock:c");
         c.expectedMessageCount(1);
-        c.message(0).property(Exchange.MULTICAST_COMPLETE).isEqualTo(true);
+        c.message(0).exchangeProperty(Exchange.MULTICAST_COMPLETE).isEqualTo(true);
 
         template.sendBody("direct:start", "Hello World");
 

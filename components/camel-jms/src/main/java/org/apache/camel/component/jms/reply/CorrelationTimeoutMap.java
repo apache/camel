@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.support.DefaultTimeoutMap;
@@ -30,9 +31,11 @@ import org.apache.camel.support.DefaultTimeoutMap;
 public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
     private CorrelationListener listener;
+    private ExecutorService executorService;
 
-    public CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
+    public CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, ExecutorService executorService) {
         super(executor, requestMapPollTimeMillis);
+        this.executorService = executorService;
     }
 
     public void setListener(CorrelationListener listener) {
@@ -40,7 +43,7 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
         this.listener = listener;
     }
 
-    public boolean onEviction(String key, ReplyHandler value) {
+    public boolean onEviction(final String key, final ReplyHandler value) {
         try {
             if (listener != null) {
                 listener.onEviction(key);
@@ -49,8 +52,25 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
             // ignore
         }
 
-        // trigger timeout
-        value.onTimeout(key);
+        final Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                // trigger timeout
+                try {
+                    value.onTimeout(key);
+                } catch (Throwable e) {
+                    // must ignore so we ensure we evict the element
+                    log.warn("Error processing onTimeout for correlationID: " + key + " due: " + e.getMessage() + ". This exception is ignored.", e);
+                }
+            }
+        };
+        if (executorService != null) {
+            executorService.submit(task);
+        } else {
+            // run task synchronously
+            task.run();
+        }
+
         // return true to remove the element
         log.trace("Evicted correlationID: {}", key);
         return true;
@@ -64,7 +84,7 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
     }
 
     @Override
-    public void put(String key, ReplyHandler value, long timeoutMillis) {
+    public ReplyHandler put(String key, ReplyHandler value, long timeoutMillis) {
         try {
             if (listener != null) {
                 listener.onPut(key);
@@ -73,13 +93,40 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
             // ignore
         }
 
+        ReplyHandler result;
         if (timeoutMillis <= 0) {
             // no timeout (must use Integer.MAX_VALUE)
-            super.put(key, value, Integer.MAX_VALUE);
+            result = super.put(key, value, Integer.MAX_VALUE);
         } else {
-            super.put(key, value, timeoutMillis);
+            result = super.put(key, value, timeoutMillis);
         }
         log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
+        return result;
+    }
+
+    @Override
+    public ReplyHandler putIfAbsent(String key, ReplyHandler value, long timeoutMillis) {
+        try {
+            if (listener != null) {
+                listener.onPut(key);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+
+        ReplyHandler result;
+        if (timeoutMillis <= 0) {
+            // no timeout (must use Integer.MAX_VALUE)
+            result = super.putIfAbsent(key, value, Integer.MAX_VALUE);
+        } else {
+            result = super.putIfAbsent(key, value, timeoutMillis);
+        }
+        if (result == null) {
+            log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
+        } else {
+            log.trace("Duplicate correlationID: {} detected", key);
+        }
+        return result;
     }
 
     @Override

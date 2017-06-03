@@ -1,0 +1,23 @@
+{
+    "store": {
+        "book": [
+            {
+                "category": "novel",
+                "author": "Thomas Mann",
+                "title": "Joseph und seine Brüder",
+                "price": 25.00
+            },
+            {
+                "category": "fiction",
+                "author": "Friedrich Nietzsche",
+                "title": "Götzendämmerung",
+                "price": 9.00,
+                "isbn": "3-458-32522-0"
+            }
+        ],
+        "bicycle": {
+            "color": "red",
+            "price": 19.95
+        }
+    }
+}

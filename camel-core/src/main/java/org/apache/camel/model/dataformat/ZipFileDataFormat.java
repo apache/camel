@@ -24,15 +24,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the ZIP file XML {@link org.apache.camel.spi.DataFormat}.
+ * Zip-file data format
  */
+@Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,file", title = "Zip File")
+// TODO: use zipfile as name in Camel 3.0
 @XmlRootElement(name = "zipFile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean usingIterator;
+    @XmlAttribute
+    private Boolean allowEmptyDirectory;
 
     public ZipFileDataFormat() {
         super("zipfile");
@@ -43,14 +48,33 @@ public class ZipFileDataFormat extends DataFormatDefinition {
         if (usingIterator != null) {
             setProperty(camelContext, dataFormat, "usingIterator", usingIterator);
         }
+        if (allowEmptyDirectory != null) {
+            setProperty(camelContext, dataFormat, "allowEmptyDirectory", allowEmptyDirectory);
+        }
     }
 
     public Boolean getUsingIterator() {
         return usingIterator;
     }
+    
+    public Boolean getAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
 
+    /**
+     * If the zip file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
+     * to split the data using an iterator in a streaming mode.
+     */
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
+    }
+    
+    /**
+     * If the zip file has more then one entry, setting this option to true, allows to get the iterator
+     * even if the directory is empty
+     */
+    public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
 }

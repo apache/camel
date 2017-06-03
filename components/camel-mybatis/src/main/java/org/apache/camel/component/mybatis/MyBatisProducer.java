@@ -23,6 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -96,7 +97,7 @@ public class MyBatisProducer extends DefaultProducer {
 
     private void doSelectOne(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             LOG.trace("SelectOne: {} using statement: {}", in, statement);
             result = session.selectOne(statement, in);
@@ -105,12 +106,12 @@ public class MyBatisProducer extends DefaultProducer {
             result = session.selectOne(statement);
         }
 
-        doProcessResult(exchange, result);
+        doProcessResult(exchange, result, session);
     }
 
     private void doSelectList(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             LOG.trace("SelectList: {} using statement: {}", in, statement);
             result = session.selectList(statement, in);
@@ -119,12 +120,12 @@ public class MyBatisProducer extends DefaultProducer {
             result = session.selectList(statement);
         }
 
-        doProcessResult(exchange, result);
+        doProcessResult(exchange, result, session);
     }
 
     private void doInsert(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // lets handle arrays or collections of objects
             Iterator<?> iter = ObjectHelper.createIterator(in);
@@ -132,33 +133,33 @@ public class MyBatisProducer extends DefaultProducer {
                 Object value = iter.next();
                 LOG.trace("Inserting: {} using statement: {}", value, statement);
                 result = session.insert(statement, value);
-                doProcessResult(exchange, result);
+                doProcessResult(exchange, result, session);
             }
         } else {
             LOG.trace("Inserting using statement: {}", statement);
             result = session.insert(statement);
-            doProcessResult(exchange, result);
+            doProcessResult(exchange, result, session);
         }
     }
 
     private void doInsertList(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
             LOG.trace("Inserting: {} using statement: {}", in, statement);
             result = session.insert(statement, in);
-            doProcessResult(exchange, result);
+            doProcessResult(exchange, result, session);
         } else {
             LOG.trace("Inserting using statement: {}", statement);
             result = session.insert(statement);
-            doProcessResult(exchange, result);
+            doProcessResult(exchange, result, session);
         }
     }
 
     private void doUpdate(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // lets handle arrays or collections of objects
             Iterator<?> iter = ObjectHelper.createIterator(in);
@@ -166,33 +167,33 @@ public class MyBatisProducer extends DefaultProducer {
                 Object value = iter.next();
                 LOG.trace("Updating: {} using statement: {}", value, statement);
                 result = session.update(statement, value);
-                doProcessResult(exchange, result);
+                doProcessResult(exchange, result, session);
             }
         } else {
             LOG.trace("Updating using statement: {}", statement);
             result = session.update(statement);
-            doProcessResult(exchange, result);
+            doProcessResult(exchange, result, session);
         }
     }
 
     private void doUpdateList(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
             LOG.trace("Updating: {} using statement: {}", in, statement);
             result = session.update(statement, in);
-            doProcessResult(exchange, result);
+            doProcessResult(exchange, result, session);
         } else {
             LOG.trace("Updating using statement: {}", statement);
             result = session.update(statement);
-            doProcessResult(exchange, result);
+            doProcessResult(exchange, result, session);
         }
     }
 
     private void doDelete(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // lets handle arrays or collections of objects
             Iterator<?> iter = ObjectHelper.createIterator(in);
@@ -200,47 +201,92 @@ public class MyBatisProducer extends DefaultProducer {
                 Object value = iter.next();
                 LOG.trace("Deleting: {} using statement: {}", value, statement);
                 result = session.delete(statement, value);
-                doProcessResult(exchange, result);
+                doProcessResult(exchange, result, session);
             }
         } else {
             LOG.trace("Deleting using statement: {}", statement);
             result = session.delete(statement);
-            doProcessResult(exchange, result);
+            doProcessResult(exchange, result, session);
         }
     }
 
     private void doDeleteList(Exchange exchange, SqlSession session) throws Exception {
         Object result;
-        Object in = exchange.getIn().getBody();
+        Object in = getInput(exchange);
         if (in != null) {
             // just pass in the body as Object and allow MyBatis to iterate using its own foreach statement
             LOG.trace("Deleting: {} using statement: {}", in, statement);
             result = session.delete(statement, in);
-            doProcessResult(exchange, result);
+            doProcessResult(exchange, result, session);
         } else {
             LOG.trace("Deleting using statement: {}", statement);
             result = session.delete(statement);
-            doProcessResult(exchange, result);
+            doProcessResult(exchange, result, session);
         }
     }
 
-    private void doProcessResult(Exchange exchange, Object result) {
-        if (endpoint.getStatementType() == StatementType.SelectList || endpoint.getStatementType() == StatementType.SelectOne) {
-            Message answer = exchange.getIn();
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                answer = exchange.getOut();
-                // preserve headers
-                answer.getHeaders().putAll(exchange.getIn().getHeaders());
-            }
-            // set the result as body for insert
-            answer.setBody(result);
+    private void doProcessResult(Exchange exchange, Object result, SqlSession session) {
+        final String outputHeader = getEndpoint().getOutputHeader();
+        Message answer = exchange.getIn();
 
-            answer.setHeader(MyBatisConstants.MYBATIS_RESULT, result);
-            answer.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, statement);
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            answer = exchange.getOut();
+            // preserve headers
+            answer.getHeaders().putAll(exchange.getIn().getHeaders());
+            if (outputHeader != null) {
+                //if we put the MyBatis result into a header we should preserve the body as well
+                answer.setBody(exchange.getIn().getBody());
+            }
+        }
+        if (endpoint.getStatementType() == StatementType.SelectList || endpoint.getStatementType() == StatementType.SelectOne) {
+            // we should not set the body if its a stored procedure as the result is already in its OUT parameter
+            MappedStatement ms = session.getConfiguration().getMappedStatement(statement);
+            if (ms != null && ms.getStatementType() == org.apache.ibatis.mapping.StatementType.CALLABLE) {
+                if (result == null) {
+                    LOG.trace("Setting result as existing body as MyBatis statement type is Callable, and there was no result.");
+                    answer.setBody(exchange.getIn().getBody());
+                } else {
+                    if (outputHeader != null) {
+                        // set the result as header for insert
+                        LOG.trace("Setting result as header [{}]: {}", outputHeader, result);
+                        answer.setHeader(outputHeader, result);
+                    } else {
+                        // set the result as body for insert
+                        LOG.trace("Setting result as body: {}", result);
+                        answer.setBody(result);
+                        answer.setHeader(MyBatisConstants.MYBATIS_RESULT, result);
+                    }
+                }
+            } else {
+                if (outputHeader != null) {
+                    LOG.trace("Setting result as header [{}]: {}", outputHeader, result);
+                    answer.setHeader(outputHeader, result);
+                } else {
+                    // set the result as body for insert
+                    LOG.trace("Setting result as body: {}", result);
+                    answer.setBody(result);
+                    answer.setHeader(MyBatisConstants.MYBATIS_RESULT, result);
+                }
+            }
+
         } else {
-            Message msg = exchange.getIn();
-            msg.setHeader(MyBatisConstants.MYBATIS_RESULT, result);
-            msg.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, statement);
+            final String headerName = (outputHeader != null) ? outputHeader : MyBatisConstants.MYBATIS_RESULT;
+            answer.setHeader(headerName, result);
+        }
+        answer.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, statement);
+    }
+
+    @Override
+    public MyBatisEndpoint getEndpoint() {
+        return (MyBatisEndpoint) super.getEndpoint();
+    }
+
+    private Object getInput(final Exchange exchange) {
+        final String inputHeader = getEndpoint().getInputHeader();
+        if (inputHeader != null) {
+            return exchange.getIn().getHeader(inputHeader);
+        } else {
+            return exchange.getIn().getBody();
         }
     }
 

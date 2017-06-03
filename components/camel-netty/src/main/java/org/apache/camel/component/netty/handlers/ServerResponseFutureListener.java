@@ -61,6 +61,11 @@ public class ServerResponseFutureListener implements ChannelFutureListener {
         } else {
             close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
         }
+        
+        // check the setting on the exchange property
+        if (close == null) {
+            close = exchange.getProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+        }
 
         // should we disconnect, the header can override the configuration
         boolean disconnect = consumer.getConfiguration().isDisconnect();

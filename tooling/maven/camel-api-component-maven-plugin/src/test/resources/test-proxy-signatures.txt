@@ -1,0 +1,9 @@
+public String sayHi();
+public String sayHi(boolean hello);
+public String sayHi(final String name);
+public final String greetMe(final String name);
+public final String greetUs(final String name1, String name2);
+public final String greetAll(String[] names);
+public final String greetAll(java.util.List<String> names);
+public final String[] greetTimes(String name, int times);
+public final String greetInnerChild(org.apache.camel.component.test.TestProxy.InnerChild child);

@@ -56,14 +56,16 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         }
         // to keep track of open sockets
         producer.getAllChannels().add(channelStateEvent.getChannel());
+        // make sure the event can be processed by other handlers
+        super.channelOpen(ctx, channelStateEvent);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Exception caught at Channel: " + ctx.getChannel(), exceptionEvent.getCause());
-
         }
+         
         if (exceptionHandled) {
             // ignore subsequent exceptions being thrown
             return;
@@ -81,8 +83,13 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
 
         // the state may not be set
         if (exchange != null && callback != null) {
-            // set the cause on the exchange
-            exchange.setException(cause);
+            Throwable initialCause = exchange.getException();
+            if (initialCause != null && initialCause.getCause() == null) {
+                initialCause.initCause(cause);
+            } else {
+                // set the cause on the exchange
+                exchange.setException(cause);
+            }
 
             // close channel in case an exception was thrown
             NettyHelper.close(exceptionEvent.getChannel());
@@ -107,7 +114,13 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         // to keep track of open sockets
         producer.getAllChannels().remove(ctx.getChannel());
 
-        if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
+        // this channel is maybe closing graceful and the exchange is already done
+        // and if so we should not trigger an exception
+        boolean doneUoW = exchange.getUnitOfWork() == null;
+
+        if (producer.getConfiguration().isSync() && !doneUoW && !messageReceived && !exceptionHandled) {
+            // To avoid call the callback.done twice 
+            exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
             // and could not return a response. We should count down to stop waiting for a response
             if (LOG.isDebugEnabled()) {
@@ -117,6 +130,9 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             // signal callback
             callback.done(false);
         }
+
+        // make sure the event can be processed by other handlers
+        super.channelClosed(ctx, e);
     }
 
     @Override
@@ -127,15 +143,18 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             LOG.trace("Message received: {}", messageEvent);
         }
 
-        if (producer.getConfiguration().getRequestTimeout() > 0) {
-            ChannelHandler handler = ctx.getPipeline().get("timeout");
-            if (handler != null) {
-                LOG.trace("Removing timeout channel as we received message");
-                ctx.getPipeline().remove(handler);
-            }
+        ChannelHandler handler = ctx.getPipeline().get("timeout");
+        if (handler != null) {
+            LOG.trace("Removing timeout channel as we received message");
+            ctx.getPipeline().remove(handler);
         }
-
+        
         Exchange exchange = getExchange(ctx);
+        if (exchange == null) {
+            // we just ignore the received message as the channel is closed
+            return;
+        }     
+
         AsyncCallback callback = getAsyncCallback(ctx);
 
         Message message;
@@ -162,7 +181,12 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             } else {
                 close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
             }
-
+            
+            // check the setting on the exchange property
+            if (close == null) {
+                close = exchange.getProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+            }
+            
             // should we disconnect, the header can override the configuration
             boolean disconnect = producer.getConfiguration().isDisconnect();
             if (close != null) {
@@ -211,7 +235,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         }
     }
 
-    private Exchange getExchange(ChannelHandlerContext ctx) {
+    protected Exchange getExchange(ChannelHandlerContext ctx) {
         NettyCamelState state = producer.getState(ctx.getChannel());
         return state != null ? state.getExchange() : null;
     }

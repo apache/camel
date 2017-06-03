@@ -25,16 +25,18 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.AbstractCamelThreadPoolFactoryBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * A {@link org.springframework.beans.factory.FactoryBean} which instantiates {@link java.util.concurrent.ExecutorService} objects
+ * Configuration of thread pools
  *
  * @version 
  */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "threadPool")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelThreadPoolFactoryBean extends AbstractCamelThreadPoolFactoryBean implements FactoryBean<ExecutorService>, ApplicationContextAware {

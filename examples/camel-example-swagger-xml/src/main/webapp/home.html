@@ -1,0 +1,100 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Apache Camel Swagger Example</title>
+    <link rel="stylesheet" href="css/foundation.min.css"/>
+    <script src="js/vendor/modernizr.js"></script>
+</head>
+
+<body>
+<div class="row">
+    <div class="large-12 columns">
+        <h2>Apache Camel Example using Swagger</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="large-12 columns">
+        This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL in XML,
+        and using camel-swagger-java to expose the REST service APIs.
+
+        <br/>
+
+        This example is implemented in XML DSL.
+
+        <br/>
+        The XML DSL the routes are define in XML code, in the <tt>src/main/resources/camel-config-xml.xml</tt> file.
+
+        <p/>
+        There is a <i>user</i> REST service that supports the following operations
+        <ul>
+            <li>GET /user/{id} - to view a user with the given id</li>
+            <li>GET /user/final - to view all users</li>
+            <li>PUT /user - to update/create an user</li>
+        </ul>
+
+        The view operations are HTTP GET, and update is using HTTP PUT.
+
+        From a web browser you can access the first two services using the following links
+
+        <ul>
+            <li><a href="rest/user/123">user/123</a> - to view the user with id 123</li>
+            <li><a href="rest/user/findAll">user/findAll</a> - to list all users</li>
+        </ul>
+
+        From the command shell you can use curl to access the service as shown below:
+<pre>
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-swagger-xml/rest/user/123
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-swagger-xml/rest/user/findAll
+    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-swagger-xml/rest/user
+</pre>
+
+        Notice when trying to get user with id 789 then there is a built-in delay of 0.5-2 seconds, to simulate some
+        slowness in the service.
+
+        <p/>
+        This example offers an API browser using Swagger which is accessible from the following link
+        <ul>
+            <li><a href="rest/api-docs">api-docs</a> - list all CamelContexts in the JVM that may have REST services</li>
+            <li><a href="rest/api-docs/myCamel">api-docs/myCamel</a> - myCamel - overview of the apis from the REST services</li>
+            <li><a href="rest/api-docs/myCamel/user">api-docs/myCamel/user</a> - myCamel - api of the user REST service</li>
+        </ul>
+
+        <p/>
+        To use the swagger ui, follow this link. Replace the URL value with this one to access the REST local resources http://localhost:8080/camel-example-swagger-xml/rest/api-docs/myCamel
+        <ul>
+            <li><a href="index.html">swagger</a> - swagger ui page</li>
+        </ul>
+
+        <p/>
+        If you hit any problems please let us know on the
+        <a href="http://camel.apache.org/discussion-forums.html">Camel Forums</a>
+        <br/>
+        <br/>
+        Please help us make Apache Camel better - we appreciate any feedback you may
+        have. Enjoy!
+        <br/>
+        <br/>
+        The Camel riders!
+    </div>
+</div>
+</body>
+
+</html>

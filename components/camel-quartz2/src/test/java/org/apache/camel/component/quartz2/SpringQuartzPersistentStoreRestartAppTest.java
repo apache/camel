@@ -19,6 +19,7 @@ package org.apache.camel.component.quartz2;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.TestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -74,8 +75,7 @@ public class SpringQuartzPersistentStoreRestartAppTest extends TestSupport {
         // we're done so let's properly close the application contexts, but close
         // the second app before the first one so that the quartz scheduler running
         // inside it can be properly shutdown
-        app2.close();
-        app.close();
+        IOHelper.close(app2, app);
     }
 
 }

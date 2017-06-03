@@ -23,6 +23,12 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedBacklogDebuggerMBean {
 
+    @ManagedAttribute(description = "Camel ID")
+    String getCamelId();
+
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
     @ManagedAttribute(description = "Logging Level")
     String getLoggingLevel();
 
@@ -53,11 +59,23 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Resume running from the suspended breakpoint at the given node id")
     void resumeBreakpoint(String nodeId);
 
-    @ManagedOperation(description = "Updates the message body on the suspended breakpoint at the given node id")
-    void setMessageBodyOnBreakpoint(String nodeId, String body);
+    @ManagedOperation(description = "Updates the message body (uses same type as old body) on the suspended breakpoint at the given node id")
+    void setMessageBodyOnBreakpoint(String nodeId, Object body);
 
-    @ManagedOperation(description = "Updates/adds the message header on the suspended breakpoint at the given node id")
-    void setMessageHeaderOnBreakpoint(String nodeId, String headerName, String value);
+    @ManagedOperation(description = "Updates the message body (with a new type) on the suspended breakpoint at the given node id")
+    void setMessageBodyOnBreakpoint(String nodeId, Object body, String type);
+
+    @ManagedOperation(description = "Removes the message body on the suspended breakpoint at the given node id")
+    void removeMessageBodyOnBreakpoint(String nodeId);
+
+    @ManagedOperation(description = "Updates/adds the message header (uses same type as old header value) on the suspended breakpoint at the given node id")
+    void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value);
+
+    @ManagedOperation(description = "Removes the message header on the suspended breakpoint at the given node id")
+    void removeMessageHeaderOnBreakpoint(String nodeId, String headerName);
+
+    @ManagedOperation(description = "Updates/adds the message header (with a new type) on the suspended breakpoint at the given node id")
+    void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, String type);
 
     @ManagedOperation(description = "Resume running any suspended breakpoints, and exits step mode")
     void resumeAll();
@@ -88,7 +106,13 @@ public interface ManagedBacklogDebuggerMBean {
 
     @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
     void setBodyMaxChars(int bodyMaxChars);
-
+    
+    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
+    long getFallbackTimeout();
+    
+    @ManagedAttribute(description = "Fallback Timeout in seconds when block the message processing in Camel.")
+    void setFallbackTimeout(long fallbackTimeout);
+    
     @ManagedAttribute(description = "Whether to include stream based message body in the trace message.")
     boolean isBodyIncludeStreams();
 
@@ -109,5 +133,8 @@ public interface ManagedBacklogDebuggerMBean {
 
     @ManagedOperation(description = "Resets the debug counter")
     void resetDebugCounter();
+
+    @ManagedOperation(description = "Used for validating if a given predicate is valid or not")
+    String validateConditionalBreakpoint(String language, String predicate);
 
 }

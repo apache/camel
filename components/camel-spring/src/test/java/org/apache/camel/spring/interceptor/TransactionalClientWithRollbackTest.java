@@ -83,12 +83,12 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
 
                 // must setup policy for each route
                 from("direct:okay").policy(required)
-                        .setBody(constant("Tiger in Action")).beanRef("bookService")
-                        .setBody(constant("Elephant in Action")).beanRef("bookService");
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 // must setup policy for each route
                 from("direct:fail").policy(required)
-                        .setBody(constant("Tiger in Action")).beanRef("bookService")
+                        .setBody(constant("Tiger in Action")).bean("bookService")
                         // force a rollback
                         .rollback();
             }

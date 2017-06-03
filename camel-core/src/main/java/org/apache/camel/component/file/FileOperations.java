@@ -27,8 +27,12 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -64,18 +68,67 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
+        boolean renamed = false;
         File file = new File(from);
         File target = new File(to);
         try {
-            return FileUtil.renameFile(file, target, endpoint.isCopyAndDeleteOnRenameFail());
+            if (endpoint.isRenameUsingCopy()) {
+                renamed = FileUtil.renameFileUsingCopy(file, target);
+            } else {
+                renamed = FileUtil.renameFile(file, target, endpoint.isCopyAndDeleteOnRenameFail());
+            }
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Error renaming file from " + from + " to " + to, e);
         }
+        
+        return renamed;
     }
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         File file = new File(name);
         return file.exists();
+    }
+
+    protected boolean buildDirectory(File dir, Set<PosixFilePermission> permissions, boolean absolute) {
+        if (dir.exists()) {
+            return true;
+        }
+
+        if (permissions == null || permissions.isEmpty()) {
+            return dir.mkdirs();
+        }
+
+        // create directory one part of a time and set permissions
+        try {
+            String[] parts = dir.getPath().split("\\" + File.separatorChar);
+
+            File base;
+            // reusing absolute flag to handle relative and absolute paths
+            if (absolute) {
+                base = new File("");
+            } else {
+                base = new File(".");
+            }
+
+            for (String part : parts) {
+                File subDir = new File(base, part);
+                if (!subDir.exists()) {
+                    if (subDir.mkdir()) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Setting chmod: {} on directory: {} ", PosixFilePermissions.toString(permissions), subDir);
+                        }
+                        Files.setPosixFilePermissions(subDir.toPath(), permissions);
+                    } else {
+                        return false;
+                    }
+                }
+                base = new File(base, subDir.getName());
+            }
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Error setting chmod on directory: " + dir, e);
+        }
+
+        return true;
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
@@ -84,7 +137,7 @@ public class FileOperations implements GenericFileOperations<File> {
         // always create endpoint defined directory
         if (endpoint.isAutoCreate() && !endpoint.getFile().exists()) {
             LOG.trace("Building starting directory: {}", endpoint.getFile());
-            endpoint.getFile().mkdirs();
+            buildDirectory(endpoint.getFile(), endpoint.getDirectoryPermissions(), absolute);
         }
 
         if (ObjectHelper.isEmpty(directory)) {
@@ -120,10 +173,8 @@ public class FileOperations implements GenericFileOperations<File> {
                 // the directory already exists
                 return true;
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Building directory: {}", path);
-                }
-                return path.mkdirs();
+                LOG.trace("Building directory: {}", path);
+                return buildDirectory(path, endpoint.getDirectoryPermissions(), absolute);
             }
         }
     }
@@ -165,7 +216,7 @@ public class FileOperations implements GenericFileOperations<File> {
         ObjectHelper.notNull(endpoint, "endpoint");
 
         File file = new File(fileName);
-        
+
         // if an existing file already exists what should we do?
         if (file.exists()) {
             if (endpoint.getFileExist() == GenericFileExist.Ignore) {
@@ -212,10 +263,10 @@ public class FileOperations implements GenericFileOperations<File> {
                 Object body = exchange.getIn().getBody();
                 if (body instanceof WrappedFile) {
                     body = ((WrappedFile<?>) body).getFile();
-                    fileBased = true;
                 }
                 if (body instanceof File) {
                     source = (File) body;
+                    fileBased = true;
                 }
             }
 
@@ -231,6 +282,16 @@ public class FileOperations implements GenericFileOperations<File> {
                     if (renamed) {
                         // try to keep last modified timestamp if configured to do so
                         keepLastModified(exchange, file);
+                        // set permissions if the chmod option was set
+                        if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
+                            Set<PosixFilePermission> permissions = endpoint.getPermissions();
+                            if (!permissions.isEmpty()) {
+                                if (LOG.isTraceEnabled()) {
+                                    LOG.trace("Setting chmod: {} on file: {} ", PosixFilePermissions.toString(permissions), file);
+                                }
+                                Files.setPosixFilePermissions(file.toPath(), permissions);
+                            }
+                        }
                         // clear header as we have renamed the file
                         exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, null);
                         // return as the operation is complete, we just renamed the local work file
@@ -242,13 +303,23 @@ public class FileOperations implements GenericFileOperations<File> {
                     writeFileByFile(source, file);
                     // try to keep last modified timestamp if configured to do so
                     keepLastModified(exchange, file);
+                    // set permissions if the chmod option was set
+                    if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
+                        Set<PosixFilePermission> permissions = endpoint.getPermissions();
+                        if (!permissions.isEmpty()) {
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Setting chmod: {} on file: {} ", PosixFilePermissions.toString(permissions), file);
+                            }
+                            Files.setPosixFilePermissions(file.toPath(), permissions);
+                        }
+                    }
                     return true;
                 }
             }
 
             if (charset != null) {
                 // charset configured so we must use a reader so we can write with encoding
-                Reader in = exchange.getIn().getBody(Reader.class);
+                Reader in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange, exchange.getIn().getBody());
                 if (in == null) {
                     // okay no direct reader conversion, so use an input stream (which a lot can be converted as)
                     InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
@@ -262,8 +333,20 @@ public class FileOperations implements GenericFileOperations<File> {
                 InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
                 writeFileByStream(in, file);
             }
+
             // try to keep last modified timestamp if configured to do so
             keepLastModified(exchange, file);
+            // set permissions if the chmod option was set
+            if (ObjectHelper.isNotEmpty(endpoint.getChmod())) {
+                Set<PosixFilePermission> permissions = endpoint.getPermissions();
+                if (!permissions.isEmpty()) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Setting chmod: {} on file: {} ", PosixFilePermissions.toString(permissions), file);
+                    }
+                    Files.setPosixFilePermissions(file.toPath(), permissions);
+                }
+            }
+
             return true;
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);

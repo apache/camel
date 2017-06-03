@@ -42,9 +42,12 @@ public class CouchDbChangesetTracker implements Runnable {
     }
 
     void initChanges() {
-        CouchDbInfo dbInfo = couchClient.context().info();
-        String since = dbInfo.getUpdateSeq(); // get latest update seq
-        LOG.debug("Last sequence [{}]", since);
+        String since = endpoint.getSince();
+        if (since == null) {
+            CouchDbInfo dbInfo = couchClient.context().info();
+            since = dbInfo.getUpdateSeq(); // get latest update seq
+            LOG.debug("Last sequence [{}]", since);
+        }
         changes = couchClient.changes().style(endpoint.getStyle()).includeDocs(true)
                 .since(since).heartBeat(endpoint.getHeartbeat()).continuousChanges();
     }

@@ -25,7 +25,13 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,6 +71,27 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
         sendTimeOutMessage("cxf://bean:springEndpoint");
     }
     
+    @Test
+    public void testInvokingJaxWsServerWithCxfEndpointWithConfigurer() throws Exception {
+        Exchange reply = sendJaxWsMessage("cxf://bean:springEndpoint?cxfEndpointConfigurer=#myConfigurer");
+        // we don't expect the exception here
+        assertFalse("We don't expect the exception here", reply.isFailed());
+        assertEquals("Get a wrong response", "Greet Hello World!", reply.getOut().getBody(String.class));
+    }
+    
+    @Test
+    public void testInvokingFromCamelRoute() throws Exception {
+        sendTimeOutMessage("direct:start");
+    }
+    
+    @Test
+    public void testDoCatchWithTimeOutException() throws Exception {
+        MockEndpoint error = context.getEndpoint("mock:error", MockEndpoint.class);
+        error.expectedMessageCount(1);
+        sendTimeOutMessage("direct:doCatch");
+        error.assertIsSatisfied();
+    }
+    
     protected void sendTimeOutMessage(String endpointUri) throws Exception {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
@@ -88,6 +115,31 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         // we can put the http conduit configuration here
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/cxfConduitTimeOutContext.xml");
+    }
+    
+    public static class MyCxfEndpointConfigurer implements CxfEndpointConfigurer {
+
+        @Override
+        public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+            // Do nothing here
+        }
+
+        @Override
+        public void configureClient(Client client) {
+            // reset the timeout option to override the spring configuration one
+            HTTPConduit conduit = (HTTPConduit) client.getConduit();
+            HTTPClientPolicy policy = new HTTPClientPolicy();
+            policy.setReceiveTimeout(60000);
+            conduit.setClient(policy);
+            
+        }
+
+        @Override
+        public void configureServer(Server server) {
+            // Do nothing here
+            
+        }
+        
     }
 
 }

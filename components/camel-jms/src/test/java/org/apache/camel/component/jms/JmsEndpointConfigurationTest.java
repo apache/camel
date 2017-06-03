@@ -95,14 +95,14 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
             resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException refe) {
-            assertEquals("Failed to resolve endpoint: jms://topic:Foo.Bar?username=James due to: The JmsComponent's username or password is null", refe.getMessage());
+            // expected
         }
 
         try {
             resolveMandatoryEndpoint("jms:topic:Foo.Bar?password=ABC");
             fail("Expect the exception here");
         } catch (ResolveEndpointFailedException refe) {
-            assertEquals("Failed to resolve endpoint: jms://topic:Foo.Bar?password=ABC due to: The JmsComponent's username or password is null", refe.getMessage());
+            // expected
         }
     }
 
@@ -266,7 +266,8 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getCamelContext());
         assertNull(endpoint.getDefaultTaskExecutorType());
         assertNull(endpoint.getMessageListenerContainerFactory());
-        assertEquals(-1, endpoint.getRecoveryInterval());
+        assertEquals(5000, endpoint.getRecoveryInterval());
+        assertEquals(1000, endpoint.getReceiveTimeout());
         assertEquals("JmsConsumer[Foo]", endpoint.getThreadName());
         assertEquals(-1, endpoint.getTimeToLive());
         assertEquals(-1, endpoint.getTransactionTimeout());
@@ -274,7 +275,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getAcknowledgementModeName());
         assertEquals(-1, endpoint.getCacheLevel());
         assertNull(endpoint.getCacheLevelName());
-        assertNotNull(endpoint.getCamelId());
+        assertNotNull(endpoint.getCamelContext().getName());
         assertNull(endpoint.getClientId());
         assertNotNull(endpoint.getConnectionFactory());
         assertEquals(1, endpoint.getConcurrentConsumers());
@@ -309,7 +310,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(1000L, endpoint.getRequestTimeoutCheckerInterval());
         assertEquals(0, endpoint.getRunningMessageListeners());
         assertNull(endpoint.getSelector());
-        assertEquals(ServiceStatus.Started.toString(), endpoint.getState());
+        assertEquals(ServiceStatus.Started, endpoint.getStatus());
         assertEquals(-1, endpoint.getTimeToLive());
         assertNull(endpoint.getTransactionName());
         assertEquals(-1, endpoint.getTransactionTimeout());
@@ -319,6 +320,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
 
         assertFalse(endpoint.isAcceptMessagesWhileStopping());
+        assertFalse(endpoint.isAllowReplyManagerQuickStop());
         assertFalse(endpoint.isAlwaysCopyMessage());
         assertTrue(endpoint.isAllowNullBody());
         assertFalse(endpoint.isAsyncConsumer());
@@ -361,6 +363,9 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         endpoint.setAcceptMessagesWhileStopping(true);
         assertTrue(endpoint.isAcceptMessagesWhileStopping());
+        
+        endpoint.setAllowReplyManagerQuickStop(true);
+        assertTrue(endpoint.isAllowReplyManagerQuickStop());
 
         endpoint.setAcknowledgementMode(2);
         assertEquals(2, endpoint.getAcknowledgementMode());

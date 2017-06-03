@@ -25,22 +25,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.DynamicRouter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;dynamicRouter/&gt; element
+ * Routes messages based on dynamic rules
  */
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "dynamicRouter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode {
 
     public static final String DEFAULT_DELIMITER = ",";
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;
+    @XmlAttribute
+    private Integer cacheSize; 
 
     public DynamicRouterDefinition() {
     }
@@ -60,11 +65,6 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     @Override
-    public String getShortName() {
-        return "dynamicRouter";
-    }
-
-    @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
     }
@@ -78,7 +78,22 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
         if (getIgnoreInvalidEndpoints() != null) {
             dynamicRouter.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
         }
+        if (getCacheSize() != null) {
+            dynamicRouter.setCacheSize(getCacheSize());
+        }
         return dynamicRouter;
+    }
+
+    /**
+     * Expression to call that returns the endpoint(s) to route to in the dynamic routing.
+     * <p/>
+     * <b>Important:</b> The expression will be called in a while loop fashion, until the expression returns <tt>null</tt>
+     * which means the dynamic router is finished.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
     }
 
     public void setUriDelimiter(String uriDelimiter) {
@@ -99,6 +114,14 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -125,6 +148,18 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
      */
     public DynamicRouterDefinition<Type> uriDelimiter(String uriDelimiter) {
         setUriDelimiter(uriDelimiter);
+        return this;
+    }
+    
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * to cache and reuse producers when using this recipient list, when uris are reused.
+     *
+     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public DynamicRouterDefinition<Type> cacheSize(int cacheSize) {
+        setCacheSize(cacheSize);
         return this;
     }
 

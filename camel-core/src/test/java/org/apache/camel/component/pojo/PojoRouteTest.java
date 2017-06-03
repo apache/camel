@@ -17,13 +17,10 @@
 package org.apache.camel.component.pojo;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
+import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.jndi.JndiContext;
 
 /**
  * @version 
@@ -31,20 +28,13 @@ import org.apache.camel.util.jndi.JndiContext;
 public class PojoRouteTest extends TestCase {
 
     public void testPojoRoutes() throws Exception {
-        // START SNIPPET: register
-        // lets populate the context with the services we need
-        // note that we could just use a spring.xml file to avoid this step
-        JndiContext context = new JndiContext();
-        context.bind("bye", new SayService("Good Bye!"));
-
-        CamelContext camelContext = new DefaultCamelContext(context);
-        // END SNIPPET: register
+        CamelContext camelContext = new DefaultCamelContext();
 
         // START SNIPPET: route
         // lets add simple route
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:hello").to("bean:bye");
+                from("direct:hello").transform().constant("Good Bye!");
             }
         });
         // END SNIPPET: route
@@ -52,8 +42,7 @@ public class PojoRouteTest extends TestCase {
         camelContext.start();
 
         // START SNIPPET: invoke
-        Endpoint endpoint = camelContext.getEndpoint("direct:hello");
-        ISay proxy = ProxyHelper.createProxy(endpoint, ISay.class);
+        ISay proxy = new ProxyBuilder(camelContext).endpoint("direct:hello").build(ISay.class);
         String rc = proxy.say();
         assertEquals("Good Bye!", rc);
         // END SNIPPET: invoke

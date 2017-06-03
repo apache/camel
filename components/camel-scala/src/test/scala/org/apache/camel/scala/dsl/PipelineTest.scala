@@ -38,6 +38,7 @@ class PipelineTest extends ScalaTestSupport {
 
     out.setHeader("test", "testValue")
     out.addAttachment("test1.xml", new DataHandler(new FileDataSource("pom.xml")))
+    out.getAttachmentObject("test1.xml").addHeader("attachmentHeader", "testvalue")
   }
 
   val removeHeaderAndAttachment = (exchange: Exchange) => {
@@ -45,6 +46,7 @@ class PipelineTest extends ScalaTestSupport {
     out.copyFrom(exchange.getIn)
 
     assertNotNull("The test attachment should not be null", out.getAttachment("test1.xml"))
+    assertNotNull("The test attachement header should not be null", out.getAttachmentObject("test1.xml").getHeader("attachmentHeader"))
     assertNotNull("The test header should not be null", out.getHeader("test"))
     out.removeAttachment("test1.xml")
     out.removeHeader("test") : Unit

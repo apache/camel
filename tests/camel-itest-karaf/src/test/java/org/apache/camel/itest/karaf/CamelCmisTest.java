@@ -18,23 +18,17 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
+@RunWith(PaxExam.class)
+public class CamelCmisTest extends BaseKarafTest {
 
-@RunWith(JUnit4TestRunner.class)
-public class CamelCmisTest extends AbstractFeatureTest {
-    public static final String COMPONENT = extractName(CamelCxfTest.class);
+    public static final String COMPONENT = extractName(CamelCmisTest.class);
 
     @Test
     public void test() throws Exception {
         testComponent(COMPONENT);
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
 
 }

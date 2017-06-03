@@ -17,10 +17,12 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +34,20 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * @version 
  */
-public class JpaComponent extends DefaultComponent {
+public class JpaComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(JpaComponent.class);
+
+    private ExecutorService pollingConsumerExecutorService;
+
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
+    @Metadata(defaultValue = "true")
+    private boolean joinTransaction = true;
+    private boolean sharedEntityManager;
+
+    public JpaComponent() {
+        super(JpaEndpoint.class);
+    }
 
     // Properties
     //-------------------------------------------------------------------------
@@ -43,6 +55,9 @@ public class JpaComponent extends DefaultComponent {
         return entityManagerFactory;
     }
 
+    /**
+     * To use the {@link EntityManagerFactory}. This is strongly recommended to configure.
+     */
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -51,8 +66,45 @@ public class JpaComponent extends DefaultComponent {
         return transactionManager;
     }
 
+    /**
+     * To use the {@link PlatformTransactionManager} for managing transactions.
+     */
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public boolean isJoinTransaction() {
+        return joinTransaction;
+    }
+
+    /**
+     * The camel-jpa component will join transaction by default.
+     * You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction
+     * doesn't work with your JPA provider. This option can also be set globally on the JpaComponent,
+     * instead of having to set it on all endpoints.
+     */
+    public void setJoinTransaction(boolean joinTransaction) {
+        this.joinTransaction = joinTransaction;
+    }
+
+    public boolean isSharedEntityManager() {
+        return sharedEntityManager;
+    }
+
+    /**
+     * Whether to use Spring's SharedEntityManager for the consumer/producer.
+     * Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager.
+     */
+    public void setSharedEntityManager(boolean sharedEntityManager) {
+        this.sharedEntityManager = sharedEntityManager;
+    }
+
+    synchronized ExecutorService getOrCreatePollingConsumerExecutorService() {
+        if (pollingConsumerExecutorService == null) {
+            LOG.debug("Creating thread pool for JpaPollingConsumer to support polling using timeout");
+            pollingConsumerExecutorService = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "JpaPollingConsumer");
+        }
+        return pollingConsumerExecutorService;
     }
 
     // Implementation methods
@@ -61,6 +113,8 @@ public class JpaComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String path, Map<String, Object> options) throws Exception {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
+        endpoint.setJoinTransaction(isJoinTransaction());
+        endpoint.setSharedEntityManager(isSharedEntityManager());
 
         // lets interpret the next string as a class
         if (ObjectHelper.isNotEmpty(path)) {
@@ -71,7 +125,6 @@ public class JpaComponent extends DefaultComponent {
                 endpoint.setEntityType(type);
             }
         }
-
         return endpoint;
     }
 
@@ -131,6 +184,16 @@ public class JpaComponent extends DefaultComponent {
         }
         if (transactionManager == null) {
             LOG.warn("No TransactionManager has been configured on this JpaComponent. Each JpaEndpoint will auto create their own JpaTransactionManager.");
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (pollingConsumerExecutorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdown(pollingConsumerExecutorService);
+            pollingConsumerExecutorService = null;
         }
     }
 }

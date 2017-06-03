@@ -34,13 +34,6 @@ public class ProduceTest extends SpringRunWithTestSupport {
     protected MyListener producer;
 
     @Test
-    public void testInvokeService() throws Exception {
-        // lets send a message
-        String actual = producer.sayHello("James");
-        assertEquals("response", "Hello James", actual);
-    }
-    
-    @Test
     public void testInvokeServiceWithMessageHeader() throws Exception {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("greeter", "Nihao ");

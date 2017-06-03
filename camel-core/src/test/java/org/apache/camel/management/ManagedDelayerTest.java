@@ -42,10 +42,10 @@ public class ManagedDelayerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName delayerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mydelayer\"");
+        ObjectName delayerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mydelayer\"");
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(1, completed.longValue());
 

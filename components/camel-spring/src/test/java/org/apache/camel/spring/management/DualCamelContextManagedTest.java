@@ -60,7 +60,7 @@ public class DualCamelContextManagedTest extends SpringTestSupport {
         assertTrue("Route 2 is missing", on2.getCanonicalName().contains("route2"));
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
-        assertTrue("Should be at least 7 endpoints, was: " + set.size(), set.size() >= 7);
+        assertTrue("Should be at least 4 endpoints, was: " + set.size(), set.size() >= 4);
 
         for (ObjectName on : set) {
             String name = on.getCanonicalName();

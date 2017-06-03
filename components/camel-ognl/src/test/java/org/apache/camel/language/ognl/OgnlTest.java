@@ -36,6 +36,18 @@ public class OgnlTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testClassMethodExpression() throws Exception {
+        try {
+            assertExpression("@org.apache.camel.language.ognl.Animal1@getClassName()", "Animal");
+            fail("Expect exception here.");
+        } catch (Exception ex) {
+            assertTrue("We should get the ClassNotFoundException", ex.getMessage().indexOf("ClassNotFoundException") > 0);
+        }
+        // setup the class resolver to load the right class for us
+        exchange.getContext().setClassResolver(new MyClassResolver(context));
+        assertExpression("@org.apache.camel.language.ognl.Animal1@getClassName()", "Animal");
+    }
+    @Test
     public void testGetOutFalseKeepsNullOutMessage() throws Exception {
         assertExpression("exchange.hasOut()", false);
         assertFalse(exchange.hasOut());

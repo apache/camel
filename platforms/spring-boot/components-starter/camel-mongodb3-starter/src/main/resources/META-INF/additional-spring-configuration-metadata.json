@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.mongodb3.enabled",
+      "description": "Enable mongodb3 component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

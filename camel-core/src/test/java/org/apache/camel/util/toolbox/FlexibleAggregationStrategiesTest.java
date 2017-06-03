@@ -17,8 +17,11 @@
 package org.apache.camel.util.toolbox;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +29,8 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.toolbox.FlexibleAggregationStrategy.CompletionAwareMixin;
@@ -54,7 +59,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        List<String> resultList = (List<String>) getMockEndpoint("mock:result1").getReceivedExchanges()
+        List<String> resultList = getMockEndpoint("mock:result1").getReceivedExchanges()
                 .get(0).getIn().getBody(List.class);
         
         for (int i = 0; i < 5; i++) {
@@ -75,7 +80,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        List<String> resultList = (List<String>) getMockEndpoint("mock:result1").getReceivedExchanges()
+        List<String> resultList = getMockEndpoint("mock:result1").getReceivedExchanges()
                 .get(0).getIn().getBody(List.class);
         for (int i = 0; i < 3; i++) {
             assertEquals("AGGREGATE" + (i + 1), resultList.get(i));
@@ -85,7 +90,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
     @Test @SuppressWarnings("unchecked")
     public void testFlexibleAggregationStrategyStoreInPropertyHashSet() throws Exception {
         getMockEndpoint("mock:result2").expectedMessageCount(1);
-        getMockEndpoint("mock:result2").message(0).property("AggregationResult").isInstanceOf(HashSet.class);
+        getMockEndpoint("mock:result2").message(0).exchangeProperty("AggregationResult").isInstanceOf(HashSet.class);
         
         template.sendBodyAndHeader("direct:start2", "ignored body", "input", "AGGREGATE1");
         template.sendBodyAndHeader("direct:start2", "ignored body", "input", "DISCARD");
@@ -95,7 +100,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        HashSet<String> resultSet = (HashSet<String>) getMockEndpoint("mock:result2").getReceivedExchanges().get(0)
+        HashSet<String> resultSet = getMockEndpoint("mock:result2").getReceivedExchanges().get(0)
                 .getProperty("AggregationResult", HashSet.class);
         assertEquals(3, resultSet.size());
         assertTrue(resultSet.contains("AGGREGATE1") && resultSet.contains("AGGREGATE2") && resultSet.contains("AGGREGATE3"));
@@ -168,17 +173,17 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
     public void testFlexibleAggregationStrategyTimeoutCompletionMixins() throws Exception {
         getMockEndpoint("mock:result.timeoutAndCompletionAware").expectedMessageCount(2);
         getMockEndpoint("mock:result.timeoutAndCompletionAware").message(0).body().isEqualTo("AGGREGATE1");
-        getMockEndpoint("mock:result.timeoutAndCompletionAware").message(0).property("Timeout").isEqualTo(true);
+        getMockEndpoint("mock:result.timeoutAndCompletionAware").message(0).exchangeProperty("Timeout").isEqualTo(true);
         getMockEndpoint("mock:result.timeoutAndCompletionAware").message(1).body().isEqualTo("AGGREGATE3");
 
         template.sendBody("direct:start.timeoutAndCompletionAware", "AGGREGATE1");
         
-        assertTrue(timeoutLatch.await(1200, TimeUnit.MILLISECONDS));
+        assertTrue(timeoutLatch.await(2500, TimeUnit.MILLISECONDS));
         
         template.sendBody("direct:start.timeoutAndCompletionAware", "AGGREGATE2");
         template.sendBody("direct:start.timeoutAndCompletionAware", "AGGREGATE3");
 
-        assertTrue(completionLatch.await(1200, TimeUnit.MILLISECONDS));
+        assertTrue(completionLatch.await(2500, TimeUnit.MILLISECONDS));
 
         getMockEndpoint("mock:result.timeoutAndCompletionAware").getReceivedExchanges();
         assertMockEndpointsSatisfied();
@@ -195,12 +200,35 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        ArrayList<Node> list = (ArrayList<Node>) getMockEndpoint("mock:result.xpath1").getReceivedExchanges().get(0).getIn().getBody(ArrayList.class);
+        ArrayList<Node> list = getMockEndpoint("mock:result.xpath1").getReceivedExchanges().get(0).getIn().getBody(ArrayList.class);
         assertEquals(2, list.size());
         assertEquals("ok", list.get(0).getTextContent());
         assertEquals("error", list.get(1).getTextContent());
     }
-    
+
+    @Test
+    public void testLinkedList() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).and().whenExactlyFailed(0).create();
+
+        template.sendBody("direct:linkedlist", Arrays.asList("FIRST", "SECOND"));
+
+        assertTrue(notify.matches(10, TimeUnit.SECONDS));
+    }
+
+    @Test
+    public void testHashSet() throws Exception {
+        HashSet<String> r = new HashSet<>();
+        r.add("FIRST");
+        r.add("SECOND");
+
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).and().whenExactlyFailed(0).create();
+
+        Set result = template.requestBody("direct:hashset", Arrays.asList("FIRST", "SECOND"), Set.class);
+
+        assertTrue(notify.matches(10, TimeUnit.SECONDS));
+        assertEquals(r, result);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -274,7 +302,28 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
                             .accumulateInCollection(ArrayList.class))
                         .constant(true).completionSize(3)
                     .to("mock:result.xpath1");
-                
+
+                from("direct:linkedlist")
+                    .log(LoggingLevel.INFO, "Before the first split the body is ${body} and has class ${body.getClass()}")
+                        .split(body(), AggregationStrategies.flexible().pick(body()).accumulateInCollection(LinkedList.class))
+                    .log(LoggingLevel.INFO, "During the first split the body is ${body} and has class ${body.getClass()}")
+                    .end()
+                    .log(LoggingLevel.INFO, "Before the second split the body is ${body} and has class ${body.getClass()}")
+                        .split(body(), AggregationStrategies.flexible().pick(body()).accumulateInCollection(LinkedList.class))
+                    .log(LoggingLevel.INFO, "During the second split the body is ${body} and has class ${body.getClass()}")
+                    .end()
+                    .log(LoggingLevel.INFO, "After the second split the body is ${body} and has class ${body.getClass()}");
+
+                from("direct:hashset")
+                    .log(LoggingLevel.INFO, "Before the first split the body is ${body} and has class ${body.getClass()}")
+                        .split(body(), AggregationStrategies.flexible().pick(body()).accumulateInCollection(HashSet.class))
+                    .log(LoggingLevel.INFO, "During the first split the body is ${body} and has class ${body.getClass()}")
+                    .end()
+                    .log(LoggingLevel.INFO, "Before the second split the body is ${body} and has class ${body.getClass()}")
+                        .split(body(), AggregationStrategies.flexible().pick(body()).accumulateInCollection(HashSet.class))
+                    .log(LoggingLevel.INFO, "During the second split the body is ${body} and has class ${body.getClass()}")
+                    .end()
+                    .log(LoggingLevel.INFO, "After the second split the body is ${body} and has class ${body.getClass()}");
             }
         };
     }

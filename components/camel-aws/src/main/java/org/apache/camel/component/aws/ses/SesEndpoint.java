@@ -16,23 +16,31 @@
  */
 package org.apache.camel.component.aws.ses;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SES Endpoint</a>.  
- *
+ * The aws-ses component is used for sending emails with Amazon's SES service.
  */
+@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-ses", title = "AWS Simple Email Service", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
 public class SesEndpoint extends DefaultEndpoint {
-    
+
+    private AmazonSimpleEmailService sesClient;
+
+    @UriParam
     private SesConfiguration configuration;
 
     @Deprecated
@@ -43,6 +51,18 @@ public class SesEndpoint extends DefaultEndpoint {
     public SesEndpoint(String uri, Component component, SesConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+    
+    @Override
+    public void doStart() throws Exception {
+        super.doStart();
+        sesClient = configuration.getAmazonSESClient() != null
+            ? configuration.getAmazonSESClient()
+            : createSESClient();
+            
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSESEndpoint())) {
+            sesClient.setEndpoint(configuration.getAmazonSESEndpoint());
+        }
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -62,18 +82,33 @@ public class SesEndpoint extends DefaultEndpoint {
     }
 
     public AmazonSimpleEmailService getSESClient() {
-        return configuration.getAmazonSESClient() != null
-                ? configuration.getAmazonSESClient()
-                : createSESClient();
+        return sesClient;
     }
 
     private AmazonSimpleEmailService createSESClient() {
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonSimpleEmailService client = new AmazonSimpleEmailServiceClient(credentials);
-        if (configuration.getAmazonSESEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonSESEndpoint());
+        AmazonSimpleEmailService client = null;
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            isClientConfigFound = true;
         }
-        configuration.setAmazonSESClient(client);
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonSimpleEmailServiceClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonSimpleEmailServiceClient(credentials);
+            }
+        } else {
+            if (isClientConfigFound) {
+                client = new AmazonSimpleEmailServiceClient();
+            } else {
+                client = new AmazonSimpleEmailServiceClient(clientConfiguration);
+            }
+        }
         return client;
     }
 }

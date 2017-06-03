@@ -28,7 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.wsdl_first.types.UnknownPersonFault;
 import org.apache.cxf.binding.soap.SoapFault;
-import org.apache.cxf.helpers.DOMUtils;
+import org.apache.cxf.staxutils.StaxUtils;
 
 
 
@@ -45,7 +45,7 @@ public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultT
                         JAXBContext context = JAXBContext.newInstance("org.apache.camel.wsdl_first.types");
                         QName faultCode = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");
                         SoapFault fault = new SoapFault("Get the null value of person name", faultCode);
-                        Element details = DOMUtils.readXml(new StringReader(DETAILS)).getDocumentElement();
+                        Element details = StaxUtils.read(new StringReader(DETAILS)).getDocumentElement();
                         UnknownPersonFault unknowPersonFault = new UnknownPersonFault();
                         unknowPersonFault.setPersonId("");
                         context.createMarshaller().marshal(unknowPersonFault, details);

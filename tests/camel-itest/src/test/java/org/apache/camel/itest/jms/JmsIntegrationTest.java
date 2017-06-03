@@ -21,12 +21,14 @@ import java.util.concurrent.TimeUnit;
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * @version 
@@ -59,8 +61,11 @@ public class JmsIntegrationTest extends CamelTestSupport {
         answer.bind("myBean", myBean);
 
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        answer.bind("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        amq.setCamelContext(context);
+
+        answer.bind("jms", amq);
         return answer;
     }
 

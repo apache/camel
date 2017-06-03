@@ -73,6 +73,18 @@
                         minOccurs="0"></xs:element>
                 </xs:sequence>
             </xs:complexType>
+            
+            <xs:element name="getAllAmericanCustomers">
+            </xs:element>
+            <xs:element name="getAllAmericanCustomersResponse" type="tns:getAllAmericanCustomersResponse">
+            </xs:element>
+
+            <xs:complexType name="getAllAmericanCustomersResponse">
+                <xs:sequence>
+                    <xs:element name="return" type="tns:customer" maxOccurs="unbounded"
+                        minOccurs="0"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
 
             <xs:element name="saveCustomer" type="tns:saveCustomer">
             </xs:element>
@@ -100,7 +112,12 @@
     </wsdl:message>
     <wsdl:message name="getAllCustomersResponse">
         <wsdl:part name="parameters" element="tns:getAllCustomersResponse"></wsdl:part>
+    </wsdl:message>   
+	<wsdl:message name="getAllAmericanCustomers">
     </wsdl:message>
+    <wsdl:message name="getAllAmericanCustomersResponse">
+        <wsdl:part name="parameters" element="tns:getAllAmericanCustomersResponse"></wsdl:part>
+    </wsdl:message>   
     <wsdl:message name="saveCustomerRequest">
         <wsdl:part name="parameters" element="tns:saveCustomer"></wsdl:part>
     </wsdl:message>
@@ -118,6 +135,10 @@
         <wsdl:operation name="getAllCustomers">
             <wsdl:input message="tns:getAllCustomers"></wsdl:input>
             <wsdl:output message="tns:getAllCustomersResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getAllAmericanCustomers">
+            <wsdl:input message="tns:getAllAmericanCustomers"></wsdl:input>
+            <wsdl:output message="tns:getAllAmericanCustomersResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="saveCustomer">
             <wsdl:input message="tns:saveCustomerRequest"></wsdl:input>
@@ -152,6 +173,12 @@
                 <soap:body use="literal" />
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getAllAmericanCustomers">
+            <soap:operation soapAction="http://customerservice.example.com/getAllAmericanCustomers" />
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="saveCustomer">
             <soap:operation soapAction="http://customerservice.example.com/saveCustomer" />
             <wsdl:input>
@@ -168,3 +195,4 @@
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
+

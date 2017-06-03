@@ -20,28 +20,52 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
-import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
-import org.jboss.netty.util.HashedWheelTimer;
-import org.jboss.netty.util.Timer;
 
-public class NettyComponent extends DefaultComponent {
-    // use a shared timer for Netty (see javadoc for HashedWheelTimer)
-    private static volatile Timer timer;
+public class NettyComponent extends UriEndpointComponent implements SSLContextParametersAware {
+
+    @Metadata(label = "advanced")
     private NettyConfiguration configuration;
-    private OrderedMemoryAwareThreadPoolExecutor executorService;
+    @Metadata(label = "advanced", defaultValue = "16")
+    private int maximumPoolSize = 16;
+    @Metadata(label = "advanced")
+    private volatile EventExecutorGroup executorService;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public NettyComponent() {
+        super(NettyEndpoint.class);
+    }
+
+    public NettyComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
     }
 
     public NettyComponent(CamelContext context) {
-        super(context);
+        super(context, NettyEndpoint.class);
+    }
+
+    public int getMaximumPoolSize() {
+        return maximumPoolSize;
+    }
+
+    /**
+     * The thread pool size for the EventExecutorGroup if its in use.
+     * <p/>
+     * The default value is 16.
+     */
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        this.maximumPoolSize = maximumPoolSize;
     }
 
     @Override
@@ -63,11 +87,14 @@ public class NettyComponent extends DefaultComponent {
             }
         }
 
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         // validate config
         config.validateConfiguration();
 
         NettyEndpoint nettyEndpoint = new NettyEndpoint(remaining, this, config);
-        nettyEndpoint.setTimer(getTimer());
         setProperties(nettyEndpoint.getConfiguration(), parameters);
         return nettyEndpoint;
     }
@@ -86,58 +113,73 @@ public class NettyComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * To use the NettyConfiguration as configuration when creating endpoints.
+     */
     public void setConfiguration(NettyConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public static Timer getTimer() {
-        return timer;
+    /**
+     * To use the given EventExecutorGroup
+     */
+    public void setExecutorService(EventExecutorGroup executorService) {
+        this.executorService = executorService;
     }
 
-    public synchronized OrderedMemoryAwareThreadPoolExecutor getExecutorService() {
-        if (executorService == null) {
-            executorService = createExecutorService();
-        }
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public EventExecutorGroup getExecutorService() {
         return executorService;
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (timer == null) {
-            timer = new HashedWheelTimer();
-        }
-
         if (configuration == null) {
             configuration = new NettyConfiguration();
         }
-        if (configuration.isOrderedThreadPoolExecutor()) {
+
+        //Only setup the executorService if it is needed
+        if (configuration.isUsingExecutorService() && executorService == null) {
             executorService = createExecutorService();
         }
 
         super.doStart();
     }
 
-    protected OrderedMemoryAwareThreadPoolExecutor createExecutorService() {
-        // use ordered thread pool, to ensure we process the events in order, and can send back
-        // replies in the expected order. eg this is required by TCP.
+    protected EventExecutorGroup createExecutorService() {
+        // Provide the executor service for the application 
         // and use a Camel thread factory so we have consistent thread namings
         // we should use a shared thread pool as recommended by Netty
         String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
-        ThreadFactory factory = new CamelThreadFactory(pattern, "NettyOrderedWorker", true);
-        return new OrderedMemoryAwareThreadPoolExecutor(configuration.getMaximumPoolSize(),
-                0L, 0L, 30, TimeUnit.SECONDS, factory);
+        ThreadFactory factory = new CamelThreadFactory(pattern, "NettyEventExecutorGroup", true);
+        return new DefaultEventExecutorGroup(getMaximumPoolSize(), factory);
     }
 
     @Override
     protected void doStop() throws Exception {
-        timer.stop();
-        timer = null;
-
-        if (executorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+        //Only shutdown the executorService if it is created by netty component
+        if (configuration.isUsingExecutorService() && executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
         }
 
+        //shutdown workerPool if configured
+        if (configuration.getWorkerGroup() != null) {
+            configuration.getWorkerGroup().shutdownGracefully();
+        }
+               
         super.doStop();
     }
 

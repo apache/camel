@@ -20,7 +20,6 @@ import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.UpdateCondition;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
@@ -52,15 +51,6 @@ public class AbstractSdbCommandTest {
                 // noop
             }
         };
-    }
-    
-    @Test
-    public void getMessageForResponse() {
-        assertSame(exchange.getIn(), this.command.getMessageForResponse(exchange));
-        
-        exchange.setPattern(ExchangePattern.InOut);
-        
-        assertSame(exchange.getOut(), this.command.getMessageForResponse(exchange));
     }
     
     @Test

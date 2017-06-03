@@ -112,7 +112,9 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
 
         final AtomicBoolean notified = new AtomicBoolean(false);
         ElectionWatcher watcher = new ElectionWatcher() {
-            @Override public void electionResultChanged() { notified.set(true); }
+            @Override public void electionResultChanged() {
+                notified.set(true);
+            }
         };
 
         ZooKeeperElection electionCandidate1 = createElectionCandidate(candidateOneContext, 2);

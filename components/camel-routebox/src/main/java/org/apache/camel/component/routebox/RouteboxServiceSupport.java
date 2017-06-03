@@ -21,8 +21,8 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public abstract class RouteboxServiceSupport extends ServiceSupport {
     public RouteboxServiceSupport(RouteboxEndpoint endpoint) {
         this.endpoint = endpoint;
         if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
+            exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
         }
     }
     

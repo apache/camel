@@ -23,7 +23,7 @@ import javax.jws.WebService;
 
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.common.message.CxfMessageMapper;
-import org.apache.camel.component.cxf.common.message.DefaultCxfMesssageMapper;
+import org.apache.camel.component.cxf.common.message.DefaultCxfMessageMapper;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -49,7 +49,7 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
     private Server server;
     private Bus bus;
     private boolean isSetDefaultBus;
-    private CxfMessageMapper cxfBeanBinding = new DefaultCxfMesssageMapper();
+    private CxfMessageMapper cxfBeanBinding = new DefaultCxfMessageMapper();
     private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
     private boolean loggingFeatureEnabled;
     private boolean populateFromClass = true;
@@ -115,8 +115,8 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
             bean.setServiceClass(serviceBeans.get(0).getClass());
             // set the bean instance as well, otherwise CXF will re-create a new instance of the class
             bean.setServiceBean(serviceBeans.get(0));
-            if (bean.getServiceFactory() != null) {
-                bean.getServiceFactory().setPopulateFromClass(isPopulateFromClass());
+            if (bean.getJaxWsServiceFactory() != null) {
+                bean.getJaxWsServiceFactory().setPopulateFromClass(isPopulateFromClass());
             }
             bean.setBus(bus);
             bean.setStart(true);

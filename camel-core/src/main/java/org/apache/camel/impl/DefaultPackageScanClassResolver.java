@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.camel.NonManagedService;
 import org.apache.camel.StaticService;
 import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
 import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
@@ -48,14 +49,13 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
  */
-public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver, StaticService {
+public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver, StaticService, NonManagedService {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
@@ -417,7 +417,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
      * @param urlPath the url of the jar file to be examined for classes
      * @return all the .class entries from the JAR
      */
-    private List<String> doLoadJarClassEntries(InputStream stream, String urlPath) {
+    protected List<String> doLoadJarClassEntries(InputStream stream, String urlPath) {
         List<String> entries = new ArrayList<String>();
 
         JarInputStream jarStream = null;
@@ -509,11 +509,11 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startService(jarCache);
+        // noop
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(jarCache);
+        jarCache.clear();
     }
 
 }

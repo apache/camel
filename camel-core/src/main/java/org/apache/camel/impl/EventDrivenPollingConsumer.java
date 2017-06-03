@@ -18,15 +18,19 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,20 +42,65 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor {
+public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor, IsSingleton {
     private static final Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);
     private final BlockingQueue<Exchange> queue;
     private ExceptionHandler interruptedExceptionHandler;
     private Consumer consumer;
+    private boolean blockWhenFull = true;
+    private long blockTimeout;
+    private final int queueCapacity;
 
     public EventDrivenPollingConsumer(Endpoint endpoint) {
-        this(endpoint, new ArrayBlockingQueue<Exchange>(1000));
+        this(endpoint, 1000);
+    }
+
+    public EventDrivenPollingConsumer(Endpoint endpoint, int queueSize) {
+        super(endpoint);
+        this.queueCapacity = queueSize;
+        if (queueSize <= 0) {
+            this.queue = new LinkedBlockingQueue<Exchange>();
+        } else {
+            this.queue = new ArrayBlockingQueue<Exchange>(queueSize);
+        }
+        this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }
 
     public EventDrivenPollingConsumer(Endpoint endpoint, BlockingQueue<Exchange> queue) {
         super(endpoint);
         this.queue = queue;
+        this.queueCapacity = queue.remainingCapacity();
         this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
+    }
+
+    public boolean isBlockWhenFull() {
+        return blockWhenFull;
+    }
+
+    public void setBlockWhenFull(boolean blockWhenFull) {
+        this.blockWhenFull = blockWhenFull;
+    }
+
+    public long getBlockTimeout() {
+        return blockTimeout;
+    }
+
+    public void setBlockTimeout(long blockTimeout) {
+        this.blockTimeout = blockTimeout;
+    }
+
+    /**
+     * Gets the queue capacity.
+     */
+    public int getQueueCapacity() {
+        return queueCapacity;
+    }
+
+    /**
+     * Gets the current queue size (no of elements in the queue).
+     */
+    public int getQueueSize() {
+        return queue.size();
     }
 
     public Exchange receiveNoWait() {
@@ -65,14 +114,17 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
 
         while (isRunAllowed()) {
-            try {
-                beforePoll(0);
-                // take will block waiting for message
-                return queue.take();
-            } catch (InterruptedException e) {
-                handleInterruptedException(e);
-            } finally {
-                afterPoll();
+            // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
+            synchronized (this) {
+                try {
+                    beforePoll(0);
+                    // take will block waiting for message
+                    return queue.take();
+                } catch (InterruptedException e) {
+                    handleInterruptedException(e);
+                } finally {
+                    afterPoll();
+                }
             }
         }
         LOG.trace("Consumer is not running, so returning null");
@@ -85,20 +137,39 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
         }
 
-        try {
-            // use the timeout value returned from beforePoll
-            timeout = beforePoll(timeout);
-            return queue.poll(timeout, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            handleInterruptedException(e);
-            return null;
-        } finally {
-            afterPoll();
+        // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
+        synchronized (this) {
+            try {
+                // use the timeout value returned from beforePoll
+                timeout = beforePoll(timeout);
+                return queue.poll(timeout, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                handleInterruptedException(e);
+                return null;
+            } finally {
+                afterPoll();
+            }
         }
     }
 
     public void process(Exchange exchange) throws Exception {
-        queue.offer(exchange);
+        if (isBlockWhenFull()) {
+            try {
+                if (getBlockTimeout() <= 0) {
+                    queue.put(exchange);
+                } else {
+                    boolean added = queue.offer(exchange, getBlockTimeout(), TimeUnit.MILLISECONDS);
+                    if (!added) {
+                        throw new ExchangeTimedOutException(exchange, getBlockTimeout());
+                    }
+                }
+            } catch (InterruptedException e) {
+                // ignore
+                log.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
+            }
+        } else {
+            queue.add(exchange);
+        }
     }
 
     public ExceptionHandler getInterruptedExceptionHandler() {
@@ -107,6 +178,10 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     public void setInterruptedExceptionHandler(ExceptionHandler interruptedExceptionHandler) {
         this.interruptedExceptionHandler = interruptedExceptionHandler;
+    }
+
+    public Consumer getDelegateConsumer() {
+        return consumer;
     }
 
     protected void handleInterruptedException(InterruptedException e) {
@@ -155,5 +230,12 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(consumer);
+        queue.clear();
+    }
+
+    @Override
+    // As the consumer could take the messages at once, so we cannot release the consumer
+    public boolean isSingleton() {
+        return true;
     }
 }

@@ -16,12 +16,23 @@
  */
 package org.apache.camel.dataformat.avro;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.spring.SpringCamelContext;
+
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class AvroMarshalAndUnmarshalSpringTest extends AvroMarshalAndUnmarshallTest {
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/avro/springDataFormat.xml");
+    private AbstractXmlApplicationContext applicationContext;
+
+    protected CamelContext createCamelContext() throws Exception {
+        applicationContext =  new ClassPathXmlApplicationContext("org/apache/camel/dataformat/avro/springDataFormat.xml");
+        return SpringCamelContext.springCamelContext(applicationContext);
+    }
+
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
 }

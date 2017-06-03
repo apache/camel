@@ -36,7 +36,7 @@ public class IrcMultiChannelRouteTest extends CamelTestSupport {
     protected String body3 = "Message Three";
     private boolean sentMessages;    
 
-    @Ignore("test manual")
+    @Ignore("test manual, irc.codehaus.org has been closed")
     @Test
     public void testIrcMessages() throws Exception {
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);

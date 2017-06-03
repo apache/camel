@@ -37,7 +37,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
-        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
+        assertEquals(RemoteFileConfiguration.PathSeparator.UNIX, config.getSeparator());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
-        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
+        assertEquals(RemoteFileConfiguration.PathSeparator.UNIX, config.getSeparator());
     }
     
     @Test
@@ -67,7 +67,7 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertEquals(false, config.isBinary());
         assertEquals(false, config.isImplicit());
         assertEquals("TLS", config.getSecurityProtocol());
-        assertEquals(RemoteFileConfiguration.PathSeparator.Auto, config.getSeparator());
+        assertEquals(RemoteFileConfiguration.PathSeparator.UNIX, config.getSeparator());
     }
 
     @Test
@@ -134,10 +134,10 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertRemoteFileEndpointFile("ftp://hostname/foo", "foo");
         assertRemoteFileEndpointFile("ftp://hostname/", "");
         assertRemoteFileEndpointFile("ftp://hostname", "");
-        assertRemoteFileEndpointFile("ftp://hostname//", "/");
-        assertRemoteFileEndpointFile("ftp://hostname//foo/bar", "/foo/bar");
-        assertRemoteFileEndpointFile("ftp://hostname//foo/bar/", "/foo/bar/");
-        assertRemoteFileEndpointFile("sftp://user@hostname:123//foo/bar?password=secret", "/foo/bar");
+        assertRemoteFileEndpointFile("ftp://hostname//", "");
+        assertRemoteFileEndpointFile("ftp://hostname//foo/bar", "foo/bar");
+        assertRemoteFileEndpointFile("ftp://hostname//foo/bar/", "foo/bar/");
+        assertRemoteFileEndpointFile("sftp://user@hostname:123//foo/bar?password=secret", "foo/bar");
         assertRemoteFileEndpointFile("sftp://user@hostname:123?password=secret", "");
         assertRemoteFileEndpointFile("sftp://hostname/foo/bar", "foo/bar");
         assertRemoteFileEndpointFile("sftp://hostname/foo/bar/", "foo/bar/");
@@ -145,10 +145,10 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertRemoteFileEndpointFile("sftp://hostname/foo", "foo");
         assertRemoteFileEndpointFile("sftp://hostname/", "");
         assertRemoteFileEndpointFile("sftp://hostname", "");
-        assertRemoteFileEndpointFile("sftp://hostname//", "/");
-        assertRemoteFileEndpointFile("sftp://hostname//foo/bar", "/foo/bar");
-        assertRemoteFileEndpointFile("sftp://hostname//foo/bar/", "/foo/bar/");
-        assertRemoteFileEndpointFile("ftps://user@hostname:123//foo/bar?password=secret", "/foo/bar");
+        assertRemoteFileEndpointFile("sftp://hostname//", "");
+        assertRemoteFileEndpointFile("sftp://hostname//foo/bar", "foo/bar");
+        assertRemoteFileEndpointFile("sftp://hostname//foo/bar/", "foo/bar/");
+        assertRemoteFileEndpointFile("ftps://user@hostname:123//foo/bar?password=secret", "foo/bar");
         assertRemoteFileEndpointFile("ftps://user@hostname:123?password=secret", "");
         assertRemoteFileEndpointFile("ftps://hostname/foo/bar", "foo/bar");
         assertRemoteFileEndpointFile("ftps://hostname/foo/bar/", "foo/bar/");
@@ -156,9 +156,10 @@ public class UriConfigurationTest extends CamelTestSupport {
         assertRemoteFileEndpointFile("ftps://hostname/foo", "foo");
         assertRemoteFileEndpointFile("ftps://hostname/", "");
         assertRemoteFileEndpointFile("ftps://hostname", "");
-        assertRemoteFileEndpointFile("ftps://hostname//", "/");
-        assertRemoteFileEndpointFile("ftps://hostname//foo/bar", "/foo/bar");
-        assertRemoteFileEndpointFile("ftps://hostname//foo/bar/", "/foo/bar/");
+        assertRemoteFileEndpointFile("ftps://hostname//", "");
+        assertRemoteFileEndpointFile("ftps://hostname//foo/bar", "foo/bar");
+        assertRemoteFileEndpointFile("ftps://hostname//foo/bar/", "foo/bar/");
+        assertRemoteFileEndpointFile("ftps://hostname//////foo/bar/", "foo/bar/");
     }
 
     private void assertRemoteFileEndpointFile(String endpointUri, String expectedFile) {

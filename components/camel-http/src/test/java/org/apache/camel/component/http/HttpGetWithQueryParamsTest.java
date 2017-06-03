@@ -19,7 +19,6 @@ package org.apache.camel.component.http;
 import org.junit.Before;
 
 /**
- * @version  
  */
 public class HttpGetWithQueryParamsTest extends HttpGetTest {
     

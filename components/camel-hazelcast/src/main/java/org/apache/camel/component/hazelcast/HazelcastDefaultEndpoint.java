@@ -16,21 +16,38 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import java.util.Map;
-
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
+import org.apache.camel.component.hazelcast.topic.HazelcastTopicConfiguration;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
+/**
+ * The hazelcast component allows you to work with the Hazelcast distributed data grid / cache.
+ */
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
-    protected final String cacheName;
+    protected HazelcastCommand command;
+    @UriPath @Metadata(required = "true")
+    protected String cacheName;
+    @UriParam
     protected HazelcastInstance hazelcastInstance;
-    private int defaultOperation = -1;
-    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
+    @UriParam
+    protected String hazelcastInstanceName;
+    @UriParam(enums = "put,delete,get,update,query,getAll,clear,evict,evictAll,putIfAbsent,addAll,removeAll,retainAll,valueCount,containsKey,containsValue,keySet,removevalue,increment"
+        + ",decrement,setvalue,destroy,compareAndSet,getAndAdd,add,offer,peek,poll,remainingCapacity,drainTo,publish,capacity,readonceHead,readonceTail")
+    private String defaultOperation;
+    @UriParam
+    private HazelcastSedaConfiguration hazelcastSedaConfiguration; // to include component schema docs
+    @UriParam
+    private HazelcastTopicConfiguration hazelcastTopicConfiguration; 
 
     public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
         this(hazelcastInstance, endpointUri, component, null);
@@ -50,17 +67,60 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    public HazelcastCommand getCommand() {
+        return command;
+    }
+
+    /**
+     * What operation to perform.
+     */
+    public void setCommand(HazelcastCommand command) {
+        this.command = command;
+    }
+
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    /**
+     * The name of the cache
+     */
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
 
-    @Override
-    public void configureProperties(Map<String, Object> options) {
-        super.configureProperties(options);
-        defaultOperation = helper.extractOperationNumber(options.remove(HazelcastConstants.OPERATION_PARAM), -1);
+    /**
+     * The hazelcast instance reference which can be used for hazelcast endpoint.
+     */
+    public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        this.hazelcastInstance = hazelcastInstance;
     }
 
-    public int getDefaultOperation() {
+    public String getHazelcastInstanceName() {
+        return hazelcastInstanceName;
+    }
+
+    /**
+     * The hazelcast instance reference name which can be used for hazelcast endpoint.
+     * If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance.
+     */
+    public void setHazelcastInstanceName(String hazelcastInstanceName) {
+        this.hazelcastInstanceName = hazelcastInstanceName;
+    }
+
+    /**
+     * To specify a default operation to use, if no operation header has been provided.
+     */
+    public void setDefaultOperation(String defaultOperation) {
+        this.defaultOperation = defaultOperation;
+    }
+
+    public String getDefaultOperation() {
         return defaultOperation;
     }
+
 }

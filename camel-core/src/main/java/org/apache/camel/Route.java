@@ -24,17 +24,19 @@ import org.apache.camel.spi.RouteContext;
 /**
  * A <a href="http://camel.apache.org/routes.html">Route</a>
  * defines the processing used on an inbound message exchange
- * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}
+ * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}.
  * <p/>
  * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
  * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
  * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
  */
-public interface Route {
+public interface Route extends EndpointAware {
 
     String ID_PROPERTY = "id";
     String PARENT_PROPERTY = "parent";
     String GROUP_PROPERTY = "group";
+    String REST_PROPERTY = "rest";
+    String DESCRIPTION_PROPERTY = "description";
 
     /**
      * Gets the route id
@@ -44,11 +46,18 @@ public interface Route {
     String getId();
 
     /**
-     * Gets the inbound endpoint
+     * Gets the uptime in a human readable format
      *
-     * @return the inbound endpoint
+     * @return the uptime in days/hours/minutes
      */
-    Endpoint getEndpoint();
+    String getUptime();
+
+    /**
+     * Gets the uptime in milli seconds
+     *
+     * @return the uptime in millis seconds
+     */
+    long getUptimeMillis();
 
     /**
      * Gets the inbound {@link Consumer}
@@ -70,6 +79,15 @@ public interface Route {
      * @return properties
      */
     Map<String, Object> getProperties();
+
+    /**
+     * Gets the route description (if any has been configured).
+     * <p/>
+     * The description is configured using the {@link #DESCRIPTION_PROPERTY} as key in the {@link #getProperties()}.
+     *
+     * @return the description, or <tt>null</tt> if no description has been configured.
+     */
+    String getDescription();
 
     /**
      * Gets the route context
@@ -106,6 +124,14 @@ public interface Route {
      * @return a navigator for {@link Processor}.
      */
     Navigate<Processor> navigate();
+
+    /**
+     * Returns a list of all the {@link Processor}s from this route that has id's matching the pattern
+     *
+     * @param pattern the pattern to match by ids
+     * @return a list of {@link Processor}, is never <tt>null</tt>.
+     */
+    List<Processor> filter(String pattern);
 
     /**
      * Callback preparing the route to be started, by warming up the route.

@@ -24,21 +24,23 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
+public class XmlSignatureComponent extends UriEndpointComponent {
 
-public class XmlSignatureComponent extends DefaultComponent {
-
+    @Metadata(label = "advanced")
     private XmlSignerConfiguration signerConfiguration;
-
+    @Metadata(label = "advanced")
     private XmlVerifierConfiguration verifierConfiguration;
 
     public XmlSignatureComponent() {
+        super(XmlSignatureEndpoint.class);
     }
 
     public XmlSignatureComponent(CamelContext context) {
-        super(context);
+        super(context, XmlSignatureEndpoint.class);
     }
 
     @Override
@@ -47,13 +49,16 @@ public class XmlSignatureComponent extends DefaultComponent {
         ObjectHelper.notNull(getCamelContext(), "CamelContext");
 
         String scheme;
+        String name;
         try {
-            scheme = new URI(remaining).getScheme();
+            URI u = new URI(remaining);
+            scheme = u.getScheme();
+            name = u.getPath();
         } catch (Exception e) {
             throw new MalformedURLException(
                 String.format(
                     "An invalid xmlsecurity uri was provided '%s'."
-                    + " Check the uri matches the format xmlsecurity:sign://<name> or xmlsecurity:verify://<name>",
+                    + " Check the uri matches the format xmlsecurity:sign://<name> or xmlsecurity:verify:<name>",
                     uri
                 )
             );
@@ -76,6 +81,8 @@ public class XmlSignatureComponent extends DefaultComponent {
         }
         setProperties(endpoint.getConfiguration(), parameters);
         endpoint.getConfiguration().setCamelContext(getCamelContext());
+        endpoint.setCommand(XmlCommand.valueOf(scheme));
+        endpoint.setName(name);
         return endpoint;
     }
 
@@ -86,6 +93,9 @@ public class XmlSignatureComponent extends DefaultComponent {
         return signerConfiguration;
     }
 
+    /**
+     * To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints.
+     */
     public void setSignerConfiguration(XmlSignerConfiguration signerConfiguration) {
         this.signerConfiguration = signerConfiguration;
     }
@@ -97,6 +107,9 @@ public class XmlSignatureComponent extends DefaultComponent {
         return verifierConfiguration;
     }
 
+    /**
+     * To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints.
+     */
     public void setVerifierConfiguration(XmlVerifierConfiguration verifierConfiguration) {
         this.verifierConfiguration = verifierConfiguration;
     }

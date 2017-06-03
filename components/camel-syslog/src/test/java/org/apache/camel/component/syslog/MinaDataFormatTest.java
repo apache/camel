@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.syslog;
 
 import java.io.IOException;
@@ -77,10 +76,10 @@ public class MinaDataFormatTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 //context.setTracing(true);
-                DataFormat syslogDataFormat = new Rfc3164SyslogDataFormat();
+                DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
-                from("mina:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {
+                from("mina2:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {
                     public void process(Exchange ex) {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }

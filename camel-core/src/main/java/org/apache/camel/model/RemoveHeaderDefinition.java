@@ -22,13 +22,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.processor.RemoveHeaderProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;removeHeader/&gt; element
+ * Removes a named header from the message
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "removeHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefinition> {
@@ -48,11 +50,6 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
     }
 
     @Override
-    public String getShortName() {
-        return "removeHeader";
-    }
-
-    @Override
     public String getLabel() {
         return "removeHeader[" + getHeaderName() + "]";
     }
@@ -60,9 +57,12 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getHeaderName(), "headerName", this);
-        return ProcessorBuilder.removeHeader(getHeaderName());
+        return new RemoveHeaderProcessor(getHeaderName());
     }
 
+    /**
+     * Name of header to remove
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }

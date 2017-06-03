@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.example.com/soapheaders" targetNamespace="http://www.example.com/soapheaders" elementFormDefault="qualified">
+	<xsd:element name="referenceUri" type="tns:AttributedURIType"/>
+	<xsd:element name="comment" type="tns:AttributedStringType"/>
+	<xsd:element name="retryCount" type="tns:AttributedIntegerType"/>
+	<xsd:element name="refusal" type="tns:AttributedSimpleEnumType"/>
+
+	<xsd:complexType name="AttributedURIType" mixed="false">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:anyURI">
+				<xsd:anyAttribute namespace="##other" processContents="lax"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AttributedStringType" mixed="false">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:anyAttribute namespace="##other" processContents="lax"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AttributedIntegerType" mixed="false">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:integer">
+				<xsd:anyAttribute namespace="##other" processContents="lax"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AttributedSimpleEnumType" mixed="false">
+		<xsd:simpleContent>
+			<xsd:extension base="tns:sampleEnumType">
+				<xsd:anyAttribute namespace="##other" processContents="lax"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="sampleEnumType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="cant" />
+			<xsd:enumeration value="wont" />
+			<xsd:enumeration value="dont" />
+			<xsd:enumeration value="isnt" />
+			<xsd:enumeration value="aint" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

@@ -24,16 +24,12 @@ import org.apache.camel.component.sjms.TransactionCommitStrategy;
 /**
  * Provides a thread safe counter to track the number of {@link Exchange}
  * objects that have been been processed.
- * 
  */
 public class BatchTransactionCommitStrategy implements TransactionCommitStrategy {
 
     private final AtomicInteger current = new AtomicInteger(0);
     private final int count;
 
-    /**
-     * @param count
-     */
     public BatchTransactionCommitStrategy(int count) {
         this.count = count;
     }
@@ -55,7 +51,7 @@ public class BatchTransactionCommitStrategy implements TransactionCommitStrategy
         current.set(0);
         return true;
     }
-    
+
     public void reset() {
         current.set(0);
     }

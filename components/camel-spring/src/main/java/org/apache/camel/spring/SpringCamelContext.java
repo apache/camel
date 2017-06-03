@@ -24,22 +24,25 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.camel.spring.spi.SpringManagementMBeanAssembler;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.Lifecycle;
+import org.springframework.context.Phased;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.ContextStoppedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.Ordered;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
@@ -53,13 +56,14 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  *
  * @version 
  */
-public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean,
-        ApplicationContextAware {
+public class SpringCamelContext extends DefaultCamelContext implements Lifecycle, ApplicationContextAware, Phased,
+        ApplicationListener<ApplicationEvent>, Ordered {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
     private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<Boolean>();
     private ApplicationContext applicationContext;
-    private EventEndpoint eventEndpoint;
+    private EventComponent eventComponent;
+    private boolean shutdownEager = true;
 
     public SpringCamelContext() {
     }
@@ -75,11 +79,21 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             NO_START.remove();
         }
     }
-    
+
+    /**
+     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
+     * using the Spring API.
+     */
+    @Deprecated
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
         return springCamelContext(applicationContext, true);
     }
-    
+
+    /**
+     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
+     * using the Spring API.
+     */
+    @Deprecated
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext, boolean maybeStart) throws Exception {
         if (applicationContext != null) {
             // lets try and look up a configured camel context in the context
@@ -91,47 +105,89 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         SpringCamelContext answer = new SpringCamelContext();
         answer.setApplicationContext(applicationContext);
         if (maybeStart) {
-            answer.afterPropertiesSet();
+            answer.start();
         }
         return answer;
     }
 
+    /**
+     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
+     * using the Spring API.
+     */
+    @Deprecated
     public static SpringCamelContext springCamelContext(String configLocations) throws Exception {
         return springCamelContext(new ClassPathXmlApplicationContext(configLocations));
     }
 
-    public void afterPropertiesSet() throws Exception {
-        maybeStart();
+    @Override
+    public void start() {
+        // for example from unit testing we want to start Camel later (manually)
+        if (Boolean.TRUE.equals(NO_START.get())) {
+            LOG.trace("Ignoring start() as NO_START is false");
+            return;
+        }
+
+        if (!isStarted() && !isStarting()) {
+            try {
+                StopWatch watch = new StopWatch();
+                super.start();
+                LOG.debug("start() took {} millis", watch.stop());
+            } catch (Exception e) {
+                throw wrapRuntimeCamelException(e);
+            }
+        } else {
+            // ignore as Camel is already started
+            LOG.trace("Ignoring start() as Camel is already started");
+        }
     }
 
-    public void destroy() throws Exception {
-        stop();
+    @Override
+    public void stop() {
+        if (!isStopping() && !isStopped()) {
+            try {
+                super.stop();
+            } catch (Exception e) {
+                throw wrapRuntimeCamelException(e);
+            }
+        } else {
+            // ignore as Camel is already stopped
+            LOG.trace("Ignoring stop() as Camel is already stopped");
+        }
     }
 
+    @Override
     public void onApplicationEvent(ApplicationEvent event) {
         LOG.debug("onApplicationEvent: {}", event);
 
         if (event instanceof ContextRefreshedEvent) {
-            // now lets start the CamelContext so that all its possible
-            // dependencies are initialized
-            try {
-                maybeStart();
-            } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
-            }
-        } else if (event instanceof ContextStoppedEvent) {
-            try {
-                maybeStop();
-            } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
-            }
+            // nominally we would prefer to use Lifecycle interface that
+            // would invoke start() method, but in order to do that 
+            // SpringCamelContext needs to implement SmartLifecycle
+            // (look at DefaultLifecycleProcessor::startBeans), but it
+            // cannot implement it as it already implements
+            // RuntimeConfiguration, and both SmartLifecycle and
+            // RuntimeConfiguration declare isAutoStartup method but
+            // with boolean and Boolean return types, and covariant
+            // methods with primitive types are not allowed by the JLS
+            // so we need to listen for ContextRefreshedEvent and start
+            // on its reception
+            start();
         }
 
-        if (eventEndpoint != null) {
-            eventEndpoint.onApplicationEvent(event);
-        } else {
-            LOG.info("No spring-event endpoint enabled to handle event: {}", event);
+        if (eventComponent != null) {
+            eventComponent.onApplicationEvent(event);
         }
+    }
+
+    @Override
+    public int getOrder() {
+        // SpringCamelContext implements Ordered so that it's the last
+        // in ApplicationListener to receive events, this is important
+        // for startup as we want all resources to be ready and all
+        // routes added to the context (see
+        // org.apache.camel.spring.boot.RoutesCollector)
+        // and we need to be after CamelContextFactoryBean
+        return LOWEST_PRECEDENCE;
     }
 
     // Properties
@@ -141,6 +197,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         return applicationContext;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
         ClassLoader cl;
@@ -158,29 +215,45 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         if (applicationContext instanceof ConfigurableApplicationContext) {
             // only add if not already added
             if (hasComponent("spring-event") == null) {
-                addComponent("spring-event", new EventComponent(applicationContext));
+                eventComponent = new EventComponent(applicationContext);
+                addComponent("spring-event", eventComponent);
             }
         }
     }
 
+    @Deprecated
     public EventEndpoint getEventEndpoint() {
-        return eventEndpoint;
+        return null;
     }
 
+    @Deprecated
     public void setEventEndpoint(EventEndpoint eventEndpoint) {
-        this.eventEndpoint = eventEndpoint;
+        // noop
+    }
+
+    /**
+     * Whether to shutdown this {@link org.apache.camel.spring.SpringCamelContext} eager (first)
+     * when Spring {@link org.springframework.context.ApplicationContext} is being stopped.
+     * <p/>
+     * <b>Important:</b> This option is default <tt>true</tt> which ensures we shutdown Camel
+     * before other beans. Setting this to <tt>false</tt> restores old behavior in earlier
+     * Camel releases, which can be used for special cases to behave as before.
+     *
+     * @return <tt>true</tt> to shutdown eager (first), <tt>false</tt> to shutdown last
+     */
+    public boolean isShutdownEager() {
+        return shutdownEager;
+    }
+
+    /**
+     * @see #isShutdownEager()
+     */
+    public void setShutdownEager(boolean shutdownEager) {
+        this.shutdownEager = shutdownEager;
     }
 
     // Implementation methods
     // -----------------------------------------------------------------------
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        if (eventEndpoint == null) {
-            eventEndpoint = createEventEndpoint();
-        }
-    }
 
     @Override
     protected Injector createInjector() {
@@ -203,6 +276,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         return getEndpoint("spring-event:default", EventEndpoint.class);
     }
 
+    @Override
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
         // We will use the type convert to build the endpoint first
         Endpoint endpoint = getTypeConverter().convertTo(Endpoint.class, bean);
@@ -219,29 +293,9 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         return new ApplicationContextRegistry(getApplicationContext());
     }
 
-    private void maybeStart() throws Exception {
-        // for example from unit testing we want to start Camel later and not when Spring framework
-        // publish a ContextRefreshedEvent
-
-        if (NO_START.get() == null) {
-            if (!isStarted() && !isStarting()) {
-                start();
-            } else {
-                // ignore as Camel is already started
-                LOG.trace("Ignoring maybeStart() as Apache Camel is already started");
-            }
-        } else {
-            LOG.trace("Ignoring maybeStart() as NO_START is false");
-        }
-    }
-
-    private void maybeStop() throws Exception {
-        if (!isStopping() && !isStopped()) {
-            stop();
-        } else {
-            // ignore as Camel is already stopped
-            LOG.trace("Ignoring maybeStop() as Apache Camel is already stopped");
-        }
+    @Override
+    protected ModelJAXBContextFactory createModelJAXBContextFactory() {
+        return new SpringModelJAXBContextFactory();
     }
 
     @Override
@@ -252,6 +306,26 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             sb.append(" with spring id ").append(applicationContext.getId());
         }
         return sb.toString();
+    }
+
+    @Override
+    public int getPhase() {
+        // the context is started by invoking start method which
+        // happens either on ContextRefreshedEvent or explicitly
+        // invoking the method, for instance CamelContextFactoryBean
+        // is using that to start the context, _so_ here we want to
+        // have maximum priority as the getPhase() will be used only
+        // for stopping, in order to be used for starting we would
+        // need to implement SmartLifecycle which we cannot
+        // (explained in comment in the onApplicationEvent method)
+        // we use LOWEST_PRECEDENCE here as this is taken into account
+        // only when stopping and then in reversed order
+        return LOWEST_PRECEDENCE;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return !isStopping() && !isStopped();
     }
 
 }

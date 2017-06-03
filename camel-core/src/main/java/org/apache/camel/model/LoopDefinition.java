@@ -22,22 +22,27 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.LoopProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;loop/&gt; element
+ * Processes a message multiple times
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "loop")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoopDefinition extends ExpressionNode {
 
     @XmlAttribute
     private Boolean copy;
+    @XmlAttribute
+    private Boolean doWhile;
 
     public LoopDefinition() {
     }
@@ -46,17 +51,17 @@ public class LoopDefinition extends ExpressionNode {
         super(expression);
     }
 
+    public LoopDefinition(Predicate predicate) {
+        super(predicate);
+        setDoWhile(true);
+    }
+
     public LoopDefinition(ExpressionDefinition expression) {
         super(expression);
     }
 
     /**
      * Enables copy mode so a copy of the input Exchange is used for each iteration.
-     * That means each iteration will start from a copy of the same message.
-     * <p/>
-     * By default loop will loop the same exchange all over, so each iteration may
-     * have different message content.
-     *
      * @return the builder
      */
     public LoopDefinition copy() {
@@ -64,21 +69,30 @@ public class LoopDefinition extends ExpressionNode {
         return this;
     }
 
-    public void setExpression(Expression expr) {
-        setExpression(ExpressionNodeHelper.toExpressionDefinition(expr));
-    }
-
     public Boolean getCopy() {
         return copy;
     }
 
-    public void setCopy(Boolean copy) {
-        this.copy = copy;
+    public Boolean getDoWhile() {
+        return doWhile;
     }
 
-    public boolean isCopy() {
-        // do not copy by default to be backwards compatible
-        return copy != null ? copy : false;
+    /**
+     * Enables the while loop that loops until the predicate evaluates to false or null.
+     */
+    public void setDoWhile(Boolean doWhile) {
+        this.doWhile = doWhile;
+    }
+
+    /**
+     * If the copy attribute is true, a copy of the input Exchange is used for each iteration.
+     * That means each iteration will start from a copy of the same message.
+     * <p/>
+     * By default loop will loop the same exchange all over, so each iteration may
+     * have different message content.
+     */
+    public void setCopy(Boolean copy) {
+        this.copy = copy;
     }
 
     @Override
@@ -92,14 +106,29 @@ public class LoopDefinition extends ExpressionNode {
     }
     
     @Override
-    public String getShortName() {
-        return "loop";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor output = this.createChildProcessor(routeContext, true);
-        return new LoopProcessor(output, getExpression().createExpression(routeContext), isCopy());
+        boolean isCopy = getCopy() != null && getCopy();
+        boolean isWhile = getDoWhile() != null && getDoWhile();
+
+        Predicate predicate = null;
+        Expression expression = null;
+        if (isWhile) {
+            predicate = getExpression().createPredicate(routeContext);
+        } else {
+            expression = getExpression().createExpression(routeContext);
+        }
+        return new LoopProcessor(output, expression, predicate, isCopy);
     }
-    
+
+    /**
+     * Expression to define how many times we should loop. Notice the expression is only evaluated once, and should return
+     * a number as how many times to loop. A value of zero or negative means no looping. The loop is like a for-loop fashion,
+     * if you want a while loop, then the dynamic router may be a better choice.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
 }

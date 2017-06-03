@@ -16,22 +16,25 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 
 public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements ScheduledRoutePolicyConstants {
     private String routeStartTime;
     private String routeStopTime;
     private String routeSuspendTime;
     private String routeResumeTime;
-    
+    private String timeZoneString;
+    private TimeZone timeZone;
+
     public void onInit(Route route) {
         try {
             doOnInit(route);
@@ -76,39 +79,36 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
         }
     }
 
-    public void onRemove(Route route) {
-        try {
-            // stop and un-schedule jobs
-            doStop();
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-    }
-
     @Override
     protected Trigger createTrigger(Action action, Route route) throws Exception {
-        CronTrigger trigger = null;
+        Trigger trigger = null;
 
+        CronScheduleBuilder scheduleBuilder = null;
+        String triggerPrefix = null;
         if (action == Action.START) {
-            trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(TRIGGER_START + route.getId(), TRIGGER_GROUP + route.getId())
-                    .withSchedule(CronScheduleBuilder.cronSchedule(getRouteStartTime()))
-                    .build();
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteStartTime());
+            triggerPrefix = TRIGGER_START;
         } else if (action == Action.STOP) {
-            trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(TRIGGER_STOP + route.getId(), TRIGGER_GROUP + route.getId())
-                    .withSchedule(CronScheduleBuilder.cronSchedule(getRouteStopTime()))
-                    .build();
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteStopTime());
+            triggerPrefix = TRIGGER_STOP;
         } else if (action == Action.SUSPEND) {
-            trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(TRIGGER_SUSPEND + route.getId(), TRIGGER_GROUP + route.getId())
-                    .withSchedule(CronScheduleBuilder.cronSchedule(getRouteSuspendTime()))
-                    .build();
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteSuspendTime());
+            triggerPrefix = TRIGGER_SUSPEND;
         } else if (action == Action.RESUME) {
+            scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteResumeTime());
+            triggerPrefix = TRIGGER_RESUME;
+        }
+
+        if (scheduleBuilder != null) {
+            if (timeZone != null) {
+                scheduleBuilder.inTimeZone(timeZone);
+            }
+
+            TriggerKey triggerKey = new TriggerKey(triggerPrefix + route.getId(), TRIGGER_GROUP + route.getId());
             trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(TRIGGER_RESUME + route.getId(), TRIGGER_GROUP + route.getId())
-                    .withSchedule(CronScheduleBuilder.cronSchedule(getRouteResumeTime()))
-                    .build();
+                .withIdentity(triggerKey)
+                .withSchedule(scheduleBuilder)
+                .build();
         }
         
         return trigger;
@@ -144,6 +144,15 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
 
     public String getRouteResumeTime() {
         return routeResumeTime;
+    }
+    
+    public String getTimeZone() {
+        return timeZoneString;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZoneString = timeZone;
+        this.timeZone = TimeZone.getTimeZone(timeZone);
     }    
 
 }

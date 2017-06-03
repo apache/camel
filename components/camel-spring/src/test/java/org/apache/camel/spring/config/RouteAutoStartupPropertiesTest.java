@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -74,9 +75,7 @@ public class RouteAutoStartupPropertiesTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        if (ac != null) {
-            ac.close();
-        }
+        IOHelper.close(ac);
         super.tearDown();
     }
 }

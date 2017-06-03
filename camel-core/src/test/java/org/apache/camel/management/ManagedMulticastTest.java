@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -43,19 +44,34 @@ public class ManagedMulticastTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://a\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://a\"");
         Long queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(3, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://b\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://b\"");
         queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(3, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"myMulticast\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myMulticast\"");
         mbeanServer.isRegistered(name);
         
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");
         assertEquals(3, total.intValue());
+
+        Boolean parallel = (Boolean) mbeanServer.getAttribute(name, "ParallelProcessing");
+        assertEquals(false, parallel.booleanValue());
+
+        TabularData data = (TabularData) mbeanServer.invoke(name, "explain", new Object[]{false}, new String[]{"boolean"});
+        assertNotNull(data);
+        assertEquals(1, data.size());
+
+        data = (TabularData) mbeanServer.invoke(name, "explain", new Object[]{true}, new String[]{"boolean"});
+        assertNotNull(data);
+        assertEquals(15, data.size());
+
+        String json = (String) mbeanServer.invoke(name, "informationJson", null, null);
+        assertNotNull(json);
+        assertTrue(json.contains("\"description\": \"Routes the same message to multiple paths either sequentially or in parallel."));
     }
 
     @Override

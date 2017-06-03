@@ -18,53 +18,25 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.Map;
 
-import javax.validation.Configuration;
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.MessageInterpolator;
-import javax.validation.TraversableResolver;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
- * Bean Validator Component for validating java beans against JSR 303 Validator
- *
- * @version 
+ * Bean Validator Component for validating Java beans against reference implementation of JSR 303 Validator (Hibernate
+ * Validator).
  */
-public class BeanValidatorComponent extends DefaultComponent {
-    
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        BeanValidator beanValidator = new BeanValidator();
-        
-        MessageInterpolator messageInterpolator = resolveAndRemoveReferenceParameter(parameters, "messageInterpolator", MessageInterpolator.class);
-        TraversableResolver traversableResolver = resolveAndRemoveReferenceParameter(parameters, "traversableResolver", TraversableResolver.class);
-        ConstraintValidatorFactory constraintValidatorFactory = resolveAndRemoveReferenceParameter(parameters, "constraintValidatorFactory", ConstraintValidatorFactory.class);
-        String group = getAndRemoveParameter(parameters, "group", String.class);
-        
-        Configuration<?> configuration = Validation.byDefaultProvider().configure();
-        
-        if (messageInterpolator != null) {
-            configuration.messageInterpolator(messageInterpolator);
-        }
-        
-        if (traversableResolver != null) {
-            configuration.traversableResolver(traversableResolver);
-        }
-        
-        if (constraintValidatorFactory != null) {
-            configuration.constraintValidatorFactory(constraintValidatorFactory);            
-        }
-        
-        ValidatorFactory validatorFactory = configuration.buildValidatorFactory();
-        beanValidator.setValidatorFactory(validatorFactory);
-        
-        if (group != null) {
-            beanValidator.setGroup(getCamelContext().getClassResolver().resolveMandatoryClass(group));
-        }
+public class BeanValidatorComponent extends UriEndpointComponent {
 
-        return new ProcessorEndpoint(uri, this, beanValidator);
+    public BeanValidatorComponent() {
+        super(BeanValidatorEndpoint.class);
     }
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        BeanValidatorEndpoint endpoint = new BeanValidatorEndpoint(uri, this);
+        endpoint.setLabel(remaining);
+        setProperties(endpoint, parameters);
+        return endpoint;
+    }
+
 }

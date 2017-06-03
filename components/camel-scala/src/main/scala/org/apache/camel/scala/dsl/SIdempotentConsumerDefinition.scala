@@ -38,7 +38,4 @@ case class SIdempotentConsumerDefinition(override val target: IdempotentConsumer
   def skipDuplicate(skipDuplicate: Boolean) = wrap(target.setSkipDuplicate(skipDuplicate))
   
   def removeOnFailure(removeOnFailure: Boolean) = wrap(target.setRemoveOnFailure(removeOnFailure))
-
-  override def wrap(block: => Unit) : SIdempotentConsumerDefinition = super.wrap(block).asInstanceOf[SIdempotentConsumerDefinition]
-   
 }

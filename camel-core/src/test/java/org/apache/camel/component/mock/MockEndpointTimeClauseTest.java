@@ -17,11 +17,15 @@
 package org.apache.camel.component.mock;
 
 import java.util.Date;
-import java.util.concurrent.Executor;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Service;
+import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -31,10 +35,10 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
     public void testReceivedTimestamp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.message(0).property(Exchange.CREATED_TIMESTAMP).isNotNull();
-        mock.message(0).property(Exchange.CREATED_TIMESTAMP).isInstanceOf(Date.class);
-        mock.message(0).property(Exchange.RECEIVED_TIMESTAMP).isNotNull();
-        mock.message(0).property(Exchange.RECEIVED_TIMESTAMP).isInstanceOf(Date.class);
+        mock.message(0).exchangeProperty(Exchange.CREATED_TIMESTAMP).isNotNull();
+        mock.message(0).exchangeProperty(Exchange.CREATED_TIMESTAMP).isInstanceOf(Date.class);
+        mock.message(0).exchangeProperty(Exchange.RECEIVED_TIMESTAMP).isNotNull();
+        mock.message(0).exchangeProperty(Exchange.RECEIVED_TIMESTAMP).isInstanceOf(Date.class);
 
         template.sendBody("direct:a", "A");
 
@@ -71,7 +75,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
         template.sendBody("direct:a", "A");
 
-        Executor executor = Executors.newSingleThreadExecutor();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
             public void run() {
                 try {
@@ -79,7 +83,9 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
                 } catch (Exception e) {
                     // ignore
                 }
-                template.sendBody("direct:a", "B");
+                if (isStarted(template)) {
+                    template.sendBody("direct:a", "B");
+                }
             }
         });
 
@@ -89,6 +95,8 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         } catch (AssertionError e) {
             assertEquals("mock://result Received message count. Expected: <1> but was: <2>", e.getMessage());
         }
+
+        executor.shutdownNow();
     }
 
     public void testNoAssertPeriodSecondMessageArrives() throws Exception {
@@ -97,22 +105,33 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
         template.sendBody("direct:a", "A");
 
+        final CountDownLatch latch = new CountDownLatch(1);
+
         // this executor was bound to send a 2nd message
-        Executor executor = Executors.newSingleThreadExecutor();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {
             public void run() {
                 try {
                     Thread.sleep(2000);
+
+                    if (isStarted(template)) {
+                        template.sendBody("direct:a", "B");
+                    }
                 } catch (Exception e) {
                     // ignore
+                } finally {
+                    latch.countDown();
                 }
-                template.sendBody("direct:a", "B");
             }
         });
 
         // but the assertion would be complete before hand and thus
         // the assertion was valid at the time given
         assertMockEndpointsSatisfied();
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+
+        executor.shutdownNow();
     }
 
     public void testArrivesBeforeNext() throws Exception {
@@ -201,6 +220,13 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
                 from("direct:a").to("mock:result");
             }
         };
+    }
+
+    private boolean isStarted(Service service) {
+        if (service instanceof StatefulService) {
+            return ((StatefulService) service).isStarted();
+        }
+        return true;
     }
 
 }

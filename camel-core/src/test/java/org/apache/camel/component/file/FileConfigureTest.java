@@ -51,6 +51,30 @@ public class FileConfigureTest extends ContextTestSupport {
         assertFileEndpoint("file:///", File.separator, true);
     }
     
+    public void testUriWithParameters() throws Exception {
+        FileEndpoint endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&consumer.bridgeErrorHandler=true"
+            + "&autoCreate=false&startingDirectoryMustExist=true&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+        assertNotNull("Could not find file endpoint", endpoint);
+        assertEquals("Get a wrong option of StartingDirectoryMustExist", true, endpoint.isStartingDirectoryMustExist());
+        
+        endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10&startingDirectoryMustExist=true"
+            + "&consumer.bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+        
+        assertNotNull("Could not find file endpoint", endpoint);
+        assertEquals("Get a wrong option of StartingDirectoryMustExist", true, endpoint.isStartingDirectoryMustExist());
+        
+        endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&startingDirectoryMustExist=true&useFixedDelay=true&initialDelay=10"
+            + "&consumer.bridgeErrorHandler=true&autoCreate=false&directoryMustExist=true&readLock=changed", FileEndpoint.class);
+        
+        assertNotNull("Could not find file endpoint", endpoint);
+        assertEquals("Get a wrong option of StartingDirectoryMustExist", true, endpoint.isStartingDirectoryMustExist());
+        
+        endpoint = resolveMandatoryEndpoint("file:///C:/camel/temp?delay=10&useFixedDelay=true&initialDelay=10", FileEndpoint.class);
+        
+        assertNotNull("Could not find file endpoint", endpoint);
+        assertEquals("Get a wrong option of StartingDirectoryMustExist", false, endpoint.isStartingDirectoryMustExist());
+    }
+    
     public void testUriWithCharset() throws Exception {
         FileEndpoint endpoint = resolveMandatoryEndpoint("file://target/foo/bar?charset=UTF-8", FileEndpoint.class);
         assertNotNull("Could not find endpoint: file://target/foo/bar?charset=UTF-8", endpoint);
@@ -98,7 +122,7 @@ public class FileConfigureTest extends ContextTestSupport {
             assertDirectoryEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
 
             file = new File(expectedPath + (expectedPath.endsWith(File.separator) ? "" : File.separator) + EXPECT_FILE);
-            GenericFile<File> consumedFile = FileConsumer.asGenericFile(endpoint.getFile().getPath(), file, null);
+            GenericFile<File> consumedFile = FileConsumer.asGenericFile(endpoint.getFile().getPath(), file, null, false);
 
             assertEquals(EXPECT_FILE, consumedFile.getRelativeFilePath());
         }

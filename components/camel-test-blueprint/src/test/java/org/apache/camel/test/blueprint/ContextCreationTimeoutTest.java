@@ -127,12 +127,11 @@ public class ContextCreationTimeoutTest extends Assert {
 
     }
 
-    private static class OverridingTestSupport extends
-            CamelBlueprintTestSupport {
+    private static class OverridingTestSupport extends CamelBlueprintTestSupport {
 
         private final Long timeout;
 
-        public OverridingTestSupport(Long timeout) {
+        OverridingTestSupport(Long timeout) {
             this.timeout = timeout;
         }
 

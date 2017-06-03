@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
+import org.apache.camel.component.salesforce.internal.processor.AnalyticsApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.BulkApiProcessor;
+import org.apache.camel.component.salesforce.internal.processor.CompositeApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.JsonRestProcessor;
 import org.apache.camel.component.salesforce.internal.processor.SalesforceProcessor;
 import org.apache.camel.component.salesforce.internal.processor.XmlRestProcessor;
@@ -42,8 +44,13 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         final PayloadFormat payloadFormat = endpointConfig.getFormat();
 
         // check if its a Bulk Operation
-        if (isBulkOperation(endpoint.getOperationName())) {
+        final OperationName operationName = endpoint.getOperationName();
+        if (isBulkOperation(operationName)) {
             processor = new BulkApiProcessor(endpoint);
+        } else if (isAnalyticsOperation(operationName)) {
+            processor = new AnalyticsApiProcessor(endpoint);
+        } else if (isCompositeOperation(operationName)) {
+            processor = new CompositeApiProcessor(endpoint);
         } else {
             // create an appropriate processor
             if (payloadFormat == PayloadFormat.JSON) {
@@ -69,6 +76,30 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         case CREATE_BATCH_QUERY:
         case GET_QUERY_RESULT_IDS:
         case GET_QUERY_RESULT:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    private boolean isAnalyticsOperation(OperationName operationName) {
+        switch (operationName) {
+        case GET_RECENT_REPORTS:
+        case GET_REPORT_DESCRIPTION:
+        case EXECUTE_SYNCREPORT:
+        case EXECUTE_ASYNCREPORT:
+        case GET_REPORT_INSTANCES:
+        case GET_REPORT_RESULTS:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    private boolean isCompositeOperation(OperationName operationName) {
+        switch (operationName) {
+        case COMPOSITE_TREE:
+        case COMPOSITE_BATCH:
             return true;
         default:
             return false;

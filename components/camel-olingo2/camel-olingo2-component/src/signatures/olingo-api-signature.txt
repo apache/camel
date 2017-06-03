@@ -1,0 +1,8 @@
+void read(org.apache.olingo.odata2.api.edm.Edm edm, String resourcePath, java.util.Map<String, String> queryParams, org.apache.camel.component.olingo2.api.Olingo2ResponseHandler responseHandler);
+void uread(org.apache.olingo.odata2.api.edm.Edm edm, String resourcePath, java.util.Map<String, String> queryParams, org.apache.camel.component.olingo2.api.Olingo2ResponseHandler responseHandler);
+void delete(String resourcePath, org.apache.camel.component.olingo2.api.Olingo2ResponseHandler responseHandler);
+void create(org.apache.olingo.odata2.api.edm.Edm edm, String resourcePath, Object data, org.apache.camel.component.olingo2.api.Olingo2ResponseHandler responseHandler);
+void update(org.apache.olingo.odata2.api.edm.Edm edm, String resourcePath, Object data, org.apache.camel.component.olingo2.api.Olingo2ResponseHandler responseHandler);
+void patch(org.apache.olingo.odata2.api.edm.Edm edm, String resourcePath, Object data, org.apache.camel.component.olingo2.api.Olingo2ResponseHandler responseHandler);
+void merge(org.apache.olingo.odata2.api.edm.Edm edm, String resourcePath, Object data, org.apache.camel.component.olingo2.api.Olingo2ResponseHandler responseHandler);
+void batch(org.apache.olingo.odata2.api.edm.Edm edm, Object data, org.apache.camel.component.olingo2.api.Olingo2ResponseHandler responseHandler);

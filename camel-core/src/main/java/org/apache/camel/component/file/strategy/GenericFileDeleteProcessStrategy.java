@@ -21,6 +21,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.ExchangeHelper;
 
 public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
 
@@ -55,7 +56,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
         boolean releaseEager = exclusiveReadLockStrategy instanceof FileLockExclusiveReadLockStrategy;
 
         if (releaseEager) {
-            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+            exclusiveReadLockStrategy.releaseExclusiveReadLockOnCommit(operations, file, exchange);
         }
 
         try {
@@ -91,7 +92,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
         } finally {
             // must release lock last
             if (!releaseEager && exclusiveReadLockStrategy != null) {
-                exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+                exclusiveReadLockStrategy.releaseExclusiveReadLockOnCommit(operations, file, exchange);
             }
         }
     }
@@ -105,7 +106,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             // moved the failed file if specifying the moveFailed option
             if (failureRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-                Exchange copy = exchange.copy();
+                Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 file.bindToExchange(copy);
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
@@ -117,7 +118,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
         } finally {
             // must release lock last
             if (exclusiveReadLockStrategy != null) {
-                exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+                exclusiveReadLockStrategy.releaseExclusiveReadLockOnRollback(operations, file, exchange);
             }
         }
     }

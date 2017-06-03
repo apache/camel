@@ -35,7 +35,7 @@ public class IrcOnReplyTest extends CamelTestSupport {
     protected String resultEnd = "End of WHO list";
     private boolean sentMessages;    
 
-    @Ignore("test manual")
+    @Ignore("test manual, irc.codehaus.org has been closed")
     @Test
     public void testIrcMessages() throws Exception {
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);

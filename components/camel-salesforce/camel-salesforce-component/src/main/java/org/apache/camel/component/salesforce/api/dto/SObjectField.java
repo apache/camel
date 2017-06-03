@@ -67,6 +67,14 @@ public class SObjectField extends AbstractDTOBase {
     private Boolean groupable;
     private Boolean permissionable;
     private Boolean displayLocationInDecimal;
+    private String extraTypeInfo;
+    private FilteredLookupInfo filteredLookupInfo;
+    private Boolean highScaleNumber;
+    private String mask;
+    private String maskType;
+    private Boolean queryByDistance;
+    private String referenceTargetField;
+    private Boolean encrypted;
 
     public Integer getLength() {
         return length;
@@ -410,5 +418,69 @@ public class SObjectField extends AbstractDTOBase {
 
     public void setDisplayLocationInDecimal(Boolean displayLocationInDecimal) {
         this.displayLocationInDecimal = displayLocationInDecimal;
+    }
+
+    public String getExtraTypeInfo() {
+        return extraTypeInfo;
+    }
+
+    public void setExtraTypeInfo(String extraTypeInfo) {
+        this.extraTypeInfo = extraTypeInfo;
+    }
+
+    public FilteredLookupInfo getFilteredLookupInfo() {
+        return filteredLookupInfo;
+    }
+
+    public void setFilteredLookupInfo(FilteredLookupInfo filteredLookupInfo) {
+        this.filteredLookupInfo = filteredLookupInfo;
+    }
+
+    public Boolean getHighScaleNumber() {
+        return highScaleNumber;
+    }
+
+    public void setHighScaleNumber(Boolean highScaleNumber) {
+        this.highScaleNumber = highScaleNumber;
+    }
+
+    public String getMask() {
+        return mask;
+    }
+
+    public void setMask(String mask) {
+        this.mask = mask;
+    }
+
+    public String getMaskType() {
+        return maskType;
+    }
+
+    public void setMaskType(String maskType) {
+        this.maskType = maskType;
+    }
+
+    public Boolean getQueryByDistance() {
+        return queryByDistance;
+    }
+
+    public void setQueryByDistance(Boolean queryByDistance) {
+        this.queryByDistance = queryByDistance;
+    }
+
+    public String getReferenceTargetField() {
+        return referenceTargetField;
+    }
+
+    public void setReferenceTargetField(String referenceTargetField) {
+        this.referenceTargetField = referenceTargetField;
+    }
+
+    public Boolean getEncrypted() {
+        return encrypted;
+    }
+
+    public void setEncrypted(Boolean encrypted) {
+        this.encrypted = encrypted;
     }
 }

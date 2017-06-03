@@ -21,12 +21,14 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
@@ -50,7 +52,9 @@ public class MailAttachmentTest extends CamelTestSupport {
         Exchange exchange = endpoint.createExchange();
         Message in = exchange.getIn();
         in.setBody("Hello World");
-        in.addAttachment("logo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
+        DefaultAttachment att = new DefaultAttachment(new FileDataSource("src/test/data/logo.jpeg"));
+        att.addHeader("Content-Description", "some sample content");
+        in.addAttachmentObject("logo.jpeg", att);
 
         // create a producer that can produce the exchange (= send the mail)
         Producer producer = endpoint.createProducer();
@@ -73,11 +77,12 @@ public class MailAttachmentTest extends CamelTestSupport {
         assertEquals("Hello World", out.getIn().getBody(String.class));
 
         // attachment
-        Map<String, DataHandler> attachments = out.getIn().getAttachments();
+        Map<String, Attachment> attachments = out.getIn().getAttachmentObjects();
         assertNotNull("Should have attachments", attachments);
         assertEquals(1, attachments.size());
 
-        DataHandler handler = out.getIn().getAttachment("logo.jpeg");
+        Attachment attachment = out.getIn().getAttachmentObject("logo.jpeg");
+        DataHandler handler = attachment.getDataHandler();
         assertNotNull("The logo should be there", handler);
 
         // content type should match
@@ -86,6 +91,8 @@ public class MailAttachmentTest extends CamelTestSupport {
         assertTrue("Should match 1 or 2", match1 || match2);
 
         assertEquals("Handler name should be the file name", "logo.jpeg", handler.getName());
+
+        assertEquals("some sample content", attachment.getHeader("content-description"));
 
         producer.stop();
     }

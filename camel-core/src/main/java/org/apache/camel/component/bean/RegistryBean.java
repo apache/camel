@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.CamelContextHelper;
 
 /**
  * An implementation of a {@link BeanHolder} which will look up a bean from the registry and act as a cache of its metadata
@@ -28,25 +27,32 @@ import org.apache.camel.util.CamelContextHelper;
  * @version 
  */
 public class RegistryBean implements BeanHolder {
-    private final Object lock = new Object();
     private final CamelContext context;
     private final String name;
     private final Registry registry;
-    private volatile Processor processor;
     private volatile BeanInfo beanInfo;
-    private volatile Object bean;
+    private volatile Class<?> clazz;
     private ParameterMappingStrategy parameterMappingStrategy;
 
     public RegistryBean(CamelContext context, String name) {
-        this.context = context;
-        this.name = name;
-        this.registry = context.getRegistry();
+        this(context.getRegistry(), context, name);
     }
 
     public RegistryBean(Registry registry, CamelContext context, String name) {
         this.registry = registry;
         this.context = context;
-        this.name = name;
+        if (name != null) {
+            // for ref it may have "ref:" or "bean:" as prefix by mistake
+            if (name.startsWith("ref:")) {
+                this.name = name.substring(4);
+            } else if (name.startsWith("bean:")) {
+                this.name = name.substring(5);
+            } else {
+                this.name = name;
+            }
+        } else {
+            this.name = null;
+        }
     }
 
     @Override
@@ -54,7 +60,12 @@ public class RegistryBean implements BeanHolder {
         return "bean: " + name;
     }
 
-    public ConstantBeanHolder createCacheHolder() throws Exception {
+    /**
+     * Creates a cached and constant {@link org.apache.camel.component.bean.BeanHolder} from this holder.
+     *
+     * @return a new {@link org.apache.camel.component.bean.BeanHolder} that has cached the lookup of the bean.
+     */
+    public ConstantBeanHolder createCacheHolder() {
         Object bean = getBean();
         BeanInfo info = createBeanInfo(bean);
         return new ConstantBeanHolder(bean, info);
@@ -70,52 +81,41 @@ public class RegistryBean implements BeanHolder {
                 // bean is a class so create an instance of it
                 value = context.getInjector().newInstance((Class<?>)value);
             }
-            bean = value;
             return value;
         }
 
         // okay bean is not in registry, so try to resolve if its a class name and create a shared instance
-        synchronized (lock) {
-            if (bean != null) {
-                return bean;
-            }
-
-            // maybe its a class
-            bean = context.getClassResolver().resolveClass(name);
-            if (bean == null) {
-                // no its not a class then we cannot find the bean
-                throw new NoSuchBeanException(name);
-            }
-            // could be a class then create an instance of it
-            if (bean instanceof Class) {
-                // bean is a class so create an instance of it
-                bean = context.getInjector().newInstance((Class<?>)bean);
-            }
+        if (clazz == null) {
+            clazz = context.getClassResolver().resolveClass(name);
         }
 
-        return bean;
+        if (clazz == null) {
+            // no its not a class then we cannot find the bean
+            throw new NoSuchBeanException(name);
+        }
+
+        // bean is a class so create an instance of it
+        return context.getInjector().newInstance(clazz);
     }
 
     public Processor getProcessor() {
-        if (processor == null && bean != null) {
-            processor = CamelContextHelper.convertTo(context, Processor.class, bean);
-        }
-        return processor;
+        return null;
+    }
+
+    public boolean supportProcessor() {
+        return false;
     }
 
     public BeanInfo getBeanInfo() {
-        if (beanInfo == null && bean != null) {
+        if (beanInfo == null) {
+            Object bean = getBean();
             this.beanInfo = createBeanInfo(bean);
         }
         return beanInfo;
     }
 
     public BeanInfo getBeanInfo(Object bean) {
-        if (this.bean == bean) {
-            return getBeanInfo();
-        } else {
-            return createBeanInfo(bean);
-        }
+        return createBeanInfo(bean);
     }
 
     public String getName() {

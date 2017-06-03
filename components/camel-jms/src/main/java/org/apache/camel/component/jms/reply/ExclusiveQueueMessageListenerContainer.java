@@ -37,6 +37,6 @@ public class ExclusiveQueueMessageListenerContainer extends DefaultJmsMessageLis
     // no need to override any methods currently
 
     public ExclusiveQueueMessageListenerContainer(JmsEndpoint endpoint) {
-        super(endpoint);
+        super(endpoint, endpoint.isAllowReplyManagerQuickStop());
     }
 }

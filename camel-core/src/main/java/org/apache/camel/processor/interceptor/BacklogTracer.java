@@ -17,11 +17,9 @@
 package org.apache.camel.processor.interceptor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
@@ -32,9 +30,7 @@ import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -47,16 +43,16 @@ import org.slf4j.LoggerFactory;
  * This tracer allows to store message tracers per node in the Camel routes. The tracers
  * is stored in a backlog queue (FIFO based) which allows to pull the traced messages on demand.
  */
-public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
+public final class BacklogTracer extends ServiceSupport implements InterceptStrategy {
 
-    // lets limit the tracer to 100 thousand messages in total
-    public static final int MAX_BACKLOG_SIZE = 100 * 1000;
+    // lets limit the tracer to 10 thousand messages in total
+    public static final int MAX_BACKLOG_SIZE = 10 * 1000;
     private static final Logger LOG = LoggerFactory.getLogger(BacklogTracer.class);
     private final CamelContext camelContext;
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
     // use a queue with a upper limit to avoid storing too many messages
-    private final Queue<DefaultBacklogTracerEventMessage> queue = new ArrayBlockingQueue<DefaultBacklogTracerEventMessage>(MAX_BACKLOG_SIZE);
+    private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<BacklogTracerEventMessage>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
     private int backlogSize = 1000;
     private boolean removeOnDump = true;
@@ -68,19 +64,9 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     private String[] patterns;
     private String traceFilter;
     private Predicate predicate;
-    // remember the processors we are tracing, which we need later
-    private final Set<ProcessorDefinition<?>> processors = new HashSet<ProcessorDefinition<?>>();
 
-    public BacklogTracer(CamelContext camelContext) {
+    private BacklogTracer(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    public void addDefinition(ProcessorDefinition<?> definition) {
-        processors.add(definition);
-    }
-
-    public Queue<DefaultBacklogTracerEventMessage> getQueue() {
-        return queue;
     }
 
     @Override
@@ -96,8 +82,7 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
      * @return a new backlog tracer
      */
     public static BacklogTracer createTracer(CamelContext context) {
-        BacklogTracer tracer = new BacklogTracer(context);
-        return tracer;
+        return new BacklogTracer(context);
     }
 
     /**
@@ -163,6 +148,22 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         return false;
     }
 
+    public void traceEvent(DefaultBacklogTracerEventMessage event) {
+        if (!enabled) {
+            return;
+        }
+
+        // ensure there is space on the queue by polling until at least single slot is free
+        int drain = queue.size() - backlogSize + 1;
+        if (drain > 0) {
+            for (int i = 0; i < drain; i++) {
+                queue.poll();
+            }
+        }
+
+        queue.add(event);
+    }
+
     private boolean shouldTraceFilter(Exchange exchange) {
         return predicate.matches(exchange);
     }
@@ -172,10 +173,6 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     }
 
     public void setEnabled(boolean enabled) {
-        // okay tracer is enabled then force auto assigning ids
-        if (enabled) {
-            forceAutoAssigningIds();
-        }
         this.enabled = enabled;
     }
 
@@ -267,8 +264,8 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId) {
         List<BacklogTracerEventMessage> answer = new ArrayList<BacklogTracerEventMessage>();
         if (nodeId != null) {
-            for (DefaultBacklogTracerEventMessage message : queue) {
-                if (nodeId.equals(message.getToNode())) {
+            for (BacklogTracerEventMessage message : queue) {
+                if (nodeId.equals(message.getToNode()) || nodeId.equals(message.getRouteId())) {
                     answer.add(message);
                 }
             }
@@ -322,10 +319,6 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         return traceCounter.incrementAndGet();
     }
 
-    void stopProcessor(ProcessorDefinition<?> processorDefinition) {
-        this.processors.remove(processorDefinition);
-    }
-
     @Override
     protected void doStart() throws Exception {
     }
@@ -333,22 +326,6 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     @Override
     protected void doStop() throws Exception {
         queue.clear();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        queue.clear();
-        processors.clear();
-    }
-
-    private void forceAutoAssigningIds() {
-        NodeIdFactory factory = camelContext.getNodeIdFactory();
-        if (factory != null) {
-            for (ProcessorDefinition<?> child : processors) {
-                // ensure also the children get ids assigned
-                RouteDefinitionHelper.forceAssignIds(camelContext, child);
-            }
-        }
     }
 
 }

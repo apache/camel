@@ -16,20 +16,13 @@
  */
 package org.apache.camel.component.mongodb;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Formatter;
-import java.util.Properties;
 
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.WriteConcern;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -37,75 +30,54 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.After;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
-    protected static Mongo mongo;
-    protected static DB db;
-    protected static DBCollection testCollection;
-    protected static DBCollection dynamicCollection;
+    protected static MongoClient mongo;
+    protected static MongoDatabase db;
+    protected static MongoCollection<BasicDBObject> testCollection;
+    protected static MongoCollection<BasicDBObject> dynamicCollection;
     
-    protected static String dbName;
+    protected static String dbName = "test";
     protected static String testCollectionName;
     protected static String dynamicCollectionName;
 
-    protected static Properties properties;
-    
     protected ApplicationContext applicationContext;
-    
 
-    /**
-     * Checks whether Mongo is running using the connection URI defined in the mongodb.test.properties file
-     * @throws IOException 
-     */
-    @BeforeClass
-    public static void checkMongoRunning() throws IOException {
-        properties = new Properties();
-        InputStream is = MongoDbConversionsTest.class.getResourceAsStream("/mongodb.test.properties");
-        properties.load(is);
-        // ping Mongo and populate db and collection
-        try {
-            mongo = new MongoClient(new MongoClientURI(properties.getProperty("mongodb.connectionURI")));
-            mongo.getDatabaseNames();
-            dbName = properties.getProperty("mongodb.testDb");
-            db = mongo.getDB(dbName);
-        } catch (Exception e) {
-            Assume.assumeNoException(e);
-        }
-        
-    }
+    @Override
+    public void doPostSetup() {
+        mongo = applicationContext.getBean(MongoClient.class);
+        db = mongo.getDatabase(dbName);
 
-    @Before
-    public void initTestCase() {
         // Refresh the test collection - drop it and recreate it. We don't do this for the database because MongoDB would create large
         // store files each time
-        testCollectionName = properties.getProperty("mongodb.testCollection");
-        testCollection = db.getCollection(testCollectionName);
+        testCollectionName = "camelTest";
+        testCollection = db.getCollection(testCollectionName, BasicDBObject.class);
         testCollection.drop();
-        testCollection = db.getCollection(testCollectionName);
+        testCollection = db.getCollection(testCollectionName, BasicDBObject.class);
         
         dynamicCollectionName = testCollectionName.concat("Dynamic");
-        dynamicCollection = db.getCollection(dynamicCollectionName);
+        dynamicCollection = db.getCollection(dynamicCollectionName, BasicDBObject.class);
         dynamicCollection.drop();
-        dynamicCollection = db.getCollection(dynamicCollectionName);
+        dynamicCollection = db.getCollection(dynamicCollectionName, BasicDBObject.class);
 
     }
 
-    @After
-    public void cleanup() {
+    @Override
+    public void tearDown() throws Exception {
         testCollection.drop();
         dynamicCollection.drop();
+
+        super.tearDown();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/mongodb/mongoComponentTest.xml");
+        applicationContext = new AnnotationConfigApplicationContext(EmbedMongoConfiguration.class);
         CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
         PropertiesComponent pc = new PropertiesComponent("classpath:mongodb.test.properties");
         ctx.addComponent("properties", pc);
@@ -120,7 +92,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
             Formatter f = new Formatter();
             String doc = f.format("{\"_id\":\"%d\", \"scientist\":\"%s\", \"fixedField\": \"fixedValue\"}", i, scientists[index]).toString();
             IOHelper.close(f);
-            testCollection.insert((DBObject) JSON.parse(doc), WriteConcern.SAFE);
+            testCollection.insertOne((BasicDBObject) JSON.parse(doc));
         }
         assertEquals("Data pumping of 1000 entries did not complete entirely", 1000L, testCollection.count());
     }

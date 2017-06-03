@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://camel.apache.org/schema/spring
+     http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+<!-- START SNIPPET: e1 -->
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- setup beanio data format -->
+    <dataFormats>
+      <barcode id="code1"/>
+      <barcode id="code2" width="200" height="200" />
+      <barcode id="code3" imageType="JPG" />
+      <barcode id="code4" width="200" height="200" imageType="JPG" barcodeFormat="PDF_417"/>
+      <barcode id="code5" width="200" height="200" imageType="PNG" barcodeFormat="AZTEC"/>
+      
+    </dataFormats>
+
+    <route>
+      <from uri="direct:code1"/>
+      <marshal ref="code1"/>
+      <to uri="file:target/out"/>
+    </route>
+    
+    <route>
+      <from uri="direct:code2"/>
+      <marshal ref="code2"/>
+      <to uri="file:target/out"/>
+    </route>
+    
+     <route>
+      <from uri="direct:code3"/>
+      <marshal ref="code3"/>
+      <to uri="file:target/out"/>
+    </route>
+    
+     <route>
+      <from uri="direct:code4"/>
+      <marshal ref="code4"/>
+      <to uri="file:target/out"/>
+    </route>
+
+     <route>
+      <from uri="direct:code5"/>
+      <marshal ref="code5"/>
+      <to uri="file:target/out"/>
+    </route>
+
+    <route>
+      <from uri="file:target/out?noop=true"/>
+      <multicast>
+         <to uri="direct:unmarshal"/>
+         <to uri="mock:image" />
+      </multicast>   
+    </route>
+    
+    <route>
+      <from uri="direct:unmarshal"/>
+      <unmarshal ref="code1"/>
+      <to uri="log:Out"/>
+      <to uri="mock:out"/>
+    </route>
+    
+  </camelContext>
+  
+</beans>

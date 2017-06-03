@@ -16,70 +16,70 @@
  */
 package org.apache.camel.jsonpath;
 
-import org.apache.camel.Exchange;
+import com.jayway.jsonpath.Option;
 import org.apache.camel.Expression;
-import org.apache.camel.ExpressionEvaluationException;
-import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
-import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LanguageSupport;
 
 public class JsonPathLanguage extends LanguageSupport {
 
+    private Class<?> resultType;
+    private boolean suppressExceptions;
+    private Option[] options;
+
+    public Class<?> getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
+    }
+
+    public boolean isSuppressExceptions() {
+        return suppressExceptions;
+    }
+
+    public void setSuppressExceptions(boolean suppressExceptions) {
+        this.suppressExceptions = suppressExceptions;
+    }
+
+    public Option[] getOptions() {
+        return options;
+    }
+
+    public void setOption(Option option) {
+        this.options = new Option[]{option};
+    }
+
+    public void setOptions(Option[] options) {
+        this.options = options;
+    }
+
     @Override
     public Predicate createPredicate(final String predicate) {
-        final JsonPathEngine engine;
-        try {
-            engine = new JsonPathEngine(predicate);
-        } catch (Exception e) {
-            throw new ExpressionIllegalSyntaxException(predicate, e);
-        }
-
-        return new ExpressionAdapter() {
-            @Override
-            public Object evaluate(Exchange exchange) {
-                try {
-                    return evaluateJsonPath(exchange, engine);
-                } catch (Exception e) {
-                    throw new ExpressionEvaluationException(this, exchange, e);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "jsonpath[" + predicate + "]";
-            }
-        };
+        JsonPathExpression answer = new JsonPathExpression(predicate);
+        answer.setPredicate(true);
+        answer.setResultType(resultType);
+        answer.setSuppressExceptions(suppressExceptions);
+        answer.setOptions(options);
+        answer.afterPropertiesConfigured(getCamelContext());
+        return answer;
     }
 
     @Override
     public Expression createExpression(final String expression) {
-        final JsonPathEngine engine;
-        try {
-            engine = new JsonPathEngine(expression);
-        } catch (Exception e) {
-            throw new ExpressionIllegalSyntaxException(expression, e);
-        }
-
-        return new ExpressionAdapter() {
-            @Override
-            public Object evaluate(Exchange exchange) {
-                try {
-                    return evaluateJsonPath(exchange, engine);
-                } catch (Exception e) {
-                    throw new ExpressionEvaluationException(this, exchange, e);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "jsonpath[" + expression + "]";
-            }
-        };
+        JsonPathExpression answer = new JsonPathExpression(expression);
+        answer.setPredicate(false);
+        answer.setResultType(resultType);
+        answer.setSuppressExceptions(suppressExceptions);
+        answer.setOptions(options);
+        answer.afterPropertiesConfigured(getCamelContext());
+        return answer;
     }
 
-    private Object evaluateJsonPath(Exchange exchange, JsonPathEngine engine) throws Exception {
-        return engine.read(exchange);
+    @Override
+    public boolean isSingleton() {
+        // cannot be singleton due options
+        return false;
     }
-
 }

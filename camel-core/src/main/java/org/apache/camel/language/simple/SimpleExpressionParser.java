@@ -72,7 +72,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         }
 
         // now after parsing we need a bit of work to do, to make it easier to turn the tokens
-        // into and ast, and then from the ast, to Camel expression(s).
+        // into an ast, and then from the ast, to Camel expression(s).
         // hence why there is a number of tasks going on below to accomplish this
 
         // turn the tokens into the ast model

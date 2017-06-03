@@ -25,22 +25,27 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
+import javax.net.ssl.SSLContext;
+
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.JdkSslContext;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jsse.ClientAuthentication;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.SSLContextServerParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -62,7 +67,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
 
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
-        uri = "websocket://" + server + ":" + port + "/test?sslContextParametersRef=#sslContextParameters";
+        uri = "websocket://" + server + ":" + port + "/test?sslContextParameters=#sslContextParameters";
 
         super.setUp();
     }
@@ -71,10 +76,10 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("jsse/localhost.ks");
-        ksp.setPassword("changeit");
+        ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setKeyPassword("changeit");
+        kmp.setKeyPassword(pwd);
         kmp.setKeyStore(ksp);
 
         TrustManagersParameters tmp = new TrustManagersParameters();
@@ -83,7 +88,6 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         // NOTE: Needed since the client uses a loose trust configuration when no ssl context
         // is provided.  We turn on WANT client-auth to prefer using authentication
         SSLContextServerParameters scsp = new SSLContextServerParameters();
-        scsp.setClientAuthentication(ClientAuthentication.WANT.name());
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
@@ -105,35 +109,17 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         AsyncHttpClient c;
         AsyncHttpClientConfig config;
 
-        AsyncHttpClientConfig.Builder builder =
-                new AsyncHttpClientConfig.Builder();
+        DefaultAsyncHttpClientConfig.Builder builder =
+                new DefaultAsyncHttpClientConfig.Builder();
 
-        builder.setSSLContext(new SSLContextParameters().createSSLContext());
+        SSLContext sslContext = new SSLContextParameters().createSSLContext(context());
+        JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
+        builder.setSslContext(ssl);
+        builder.setAcceptAnyCertificate(true);
         config = builder.build();
-        c = new AsyncHttpClient(config);
+        c = new DefaultAsyncHttpClient(config);
 
         return c;
-    }
-
-    protected SSLContextParameters defineSSLContextParameters() {
-
-        KeyStoreParameters ksp = new KeyStoreParameters();
-        // ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
-        ksp.setResource("jsse/localhost.ks");
-        ksp.setPassword(pwd);
-
-        KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setKeyPassword(pwd);
-        kmp.setKeyStore(ksp);
-
-        TrustManagersParameters tmp = new TrustManagersParameters();
-        tmp.setKeyStore(ksp);
-
-        SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setKeyManagers(kmp);
-        sslContextParameters.setTrustManagers(tmp);
-
-        return sslContextParameters;
     }
 
     @Test
@@ -150,9 +136,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
                                 latch.countDown();
                             }
 
-                            @Override
-                            public void onFragment(String fragment, boolean last) {
-                            }
+                            
 
                             @Override
                             public void onOpen(WebSocket websocket) {
@@ -170,7 +154,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
-        websocket.sendTextMessage("Hello from WS client");
+        websocket.sendMessage("Hello from WS client");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
@@ -188,7 +172,9 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(20);
                 from(uri)
                      .log(">>> Message received from WebSocket Client : ${body}")
                      .to("mock:client")

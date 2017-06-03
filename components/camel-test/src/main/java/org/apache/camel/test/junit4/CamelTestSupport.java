@@ -16,12 +16,29 @@
  */
 package org.apache.camel.test.junit4;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -30,13 +47,19 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Route;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -51,11 +74,13 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,23 +88,27 @@ import org.slf4j.LoggerFactory;
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
  * along with a {@link org.apache.camel.ProducerTemplate} for use in the test case
  *
- * @version 
+ * @version
  */
 public abstract class CamelTestSupport extends TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
     private static final ThreadLocal<Boolean> INIT = new ThreadLocal<Boolean>();
     private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<ModelCamelContext>();
     private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<ProducerTemplate>();
+    private static ThreadLocal<FluentProducerTemplate> threadFluentTemplate = new ThreadLocal<FluentProducerTemplate>();
     private static ThreadLocal<ConsumerTemplate> threadConsumer = new ThreadLocal<ConsumerTemplate>();
     private static ThreadLocal<Service> threadService = new ThreadLocal<Service>();
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
+    protected volatile FluentProducerTemplate fluentTemplate;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
+    protected boolean dumpRouteStats;
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<String, String>();
+    private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
 
     /**
      * Use the RouteBuilder or not
@@ -92,6 +121,18 @@ public abstract class CamelTestSupport extends TestSupport {
 
     public void setUseRouteBuilder(boolean useRouteBuilder) {
         this.useRouteBuilder = useRouteBuilder;
+    }
+
+    /**
+     * Whether to dump route coverage stats at the end of the test.
+     * <p/>
+     * This allows tooling or manual inspection of the stats, so you can generate a route trace diagram of which EIPs
+     * have been in use and which have not. Similar concepts as a code coverage report.
+     *
+     * @return <tt>true</tt> to write route coverage status in an xml file in the <tt>target/camel-route-coverage</tt> directory after the test has finished.
+     */
+    public boolean isDumpRouteCoverage() {
+        return false;
     }
 
     /**
@@ -179,6 +220,10 @@ public abstract class CamelTestSupport extends TestSupport {
         return template;
     }
 
+    public FluentProducerTemplate fluentTemplate() {
+        return fluentTemplate;
+    }
+
     public ConsumerTemplate consumer() {
         return consumer;
     }
@@ -238,10 +283,12 @@ public abstract class CamelTestSupport extends TestSupport {
 
     private void doSetUp() throws Exception {
         log.debug("setUp test");
-        if (!useJmx()) {
-            disableJMX();
-        } else {
+        // jmx is enabled if we have configured to use it, or if dump route coverage is enabled (it requires JMX)
+        boolean jmx = useJmx() || isDumpRouteCoverage();
+        if (jmx) {
             enableJMX();
+        } else {
+            disableJMX();
         }
 
         context = (ModelCamelContext)createCamelContext();
@@ -266,10 +313,13 @@ public abstract class CamelTestSupport extends TestSupport {
 
         template = context.createProducerTemplate();
         template.start();
+        fluentTemplate = context.createFluentProducerTemplate();
+        fluentTemplate.start();
         consumer = context.createConsumerTemplate();
         consumer.start();
 
         threadTemplate.set(template);
+        threadFluentTemplate.set(fluentTemplate);
         threadConsumer.set(consumer);
 
         // enable auto mocking if enabled
@@ -296,8 +346,8 @@ public abstract class CamelTestSupport extends TestSupport {
         postProcessTest();
 
         if (isUseRouteBuilder()) {
-            RouteBuilder[] builders = createRouteBuilders();
-            for (RouteBuilder builder : builders) {
+            RoutesBuilder[] builders = createRouteBuilders();
+            for (RoutesBuilder builder : builders) {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
@@ -339,6 +389,34 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("********************************************************************************");
         log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
         log.info("Took: " + TimeUtils.printDuration(time) + " (" + time + " millis)");
+
+        // if we should dump route stats, then write that to a file
+        if (isDumpRouteCoverage()) {
+            String className = this.getClass().getSimpleName();
+            String dir = "target/camel-route-coverage";
+            String name = className + "-" + getTestMethodName() + ".xml";
+
+            ManagedCamelContextMBean managedCamelContext = context.getManagedCamelContext();
+            if (managedCamelContext == null) {
+                log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
+            } else {
+                logCoverageSummary(managedCamelContext);
+
+                String xml = managedCamelContext.dumpRoutesCoverageAsXml();
+                String combined = "<camelRouteCoverage>\n" + gatherTestDetailsAsXml() + xml + "\n</camelRouteCoverage>";
+
+                File file = new File(dir);
+                // ensure dir exists
+                file.mkdirs();
+                file = new File(dir, name);
+
+                log.info("Dumping route coverage to file: " + file);
+                InputStream is = new ByteArrayInputStream(combined.getBytes());
+                OutputStream os = new FileOutputStream(file, false);
+                IOHelper.copyAndCloseInput(is, os);
+                IOHelper.close(os);
+            }
+        }
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
@@ -347,16 +425,127 @@ public abstract class CamelTestSupport extends TestSupport {
         }
 
         LOG.debug("tearDown test");
-        doStopTemplates(consumer, template);
+        doStopTemplates(consumer, template, fluentTemplate);
         doStopCamelContext(context, camelContextService);
+    }
+
+    /**
+     * Logs route coverage summary:
+     * - which routes are uncovered
+     * - what is the coverage of each processor in each route
+     */
+    private void logCoverageSummary(ManagedCamelContextMBean managedCamelContext) throws Exception {
+        StringBuilder builder = new StringBuilder("\nCoverage summary\n");
+
+        int routes = managedCamelContext.getTotalRoutes();
+
+        long contextExchangesTotal = managedCamelContext.getExchangesTotal();
+
+        List<String> uncoveredRoutes = new ArrayList<>();
+
+        StringBuilder routesSummary = new StringBuilder();
+        routesSummary.append("\tProcessor coverage\n");
+
+        MBeanServer server = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+
+        Map<String, List<ManagedProcessorMBean>> processorsForRoute = findProcessorsForEachRoute(server);
+
+        // log processor coverage for each route
+        for (Route route : context.getRoutes()) {
+            ManagedRouteMBean managedRoute = context.getManagedRoute(route.getId(), ManagedRouteMBean.class);
+            if (managedRoute.getExchangesTotal() == 0) {
+                uncoveredRoutes.add(route.getId());
+            }
+
+            long routeCoveragePercentage = Math.round((double) managedRoute.getExchangesTotal() / contextExchangesTotal * 100);
+            routesSummary.append("\t\tRoute ").append(route.getId()).append(" total: ").append(managedRoute.getExchangesTotal()).append(" (").append(routeCoveragePercentage).append("%)\n");
+
+            if (server != null) {
+                List<ManagedProcessorMBean> processors = processorsForRoute.get(route.getId());
+                if (processors != null) {
+                    for (ManagedProcessorMBean managedProcessor : processors) {
+                        String processorId = managedProcessor.getProcessorId();
+                        long processorExchangesTotal = managedProcessor.getExchangesTotal();
+                        long processorCoveragePercentage = Math.round((double) processorExchangesTotal / contextExchangesTotal * 100);
+                        routesSummary.append("\t\t\tProcessor ").append(processorId).append(" total: ").append(processorExchangesTotal).append(" (").append(processorCoveragePercentage).append("%)\n");
+                    }
+                }
+            }
+        }
+
+        int used = routes - uncoveredRoutes.size();
+
+        long contextPercentage = Math.round((double) used / routes * 100);
+        builder.append("\tRoute coverage: ").append(used).append(" out of ").append(routes).append(" routes used (").append(contextPercentage).append("%)\n");
+        builder.append("\t\tCamelContext (").append(managedCamelContext.getCamelId()).append(") total: ").append(contextExchangesTotal).append("\n");
+
+        if (uncoveredRoutes.size() > 0) {
+            builder.append("\t\tUncovered routes: ").append(uncoveredRoutes.stream().collect(Collectors.joining(", "))).append("\n");
+        }
+
+        builder.append(routesSummary);
+        log.info(builder.toString());
+
+    }
+
+    /**
+     * Groups all processors from Camel context by route id
+     */
+    private Map<String, List<ManagedProcessorMBean>> findProcessorsForEachRoute(MBeanServer server)
+            throws MalformedObjectNameException, MBeanException, AttributeNotFoundException, InstanceNotFoundException, ReflectionException {
+        String domain = context.getManagementStrategy().getManagementAgent().getMBeanServerDefaultDomain();
+
+        Map<String, List<ManagedProcessorMBean>> processorsForRoute = new HashMap<>();
+
+        ObjectName processorsObjectName = new ObjectName(domain + ":context=" + context.getManagementName() + ",type=processors,name=*");
+        Set<ObjectName> objectNames = server.queryNames(processorsObjectName, null);
+
+        for (ObjectName objectName : objectNames) {
+            String routeId = server.getAttribute(objectName, "RouteId").toString();
+            String name = objectName.getKeyProperty("name");
+            name = ObjectName.unquote(name);
+
+            ManagedProcessorMBean managedProcessor = context.getManagedProcessor(name, ManagedProcessorMBean.class);
+
+            if (managedProcessor != null) {
+                if (processorsForRoute.get(routeId) == null) {
+                    List<ManagedProcessorMBean> processorsList = new ArrayList<>();
+                    processorsList.add(managedProcessor);
+
+                    processorsForRoute.put(routeId, processorsList);
+                } else {
+                    processorsForRoute.get(routeId).add(managedProcessor);
+                }
+            }
+        }
+
+        // sort processors by position in route definition
+        for (Map.Entry<String, List<ManagedProcessorMBean>> entry : processorsForRoute.entrySet()) {
+            Collections.sort(entry.getValue(), Comparator.comparing(ManagedProcessorMBean::getIndex));
+        }
+
+        return processorsForRoute;
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         INIT.remove();
         LOG.debug("tearDownAfterClass test");
-        doStopTemplates(threadConsumer.get(), threadTemplate.get());
+        doStopTemplates(threadConsumer.get(), threadTemplate.get(), threadFluentTemplate.get());
         doStopCamelContext(threadCamelContext.get(), threadService.get());
+    }
+
+    /**
+     * Gathers test details as xml
+     */
+    private String gatherTestDetailsAsXml() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<test>\n");
+        sb.append("  <class>").append(getClass().getName()).append("</class>\n");
+        sb.append("  <method>").append(getTestMethodName()).append("</method>\n");
+        sb.append("  <time>").append(getCamelTestWatcher().timeTaken()).append("</time>\n");
+        sb.append("</test>\n");
+        return sb.toString();
     }
 
     /**
@@ -399,6 +588,11 @@ public abstract class CamelTestSupport extends TestSupport {
         return null;
     }
 
+    @Rule
+    public CamelTestWatcher getCamelTestWatcher() {
+        return camelTestWatcher;
+    }
+
     /**
      * Whether to ignore missing locations with the {@link PropertiesComponent}.
      * For example when unit testing you may want to ignore locations that are
@@ -414,6 +608,7 @@ public abstract class CamelTestSupport extends TestSupport {
     protected void postProcessTest() throws Exception {
         context = threadCamelContext.get();
         template = threadTemplate.get();
+        fluentTemplate = threadFluentTemplate.get();
         consumer = threadConsumer.get();
         camelContextService = threadService.get();
         applyCamelPostProcessor();
@@ -452,7 +647,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
     }
 
-    private static void doStopTemplates(ConsumerTemplate consumer, ProducerTemplate template) throws Exception {
+    private static void doStopTemplates(ConsumerTemplate consumer, ProducerTemplate template, FluentProducerTemplate fluentTemplate) throws Exception {
         if (consumer != null) {
             if (consumer == threadConsumer.get()) {
                 threadConsumer.remove();
@@ -464,6 +659,12 @@ public abstract class CamelTestSupport extends TestSupport {
                 threadTemplate.remove();
             }
             template.stop();
+        }
+        if (fluentTemplate != null) {
+            if (fluentTemplate == threadFluentTemplate.get()) {
+                threadFluentTemplate.remove();
+            }
+            fluentTemplate.stop();
         }
     }
 
@@ -511,8 +712,9 @@ public abstract class CamelTestSupport extends TestSupport {
      * Factory method which derived classes can use to create a {@link RouteBuilder}
      * to define the routes for testing
      */
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 // no routes added by default
             }
@@ -525,8 +727,8 @@ public abstract class CamelTestSupport extends TestSupport {
      *
      * @see #createRouteBuilder()
      */
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {createRouteBuilder()};
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] {createRouteBuilder()};
     }
 
     /**

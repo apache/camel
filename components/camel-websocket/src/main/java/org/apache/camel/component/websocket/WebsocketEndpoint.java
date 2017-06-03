@@ -25,41 +25,65 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
+/**
+ * The websocket component provides websocket endpoints for communicating with clients using websocket.
+ *
+ * This component uses Jetty as the websocket implementation.
+ */
+@UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "websocket")
 public class WebsocketEndpoint extends DefaultEndpoint {
 
-    private NodeSynchronization sync;
-    private WebsocketStore memoryStore;
     private WebsocketComponent component;
-    private SSLContextParameters sslContextParameters;
     private URI uri;
     private List<Handler> handlers;
 
-    private Boolean sendToAll;
-    private boolean enableJmx;
-    private boolean sessionSupport;
-    private boolean crossOriginFilterOn;
-
-    private String remaining;
+    @UriPath(defaultValue = "0.0.0.0")
     private String host;
-    private String allowedOrigins;
-    // Used to filter CORS
-    private String filterPath;
-
-    // Base Resource for the ServletContextHandler
-    private String staticResources;
-
+    @UriPath(defaultValue = "9292")
     private Integer port;
+    @UriPath @Metadata(required = "true")
+    private String resourceUri;
 
-    public WebsocketEndpoint(WebsocketComponent component, String uri, String remaining, Map<String, Object> parameters) {
+    @UriParam(label = "producer")
+    private Boolean sendToAll;
+    @UriParam(label = "producer", defaultValue = "30000")
+    private Integer sendTimeout = 30000;
+    @UriParam(label = "monitoring")
+    private boolean enableJmx;
+    @UriParam(label = "consumer")
+    private boolean sessionSupport;
+    @UriParam(label = "cors")
+    private boolean crossOriginFilterOn;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "cors")
+    private String allowedOrigins;
+    @UriParam(label = "cors")
+    private String filterPath;
+    @UriParam(label = "consumer")
+    private String staticResources;
+    @UriParam(label = "advanced", defaultValue = "8192")
+    private Integer bufferSize;
+    @UriParam(label = "advanced", defaultValue = "300000")
+    private Integer maxIdleTime;
+    @UriParam(label = "advanced")
+    private Integer maxTextMessageSize;
+    @UriParam(defaultValue = "-1")
+    private Integer maxBinaryMessageSize;
+    @UriParam(label = "advanced", defaultValue = "13")
+    private Integer minVersion;
+
+    public WebsocketEndpoint(WebsocketComponent component, String uri, String resourceUri, Map<String, Object> parameters) {
         super(uri, component);
-        this.remaining = remaining;
-        this.memoryStore = new MemoryWebsocketStore();
-        this.sync = new DefaultNodeSynchronization(memoryStore);
+        this.resourceUri = resourceUri;
         this.component = component;
         try {
             this.uri = new URI(uri);
@@ -84,27 +108,23 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new WebsocketProducer(this, memoryStore);
+        return new WebsocketProducer(this);
     }
 
     public void connect(WebsocketConsumer consumer) throws Exception {
         component.connect(consumer);
-        component.addServlet(sync, consumer, remaining);
     }
 
     public void disconnect(WebsocketConsumer consumer) throws Exception {
         component.disconnect(consumer);
-        // Servlet should be removed
     }
 
     public void connect(WebsocketProducer producer) throws Exception {
         component.connect(producer);
-        component.addServlet(sync, producer, remaining);
     }
 
     public void disconnect(WebsocketProducer producer) throws Exception {
         component.disconnect(producer);
-        // Servlet should be removed
     }
 
     @Override
@@ -124,10 +144,18 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         return host;
     }
 
+    /**
+     * The hostname. The default value is <tt>0.0.0.0</tt>.
+     * Setting this option on the component will use the component configured value as default.
+     */
     public void setHost(String host) {
         this.host = host;
     }
 
+    /**
+     * The port number. The default value is <tt>9292</tt>.
+     * Setting this option on the component will use the component configured value as default.
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -136,6 +164,17 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         return staticResources;
     }
 
+    /**
+     * Set a resource path for static resources (such as .html files etc).
+     * <p/>
+     * The resources can be loaded from classpath, if you prefix with <tt>classpath:</tt>,
+     * otherwise the resources is loaded from file system or from JAR files.
+     * <p/>
+     * For example to load from root classpath use <tt>classpath:.</tt>, or
+     * <tt>classpath:WEB-INF/static</tt>
+     * <p/>
+     * If not configured (eg <tt>null</tt>) then no static resource is in use.
+     */
     public void setStaticResources(String staticResources) {
         this.staticResources = staticResources;
     }
@@ -144,8 +183,23 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         return sendToAll;
     }
 
+    /**
+     * To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the WebsocketConstants.SEND_TO_ALL header on the message.
+     */
     public void setSendToAll(Boolean sendToAll) {
         this.sendToAll = sendToAll;
+    }
+
+    public Integer getSendTimeout() {
+        return sendTimeout;
+    }
+
+    /**
+     * Timeout in millis when sending to a websocket channel.
+     * The default timeout is 30000 (30 seconds).
+     */
+    public void setSendTimeout(Integer sendTimeout) {
+        this.sendTimeout = sendTimeout;
     }
 
     public String getProtocol() {
@@ -156,12 +210,70 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         return uri.getPath();
     }
 
+    /**
+     * Whether to enable session support which enables HttpSession for each http request.
+     */
     public void setSessionSupport(boolean support) {
         sessionSupport = support;
     }
 
     public boolean isSessionSupport() {
         return sessionSupport;
+    }
+
+    public Integer getBufferSize() {
+        return bufferSize;
+    }
+
+    /**
+     * Set the buffer size of the websocketServlet, which is also the max frame byte size (default 8192)
+     */
+    public void setBufferSize(Integer bufferSize) {
+        this.bufferSize = bufferSize;
+    }
+
+    public Integer getMaxIdleTime() {
+        return maxIdleTime;
+    }
+
+    /**
+     * Set the time in ms that the websocket created by the websocketServlet may be idle before closing. (default is 300000)
+     */
+    public void setMaxIdleTime(Integer maxIdleTime) {
+        this.maxIdleTime = maxIdleTime;
+    }
+
+    public Integer getMaxTextMessageSize() {
+        return maxTextMessageSize;
+    }
+
+    /**
+     * Can be used to set the size in characters that the websocket created by the websocketServlet may be accept before closing.
+     */
+    public void setMaxTextMessageSize(Integer maxTextMessageSize) {
+        this.maxTextMessageSize = maxTextMessageSize;
+    }
+
+    public Integer getMaxBinaryMessageSize() {
+        return maxBinaryMessageSize;
+    }
+
+    /**
+     * Can be used to set the size in bytes that the websocket created by the websocketServlet may be accept before closing. (Default is -1 - or unlimited)
+     */
+    public void setMaxBinaryMessageSize(Integer maxBinaryMessageSize) {
+        this.maxBinaryMessageSize = maxBinaryMessageSize;
+    }
+
+    public Integer getMinVersion() {
+        return minVersion;
+    }
+
+    /**
+     * Can be used to set the minimum protocol version accepted for the websocketServlet. (Default 13 - the RFC6455 version)
+     */
+    public void setMinVersion(Integer minVersion) {
+        this.minVersion = minVersion;
     }
 
     public List<Handler> getHandlers() {
@@ -172,11 +284,13 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         this.handlers = handlers;
     }
 
-
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -185,6 +299,9 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         return this.enableJmx;
     }
 
+    /**
+     * If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
+     */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
     }
@@ -193,6 +310,9 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         return allowedOrigins;
     }
 
+    /**
+     * The CORS allowed origins. Use * to allow all.
+     */
     public void setAllowedOrigins(String allowedOrigins) {
         this.allowedOrigins = allowedOrigins;
     }
@@ -201,6 +321,9 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         return crossOriginFilterOn;
     }
 
+    /**
+     * Whether to enable CORS
+     */
     public void setCrossOriginFilterOn(boolean crossOriginFilterOn) {
         this.crossOriginFilterOn = crossOriginFilterOn;
     }
@@ -209,20 +332,21 @@ public class WebsocketEndpoint extends DefaultEndpoint {
         return filterPath;
     }
 
+    /**
+     * Context path for filtering CORS
+     */
     public void setFilterPath(String filterPath) {
         this.filterPath = filterPath;
     }
 
-
-    @Override
-    protected void doStart() throws Exception {
-        ServiceHelper.startService(memoryStore);
-        super.doStart();
+    public String getResourceUri() {
+        return resourceUri;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(memoryStore);
-        super.doStop();
+    /**
+     * Name of the websocket channel to use
+     */
+    public void setResourceUri(String resourceUri) {
+        this.resourceUri = resourceUri;
     }
 }

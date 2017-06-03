@@ -59,6 +59,14 @@ public class ManagedThreadPool implements ManagedThreadPoolMBean {
         return threadPool;
     }
 
+    public String getCamelId() {
+        return camelContext.getName();
+    }
+
+    public String getCamelManagementName() {
+        return camelContext.getManagementName();
+    }
+
     public String getId() {
         return id;
     }
@@ -133,6 +141,14 @@ public class ManagedThreadPool implements ManagedThreadPoolMBean {
 
     public void setKeepAliveTime(long keepAliveTimeInSeconds) {
         threadPool.setKeepAliveTime(keepAliveTimeInSeconds, TimeUnit.SECONDS);
+    }
+
+    public boolean isAllowCoreThreadTimeout() {
+        return threadPool.allowsCoreThreadTimeOut();
+    }
+
+    public void setAllowCoreThreadTimeout(boolean allowCoreThreadTimeout) {
+        threadPool.allowCoreThreadTimeOut(allowCoreThreadTimeout);
     }
 
     public boolean isShutdown() {

@@ -18,14 +18,14 @@ package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelPipelineFactory;
@@ -45,12 +45,12 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
+public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
     private static final String LOOPBACK_INTERFACE = "lo";
     private static final String MULTICAST_SUBNET = "224.0.0.0/4";
-    private final ChannelGroup allChannels;
+    private ChannelGroup allChannels;
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
@@ -63,19 +63,26 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private WorkerPool workerPool;
 
     public SingleUDPNettyServerBootstrapFactory() {
-        this.allChannels = new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
     }
 
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
+
+        this.allChannels = configuration.getChannelGroup() != null
+            ? configuration.getChannelGroup()
+            : new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
     }
 
     public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
+
+        this.allChannels = configuration.getChannelGroup() != null
+            ? configuration.getChannelGroup()
+            : new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
     }
 
     public void addChannel(Channel channel) {
@@ -117,7 +124,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         // noop
     }
 
-    protected void startServerBootstrap() throws UnknownHostException, SocketException {
+    protected void startServerBootstrap() throws Exception {
         // create non-shared worker pool
         int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : NettyHelper.DEFAULT_IO_THREADS;
         workerPool = new NioDatagramWorkerPool(Executors.newCachedThreadPool(), count);
@@ -161,8 +168,9 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             datagramChannel = (DatagramChannel)connectionlessBootstrap.bind(hostAddress);
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
             multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
+            ObjectHelper.notNull(multicastNetworkInterface, "No network interface found for '" + networkInterface + "'.");
             LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", new Object[]{configuration.getHost(), configuration.getPort(), multicastNetworkInterface.getName()});
-            datagramChannel.joinGroup(hostAddress, multicastNetworkInterface);
+            datagramChannel.joinGroup(hostAddress, multicastNetworkInterface).syncUninterruptibly();
             allChannels.add(datagramChannel);
         } else {
             LOG.info("ConnectionlessBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());

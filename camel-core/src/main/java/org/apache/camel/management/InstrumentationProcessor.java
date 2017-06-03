@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
  */
 public class InstrumentationProcessor extends DelegateAsyncProcessor {
 
+    // TODO: Would be good to get this as an advice instead
+
     private static final Logger LOG = LoggerFactory.getLogger(InstrumentationProcessor.class);
     private PerformanceCounter counter;
     private String type;
@@ -69,12 +71,17 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
         // only record time if stats is enabled
         final StopWatch watch = (counter != null && counter.isStatisticsEnabled()) ? new StopWatch() : null;
 
+        // mark beginning to process the exchange
+        if (watch != null) {
+            beginTime(exchange);
+        }
+
         return processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 try {
                     // record end time
                     if (watch != null) {
-                        recordTime(exchange, watch.stop());
+                        recordTime(exchange, watch.taken());
                     }
                 } finally {
                     // and let the original callback know we are done as well
@@ -87,6 +94,10 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
                 return InstrumentationProcessor.this.toString();
             }
         });
+    }
+
+    protected void beginTime(Exchange exchange) {
+        counter.processExchange(exchange);
     }
 
     protected void recordTime(Exchange exchange, long duration) {

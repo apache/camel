@@ -20,11 +20,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
+import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Produce;
@@ -50,6 +52,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myProp", myProp);
+        jndi.bind("foo", new FooBar());
         return jndi;
     }
 
@@ -253,6 +256,30 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testEndpointInjectFluentProducerTemplateField() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyEndpointInjectFluentProducerTemplate bean = new MyEndpointInjectFluentProducerTemplate();
+        Field field = bean.getClass().getField("producer");
+
+        EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+        Class<?> type = field.getType();
+        String propertyName = "producer";
+        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), propertyName, bean, "foo");
+
+        field.set(bean, value);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("Hello World");
+
+        bean.send(exchange);
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testEndpointInjectProducerTemplateFieldNoDefaultEndpoint() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -393,6 +420,52 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertEquals("Hello Camel", value);
     }
 
+    public void testBeanInject() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyBeanInjectBean bean = new MyBeanInjectBean();
+        Field field = bean.getClass().getField("foo");
+
+        BeanInject beanInject = field.getAnnotation(BeanInject.class);
+        Class<?> type = field.getType();
+        Object value = helper.getInjectionBeanValue(type, beanInject.value());
+        field.set(bean, value);
+
+        String out = bean.doSomething("World");
+        assertEquals("Hello World", out);
+    }
+
+    public void testBeanInjectNotFound() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyBeanInjectBean bean = new MyBeanInjectBean();
+        Field field = bean.getClass().getField("foo");
+
+        Class<?> type = field.getType();
+        try {
+            helper.getInjectionBeanValue(type, "bar");
+            fail("Should have thrown exception");
+        } catch (NoSuchBeanException e) {
+            assertEquals("No bean could be found in the registry for: bar of type: org.apache.camel.impl.FooBar", e.getMessage());
+            assertEquals("bar", e.getName());
+        }
+    }
+
+    public void testBeanInjectByType() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyBeanInjectByTypeBean bean = new MyBeanInjectByTypeBean();
+        Field field = bean.getClass().getField("foo");
+
+        BeanInject beanInject = field.getAnnotation(BeanInject.class);
+        Class<?> type = field.getType();
+        Object value = helper.getInjectionBeanValue(type, beanInject.value());
+        field.set(bean, value);
+
+        String out = bean.doSomething("Camel");
+        assertEquals("Hello Camel", out);
+    }
+
     public class MyConsumeBean {
 
         @Consume(uri = "seda:foo")
@@ -420,7 +493,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         public void produceSomething(String body) throws Exception {
             assertEquals("Hello World", body);
 
-            Exchange exchange = producer.createExchange();
+            Exchange exchange = producer.getEndpoint().createExchange();
             exchange.addOnCompletion(mySynchronization);
             exchange.getIn().setBody(body);
             producer.process(exchange);
@@ -508,6 +581,17 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         public void send(Exchange exchange) throws Exception {
             producer.send(exchange);
+        }
+
+    }
+
+    public class MyEndpointInjectFluentProducerTemplate {
+
+        @EndpointInject(uri = "mock:result")
+        public FluentProducerTemplate producer;
+
+        public void send(Exchange exchange) throws Exception {
+            producer.withExchange(exchange).send();
         }
 
     }
@@ -618,5 +702,27 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             this.greeting = greeting;
         }
     }
+
+    public class MyBeanInjectBean {
+
+        @BeanInject("foo")
+        public FooBar foo;
+
+        public String doSomething(String body) {
+            return foo.hello(body);
+        }
+    }
+
+    public class MyBeanInjectByTypeBean {
+
+        @BeanInject
+        public FooBar foo;
+
+        public String doSomething(String body) {
+            return foo.hello(body);
+        }
+    }
+
+
 
 }

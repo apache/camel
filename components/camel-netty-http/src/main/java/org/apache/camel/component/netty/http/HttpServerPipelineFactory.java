@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.List;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.netty.ChannelHandlerFactory;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.ServerPipelineFactory;
@@ -45,7 +48,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
     private static final Logger LOG = LoggerFactory.getLogger(HttpServerPipelineFactory.class);
     protected NettyHttpConsumer consumer;
     protected SSLContext sslContext;
-    protected NettyServerBootstrapConfiguration configuration;
+    protected NettyHttpConfiguration configuration;
 
     public HttpServerPipelineFactory() {
         // default constructor needed
@@ -83,14 +86,32 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             pipeline.addLast("ssl", sslHandler);
         }
 
-        pipeline.addLast("decoder", new HttpRequestDecoder());
-        pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
-
+        pipeline.addLast("decoder", new HttpRequestDecoder(4096, configuration.getMaxHeaderSize(), 8192));
+        List<ChannelHandler> decoders = consumer.getConfiguration().getDecoders();
+        for (int x = 0; x < decoders.size(); x++) {
+            ChannelHandler decoder = decoders.get(x);
+            if (decoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
+            }
+            pipeline.addLast("decoder-" + x, decoder);
+        }
+        pipeline.addLast("aggregator", new HttpChunkAggregator(configuration.getChunkedMaxContentLength()));
+        
         pipeline.addLast("encoder", new HttpResponseEncoder());
+        List<ChannelHandler> encoders = consumer.getConfiguration().getEncoders();
+        for (int x = 0; x < encoders.size(); x++) {
+            ChannelHandler encoder = encoders.get(x);
+            if (encoder instanceof ChannelHandlerFactory) {
+                // use the factory to create a new instance of the channel as it may not be shareable
+                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
+            }
+            pipeline.addLast("encoder-" + x, encoder);
+        }
         if (supportCompressed()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }
-
+        
         if (consumer.getConfiguration().isOrderedThreadPoolExecutor()) {
             // this must be added just before the HttpServerMultiplexChannelHandler
             // use ordered thread pool, to ensure we process the events in order, and can send back
@@ -117,7 +138,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
 
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
-            answer = configuration.getSslContextParameters().createSSLContext();
+            answer = configuration.getSslContextParameters().createSSLContext(camelContext);
         } else {
             if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
                 LOG.debug("keystorefile is null");
@@ -163,6 +184,10 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(false);
             engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
+            if (consumer.getConfiguration().getSslContextParameters() == null) {
+                // just set the enabledProtocols if the SslContextParameter doesn't set
+                engine.setEnabledProtocols(consumer.getConfiguration().getEnabledProtocols().split(","));
+            }
             return new SslHandler(engine);
         }
 

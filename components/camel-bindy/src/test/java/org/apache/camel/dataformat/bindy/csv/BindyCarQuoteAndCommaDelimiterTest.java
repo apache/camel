@@ -16,15 +16,16 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.dataformat.bindy.format.factories.DefaultFactoryRegistry;
 import org.apache.camel.dataformat.bindy.model.car.Car;
 import org.apache.camel.dataformat.bindy.model.car.Car.Colour;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -43,6 +44,13 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
             + " Engine Immobiliser, Limited Slip Differential, Power Mirrors, Power Steering, Power Windows, Radio CD with 6 Speakers"
             + " CV GOOD KLMS AUTO POWER OPTIONS GOOD KLMS   \";\"Used\";\"0.0\";\"EZR05I\"\n";
 
+    @Before
+    public void setup() {
+        PropertyPlaceholderDelegateRegistry registry = (PropertyPlaceholderDelegateRegistry)context.getRegistry();
+        JndiRegistry reg = (JndiRegistry)registry.getRegistry();
+        reg.bind("defaultFactoryRegistry", new DefaultFactoryRegistry());
+    }
+
     @Test
     public void testBindyUnmarshalQuoteAndCommaDelimiter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:out");
@@ -51,10 +59,8 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
         template.sendBody("direct:out", HEADER + "\n" + ROW);
 
         assertMockEndpointsSatisfied();
-
-        Map<?, ?> map1 = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-
-        Car rec1 = (Car) map1.values().iterator().next();
+        
+        Car rec1 = mock.getReceivedExchanges().get(0).getIn().getBody(Car.class);
 
         assertEquals("SS552", rec1.getStockid());
         assertEquals("TOYOTA", rec1.getMake());
@@ -87,17 +93,17 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                BindyCsvDataFormat camelDataFormat =
-                        new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.car");
-                camelDataFormat.setLocale("en");
+                Class<?> type = org.apache.camel.dataformat.bindy.model.car.Car.class;
+                BindyCsvDataFormat dataFormat = new BindyCsvDataFormat();
+                dataFormat.setClassType(type);
+                dataFormat.setLocale("en");
 
                 from("direct:out")
-                        .unmarshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.car")
-                        .to("mock:out");
-
+                    .unmarshal().bindy(BindyType.Csv, type)
+                    .to("mock:out");
                 from("direct:in")
-                        .marshal(camelDataFormat)
-                        .to("mock:in");
+                    .marshal(dataFormat)
+                    .to("mock:in");
             }
         };
     }

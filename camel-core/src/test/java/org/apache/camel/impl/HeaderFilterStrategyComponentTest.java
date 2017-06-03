@@ -33,6 +33,10 @@ public class HeaderFilterStrategyComponentTest extends TestCase {
 
     private static class MyComponent extends HeaderFilterStrategyComponent {
 
+        MyComponent(Class<? extends Endpoint> endpointClass) {
+            super(endpointClass);
+        }
+
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return null;
         }
@@ -64,7 +68,7 @@ public class HeaderFilterStrategyComponentTest extends TestCase {
     }
 
     public void testHeaderFilterStrategyComponent() {
-        MyComponent comp = new MyComponent();
+        MyComponent comp = new MyComponent(MyEndpoint.class);
         assertNull(comp.getHeaderFilterStrategy());
 
         HeaderFilterStrategy strategy = new DefaultHeaderFilterStrategy();
@@ -74,7 +78,7 @@ public class HeaderFilterStrategyComponentTest extends TestCase {
     }
 
     public void testHeaderFilterStrategyAware() {
-        MyComponent comp = new MyComponent();
+        MyComponent comp = new MyComponent(MyEndpoint.class);
         assertNull(comp.getHeaderFilterStrategy());
 
         HeaderFilterStrategy strategy = new DefaultHeaderFilterStrategy();

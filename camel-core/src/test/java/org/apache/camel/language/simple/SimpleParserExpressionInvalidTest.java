@@ -61,7 +61,8 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
             parser.parseExpression().evaluate(exchange, String.class);
             fail("Should thrown exception");
         } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(15, e.getIndex());
+            // its a nested function is it reset the index
+            assertEquals(0, e.getIndex());
         }
     }
     

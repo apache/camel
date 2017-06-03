@@ -22,6 +22,7 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
+import javax.jms.Session;
 import javax.jms.Topic;
 
 import org.apache.camel.RuntimeExchangeException;
@@ -39,10 +40,17 @@ import org.slf4j.LoggerFactory;
 public class JmsMessage extends DefaultMessage {
     private static final Logger LOG = LoggerFactory.getLogger(JmsMessage.class);
     private Message jmsMessage;
+    private Session jmsSession;
     private JmsBinding binding;
 
+    @Deprecated
     public JmsMessage(Message jmsMessage, JmsBinding binding) {
+        this(jmsMessage, null, binding);
+    }
+
+    public JmsMessage(Message jmsMessage, Session jmsSession, JmsBinding binding) {
         setJmsMessage(jmsMessage);
+        setJmsSession(jmsSession);
         setBinding(binding);
     }
 
@@ -94,15 +102,8 @@ public class JmsMessage extends DefaultMessage {
 
         getAttachments().clear();
         if (that.hasAttachments()) {
-            getAttachments().putAll(that.getAttachments());
+            getAttachmentObjects().putAll(that.getAttachmentObjects());
         }
-    }
-
-    /**
-     * Returns the underlying JMS message
-     */
-    public Message getJmsMessage() {
-        return jmsMessage;
     }
 
     public JmsBinding getBinding() {
@@ -116,6 +117,13 @@ public class JmsMessage extends DefaultMessage {
         this.binding = binding;
     }
 
+    /**
+     * Returns the underlying JMS message
+     */
+    public Message getJmsMessage() {
+        return jmsMessage;
+    }
+
     public void setJmsMessage(Message jmsMessage) {
         if (jmsMessage != null) {
             try {
@@ -125,6 +133,20 @@ public class JmsMessage extends DefaultMessage {
             }
         }
         this.jmsMessage = jmsMessage;
+    }
+
+    /**
+     * Returns the underlying JMS session.
+     * <p/>
+     * This may be <tt>null</tt> if using {@link org.apache.camel.component.jms.JmsPollingConsumer},
+     * or the broker component from Apache ActiveMQ 5.11.x or older.
+     */
+    public Session getJmsSession() {
+        return jmsSession;
+    }
+
+    public void setJmsSession(Session jmsSession) {
+        this.jmsSession = jmsSession;
     }
 
     @Override
@@ -139,25 +161,8 @@ public class JmsMessage extends DefaultMessage {
     }
 
     public Object getHeader(String name) {
-        Object answer = null;
-
-        // we will exclude using JMS-prefixed headers here to avoid strangeness with some JMS providers
-        // e.g. ActiveMQ returns the String not the Destination type for "JMSReplyTo"!
-        // only look in jms message directly if we have not populated headers
-        if (jmsMessage != null && !hasPopulatedHeaders() && !name.startsWith("JMS")) {
-            try {
-                // use binding to do the lookup as it has to consider using encoded keys
-                answer = getBinding().getObjectProperty(jmsMessage, name);
-            } catch (JMSException e) {
-                throw new RuntimeExchangeException("Unable to retrieve header from JMS Message: " + name, getExchange(), e);
-            }
-        }
-        // only look if we have populated headers otherwise there are no headers at all
-        // if we do lookup a header starting with JMS then force a lookup
-        if (answer == null && (hasPopulatedHeaders() || name.startsWith("JMS"))) {
-            answer = super.getHeader(name);
-        }
-        return answer;
+        ensureInitialHeaders();
+        return super.getHeader(name);
     }
 
     @Override
@@ -186,7 +191,9 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public JmsMessage newInstance() {
-        return new JmsMessage(null, binding);
+        JmsMessage answer = new JmsMessage(null, null, binding);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     /**

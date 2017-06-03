@@ -16,13 +16,18 @@
  */
 package org.apache.camel.model;
 
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -30,15 +35,21 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.EndpointHelper.isReferenceParameter;
 
 /**
- * Represents the base XML type for DataFormat.
+ * Represents a Camel data format
  */
+@Metadata(label = "dataformat,transformation")
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatDefinition extends IdentifiedType {
+public class DataFormatDefinition extends IdentifiedType implements OtherAttributesAware {
     @XmlTransient
     private DataFormat dataFormat;
     @XmlTransient
     private String dataFormatName;
+    // use xs:any to support optional property placeholders
+    @XmlAnyAttribute
+    private Map<QName, Object> otherAttributes;
+    @XmlAttribute
+    private Boolean contentTypeHeader;
 
     public DataFormatDefinition() {
     }
@@ -64,7 +75,7 @@ public class DataFormatDefinition extends IdentifiedType {
             ObjectHelper.notNull(ref, "ref or type");
 
             // try to let resolver see if it can resolve it, its not always possible
-            type = ((ModelCamelContext) routeContext.getCamelContext()).resolveDataFormatDefinition(ref);
+            type = routeContext.getCamelContext().resolveDataFormatDefinition(ref);
 
             if (type != null) {
                 return type.getDataFormat(routeContext);
@@ -83,13 +94,34 @@ public class DataFormatDefinition extends IdentifiedType {
 
     public DataFormat getDataFormat(RouteContext routeContext) {
         if (dataFormat == null) {
-            dataFormat = createDataFormat(routeContext);
-            if (dataFormat != null) {
-                configureDataFormat(dataFormat, routeContext.getCamelContext());
-            } else {
-                throw new IllegalArgumentException(
-                        "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
-                                + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+            Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
+
+            // resolve properties before we create the data format
+            try {
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), this);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Error resolving property placeholders on data format: " + this, e);
+            }
+            try {
+                dataFormat = createDataFormat(routeContext);
+                if (dataFormat != null) {
+                    // is enabled by default so assume true if null
+                    if (contentTypeHeader == null || contentTypeHeader) {
+                        try {
+                            setProperty(routeContext.getCamelContext(), dataFormat, "contentTypeHeader", Boolean.TRUE);
+                        } catch (Exception e) {
+                            // ignore as this option is optional and not all data formats support this
+                        }
+                    }
+                    // configure the rest of the options
+                    configureDataFormat(dataFormat, routeContext.getCamelContext());
+                } else {
+                    throw new IllegalArgumentException(
+                            "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
+                                    + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+                }
+            } finally {
+                propertyPlaceholdersChangeReverter.run();
             }
         }
         return dataFormat;
@@ -99,8 +131,9 @@ public class DataFormatDefinition extends IdentifiedType {
      * Factory method to create the data format instance
      */
     protected DataFormat createDataFormat(RouteContext routeContext) {
-        if (dataFormatName != null) {
-            return routeContext.getCamelContext().resolveDataFormat(dataFormatName);
+        // must use getDataFormatName() as we need special logic in json dataformat
+        if (getDataFormatName() != null) {
+            return routeContext.getCamelContext().createDataFormat(getDataFormatName());
         }
         return null;
     }
@@ -160,6 +193,32 @@ public class DataFormatDefinition extends IdentifiedType {
 
     public void setDataFormat(DataFormat dataFormat) {
         this.dataFormat = dataFormat;
+    }
+
+    public Map<QName, Object> getOtherAttributes() {
+        return otherAttributes;
+    }
+
+    /**
+     * Adds an optional attribute
+     */
+    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+        this.otherAttributes = otherAttributes;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * Whether the data format should set the <tt>Content-Type</tt> header with the type from the data format if the
+     * data format is capable of doing so.
+     * <p/>
+     * For example <tt>application/xml</tt> for data formats marshalling to XML, or <tt>application/json</tt>
+     * for data formats marshalling to JSon etc.
+     */
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     public String getShortName() {

@@ -22,6 +22,7 @@ import java.util.Queue;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
@@ -42,11 +43,12 @@ import org.slf4j.LoggerFactory;
 /**
  * A Consumer of messages from the Amazon Web Service Simple Storage Service
  * <a href="http://aws.amazon.com/s3/">AWS S3</a>
- * 
  */
 public class S3Consumer extends ScheduledBatchPollingConsumer {
     
     private static final Logger LOG = LoggerFactory.getLogger(S3Consumer.class);
+    private String marker;
+    private transient String s3ConsumerToString;
 
     public S3Consumer(S3Endpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
@@ -58,22 +60,52 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
         
+        String fileName = getConfiguration().getFileName();
         String bucketName = getConfiguration().getBucketName();
-        LOG.trace("Queueing objects in bucket [{}]...", bucketName);
+        Queue<Exchange> exchanges;
         
-        ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
-        listObjectsRequest.setBucketName(bucketName);
-        listObjectsRequest.setPrefix(getConfiguration().getPrefix());
-        listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
-        
-        ObjectListing listObjects = getAmazonS3Client().listObjects(listObjectsRequest);
+        if (fileName != null) {
+            LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
+            S3Object s3Object = getAmazonS3Client().getObject(new GetObjectRequest(bucketName, fileName));
+            exchanges = createExchanges(s3Object);
+        } else {
+            LOG.trace("Queueing objects in bucket [{}]...", bucketName);
+
+            ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
+            listObjectsRequest.setBucketName(bucketName);
+            listObjectsRequest.setPrefix(getConfiguration().getPrefix());
+            if (maxMessagesPerPoll > 0) {
+                listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
+            }
+            // if there was a marker from previous poll then use that to continue from where we left last time
+            if (marker != null) {
+                LOG.trace("Resuming from marker: {}", marker);
+                listObjectsRequest.setMarker(marker);
+            }
+
+            ObjectListing listObjects = getAmazonS3Client().listObjects(listObjectsRequest);
+            if (listObjects.isTruncated()) {
+                marker = listObjects.getNextMarker();
+                LOG.trace("Returned list is truncated, so setting next marker: {}", marker);
+            } else {
+                // no more data so clear marker
+                marker = null;
+            }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
+            }
+
+            exchanges = createExchanges(listObjects.getObjectSummaries());
         }
-        
-        Queue<Exchange> exchanges = createExchanges(listObjects.getObjectSummaries());
         return processBatch(CastUtils.cast(exchanges));
+    }
+    
+    protected Queue<Exchange> createExchanges(S3Object s3Object) {
+        Queue<Exchange> answer = new LinkedList<Exchange>();
+        Exchange exchange = getEndpoint().createExchange(s3Object);
+        answer.add(exchange);
+        return answer;
     }
     
     protected Queue<Exchange> createExchanges(List<S3ObjectSummary> s3ObjectSummaries) {
@@ -184,6 +216,9 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public String toString() {
-        return "S3Consumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (s3ConsumerToString == null) {
+            s3ConsumerToString = "S3Consumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return s3ConsumerToString;
     }
 }

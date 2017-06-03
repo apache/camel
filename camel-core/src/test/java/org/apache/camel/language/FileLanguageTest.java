@@ -71,10 +71,13 @@ public class FileLanguageTest extends LanguageTestSupport {
     public void testFile() throws Exception {
         assertExpression("${file:ext}", "txt");
         assertExpression("${file:name.ext}", "txt");
+        assertExpression("${file:name.ext.single}", "txt");
         assertExpression("${file:name}", "test" + File.separator + file.getName());
         assertExpression("${file:name.noext}", "test" + File.separator + "hello");
+        assertExpression("${file:name.noext.single}", "test" + File.separator + "hello");
         assertExpression("${file:onlyname}", file.getName());
         assertExpression("${file:onlyname.noext}", "hello");
+        assertExpression("${file:onlyname.noext.single}", "hello");
         assertExpression("${file:parent}", file.getParent());
         assertExpression("${file:path}", file.getPath());
         assertExpression("${file:absolute}", FileUtil.isAbsolute(file));
@@ -162,6 +165,22 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("target\\newdir\\onwindows\\${file:name}", "target\\newdir\\onwindows\\hello.txt");
     }
 
+    public void testFileNameDoubleExtension() throws Exception {
+        file = new File("target/filelanguage/test/bigfile.tar.gz");
+
+        String uri = "file://target/filelanguage?fileExist=Override";
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null, false);
+
+        FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
+
+        Exchange answer = endpoint.createExchange(gf);
+        endpoint.configureMessage(gf, answer.getIn());
+
+        assertEquals("bigfile.tar.gz", file.getName());
+        assertExpression(answer, "${file:onlyname}", "bigfile.tar.gz");
+        assertExpression(answer, "${file:ext}", "tar.gz");
+    }
+
     public Exchange createExchange() {
         // create the file
         String uri = "file://target/filelanguage?fileExist=Override";
@@ -169,7 +188,7 @@ public class FileLanguageTest extends LanguageTestSupport {
 
         // get the file handle
         file = new File("target/filelanguage/test/hello.txt");
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null);
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 

@@ -22,7 +22,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.DocumentType;
@@ -35,21 +39,34 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class CMISSessionFacade {
     private static final Logger LOG = LoggerFactory.getLogger(CMISSessionFacade.class);
+
+    private transient Session session;
+
     private final String url;
+
+    @UriParam(defaultValue = "100")
     private int pageSize = 100;
+    @UriParam
     private int readCount;
+    @UriParam
     private boolean readContent;
+    @UriParam(label = "security", secret = true)
     private String username;
+    @UriParam(label = "security", secret = true)
     private String password;
+    @UriParam
     private String repositoryId;
+    @UriParam(label = "consumer")
     private String query;
-    private Session session;
 
     public CMISSessionFacade(String url) {
         this.url = url;
@@ -156,17 +173,20 @@ public class CMISSessionFacade {
 
     public Document getDocument(QueryResult queryResult) {
         if (CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.OBJECT_TYPE_ID))
-            || CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.BASE_TYPE_ID))) {
-            String objectId = (String)queryResult.getPropertyById(PropertyIds.OBJECT_ID).getFirstValue();
-            return (org.apache.chemistry.opencmis.client.api.Document)session.getObject(objectId);
+                || CamelCMISConstants.CMIS_DOCUMENT.equals(queryResult.getPropertyValueById(PropertyIds.BASE_TYPE_ID))) {
+            String objectId = (String) queryResult.getPropertyById(PropertyIds.OBJECT_ID).getFirstValue();
+            return (org.apache.chemistry.opencmis.client.api.Document) session.getObject(objectId);
         }
         return null;
     }
 
     public InputStream getContentStreamFor(QueryResult item) {
         Document document = getDocument(item);
-        if (document != null && document.getContentStream() != null) {
-            return document.getContentStream().getStream();
+        if (document != null) {
+            ContentStream contentStream = document.getContentStream();
+            if (contentStream != null) {
+                return contentStream.getStream();
+            }
         }
         return null;
     }
@@ -176,9 +196,21 @@ public class CMISSessionFacade {
     }
 
     public boolean isObjectTypeVersionable(String objectType) {
-        if (CamelCMISConstants.CMIS_DOCUMENT.equals(objectType)) {
+        if (CamelCMISConstants.CMIS_DOCUMENT.equals(getCMISTypeFor(objectType))) {
             ObjectType typeDefinition = session.getTypeDefinition(objectType);
-            return ((DocumentType)typeDefinition).isVersionable();
+            return ((DocumentType) typeDefinition).isVersionable();
+        }
+        return false;
+    }
+
+    public boolean supportsSecondaries() {
+        if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0) {
+            return false;
+        }
+        for (ObjectType type : session.getTypeChildren(null, false)) {
+            if (BaseTypeId.CMIS_SECONDARY.value().equals(type.getId())) {
+                return true;
+            }
         }
         return false;
     }
@@ -187,35 +219,66 @@ public class CMISSessionFacade {
         return buf != null ? session.getObjectFactory()
                 .createContentStream(fileName, buf.length, mimeType, new ByteArrayInputStream(buf)) : null;
     }
-    
+
+    public String getCMISTypeFor(String customOrCMISType) {
+        ObjectType objectBaseType = session.getTypeDefinition(customOrCMISType).getBaseType();
+        return objectBaseType == null ? customOrCMISType : objectBaseType.getId();
+    }
+
+    public Set<String> getPropertiesFor(String objectType) {
+        return session.getTypeDefinition(objectType).getPropertyDefinitions().keySet();
+    }
+
     public OperationContext createOperationContext() {
         return session.createOperationContext();
     }
 
+    /**
+     * Username for the cmis repository
+     */
     public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * Password for the cmis repository
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * The Id of the repository to use. If not specified the first available repository is used
+     */
     public void setRepositoryId(String repositoryId) {
         this.repositoryId = repositoryId;
     }
 
+    /**
+     * If set to true, the content of document node will be retrieved in addition to the properties
+     */
     public void setReadContent(boolean readContent) {
         this.readContent = readContent;
     }
 
+    /**
+     * Max number of nodes to read
+     */
     public void setReadCount(int readCount) {
         this.readCount = readCount;
     }
 
+    /**
+     * The cmis query to execute against the repository.
+     * If not specified, the consumer will retrieve every node from the content repository by iterating the content tree recursively
+     */
     public void setQuery(String query) {
         this.query = query;
     }
 
+    /**
+     * Number of nodes to retrieve per page
+     */
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }

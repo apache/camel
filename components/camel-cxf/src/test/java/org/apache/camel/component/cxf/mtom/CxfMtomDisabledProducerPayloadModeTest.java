@@ -44,8 +44,8 @@ import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.cxf.attachment.AttachmentDataSource;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.IOUtils;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Assert;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -81,7 +81,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 List<Source> elements = new ArrayList<Source>();
-                elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE)).getDocumentElement()));
+                elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE)).getDocumentElement()));
                 CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
                     elements, null);
                 exchange.getIn().setBody(body);

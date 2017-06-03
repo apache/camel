@@ -34,7 +34,10 @@ public enum OperationName {
     GET_BLOB_FIELD("getBlobField"),
     QUERY("query"),
     QUERY_MORE("queryMore"),
+    QUERY_ALL("queryAll"),
     SEARCH("search"),
+    APEX_CALL("apexCall"),
+    RECENT("recent"),
 
     // bulk API
     CREATE_JOB("createJob"),
@@ -48,11 +51,30 @@ public enum OperationName {
     GET_RESULTS("getResults"),
     CREATE_BATCH_QUERY("createBatchQuery"),
     GET_QUERY_RESULT_IDS("getQueryResultIds"),
-    GET_QUERY_RESULT("getQueryResult");
+    GET_QUERY_RESULT("getQueryResult"),
+    
+    // analytics API
+    GET_RECENT_REPORTS("getRecentReports"),
+    GET_REPORT_DESCRIPTION("getReportDescription"),
+    EXECUTE_SYNCREPORT("executeSyncReport"),
+    EXECUTE_ASYNCREPORT("executeAsyncReport"),
+    GET_REPORT_INSTANCES("getReportInstances"),
+    GET_REPORT_RESULTS("getReportResults"),
+
+    // limits API
+    LIMITS("limits"),
+
+    // Approval Processes and Process Rules API
+    APPROVAL("approval"),
+    APPROVALS("approvals"),
+
+    // Composite API
+    COMPOSITE_TREE("composite-tree"),
+    COMPOSITE_BATCH("composite-batch");
 
     private final String value;
 
-    private OperationName(String value) {
+    OperationName(String value) {
         this.value = value;
     }
 

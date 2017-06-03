@@ -38,7 +38,7 @@ public class CMISConsumerTest extends CMISTestSupport {
     public void getAllContentFromServerOrderedFromRootToLeaves() throws Exception {
         resultEndpoint.expectedMessageCount(5);
 
-        Consumer treeBasedConsumer = createConsumerFor(getUrl());
+        Consumer treeBasedConsumer = createConsumerFor(getUrl() + "?pageSize=50");
         treeBasedConsumer.start();
 
         resultEndpoint.assertIsSatisfied();

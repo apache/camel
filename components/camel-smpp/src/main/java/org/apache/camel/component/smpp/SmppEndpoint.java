@@ -23,18 +23,21 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 
 /**
- * A SMPP Endpoint
- * 
- * @version 
+ * To send and receive SMS using a SMSC (Short Message Service Center).
  */
+@UriEndpoint(firstVersion = "2.2.0", scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
+        consumerClass = SmppConsumer.class, label = "mobile", lenientProperties = true)
 public class SmppEndpoint extends DefaultEndpoint {
 
     private SmppBinding binding;
+    @UriParam
     private SmppConfiguration configuration;
 
     public SmppEndpoint(String endpointUri, Component component, SmppConfiguration configuration) {
@@ -89,7 +92,7 @@ public class SmppEndpoint extends DefaultEndpoint {
                                                             AlertNotification alertNotification) {
         Exchange exchange = createExchange(exchangePattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(getBinding().createSmppMessage(alertNotification));
+        exchange.setIn(getBinding().createSmppMessage(getCamelContext(), alertNotification));
         return exchange;
     }
 
@@ -116,7 +119,7 @@ public class SmppEndpoint extends DefaultEndpoint {
                                                     DeliverSm deliverSm) throws Exception {
         Exchange exchange = createExchange(exchangePattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(getBinding().createSmppMessage(deliverSm));
+        exchange.setIn(getBinding().createSmppMessage(getCamelContext(), deliverSm));
         return exchange;
     }
     
@@ -144,7 +147,7 @@ public class SmppEndpoint extends DefaultEndpoint {
     public Exchange createOnAcceptDataSm(ExchangePattern exchangePattern, DataSm dataSm, String smppMessageId) {
         Exchange exchange = createExchange(exchangePattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(getBinding().createSmppMessage(dataSm, smppMessageId));
+        exchange.setIn(getBinding().createSmppMessage(getCamelContext(), dataSm, smppMessageId));
         return exchange;
     }
 

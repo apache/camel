@@ -22,6 +22,7 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StaticService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
@@ -78,6 +79,10 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         return context.getName();
     }
 
+    public String getCamelManagementName() {
+        return context.getManagementName();
+    }
+
     public String getRouteId() {
         if (route != null) {
             return route.getId();
@@ -107,7 +112,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
     }
 
     public boolean isSupportSuspension() {
-        return service instanceof SuspendableService;
+        return service instanceof Suspendable && service instanceof SuspendableService;
     }
 
     public boolean isSuspended() {
@@ -123,7 +128,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        if (service instanceof SuspendableService) {
+        if (service instanceof Suspendable && service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             ss.suspend();
         } else {

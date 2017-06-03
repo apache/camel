@@ -45,7 +45,13 @@ public class ActiveMQUuidGeneratorTest extends TestCase {
         }
         LOG.info("Last id:  " + uuidGenerator.generateUuid());
 
-        LOG.info("Took " + TimeUtils.printDuration(watch.stop()));
+        LOG.info("Took " + TimeUtils.printDuration(watch.taken()));
+    }
+
+    public void testSanitizeHostName() throws Exception {
+        assertEquals("somehost.lan", ActiveMQUuidGenerator.sanitizeHostName("somehost.lan"));
+        // include a UTF-8 char in the text \u0E08 is a Thai elephant
+        assertEquals("otherhost.lan", ActiveMQUuidGenerator.sanitizeHostName("other\u0E08host.lan"));
     }
 
 }

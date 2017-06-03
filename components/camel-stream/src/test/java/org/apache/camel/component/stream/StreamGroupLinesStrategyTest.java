@@ -38,7 +38,7 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
             StringBuilder buffer = new StringBuilder();
             for (String line : lines) {
                 buffer.append(line);
-                buffer.append("\n");
+                buffer.append(System.lineSeparator());
             }
             return buffer.toString();
         }
@@ -48,16 +48,19 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
     public void testGroupLines() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
+        mock.setAssertPeriod(1000);
+        mock.message(0).header(StreamConstants.STREAM_INDEX).isEqualTo(0);
+        mock.message(0).header(StreamConstants.STREAM_COMPLETE).isEqualTo(false);
+        mock.message(1).header(StreamConstants.STREAM_INDEX).isEqualTo(1);
+        mock.message(1).header(StreamConstants.STREAM_COMPLETE).isEqualTo(true);
 
         assertMockEndpointsSatisfied();
 
         Object result = mock.getExchanges().get(0).getIn().getBody();
         assertEquals("Get a wrong result.", "A\nB\nC\n", result);
-        
 
         Object result2 = mock.getExchanges().get(1).getIn().getBody();
         assertEquals("Get a wrong result.", "D\nE\nF\n", result2);
-        
     }
 
     @Override

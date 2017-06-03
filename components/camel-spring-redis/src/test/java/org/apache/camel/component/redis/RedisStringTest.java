@@ -231,10 +231,10 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteMGET() throws Exception {
-        List<String> fields = new ArrayList<String>();
+        List<String> fields = new ArrayList<>();
         fields.add("field1");
 
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         values.add("value1");
 
         when(valueOperations.multiGet(fields)).thenReturn(values);
@@ -250,7 +250,7 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteMSET() throws Exception {
-        Map<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<>();
         values.put("field1", "valu1");
 
         sendHeaders(
@@ -263,7 +263,7 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteMSETNX() throws Exception {
-        Map<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<>();
         values.put("field1", "valu1");
 
         sendHeaders(

@@ -94,14 +94,25 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public void pushRouteContext(RouteContext routeContext) {
-        MDC.put(MDC_ROUTE_ID, routeContext.getRoute().getId());
         super.pushRouteContext(routeContext);
+        MDC.put(MDC_ROUTE_ID, routeContext.getRoute().getId());
     }
 
     @Override
     public RouteContext popRouteContext() {
-        MDC.remove(MDC_ROUTE_ID);
-        return super.popRouteContext();
+        RouteContext answer = super.popRouteContext();
+
+        // restore old route id back again after we have popped
+        RouteContext previous = getRouteContext();
+        if (previous != null) {
+            // restore old route id back again
+            MDC.put(MDC_ROUTE_ID, previous.getRoute().getId());
+        } else {
+            // not running in route, so clear (should ideally not happen)
+            MDC.remove(MDC_ROUTE_ID);
+        }
+
+        return answer;
     }
 
     @Override
@@ -118,13 +129,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
-        String routeId = MDC.get(MDC_ROUTE_ID);
-        if (routeId != null) {
-            // only need MDC callback if we have a route id
-            return new MDCCallback(callback, routeId);
-        } else {
-            return callback;
-        }
+        return new MDCCallback(callback);
     }
 
     @Override
@@ -190,16 +195,48 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     private static final class MDCCallback implements AsyncCallback {
 
         private final AsyncCallback delegate;
+        private final String breadcrumbId;
+        private final String exchangeId;
+        private final String messageId;
+        private final String correlationId;
         private final String routeId;
+        private final String camelContextId;
 
-        private MDCCallback(AsyncCallback delegate, String routeId) {
+        private MDCCallback(AsyncCallback delegate) {
             this.delegate = delegate;
-            this.routeId = routeId;
+            this.exchangeId = MDC.get(MDC_EXCHANGE_ID);
+            this.messageId = MDC.get(MDC_MESSAGE_ID);
+            this.breadcrumbId = MDC.get(MDC_BREADCRUMB_ID);
+            this.correlationId = MDC.get(MDC_CORRELATION_ID);
+            this.camelContextId = MDC.get(MDC_CAMEL_CONTEXT_ID);
+            this.routeId = MDC.get(MDC_ROUTE_ID);
         }
 
         public void done(boolean doneSync) {
             try {
-                MDC.put(MDC_ROUTE_ID, routeId);
+                if (!doneSync) {
+                    // when done asynchronously then restore information from previous thread
+                    if (breadcrumbId != null) {
+                        MDC.put(MDC_BREADCRUMB_ID, breadcrumbId);
+                    }
+                    if (exchangeId != null) {
+                        MDC.put(MDC_EXCHANGE_ID, exchangeId);
+                    }
+                    if (messageId != null) {
+                        MDC.put(MDC_MESSAGE_ID, messageId);
+                    }
+                    if (correlationId != null) {
+                        MDC.put(MDC_CORRELATION_ID, correlationId);
+                    }
+                    if (camelContextId != null) {
+                        MDC.put(MDC_CAMEL_CONTEXT_ID, camelContextId);
+                    }
+                }
+                // need to setup the routeId finally
+                if (routeId != null) {
+                    MDC.put(MDC_ROUTE_ID, routeId);
+                }
+                
             } finally {
                 // muse ensure delegate is invoked
                 delegate.done(doneSync);

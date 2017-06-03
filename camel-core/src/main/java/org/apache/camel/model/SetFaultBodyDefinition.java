@@ -23,11 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;setFaultBody/&gt; element.
+ *  Sets the contents of a fault message's body
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setFaultBody")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetFaultBodyDefinition extends NoOutputExpressionNode {
@@ -45,11 +48,6 @@ public class SetFaultBodyDefinition extends NoOutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "setFaultBody";
-    }
-
-    @Override
     public String getLabel() {
         return "setFaultBody[" + getExpression() + "]";
     }
@@ -59,5 +57,12 @@ public class SetFaultBodyDefinition extends NoOutputExpressionNode {
         Expression expr = getExpression().createExpression(routeContext);
         return ProcessorBuilder.setFaultBody(expr);
     }
-    
+
+    /**
+     * Expression that returns the new fault body to use
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        super.setExpression(expression);
+    }
 }

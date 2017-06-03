@@ -26,6 +26,7 @@ import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.After;
 import org.junit.Before;
@@ -55,9 +56,7 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
 
     @After
     public void tearDown() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
         super.tearDown();
     }
     
@@ -89,7 +88,7 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD").process(new Processor() {
+                from("cxf:bean:routerEndpoint?dataFormat=PAYLOAD").streamCaching().process(new Processor() {
 
                     @Override
                     public void process(Exchange exchange) throws Exception {

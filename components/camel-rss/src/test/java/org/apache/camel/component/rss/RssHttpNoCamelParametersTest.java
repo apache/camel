@@ -19,9 +19,6 @@ package org.apache.camel.component.rss;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RssHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test

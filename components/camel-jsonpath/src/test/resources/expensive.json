@@ -1,16 +1,17 @@
-{ "store": {
-  "book": [
-    {
-      "category": "programming",
-      "author": "Claus Ibsen,Jonathan Anstey",
-      "title": "Camel in Action",
-      "price": 39.99,
-      "isbn": "978-193-518-236-8"
+{
+    "store": {
+        "book": [
+            {
+                "category": "programming",
+                "author": "Claus Ibsen,Jonathan Anstey",
+                "title": "Camel in Action",
+                "price": 39.99,
+                "isbn": "978-193-518-236-8"
+            }
+        ],
+        "bicycle": {
+            "color": "red",
+            "price": 99.95
+        }
     }
-  ],
-  "bicycle": {
-    "color": "red",
-    "price": 19.95
-  }
-}
 }

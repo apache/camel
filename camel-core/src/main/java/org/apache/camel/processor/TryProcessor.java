@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -39,9 +40,10 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
+public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
 
+    protected String id;
     protected final Processor tryProcessor;
     protected final List<Processor> catchClauses;
     protected final Processor finallyProcessor;
@@ -73,6 +75,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         exchange.setProperty(Exchange.EXCEPTION_HANDLED, null);
 
         while (continueRouting(processors, exchange)) {
+            exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
             ExchangeHelper.prepareOutToIn(exchange);
 
             // process the next processor
@@ -92,6 +95,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         }
 
         ExchangeHelper.prepareOutToIn(exchange);
+        exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
         exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
         LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
         callback.done(true);
@@ -115,6 +119,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
 
                 // continue processing the try .. catch .. finally asynchronously
                 while (continueRouting(processors, exchange)) {
+                    exchange.setProperty(Exchange.TRY_ROUTE_BLOCK, true);
                     ExchangeHelper.prepareOutToIn(exchange);
 
                     // process the next processor
@@ -130,6 +135,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                 }
 
                 ExchangeHelper.prepareOutToIn(exchange);
+                exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
                 exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
                 LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 callback.done(false);
@@ -182,4 +188,11 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         return tryProcessor != null || catchClauses != null && !catchClauses.isEmpty() || finallyProcessor != null;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

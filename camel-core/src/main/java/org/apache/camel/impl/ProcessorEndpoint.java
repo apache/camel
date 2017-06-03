@@ -31,7 +31,7 @@ import org.apache.camel.Producer;
  * <br/>Implementors beware that this endpoint creates producers and consumers which
  * doesn't allow you full control of its lifecycle as a {@link org.apache.camel.Service}
  * or {@link org.apache.camel.SuspendableService} would do.
- * If your producers/consumers need more control of its lifecycle its adviced instead to extend
+ * If your producers/consumers need more control of its lifecycle it is advised instead to extend
  * {@link org.apache.camel.impl.DefaultEndpoint}, {@link org.apache.camel.impl.DefaultProducer}
  * and {@link org.apache.camel.impl.DefaultConsumer}.
  *

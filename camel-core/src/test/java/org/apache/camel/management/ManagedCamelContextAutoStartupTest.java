@@ -34,8 +34,8 @@ public class ManagedCamelContextAutoStartupTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
-        ObjectName onRoute = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName onRoute = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
         String name = (String) mbeanServer.getAttribute(on, "CamelId");

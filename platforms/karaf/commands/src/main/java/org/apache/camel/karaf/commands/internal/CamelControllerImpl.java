@@ -17,12 +17,15 @@
 package org.apache.camel.karaf.commands.internal;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.karaf.commands.CamelController;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.commands.AbstractLocalCamelController;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -31,17 +34,19 @@ import org.slf4j.LoggerFactory;
 /**
  * Implementation of <code>CamelController</code>.
  */
-public class CamelControllerImpl implements CamelController {
+public class CamelControllerImpl extends AbstractLocalCamelController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelControllerImpl.class);
 
+    @Reference
     private BundleContext bundleContext;
 
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
 
-    public List<CamelContext> getCamelContexts() {
+    @Override
+    public List<CamelContext> getLocalCamelContexts() {
         List<CamelContext> camelContexts = new ArrayList<CamelContext>();
         try {
             ServiceReference<?>[] references = bundleContext.getServiceReferences(CamelContext.class.getName(), null);
@@ -58,104 +63,41 @@ public class CamelControllerImpl implements CamelController {
         } catch (Exception e) {
             LOG.warn("Cannot retrieve the list of Camel contexts.", e);
         }
+
+        // sort the list
+        Collections.sort(camelContexts, new Comparator<CamelContext>() {
+            @Override
+            public int compare(CamelContext o1, CamelContext o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+
         return camelContexts;
     }
 
-    public CamelContext getCamelContext(String name) {
-        for (CamelContext camelContext : this.getCamelContexts()) {
-            if (camelContext.getName().equals(name)) {
-                return camelContext;
-            }
-        }
-        return null;
-    }
+    @Override
+    public List<Map<String, String>> getCamelContexts() throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
 
-    public List<Route> getRoutes(String camelContextName) {
-        if (camelContextName != null) {
-            CamelContext context = this.getCamelContext(camelContextName);
-            if (context != null) {
-                return context.getRoutes();
+        List<CamelContext> camelContexts = getLocalCamelContexts();
+        for (CamelContext camelContext : camelContexts) {
+            Map<String, String> row = new LinkedHashMap<String, String>();
+            row.put("name", camelContext.getName());
+            row.put("state", camelContext.getStatus().name());
+            row.put("uptime", camelContext.getUptime());
+            if (camelContext.getManagedCamelContext() != null) {
+                row.put("exchangesTotal", "" + camelContext.getManagedCamelContext().getExchangesTotal());
+                row.put("exchangesInflight", "" + camelContext.getManagedCamelContext().getExchangesInflight());
+                row.put("exchangesFailed", "" + camelContext.getManagedCamelContext().getExchangesFailed());
+            } else {
+                row.put("exchangesTotal", "0");
+                row.put("exchangesInflight", "0");
+                row.put("exchangesFailed", "0");
             }
-        } else {
-            List<Route> routes = new ArrayList<Route>();
-            List<CamelContext> camelContexts = this.getCamelContexts();
-            for (CamelContext camelContext : camelContexts) {
-                for (Route route : camelContext.getRoutes()) {
-                    routes.add(route);
-                }
-            }
-            return routes;
+            answer.add(row);
         }
-        return null;
-    }
 
-    public List<Route> getRoutes(String camelContextName, String filter) {
-        List<Route> routes = null;
-        if (camelContextName != null) {
-            CamelContext context = this.getCamelContext(camelContextName);
-            if (context != null) {
-                for (Route route : context.getRoutes()) {
-                    if (routes == null) {
-                        routes = new ArrayList<Route>();
-                    }
-                    if (route.getId().matches(filter)) {
-                        routes.add(route);
-                    }
-                }
-            }
-        } else {
-            List<CamelContext> camelContexts = this.getCamelContexts();
-            for (CamelContext camelContext : camelContexts) {
-                for (Route route : camelContext.getRoutes()) {
-                    if (routes == null) {
-                        routes = new ArrayList<Route>();
-                    }
-                    if (route.getId().matches(filter)) {
-                        routes.add(route);
-                    }
-                }
-            }
-        }
-        return routes;
-    }
-
-    @SuppressWarnings("deprecation")
-    public List<RouteDefinition> getRouteDefinitions(String camelContextName) {
-        if (camelContextName != null) {
-            CamelContext context = this.getCamelContext(camelContextName);
-            if (context != null) {
-                return context.getRouteDefinitions();
-            }
-        } else {
-            List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
-            List<CamelContext> camelContexts = this.getCamelContexts();
-            for (CamelContext camelContext : camelContexts) {
-                for (RouteDefinition routeDefinition : camelContext.getRouteDefinitions()) {
-                    routeDefinitions.add(routeDefinition);
-                }
-            }
-            return routeDefinitions;
-        }
-        return null;
-    }
-
-    public Route getRoute(String routeId, String camelContextName) {
-        List<Route> routes = this.getRoutes(camelContextName);
-        for (Route route : routes) {
-            if (route.getId().equals(routeId)) {
-                return route;
-            }
-        }
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    public RouteDefinition getRouteDefinition(String routeId, String camelContextName) {
-        CamelContext context = this.getCamelContext(camelContextName);
-        if (context == null) {
-            return null;
-        }
-        return context.getRouteDefinition(routeId);
+        return answer;
     }
 
 }

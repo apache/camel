@@ -17,7 +17,6 @@
 package org.apache.camel.component.xmlsecurity.processor;
 
 import java.util.Map;
-
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.dsig.XMLSignContext;
@@ -26,22 +25,29 @@ import javax.xml.crypto.dsig.XMLValidateContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
+@UriParams
 public abstract class XmlSignatureConfiguration implements Cloneable, CamelContextAware {
 
     private CamelContext context;
-
-    private URIDereferencer uriDereferencer;
-
+    @UriParam(label = "common")
     private String baseUri;
-
-    private Map<String, ? extends Object> cryptoContextProperties;
-
+    @UriParam(label = "common")
+    private Map<String, ?> cryptoContextProperties;
+    @UriParam(label = "common", defaultValue = "true")
     private Boolean disallowDoctypeDecl = Boolean.TRUE;
-
+    @UriParam(label = "common", defaultValue = "false")
     private Boolean omitXmlDeclaration = Boolean.FALSE;
-
+    @UriParam(label = "common", defaultValue = "true")
     private Boolean clearHeaders = Boolean.TRUE;
+    @UriParam(label = "common")
+    private String schemaResourceUri;
+    @UriParam(label = "common")
+    private String outputXmlEncoding;
+    @UriParam(label = "advanced")
+    private URIDereferencer uriDereferencer;
 
     public XmlSignatureConfiguration() {
     }
@@ -66,7 +72,6 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
      * <p>
      * Attention: The implementation is provider dependent!
      * 
-     * @param uriDereferencer
      * @see XMLCryptoContext#setURIDereferencer(URIDereferencer)
      */
     public void setUriDereferencer(URIDereferencer uriDereferencer) {
@@ -80,10 +85,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
     /**
      * You can set a base URI which is used in the URI dereferencing. Relative
      * URIs are then concatenated with the base URI.
-     * 
-     * @param baseUri
-     *            base URI
-     * 
+     *
      * @see XMLCryptoContext#setBaseURI(String)
      */
     public void setBaseUri(String baseUri) {
@@ -107,8 +109,6 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
      * <li><code>"org.jcp.xml.dsig.validateManifests"</code></li>
      * <li><code>"javax.xml.crypto.dsig.cacheReference"</code></li>
      * </ul>
-     * 
-     * @param cryptoContextProperties
      */
     public void setCryptoContextProperties(Map<String, ? extends Object> cryptoContextProperties) {
         this.cryptoContextProperties = cryptoContextProperties;
@@ -122,9 +122,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
      * Disallows that the incoming XML document contains DTD DOCTYPE
      * declaration. The default value is {@link Boolean#TRUE}.
      * 
-     * @param disallowDoctypeDecl
-     *            if set to {@link Boolean#FALSE} then DOCTYPE declaration is
-     *            allowed, otherwise not
+     * @param disallowDoctypeDecl if set to {@link Boolean#FALSE} then DOCTYPE declaration is allowed, otherwise not
      */
     public void setDisallowDoctypeDecl(Boolean disallowDoctypeDecl) {
         this.disallowDoctypeDecl = disallowDoctypeDecl;
@@ -159,6 +157,33 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
      */
     public void setClearHeaders(Boolean clearHeaders) {
         this.clearHeaders = clearHeaders;
+    }
+
+    public String getSchemaResourceUri() {
+        return schemaResourceUri;
+    }
+
+    /**
+     * Classpath to the XML Schema. Must be specified in the detached XML
+     * Signature case for determining the ID attributes, might be set in the
+     * enveloped and enveloping case. If set, then the XML document is validated
+     * with the specified XML schema. The schema resource URI can be overwritten
+     * by the header {@link XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI}.
+     */
+    public void setSchemaResourceUri(String schemaResourceUri) {
+        this.schemaResourceUri = schemaResourceUri;
+    }
+    
+    public String getOutputXmlEncoding() {
+        return outputXmlEncoding;
+    }
+
+    /**
+     * The character encoding of the resulting signed XML document. If
+     * <code>null</code> then the encoding of the original XML document is used.
+     */
+    public void setOutputXmlEncoding(String outputXmlEncoding) {
+        this.outputXmlEncoding = outputXmlEncoding;
     }
 
 }

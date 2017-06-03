@@ -54,7 +54,4 @@ case class SResequenceDefinition(override val target: ResequenceDefinition)(impl
   def ignoreInvalidExchanges = wrap(target.ignoreInvalidExchanges)
   
   def comparator(comparator: ExpressionResultComparator) = wrap(target.comparator(comparator))
-  
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SResequenceDefinition]
-
 }

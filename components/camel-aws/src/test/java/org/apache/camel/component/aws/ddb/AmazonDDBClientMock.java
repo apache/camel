@@ -16,44 +16,45 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.dynamodb.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.BatchGetItemRequest;
-import com.amazonaws.services.dynamodb.model.BatchGetItemResult;
-import com.amazonaws.services.dynamodb.model.BatchResponse;
-import com.amazonaws.services.dynamodb.model.CreateTableRequest;
-import com.amazonaws.services.dynamodb.model.CreateTableResult;
-import com.amazonaws.services.dynamodb.model.DeleteItemRequest;
-import com.amazonaws.services.dynamodb.model.DeleteItemResult;
-import com.amazonaws.services.dynamodb.model.DeleteTableRequest;
-import com.amazonaws.services.dynamodb.model.DeleteTableResult;
-import com.amazonaws.services.dynamodb.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodb.model.DescribeTableResult;
-import com.amazonaws.services.dynamodb.model.GetItemRequest;
-import com.amazonaws.services.dynamodb.model.GetItemResult;
-import com.amazonaws.services.dynamodb.model.Key;
-import com.amazonaws.services.dynamodb.model.KeySchema;
-import com.amazonaws.services.dynamodb.model.KeySchemaElement;
-import com.amazonaws.services.dynamodb.model.KeysAndAttributes;
-import com.amazonaws.services.dynamodb.model.ProvisionedThroughputDescription;
-import com.amazonaws.services.dynamodb.model.PutItemRequest;
-import com.amazonaws.services.dynamodb.model.PutItemResult;
-import com.amazonaws.services.dynamodb.model.QueryRequest;
-import com.amazonaws.services.dynamodb.model.QueryResult;
-import com.amazonaws.services.dynamodb.model.ResourceNotFoundException;
-import com.amazonaws.services.dynamodb.model.ScanRequest;
-import com.amazonaws.services.dynamodb.model.ScanResult;
-import com.amazonaws.services.dynamodb.model.TableDescription;
-import com.amazonaws.services.dynamodb.model.TableStatus;
-import com.amazonaws.services.dynamodb.model.UpdateItemRequest;
-import com.amazonaws.services.dynamodb.model.UpdateItemResult;
-import com.amazonaws.services.dynamodb.model.UpdateTableRequest;
-import com.amazonaws.services.dynamodb.model.UpdateTableResult;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.BatchGetItemRequest;
+import com.amazonaws.services.dynamodbv2.model.BatchGetItemResult;
+import com.amazonaws.services.dynamodbv2.model.ConsumedCapacity;
+import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.CreateTableResult;
+import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
+import com.amazonaws.services.dynamodbv2.model.DeleteItemResult;
+import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DeleteTableResult;
+import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DescribeTableResult;
+import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
+import com.amazonaws.services.dynamodbv2.model.GetItemResult;
+import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
+import com.amazonaws.services.dynamodbv2.model.KeysAndAttributes;
+import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughputDescription;
+import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
+import com.amazonaws.services.dynamodbv2.model.PutItemResult;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import com.amazonaws.services.dynamodbv2.model.QueryResult;
+import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.amazonaws.services.dynamodbv2.model.TableDescription;
+import com.amazonaws.services.dynamodbv2.model.TableStatus;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemResult;
+import com.amazonaws.services.dynamodbv2.model.UpdateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.UpdateTableResult;
+
 
 public class AmazonDDBClientMock extends AmazonDynamoDBClient {
     public static final long NOW = 1327709390233L;
@@ -87,7 +88,7 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
                     .withTableStatus(TableStatus.ACTIVE)
                     .withCreationDateTime(new Date(NOW))
                     .withItemCount(100L)
-                    .withKeySchema(new KeySchema(new KeySchemaElement().withAttributeName("name")))
+                    .withKeySchema(new KeySchemaElement().withAttributeName("name"))
                     .withProvisionedThroughput(new ProvisionedThroughputDescription()
                             .withReadCapacityUnits(20L)
                             .withWriteCapacityUnits(10L))
@@ -121,7 +122,7 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
                 .withTableName(deleteTableRequest.getTableName())
                 .withCreationDateTime(new Date(NOW))
                 .withItemCount(10L)
-                .withKeySchema(new KeySchema())
+                .withKeySchema(new ArrayList<KeySchemaElement>())
                 .withTableSizeBytes(20L)
                 .withTableStatus(TableStatus.ACTIVE));
     }
@@ -160,12 +161,14 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
     @Override
     public BatchGetItemResult batchGetItem(BatchGetItemRequest batchGetItemRequest) {
         this.batchGetItemRequest = batchGetItemRequest;
-        Map<String, BatchResponse> responseMap = new HashMap<String, BatchResponse>();
-        responseMap.put("DOMAIN1", new BatchResponse().withItems(getAttributes()));
-
+        Map<String, List<Map<String, AttributeValue>>> responseMap = new HashMap<String, List<Map<String, AttributeValue>>>();
+        List<Map<String, AttributeValue>> p = new ArrayList<Map<String, AttributeValue>>();
+        p.add(getAttributes());
+        responseMap.put("DOMAIN1", p);
+        Map<String, AttributeValue> keysMap = new HashMap<String, AttributeValue>();
+        keysMap.put("1", new AttributeValue("UNPROCESSED_KEY"));
         Map<String, KeysAndAttributes> unprocessedKeys = new HashMap<String, KeysAndAttributes>();
-        unprocessedKeys.put("DOMAIN1", new KeysAndAttributes().withKeys(
-                new Key(new AttributeValue("UNPROCESSED_KEY"))));
+        unprocessedKeys.put("DOMAIN1", new KeysAndAttributes().withKeys(keysMap));
 
         return new BatchGetItemResult()
                 .withResponses(responseMap)
@@ -176,22 +179,30 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
     @Override
     public ScanResult scan(ScanRequest scanRequest) {
         this.scanRequest = scanRequest;
+        ConsumedCapacity consumed = new ConsumedCapacity();
+        consumed.setCapacityUnits(1.0);
+        Map<String, AttributeValue> lastEvaluatedKey = new HashMap<String, AttributeValue>();
+        lastEvaluatedKey.put("1", new AttributeValue("LAST_KEY"));
         return new ScanResult()
-                .withConsumedCapacityUnits(1.0)
+                .withConsumedCapacity(consumed)
                 .withCount(1)
                 .withItems(getAttributes())
                 .withScannedCount(10)
-                .withLastEvaluatedKey(new Key(new AttributeValue("LAST_KEY")));
+                .withLastEvaluatedKey(lastEvaluatedKey);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public QueryResult query(QueryRequest queryRequest) {
         this.queryRequest = queryRequest;
+        ConsumedCapacity consumed = new ConsumedCapacity();
+        consumed.setCapacityUnits(1.0);
+        Map<String, AttributeValue> lastEvaluatedKey = new HashMap<String, AttributeValue>();
+        lastEvaluatedKey.put("1", new AttributeValue("LAST_KEY"));
         return new QueryResult()
-                .withConsumedCapacityUnits(1.0)
+                .withConsumedCapacity(consumed)
                 .withCount(1)
                 .withItems(getAttributes())
-                .withLastEvaluatedKey(new Key(new AttributeValue("LAST_KEY")));
+                .withLastEvaluatedKey(lastEvaluatedKey);
     }
 }

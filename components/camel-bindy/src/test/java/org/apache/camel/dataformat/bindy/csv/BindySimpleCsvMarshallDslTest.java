@@ -23,6 +23,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -40,7 +41,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 public class BindySimpleCsvMarshallDslTest extends AbstractJUnit4SpringContextTests {
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-    private String result = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,450.45,EUR,14-01-2009\r\n";
+    private String result = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,450.45,EUR,14-01-2009,17-05-2010 23:21:59\r\n";
 
     @Produce(uri = "direct:start")
     private ProducerTemplate template;
@@ -76,6 +77,12 @@ public class BindySimpleCsvMarshallDslTest extends AbstractJUnit4SpringContextTe
         calendar.set(2009, 0, 14);
         order.setOrderDate(calendar.getTime());
 
+        calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        // 4 hour shift
+        // 17-05-2010 23:21:59 by GMT+4
+        calendar.set(2010, 4, 17, 19, 21, 59);
+        order.setOrderDateTime(calendar.getTime());
+
         modelObjects.put(order.getClass().getName(), order);
 
         models.add(modelObjects);
@@ -88,7 +95,7 @@ public class BindySimpleCsvMarshallDslTest extends AbstractJUnit4SpringContextTe
         public void configure() {
             BindyDataFormat bindy = new BindyDataFormat();
             bindy.setLocale("en");
-            bindy.setPackages(new String[] {"org.apache.camel.dataformat.bindy.model.simple.oneclass"});
+            bindy.setClassType(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
             bindy.setType(BindyType.Csv);
 
             from("direct:start").

@@ -36,7 +36,7 @@ public class ManagedUnregisterProcessorTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals(1, set.size());
+        assertEquals(2, set.size());
 
         ObjectName on = set.iterator().next();
 

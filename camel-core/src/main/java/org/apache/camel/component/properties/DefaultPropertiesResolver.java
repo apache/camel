@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.properties;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default {@link org.apache.camel.component.properties.PropertiesResolver} which can resolve properties
@@ -38,79 +41,95 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultPropertiesResolver implements PropertiesResolver {
 
-    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
-        Properties answer = new Properties();
+    private final PropertiesComponent propertiesComponent;
 
-        for (String path : uri) {
-            if (path.startsWith("ref:")) {
-                Properties prop = loadPropertiesFromRegistry(context, ignoreMissingLocation, path);
+    public DefaultPropertiesResolver(PropertiesComponent propertiesComponent) {
+        this.propertiesComponent = propertiesComponent;
+    }
+
+    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
+        Properties answer = new Properties();
+        Properties prop;
+
+        for (PropertiesLocation location : locations) {
+            switch(location.getResolver()) {
+            case "ref":
+                prop = loadPropertiesFromRegistry(context, ignoreMissingLocation, location);
                 prop = prepareLoadedProperties(prop);
                 answer.putAll(prop);
-            } else if (path.startsWith("file:")) {
-                Properties prop = loadPropertiesFromFilePath(context, ignoreMissingLocation, path);
+                break;
+            case "file":
+                prop = loadPropertiesFromFilePath(context, ignoreMissingLocation, location);
                 prop = prepareLoadedProperties(prop);
                 answer.putAll(prop);
-            } else {
+                break;
+            case "classpath":
+            default:
                 // default to classpath
-                Properties prop = loadPropertiesFromClasspath(context, ignoreMissingLocation, path);
+                prop = loadPropertiesFromClasspath(context, ignoreMissingLocation, location);
                 prop = prepareLoadedProperties(prop);
                 answer.putAll(prop);
+                break;
             }
         }
 
         return answer;
     }
 
-    protected Properties loadPropertiesFromFilePath(CamelContext context, boolean ignoreMissingLocation, String path) throws IOException {
+    protected Properties loadPropertiesFromFilePath(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) throws IOException {
         Properties answer = new Properties();
-
-        if (path.startsWith("file:")) {
-            path = ObjectHelper.after(path, "file:");
-        }
+        String path = location.getPath();
 
         InputStream is = null;
+        Reader reader = null;
         try {
             is = new FileInputStream(path);
-            answer.load(is);
+            if (propertiesComponent.getEncoding() != null) {
+                reader = new BufferedReader(new InputStreamReader(is, propertiesComponent.getEncoding()));
+                answer.load(reader);
+            } else {
+                answer.load(is);
+            }
         } catch (FileNotFoundException e) {
-            if (!ignoreMissingLocation) {
+            if (!ignoreMissingLocation && !location.isOptional()) {
                 throw e;
             }
         } finally {
-            IOHelper.close(is);
+            IOHelper.close(reader, is);
         }
 
         return answer;
     }
 
-    protected Properties loadPropertiesFromClasspath(CamelContext context, boolean ignoreMissingLocation, String path) throws IOException {
+    protected Properties loadPropertiesFromClasspath(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) throws IOException {
         Properties answer = new Properties();
-
-        if (path.startsWith("classpath:")) {
-            path = ObjectHelper.after(path, "classpath:");
-        }
+        String path = location.getPath();
 
         InputStream is = context.getClassResolver().loadResourceAsStream(path);
+        Reader reader = null;
         if (is == null) {
-            if (!ignoreMissingLocation) {
+            if (!ignoreMissingLocation && !location.isOptional()) {
                 throw new FileNotFoundException("Properties file " + path + " not found in classpath");
             }
         } else {
             try {
-                answer.load(is);
+                if (propertiesComponent.getEncoding() != null) {
+                    reader = new BufferedReader(new InputStreamReader(is, propertiesComponent.getEncoding()));
+                    answer.load(reader);
+                } else {
+                    answer.load(is);
+                }
             } finally {
-                IOHelper.close(is);
+                IOHelper.close(reader, is);
             }
         }
         return answer;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Properties loadPropertiesFromRegistry(CamelContext context, boolean ignoreMissingLocation, String path) throws IOException {
-        if (path.startsWith("ref:")) {
-            path = ObjectHelper.after(path, "ref:");
-        }
-        Properties answer = null;
+    protected Properties loadPropertiesFromRegistry(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) throws IOException {
+        String path = location.getPath();
+        Properties answer;
         try {
             answer = context.getRegistry().lookupByNameAndType(path, Properties.class);
         } catch (Exception ex) {
@@ -119,7 +138,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
             answer = new Properties();
             answer.putAll(map);
         }
-        if (answer == null && (!ignoreMissingLocation)) {
+        if (answer == null && (!ignoreMissingLocation && !location.isOptional())) {
             throw new FileNotFoundException("Properties " + path + " not found in registry");
         }
         return answer != null ? answer : new Properties();

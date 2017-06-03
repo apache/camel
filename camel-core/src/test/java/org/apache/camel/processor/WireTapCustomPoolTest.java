@@ -59,7 +59,6 @@ public class WireTapCustomPoolTest extends ContextTestSupport {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            @SuppressWarnings("deprecation")
             public void configure() {
                 // START SNIPPET: e1
                 // use a custom thread pool for sending tapped messages
@@ -68,7 +67,7 @@ public class WireTapCustomPoolTest extends ContextTestSupport {
                 from("direct:start")
                     .to("log:foo")
                     // pass in the custom pool to the wireTap DSL
-                    .wireTap("direct:tap", pool)
+                    .wireTap("direct:tap").executorService(pool)
                     .to("mock:result");
                 // END SNIPPET: e1
 

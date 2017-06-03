@@ -27,9 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class SedaBlockWhenFullTest extends ContextTestSupport {
     private static final int QUEUE_SIZE = 1;
     private static final int DELAY = 10;
+    private static final int DELAY_LONG = 100;
     private static final String MOCK_URI = "mock:blockWhenFullOutput";
     private static final String SIZE_PARAM = "?size=%d";
-    private static final String BLOCK_WHEN_FULL_URI = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true";
+    private static final String BLOCK_WHEN_FULL_URI = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&timeout=0";
     private static final String DEFAULT_URI = "seda:foo" + String.format(SIZE_PARAM, QUEUE_SIZE);
 
     @Override
@@ -37,7 +38,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(BLOCK_WHEN_FULL_URI).delay(DELAY).to(MOCK_URI);
+                from(BLOCK_WHEN_FULL_URI).delay(DELAY_LONG).to(MOCK_URI);
 
                 // use same delay as above on purpose
                 from(DEFAULT_URI).delay(DELAY).to("mock:whatever");
@@ -60,11 +61,22 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
 
     public void testSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 2);
-
+        
         SedaEndpoint seda = context.getEndpoint(BLOCK_WHEN_FULL_URI, SedaEndpoint.class);
         assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
 
         sendTwoOverCapacity(BLOCK_WHEN_FULL_URI, QUEUE_SIZE);
+        assertMockEndpointsSatisfied();
+    }
+    
+    public void testAsyncSedaBlockingWhenFull() throws Exception {
+        getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 1);
+        getMockEndpoint(MOCK_URI).setResultWaitTime(DELAY_LONG * 3);
+
+        SedaEndpoint seda = context.getEndpoint(BLOCK_WHEN_FULL_URI, SedaEndpoint.class);
+        assertEquals(QUEUE_SIZE, seda.getQueue().remainingCapacity());
+
+        asyncSendTwoOverCapacity(BLOCK_WHEN_FULL_URI, QUEUE_SIZE + 4);
         assertMockEndpointsSatisfied();
     }
 
@@ -76,6 +88,12 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
     private void sendTwoOverCapacity(String uri, int capacity) {
         for (int i = 0; i < (capacity + 2); i++) {
             template.sendBody(uri, "Message " + i);
+        }
+    }
+    
+    private void asyncSendTwoOverCapacity(String uri, int capacity) {
+        for (int i = 0; i < (capacity + 2); i++) {
+            template.asyncSendBody(uri, "Message " + i);
         }
     }
 

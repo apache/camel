@@ -45,14 +45,18 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     private byte[] passPhrase;
     private SecurityManager securityManager;
     private List<Permission> permissionsList;
+    private List<String> rolesList;
     private boolean alwaysReauthenticate;
     private boolean base64;
+    private boolean allPermissionsRequired;
+    private boolean allRolesRequired;
     
     public ShiroSecurityPolicy() {
         this.passPhrase = bits128;
         // Set up AES encryption based cipher service, by default 
         cipherService = new AesCipherService();
         permissionsList = new ArrayList<Permission>();
+        rolesList = new ArrayList<String>();
         alwaysReauthenticate = true;
     }   
     
@@ -157,5 +161,29 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
 
     public void setBase64(boolean base64) {
         this.base64 = base64;
+    }
+
+    public boolean isAllPermissionsRequired() {
+        return allPermissionsRequired;
+    }
+
+    public void setAllPermissionsRequired(boolean allPermissionsRequired) {
+        this.allPermissionsRequired = allPermissionsRequired;
+    }
+
+    public List<String> getRolesList() {
+        return rolesList;
+    }
+
+    public void setRolesList(List<String> rolesList) {
+        this.rolesList = rolesList;
+    }
+
+    public boolean isAllRolesRequired() {
+        return allRolesRequired;
+    }
+
+    public void setAllRolesRequired(boolean allRolesRequired) {
+        this.allRolesRequired = allRolesRequired;
     }
 }

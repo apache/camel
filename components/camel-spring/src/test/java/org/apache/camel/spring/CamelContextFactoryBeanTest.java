@@ -16,11 +16,23 @@
  */
 package org.apache.camel.spring;
 
-import junit.framework.TestCase;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
+import javax.xml.bind.JAXBContext;
 
+import junit.framework.TestCase;
 import org.apache.camel.impl.ActiveMQUuidGenerator;
+import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.SimpleUuidGenerator;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.util.IOHelper;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.springframework.context.support.StaticApplicationContext;
 
 /**
@@ -55,5 +67,49 @@ public class CamelContextFactoryBeanTest extends TestCase {
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
         
         assertTrue(uuidGenerator instanceof SimpleUuidGenerator);
+    }
+
+    public void testSetEndpoints() throws Exception {
+        // Create a new Camel context and add an endpoint
+        CamelContextFactoryBean camelContext = new CamelContextFactoryBean();
+        List<CamelEndpointFactoryBean> endpoints = new LinkedList<CamelEndpointFactoryBean>();
+        CamelEndpointFactoryBean endpoint = new CamelEndpointFactoryBean();
+        endpoint.setId("endpoint1");
+        endpoint.setUri("mock:end");
+        endpoints.add(endpoint);
+        camelContext.setEndpoints(endpoints);
+
+        // Compare the new context with our reference context
+        Reader expectedContext = null;
+        try {
+            expectedContext = new InputStreamReader(getClass().getResourceAsStream("/org/apache/camel/spring/context-with-endpoint.xml"));
+            String createdContext = contextAsString(camelContext);
+            XMLUnit.setIgnoreWhitespace(true);
+            XMLAssert.assertXMLEqual(expectedContext, new StringReader(createdContext));
+        } finally {
+            IOHelper.close(expectedContext);
+        }
+    }
+
+    private String contextAsString(CamelContextFactoryBean context) throws Exception {
+        StringWriter stringOut = new StringWriter();
+        JAXBContext jaxb = JAXBContext.newInstance(CamelContextFactoryBean.class);
+        jaxb.createMarshaller().marshal(context, stringOut);
+        return stringOut.toString();
+    }
+
+    public void testCustomModelJAXBContextFactory() throws Exception {
+        StaticApplicationContext applicationContext = new StaticApplicationContext();
+        applicationContext.registerSingleton("customModelJAXBContextFactory", CustomModelJAXBContextFactory.class);
+        factory.setApplicationContext(applicationContext);
+        factory.afterPropertiesSet();
+
+        ModelJAXBContextFactory modelJAXBContextFactory = factory.getContext().getModelJAXBContextFactory();
+
+        assertTrue(modelJAXBContextFactory instanceof CustomModelJAXBContextFactory);
+    }
+
+    private static class CustomModelJAXBContextFactory extends DefaultModelJAXBContextFactory {
+        // Do nothing here
     }
 }

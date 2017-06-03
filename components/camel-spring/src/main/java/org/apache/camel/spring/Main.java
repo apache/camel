@@ -16,17 +16,22 @@
  */
 package org.apache.camel.spring;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.MainSupport;
-import org.apache.camel.spring.handler.CamelNamespaceHandler;
-import org.apache.camel.view.ModelFileGenerator;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -34,18 +39,27 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  * A command line tool for booting up a CamelContext using an optional Spring
- * ApplicationContext
- *
- * @version 
+ * {@link org.springframework.context.ApplicationContext}.
+ * <p/>
+ * By placing a file in the {@link #LOCATION_PROPERTIES} directory of any JARs on the classpath,
+ * allows this Main class to load those additional Spring XML files as Spring
+ * {@link org.springframework.context.ApplicationContext} to be included.
+ * <p/>
+ * Each line in the {@link #LOCATION_PROPERTIES} is a reference to a Spring XML file to include,
+ * which by default gets loaded from classpath.
  */
 @SuppressWarnings("deprecation")
 public class Main extends MainSupport {
+
+    public static final String LOCATION_PROPERTIES = "META-INF/camel-spring/location.properties";
     protected static Main instance;
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private String applicationContextUri = "META-INF/spring/*.xml";
     private String fileApplicationContextUri;
     private AbstractApplicationContext applicationContext;
     private AbstractApplicationContext parentApplicationContext;
+    private AbstractApplicationContext additionalApplicationContext;
     private String parentApplicationContextUri;
 
     public Main() {
@@ -69,7 +83,6 @@ public class Main extends MainSupport {
     public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
-        main.enableHangupSupport();
         main.run(args);
     }
 
@@ -81,7 +94,7 @@ public class Main extends MainSupport {
     public static Main getInstance() {
         return instance;
     }
-    
+
     // Properties
     // -------------------------------------------------------------------------
     public AbstractApplicationContext getApplicationContext() {
@@ -135,21 +148,44 @@ public class Main extends MainSupport {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-        if (applicationContext == null) {
-            applicationContext = createDefaultApplicationContext();
-        }
-        LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
-        applicationContext.start();
+        try {
+            super.doStart();
+            if (applicationContext == null) {
+                applicationContext = createDefaultApplicationContext();
+            }
 
-        postProcessContext();
+            // then start any additional after Camel has been started
+            if (additionalApplicationContext == null) {
+                additionalApplicationContext = createAdditionalLocationsFromClasspath();
+                if (additionalApplicationContext != null) {
+                    LOG.debug("Starting Additional ApplicationContext: " + additionalApplicationContext.getId());
+                    additionalApplicationContext.start();
+                }
+            }
+
+            LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
+            applicationContext.start();
+
+            postProcessContext();
+        } finally {
+            if (camelContexts != null && !camelContexts.isEmpty()) {
+                // if we were veto started then mark as completed
+                if (getCamelContexts().get(0).isVetoStarted()) {
+                    completed();
+                }
+            }
+        }
     }
 
     protected void doStop() throws Exception {
         super.doStop();
+        if (additionalApplicationContext != null) {
+            LOG.debug("Stopping Additional ApplicationContext: " + additionalApplicationContext.getId());
+            IOHelper.close(additionalApplicationContext);
+        }
         if (applicationContext != null) {
             LOG.debug("Stopping Spring ApplicationContext: " + applicationContext.getId());
-            applicationContext.close();
+            IOHelper.close(applicationContext);
         }
     }
 
@@ -164,12 +200,13 @@ public class Main extends MainSupport {
         return getCamelContexts().get(0).createProducerTemplate();
     }
 
-    protected AbstractApplicationContext createDefaultApplicationContext() {
+    protected AbstractApplicationContext createDefaultApplicationContext() throws IOException {
+        ApplicationContext parentContext = getParentApplicationContext();
+
         // file based
         if (getFileApplicationContextUri() != null) {
             String[] args = getFileApplicationContextUri().split(";");
 
-            ApplicationContext parentContext = getParentApplicationContext();
             if (parentContext != null) {
                 return new FileSystemXmlApplicationContext(args, parentContext);
             } else {
@@ -179,14 +216,13 @@ public class Main extends MainSupport {
 
         // default to classpath based
         String[] args = getApplicationContextUri().split(";");
-        ApplicationContext parentContext = getParentApplicationContext();
         if (parentContext != null) {
             return new ClassPathXmlApplicationContext(args, parentContext);
         } else {
             return new ClassPathXmlApplicationContext(args);
         }
     }
-    
+
     protected Map<String, CamelContext> getCamelContextMap() {
         Map<String, SpringCamelContext> map = applicationContext.getBeansOfType(SpringCamelContext.class);
         Set<Map.Entry<String, SpringCamelContext>> entries = map.entrySet();
@@ -199,7 +235,41 @@ public class Main extends MainSupport {
         return answer;
     }
 
-    protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(new CamelNamespaceHandler().getJaxbContext());
+    protected AbstractApplicationContext createAdditionalLocationsFromClasspath() throws IOException {
+        Set<String> locations = new LinkedHashSet<String>();
+        findLocations(locations, Main.class.getClassLoader());
+
+        if (!locations.isEmpty()) {
+            LOG.info("Found locations for additional Spring XML files: {}", locations);
+
+            String[] locs = locations.toArray(new String[locations.size()]);
+            return new ClassPathXmlApplicationContext(locs);
+        } else {
+            return null;
+        }
     }
+
+    protected void findLocations(Set<String> locations, ClassLoader classLoader) throws IOException {
+        Enumeration<URL> resources = classLoader.getResources(LOCATION_PROPERTIES);
+        while (resources.hasMoreElements()) {
+            URL url = resources.nextElement();
+            BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), UTF8));
+            try {
+                while (true) {
+                    String line = reader.readLine();
+                    if (line == null) {
+                        break;
+                    }
+                    line = line.trim();
+                    if (line.startsWith("#") || line.length() == 0) {
+                        continue;
+                    }
+                    locations.add(line);
+                }
+            } finally {
+                IOHelper.close(reader, null, LOG);
+            }
+        }
+    }
+
 }

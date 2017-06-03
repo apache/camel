@@ -28,6 +28,7 @@ import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
+import org.apache.camel.util.IOHelper;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -49,6 +50,14 @@ public abstract class SpringTestSupport extends ContextTestSupport {
             System.setProperty(AbstractCamelContextFactoryBean.LAZY_LOAD_TYPE_CONVERTERS, "false");
         }
 
+        // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
+        System.setProperty("CamelSedaPollTimeout", "10");
+        if (!this.useJmx()) {
+            this.disableJMX();
+        } else {
+            this.enableJMX();
+        }
+
         applicationContext = createApplicationContext();
         assertNotNull("Should have created a valid spring context", applicationContext);
         super.setUp();
@@ -57,9 +66,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
     }
 
     private static class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {

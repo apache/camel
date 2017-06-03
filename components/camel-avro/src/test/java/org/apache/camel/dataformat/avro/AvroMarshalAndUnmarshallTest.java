@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.avro;
 
 import org.apache.camel.CamelException;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.avro.generated.Value;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -54,8 +53,7 @@ public class AvroMarshalAndUnmarshallTest extends CamelTestSupport {
             });
             fail("Expect the exception here");
         } catch (Exception ex) {
-            assertTrue("Expect FailedToCreateRouteException", ex instanceof FailedToCreateRouteException);
-            assertTrue("Get a wrong reason", ex.getCause() instanceof IllegalArgumentException);
+            // expected
         }
     }
 
@@ -66,7 +64,7 @@ public class AvroMarshalAndUnmarshallTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Value.class);
-        mock.message(0).body().equals(input);
+        mock.message(0).body().isEqualTo(input);
 
         Object marshalled = template.requestBody(inURI, input);
 

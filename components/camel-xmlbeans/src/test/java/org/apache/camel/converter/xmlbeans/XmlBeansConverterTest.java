@@ -20,26 +20,21 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.piccolo.xml.XMLStreamReader;
 import org.junit.Test;
@@ -64,19 +59,21 @@ public class XmlBeansConverterTest extends CamelTestSupport {
     }
 
     @Test
-    public void toXmlObjectFromFile() throws IOException, XmlException {
-        XmlObject result = XmlBeansConverter.toXmlObject(new File("src/test/data/buyStocks.xml"));
+    public void toXmlObjectFromFile() throws Exception {
+        XmlObject result = XmlBeansConverter.toXmlObject(new File("src/test/data/buyStocks.xml"),
+                                                         new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }
 
     @Test
-    public void toXmlObjectFromReader() throws IOException, XmlException {
-        XmlObject result = XmlBeansConverter.toXmlObject(new FileReader("src/test/data/buyStocks.xml"));
+    public void toXmlObjectFromReader() throws Exception {
+        XmlObject result = XmlBeansConverter.toXmlObject(new FileReader("src/test/data/buyStocks.xml"), 
+                                                         new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }
 
     @Test
-    public void toXmlObjectFromNode() throws IOException, XmlException, ParserConfigurationException, SAXException {
+    public void toXmlObjectFromNode() throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setIgnoringElementContentWhitespace(true);
@@ -84,42 +81,45 @@ public class XmlBeansConverterTest extends CamelTestSupport {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(new InputSource(new StringReader(PAYLOAD)));
         
-        XmlObject result = XmlBeansConverter.toXmlObject(document);
+        XmlObject result = XmlBeansConverter.toXmlObject(document, 
+                                                         new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }
 
     @Test
-    public void toXmlObjectFromInputStream() throws IOException, XmlException {
-        XmlObject result = XmlBeansConverter.toXmlObject(new FileInputStream("src/test/data/buyStocks.xml"));
+    public void toXmlObjectFromInputStream() throws Exception {
+        XmlObject result = XmlBeansConverter.toXmlObject(new FileInputStream("src/test/data/buyStocks.xml"),
+                                                         new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }
 
     @Test
-    public void toXmlObjectFromString() throws IOException, XmlException {
+    public void toXmlObjectFromString() throws Exception {
         XmlObject result = XmlBeansConverter.toXmlObject(PAYLOAD, new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }
 
     @Test
-    public void toXmlObjectFromByteArray() throws IOException, XmlException {
-        XmlObject result = XmlBeansConverter.toXmlObject(PAYLOAD.getBytes());
+    public void toXmlObjectFromByteArray() throws Exception {
+        XmlObject result = XmlBeansConverter.toXmlObject(PAYLOAD.getBytes(), new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }
 
     @Test
-    public void toXmlObjectFromByteBuffer() throws IOException, XmlException {
-        XmlObject result = XmlBeansConverter.toXmlObject(ByteBuffer.wrap(PAYLOAD.getBytes()));
+    public void toXmlObjectFromByteBuffer() throws Exception {
+        XmlObject result = XmlBeansConverter.toXmlObject(ByteBuffer.wrap(PAYLOAD.getBytes()), new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }
 
     @Test
-    public void toXmlObjectFromXMLStreamReader() throws IOException, XmlException {
-        XmlObject result = XmlBeansConverter.toXmlObject(new XMLStreamReader(new ByteArrayInputStream(PAYLOAD.getBytes()), false));
+    public void toXmlObjectFromXMLStreamReader() throws Exception {
+        XmlObject result = XmlBeansConverter.toXmlObject(new XMLStreamReader(new ByteArrayInputStream(PAYLOAD.getBytes()), false), 
+                                                         new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }
 
     @Test
-    public void toXmlObjectFromSource() throws IOException, XmlException, NoTypeConversionAvailableException {
+    public void toXmlObjectFromSource() throws Exception {
         XmlObject result = XmlBeansConverter.toXmlObject(new BytesSource(PAYLOAD.getBytes()), new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }

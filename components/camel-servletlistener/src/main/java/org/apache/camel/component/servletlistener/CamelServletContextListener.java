@@ -64,6 +64,11 @@ public abstract class CamelServletContextListener<R extends Registry> implements
      */
     public static ServletCamelContext instance;
 
+    /**
+     * Key to store the created {@link org.apache.camel.CamelContext} as an attribute on the {@link javax.servlet.ServletContext}.
+     */
+    public static final String CAMEL_CONTEXT_KEY = "CamelContext";
+
     protected static final Logger LOG = LoggerFactory.getLogger(CamelServletContextListener.class);
     protected ServletCamelContext camelContext;
     protected CamelContextLifecycle<R> camelContextLifecycle;
@@ -104,6 +109,26 @@ public abstract class CamelServletContextListener<R extends Registry> implements
             throw new RuntimeException("Error setting init parameters on CamelContext.", e);
         }
 
+        // any custom CamelContextLifecycle
+        String lifecycle = (String) map.remove("CamelContextLifecycle");
+        if (lifecycle != null) {
+            try {
+                Class<CamelContextLifecycle<R>> clazz = CastUtils.cast(camelContext.getClassResolver().resolveMandatoryClass(lifecycle, CamelContextLifecycle.class));
+                camelContextLifecycle = camelContext.getInjector().newInstance(clazz);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Error creating CamelContextLifecycle class with name " + lifecycle, e);
+            }
+        }
+        
+        try {
+            if (camelContextLifecycle != null) {
+                camelContextLifecycle.beforeAddRoutes(camelContext, registry);
+            }
+        } catch (Exception e) {
+            LOG.error("Error before adding routes to CamelContext.", e);
+            throw new RuntimeException("Error before adding routes to CamelContext.", e);
+        }
+
         // get the routes and add to the CamelContext
         List<Object> routes = extractRoutes(map);
         for (Object route : routes) {
@@ -138,21 +163,19 @@ public abstract class CamelServletContextListener<R extends Registry> implements
                 throw new IllegalArgumentException("Unsupported route: " + route);
             }
         }
-
-        // any custom CamelContextLifecycle
-        String lifecycle = (String) map.remove("CamelContextLifecycle");
-        if (lifecycle != null) {
-            try {
-                Class<CamelContextLifecycle<R>> clazz = CastUtils.cast(camelContext.getClassResolver().resolveMandatoryClass(lifecycle, CamelContextLifecycle.class));
-                camelContextLifecycle = camelContext.getInjector().newInstance(clazz);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Error creating CamelContextLifecycle class with name " + lifecycle, e);
-            }
-        }
-
+        
         // just log if we could not use all the parameters, as they may be used by others
         if (!map.isEmpty()) {
             LOG.info("There are {} ServletContext init parameters, unknown to Camel. Maybe they are used by other frameworks? [{}]", map.size(), map);
+        }
+
+        try {
+            if (camelContextLifecycle != null) {
+                camelContextLifecycle.afterAddRoutes(camelContext, registry);
+            }
+        } catch (Exception e) {
+            LOG.error("Error after adding routes to CamelContext.", e);
+            throw new RuntimeException("Error after adding routes to CamelContext.", e);
         }
 
         try {
@@ -171,6 +194,9 @@ public abstract class CamelServletContextListener<R extends Registry> implements
         if (this.test) {
             instance = camelContext;
         }
+
+        // store the CamelContext as an attribute
+        sce.getServletContext().setAttribute(CAMEL_CONTEXT_KEY, camelContext);
 
         LOG.info("CamelContextServletListener initialized");
     }
@@ -194,6 +220,10 @@ public abstract class CamelServletContextListener<R extends Registry> implements
         camelContext = null;
         registry = null;
         instance = null;
+
+        // store the CamelContext as an attribute
+        sce.getServletContext().removeAttribute(CAMEL_CONTEXT_KEY);
+
         LOG.info("CamelContextServletListener destroyed");
     }
 
@@ -387,7 +417,7 @@ public abstract class CamelServletContextListener<R extends Registry> implements
                             // XML resource from classpath or file system
                             InputStream is = null;
                             try {
-                                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), value);
+                                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, value);
                                 target = camelContext.loadRoutesDefinition(is);
                             } catch (Exception e) {
                                 throw new RuntimeException("Error loading routes from resource: " + value, e);

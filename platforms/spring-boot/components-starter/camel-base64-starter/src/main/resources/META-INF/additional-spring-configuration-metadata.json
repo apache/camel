@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.base64.enabled",
+      "description": "Enable base64 dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

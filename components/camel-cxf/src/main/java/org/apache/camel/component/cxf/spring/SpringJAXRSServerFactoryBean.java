@@ -21,14 +21,11 @@ import java.util.List;
 
 import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
-import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
-import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.logging.FaultListener;
-import org.apache.cxf.version.Version;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,18 +43,9 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean impleme
         super(sf);
     }
 
-    @SuppressWarnings("deprecation")
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         if (bus == null) {
-            if (Version.getCurrentVersion().startsWith("2.3")) {
-                // Don't relate on the DefaultBus
-                BusFactory factory = new SpringBusFactory(ctx);
-                bus = factory.createBus();               
-                setBus(bus);
-                BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(bus, ctx);
-            } else {
-                setBus(BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx));
-            }
+            setBus(BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx));
         }
     }
 

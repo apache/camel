@@ -29,6 +29,7 @@ import org.apache.camel.util.MessageHelper;
 /**
  * Default {@link TraceEventMessage}.
  */
+@Deprecated
 public final class DefaultTraceEventMessage implements Serializable, TraceEventMessage {
     private static final long serialVersionUID = -4549012920528941203L;
 
@@ -72,7 +73,8 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
         this.exchangePattern = exchange.getPattern().toString();
         this.properties = exchange.getProperties().isEmpty() ? null : exchange.getProperties().toString();
         this.headers = in.getHeaders().isEmpty() ? null : in.getHeaders().toString();
-        this.body = MessageHelper.extractBodyAsString(in);
+        // We should not turn the message body into String
+        this.body = MessageHelper.extractBodyForLogging(in, "");
         this.bodyType = MessageHelper.getBodyTypeName(in);
         if (exchange.hasOut()) {
             Message out = exchange.getOut();
@@ -106,8 +108,10 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private static String extractFromNode(Exchange exchange) {
         if (exchange.getUnitOfWork() != null) {
             TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-            RouteNode last = traced.getSecondLastNode();
-            return last != null ? last.getLabel(exchange) : null;
+            if (traced != null) {
+                RouteNode last = traced.getSecondLastNode();
+                return last != null ? last.getLabel(exchange) : null;
+            }
         }
         return null;
     }
@@ -115,8 +119,10 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private static String extractToNode(Exchange exchange) {
         if (exchange.getUnitOfWork() != null) {
             TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-            RouteNode last = traced.getLastNode();
-            return last != null ? last.getLabel(exchange) : null;
+            if (traced != null) {
+                RouteNode last = traced.getLastNode();
+                return last != null ? last.getLabel(exchange) : null;
+            }
         }
         return null;
     }

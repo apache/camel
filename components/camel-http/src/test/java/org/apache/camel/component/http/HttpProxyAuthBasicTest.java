@@ -17,11 +17,11 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class HttpProxyAuthBasicTest extends CamelTestSupport {
 
@@ -48,7 +48,7 @@ public class HttpProxyAuthBasicTest extends CamelTestSupport {
                 config.setProxyHost("myProxyHosy");
                 config.setProxyPort(1234);
                 // proxy requires auth as well
-                config.setProxyAuthMethod(AuthMethod.Basic);
+                config.setProxyAuthMethod("Basic");
                 config.setProxyAuthUsername("myUser");
                 config.setProxyAuthPassword("myPassword");
 

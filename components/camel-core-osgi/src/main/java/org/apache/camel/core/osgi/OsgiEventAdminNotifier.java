@@ -52,16 +52,16 @@ public class OsgiEventAdminNotifier extends EventNotifierSupport {
     public static final String TOPIC_CAMEL_ROUTE_EVENTS = TOPIC_CAMEL_EVENTS + "route/";
 
     private final BundleContext bundleContext;
-    private final ServiceTracker tracker;
+    private final ServiceTracker<EventAdmin, EventAdmin> tracker;
 
     public OsgiEventAdminNotifier(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        this.tracker = new ServiceTracker(bundleContext, EventAdmin.class.getName(), null);
+        this.tracker = new ServiceTracker<EventAdmin, EventAdmin>(bundleContext, EventAdmin.class.getName(), null);
         setIgnoreExchangeEvents(true);
     }
 
     public void notify(EventObject event) throws Exception {
-        EventAdmin eventAdmin = (EventAdmin) tracker.getService();
+        EventAdmin eventAdmin = tracker.getService();
         if (eventAdmin == null) {
             return;
         }

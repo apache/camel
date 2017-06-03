@@ -32,6 +32,9 @@ public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBa
 
     @XmlAttribute
     private String secureSocketProtocol;
+    
+    @XmlAttribute
+    private String certAlias;
 
     @Override
     protected SSLContextParameters createInstance() throws Exception {
@@ -65,6 +68,7 @@ public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBa
         
         newInstance.setProvider(provider);
         newInstance.setSecureSocketProtocol(secureSocketProtocol);
+        newInstance.setCertAlias(certAlias);
         newInstance.setCamelContext(getCamelContext());
         
         return newInstance;
@@ -89,6 +93,14 @@ public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBa
 
     public void setSecureSocketProtocol(String secureSocketProtocol) {
         this.secureSocketProtocol = secureSocketProtocol;
+    }
+    
+    public String getCertAlias() {
+        return certAlias;
+    }
+
+    public void setCertAlias(String certAlias) {
+        this.certAlias = certAlias;
     }
 
     protected abstract AbstractKeyManagersParametersFactoryBean getKeyManagers();

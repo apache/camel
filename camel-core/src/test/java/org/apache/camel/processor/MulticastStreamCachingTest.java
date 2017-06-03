@@ -80,7 +80,7 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
 
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                //stream caching should fix re-readability issues when multicasting messags
+                //stream caching should fix re-readability issues when multicasting messages
                 from("direct:a").multicast().to("direct:x", "direct:y", "direct:z");
 
                 from("direct:x").process(processor).to("mock:x");

@@ -16,19 +16,19 @@
  */
 package org.apache.camel.component.netty4;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipeline;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.CharsetUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
 import org.apache.camel.impl.JndiRegistry;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
-import org.jboss.netty.handler.codec.frame.Delimiters;
-import org.jboss.netty.handler.codec.string.StringDecoder;
-import org.jboss.netty.handler.codec.string.StringEncoder;
-import org.jboss.netty.util.CharsetUtil;
 import org.junit.Test;
 
 public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
@@ -49,7 +49,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4:tcp://localhost:{{port}}?serverPipelineFactory=#spf&textline=true")
+                from("netty4:tcp://localhost:{{port}}?serverInitializerFactory=#spf&textline=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
@@ -62,7 +62,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
     @Test
     public void testCustomClientPipelineFactory() throws Exception {
         String response = (String) template.requestBody(
-                "netty4:tcp://localhost:{{port}}?clientPipelineFactory=#cpf&textline=true",
+                "netty4:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&textline=true",
                 "Forest Gump describing Vietnam...");
 
         assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);
@@ -70,7 +70,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
         assertEquals(true, serverInvoked);
     }
 
-    public class TestClientChannelPipelineFactory extends ClientPipelineFactory {
+    public class TestClientChannelPipelineFactory extends ClientInitializerFactory {
         private int maxLineSize = 1024;
         private NettyProducer producer;
 
@@ -79,26 +79,23 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
         }
 
         @Override
-        public ChannelPipeline getPipeline() throws Exception {
+        protected void initChannel(Channel ch) throws Exception {
+            
+            ChannelPipeline channelPipeline = ch.pipeline();
             clientInvoked = true;
-
-            ChannelPipeline channelPipeline = Channels.pipeline();
-
             channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ClientChannelHandler(producer));
-
-            return channelPipeline;
         }
 
         @Override
-        public ClientPipelineFactory createPipelineFactory(NettyProducer producer) {
+        public ClientInitializerFactory createPipelineFactory(NettyProducer producer) {
             return new TestClientChannelPipelineFactory(producer);
         }
     }
 
-    public class TestServerChannelPipelineFactory extends ServerPipelineFactory {
+    public class TestServerChannelPipelineFactory extends ServerInitializerFactory {
         private int maxLineSize = 1024;
         private NettyConsumer consumer;
 
@@ -106,22 +103,17 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
             this.consumer = consumer;
         }
 
-        @Override
-        public ChannelPipeline getPipeline() throws Exception {
+        protected void initChannel(Channel ch) throws Exception {
+            ChannelPipeline channelPipeline = ch.pipeline();
             serverInvoked = true;
-
-            ChannelPipeline channelPipeline = Channels.pipeline();
-
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ServerChannelHandler(consumer));
-
-            return channelPipeline;
         }
 
         @Override
-        public ServerPipelineFactory createPipelineFactory(NettyConsumer consumer) {
+        public ServerInitializerFactory createPipelineFactory(NettyConsumer consumer) {
             return new TestServerChannelPipelineFactory(consumer);
         }
     }

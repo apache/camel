@@ -28,6 +28,6 @@ public class GreeterImplWithSleep extends GreeterImpl {
         } catch (Exception ignore) {
 
         }
-        return "";
+        return "Greet " + hi;
     }
 }

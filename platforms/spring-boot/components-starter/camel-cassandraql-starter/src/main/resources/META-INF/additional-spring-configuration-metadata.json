@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.cql.enabled",
+      "description": "Enable cql component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

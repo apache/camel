@@ -50,7 +50,8 @@ public class UpdatedDateFilter implements EntryFilter {
             return true;
         }        
         if (lastUpdate != null) {
-            if (lastUpdate.after(updated)) {
+            // we need to skip the latest updated entry
+            if (lastUpdate.after(updated) || lastUpdate.equals(updated)) {
                 LOG.debug("Entry is older than lastupdate=[{}], no valid entry=[{}]", lastUpdate, entry);
                 return false;
             }

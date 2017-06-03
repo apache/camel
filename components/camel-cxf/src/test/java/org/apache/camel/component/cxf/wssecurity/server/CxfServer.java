@@ -16,87 +16,22 @@
  */
 package org.apache.camel.component.cxf.wssecurity.server;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URL;
 
-import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
-import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
-import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
+import org.apache.camel.component.cxf.wssecurity.camel.WSSecurityRouteTest;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.spring.SpringBusFactory;
 
 public class CxfServer {
     
-    //private static final String WSU_NS
-    //     = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
-    
-    private String address;
-    
-    private Server server;
+    public CxfServer() throws Exception {
+        SpringBusFactory bf = new SpringBusFactory();
+        URL busFile = WSSecurityRouteTest.class.getResource("../server/wssec.xml");
 
-    public CxfServer(int port) throws Exception {
-        Object implementor = new GreeterImpl();
-        address = "http://localhost:" + port + "/WSSecurityRouteTest/GreeterPort";
-        JaxWsServerFactoryBean bean = new JaxWsServerFactoryBean();
-        bean.setAddress(address);
-        bean.setServiceBean(implementor);
-        bean.getInInterceptors().add(getWSS4JInInterceptor());
-        bean.getOutInterceptors().add(getWSS4JOutInterceptor());
-        server = bean.create();
+        Bus bus = bf.createBus(busFile.toString());
+        BusFactory.setDefaultBus(bus);
+        BusFactory.setThreadDefaultBus(bus);
     }
-    
-    public void stop() {
-        if (server != null) {
-            server.start();
-        }
-    }
-
-    public static WSS4JOutInterceptor getWSS4JOutInterceptor() throws Exception {
-
-        Map<String, Object> outProps = new HashMap<String, Object>();
-        outProps.put("action", "Signature");
-        //outProps.put("action", "UsernameToken Timestamp Signature Encrypt");
-
-        outProps.put("passwordType", "PasswordText");
-        outProps.put("user", "serverx509v1");
-        outProps.put("passwordCallbackClass", "org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback");
-
-        //If you are using the patch WSS-194, then uncomment below two lines and 
-        //comment the above "user" prop line.
-        //outProps.put("user", "Alice");
-        //outProps.put("signatureUser", "serverx509v1");
-
-        //outProps.put("encryptionUser", "clientx509v1");
-        //outProps.put("encryptionPropFile", "wssecurity/etc/Server_SignVerf.properties");
-        //outProps.put("encryptionKeyIdentifier", "IssuerSerial");
-        //outProps.put("encryptionParts", "{Element}{" + WSU_NS + "}Timestamp;"
-        //                 + "{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body");
-
-        outProps.put("signaturePropFile", "wssecurity/etc/Server_Decrypt.properties");
-        outProps.put("signatureKeyIdentifier", "DirectReference");
-        outProps.put("signatureParts", //"{Element}{" + WSU_NS + "}Timestamp;"
-                         "{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body");
-
-        return new WSS4JOutInterceptor(outProps);
-    }  
-    
-    public static WSS4JInInterceptor getWSS4JInInterceptor() throws Exception {
-
-        Map<String, Object> inProps = new HashMap<String, Object>();
-
-        //inProps.put("action", "UsernameToken Timestamp Signature Encrypt");
-        inProps.put("action", "Signature");
-        inProps.put("passwordType", "PasswordDigest");
-        inProps.put("passwordCallbackClass", "org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback");
-
-        //inProps.put("decryptionPropFile", "wssecurity/etc/Server_Decrypt.properties");
-        //inProps.put("encryptionKeyIdentifier", "IssuerSerial");
-
-        inProps.put("signaturePropFile", "wssecurity/etc/Server_SignVerf.properties");
-        inProps.put("signatureKeyIdentifier", "DirectReference");
-
-        return new WSS4JInInterceptor(inProps);
-
-    }  
-       
     
 }

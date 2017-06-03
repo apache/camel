@@ -16,13 +16,8 @@
  */
 package org.apache.camel.component.cxf.holder;
 
-import java.util.List;
-
 import javax.xml.ws.Holder;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -34,27 +29,14 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
     protected static final String ADDRESS = "http://localhost:"
         + CXFTestSupport.getPort1() + "/CxfHolderConsumerTest/test";
     protected static final String CXF_ENDPOINT_URI = "cxf://" + ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint";
+        + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint"
+        + "&loggingFeatureEnabled=true";
        
     
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(CXF_ENDPOINT_URI).process(new Processor() {
-                    @SuppressWarnings("unchecked")
-                    public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
-                        List<Object> parameters = in.getBody(List.class);
-                        int amount = (Integer) parameters.remove(1);
-                        Holder<String> customer = (Holder<String>)parameters.get(1);
-                        if (customer.value.length() == 0) {
-                            customer.value = "newCustomer";
-                        }
-                        parameters.add(0, "Ordered ammount " + amount);
-                        //reuse the MessageContentList at this time to test CAMEL-4113
-                        exchange.getOut().setBody(parameters);
-                    }
-                }); 
+                from(CXF_ENDPOINT_URI).process(new MyProcessor()); 
             }
         };
     }
@@ -78,6 +60,25 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
         assertEquals("Get a wrong order result", "Ordered ammount 2", result);
         assertEquals("Get a wrong parts", "parts", strPart.value);
         assertEquals("Get a wrong customer", "newCustomer", strCustomer.value);
+    }
+    
+    
+    @Test
+    public void testInvokingServiceWithSoapHeaderFromCXFClient() throws Exception {
+        JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
+        ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
+        clientBean.setAddress(ADDRESS);
+        clientBean.setServiceClass(MyOrderEndpoint.class);
+        
+        MyOrderEndpoint client = (MyOrderEndpoint) proxyFactory.create();
+        
+        Holder<String> header = new Holder<String>();
+        header.value = "parts";
+
+        String result = client.mySecureOrder(1, header);
+        assertEquals("Get a wrong order result", "Ordered ammount 1", result);
+        assertEquals("Get a wrong parts", "secureParts", header.value);
+        
     }
 
 }

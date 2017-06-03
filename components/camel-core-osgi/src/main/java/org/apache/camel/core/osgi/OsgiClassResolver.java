@@ -20,9 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Vector;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -33,30 +36,51 @@ import org.slf4j.LoggerFactory;
 public class OsgiClassResolver extends DefaultClassResolver {
     private static final Logger LOG = LoggerFactory.getLogger(OsgiClassResolver.class);
 
-    public BundleContext bundleContext;
-    
-    public OsgiClassResolver(BundleContext context) {
+    private final CamelContext camelContext;
+    private final BundleContext bundleContext;
+
+    public OsgiClassResolver(CamelContext camelContext, BundleContext context) {
+        super(camelContext);
+        this.camelContext = camelContext;
         this.bundleContext = context;
     }
-    
+
+    @Override
     public Class<?> resolveClass(String name) {
         LOG.trace("Resolve class {}", name);
         name = ObjectHelper.normalizeClassName(name);
+        if (ObjectHelper.isEmpty(name)) {
+            return null;
+        }
+        // we need to avoid the NPE issue of loading the class
         Class<?> clazz = ObjectHelper.loadSimpleType(name);
         if (clazz == null) {
             clazz = doLoadClass(name, bundleContext.getBundle());
-            LOG.trace("Loading class {} using BundleContext {} -> {}", new Object[]{name, bundleContext.getBundle(), clazz});
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Loading class {} using BundleContext {} -> {}", new Object[]{name, bundleContext.getBundle(), clazz});
+            }
+        }
+        if (clazz == null && camelContext != null) {
+            // fallback and load class using the application context classloader
+            clazz = super.loadClass(name, camelContext.getApplicationContextClassLoader());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Loading class {} using CamelContext {} -> {}", new Object[]{name, camelContext, clazz});
+            }
         }
         return clazz;
     }
 
+    @Override
     public <T> Class<T> resolveClass(String name, Class<T> type) {
         return CastUtils.cast(resolveClass(name));
     }
 
+    @Override
     public InputStream loadResourceAsStream(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        URL url = loadResourceAsURL(uri);
+
+        String resolvedName = resolveUriPath(uri);
+        URL url = loadResourceAsURL(resolvedName);
         InputStream answer = null;
         if (url != null) {
             try {
@@ -64,23 +88,68 @@ public class OsgiClassResolver extends DefaultClassResolver {
             } catch (IOException ex) {
                 throw new RuntimeException("Cannot load resource: " + uri, ex);
             }
-        } 
+        }
+
+        // fallback to default as spring-dm may have issues loading resources
+        if (answer == null) {
+            answer = super.loadResourceAsStream(uri);
+        }
         return answer;
     }
 
+    @Override
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        return bundleContext.getBundle().getResource(uri);
+        String resolvedName = resolveUriPath(uri);
+        URL answer = bundleContext.getBundle().getResource(resolvedName);
+
+        // fallback to default as spring-dm may have issues loading resources
+        if (answer == null) {
+            answer = super.loadResourceAsURL(uri);
+        }
+        return answer;
     }
 
     @Override
     public Enumeration<URL> loadResourcesAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         try {
-            return bundleContext.getBundle().getResources(uri);
+            String resolvedName = resolveUriPath(uri);
+            return bundleContext.getBundle().getResources(resolvedName);
         } catch (IOException e) {
             throw new RuntimeException("Cannot load resource: " + uri, e);
         }
+    }
+
+    @Override
+    public Enumeration<URL> loadAllResourcesAsURL(String uri) {
+        ObjectHelper.notEmpty(uri, "uri");
+        Vector<URL> answer = new Vector<URL>();
+
+        try {
+            String resolvedName = resolveUriPath(uri);
+
+            Enumeration<URL> e = bundleContext.getBundle().getResources(resolvedName);
+            while (e != null && e.hasMoreElements()) {
+                answer.add(e.nextElement());
+            }
+
+            String path = FileUtil.onlyPath(uri);
+            String name = FileUtil.stripPath(uri);
+            if (path != null && name != null) {
+                for (Bundle bundle : bundleContext.getBundles()) {
+                    LOG.trace("Finding all entries in path: {} with pattern: {}", path, name);
+                    e = bundle.findEntries(path, name, false);
+                    while (e != null && e.hasMoreElements()) {
+                        answer.add(e.nextElement());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot load resource: " + uri, e);
+        }
+
+        return answer.elements();
     }
 
     protected Class<?> doLoadClass(String name, Bundle loader) {
@@ -98,5 +167,19 @@ public class OsgiClassResolver extends DefaultClassResolver {
         }
         return answer;
     }
+
+    /**
+     * Helper operation used to remove relative path notation from
+     * resources.  Most critical for resources on the Classpath
+     * as resource loaders will not resolve the relative paths correctly.
+     *
+     * @param name the name of the resource to load
+     * @return the modified or unmodified string if there were no changes
+     */
+    private static String resolveUriPath(String name) {
+        // compact the path and use / as separator as that's used for loading resources on the classpath
+        return FileUtil.compactPath(name, '/');
+    }
+
     
 }

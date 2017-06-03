@@ -34,9 +34,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.KeyManager;
+import javax.net.ssl.SNIServerName;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLContextSpi;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSessionContext;
@@ -61,10 +63,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         Collections.unmodifiableList(Arrays.asList(".*"));
     
     protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_EXCLUDE =
-        Collections.unmodifiableList(Arrays.asList(".*_NULL_.*", ".*_anon_.*"));
+        Collections.unmodifiableList(Arrays.asList(".*_NULL_.*", ".*_anon_.*", ".*_EXPORT_.*", ".*_DES_.*"));
     
     protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_INCLUDE =
         Collections.unmodifiableList(Arrays.asList(".*"));
+    
+    protected static final List<String> DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_EXCLUDE =
+        Collections.unmodifiableList(Arrays.asList("SSL.*"));
     
     private static final Logger LOG = LoggerFactory.getLogger(BaseSSLContextParameters.class);
     
@@ -106,7 +111,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * The optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
      */
     private String sessionTimeout;
-    
+
+    protected List<SNIServerName> getSNIHostNames() {
+        return Collections.emptyList();
+    }
 
     /**
      * Returns the optional explicitly configured cipher suites for this configuration.
@@ -281,6 +289,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         FilterParameters filter = new FilterParameters();
         
         filter.getInclude().addAll(DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_INCLUDE);
+        filter.getExclude().addAll(DEFAULT_SECURE_SOCKET_PROTOCOLS_FILTER_EXCLUDE);
         
         return filter; 
     }
@@ -511,7 +520,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             
             @Override
             public SSLSocket configure(SSLSocket socket) {
-                
+
+                if (!getSNIHostNames().isEmpty()) {
+                    SSLParameters sslParameters = socket.getSSLParameters();
+                    sslParameters.setServerNames(getSNIHostNames());
+                    socket.setSSLParameters(sslParameters);
+                }
+
                 Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
                     .filter(enabledCipherSuites, Arrays.asList(socket.getSSLParameters().getCipherSuites()),
                             Arrays.asList(socket.getEnabledCipherSuites()),
@@ -535,7 +550,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             Arrays.asList(socket.getEnabledProtocols()),
                             enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
                             !allowPassthrough);
-                
+
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(SSL_SOCKET_PROTOCOL_LOG_MSG,
                             new Object[] {socket,

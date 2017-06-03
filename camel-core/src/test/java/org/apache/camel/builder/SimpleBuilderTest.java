@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version 
+ * @version
  */
 public class SimpleBuilderTest extends TestSupport {
 
@@ -41,6 +41,19 @@ public class SimpleBuilderTest extends TestSupport {
 
         assertEquals("foo", SimpleBuilder.simple("${body}").evaluate(exchange, String.class));
         assertNull(SimpleBuilder.simple("${header.cheese}").evaluate(exchange, String.class));
+    }
+
+    public void testFormatExpression() throws Exception {
+        exchange.getIn().setHeader("head", "foo");
+
+        assertEquals("foo", SimpleBuilder.simpleF("${header.%s}", "head").evaluate(exchange, String.class));
+        assertNull(SimpleBuilder.simple("${header.cheese}").evaluate(exchange, String.class));
+    }
+
+    public void testFormatExpressionWithResultType() throws Exception {
+        exchange.getIn().setHeader("head", "200");
+
+        assertEquals(200, SimpleBuilder.simpleF("${header.%s}", Integer.class, "head").evaluate(exchange, Object.class));
     }
 
     public void testResultType() throws Exception {
@@ -69,4 +82,28 @@ public class SimpleBuilderTest extends TestSupport {
         // should be convertable to integers
         assertEquals(11, SimpleBuilder.simple("11", int.class).evaluate(exchange, Object.class));
     }
+
+    public void testRegexAllWithPlaceHolders() {
+        exchange.getIn().setHeader("activateUrl", "http://some/rest/api/(id)/activate");
+        assertEquals("http://some/rest/api/12/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\(id\\)\",\"12\")}").evaluate(exchange, String.class));
+
+        //passes when contains { only
+        exchange.getIn().setHeader("activateUrl", "http://some/rest/api/{id/activate");
+        assertEquals("http://some/rest/api/12/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\{id\",\"12\")}").evaluate(exchange, String.class));
+
+        String replaced = "http://some/rest/api/{id}/activate".replaceAll("\\{id\\}", "12");
+        assertEquals("http://some/rest/api/12/activate", replaced);
+
+        //passes when contains { }
+        exchange.getIn().setHeader("activateUrl", "http://some/rest/api/{id}/activate");
+        assertEquals("http://some/rest/api/12/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\{id\\}\",\"12\")}").evaluate(exchange, String.class));
+
+        //passes when contains { } and another ${body} function
+        exchange.getIn().setBody("12");
+        assertEquals("http://some/rest/api/12/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\{id\\}\",\"${body}\")}").evaluate(exchange, String.class));
+
+        //passes when } is escaped with \}
+        assertEquals("http://some/rest/api/{}/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\{id\\}\",\"{\\}\")}").evaluate(exchange, String.class));
+    }
+
 }

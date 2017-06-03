@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sdb;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
@@ -23,6 +24,7 @@ import com.amazonaws.services.simpledb.AmazonSimpleDBClient;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
 import com.amazonaws.services.simpledb.model.NoSuchDomainException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -30,16 +32,23 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.s3.S3Endpoint;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SDB Endpoint</a>.  
- *
+ * The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
  */
+@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-sdb", title = "AWS SimpleDB", syntax = "aws-sdb:domainName", producerOnly = true, label = "cloud,database,nosql")
 public class SdbEndpoint extends ScheduledPollEndpoint {
     
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
+
+    private AmazonSimpleDB sdbClient;
+
+    @UriParam
     private SdbConfiguration configuration;
 
     @Deprecated
@@ -68,7 +77,11 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
         
-        AmazonSimpleDB sdbClient = getSdbClient();
+        sdbClient = configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSdbEndpoint())) {
+            sdbClient.setEndpoint(configuration.getAmazonSdbEndpoint());
+        }
+        
         String domainName = getConfiguration().getDomainName();
         LOG.trace("Querying whether domain [{}] already exists...", domainName);
 
@@ -89,16 +102,33 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
     }
 
     public AmazonSimpleDB getSdbClient() {
-        return configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
+        return sdbClient;
     }
 
     AmazonSimpleDB createSdbClient() {
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonSimpleDB client = new AmazonSimpleDBClient(credentials);
-        if (configuration.getAmazonSdbEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonSdbEndpoint());
+        AmazonSimpleDB client = null;
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            isClientConfigFound = true;
         }
-        configuration.setAmazonSDBClient(client);
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonSimpleDBClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonSimpleDBClient(credentials);
+            }
+        } else {
+            if (isClientConfigFound) {
+                client = new AmazonSimpleDBClient();
+            } else {
+                client = new AmazonSimpleDBClient(clientConfiguration);
+            }
+        }
         return client;
     }
 }

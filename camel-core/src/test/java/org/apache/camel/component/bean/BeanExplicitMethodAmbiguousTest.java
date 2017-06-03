@@ -64,11 +64,11 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:hello").beanRef("dummy", "hello", true);
+                from("direct:hello").bean("dummy", "hello", true);
 
-                from("direct:bye").beanRef("dummy", true);
+                from("direct:bye").bean("dummy", true);
                 
-                from("direct:foo").beanRef("dummy", "bar", true);
+                from("direct:foo").bean("dummy", "bar", true);
             }
         };
     }

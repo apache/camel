@@ -18,19 +18,19 @@ package org.apache.camel.component.solr;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Test;
 
-public class SolrServerMissingTest extends CamelTestSupport {
+public class SolrServerMissingTest extends SolrTestSupport {
 
     @Test
     public void indexSingleDocumentToNonexistentServer() throws Exception {
         Exchange exchange = createExchangeWithBody(null);
         exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         exchange.getIn().setHeader("SolrField.id", "MA147LL/A");
+
         template.send("direct:start", exchange);
-        assertEquals(SolrServerException.class, exchange.getException().getClass());
+
+        assertTrue(exchange.isFailed());
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SolrServerMissingTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("solr://localhost:8999/missingSolr");
+                from("direct:start").to("solr://localhost:" + getPort() + "/missingSolr");
             }
         };
     }

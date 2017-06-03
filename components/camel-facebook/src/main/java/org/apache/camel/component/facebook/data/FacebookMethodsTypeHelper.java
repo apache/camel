@@ -363,7 +363,7 @@ public final class FacebookMethodsTypeHelper {
         }
     }
 
-    public static enum MatchType {
+    public enum MatchType {
         EXACT, SUBSET, SUPER_SET
     }
 

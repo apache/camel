@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 
 /**
@@ -49,6 +50,10 @@ public class ReaderCache extends StringReader implements StreamCache {
 
     public void writeTo(OutputStream os) throws IOException {
         os.write(data.getBytes());
+    }
+
+    public StreamCache copy(Exchange exchange) throws IOException {
+        return new ReaderCache(data);
     }
 
     public boolean inMemory() {

@@ -142,8 +142,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
 
         public static String doSomething(InputStream is) throws IOException {
             int byteCount = 0;
-            int c;
-            while ((c = is.read()) != -1) {
+            while ((is.read()) != -1) {
                 byteCount++;
             }
             return "There is " + byteCount + " bytes";

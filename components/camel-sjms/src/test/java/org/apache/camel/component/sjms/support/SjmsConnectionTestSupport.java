@@ -27,10 +27,6 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * TODO Add Class documentation for SjmsConnectionTestSupport
- * 
- */
 public abstract class SjmsConnectionTestSupport {
 
     static {
@@ -47,16 +43,10 @@ public abstract class SjmsConnectionTestSupport {
 
     public abstract String getConnectionUri();
 
-    /**
-     * @throws java.lang.Exception
-     */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
     }
@@ -86,12 +76,6 @@ public abstract class SjmsConnectionTestSupport {
         }
     }
 
-    /**
-     * Gets the ActiveMQConnectionFactory value of testConnectionFactory for
-     * this instance of SjmsConnectionTestSupport.
-     * 
-     * @return the testConnectionFactory
-     */
     public ActiveMQConnectionFactory createTestConnectionFactory(String uri) {
         ActiveMQConnectionFactory cf = null;
         if (ObjectHelper.isEmpty(uri)) {
@@ -121,45 +105,19 @@ public abstract class SjmsConnectionTestSupport {
         }
     }
 
-    /**
-     * Sets the ActiveMQConnectionFactory value of testConnectionFactory for
-     * this instance of SjmsConnectionTestSupport.
-     * 
-     * @param testConnectionFactory
-     *            Sets ActiveMQConnectionFactory, default is TODO add default
-     */
     public void setTestConnectionFactory(
             ActiveMQConnectionFactory testConnectionFactory) {
         this.testConnectionFactory = testConnectionFactory;
     }
 
-    /**
-     * Gets the ActiveMQConnectionFactory value of testConnectionFactory for
-     * this instance of SjmsConnectionTestSupport.
-     * 
-     * @return the testConnectionFactory
-     */
     public ActiveMQConnectionFactory getTestConnectionFactory() {
         return testConnectionFactory;
     }
 
-    /**
-     * Sets the boolean value of persistenceEnabled for this instance of
-     * SjmsConnectionTestSupport.
-     * 
-     * @param persistenceEnabled
-     *            Sets boolean, default is false
-     */
     public void setPersistenceEnabled(boolean persistenceEnabled) {
         this.persistenceEnabled = persistenceEnabled;
     }
 
-    /**
-     * Gets the boolean value of persistenceEnabled for this instance of
-     * SjmsConnectionTestSupport.
-     * 
-     * @return the persistenceEnabled
-     */
     public boolean isPersistenceEnabled() {
         return persistenceEnabled;
     }

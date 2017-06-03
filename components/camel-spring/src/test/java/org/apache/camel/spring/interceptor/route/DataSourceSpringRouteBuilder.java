@@ -31,13 +31,13 @@ public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
 
         // set the required policy for this route
         from("direct:okay").policy(required).
-            setBody(constant("Tiger in Action")).beanRef("bookService").
-            setBody(constant("Elephant in Action")).beanRef("bookService");
+            setBody(constant("Tiger in Action")).bean("bookService").
+            setBody(constant("Elephant in Action")).bean("bookService");
 
         // set the required policy for this route
         from("direct:fail").policy(required).
-            setBody(constant("Tiger in Action")).beanRef("bookService").
-            setBody(constant("Donkey in Action")).beanRef("bookService");
+            setBody(constant("Tiger in Action")).bean("bookService").
+            setBody(constant("Donkey in Action")).bean("bookService");
     }
 
 }

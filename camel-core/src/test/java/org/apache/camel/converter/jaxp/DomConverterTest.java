@@ -41,7 +41,14 @@ public class DomConverterTest extends ContextTestSupport {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
 
         byte[] bytes = new DomConverter().toByteArray(document.getChildNodes(), null);
-        assertTrue("Should be equal", ObjectHelper.equalByteArray("<hello>world!</hello>".getBytes(), bytes));
+        assertTrue("Should be equal", ObjectHelper.equalByteArray("<hello>world!</hello>".getBytes("UTF-8"), bytes));
+    }
+    
+    public void testDomConverterToNoAssicBytes() throws Exception {
+        Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>\u99f1\u99ddb\u00e4r</foo>");
+
+        byte[] bytes = new DomConverter().toByteArray(document.getChildNodes(), null);
+        assertTrue("Should be equal", ObjectHelper.equalByteArray("<foo>\u99f1\u99ddb\u00e4r</foo>".getBytes("UTF-8"), bytes));
     }
 
     public void testDomConverterToInteger() throws Exception {

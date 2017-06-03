@@ -64,7 +64,6 @@ public class DirectVmBlockingProducer extends DefaultAsyncProducer {
             // okay then await until we have a consumer or we timed out
             answer = awaitConsumer();
             if (answer == null) {
-                LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
                 throw new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
             }
         }

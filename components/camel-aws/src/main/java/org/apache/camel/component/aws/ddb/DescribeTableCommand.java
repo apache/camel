@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodb.model.DescribeTableResult;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DescribeTableResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
 public class DescribeTableCommand extends AbstractDdbCommand {
+
     public DescribeTableCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration,
                                 Exchange exchange) {
         super(ddbClient, configuration, exchange);

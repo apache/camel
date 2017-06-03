@@ -24,9 +24,9 @@ class SOnCompletionGlobalTest extends OnCompletionGlobalTest with RouteBuilderSu
 
   override def createRouteBuilder = new RouteBuilder {
 
-    onCompletion to "mock:sync"
+    onCompletion to "log:global" to "mock:sync"
 
-    "direct:start" process (new MyProcessor()) to ("mock:result")
+    "direct:start" process new MyProcessor() to "mock:result"
 
   }
 

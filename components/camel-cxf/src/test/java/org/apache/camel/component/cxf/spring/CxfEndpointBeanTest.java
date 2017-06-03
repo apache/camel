@@ -56,7 +56,8 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("Got the wrong handlers size", 1, routerEndpoint.getHandlers().size());
         assertEquals("Got the wrong schemalocations size", 1, routerEndpoint.getSchemaLocations().size());
         assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", routerEndpoint.getSchemaLocations().get(0));
-
+        assertEquals("Got the wrong continuationTimeout", 60000, routerEndpoint.getContinuationTimeout());
+        
         CxfEndpoint myEndpoint = ctx.getBean("myEndpoint", CxfEndpoint.class);
         assertEquals("Got the wrong endpointName", endpointName, myEndpoint.getPortName());
         assertEquals("Got the wrong serviceName", serviceName, myEndpoint.getServiceName());

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.validator;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -127,6 +132,31 @@ public class ValidatorRouteTest extends ContextTestSupport {
 
         template.sendBody("direct:useNotASharedSchema", "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
 
+        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+    }
+    
+    public void testConcurrentUseNotASharedSchema() throws Exception {
+        validEndpoint.expectedMessageCount(10);
+        // latch for the 10 exchanges we expect
+        final CountDownLatch latch = new CountDownLatch(10);
+        // setup a task executor to be able send the messages in parallel
+        ExecutorService executor = Executors.newCachedThreadPool();
+        for (int i = 0; i < 10; i++) {
+            executor.execute(new Runnable() {
+                public void run() {
+                    template.requestBody("direct:useNotASharedSchema", "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
+                    latch.countDown();
+                }
+            });
+        }
+
+        try {
+            // wait for test completion, timeout after 30 sec to let other unit test run to not wait forever
+            assertTrue(latch.await(30000L, TimeUnit.MILLISECONDS));
+            assertEquals("Latch should be zero", 0, latch.getCount());
+        } finally {
+            executor.shutdown();
+        }
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 

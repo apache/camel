@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.spring-redis.enabled",
+      "description": "Enable spring-redis component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

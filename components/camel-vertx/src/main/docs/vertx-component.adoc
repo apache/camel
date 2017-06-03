@@ -1,0 +1,113 @@
+## Vert.x Component
+
+*Available as of Camel version 2.12*
+
+The *vertx* component is for working with the http://vertx.io/[Vertx]
+http://vertx.io/core_manual_js.html#the-event-bus[EventBus].
+
+The vertx http://vertx.io/core_manual_js.html#the-event-bus[EventBus]
+sends and receives JSON events.
+
+INFO:From *Camel 2.16* onwards vertx 3 is in use which requires Java 1.8 at
+runtime.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-vertx</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+---------------------------
+vertx:channelName[?options]
+---------------------------
+
+### Options
+
+
+
+// component options: START
+The Vert.x component supports 7 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **vertxFactory** (advanced) | To use a custom VertxFactory implementation |  | VertxFactory
+| **host** (common) | Hostname for creating an embedded clustered EventBus |  | String
+| **port** (common) | Port for creating an embedded clustered EventBus |  | int
+| **vertxOptions** (common) | Options to use for creating vertx |  | VertxOptions
+| **vertx** (common) | To use the given vertx EventBus instead of creating a new embedded EventBus |  | Vertx
+| **timeout** (common) | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60. | 60 | int
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
+// component options: END
+
+
+
+
+// endpoint options: START
+The Vert.x endpoint is configured using URI syntax:
+
+    vertx:address
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **address** | *Required* Sets the event bus address used to communicate |  | String
+|=======================================================================
+
+#### Query Parameters (5 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **pubSub** (common) | Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint. |  | Boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
+// endpoint options: END
+
+
+*Camel 2.12.3:* Whether to use publish/subscribe instead of point to
+point when sending to a vertx endpoint.
+
+-----------------------------------------------------------------------------------------------
+You can append query options to the URI in the following format, ?option=value&option=value&...
+-----------------------------------------------------------------------------------------------
+
+### Connecting to the existing Vert.x instance
+
+If you would like to connect to the Vert.x instance already existing in
+your JVM, you can set the instance on the component level:
+
+[source,java]
+-----------------------------------------------------
+Vertx vertx = ...;
+VertxComponent vertxComponent = new VertxComponent();
+vertxComponent.setVertx(vertx);
+camelContext.addComponent("vertx", vertxComponent);
+-----------------------------------------------------
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]

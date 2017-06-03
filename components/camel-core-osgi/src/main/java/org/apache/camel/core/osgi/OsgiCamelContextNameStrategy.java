@@ -16,15 +16,48 @@
  */
 package org.apache.camel.core.osgi;
 
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.camel.spi.CamelContextNameStrategy;
 import org.osgi.framework.BundleContext;
 
-public class OsgiCamelContextNameStrategy extends DefaultCamelContextNameStrategy {
+import static org.apache.camel.core.osgi.OsgiCamelContextPublisher.CONTEXT_NAME_PROPERTY;
+
+/**
+ * In OSGi we want to use a {@link CamelContextNameStrategy} that finds a free name in the
+ * OSGi Service Registry to be used for auto assigned names.
+ * <p/>
+ * If there is a name clash in the OSGi registry, then a new candidate name is used by appending
+ * a unique counter.
+ */
+public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
+
+    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
+    private final BundleContext context;
+    private final String prefix = "camel";
+    private volatile String name;
 
     public OsgiCamelContextNameStrategy(BundleContext context) {
-        // use bundle id in auto assigned names to make it unique and have the bundle id as prefix
-        // which makes the ordering of the camel apps in JMX nicely sorted
-        super(context.getBundle().getBundleId() + "-camel");
+        this.context = context;
+    }
+
+    @Override
+    public String getName() {
+        if (name == null) {
+            name = getNextName();
+        }
+        return name;
+    }
+
+    @Override
+    public synchronized String getNextName() {
+        // false = do no check fist, but add the counter asap, so we have camel-1
+        return OsgiNamingHelper.findFreeCamelContextName(context, prefix, CONTEXT_NAME_PROPERTY, CONTEXT_COUNTER, false);
+    }
+
+    @Override
+    public boolean isFixedName() {
+        return false;
     }
 
 }

@@ -21,8 +21,10 @@ import java.util.List;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
@@ -36,6 +38,32 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
     public SftpConsumer(RemoteFileEndpoint<ChannelSftp.LsEntry> endpoint, Processor processor, RemoteFileOperations<ChannelSftp.LsEntry> operations) {
         super(endpoint, processor, operations);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // turn off scheduler first, so autoCreate is handled before scheduler starts
+        boolean startScheduler = isStartScheduler();
+        setStartScheduler(false);
+        try {
+            super.doStart();
+            if (endpoint.isAutoCreate()) {
+                log.debug("Auto creating directory: {}", endpoint.getConfiguration().getDirectory());
+                try {
+                    connectIfNecessary();
+                    operations.buildDirectory(endpoint.getConfiguration().getDirectory(), true);
+                } catch (GenericFileOperationFailedException e) {
+                    // log a WARN as we want to start the consumer.
+                    log.warn("Error auto creating directory: " + endpoint.getConfiguration().getDirectory()
+                            + " due " + e.getMessage() + ". This exception is ignored.", e);
+                }
+            }
+        } finally {
+            if (startScheduler) {
+                setStartScheduler(true);
+                startScheduler();
+            }
+        }
     }
 
     @Override
@@ -58,7 +86,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
     }
 
     protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList, int depth) {
-        boolean answer = doPollDirectory(absolutePath, dirName, fileList, depth);
+        boolean answer = doSafePollSubDirectory(absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         if (isStepwise()) {
             operations.changeToParentDirectory();
@@ -110,7 +138,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
             }
 
             if (file.getAttrs().isDir()) {
-                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
+                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getFilename();
@@ -123,7 +151,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
                 // just assuming its a file we should poll
             } else {
-                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
+                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
                     // matched file so add
                     fileList.add(remote);
@@ -159,9 +187,10 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
-    private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String absolutePath, ChannelSftp.LsEntry file) {
+    private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String absolutePath, ChannelSftp.LsEntry file, String charset) {
         RemoteFile<ChannelSftp.LsEntry> answer = new RemoteFile<ChannelSftp.LsEntry>();
 
+        answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getFilename());
@@ -193,6 +222,20 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         answer.setFileName(answer.getRelativeFilePath());
 
         return answer;
+    }
+
+    @Override
+    protected void updateFileHeaders(GenericFile<ChannelSftp.LsEntry> file, Message message) {
+        long length = file.getFile().getAttrs().getSize();
+        long modified = file.getFile().getAttrs().getMTime() * 1000L;
+        file.setFileLength(length);
+        file.setLastModified(modified);
+        if (length >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, length);
+        }
+        if (modified >= 0) {
+            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+        }
     }
 
     private boolean isStepwise() {

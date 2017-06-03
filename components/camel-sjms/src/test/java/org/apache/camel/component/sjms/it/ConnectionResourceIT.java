@@ -41,7 +41,7 @@ public class ConnectionResourceIT extends JmsTestSupport {
 
     /**
      * Test method for
-     * {@link org.apache.camel.component.sjms.jms.ObjectPool#returnObject(java.lang.Object)}
+     * {@link org.apache.commons.pool.ObjectPool#returnObject(java.lang.Object)}
      * .
      * 
      * @throws Exception
@@ -125,28 +125,6 @@ public class ConnectionResourceIT extends JmsTestSupport {
         public Connection borrowConnection() throws Exception {
             Connection answer = pcf.createConnection();
             answer.start();
-            return answer;
-        }
-
-        @Override
-        public Connection borrowConnection(long timeout) throws Exception {
-            Connection answer = null;
-            int counter = 0;
-            while (counter++ < timeout) {
-                answer = pcf.createConnection();
-                if (answer == null) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        log.info("Intrupted but ignoring: ", e.getMessage());
-                    }
-                } else {
-                    break;
-                }
-            }
-            if (answer != null) {
-                answer.start();
-            }
             return answer;
         }
 

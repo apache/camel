@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public class FromFtpNoopTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&noop=true";
     }
 

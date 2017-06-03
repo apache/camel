@@ -19,13 +19,12 @@ package org.apache.camel.component.aws.ddb;
 import java.util.Collection;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.ExpectedAttributeValue;
-import com.amazonaws.services.dynamodb.model.Key;
-
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExchangeUtil;
 
 public abstract class AbstractDdbCommand {
     protected DdbConfiguration configuration;
@@ -40,16 +39,10 @@ public abstract class AbstractDdbCommand {
         this.exchange = exchange;
     }
 
-
     public abstract void execute();
 
     protected Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return AwsExchangeUtil.getMessageForResponse(exchange);
     }
 
     protected String determineTableName() {
@@ -76,13 +69,16 @@ public abstract class AbstractDdbCommand {
         msg.setHeader(DdbConstants.ATTRIBUTES, attributes);
     }
     
-    protected void addToResult(String headerKey, Object value) {
+    protected void addToResults(Map<String, Object> map) {
         Message msg = getMessageForResponse(exchange);
-        msg.setHeader(headerKey, value);
+        for (Map.Entry<String, Object> en : map.entrySet()) {
+            msg.setHeader(en.getKey(), en.getValue());
+        }
     }
 
-    protected Key determineKey() {
-        return exchange.getIn().getHeader(DdbConstants.KEY, Key.class);
+    @SuppressWarnings("unchecked")
+    protected Map<String, AttributeValue> determineKey() {
+        return exchange.getIn().getHeader(DdbConstants.KEY, Map.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -91,7 +87,6 @@ public abstract class AbstractDdbCommand {
     }
 
     protected Boolean determineConsistentRead() {
-        Boolean consistentRead = exchange.getIn().getHeader(DdbConstants.CONSISTENT_READ, Boolean.class);
-        return consistentRead != null ? consistentRead : configuration.getConsistentRead();
+        return exchange.getIn().getHeader(DdbConstants.CONSISTENT_READ, configuration.isConsistentRead(), Boolean.class);
     }
 }

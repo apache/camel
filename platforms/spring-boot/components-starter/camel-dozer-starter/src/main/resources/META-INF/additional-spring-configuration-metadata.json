@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.dozer.enabled",
+      "description": "Enable dozer component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

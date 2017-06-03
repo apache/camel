@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,7 +26,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class BindyPipeDelimiterTest extends CamelTestSupport {
 
@@ -40,11 +39,11 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Map<?, ?> map1 = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        Map<?, ?> map2 = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(1);
+        MyData rec1 = (MyData) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        MyData rec2 = (MyData) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(1);
 
-        MyData rec1 = (MyData) map1.values().iterator().next();
-        MyData rec2 = (MyData) map2.values().iterator().next();
+        //MyData rec1 = (MyData) map1.values().iterator().next();
+        //MyData rec2 = (MyData) map2.values().iterator().next();
 
         assertEquals("COL1", rec1.getCol1());
         assertEquals("COL2", rec1.getCol2());
@@ -56,10 +55,25 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBindyPipeDelimiterMarshal() throws Exception {
+    public void testBindyPipeDelimiterMarshalShouldHaveCorrectHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body().startsWith("HAPPY|NEW|YEAR");
+        mock.message(0).body().convertToString().startsWith("col1|col2|col3");
+
+        MyData data = new MyData();
+        data.setCol1("HAPPY");
+        data.setCol2("NEW");
+        data.setCol3("YEAR");
+        template.sendBody("direct:marshal", data);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testBindyPipeDelimiterMarshalShouldContainMyData() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().convertToString().contains("HAPPY|NEW|YEAR");
 
         MyData data = new MyData();
         data.setCol1("HAPPY");
@@ -76,12 +90,14 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:unmarshal")
-                    .unmarshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.simple.pipeline")
-                    .to("mock:result");
+                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
+                        .to("log:after.unmarshal")
+                        .to("mock:result");
 
                 from("direct:marshal")
-                    .marshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.simple.pipeline")
-                    .to("mock:result");
+                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
+                        .to("log:after.marshal")
+                        .to("mock:result");
             }
         };
     }

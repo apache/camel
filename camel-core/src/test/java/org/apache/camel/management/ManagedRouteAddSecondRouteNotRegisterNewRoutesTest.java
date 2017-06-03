@@ -50,7 +50,7 @@ public class ManagedRouteAddSecondRouteNotRegisterNewRoutesTest extends Manageme
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"foo\"");
+        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
 
         // should be started
         String state = (String) mbeanServer.getAttribute(route1, "State");
@@ -67,7 +67,7 @@ public class ManagedRouteAddSecondRouteNotRegisterNewRoutesTest extends Manageme
         log.info(">>>>>>>>>>>>>>>>> adding 2nd route DONE <<<<<<<<<<<<<<");
 
         // find the 2nd route
-        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"bar\"");
+        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"bar\"");
 
         // should not be registered
         assertFalse("2nd route should not be registered", mbeanServer.isRegistered(route2));

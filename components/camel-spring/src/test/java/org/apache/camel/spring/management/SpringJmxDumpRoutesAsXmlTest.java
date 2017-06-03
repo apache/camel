@@ -29,6 +29,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringJmxDumpRoutesAsXmlTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxDumpRouteAsXmlTest.xml");
     }
@@ -40,7 +45,7 @@ public class SpringJmxDumpRoutesAsXmlTest extends SpringTestSupport {
     public void testJmxDumpRoutesAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
         String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         assertNotNull(xml);
         log.info(xml);

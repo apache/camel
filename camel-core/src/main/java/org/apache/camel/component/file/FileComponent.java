@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.spi.EndpointCompleter;
 import org.apache.camel.util.FileUtil;
@@ -28,10 +29,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
- * File component.
+ *  * The <a href="http://camel.apache.org/file.html">File Component</a> provides access to file systems.
  */
 public class FileComponent extends GenericFileComponent<File> implements EndpointCompleter {
-
     /**
      * GenericFile property on Camel Exchanges.
      */
@@ -41,6 +41,15 @@ public class FileComponent extends GenericFileComponent<File> implements Endpoin
      * Default camel lock filename postfix
      */
     public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
+
+    public FileComponent() {
+        setEndpointClass(FileEndpoint.class);
+    }
+
+    public FileComponent(CamelContext context) {
+        super(context);
+        setEndpointClass(FileEndpoint.class);
+    }
 
     protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // the starting directory must be a static (not containing dynamic expressions)

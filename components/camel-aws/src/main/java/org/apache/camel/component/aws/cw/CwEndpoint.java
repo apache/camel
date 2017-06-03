@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.cw;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
@@ -27,12 +28,17 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Defines the <a href="http://aws.amazon.com/cloudwatch/">AWS CloudWatch Endpoint</a>
+ * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
  */
+@UriEndpoint(firstVersion = "2.11.0", scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace", producerOnly = true, label = "cloud,monitoring")
 public class CwEndpoint extends DefaultEndpoint {
 
+    @UriParam
     private CwConfiguration configuration;
     private AmazonCloudWatch cloudWatchClient;
 
@@ -62,6 +68,13 @@ public class CwEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
+        
+        cloudWatchClient = configuration.getAmazonCwClient() != null
+            ? configuration.getAmazonCwClient() : createCloudWatchClient();
+            
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonCwEndpoint())) {
+            cloudWatchClient.setEndpoint(configuration.getAmazonCwEndpoint());
+        }
     }
 
     public CwConfiguration getConfiguration() {
@@ -77,18 +90,32 @@ public class CwEndpoint extends DefaultEndpoint {
     }
 
     public AmazonCloudWatch getCloudWatchClient() {
-        if (cloudWatchClient == null) {
-            cloudWatchClient = configuration.getAmazonCwClient() != null
-                    ? configuration.getAmazonCwClient() : createCloudWatchClient();
-        }
         return cloudWatchClient;
     }
 
     AmazonCloudWatch createCloudWatchClient() {
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonCloudWatch client = new AmazonCloudWatchClient(credentials);
-        if (configuration.getAmazonCwEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonCwEndpoint());
+        AmazonCloudWatch client = null;
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
+        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonCloudWatchClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonCloudWatchClient(credentials);
+            }
+        } else {
+            if (isClientConfigFound) {
+                client = new AmazonCloudWatchClient();
+            } else {
+                client = new AmazonCloudWatchClient(clientConfiguration);
+            }
         }
         return client;
     }

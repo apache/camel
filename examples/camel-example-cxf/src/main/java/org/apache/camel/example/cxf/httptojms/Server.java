@@ -24,7 +24,9 @@ public class Server {
     public void start() throws Exception {
         System.out.println("Starting Server");
         Object implementor = new GreeterImpl();
-        String address = "http://cxf.apache.org/transports/jms";
+        String address = "jms:jndi:dynamicQueues/test.soap.jmstransport.queue?jndiInitialContextFactory="
+            + "org.apache.activemq.jndi.ActiveMQInitialContextFactory&jndiConnectionFactoryName="
+            + "ConnectionFactory&jndiURL=vm://localhost";
         endpoint = Endpoint.publish(address, implementor);
     }
 

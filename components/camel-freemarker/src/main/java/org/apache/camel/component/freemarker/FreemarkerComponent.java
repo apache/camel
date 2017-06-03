@@ -23,26 +23,32 @@ import freemarker.cache.NullCacheStorage;
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
  * Freemarker component.
  */
-public class FreemarkerComponent extends DefaultComponent {
+public class FreemarkerComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private Configuration configuration;
     private Configuration noCacheConfiguration;
+
+    public FreemarkerComponent() {
+        super(FreemarkerEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // should we use regular configuration or no cache (content cache is default true)
         Configuration config;
         String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        int templateUpdateDelay = getAndRemoveParameter(parameters, "templateUpdateDelay", Integer.class, 0);
         if (cache) {
             config = getConfiguration();
-            int templateUpdateDelay = getAndRemoveParameter(parameters, "templateUpdateDelay", Integer.class, 0);
             if (templateUpdateDelay > 0) {
                 config.setTemplateUpdateDelay(templateUpdateDelay);
             }
@@ -54,7 +60,9 @@ public class FreemarkerComponent extends DefaultComponent {
         if (ObjectHelper.isNotEmpty(encoding)) {
             endpoint.setEncoding(encoding);
         }
+        endpoint.setContentCache(cache);
         endpoint.setConfiguration(config);
+        endpoint.setTemplateUpdateDelay(templateUpdateDelay);
 
         // if its a http resource then append any remaining parameters and update the resource uri
         if (ResourceHelper.isHttpUri(remaining)) {
@@ -84,6 +92,9 @@ public class FreemarkerComponent extends DefaultComponent {
         return (Configuration) configuration.clone();
     }
 
+    /**
+     * To use an existing {@link freemarker.template.Configuration} instance as the configuration.
+     */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }

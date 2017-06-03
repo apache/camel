@@ -25,7 +25,6 @@ import org.apache.camel.Message;
  * Based on the thread <a href=
  * "http://camel.465427.n5.nabble.com/zip-file-best-practices-td5713437.html"
  * >zip file best practices</a>
- * 
  */
 public class ZipSplitter implements Expression {
 

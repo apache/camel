@@ -31,6 +31,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ExchangeHelper;
 
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_ENDPOINT_URI_PREFIX;
@@ -38,14 +40,18 @@ import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RES
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEMPLATE;
 
 /**
- * Represents a Camel Mustache endpoint.
+ * Transforms the message using a Mustache template.
  */
+@UriEndpoint(firstVersion = "2.12.0", scheme = "mustache", title = "Mustache", syntax = "mustache:resourceUri", producerOnly = true, label = "transformation")
 public class MustacheEndpoint extends ResourceEndpoint {
 
     private MustacheFactory mustacheFactory;
     private Mustache mustache;
+    @UriParam
     private String encoding;
+    @UriParam(defaultValue = "{{")
     private String startDelimiter;
+    @UriParam(defaultValue = "}}")
     private String endDelimiter;
 
     public MustacheEndpoint() {
@@ -160,6 +166,9 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return mustacheFactory;
     }
 
+    /**
+     * To use a custom {@link MustacheFactory}
+     */
     public void setMustacheFactory(MustacheFactory mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
     }
@@ -168,6 +177,9 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return encoding;
     }
 
+    /**
+     * Character encoding of the resource content.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -182,6 +194,9 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return startDelimiter;
     }
 
+    /**
+     * Characters used to mark template code beginning.
+     */
     public void setStartDelimiter(String startDelimiter) {
         this.startDelimiter = startDelimiter;
     }
@@ -190,6 +205,9 @@ public class MustacheEndpoint extends ResourceEndpoint {
         return endDelimiter;
     }
 
+    /**
+     * Characters used to mark template code end.
+     */
     public void setEndDelimiter(String endDelimiter) {
         this.endDelimiter = endDelimiter;
     }

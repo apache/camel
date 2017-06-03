@@ -19,10 +19,7 @@ package org.apache.camel.component.properties;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
-public class SpringPropertiesComponentCacheDisabledTest extends SpringPropertiesComponentTest {
+public class SpringPropertiesComponentCacheDisabledTest extends BaseSpringPropertiesComponentTest {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {

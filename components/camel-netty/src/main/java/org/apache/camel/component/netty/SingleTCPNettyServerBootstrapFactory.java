@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Suspendable;
 import org.apache.camel.support.ServiceSupport;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -39,10 +40,10 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
+public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleTCPNettyServerBootstrapFactory.class);
-    private final ChannelGroup allChannels;
+    private ChannelGroup allChannels;
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
@@ -54,19 +55,26 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     private WorkerPool workerPool;
 
     public SingleTCPNettyServerBootstrapFactory() {
-        this.allChannels = new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName());
     }
 
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
+
+        this.allChannels = configuration.getChannelGroup() != null
+            ? configuration.getChannelGroup()
+            : new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName());
     }
 
     public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
+
+        this.allChannels = configuration.getChannelGroup() != null
+            ? configuration.getChannelGroup()
+            : new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName());
     }
 
     public void addChannel(Channel channel) {

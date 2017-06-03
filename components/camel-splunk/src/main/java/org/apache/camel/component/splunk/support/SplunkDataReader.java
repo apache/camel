@@ -85,15 +85,20 @@ public class SplunkDataReader {
     }
 
     public List<SplunkEvent> read() throws Exception {
+        // Read without callback
+        return read(null);
+    }
+
+    public List<SplunkEvent> read(SplunkResultProcessor callback) throws Exception {
         switch (consumerType) {
         case NORMAL: {
-            return nonBlockingSearch();
+            return nonBlockingSearch(callback);
         }
         case REALTIME: {
-            return realtimeSearch();
+            return realtimeSearch(callback);
         }
         case SAVEDSEARCH: {
-            return savedSearch();
+            return savedSearch(callback);
         }
         default: {
             throw new RuntimeException("Unknown search mode " + consumerType);
@@ -182,7 +187,7 @@ public class SplunkDataReader {
         return eTime;
     }
 
-    private List<SplunkEvent> savedSearch() throws Exception {
+    private List<SplunkEvent> savedSearch(SplunkResultProcessor callback) throws Exception {
         LOG.trace("saved search start");
 
         ServiceArgs queryArgs = new ServiceArgs();
@@ -215,17 +220,19 @@ public class SplunkDataReader {
             args.setDispatchEarliestTime(earliestTime);
             args.setDispatchLatestTime(latestTime);
             job = search.dispatch(args);
+        } else {
+            throw new RuntimeException("Unable to find saved search '" + getSavedSearch() + "'.");
         }
         while (!job.isDone()) {
             Thread.sleep(2000);
         }
-        List<SplunkEvent> data = extractData(job, false);
+        List<SplunkEvent> data = extractData(job, false, callback);
         this.lastSuccessfulReadTime = startTime;
         return data;
 
     }
 
-    private List<SplunkEvent> nonBlockingSearch() throws Exception {
+    private List<SplunkEvent> nonBlockingSearch(SplunkResultProcessor callback) throws Exception {
         LOG.debug("non block search start");
 
         JobArgs queryArgs = new JobArgs();
@@ -233,12 +240,12 @@ public class SplunkDataReader {
         Calendar startTime = Calendar.getInstance();
         populateArgs(queryArgs, startTime, false);
 
-        List<SplunkEvent> data = runQuery(queryArgs, false);
+        List<SplunkEvent> data = runQuery(queryArgs, false, callback);
         lastSuccessfulReadTime = startTime;
         return data;
     }
 
-    private List<SplunkEvent> realtimeSearch() throws Exception {
+    private List<SplunkEvent> realtimeSearch(SplunkResultProcessor callback) throws Exception {
         LOG.debug("realtime search start");
 
         JobArgs queryArgs = new JobArgs();
@@ -247,12 +254,12 @@ public class SplunkDataReader {
         Calendar startTime = Calendar.getInstance();
         populateArgs(queryArgs, startTime, true);
 
-        List<SplunkEvent> data = runQuery(queryArgs, true);
+        List<SplunkEvent> data = runQuery(queryArgs, true, callback);
         lastSuccessfulReadTime = startTime;
         return data;
     }
 
-    private List<SplunkEvent> runQuery(JobArgs queryArgs, boolean realtime) throws Exception {
+    private List<SplunkEvent> runQuery(JobArgs queryArgs, boolean realtime, SplunkResultProcessor callback) throws Exception {
         Service service = endpoint.getService();
         Job job = service.getJobs().create(getSearch(), queryArgs);
         LOG.debug("Running search : {} with queryArgs : {}", getSearch(), queryArgs);
@@ -270,10 +277,10 @@ public class SplunkDataReader {
                 Thread.sleep(500);
             }
         }
-        return extractData(job, realtime);
+        return extractData(job, realtime, callback);
     }
 
-    private List<SplunkEvent> extractData(Job job, boolean realtime) throws Exception {
+    private List<SplunkEvent> extractData(Job job, boolean realtime, SplunkResultProcessor callback) throws Exception {
         List<SplunkEvent> result = new ArrayList<SplunkEvent>();
         HashMap<String, String> data;
         SplunkEvent splunkData;
@@ -300,7 +307,11 @@ public class SplunkDataReader {
             resultsReader = new ResultsReaderJson(stream);
             while ((data = resultsReader.getNextEvent()) != null) {
                 splunkData = new SplunkEvent(data);
-                result.add(splunkData);
+                if (callback != null) {
+                    callback.process(splunkData);
+                } else {
+                    result.add(splunkData);
+                }
             }
             IOHelper.close(stream);
         } else {
@@ -319,7 +330,11 @@ public class SplunkDataReader {
                 resultsReader = new ResultsReaderJson(stream);
                 while ((data = resultsReader.getNextEvent()) != null) {
                     splunkData = new SplunkEvent(data);
-                    result.add(splunkData);
+                    if (callback != null) {
+                        callback.process(splunkData);
+                    } else {
+                        result.add(splunkData);
+                    }
                 }
                 offset += getCount();
                 IOHelper.close(stream);

@@ -20,31 +20,111 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.http.HttpClientConfigurer;
-import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpBinding;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
-public class ServletEndpoint extends HttpEndpoint {
+/**
+ * To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
+ */
+@UriEndpoint(firstVersion = "2.0.0", scheme = "servlet", extendsScheme = "http", title = "Servlet",
+        syntax = "servlet:contextPath", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
+public class ServletEndpoint extends HttpCommonEndpoint {
 
+    private HttpBinding binding;
+
+    @UriPath(label = "consumer") @Metadata(required = "true")
+    private String contextPath;
+    @UriParam(label = "consumer", defaultValue = "CamelServlet")
     private String servletName;
+    @UriParam(label = "consumer,advanced")
+    private boolean attachmentMultipartBinding;
 
     public ServletEndpoint() {
     }
 
-    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,
-                           HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
+    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri) throws URISyntaxException {
+        super(endPointURI, component, httpUri);
+        this.contextPath = httpUri.getPath();
     }
 
+    @Override
+    public ServletComponent getComponent() {
+        return (ServletComponent) super.getComponent();
+    }
+
+    @Override
+    public HttpBinding getHttpBinding() {
+        // make sure we include servlet variant of the http binding
+        if (this.binding == null) {
+            // is attachment binding enabled?
+            if (isAttachmentMultipartBinding()) {
+                this.binding = new AttachmentHttpBinding();
+            } else {
+                this.binding = new DefaultHttpBinding();
+            }
+            this.binding.setTransferException(isTransferException());
+            if (getComponent() != null) {
+                this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+            }
+            this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            this.binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
+            this.binding.setMapHttpMessageBody(isMapHttpMessageBody());
+            this.binding.setMapHttpMessageHeaders(isMapHttpMessageHeaders());
+            this.binding.setMapHttpMessageFormUrlEncodedBody(isMapHttpMessageFormUrlEncodedBody());
+        }
+        return this.binding;
+    }
+
+    @Override
+    public void setHttpBinding(HttpBinding binding) {
+        super.setHttpBinding(binding);
+        this.binding = binding;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    /**
+     * The context-path to use
+     */
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
+    }
+
+    /**
+     * Name of the servlet to use
+     */
     public void setServletName(String name) {
         servletName = name;
     }
 
     public String getServletName() {
         return servletName;
+    }
+
+    public boolean isAttachmentMultipartBinding() {
+        return attachmentMultipartBinding;
+    }
+
+    /**
+     * Whether to automatic bind multipart/form-data as attachments on the Camel {@link Exchange}.
+     * <p/>
+     * The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together.
+     * Remove disableStreamCache to use AttachmentMultipartBinding.
+     * <p/>
+     * This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
+     */
+    public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
+        this.attachmentMultipartBinding = attachmentMultipartBinding;
     }
 
     @Override

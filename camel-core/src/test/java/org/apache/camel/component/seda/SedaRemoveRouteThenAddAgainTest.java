@@ -34,8 +34,6 @@ public class SedaRemoveRouteThenAddAgainTest extends ContextTestSupport {
 
         out.assertIsSatisfied();
 
-        out.reset();
-
         // now stop & remove the route
         context.stopRoute("sedaToMock");
         context.removeRoute("sedaToMock");
@@ -43,6 +41,8 @@ public class SedaRemoveRouteThenAddAgainTest extends ContextTestSupport {
         // and then add it back again
         context.addRoutes(createRouteBuilder());
 
+        // the mock endpoint was removed, so need to grab it again
+        out = getMockEndpoint("mock:out");
         out.expectedMessageCount(1);
         out.expectedBodiesReceived("after removing the route");
 

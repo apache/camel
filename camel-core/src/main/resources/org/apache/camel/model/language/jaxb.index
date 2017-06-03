@@ -16,6 +16,7 @@
 ## ------------------------------------------------------------------------
 ConstantExpression
 ELExpression
+ExchangePropertyExpression
 ExpressionDefinition
 GroovyExpression
 HeaderExpression
@@ -27,14 +28,14 @@ MethodCallExpression
 MvelExpression
 OgnlExpression
 PhpExpression
-PropertyExpression
 PythonExpression
 RefExpression
 RubyExpression
 SimpleExpression
 SpELExpression
 SqlExpression
+TerserExpression
 TokenizerExpression
-VtdXmlExpression
+XMLTokenizerExpression
 XPathExpression
 XQueryExpression

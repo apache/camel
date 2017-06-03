@@ -19,19 +19,20 @@ package org.apache.camel.dataformat.xstream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
 
 public class UnmarshalThenMarshalJSONTest extends UnmarshalThenMarshalTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").
-                        marshal().json().
+                        marshal().json(JsonLibrary.XStream, PurchaseOrder.class).
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 log.debug("marshalled: " + exchange.getIn().getBody(String.class));
                             }
                         }).
-                        unmarshal().json().
+                        unmarshal().json(JsonLibrary.XStream, PurchaseOrder.class).
                         to("mock:result");
             }
         };

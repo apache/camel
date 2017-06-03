@@ -97,6 +97,10 @@ public class BlueprintContainerRegistry implements Registry {
     }
 
     public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type) {
+        return lookupByType(blueprintContainer, type, true);
+    }
+
+    public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type, boolean includeNonSingletons) {
         Bundle bundle = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
         Map<String, T> objects = new LinkedHashMap<String, T>();
         Set<String> ids = blueprintContainer.getComponentIds();
@@ -106,6 +110,13 @@ public class BlueprintContainerRegistry implements Registry {
                 Class<?> cl = null;
                 if (metadata instanceof BeanMetadata) {
                     BeanMetadata beanMetadata = (BeanMetadata)metadata;
+                    // should we skip the bean if its prototype and we are only looking for singletons?
+                    if (!includeNonSingletons) {
+                        String scope = beanMetadata.getScope();
+                        if (BeanMetadata.SCOPE_PROTOTYPE.equals(scope)) {
+                            continue;
+                        }
+                    }
                     cl = bundle.loadClass(beanMetadata.getClassName());
                 } else if (metadata instanceof ReferenceMetadata) {
                     ReferenceMetadata referenceMetadata = (ReferenceMetadata)metadata;

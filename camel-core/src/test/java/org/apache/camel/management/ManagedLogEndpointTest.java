@@ -43,7 +43,7 @@ public class ManagedLogEndpointTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"log-foo\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"log-foo\"");
         mbeanServer.isRegistered(name);
         
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");

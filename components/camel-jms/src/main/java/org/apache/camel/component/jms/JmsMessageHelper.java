@@ -30,13 +30,15 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.jms.JmsConfiguration.QUEUE_PREFIX;
+import static org.apache.camel.component.jms.JmsConfiguration.TEMP_QUEUE_PREFIX;
+import static org.apache.camel.component.jms.JmsConfiguration.TEMP_TOPIC_PREFIX;
 import static org.apache.camel.component.jms.JmsConfiguration.TOPIC_PREFIX;
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
 /**
  * Utility class for {@link javax.jms.Message}.
  *
- * @version 
+ * @version
  */
 public final class JmsMessageHelper {
 
@@ -169,19 +171,85 @@ public final class JmsMessageHelper {
     }
 
     /**
-     * Normalizes the destination name, by removing any leading queue or topic prefixes.
+     * Whether the destination name has either queue or temp queue prefix.
+     *
+     * @param destination the destination
+     * @return <tt>true</tt> if queue or temp-queue prefix, <tt>false</tt> otherwise
+     */
+    public static boolean isQueuePrefix(String destination) {
+        if (ObjectHelper.isEmpty(destination)) {
+            return false;
+        }
+
+        return destination.startsWith(QUEUE_PREFIX) || destination.startsWith(TEMP_QUEUE_PREFIX);
+    }
+
+    /**
+     * Whether the destination name has either topic or temp topic prefix.
+     *
+     * @param destination the destination
+     * @return <tt>true</tt> if topic or temp-topic prefix, <tt>false</tt> otherwise
+     */
+    public static boolean isTopicPrefix(String destination) {
+        if (ObjectHelper.isEmpty(destination)) {
+            return false;
+        }
+
+        return destination.startsWith(TOPIC_PREFIX) || destination.startsWith(TEMP_TOPIC_PREFIX);
+    }
+
+    /**
+     * Normalizes the destination name.
+     * <p/>
+     * This ensures the destination name is correct, and we do not create queues as <tt>queue://queue:foo</tt>, which
+     * was intended as <tt>queue://foo</tt>.
      *
      * @param destination the destination
      * @return the normalized destination
      */
     public static String normalizeDestinationName(String destination) {
+        // do not include prefix which is the current behavior when using this method.
+        return normalizeDestinationName(destination, false);
+    }
+
+    /**
+     * Normalizes the destination name.
+     * <p/>
+     * This ensures the destination name is correct, and we do not create queues as <tt>queue://queue:foo</tt>, which
+     * was intended as <tt>queue://foo</tt>.
+     *
+     * @param destination the destination
+     * @param includePrefix whether to include <tt>queue://</tt>, or <tt>topic://</tt> prefix in the normalized destination name
+     * @return the normalized destination
+     */
+    public static String normalizeDestinationName(String destination, boolean includePrefix) {
         if (ObjectHelper.isEmpty(destination)) {
             return destination;
         }
         if (destination.startsWith(QUEUE_PREFIX)) {
-            return removeStartingCharacters(destination.substring(QUEUE_PREFIX.length()), '/');
+            String s = removeStartingCharacters(destination.substring(QUEUE_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = QUEUE_PREFIX + "//" + s;
+            }
+            return s;
+        } else if (destination.startsWith(TEMP_QUEUE_PREFIX)) {
+            String s = removeStartingCharacters(destination.substring(TEMP_QUEUE_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = TEMP_QUEUE_PREFIX + "//" + s;
+            }
+            return s;
         } else if (destination.startsWith(TOPIC_PREFIX)) {
-            return removeStartingCharacters(destination.substring(TOPIC_PREFIX.length()), '/');
+            String s = removeStartingCharacters(destination.substring(TOPIC_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = TOPIC_PREFIX + "//" + s;
+            }
+            return s;
+        } else if (destination.startsWith(TEMP_TOPIC_PREFIX)) {
+            String s = removeStartingCharacters(destination.substring(TEMP_TOPIC_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = TEMP_TOPIC_PREFIX + "//" + s;
+            }
+            return s;
         } else {
             return destination;
         }
@@ -234,6 +302,22 @@ public final class JmsMessageHelper {
     }
 
     /**
+     * Gets the String Properties from the message.
+     *
+     * @param message  the message
+     * @return the type, can be <tt>null</tt>
+     */
+    public static String getStringProperty(Message message, String propertyName) {
+        try {
+            return message.getStringProperty(propertyName);
+        } catch (Exception e) {
+            // ignore due some broker client does not support accessing StringProperty
+        }
+
+        return null;
+    }
+
+    /**
      * Gets the JMSRedelivered from the message.
      *
      * @param message  the message
@@ -258,6 +342,22 @@ public final class JmsMessageHelper {
     public static String getJMSMessageID(Message message) {
         try {
             return message.getJMSMessageID();
+        } catch (Exception e) {
+            // ignore if JMS broker do not support this
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the JMSDestination from the message.
+     *
+     * @param message  the message
+     * @return the JMSDestination, or <tt>null</tt> if not able to get
+     */
+    public static Destination getJMSDestination(Message message) {
+        try {
+            return message.getJMSDestination();
         } catch (Exception e) {
             // ignore if JMS broker do not support this
         }
@@ -305,4 +405,25 @@ public final class JmsMessageHelper {
         }
     }
 
+    /**
+     * Gets the JMSCorrelationIDAsBytes from the message.
+     *
+     * @param message the message
+     * @return the JMSCorrelationIDAsBytes, or <tt>null</tt> if not able to get
+     */
+    public static String getJMSCorrelationIDAsBytes(Message message) {
+        try {
+            byte[] bytes = message.getJMSCorrelationIDAsBytes();
+            boolean isNull = true;
+            for (byte b : bytes) {
+                if (b != 0) {
+                    isNull = false;
+                }
+            }
+            return isNull ? null : new String(bytes);
+        } catch (Exception e) {
+            // ignore if JMS broker do not support this
+        }
+        return null;
+    }
 }

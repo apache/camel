@@ -20,13 +20,14 @@ import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.EnhancedApnsNotification;
 import com.notnoop.apns.utils.ApnsServerStub;
-import com.notnoop.apns.utils.FixedCertificates;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.apns.factory.ApnsServiceFactory;
 import org.apache.camel.component.apns.model.ApnsConstants;
+import org.apache.camel.component.apns.model.MessageType;
 import org.apache.camel.component.apns.util.ApnsUtils;
+import org.apache.camel.component.apns.util.TestConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +44,7 @@ public class ApnsProducerTest extends CamelTestSupport {
 
     @Before
     public void startup() {
-        server = ApnsUtils.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);
+        server = ApnsUtils.prepareAndStartServer(TestConstants.TEST_GATEWAY_PORT, TestConstants.TEST_FEEDBACK_PORT);
     }
 
     @After
@@ -61,8 +62,25 @@ public class ApnsProducerTest extends CamelTestSupport {
 
         template.sendBody("direct:test", message);
 
-        server.messages.acquire();
-        assertArrayEquals(apnsNotification.marshall(), server.received.toByteArray());
+        server.getMessages().acquire();
+        assertArrayEquals(apnsNotification.marshall(), server.getReceived().toByteArray());
+    }
+
+
+    @Test(timeout = 5000)
+    public void testProducerWithApnsNotification() throws InterruptedException {
+        String message = "Hello World";
+        String messagePayload = APNS.newPayload().alertBody(message).build();
+
+        final EnhancedApnsNotification apnsNotification =
+                new EnhancedApnsNotification(14, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
+        server.stopAt(apnsNotification.length());
+
+        template.sendBody("direct:testWithApnsNotification", apnsNotification);
+
+        server.getMessages().acquire();
+        assertArrayEquals(apnsNotification.marshall(), server.getReceived().toByteArray());
+
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -81,6 +99,9 @@ public class ApnsProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:test").setHeader(ApnsConstants.HEADER_TOKENS, constant(FAKE_TOKEN)).to("apns:notify");
+                from("direct:testWithApnsNotification")
+                        .setHeader(ApnsConstants.HEADER_MESSAGE_TYPE, constant(MessageType.APNS_NOTIFICATION.name()))
+                        .to("apns:notify");
             }
         };
     }

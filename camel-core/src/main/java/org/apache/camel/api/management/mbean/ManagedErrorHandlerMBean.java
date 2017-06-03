@@ -23,6 +23,9 @@ public interface ManagedErrorHandlerMBean {
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
     @ManagedAttribute(description = "Does the error handler support redelivery")
     boolean isSupportRedelivery();
 
@@ -32,11 +35,17 @@ public interface ManagedErrorHandlerMBean {
     @ManagedAttribute(description = "When a message is moved to dead letter channel is it the original message or recent message")
     boolean isDeadLetterUseOriginalMessage();
 
+    @ManagedAttribute(description = "Does this error handler handle new exceptions which may occur during error handling")
+    boolean isDeadLetterHandleNewException();
+
     @ManagedAttribute(description = "Does this error handler support transactions")
     boolean isSupportTransactions();
 
     @ManagedAttribute(description = "Endpoint Uri for the dead letter channel where dead message is move to", mask = true)
     String getDeadLetterChannelEndpointUri();
+
+    @ManagedAttribute(description = "Number of Exchanges scheduled for redelivery (waiting to be redelivered in the future)")
+    Integer getPendingRedeliveryCount();
 
     @ManagedAttribute(description = "RedeliveryPolicy for maximum redeliveries")
     Integer getMaximumRedeliveries();
@@ -110,6 +119,24 @@ public interface ManagedErrorHandlerMBean {
     @ManagedAttribute(description = "RedeliveryPolicy for logging handled exceptions")
     void setLogHandled(Boolean log);
 
+    @ManagedAttribute(description = "RedeliveryPolicy for logging new exceptions")
+    Boolean getLogNewException();
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging new exceptions")
+    void setLogNewException(Boolean log);
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging exhausted with message history")
+    Boolean getLogExhaustedMessageHistory();
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging exhausted with message history")
+    void setLogExhaustedMessageHistory(Boolean log);
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging exhausted with message history")
+    Boolean getLogExhaustedMessageBody();
+
+    @ManagedAttribute(description = "RedeliveryPolicy for logging exhausted with message body")
+    void setLogExhaustedMessageBody(Boolean log);
+
     @ManagedAttribute(description = "RedeliveryPolicy for logging handled and continued exceptions")
     Boolean getLogContinued();
 
@@ -133,5 +160,11 @@ public interface ManagedErrorHandlerMBean {
 
     @ManagedAttribute(description = "RedeliveryPolicy for using exponential backoff")
     void setUseExponentialBackOff(Boolean backoff);
+
+    @ManagedAttribute(description = "RedeliveryPolicy for allow redelivery while stopping")
+    Boolean getAllowRedeliveryWhileStopping();
+
+    @ManagedAttribute(description = "RedeliveryPolicy for allow redelivery while stopping")
+    void setAllowRedeliveryWhileStopping(Boolean allow);
 
 }

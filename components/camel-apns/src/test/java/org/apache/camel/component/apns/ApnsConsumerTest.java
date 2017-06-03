@@ -18,13 +18,13 @@ package org.apache.camel.component.apns;
 
 import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.utils.ApnsServerStub;
-import com.notnoop.apns.utils.FixedCertificates;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.apns.factory.ApnsServiceFactory;
 import org.apache.camel.component.apns.model.InactiveDevice;
 import org.apache.camel.component.apns.util.ApnsUtils;
+import org.apache.camel.component.apns.util.TestConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
@@ -41,7 +41,7 @@ public class ApnsConsumerTest extends CamelTestSupport {
 
     @Before
     public void startup() throws InterruptedException {
-        server = ApnsUtils.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);
+        server = ApnsUtils.prepareAndStartServer(TestConstants.TEST_GATEWAY_PORT, TestConstants.TEST_FEEDBACK_PORT);
     }
 
     @After
@@ -60,7 +60,7 @@ public class ApnsConsumerTest extends CamelTestSupport {
         mock.message(0).body().isInstanceOf(InactiveDevice.class);
 
         byte[] feedBackBytes = ApnsUtils.generateFeedbackBytes(deviceTokenBytes);
-        server.toSend.write(feedBackBytes);
+        server.getToSend().write(feedBackBytes);
 
         Thread.sleep(1000);
 

@@ -25,13 +25,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * For expressions and predicates using a body or header tokenizer.
+ * For expressions and predicates using a body or header tokenizer
  *
  * @see TokenizeLanguage
  */
+@Metadata(firstVersion = "2.0.0", label = "language,core", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends ExpressionDefinition {
@@ -51,6 +53,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     private Boolean includeTokens;
     @XmlAttribute
     private Integer group;
+    @XmlAttribute
+    private Boolean skipFirst;
 
     public TokenizerExpression() {
     }
@@ -64,6 +68,10 @@ public class TokenizerExpression extends ExpressionDefinition {
         return token;
     }
 
+    /**
+     * The (start) token to use as tokenizer, for example \n for a new line token.
+     * You can use simple language as the token to support dynamic tokens.
+     */
     public void setToken(String token) {
         this.token = token;
     }
@@ -72,6 +80,10 @@ public class TokenizerExpression extends ExpressionDefinition {
         return endToken;
     }
 
+    /**
+     * The end token to use as tokenizer if using start/end token pairs.
+     * You can use simple language as the token to support dynamic tokens.
+     */
     public void setEndToken(String endToken) {
         this.endToken = endToken;
     }
@@ -80,10 +92,18 @@ public class TokenizerExpression extends ExpressionDefinition {
         return headerName;
     }
 
+    /**
+     * Name of header to tokenize instead of using the message body.
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
 
+    /**
+     * If the token is a regular expression pattern.
+     * <p/>
+     * The default value is false
+     */
     public void setRegex(boolean regex) {
         this.regex = regex;
     }
@@ -96,6 +116,10 @@ public class TokenizerExpression extends ExpressionDefinition {
         return inheritNamespaceTagName;
     }
 
+    /**
+     * To inherit namespaces from a root/parent tag name when using XML
+     * You can use simple language as the tag name to support dynamic names.
+     */
     public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
         this.inheritNamespaceTagName = inheritNamespaceTagName;
     }
@@ -104,6 +128,10 @@ public class TokenizerExpression extends ExpressionDefinition {
         return xml;
     }
 
+    /**
+     * Whether the input is XML messages.
+     * This option must be set to true if working with XML payloads.
+     */
     public void setXml(Boolean xml) {
         this.xml = xml;
     }
@@ -112,6 +140,11 @@ public class TokenizerExpression extends ExpressionDefinition {
         return includeTokens;
     }
 
+    /**
+     * Whether to include the tokens in the parts when using pairs
+     * <p/>
+     * The default value is false
+     */
     public void setIncludeTokens(Boolean includeTokens) {
         this.includeTokens = includeTokens;
     }
@@ -120,8 +153,22 @@ public class TokenizerExpression extends ExpressionDefinition {
         return group;
     }
 
+    /**
+     * To group N parts together, for example to split big files into chunks of 1000 lines.
+     */
     public void setGroup(Integer group) {
         this.group = group;
+    }
+
+    public Boolean getSkipFirst() {
+        return skipFirst;
+    }
+
+    /**
+     * To skip the very first element
+     */
+    public void setSkipFirst(Boolean skipFirst) {
+        this.skipFirst = skipFirst;
     }
 
     @Override
@@ -150,6 +197,9 @@ public class TokenizerExpression extends ExpressionDefinition {
                 throw new IllegalArgumentException("Group must be a positive number, was: " + group);
             }
             language.setGroup(group);
+        }
+        if (skipFirst != null) {
+            language.setSkipFirst(skipFirst);
         }
         return language.createExpression();
     }

@@ -16,9 +16,10 @@
  */
 package org.apache.camel.example.bam;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.apache.camel.bam.ActivityBuilder;
 import org.apache.camel.bam.ProcessBuilder;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.util.Time.seconds;
@@ -32,8 +33,8 @@ public class MyActivities extends ProcessBuilder {
     public MyActivities() {
     }
 
-    public MyActivities(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
-        super(jpaTemplate, transactionTemplate);
+    public MyActivities(EntityManagerFactory entityManagerFactory, TransactionTemplate transactionTemplate) {
+        super(entityManagerFactory, transactionTemplate);
     }
 
     public void configure() throws Exception {

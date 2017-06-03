@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.s3;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -74,6 +76,7 @@ import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import com.amazonaws.services.s3.model.VersionListing;
 
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Assert;
 
 public class AmazonS3ClientMock extends AmazonS3Client {
@@ -82,6 +85,8 @@ public class AmazonS3ClientMock extends AmazonS3Client {
     List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<PutObjectRequest>();
     
     private boolean nonExistingBucketCreated;
+    
+    private int maxCapacity = 100;
     
     public AmazonS3ClientMock() {
         super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
@@ -121,13 +126,17 @@ public class AmazonS3ClientMock extends AmazonS3Client {
     @Override
     public ObjectListing listObjects(ListObjectsRequest listObjectsRequest) throws AmazonClientException, AmazonServiceException {
         if ("nonExistingBucket".equals(listObjectsRequest.getBucketName()) && !nonExistingBucketCreated) {
-            AmazonServiceException ex = new AmazonServiceException("Unknow bucket");
+            AmazonServiceException ex = new AmazonServiceException("Unknown bucket");
             ex.setStatusCode(404);
             throw ex; 
         }
-        
+        int capacity;
         ObjectListing objectListing = new ObjectListing();
-        int capacity = listObjectsRequest.getMaxKeys();
+        if (!ObjectHelper.isEmpty(listObjectsRequest.getMaxKeys()) && listObjectsRequest.getMaxKeys() != null) {
+            capacity = listObjectsRequest.getMaxKeys();
+        } else {
+            capacity = maxCapacity;
+        }
         
         for (int index = 0; index < objects.size() && index < capacity; index++) {
             S3ObjectSummary s3ObjectSummary = new S3ObjectSummary();
@@ -157,7 +166,12 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public List<Bucket> listBuckets() throws AmazonClientException, AmazonServiceException {
-        return new ArrayList<Bucket>();
+        ArrayList<Bucket> list = new ArrayList<Bucket>();
+        Bucket bucket = new Bucket("camel-bucket");
+        bucket.setOwner(new Owner("Camel", "camel"));
+        bucket.setCreationDate(new Date());
+        list.add(bucket);
+        return list;
     }
 
     @Override
@@ -247,7 +261,8 @@ public class AmazonS3ClientMock extends AmazonS3Client {
     public ObjectMetadata getObjectMetadata(GetObjectMetadataRequest getObjectMetadataRequest) throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
-
+    
+    
     @Override
     public S3Object getObject(String bucketName, String key) throws AmazonClientException, AmazonServiceException {
         for (S3Object s3Object : objects) {
@@ -271,7 +286,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public S3Object getObject(GetObjectRequest getObjectRequest) throws AmazonClientException, AmazonServiceException {
-        throw new UnsupportedOperationException();
+        return getObject(getObjectRequest.getBucketName(), getObjectRequest.getKey());
     }
 
     @Override
@@ -299,6 +314,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("resource")
     @Override
     public PutObjectResult putObject(PutObjectRequest putObjectRequest) throws AmazonClientException, AmazonServiceException {
         putObjectRequests.add(putObjectRequest);
@@ -306,7 +322,15 @@ public class AmazonS3ClientMock extends AmazonS3Client {
         S3Object s3Object = new S3Object();
         s3Object.setBucketName(putObjectRequest.getBucketName());
         s3Object.setKey(putObjectRequest.getKey());
-        s3Object.setObjectContent(putObjectRequest.getInputStream());
+        if (putObjectRequest.getFile() != null) {
+            try {
+                s3Object.setObjectContent(new FileInputStream(putObjectRequest.getFile()));
+            } catch (FileNotFoundException e) {
+                throw new AmazonServiceException("Cannot store the file object.", e);
+            }
+        } else {
+            s3Object.setObjectContent(putObjectRequest.getInputStream());
+        }
         objects.add(s3Object);
         
         PutObjectResult putObjectResult = new PutObjectResult();
@@ -321,7 +345,10 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public CopyObjectResult copyObject(CopyObjectRequest copyObjectRequest) throws AmazonClientException, AmazonServiceException {
-        throw new UnsupportedOperationException();
+        CopyObjectResult copyObjectResult = new CopyObjectResult();
+        copyObjectResult.setETag("3a5c8b1ad448bca04584ecb55b836264");
+        copyObjectResult.setVersionId("11192828ahsh2723");
+        return copyObjectResult;
     }
 
     @Override

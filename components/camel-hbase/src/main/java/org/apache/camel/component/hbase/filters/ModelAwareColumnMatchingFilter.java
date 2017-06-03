@@ -28,12 +28,18 @@ import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 /**
  * A {@link FilterList} that contains multiple {@link SingleColumnValueExcludeFilter}s one per column that is part of the model.
  */
-public class ModelAwareColumnMatchingFilter extends FilterList implements ModelAwareFilter<FilterList> {
+public class ModelAwareColumnMatchingFilter implements ModelAwareFilter<FilterList> {
+    FilterList fl;
 
     /**
      * Writable constructor, do not use.
      */
     public ModelAwareColumnMatchingFilter() {
+        fl = new FilterList();
+    }
+
+    public FilterList getFilteredList() {
+        return fl;
     }
 
     /**
@@ -41,7 +47,7 @@ public class ModelAwareColumnMatchingFilter extends FilterList implements ModelA
      */
     @Override
     public void apply(CamelContext context, HBaseRow rowModel) {
-        getFilters().clear();
+        fl.getFilters().clear();
         if (rowModel != null) {
             for (HBaseCell cell : rowModel.getCells()) {
                 if (cell.getValue() != null) {
@@ -49,7 +55,7 @@ public class ModelAwareColumnMatchingFilter extends FilterList implements ModelA
                     byte[] qualifier = HBaseHelper.getHBaseFieldAsBytes(cell.getQualifier());
                     byte[] value = context.getTypeConverter().convertTo(byte[].class, cell.getValue());
                     SingleColumnValueFilter columnValueFilter = new SingleColumnValueFilter(family, qualifier, CompareFilter.CompareOp.EQUAL, value);
-                    addFilter(columnValueFilter);
+                    fl.addFilter(columnValueFilter);
                 }
             }
         }

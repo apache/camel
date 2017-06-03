@@ -16,19 +16,18 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.camel.commands.RouteResumeCommand;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-/**
- * Command to resume a route.
- */
-@Command(scope = "camel", name = "route-resume", description = "Resume a Camel route or a group of routes.")
+@Command(scope = "camel", name = "route-resume", description = "Resume a Camel route")
+@Service
 public class RouteResume extends AbstractRouteCommand {
 
     @Override
-    public void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception {
-        camelContext.resumeRoute(camelRoute.getId());
+    public Object execute() throws Exception {
+        RouteResumeCommand command = new RouteResumeCommand(route, context);
+        return command.execute(this, System.out, System.err);
     }
 
 }

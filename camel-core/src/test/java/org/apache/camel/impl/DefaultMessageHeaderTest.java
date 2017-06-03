@@ -17,15 +17,18 @@
 package org.apache.camel.impl;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 
 /**
  * @version 
  */
 public class DefaultMessageHeaderTest extends TestCase {
+    
+    private CamelContext camelContext = new DefaultCamelContext();
 
     public void testLookupCaseAgnostic() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("foo", "cheese");
@@ -36,7 +39,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testLookupCaseAgnosticAddHeader() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("foo", "cheese");
@@ -55,7 +58,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testLookupCaseAgnosticAddHeader2() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("foo", "cheese");
@@ -74,7 +77,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testLookupCaseAgnosticAddHeaderRemoveHeader() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("foo", "cheese");
@@ -97,7 +100,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testSetWithDifferentCase() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("foo", "cheese");
@@ -109,7 +112,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testRemoveWithDifferentCase() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("foo", "cheese");
@@ -128,25 +131,8 @@ public class DefaultMessageHeaderTest extends TestCase {
         assertTrue(msg.getHeaders().isEmpty());
     }
 
-    public void testRemoveHeaderWithNullArg() {
-        Message msg = new DefaultMessage();
-        assertNull(msg.getHeader("foo"));
-
-        msg.setHeader("tick", "bla");
-        msg.setHeader("tack", "blaa");
-        msg.setHeader("tock", "blaaa");
-
-        assertEquals("bla", msg.getHeader("tick"));
-        assertEquals("blaa", msg.getHeader("tack"));
-        assertEquals("blaaa", msg.getHeader("tock"));
-
-        msg.removeHeader(null);
-
-        assertFalse(msg.getHeaders().isEmpty());
-    }
-
     public void testRemoveHeaderWithNullValue() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("tick", null);
@@ -156,7 +142,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testRemoveHeadersWithWildcard() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("tick", "bla");
@@ -173,7 +159,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testRemoveHeadersAllWithWildcard() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("tick", "bla");
@@ -190,7 +176,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testRemoveHeadersWithExclude() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("tick", "bla");
@@ -206,7 +192,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testRemoveHeadersAllWithExclude() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("tick", "bla");
@@ -226,7 +212,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testRemoveHeadersWithWildcardInExclude() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("tick", "bla");
@@ -242,7 +228,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testRemoveHeadersWithNulls() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("tick", "bla");
@@ -261,7 +247,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testRemoveHeadersWithNonExcludeHeaders() {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));
 
         msg.setHeader("tick", "bla");
@@ -274,7 +260,7 @@ public class DefaultMessageHeaderTest extends TestCase {
     }
 
     public void testWithDefaults() {
-        DefaultMessage msg = new DefaultMessage();
+        DefaultMessage msg = new DefaultMessage(camelContext);
         // must have exchange so to leverage the type converters
         msg.setExchange(new DefaultExchange(new DefaultCamelContext()));
 

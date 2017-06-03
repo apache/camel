@@ -135,12 +135,12 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
 
     public MBeanNotificationInfo[] getNotificationInfo() {
         // all the class names in the event package
-        String[] names = {"CamelContextStartedEvent", "CamelContextStartingEvent", "CamelContextStartupFailureEvent"
-                , "CamelContextStopFailureEvent", "CamelContextStoppedEvent", "CamelContextStoppingEvent"
-                , "CamelContextSuspendingEvent", "CamelContextSuspendedEvent", "CamelContextResumingEvent", "CamelContextResumedEvent"
-                , "CamelContextResumeFailureEvent", "ExchangeCompletedEvent", "ExchangeCreatedEvent", "ExchangeFailedEvent"
-                , "ExchangeFailureHandledEvent", "ExchangeRedeliveryEvents", "ExchangeSendingEvent", "ExchangeSentEvent", "RouteStartedEvent"
-                , "RouteStoppedEvent", "ServiceStartupFailureEvent", "ServiceStopFailureEvent"};
+        String[] names = {"CamelContextStartedEvent", "CamelContextStartingEvent", "CamelContextStartupFailureEvent",
+                          "CamelContextStopFailureEvent", "CamelContextStoppedEvent", "CamelContextStoppingEvent",
+                          "CamelContextSuspendingEvent", "CamelContextSuspendedEvent", "CamelContextResumingEvent", "CamelContextResumedEvent",
+                          "CamelContextResumeFailureEvent", "ExchangeCompletedEvent", "ExchangeCreatedEvent", "ExchangeFailedEvent",
+                          "ExchangeFailureHandledEvent", "ExchangeRedeliveryEvents", "ExchangeSendingEvent", "ExchangeSentEvent", "RouteStartedEvent",
+                          "RouteStoppedEvent", "ServiceStartupFailureEvent", "ServiceStopFailureEvent"};
 
         List<MBeanNotificationInfo> infos = new ArrayList<MBeanNotificationInfo>();
         for (String name : names) {

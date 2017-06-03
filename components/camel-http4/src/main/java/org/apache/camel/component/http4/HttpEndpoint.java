@@ -16,57 +16,80 @@
  */
 package org.apache.camel.component.http4;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
+import javax.net.ssl.HostnameVerifier;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http4.helper.HttpHelper;
-import org.apache.camel.impl.DefaultPollingEndpoint;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a <a href="http://camel.apache.org/http.html">HTTP endpoint</a>
- *
- * @version 
+ * For calling out to external HTTP servers using Apache HTTP Client 4.x.
  */
-public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilterStrategyAware {
+@UriEndpoint(firstVersion = "2.3.0", scheme = "http4,http4s", title = "HTTP4,HTTP4S", syntax = "http4:httpUri",
+    producerOnly = true, label = "http", lenientProperties = true)
+public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    private HttpBinding binding;
+
+    @UriParam(label = "advanced", description = "To use a custom HttpContext instance")
     private HttpContext httpContext;
-    private HttpComponent component;
-    private URI httpUri;
-    private HttpParams clientParams;
+    @UriParam(label = "advanced", description = "Register a custom configuration strategy for new HttpClient instances"
+        + " created by producers or consumers such as to configure authentication mechanisms etc.")
     private HttpClientConfigurer httpClientConfigurer;
-    private ClientConnectionManager clientConnectionManager;
+    @UriParam(label = "advanced", prefix = "httpClient.", multiValue = true, description = "To configure the HttpClient using the key/values from the Map.")
+    private Map<String, Object> httpClientOptions;
+    @UriParam(label = "advanced", description = "To use a custom HttpClientConnectionManager to manage connections")
+    private HttpClientConnectionManager clientConnectionManager;
+    @UriParam(label = "advanced", description = "Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.")
+    private HttpClientBuilder clientBuilder;
+    @UriParam(label = "advanced", description = "Sets a custom HttpClient to be used by the producer")
     private HttpClient httpClient;
-    private boolean throwExceptionOnFailure = true;
-    private boolean bridgeEndpoint;
-    private boolean matchOnUriPrefix;
-    private boolean chunked = true;
-    private boolean disableStreamCache;
-    private boolean transferException;
-    private boolean traceEnabled;
-    private String httpMethodRestrict;
-    private UrlRewrite urlRewrite;
+    @UriParam(label = "advanced", defaultValue = "false", description = "To use System Properties as fallback for configuration")
+    private boolean useSystemProperties;
+
+    @UriParam(label = "producer", description = "To use a custom CookieStore."
+        + " By default the BasicCookieStore is used which is an in-memory only cookie store."
+        + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
+        + " If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.")
+    private CookieStore cookieStore = new BasicCookieStore();
+    @UriParam(label = "producer", defaultValue = "true", description = "Whether to clear expired cookies before sending the HTTP request."
+        + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.")
     private boolean clearExpiredCookies = true;
-    private CookieStore cookieStore;
+    @UriParam(label = "producer", description = "If this option is true, camel-http4 sends preemptive basic authentication to the server.")
+    private boolean authenticationPreemptive;
+    @UriParam(label = "producer", description = "Whether the HTTP DELETE should include the message body or not."
+        + " By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the message body.")
+    private boolean deleteWithBody;
+
+    @UriParam(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
+    private int maxTotalConnections;
+    @UriParam(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
+    private int connectionsPerRoute;
+    @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
+    private HostnameVerifier x509HostnameVerifier;
 
     public HttpEndpoint() {
     }
@@ -75,21 +98,19 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this(endPointURI, component, httpURI, null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, ClientConnectionManager clientConnectionManager) throws URISyntaxException {
-        this(endPointURI, component, httpURI, new BasicHttpParams(), clientConnectionManager, null);
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientConnectionManager clientConnectionManager) throws URISyntaxException {
+        this(endPointURI, component, httpURI, HttpClientBuilder.create(), clientConnectionManager, null);
     }
     
-    public HttpEndpoint(String endPointURI, HttpComponent component, HttpParams clientParams,
-                        ClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        this(endPointURI, component, null, clientParams, clientConnectionManager, clientConfigurer);
+    public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientBuilder clientBuilder,
+                        HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+        this(endPointURI, component, null, clientBuilder, clientConnectionManager, clientConfigurer);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpParams clientParams,
-                        ClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endPointURI, component);
-        this.component = component;
-        this.httpUri = httpURI;
-        this.clientParams = clientParams;
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientBuilder clientBuilder,
+                        HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+        super(endPointURI, component, httpURI);
+        this.clientBuilder = clientBuilder;
         this.httpClientConfigurer = clientConfigurer;
         this.clientConnectionManager = clientConnectionManager;
     }
@@ -98,15 +119,17 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return new HttpProducer(this);
     }
 
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new UnsupportedOperationException("Cannot consume from http endpoint");
+    }
+
     public PollingConsumer createPollingConsumer() throws Exception {
         HttpPollingConsumer answer = new HttpPollingConsumer(this);
         configurePollingConsumer(answer);
         return answer;
     }
 
-    /**
-     * Gets the HttpClient to be used by {@link org.apache.camel.component.http4.HttpProducer}
-     */
     public synchronized HttpClient getHttpClient() {
         if (httpClient == null) {
             httpClient = createHttpClient();
@@ -114,6 +137,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         return httpClient;
     }
 
+    /**
+     * Sets a custom HttpClient to be used by the producer
+     */
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -124,86 +150,95 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
      * Producers and consumers should use the {@link #getHttpClient()} method instead.
      */
     protected HttpClient createHttpClient() {
-        ObjectHelper.notNull(clientParams, "clientParams");
+        ObjectHelper.notNull(clientBuilder, "httpClientBuilder");
         ObjectHelper.notNull(clientConnectionManager, "httpConnectionManager");
 
-        DefaultHttpClient answer = new DefaultHttpClient(clientConnectionManager, getClientParams());
-        if (cookieStore != null) {
-            answer.setCookieStore(cookieStore);
+        // setup the cookieStore
+        clientBuilder.setDefaultCookieStore(cookieStore);
+        // setup the httpConnectionManager
+        clientBuilder.setConnectionManager(clientConnectionManager);
+        if (getComponent() != null && getComponent().getClientConnectionManager() == getClientConnectionManager()) {
+            clientBuilder.setConnectionManagerShared(true);
         }
 
-        // configure http proxy from camelContext
-        if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
-            String host = getCamelContext().getProperty("http.proxyHost");
-            int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
-            String scheme = getCamelContext().getProperty("http.proxyScheme");
-            // fallback and use either http or https depending on secure
-            if (scheme == null) {
-                scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
+        if (!useSystemProperties) {
+            // configure http proxy from camelContext
+            if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
+                String host = getCamelContext().getProperty("http.proxyHost");
+                int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
+                String scheme = getCamelContext().getProperty("http.proxyScheme");
+                // fallback and use either http or https depending on secure
+                if (scheme == null) {
+                    scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
+                }
+                LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
+                HttpHost proxy = new HttpHost(host, port, scheme);
+                clientBuilder.setProxy(proxy);
             }
-            LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
-            try {
-                component.registerPort(HttpHelper.isSecureConnection(scheme), component.getX509HostnameVerifier(), port, component.getSslContextParameters());
-            } catch (Exception ex) {
-                throw new RuntimeCamelException(ex);
-            }
-            HttpHost proxy = new HttpHost(host, port, scheme);
-            answer.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+        } else {
+            clientBuilder.useSystemProperties();
+        }
+        
+        if (isAuthenticationPreemptive()) {
+            // setup the PreemptiveAuthInterceptor here
+            clientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
         }
 
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
-            configurer.configureHttpClient(answer);
+            configurer.configureHttpClient(clientBuilder);
         }
 
         if (isBridgeEndpoint()) {
             // need to use noop cookiestore as we do not want to keep cookies in memory
-            answer.setCookieStore(new NoopCookieStore());
+            clientBuilder.setDefaultCookieStore(new NoopCookieStore());
         }
 
-        LOG.debug("Created HttpClient {}", answer);
-        return answer;
+        LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
+        return clientBuilder.build();
     }
 
-    public void connect(HttpConsumer consumer) throws Exception {
-        component.connect(consumer);
+    @Override
+    public HttpComponent getComponent() {
+        return (HttpComponent) super.getComponent();
     }
 
-    public void disconnect(HttpConsumer consumer) throws Exception {
-        component.disconnect(consumer);
+    @Override
+    protected void doStop() throws Exception {
+        if (getComponent() != null && getComponent().getClientConnectionManager() != clientConnectionManager) {
+            // need to shutdown the ConnectionManager
+            clientConnectionManager.shutdown();
+        }
+        if (httpClient != null && httpClient instanceof Closeable) {
+            IOHelper.close((Closeable)httpClient);
+        }
     }
-
-    public boolean isLenientProperties() {
-        // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
-        return true;
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
-
 
     // Properties
     //-------------------------------------------------------------------------
 
-    /**
-     * Provide access to the client parameters used on new {@link HttpClient} instances
-     * used by producers or consumers of this endpoint.
-     */
-    public HttpParams getClientParams() {
-        return clientParams;
+    public HttpClientBuilder getClientBuilder() {
+        return clientBuilder;
     }
 
     /**
-     * Provide access to the client parameters used on new {@link HttpClient} instances
+     * Provide access to the http client request parameters used on new {@link RequestConfig} instances
      * used by producers or consumers of this endpoint.
      */
-    public void setClientParams(HttpParams clientParams) {
-        this.clientParams = clientParams;
+    public void setClientBuilder(HttpClientBuilder clientBuilder) {
+        this.clientBuilder = clientBuilder;
     }
 
     public HttpClientConfigurer getHttpClientConfigurer() {
         return httpClientConfigurer;
+    }
+    
+    /**
+     * Register a custom configuration strategy for new {@link HttpClient} instances
+     * created by producers or consumers such as to configure authentication mechanisms etc
+     */
+    public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
+        this.httpClientConfigurer = httpClientConfigurer;
     }
 
     public HttpContext getHttpContext() {
@@ -211,167 +246,135 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     }
 
     /**
-     * Register a custom configuration strategy for new {@link HttpClient} instances
-     * created by producers or consumers such as to configure authentication mechanisms etc
-     *
-     * @param httpClientConfigurer the strategy for configuring new {@link HttpClient} instances
+     * To use a custom HttpContext instance
      */
-    public void setHttpClientConfigurer(HttpClientConfigurer httpClientConfigurer) {
-        this.httpClientConfigurer = httpClientConfigurer;
-    }
-
-    public HttpBinding getBinding() {
-        if (binding == null) {
-            binding = new DefaultHttpBinding(this);
-        }
-        return binding;
-    }
-
-    public void setBinding(HttpBinding binding) {
-        this.binding = binding;
-    }
-    
-    public void setHttpBinding(HttpBinding binding) {
-        this.binding = binding;
-    }
-
-    public void setHttpBindingRef(HttpBinding binding) {
-        this.binding = binding;
-    }
-
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
     }
 
-    public String getPath() {
-        //if the path is empty, we just return the default path here
-        return httpUri.getPath().length() == 0 ? "/" : httpUri.getPath();
-    }
-
-    public int getPort() {
-        if (httpUri.getPort() == -1) {
-            if ("https".equals(getProtocol()) || "https4".equals(getProtocol())) {
-                return 443;
-            } else {
-                return 80;
-            }
-        }
-        return httpUri.getPort();
-    }
-
-    public String getProtocol() {
-        return httpUri.getScheme();
-    }
-
-    public URI getHttpUri() {
-        return httpUri;
-    }
-
-    public void setHttpUri(URI httpUri) {
-        this.httpUri = httpUri;
-    }
-
-    public ClientConnectionManager getClientConnectionManager() {
+    public HttpClientConnectionManager getClientConnectionManager() {
         return clientConnectionManager;
     }
 
-    public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
+    /**
+     * To use a custom HttpClientConnectionManager to manage connections
+     */
+    public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
-    }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
-        this.headerFilterStrategy = headerFilterStrategy;
-    }
-
-    public boolean isThrowExceptionOnFailure() {
-        return throwExceptionOnFailure;
-    }
-
-    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
-        this.throwExceptionOnFailure = throwExceptionOnFailure;
-    }
-
-    public boolean isBridgeEndpoint() {
-        return bridgeEndpoint;
-    }
-
-    public void setBridgeEndpoint(boolean bridge) {
-        this.bridgeEndpoint = bridge;
-    }
-
-    public boolean isMatchOnUriPrefix() {
-        return matchOnUriPrefix;
-    }
-
-    public void setMatchOnUriPrefix(boolean match) {
-        this.matchOnUriPrefix = match;
-    }
-    
-    public boolean isDisableStreamCache() {
-        return this.disableStreamCache;
-    }
-       
-    public void setDisableStreamCache(boolean disable) {
-        this.disableStreamCache = disable;
-    }
-
-    public boolean isChunked() {
-        return this.chunked;
-    }
-
-    public void setChunked(boolean chunked) {
-        this.chunked = chunked;
-    }
-
-    public boolean isTransferException() {
-        return transferException;
-    }
-
-    public void setTransferException(boolean transferException) {
-        this.transferException = transferException;
-    }
-    
-    public boolean isTraceEnabled() {
-        return this.traceEnabled;
-    }
-
-    public void setTraceEnabled(boolean traceEnabled) {
-        this.traceEnabled = traceEnabled;
-    }
-
-    public String getHttpMethodRestrict() {
-        return httpMethodRestrict;
-    }
-
-    public void setHttpMethodRestrict(String httpMethodRestrict) {
-        this.httpMethodRestrict = httpMethodRestrict;
-    }
-
-    public UrlRewrite getUrlRewrite() {
-        return urlRewrite;
-    }
-
-    public void setUrlRewrite(UrlRewrite urlRewrite) {
-        this.urlRewrite = urlRewrite;
     }
 
     public boolean isClearExpiredCookies() {
         return clearExpiredCookies;
     }
 
+    /**
+     * Whether to clear expired cookies before sending the HTTP request.
+     * This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.
+     */
     public void setClearExpiredCookies(boolean clearExpiredCookies) {
         this.clearExpiredCookies = clearExpiredCookies;
+    }
+
+    public boolean isDeleteWithBody() {
+        return deleteWithBody;
+    }
+
+    /**
+     * Whether the HTTP DELETE should include the message body or not.
+     * <p/>
+     * By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the
+     * message body.
+     */
+    public void setDeleteWithBody(boolean deleteWithBody) {
+        this.deleteWithBody = deleteWithBody;
     }
 
     public CookieStore getCookieStore() {
         return cookieStore;
     }
 
+    /**
+     * To use a custom CookieStore.
+     * By default the BasicCookieStore is used which is an in-memory only cookie store.
+     * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie
+     * shouldn't be stored as we are just bridging (eg acting as a proxy).
+     * If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is
+     * then performed by the cookieHandler.
+     */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
+    }
+
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        super.setCookieHandler(cookieHandler);
+        // if we set an explicit cookie handler 
+        this.cookieStore = new NoopCookieStore();
+    }
+
+    public boolean isAuthenticationPreemptive() {
+        return authenticationPreemptive;
+    }
+
+    /**
+     * If this option is true, camel-http4 sends preemptive basic authentication to the server.
+     */
+    public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
+        this.authenticationPreemptive = authenticationPreemptive;
+    }
+
+    public Map<String, Object> getHttpClientOptions() {
+        return httpClientOptions;
+    }
+
+    /**
+     * To configure the HttpClient using the key/values from the Map.
+     */
+    public void setHttpClientOptions(Map<String, Object> httpClientOptions) {
+        this.httpClientOptions = httpClientOptions;
+    }
+
+    public boolean isUseSystemProperties() {
+        return useSystemProperties;
+    }
+
+    /**
+     * To use System Properties as fallback for configuration
+     */
+    public void setUseSystemProperties(boolean useSystemProperties) {
+        this.useSystemProperties = useSystemProperties;
+    }
+
+    public int getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    /**
+     * The maximum number of connections.
+     */
+    public void setMaxTotalConnections(int maxTotalConnections) {
+        this.maxTotalConnections = maxTotalConnections;
+    }
+
+    public int getConnectionsPerRoute() {
+        return connectionsPerRoute;
+    }
+
+    /**
+     * The maximum number of connections per route.
+     */
+    public void setConnectionsPerRoute(int connectionsPerRoute) {
+        this.connectionsPerRoute = connectionsPerRoute;
+    }
+
+    public HostnameVerifier getX509HostnameVerifier() {
+        return x509HostnameVerifier;
+    }
+
+    /**
+     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier}
+     * or {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
+     */
+    public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
+        this.x509HostnameVerifier = x509HostnameVerifier;
     }
 }

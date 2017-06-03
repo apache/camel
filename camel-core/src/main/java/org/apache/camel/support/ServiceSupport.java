@@ -234,11 +234,27 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public boolean isRunAllowed() {
+        // if we have not yet initialized, then all options is false
+        boolean unused1 = !started.get() && !starting.get() && !stopping.get() && !stopped.get();
+        boolean unused2 = !suspending.get() && !suspended.get() && !shutdown.get() && !shuttingdown.get();
+        if (unused1 && unused2) {
+            return false;
+        }
         return !isStoppingOrStopped();
     }
 
+    /**
+     * Is the service in progress of being stopped or already stopped
+     */
     public boolean isStoppingOrStopped() {
         return stopping.get() || stopped.get();
+    }
+
+    /**
+     * Is the service in progress of being suspended or already suspended
+     */
+    public boolean isSuspendingOrSuspended() {
+        return suspending.get() || suspended.get();
     }
 
     /**
@@ -268,12 +284,14 @@ public abstract class ServiceSupport implements StatefulService {
      * Implementations override this method to support customized suspend/resume.
      */
     protected void doSuspend() throws Exception {
+        // noop
     }
 
     /**
      * Implementations override this method to support customized suspend/resume.
      */
     protected void doResume() throws Exception {
+        // noop
     }
 
     /**

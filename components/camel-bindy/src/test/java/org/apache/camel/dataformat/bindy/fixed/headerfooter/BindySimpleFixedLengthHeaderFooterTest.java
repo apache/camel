@@ -27,11 +27,9 @@ import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
-
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;

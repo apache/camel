@@ -57,10 +57,10 @@ public class XStreamDataFormatOmitFieldsTest extends CamelTestSupport {
                 Map<String, String[]> omitFields = new HashMap<String, String[]>();
                 omitFields.put(PurchaseOrder.class.getName(), new String[]{"price"});
                 xStreamDataFormat.setOmitFields(omitFields);
-                
+
                 from("direct:start").
                         marshal(xStreamDataFormat).
-                        convertBodyTo(String.class).                       
+                        convertBodyTo(String.class).
                         to("mock:result");
             }
         };

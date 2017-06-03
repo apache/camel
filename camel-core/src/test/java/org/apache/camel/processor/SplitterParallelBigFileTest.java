@@ -64,7 +64,7 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
         NotifyBuilder builder = new NotifyBuilder(context).whenDone(lines + 1).create();
         boolean done = builder.matches(120, TimeUnit.SECONDS);
 
-        log.info("Took " + TimeUtils.printDuration(watch.stop()));
+        log.info("Took " + TimeUtils.printDuration(watch.taken()));
 
         if (!done) {
             throw new CamelException("Could not split file in 2 minutes");

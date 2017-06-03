@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.flatpack.FlatpackDataFormat
+class=org.apache.camel.dataformat.flatpack.FlatpackDataFormat

@@ -24,7 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -32,7 +32,7 @@ import org.apache.camel.util.IntrospectionSupport;
  */
 public class FacebookComponent extends UriEndpointComponent {
 
-    @UriParam
+    @Metadata(label = "advanced")
     private FacebookConfiguration configuration;
 
     public FacebookComponent() {
@@ -55,8 +55,16 @@ public class FacebookComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         FacebookEndpointConfiguration config = copyComponentProperties();
         final FacebookEndpoint endpoint = new FacebookEndpoint(uri, this, remaining, config);
+
         // set endpoint property inBody so that it's available in initState()
         setProperties(endpoint, parameters);
+
+        // configure endpoint properties
+        endpoint.configureProperties(parameters);
+
+        // validate parameters
+        validateParameters(uri, parameters, null);
+
         return endpoint;
     }
 
@@ -66,7 +74,7 @@ public class FacebookComponent extends UriEndpointComponent {
 
         // create endpoint configuration with component properties
         FacebookEndpointConfiguration config = new FacebookEndpointConfiguration();
-        IntrospectionSupport.setProperties(config, componentProperties, null);
+        IntrospectionSupport.setProperties(config, componentProperties);
         return config;
     }
 
@@ -74,6 +82,9 @@ public class FacebookComponent extends UriEndpointComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared configuration
+     */
     public void setConfiguration(FacebookConfiguration configuration) {
         this.configuration = configuration;
     }

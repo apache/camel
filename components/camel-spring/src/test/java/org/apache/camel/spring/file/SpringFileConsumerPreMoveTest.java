@@ -18,22 +18,19 @@ package org.apache.camel.spring.file;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.FileConsumerPreMoveTest;
-import org.apache.camel.spring.SpringCamelContext;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringFileConsumerPreMoveTest extends FileConsumerPreMoveTest {
     private AbstractXmlApplicationContext applicationContext;
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext =  new ClassPathXmlApplicationContext("org/apache/camel/spring/file/SpringFileConsumerPreMoveTest.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
+        applicationContext = new ClassPathXmlApplicationContext(
+            "org/apache/camel/spring/file/SpringFileConsumerPreMoveTest.xml");
+        return applicationContext.getBean(CamelContext.class);
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         if (applicationContext != null) {
@@ -41,6 +38,5 @@ public class SpringFileConsumerPreMoveTest extends FileConsumerPreMoveTest {
         }
         super.tearDown();
     }
-    
 
 }

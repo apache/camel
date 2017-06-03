@@ -148,7 +148,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
         endpoint = context.getEndpoint(endpointUri, JpaEndpoint.class);
 
         transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.createEntityManager();
+        entityManager = endpoint.getEntityManagerFactory().createEntityManager();
         
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {

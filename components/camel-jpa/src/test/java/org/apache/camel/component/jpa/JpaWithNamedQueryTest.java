@@ -107,7 +107,8 @@ public class JpaWithNamedQueryTest extends Assert {
 
         // lets now test that the database is updated
         // we need to sleep as we will be invoked from inside the transaction!
-        Thread.sleep(1000);
+        // org.apache.openjpa.persistence.InvalidStateException: This operation cannot be performed while a Transaction is active.
+        Thread.sleep(2000);
 
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
@@ -131,6 +132,7 @@ public class JpaWithNamedQueryTest extends Assert {
                     } else {
                         // dummy row
                         assertEquals("dummy row step for: " + row, 4, row.getStep());
+                        assertEquals("Not the expected row: " + row, "cheese", row.getAddress());
                     }
                 }
                 return null;

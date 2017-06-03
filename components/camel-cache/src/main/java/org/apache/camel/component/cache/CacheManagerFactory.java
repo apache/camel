@@ -17,16 +17,35 @@
 package org.apache.camel.component.cache;
 
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.Configuration;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ReflectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class CacheManagerFactory extends ServiceSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CacheManagerFactory.class);
     private CacheManager cacheManager;
 
     public synchronized CacheManager getInstance() {
         if (cacheManager == null) {
             cacheManager = createCacheManagerInstance();
+
+            // always turn off ET phone-home
+            LOG.debug("Turning off EHCache update checker ...");
+            Configuration config = cacheManager.getConfiguration();
+            try {
+                // need to set both the system property and bypass the setUpdateCheck method as that can be changed dynamically
+                System.setProperty("net.sf.ehcache.skipUpdateCheck", "true");
+                ReflectionHelper.setField(config.getClass().getDeclaredField("updateCheck"), config, false);
+
+                LOG.info("Turned off EHCache update checker. updateCheck={}", config.getUpdateCheck());
+            } catch (Throwable e) {
+                // ignore
+                LOG.warn("Error turning off EHCache update checker. Beware information sent over the internet!", e);
+            }
         }
-        
+
         return cacheManager;
     }
 
@@ -44,10 +63,18 @@ public abstract class CacheManagerFactory extends ServiceSupport {
     }
 
     @Override
-    protected void doStop() throws Exception {
-        // shutdown cache manager when stopping
+    protected synchronized void doStop() throws Exception {
+        // only shutdown cache manager if no longer in use
+        // (it may be reused when running in app servers like Karaf)
         if (cacheManager != null) {
-            cacheManager.shutdown();
+            int size = cacheManager.getCacheNames().length;
+            if (size <= 0) {
+                LOG.info("Shutting down CacheManager as its no longer in use");
+                cacheManager.shutdown();
+                cacheManager = null;
+            } else {
+                LOG.info("Cannot stop CacheManager as its still in use by {} clients", size);
+            }
         }
     }
 }

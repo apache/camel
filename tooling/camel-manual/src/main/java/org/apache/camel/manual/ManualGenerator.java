@@ -44,6 +44,7 @@ public class ManualGenerator {
     String head;
     String version;
     String targetDir;
+    String skip;
     
     public ManualGenerator(String[] args) {
         page = args[0];
@@ -51,6 +52,7 @@ public class ManualGenerator {
         version = args[2];
         head = args[3];
         targetDir = args[4];
+        skip = args[5];
     }
     
     public void run() {
@@ -90,6 +92,10 @@ public class ManualGenerator {
         out.close();
     }
     private boolean doGenerate() throws MalformedURLException, IOException {
+        if (skip.equalsIgnoreCase("true")) {
+            // we don't want to generate the manual here
+            return false;
+        }
         URL url = new URL(page);
         File file = new File(targetDir, ".manualCache-" + url.getFile().substring(1));
         if (file.exists()) {

@@ -24,12 +24,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the BeanIO {@link org.apache.camel.spi.DataFormat}
+ * BeanIO data format
  *
  * @version 
  */
+@Metadata(firstVersion = "2.10.0", label = "dataformat,transformation,csv", title = "BeanIO")
 @XmlRootElement(name = "beanio")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanioDataFormat extends DataFormatDefinition {
@@ -46,6 +48,8 @@ public class BeanioDataFormat extends DataFormatDefinition {
     private Boolean ignoreInvalidRecords;
     @XmlAttribute
     private String encoding;
+    @XmlAttribute
+    private String beanReaderErrorHandlerType;
 
     public BeanioDataFormat() {
         super("beanio");
@@ -67,12 +71,19 @@ public class BeanioDataFormat extends DataFormatDefinition {
         if (encoding != null) {
             setProperty(camelContext, dataFormat, "encoding", encoding);
         }
+        if (beanReaderErrorHandlerType != null) {
+            setProperty(camelContext, dataFormat, "beanReaderErrorHandlerType", beanReaderErrorHandlerType);
+        }
     }
 
     public String getMapping() {
         return mapping;
     }
 
+    /**
+     * The BeanIO mapping file.
+     * Is by default loaded from the classpath. You can prefix with file:, http:, or classpath: to denote from where to load the mapping file.
+     */
     public void setMapping(String mapping) {
         this.mapping = mapping;
     }
@@ -81,6 +92,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return streamName;
     }
 
+    /**
+     * The name of the stream to use.
+     */
     public void setStreamName(String streamName) {
         this.streamName = streamName;
     }
@@ -89,6 +103,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return ignoreUnidentifiedRecords;
     }
 
+    /**
+     * Whether to ignore unidentified records.
+     */
     public void setIgnoreUnidentifiedRecords(Boolean ignoreUnidentifiedRecords) {
         this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords;
     }
@@ -97,6 +114,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return ignoreUnexpectedRecords;
     }
 
+    /**
+     * Whether to ignore unexpected records.
+     */
     public void setIgnoreUnexpectedRecords(Boolean ignoreUnexpectedRecords) {
         this.ignoreUnexpectedRecords = ignoreUnexpectedRecords;
     }
@@ -105,6 +125,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return ignoreInvalidRecords;
     }
 
+    /**
+     * Whether to ignore invalid records.
+     */
     public void setIgnoreInvalidRecords(Boolean ignoreInvalidRecords) {
         this.ignoreInvalidRecords = ignoreInvalidRecords;
     }
@@ -113,8 +136,26 @@ public class BeanioDataFormat extends DataFormatDefinition {
         return encoding;
     }
 
+    /**
+     * The charset to use.
+     * <p/>
+     * Is by default the JVM platform default charset.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
 
+    public String getBeanReaderErrorHandlerType() {
+        return beanReaderErrorHandlerType;
+    }
+
+    /**
+     * To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler
+     * while parsing. Configure the fully qualified class name of the error handler.
+     * Notice the options ignoreUnidentifiedRecords, ignoreUnexpectedRecords, and ignoreInvalidRecords
+     * may not be in use when you use a custom error handler.
+     */
+    public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
+        this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
+    }
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -84,6 +85,11 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
         } finally {
             buffer.readerIndex(idx);
         }
+    }
+
+    @Override
+    public StreamCache copy(Exchange exchange) throws IOException {
+        return new NettyChannelBufferStreamCache(buffer.copy());
     }
 
     @Override

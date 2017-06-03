@@ -37,6 +37,7 @@ public class SpringCamelContextCustomDefaultThreadPoolProfileTest extends Spring
         assertEquals(15, profile.getMaxPoolSize().intValue());
         assertEquals(25, profile.getKeepAliveTime().longValue());
         assertEquals(250, profile.getMaxQueueSize().intValue());
+        assertEquals(true, profile.getAllowCoreThreadTimeOut().booleanValue());
         assertEquals(ThreadPoolRejectedPolicy.Abort, profile.getRejectedPolicy());
     }
 

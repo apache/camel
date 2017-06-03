@@ -55,4 +55,11 @@ public class Address {
     public void setAddressLine2(String addressLine2) {
         this.addressLine2 = addressLine2;
     }
+
+    @Override
+    public String toString() {
+        // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
+        return "Address[id: " + getId() + ", addressLine1: " + getAddressLine1() + ", addressLine2: " + getAddressLine2() + "]";
+    }
+
 }

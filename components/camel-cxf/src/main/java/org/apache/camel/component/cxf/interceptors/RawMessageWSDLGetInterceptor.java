@@ -77,7 +77,7 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
             while (iterator.hasNext()) {
                 Interceptor<? extends Message> inInterceptor = iterator.next();
                 if (inInterceptor instanceof AbstractPhaseInterceptor) {
-                    AbstractPhaseInterceptor interceptor = (AbstractPhaseInterceptor)inInterceptor;
+                    AbstractPhaseInterceptor<?> interceptor = (AbstractPhaseInterceptor<?>)inInterceptor;
                     if (interceptor.getPhase().equals(Phase.PREPARE_SEND)
                         || interceptor.getPhase().equals(Phase.PRE_STREAM)) {
                         // just make sure we keep the right interceptors

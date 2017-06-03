@@ -25,10 +25,11 @@ import java.net.Socket;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 /**
- * To test camel-mina component using a TCP client that communicates using TCP socket communication.
+ * To test camel-mina2 component using a TCP client that communicates using TCP socket communication.
  *
  * @version 
  */
@@ -86,7 +87,7 @@ public class Mina2TcpLineDelimiterUsingPlainSocketTest extends BaseMina2Test {
         InputStream is = null;
         try {
             os = soc.getOutputStream();
-            // must append MAC newline at the end to flag end of textline to Camel-Mina
+            // must append MAC newline at the end to flag end of textline to camel-mina2
             os.write((input + "\r").getBytes());
 
             is = soc.getInputStream();
@@ -96,12 +97,7 @@ public class Mina2TcpLineDelimiterUsingPlainSocketTest extends BaseMina2Test {
                 return null;
             }
         } finally {
-            if (is != null) {
-                is.close();
-            }
-            if (os != null) {
-                os.close();
-            }
+            IOHelper.close(is, os);
             soc.close();
         }
 

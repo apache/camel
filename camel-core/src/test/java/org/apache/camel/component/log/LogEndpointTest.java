@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.log;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,9 +33,9 @@ public class LogEndpointTest extends ContextTestSupport {
     private static class MyLogger extends CamelLogProcessor {
 
         @Override
-        public void process(Exchange exchange) throws Exception {
-            super.process(exchange);
+        public boolean process(Exchange exchange, AsyncCallback callback) {
             logged = exchange;
+            return super.process(exchange, callback);
         }
 
         @Override
@@ -47,11 +48,22 @@ public class LogEndpointTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start1", "Hello World");
 
         assertMockEndpointsSatisfied();
 
         assertNotNull(logged);
+    }
+    
+    
+    public void testLogEndpointGroupSize() throws InterruptedException {
+        MockEndpoint out = getMockEndpoint("mock:result");
+        int expectedCount = 50;
+        out.expectedMessageCount(expectedCount);
+        for (int i = 0; i < expectedCount; i++) {
+            template.sendBody("direct:start2", "blub");
+        }
+        out.assertIsSatisfied();
     }
 
     @Override
@@ -62,10 +74,18 @@ public class LogEndpointTest extends ContextTestSupport {
                 LogEndpoint end = new LogEndpoint();
                 end.setCamelContext(context);
                 end.setLogger(new MyLogger());
+                
+                LogEndpoint endpoint = new LogEndpoint();
+                endpoint.setLoggerName("loggerSetter");
+                endpoint.setGroupSize(10);
+                endpoint.setCamelContext(context);
+                endpoint.start();
 
                 assertEquals("log:myLogger", end.getEndpointUri());
 
-                from("direct:start").to(end).to("mock:result");
+                from("direct:start1").to(end).to("mock:result");
+                
+                from("direct:start2").to(endpoint).to("mock:result");
             }
         };
     }

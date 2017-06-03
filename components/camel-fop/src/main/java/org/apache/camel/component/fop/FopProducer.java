@@ -28,7 +28,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.fop.apps.FOPException;
@@ -42,12 +41,12 @@ import org.apache.fop.pdf.PDFEncryptionParams;
  */
 public class FopProducer extends DefaultProducer {
     private final FopFactory fopFactory;
-    private final String remaining;
+    private final String outputFormat;
 
-    public FopProducer(FopEndpoint endpoint, FopFactory fopFactory, String remaining) {
+    public FopProducer(FopEndpoint endpoint, FopFactory fopFactory, String outputFormat) {
         super(endpoint);
         this.fopFactory = fopFactory;
-        this.remaining = remaining;
+        this.outputFormat = outputFormat;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -55,6 +54,7 @@ public class FopProducer extends DefaultProducer {
         Map<String, Object> headers = exchange.getIn().getHeaders();
         setRenderParameters(userAgent, headers);
         setEncryptionParameters(userAgent, headers);
+        setUserAgentRendererOptions(userAgent, headers);
 
         String outputFormat = getOutputFormat(exchange);
         Source src = exchange.getIn().getBody(StreamSource.class);
@@ -67,13 +67,18 @@ public class FopProducer extends DefaultProducer {
     }
 
     private String getOutputFormat(Exchange exchange) {
-        String outputFormat = exchange.getIn()
-                .getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, this.remaining, String.class);
-        if (outputFormat == null) {
-            throw new RuntimeExchangeException("Missing output format", exchange);
+        String headerOutputFormat = exchange.getIn().getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, String.class);
+        if (headerOutputFormat != null) {
+            // it may be a short hand
+            FopOutputType type = exchange.getContext().getTypeConverter().tryConvertTo(FopOutputType.class, exchange, headerOutputFormat);
+            if (type != null) {
+                return type.getFormatExtended();
+            } else {
+                return headerOutputFormat;
+            }
+        } else {
+            return outputFormat;
         }
-
-        return outputFormat;
     }
 
     private OutputStream transform(FOUserAgent userAgent, String outputFormat, Source src)
@@ -100,11 +105,18 @@ public class FopProducer extends DefaultProducer {
         }
     }
 
+    private void setUserAgentRendererOptions(FOUserAgent userAgent, Map<String, Object> headers) {
+        Map<String, Object> parameters = IntrospectionSupport.extractProperties(headers, FopConstants.CAMEL_FOP_RENDERER_OPTIONS);
+        if (!parameters.isEmpty()) {
+            userAgent.getRendererOptions().putAll(parameters);
+        }
+    }
+
     private void setRenderParameters(FOUserAgent userAgent, Map<String, Object> headers) throws Exception {
-        Map<String, Object> parameters = IntrospectionSupport
-                .extractProperties(headers, FopConstants.CAMEL_FOP_RENDER);
+        Map<String, Object> parameters = IntrospectionSupport.extractProperties(headers, FopConstants.CAMEL_FOP_RENDER);
         if (!parameters.isEmpty()) {
             IntrospectionSupport.setProperties(userAgent, parameters);
         }
     }
+    
 }

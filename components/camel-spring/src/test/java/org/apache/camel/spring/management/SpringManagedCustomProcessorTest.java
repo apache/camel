@@ -34,6 +34,11 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 public class SpringManagedCustomProcessorTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringManagedCustomProcessorTest.xml");
     }
@@ -44,7 +49,7 @@ public class SpringManagedCustomProcessorTest extends SpringTestSupport {
 
     public void testManageCustomProcessor() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"custom\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"custom\"");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "hey");

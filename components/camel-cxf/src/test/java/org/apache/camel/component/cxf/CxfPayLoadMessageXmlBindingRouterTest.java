@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
@@ -78,9 +79,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     @After
     public void tearDown() throws Exception {
         
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
         super.tearDown();
     }
     
@@ -112,11 +111,11 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
                         List<Source> elements = payload.getBodySources();
-                        assertNotNull("We should get the elements here" , elements);
-                        assertEquals("Get the wrong elements size" , elements.size(), 1);
+                        assertNotNull("We should get the elements here", elements);
+                        assertEquals("Get the wrong elements size", elements.size(), 1);
                         
                         Element el = new XmlConverter().toDOMElement(elements.get(0));
-                        assertEquals("Get the wrong namespace URI" , el.getNamespaceURI(), "http://cxf.component.camel.apache.org/");
+                        assertEquals("Get the wrong namespace URI", el.getNamespaceURI(), "http://cxf.component.camel.apache.org/");
                     }
                     
                 })

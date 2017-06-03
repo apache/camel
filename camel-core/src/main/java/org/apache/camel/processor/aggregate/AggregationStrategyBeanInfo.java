@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +37,14 @@ public class AggregationStrategyBeanInfo {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregationStrategyBeanInfo.class);
 
-    private final CamelContext camelContext;
     private final Class<?> type;
     private final Method method;
 
+    @Deprecated
     public AggregationStrategyBeanInfo(CamelContext camelContext, Class<?> type, Method method) {
-        this.camelContext = camelContext;
+        this(type, method);
+    }        
+    public AggregationStrategyBeanInfo(Class<?> type, Method method) {
         this.type = type;
         this.method = method;
     }
@@ -62,10 +65,11 @@ public class AggregationStrategyBeanInfo {
         }
 
         // must not have annotations as they are not supported (yet)
-        for (int i = 0; i < size; i++) {
-            Class<?> type = parameterTypes[i];
-            if (type.getAnnotations().length > 0) {
-                throw new IllegalArgumentException("Parameter annotations at index " + i + " is not supported on method: " + method);
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        for (int i = 0; i < parameterAnnotations.length; i++) {
+            Annotation[] annotations = parameterAnnotations[i];
+            if (annotations.length > 0) {
+                throw new IllegalArgumentException("Method parameter annotation: " + annotations[0] + " at index: " + i + " is not supported on method: " + method);
             }
         }
 
@@ -86,7 +90,7 @@ public class AggregationStrategyBeanInfo {
                 oldParameters.add(info);
             } else if (oldParameters.size() == 2) {
                 // the 3rd parameter is the properties
-                Expression oldProperties = ExpressionBuilder.propertiesExpression();
+                Expression oldProperties = ExpressionBuilder.exchangePropertiesExpression();
                 ParameterInfo info = new ParameterInfo(i, oldType, null, oldProperties);
                 oldParameters.add(info);
             }
@@ -106,13 +110,13 @@ public class AggregationStrategyBeanInfo {
                 newParameters.add(info);
             } else if (newParameters.size() == 2) {
                 // the 3rd parameter is the properties
-                Expression newProperties = ExpressionBuilder.propertiesExpression();
+                Expression newProperties = ExpressionBuilder.exchangePropertiesExpression();
                 ParameterInfo info = new ParameterInfo(i, newType, null, newProperties);
                 newParameters.add(info);
             }
         }
 
-        return new AggregationStrategyMethodInfo(camelContext, type, method, oldParameters, newParameters);
+        return new AggregationStrategyMethodInfo(method, oldParameters, newParameters);
     }
 
 }

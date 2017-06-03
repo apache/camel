@@ -33,11 +33,14 @@ import org.slf4j.LoggerFactory;
 /**
  * A component implementation for endpoints which are annotated with UriEndpoint to describe
  * their configurable parameters via annotations
+ *
+ * @deprecated use {@link DefaultComponent}
  */
+@Deprecated
 public abstract class UriEndpointComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(UriEndpointComponent.class);
 
-    private final Class<? extends Endpoint> endpointClass;
+    private Class<? extends Endpoint> endpointClass;
     private SortedMap<String, ParameterConfiguration> parameterConfigurationMap;
 
     public UriEndpointComponent(Class<? extends Endpoint> endpointClass) {
@@ -46,6 +49,15 @@ public abstract class UriEndpointComponent extends DefaultComponent {
 
     public UriEndpointComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
         super(context);
+        this.endpointClass = endpointClass;
+    }
+
+    /**
+     * To use a specific endpoint class, instead of what has been provided by the constructors.
+     *
+     * @param endpointClass the endpoint class to use
+     */
+    public void setEndpointClass(Class<? extends Endpoint> endpointClass) {
         this.endpointClass = endpointClass;
     }
 
@@ -92,8 +104,7 @@ public abstract class UriEndpointComponent extends DefaultComponent {
                         populateParameterConfigurationMap(parameterMap, fieldType, nestedPrefix);
                     } else {
                         if (parameterMap.containsKey(propertyName)) {
-                            LOG.warn(
-                                    "Duplicate property name " + propertyName + " defined on field " + field);
+                            LOG.warn("Duplicate property name " + propertyName + " defined on field " + field);
                         } else {
                             parameterMap.put(propertyName,
                                     ParameterConfiguration.newInstance(propertyName, field, uriParam));

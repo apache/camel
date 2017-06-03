@@ -16,23 +16,22 @@
  */
 package org.apache.camel.component.twitter.consumer;
 
-import java.io.Serializable;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * Camel DirectConsumer implementation.
  */
-public class TwitterConsumerDirect extends DirectConsumer {
+@Deprecated
+public class TwitterConsumerDirect extends DefaultConsumer {
 
-    private Twitter4JConsumer twitter4jConsumer;
+    private final AbstractTwitterConsumerHandler twitter4jConsumer;
 
-    public TwitterConsumerDirect(TwitterEndpoint endpoint, Processor processor,
-                                 Twitter4JConsumer twitter4jConsumer) {
+    public TwitterConsumerDirect(TwitterEndpoint endpoint, Processor processor, AbstractTwitterConsumerHandler twitter4jConsumer) {
         super(endpoint, processor);
 
         this.twitter4jConsumer = twitter4jConsumer;
@@ -42,11 +41,9 @@ public class TwitterConsumerDirect extends DirectConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        Iterator<? extends Serializable> i = twitter4jConsumer.directConsume().iterator();
-        while (i.hasNext()) {
-            Exchange e = getEndpoint().createExchange();
-            e.getIn().setBody(i.next());
-            getProcessor().process(e);
+        List<Exchange> exchanges = twitter4jConsumer.directConsume();
+        for (int i = 0; i < exchanges.size(); i++) {
+            getProcessor().process(exchanges.get(i));
         }
     }
 }

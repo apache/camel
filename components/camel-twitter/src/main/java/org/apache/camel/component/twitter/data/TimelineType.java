@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.twitter.data;
 
+import org.apache.camel.component.twitter.TwitterHelper;
+
 public enum TimelineType {
     PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME, UNKNOWN;
 
-    public static TimelineType fromUri(String uri) {
-        for (TimelineType timelineType : TimelineType.values()) {
-            if (timelineType.name().equalsIgnoreCase(uri)) {
-                return timelineType;
-            }
-        }
-        return TimelineType.UNKNOWN;
+    private static final TimelineType[] VALUES = values();
+
+    public static TimelineType fromString(String uri) {
+        return TwitterHelper.enumFromString(VALUES, uri, TimelineType.UNKNOWN);
     }
 }

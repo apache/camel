@@ -25,17 +25,21 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents the JiBX XML {@link org.apache.camel.spi.DataFormat}
+ * JiBX data format
  */
+@Metadata(firstVersion = "2.6.0", label = "dataformat,transformation,xml", title = "JiBX")
 @XmlRootElement(name = "jibx")
 @XmlAccessorType(XmlAccessType.NONE)
 public class JibxDataFormat extends DataFormatDefinition {
     @XmlAttribute(name = "unmarshallClass")
     private String unmarshallTypeName;
+    @XmlAttribute
+    private String bindingName;
     @XmlTransient
     private Class<?> unmarshallClass;
 
@@ -52,6 +56,9 @@ public class JibxDataFormat extends DataFormatDefinition {
         return unmarshallClass;
     }
 
+    /**
+     * Class use when unmarshalling from XML to Java.
+     */
     public void setUnmarshallClass(Class<?> unmarshallClass) {
         this.unmarshallClass = unmarshallClass;
     }
@@ -60,8 +67,22 @@ public class JibxDataFormat extends DataFormatDefinition {
         return unmarshallTypeName;
     }
 
+    /**
+     * Class name to use when unmarshalling from XML to Java.
+     */
     public void setUnmarshallTypeName(String unmarshallTypeName) {
         this.unmarshallTypeName = unmarshallTypeName;
+    }
+
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    /**
+     * To use a custom binding factory
+     */
+    public void setBindingName(String bindingName) {
+        this.bindingName = bindingName;
     }
 
     @Override
@@ -81,6 +102,9 @@ public class JibxDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (unmarshallClass != null) {
             setProperty(camelContext, dataFormat, "unmarshallClass", unmarshallClass);
+        }
+        if (bindingName != null) {
+            setProperty(camelContext, dataFormat, "bindingName", bindingName);
         }
     }
 

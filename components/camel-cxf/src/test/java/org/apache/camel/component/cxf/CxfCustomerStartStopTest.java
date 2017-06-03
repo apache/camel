@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.transport.http_jetty.JettyHTTPServerEngine;
@@ -69,7 +70,7 @@ public class CxfCustomerStartStopTest extends Assert {
         Bus bus = applicationContext.getBean("cxf", Bus.class);
         // Bus shutdown will be called when the application context is closed.
         String orig = System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "false");
-        applicationContext.close();
+        IOHelper.close(applicationContext);
         System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort",
                            orig == null ? "true" : "false");
         JettyHTTPServerEngineFactory factory = bus.getExtension(JettyHTTPServerEngineFactory.class);

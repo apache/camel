@@ -17,9 +17,11 @@
 package org.apache.camel.dataformat.bindy.fix;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -36,7 +38,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4SpringContextTests {
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-    private String result = "1=BE.CHM.00111=CHM0001-0122=448=BE000124567854=158=this is a camel - bindy test\r\n";
+    private String result = "1=BE.CHM.00111=CHM0001-0122=448=BE0001245678"
+        + "54=158=this is a camel - bindy test777=17-02-2011 23:29:59\r\n";
 
     @Produce(uri = "direct:start")
     private ProducerTemplate template;
@@ -63,6 +66,12 @@ public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4Spring
         order.setSide("1");
         order.setText("this is a camel - bindy test");
 
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        // 4 hour shift
+        // 17-02-2011 23:29:59 by GMT-3
+        calendar.set(2011, 1, 18, 2, 29, 59);
+        order.setCreated(calendar.getTime());
+
         modelObjects.put(order.getClass().getName(), order);
 
         models.add(modelObjects);
@@ -73,7 +82,7 @@ public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4Spring
         
         public void configure() {
             from("direct:start").marshal()
-                .bindy(BindyType.KeyValue, "org.apache.camel.dataformat.bindy.model.fix.simple")
+                .bindy(BindyType.KeyValue, org.apache.camel.dataformat.bindy.model.fix.simple.Order.class)
                 .to("mock:result");
         }
 

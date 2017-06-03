@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.elasticsearch.enabled",
+      "description": "Enable elasticsearch component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

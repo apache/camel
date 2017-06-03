@@ -35,13 +35,35 @@ public class SpringGsonJsonDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojo");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojo.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inPojo", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         assertEquals("{\"name\":\"Camel\"}", marshalledAsString);
 
         template.sendBody("direct:backPojo", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMarshalAndUnmarshalPojoWithPrettyPrint() throws Exception {
+        TestPojo in = new TestPojo();
+        in.setName("Camel");
+
+        MockEndpoint mock = getMockEndpoint("mock:reversePojo");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(TestPojo.class);
+        mock.message(0).body().isEqualTo(in);
+
+        Object marshalled = template.requestBody("direct:inPretty", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        String expected = "{\n" 
+                         + "  \"name\": \"Camel\""
+                         + "\n}";
+        assertEquals(expected, marshalledAsString);
+
+        template.sendBody("direct:backPretty", marshalled);
 
         mock.assertIsSatisfied();
     }

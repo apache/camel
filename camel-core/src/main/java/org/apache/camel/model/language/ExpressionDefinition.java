@@ -17,46 +17,48 @@
 package org.apache.camel.model.language;
 
 import java.util.List;
-
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.namespace.QName;
 
+import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
+import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.Required;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * A useful base class for an expression
- *
- * @version 
  */
+@Metadata(label = "language", title = "Expression")
 @XmlRootElement
-@XmlType(name = "expression")
+@XmlType(name = "expression") // must be named expression
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionDefinition implements Expression, Predicate {
+public class ExpressionDefinition implements Expression, Predicate, OtherAttributesAware {
     @XmlAttribute
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     private String id;
-    @XmlValue
+    @XmlValue @Metadata(required = "true")
     private String expression;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean trim;
     @XmlTransient
     private Predicate predicate;
@@ -64,6 +66,9 @@ public class ExpressionDefinition implements Expression, Predicate {
     private Expression expressionValue;
     @XmlTransient
     private ExpressionDefinition expressionType;
+    // use xs:any to support optional property placeholders
+    @XmlAnyAttribute
+    private Map<QName, Object> otherAttributes;
 
     public ExpressionDefinition() {
     }
@@ -152,11 +157,19 @@ public class ExpressionDefinition implements Expression, Predicate {
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
+                if (language == null) {
+                    throw new NoSuchLanguageException(getLanguage());
+                }
                 String exp = getExpression();
+                // should be true by default
+                boolean isTrim = getTrim() == null || getTrim();
                 // trim if configured to trim
-                if (exp != null && isTrim()) {
+                if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
+                // resolve the expression as it may be an external script from the classpath/file etc
+                exp = ResourceHelper.resolveOptionalExternalScript(camelContext, exp);
+
                 predicate = language.createPredicate(exp);
                 configurePredicate(camelContext, predicate);
             }
@@ -175,11 +188,19 @@ public class ExpressionDefinition implements Expression, Predicate {
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
+                if (language == null) {
+                    throw new NoSuchLanguageException(getLanguage());
+                }
                 String exp = getExpression();
+                // should be true by default
+                boolean isTrim = getTrim() == null || getTrim();
                 // trim if configured to trim
-                if (exp != null && isTrim()) {
+                if (exp != null && isTrim) {
                     exp = exp.trim();
                 }
+                // resolve the expression as it may be an external script from the classpath/file etc
+                exp = ResourceHelper.resolveOptionalExternalScript(camelContext, exp);
+
                 setExpressionValue(language.createExpression(exp));
                 configureExpression(camelContext, getExpressionValue());
             }
@@ -191,20 +212,19 @@ public class ExpressionDefinition implements Expression, Predicate {
         return expression;
     }
 
-    @Required
+    /**
+     * The expression value in your chosen language syntax
+     */
     public void setExpression(String expression) {
         this.expression = expression;
     }
 
-    /**
-     * Gets the value of the id property.
-     */
     public String getId() {
         return id;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the id of this node
      */
     public void setId(String value) {
         this.id = value;
@@ -230,13 +250,21 @@ public class ExpressionDefinition implements Expression, Predicate {
         return trim;
     }
 
+    /**
+     * Whether to trim the value to remove leading and trailing whitespaces and line breaks
+     */
     public void setTrim(Boolean trim) {
         this.trim = trim;
     }
 
-    public boolean isTrim() {
-        // trim by default
-        return trim == null || trim;
+    @Override
+    public Map<QName, Object> getOtherAttributes() {
+        return otherAttributes;
+    }
+
+    @Override
+    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+        this.otherAttributes = otherAttributes;
     }
 
     /**
@@ -265,9 +293,19 @@ public class ExpressionDefinition implements Expression, Predicate {
     }
 
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
+        // allows to perform additional logic after the properties has been configured which may be needed
+        // in the various camel components outside camel-core
+        if (predicate instanceof AfterPropertiesConfigured) {
+            ((AfterPropertiesConfigured) predicate).afterPropertiesConfigured(camelContext);
+        }
     }
 
     protected void configureExpression(CamelContext camelContext, Expression expression) {
+        // allows to perform additional logic after the properties has been configured which may be needed
+        // in the various camel components outside camel-core
+        if (expression instanceof AfterPropertiesConfigured) {
+            ((AfterPropertiesConfigured) expression).afterPropertiesConfigured(camelContext);
+        }
     }
 
     /**

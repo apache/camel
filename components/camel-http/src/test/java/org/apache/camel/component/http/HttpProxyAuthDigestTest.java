@@ -17,11 +17,11 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class HttpProxyAuthDigestTest extends CamelTestSupport {
 
@@ -45,7 +45,7 @@ public class HttpProxyAuthDigestTest extends CamelTestSupport {
             public void configure() {
                 // setup proxy details
                 HttpConfiguration config = new HttpConfiguration();
-                config.setProxyAuthMethod(AuthMethod.Digest);
+                config.setProxyAuthMethod("Digest");
                 config.setProxyAuthUsername("myUser");
                 config.setProxyAuthPassword("myPassword");
 

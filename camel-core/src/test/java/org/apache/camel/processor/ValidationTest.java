@@ -86,8 +86,8 @@ public class ValidationTest extends ContextTestSupport {
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);
         invalidEndpoint = resolveMandatoryEndpoint("mock:invalid", MockEndpoint.class);
 
-        validEndpoint.whenAnyExchangeReceived(ProcessorBuilder.setOutBody(Builder.constant("validResult")));
-        invalidEndpoint.whenAnyExchangeReceived(ProcessorBuilder.setOutBody(Builder.constant("invalidResult")));
+        validEndpoint.whenAnyExchangeReceived(ProcessorBuilder.setBody(Builder.constant("validResult")));
+        invalidEndpoint.whenAnyExchangeReceived(ProcessorBuilder.setBody(Builder.constant("invalidResult")));
     }
 
     protected RouteBuilder createRouteBuilder() {

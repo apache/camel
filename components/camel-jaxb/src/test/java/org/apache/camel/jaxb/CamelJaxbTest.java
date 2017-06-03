@@ -19,6 +19,7 @@ package org.apache.camel.jaxb;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
@@ -48,6 +49,20 @@ public class CamelJaxbTest extends CamelTestSupport {
         String xml = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>";
         template.sendBody("direct:getJAXBElementValue", xml);
     }
+    
+    @Test
+    public void testFilterNonXmlChars() throws Exception {
+        String xmlUTF = "<Person><firstName>FOO</firstName><lastName>BAR \u20AC </lastName></Person>";
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xmlUTF;
+        PersonType expected = new PersonType();
+        expected.setFirstName("FOO");
+        expected.setLastName("BAR \u20AC ");
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedBodiesReceived(expected);
+        template.sendBody("direct:unmarshalFilteringEnabled", xml);
+        resultEndpoint.assertIsSatisfied();
+       
+    }
 
     @Test
     public void testMarshalBadCharsWithFiltering() throws Exception {
@@ -72,12 +87,30 @@ public class CamelJaxbTest extends CamelTestSupport {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
         template.sendBody("direct:marshal", person);
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertTrue("Non-xml character unexpectedly did not get into marshalled contents", body
                 .contains("\u0004"));
+    }
+    
+    @Test
+    public void testMarshalWithSchemaLocation() throws Exception {
+        PersonType person = new PersonType();
+        person.setFirstName("foo");
+        person.setLastName("bar");
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
+        template.sendBody("direct:marshal", person);
+        resultEndpoint.assertIsSatisfied();
+
+        String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue("We should get the schemaLocation here", body
+                .contains("schemaLocation=\"person.xsd\""));
     }
 
     @Test
@@ -129,6 +162,12 @@ public class CamelJaxbTest extends CamelTestSupport {
         template.sendBody("direct:getJAXBElement", xml);        
         resultEndpoint.assertIsSatisfied();
         assertTrue("We should get the JAXBElement here", resultEndpoint.getExchanges().get(0).getIn().getBody() instanceof JAXBElement);
+        
+        resultEndpoint.reset();
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedBodiesReceived(expected);
+        template.sendBody("direct:unmarshall", xml);        
+        resultEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -137,6 +176,7 @@ public class CamelJaxbTest extends CamelTestSupport {
 
             public void configure() throws Exception {
                 JaxbDataFormat dataFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
+                dataFormat.setSchemaLocation("person.xsd");
                 dataFormat.setIgnoreJAXBElement(false);
 
                 JaxbDataFormat filterEnabledFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
@@ -175,6 +215,11 @@ public class CamelJaxbTest extends CamelTestSupport {
                 from("direct:marshalCustomWriterAndFiltering")
                         .marshal(customWriterAndFilterFormat)
                         .to("mock:result");
+                
+                from("direct:unmarshall")
+                    .unmarshal()
+                    .jaxb(PersonType.class.getPackage().getName())
+                    .to("mock:result");
 
             }
         };

@@ -29,19 +29,20 @@ import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.ConstantBeanHolder;
-import org.apache.camel.component.bean.ConstantTypeBeanHolder;
+import org.apache.camel.component.bean.ConstantStaticTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 
 /**
- * For expressions and predicates using the
- * <a href="http://camel.apache.org/bean-language.html">bean language</a>
+ * For expressions and predicates using a java bean (aka method call)
  *
  * @version
  */
+@Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean method")
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {
@@ -100,6 +101,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return bean;
     }
 
+    /**
+     * Either a reference or a class name of the bean to use
+     */
     public void setBean(String bean) {
         this.bean = bean;
     }
@@ -108,6 +112,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return ref;
     }
 
+    /**
+     * Reference to bean to lookup in the registry
+     */
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -116,6 +123,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return method;
     }
 
+    /**
+     * Name of method to call
+     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -133,6 +143,9 @@ public class MethodCallExpression extends ExpressionDefinition {
         return beanTypeName;
     }
 
+    /**
+     * Class name of the bean to use
+     */
     public void setBeanTypeName(String beanTypeName) {
         this.beanTypeName = beanTypeName;
     }
@@ -171,7 +184,7 @@ public class MethodCallExpression extends ExpressionDefinition {
                 instance = camelContext.getInjector().newInstance(beanType);
                 holder = new ConstantBeanHolder(instance, camelContext);
             } else {
-                holder = new ConstantTypeBeanHolder(beanType, camelContext);
+                holder = new ConstantStaticTypeBeanHolder(beanType, camelContext);
             }
         } else if (instance != null) {
             holder = new ConstantBeanHolder(instance, camelContext);
@@ -255,6 +268,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public String toString() {
-        return "bean{" + beanName() + (method != null ? ", method=" + method : "") + "}";
+        boolean isRef = bean != null || ref != null;
+        return "bean[" + (isRef ? "ref:" : "") + beanName() + (method != null ? " method:" + method : "") + "]";
     }
 }

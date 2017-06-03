@@ -39,7 +39,7 @@ public class ClaimCheckTest extends ContextTestSupport {
         // check to make sure the message body gets added back in properly
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).body().equals(body);
+        resultEndpoint.message(0).body().isEqualTo(body);
 
         // check to make sure the claim check is added to the message and
         // the body is removed

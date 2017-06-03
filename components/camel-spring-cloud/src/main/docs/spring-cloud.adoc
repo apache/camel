@@ -1,0 +1,40 @@
+[[SpringCloud-SpringCloud]]
+Spring Cloud
+~~~~~~~~~~~
+
+*Available as of Camel 2.19*
+
+Spring Cloud component
+
+Maven users will need to add the following dependency to their `pom.xml`
+in order to use this component:
+
+[source,xml]
+------------------------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-cloud</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------------------------------------------
+
+`camel-spring-cloud` jar comes with the `spring.factories` file, so as
+soon as you add that dependency into your classpath, Spring Boot will
+automatically auto-configure Camel for you.
+
+[[SpringCloud-CamelSpringCloudStarter]]
+Camel Spring Cloud Starter
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.19*
+
+To use the starter, add the following to your spring boot pom.xml file:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-cloud-starter</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------

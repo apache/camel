@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.joda.time.DateTime;
+import java.time.ZonedDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 //CHECKSTYLE:OFF
 public class AbstractSObjectBase extends AbstractDTOBase {
 
@@ -29,23 +31,25 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     private String OwnerId;
     private Boolean IsDeleted;
     private String Name;
-    private DateTime CreatedDate;
+    private ZonedDateTime CreatedDate;
     private String CreatedById;
-    private DateTime LastModifiedDate;
+    private ZonedDateTime LastModifiedDate;
     private String LastModifiedById;
-    private DateTime SystemModstamp;
-    private String LastActivityDate;
+    private ZonedDateTime SystemModstamp;
+    private ZonedDateTime LastActivityDate;
+    private ZonedDateTime LastViewedDate;
+    private ZonedDateTime LastReferencedDate;
 
     /**
-     * Utility method to clear all {@link AbstractSObjectBase} fields.
-     * <p>Used when reusing a DTO for a new record.</p>
+     * Utility method to clear all system {@link AbstractSObjectBase} fields.
+     * <p>Useful when reusing a DTO for a new record, or for update/upsert.</p>
+     * <p>This method does not clear {@code Name} to allow updating it, so it must be explicitly set to {@code null} if needed.</p>
      */
     public final void clearBaseFields() {
         attributes = null;
         Id = null;
         OwnerId = null;
         IsDeleted = null;
-        Name = null;
         CreatedDate = null;
         CreatedById = null;
         LastModifiedDate = null;
@@ -103,12 +107,12 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("CreatedDate")
-    public DateTime getCreatedDate() {
+    public ZonedDateTime getCreatedDate() {
         return CreatedDate;
     }
 
     @JsonProperty("CreatedDate")
-    public void setCreatedDate(DateTime createdDate) {
+    public void setCreatedDate(ZonedDateTime createdDate) {
         this.CreatedDate = createdDate;
     }
 
@@ -123,12 +127,12 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("LastModifiedDate")
-    public DateTime getLastModifiedDate() {
+    public ZonedDateTime getLastModifiedDate() {
         return LastModifiedDate;
     }
 
     @JsonProperty("LastModifiedDate")
-    public void setLastModifiedDate(DateTime lastModifiedDate) {
+    public void setLastModifiedDate(ZonedDateTime lastModifiedDate) {
         this.LastModifiedDate = lastModifiedDate;
     }
 
@@ -143,23 +147,43 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("SystemModstamp")
-    public DateTime getSystemModstamp() {
+    public ZonedDateTime getSystemModstamp() {
         return SystemModstamp;
     }
 
     @JsonProperty("SystemModstamp")
-    public void setSystemModstamp(DateTime systemModstamp) {
+    public void setSystemModstamp(ZonedDateTime systemModstamp) {
         this.SystemModstamp = systemModstamp;
     }
 
     @JsonProperty("LastActivityDate")
-    public String getLastActivityDate() {
+    public ZonedDateTime getLastActivityDate() {
         return LastActivityDate;
     }
 
     @JsonProperty("LastActivityDate")
-    public void setLastActivityDate(String lastActivityDate) {
+    public void setLastActivityDate(ZonedDateTime lastActivityDate) {
         this.LastActivityDate = lastActivityDate;
+    }
+
+    @JsonProperty("LastViewedDate")
+    public ZonedDateTime getLastViewedDate() {
+        return LastViewedDate;
+    }
+
+    @JsonProperty("LastViewedDate")
+    public void setLastViewedDate(ZonedDateTime lastViewedDate) {
+        LastViewedDate = lastViewedDate;
+    }
+
+    @JsonProperty("LastReferencedDate")
+    public ZonedDateTime getLastReferencedDate() {
+        return LastReferencedDate;
+    }
+
+    @JsonProperty("LastReferencedDate")
+    public void setLastReferencedDate(ZonedDateTime lastReferencedDate) {
+        LastReferencedDate = lastReferencedDate;
     }
 }
 //CHECKSTYLE:ON

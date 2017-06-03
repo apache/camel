@@ -5,9 +5,16 @@ target
 .idea
 .DS_Store
 .classpath
+.ekstazi
 .project
 .settings
 .checkstyle
 *.log
 test-salesforce-login.properties
 dependency-reduced-pom.xml
+id_file
+components/camel-solr/data
+*.epoch
+.factorypath
+.pmd
+

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<search-results>
+  <totalCount>1</totalCount>
+  <from>-1</from>
+  <count>-1</count>
+  <tooManyResults>false</tooManyResults>
+  <data>
+    <artifact>
+      <resourceURI>http://nexus.dummy/service/local/repositories/staging/content/org/apache/camel/myfoo-connector/${project.version}/myfoo-connector-${project.version}.jar</resourceURI>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>myfoo-connector</artifactId>
+      <version>${project.version}</version>
+      <packaging>jar</packaging>
+      <extension>jar</extension>
+      <repoId>staging</repoId>
+      <contextId>Staging</contextId>
+      <pomLink>http://nexus.dummy/service/local/artifact/maven/redirect?r=staging&amp;g=org.apache.camel&amp;a=myfoo-connector&amp;v=${project.version}&amp;e=pom</pomLink>
+      <artifactLink>http://nexus.dummy/service/local/artifact/maven/redirect?r=staging&amp;g=org.apache.camel&amp;a=myfoo-connector&amp;v=${project.version}&amp;e=jar</artifactLink>
+      <highlightedFragment>&lt;blockquote&gt;Artifact ID&lt;UL&gt;&lt;LI&gt;myfoo-&lt;B&gt;connector&lt;/B&gt;&lt;/LI&gt;&lt;/UL&gt;&lt;/blockquote&gt;</highlightedFragment>
+    </artifact>
+  </data>
+</search-results>

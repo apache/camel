@@ -67,4 +67,11 @@ public class SendEmail {
             setAddress("dummy@somewhere.org");
         }
     }
+
+    @Override
+    public String toString() {
+        // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
+        return "SendEmail[id: " + getId() + ", address: " + getAddress() + "]";
+    }
+
 }

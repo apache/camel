@@ -27,31 +27,49 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatchStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class RouteboxConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(RouteboxConfiguration.class);
+
     private URI uri;
     private String authority;
-    private String endpointName;
-    private URI consumerUri;
-    private URI producerUri;
+
+    @UriPath @Metadata(required = "true")
+    private String routeboxName;
+    @UriParam
     private RouteboxDispatchStrategy dispatchStrategy;
+    @UriParam
     private Map<String, String> dispatchMap;
-    private CamelContext innerContext;
-    private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
-    private Registry innerRegistry;
+    @UriParam(defaultValue = "true")
     private boolean forkContext = true;
-    private boolean local = true;
+    @UriParam(label = "producer", defaultValue = "20000")
     private long connectionTimeout = 20000;
+    @UriParam(label = "consumer", defaultValue = "1000")
     private long pollInterval = 1000;
-    private String innerProtocol;
+    @UriParam(defaultValue = "direct", enums = "direct,seda")
+    private String innerProtocol = "direct";
+    @UriParam(label = "consumer", defaultValue = "20")
     private int threads = 20;
+    @UriParam
     private int queueSize;
-    private ProducerTemplate innerProducerTemplate;
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean sendToConsumer = true;
+    @UriParam(label = "advanced")
+    private CamelContext innerContext;
+    @UriParam(label = "advanced")
+    private Registry innerRegistry;
+    @UriParam(label = "advanced")
+    private ProducerTemplate innerProducerTemplate;
+    @UriParam(label = "advanced", javaType = "java.lang.String")
+    private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
 
     public RouteboxConfiguration() {
     }
@@ -75,7 +93,7 @@ public class RouteboxConfiguration {
             LOG.trace("Authority: {}", uri.getAuthority());
         }
         
-        setEndpointName(getAuthority());
+        setRouteboxName(getAuthority());
         
         if (parameters.containsKey("threads")) {
             setThreads(Integer.valueOf((String) parameters.get("threads")));
@@ -130,9 +148,7 @@ public class RouteboxConfiguration {
         
         innerProducerTemplate = innerContext.createProducerTemplate();
         setQueueSize(component.getAndRemoveParameter(parameters, "size", Integer.class, 0));
-        consumerUri = component.resolveAndRemoveReferenceParameter(parameters, "consumerUri", URI.class, new URI("routebox:" + getEndpointName()));
-        producerUri = component.resolveAndRemoveReferenceParameter(parameters, "producerUri", URI.class, new URI("routebox:" + getEndpointName()));        
-        
+
         dispatchStrategy = component.resolveAndRemoveReferenceParameter(parameters, "dispatchStrategy", RouteboxDispatchStrategy.class, null);
         dispatchMap = component.resolveAndRemoveReferenceParameter(parameters, "dispatchMap", HashMap.class, new HashMap<String, String>());
         if (dispatchStrategy == null && dispatchMap == null) {
@@ -160,10 +176,19 @@ public class RouteboxConfiguration {
         return innerContext;
     }
 
+    /**
+     * A string representing a key in the Camel Registry matching an object value of the type org.apache.camel.CamelContext.
+     * If a CamelContext is not provided by the user a CamelContext is automatically created for deployment of inner routes.
+     */
     public void setInnerContext(CamelContext innerContext) {
         this.innerContext = innerContext;
     }
 
+    /**
+     * A string representing a key in the Camel Registry matching an object value of the type List<org.apache.camel.builder.RouteBuilder>.
+     * If the user does not supply an innerContext pre-primed with inner routes, the routeBuilders option must be provided as a non-empty
+     * list of RouteBuilders containing inner routes
+     */
     public void setRouteBuilders(List<RouteBuilder> routeBuilders) {
         this.routeBuilders = routeBuilders;
     }
@@ -172,6 +197,9 @@ public class RouteboxConfiguration {
         return routeBuilders;
     }
 
+    /**
+     * Whether to fork and create a new inner CamelContext instead of reusing the same CamelContext.
+     */
     public void setForkContext(boolean forkContext) {
         this.forkContext = forkContext;
     }
@@ -180,6 +208,9 @@ public class RouteboxConfiguration {
         return forkContext;
     }
 
+    /**
+     * Number of threads to be used by the routebox to receive requests.
+     */
     public void setThreads(int threads) {
         this.threads = threads;
     }
@@ -188,38 +219,20 @@ public class RouteboxConfiguration {
         return threads;
     }
 
-    public void setEndpointName(String endpointName) {
-        this.endpointName = endpointName;
+    /**
+     * Logical name for the routebox (eg like a queue name)
+     */
+    public void setRouteboxName(String routeboxName) {
+        this.routeboxName = routeboxName;
     }
 
-    public String getEndpointName() {
-        return endpointName;
+    public String getRouteboxName() {
+        return routeboxName;
     }
 
-    public void setLocal(boolean local) {
-        this.local = local;
-    }
-
-    public boolean isLocal() {
-        return local;
-    }
-
-    public void setProducerUri(URI producerUri) {
-        this.producerUri = producerUri;
-    }
-
-    public URI getProducerUri() {
-        return producerUri;
-    }
-
-    public void setConsumerUri(URI consumerUri) {
-        this.consumerUri = consumerUri;
-    }
-
-    public URI getConsumerUri() {
-        return consumerUri;
-    }
-
+    /**
+     * To use a custom RouteboxDispatchStrategy which allows to use custom dispatching instead of the default.
+     */
     public void setDispatchStrategy(RouteboxDispatchStrategy dispatchStrategy) {
         this.dispatchStrategy = dispatchStrategy;
     }
@@ -228,6 +241,9 @@ public class RouteboxConfiguration {
         return dispatchStrategy;
     }
 
+    /**
+     * Timeout in millis used by the producer when sending a message.
+     */
     public void setConnectionTimeout(long connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
@@ -240,10 +256,18 @@ public class RouteboxConfiguration {
         return pollInterval;
     }
 
+    /**
+     * The timeout used when polling from seda.
+     * When a timeout occurs, the consumer can check whether it is allowed to continue running.
+     * Setting a lower value allows the consumer to react more quickly upon shutdown.
+     */
     public void setPollInterval(long pollInterval) {
         this.pollInterval = pollInterval;
     }
 
+    /**
+     * Create a fixed size queue to receive requests.
+     */
     public void setQueueSize(int queueSize) {
         this.queueSize = queueSize;
     }
@@ -256,10 +280,16 @@ public class RouteboxConfiguration {
         this.innerProducerTemplate = innerProducerTemplate;
     }
 
+    /**
+     * The ProducerTemplate to use by the internal embeded CamelContext
+     */
     public ProducerTemplate getInnerProducerTemplate() {
         return innerProducerTemplate;
     }
 
+    /**
+     * The Protocol used internally by the Routebox component. Can be Direct or SEDA. The Routebox component currently offers protocols that are JVM bound.
+     */
     public void setInnerProtocol(String innerProtocol) {
         this.innerProtocol = innerProtocol;
     }
@@ -268,6 +298,9 @@ public class RouteboxConfiguration {
         return innerProtocol;
     }
 
+    /**
+     * To use a custom registry for the internal embedded CamelContext.
+     */
     public void setInnerRegistry(Registry innerRegistry) {
         this.innerRegistry = innerRegistry;
     }
@@ -276,6 +309,10 @@ public class RouteboxConfiguration {
         return innerRegistry;
     }
 
+    /**
+     * Dictates whether a Producer endpoint sends a request to an external routebox consumer.
+     * If the setting is false, the Producer creates an embedded inner context and processes requests internally.
+     */
     public void setSendToConsumer(boolean sendToConsumer) {
         this.sendToConsumer = sendToConsumer;
     }
@@ -284,6 +321,11 @@ public class RouteboxConfiguration {
         return sendToConsumer;
     }
 
+    /**
+     * A string representing a key in the Camel Registry matching an object value of the type HashMap<String, String>.
+     * The HashMap key should contain strings that can be matched against the value set for the exchange header ROUTE_DISPATCH_KEY.
+     * The HashMap value should contain inner route consumer URI's to which requests should be directed.
+     */
     public void setDispatchMap(Map<String, String> dispatchMap) {
         this.dispatchMap = dispatchMap;
     }

@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -37,7 +36,7 @@ import org.apache.camel.spi.RouteContext;
  * @version
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
+public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     @XmlElementRef
     private ExpressionDefinition expression;
     @XmlElementRef
@@ -62,18 +61,19 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
         }
     }
 
-    @Override
-    public String getShortName() {
-        return "exp";
-    }
-
     public ExpressionDefinition getExpression() {
         return expression;
     }
 
-    @Required
     public void setExpression(ExpressionDefinition expression) {
-        this.expression = expression;
+        // favour using the helper to set the expression as it can unwrap some unwanted builders when using Java DSL
+        if (expression instanceof Expression) {
+            this.expression = ExpressionNodeHelper.toExpressionDefinition((Expression) expression);
+        } else if (expression instanceof Predicate) {
+            this.expression = ExpressionNodeHelper.toExpressionDefinition((Predicate) expression);
+        } else {
+            this.expression = expression;
+        }
     }
 
     @Override
@@ -121,7 +121,7 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     }
 
     @Override
-    protected void configureChild(ProcessorDefinition<?> output) {
+    public void configureChild(ProcessorDefinition<?> output) {
         // reuse the logic from pre create processor
         preCreateProcessor();
     }

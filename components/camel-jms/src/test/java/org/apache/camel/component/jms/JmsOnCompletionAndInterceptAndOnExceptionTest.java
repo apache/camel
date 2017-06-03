@@ -69,10 +69,10 @@ public class JmsOnCompletionAndInterceptAndOnExceptionTest extends CamelTestSupp
             public void configure() throws Exception {
                 intercept().to("mock:intercept");
 
-                // define a global on completion that is invoked when the exchage is complete
+                // define a global on completion that is invoked when the exchange is complete
                 onCompletion().to("log:global").to("mock:sync");
 
-                // define an on excpetion
+                // define an on exception
                 onException(Exception.class).to("mock:exception");
 
                 from("activemq:queue:start")

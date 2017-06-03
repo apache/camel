@@ -21,10 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 /**
  * Represents the configuration of the Kestrel component and/or endpoint.
  */
+@UriParams
 public class KestrelConfiguration implements Cloneable {
     /**
      * The default port on which kestrel runs
@@ -34,22 +38,28 @@ public class KestrelConfiguration implements Cloneable {
     /**
      * The address(es) on which kestrel is running
      */
+    @UriPath(defaultValue = "localhost:22133")
     private String[] addresses = new String[]{"localhost:" + DEFAULT_KESTREL_PORT};
 
     /**
      * How long a given wait should block (server side), in milliseconds
      */
+    @UriParam(defaultValue = "100")
     private int waitTimeMs = 100;
 
     /**
      * How many concurrent listeners to schedule for the thread pool
      */
+    @UriParam(defaultValue = "1")
     private int concurrentConsumers = 1;
 
     public String[] getAddresses() {
         return addresses;
     }
 
+    /**
+     * The addresses
+     */
     public void setAddresses(String[] addresses) {
         this.addresses = addresses;
     }
@@ -58,6 +68,9 @@ public class KestrelConfiguration implements Cloneable {
         return waitTimeMs;
     }
 
+    /**
+     * The wait time in milliseconds
+     */
     public void setWaitTimeMs(int waitTimeMs) {
         this.waitTimeMs = waitTimeMs;
     }
@@ -66,6 +79,9 @@ public class KestrelConfiguration implements Cloneable {
         return concurrentConsumers;
     }
 
+    /**
+     * The number of concurrent consumers
+     */
     public void setConcurrentConsumers(int concurrentConsumers) {
         if (concurrentConsumers <= 0) {
             throw new IllegalArgumentException("Invalid value for concurrentConsumers: " + concurrentConsumers);

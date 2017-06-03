@@ -25,15 +25,18 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.SortProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 
 /**
- * Represents an XML &lt;sort/&gt; element
+ * Sorts the contents of the message
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortDefinition<T> extends NoOutputExpressionNode {
@@ -65,11 +68,6 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "sort";
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // lookup in registry
@@ -94,6 +92,15 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
             exp = getExpression().createExpression(routeContext);
         }
         return new SortProcessor<T>(exp, getComparator());
+    }
+
+    /**
+     * Optional expression to sort by something else than the message body
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
     }
 
     public Comparator<? super T> getComparator() {

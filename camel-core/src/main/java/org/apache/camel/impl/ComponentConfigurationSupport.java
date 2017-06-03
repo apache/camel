@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 /**
  * Useful base class for implementations of {@link ComponentConfiguration}
  */
+@Deprecated
 public abstract class ComponentConfigurationSupport implements ComponentConfiguration {
     protected final Component component;
     private Map<String, Object> propertyValues = new HashMap<String, Object>();
@@ -122,7 +124,7 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
                 queryParams.add(key + "=" + UnsafeUriCharactersEncoder.encode(value.toString()));
             }
         }
-        Collections.sort(queryParams);
+        queryParams.sort(null);
         StringBuilder builder = new StringBuilder();
         String base = getBaseUri();
         if (base != null) {
@@ -165,6 +167,17 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
     }
 
     public String createParameterJsonSchema() {
+        // favor loading the json schema from the built-time generated file
+        String defaultName = component.getCamelContext().resolveComponentDefaultName(component.getClass().getName());
+        if (defaultName != null) {
+            try {
+                return component.getCamelContext().getComponentParameterJsonSchema(defaultName);
+            } catch (IOException e) {
+                // ignore as we fallback to create the json at runtime
+            }
+        }
+
+        // fallback to resolving at runtime
         SortedMap<String, ParameterConfiguration> map = getParameterConfigurationMap();
         StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
         boolean first = true;

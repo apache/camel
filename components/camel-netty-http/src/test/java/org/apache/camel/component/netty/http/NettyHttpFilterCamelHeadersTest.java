@@ -42,7 +42,7 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
         // except for the response code and response text
         Map<String, Object> headers = out.getOut().getHeaders();
         for (String key : headers.keySet()) {
-            if (!key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE) && !key.equalsIgnoreCase(NettyHttpConstants.HTTP_RESPONSE_TEXT)) {
+            if (!key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_CODE) && !key.equalsIgnoreCase(Exchange.HTTP_RESPONSE_TEXT)) {
                 assertTrue("Should not contain any Camel internal headers", !key.toLowerCase().startsWith("camel"));
             }
         }
@@ -61,7 +61,7 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://localhost:{{port}}/test/filter").beanRef("foo");
+                from("netty-http:http://localhost:{{port}}/test/filter").bean("foo");
             }
         };
     }

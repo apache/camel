@@ -38,8 +38,8 @@ public class ManagedRouteContextTracerTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on1 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
-        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route2\"");
+        ObjectName on1 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
+        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
 
         // with tracing
         MockEndpoint traced = getMockEndpoint("mock:traced");

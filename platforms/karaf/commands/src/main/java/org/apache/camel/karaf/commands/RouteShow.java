@@ -16,44 +16,17 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.Route;
-import org.apache.camel.model.ModelHelper;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
+import org.apache.camel.commands.RouteShowCommand;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-/**
- * Command to show the route marshaled in XML.
- */
-@Command(scope = "camel", name = "route-show", description = "Display the Camel route definition in XML.")
-public class RouteShow extends OsgiCommandSupport {
+@Command(scope = "camel", name = "route-show", description = "Display the Camel route definition in XML")
+@Service
+public class RouteShow extends AbstractRouteCommand {
 
-    @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
-    String route;
-
-    @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
-    String context;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
-
-    public Object doExecute() throws Exception {
-        Route camelRoute = camelController.getRoute(route, context);
-        if (camelRoute == null) {
-            System.err.println("Camel route " + route + " not found.");
-            return null;
-        }
-        RouteDefinition routeDefinition = camelController.getRouteDefinition(route, camelRoute.getRouteContext().getCamelContext().getName());
-        if (routeDefinition == null) {
-            System.err.println("Definition of route " + route + " not found.");
-            return null;
-        }
-        System.out.println(ModelHelper.dumpModelAsXml(routeDefinition));
-        return null;
+    public Object execute() throws Exception {
+        RouteShowCommand command = new RouteShowCommand(route, context);
+        return command.execute(this, System.out, System.err);
     }
 
 }

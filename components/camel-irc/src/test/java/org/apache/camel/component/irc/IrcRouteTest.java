@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -34,7 +35,7 @@ public class IrcRouteTest extends CamelTestSupport {
     protected String body2 = "Message Two";
     private boolean sentMessages;    
 
-    
+    @Ignore("test manual, irc.codehaus.org has been closed")   
     @Test
     public void testIrcMessages() throws Exception {
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);

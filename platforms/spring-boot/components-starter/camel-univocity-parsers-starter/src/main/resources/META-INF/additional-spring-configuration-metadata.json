@@ -1,0 +1,22 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.univocity-csv.enabled",
+      "description": "Enable univocity-csv dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.univocity-fixed.enabled",
+      "description": "Enable univocity-fixed dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.univocity-tsv.enabled",
+      "description": "Enable univocity-tsv dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

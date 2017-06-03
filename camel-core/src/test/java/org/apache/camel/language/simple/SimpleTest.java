@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExecutionException;
@@ -37,13 +39,14 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
-import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.Language;
-
 /**
- * @version 
+ * @version
  */
 public class SimpleTest extends LanguageTestSupport {
+
+    private static final String JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index: 2, Size: 2";
+    private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out-of-bounds for length 2";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -88,7 +91,7 @@ public class SimpleTest extends LanguageTestSupport {
     public void testRefExpression() throws Exception {
         assertExpressionResultInstanceOf("ref:myAnimal", Animal.class);
         assertExpressionResultInstanceOf("${ref:myAnimal}", Animal.class);
-        
+
         assertExpression("ref:myAnimal", "Donkey");
         assertExpression("${ref:myAnimal}", "Donkey");
         assertExpression("ref:unknown", null);
@@ -99,6 +102,14 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void testConstantExpression() throws Exception {
         assertExpression("Hello World", "Hello World");
+    }
+
+    public void testNull() throws Exception {
+        assertNull(SimpleLanguage.simple("${null}").evaluate(exchange, Object.class));
+    }
+
+    public void testSimpleFileDir() throws Exception {
+        assertExpression("file:mydir", "file:mydir");
     }
 
     public void testEmptyExpression() throws Exception {
@@ -121,6 +132,23 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testExchangeExpression() throws Exception {
+        Expression exp = SimpleLanguage.simple("${exchange}");
+        assertNotNull(exp);
+        assertEquals(exchange, exp.evaluate(exchange, Object.class));
+
+        assertExpression("exchange", exchange);
+    }
+
+    public void testExchangeOgnlExpression() throws Exception {
+        Expression exp = SimpleLanguage.simple("${exchange.exchangeId}");
+        assertNotNull(exp);
+        assertEquals(exchange.getExchangeId(), exp.evaluate(exchange, Object.class));
+
+        assertExpression("exchange.exchangeId", exchange.getExchangeId());
+        assertExpression("exchange.class.name", "org.apache.camel.impl.DefaultExchange");
+    }
+
     public void testBodyExpression() throws Exception {
         Expression exp = SimpleLanguage.simple("${body}");
         assertNotNull(exp);
@@ -140,6 +168,20 @@ public class SimpleTest extends LanguageTestSupport {
         assertEquals(123, val);
     }
 
+    public void testBodyExpressionWithArray() throws Exception {
+        exchange.getIn().setBody(new MyClass());
+        Expression exp = SimpleLanguage.simple("body.myArray");
+        assertNotNull(exp);
+        Object val = exp.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Object[].class, val);
+
+        exp = SimpleLanguage.simple("body.myArray.length");
+        assertNotNull(exp);
+        val = exp.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, val);
+        assertEquals(3, val);
+    }
+
     public void testSimpleExpressions() throws Exception {
         assertExpression("exchangeId", exchange.getExchangeId());
         assertExpression("id", exchange.getIn().getMessageId());
@@ -153,7 +195,7 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.setFromRouteId("myRouteId");
         assertExpression("routeId", "myRouteId");
     }
-    
+
     public void testTrimSimpleExpressions() throws Exception {
         assertExpression(" \texchangeId\n".trim(), exchange.getExchangeId());
         assertExpression("\nid\r".trim(), exchange.getIn().getMessageId());
@@ -178,6 +220,11 @@ public class SimpleTest extends LanguageTestSupport {
     public void testSimplePropertyExpressions() throws Exception {
         exchange.setProperty("medal", "gold");
         assertExpression("property.medal", "gold");
+    }
+
+    public void testSimpleExchangePropertyExpressions() throws Exception {
+        exchange.setProperty("medal", "gold");
+        assertExpression("exchangeProperty.medal", "gold");
     }
 
     public void testSimpleSystemPropertyExpressions() throws Exception {
@@ -213,6 +260,70 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body[0][code]}", 4321);
     }
 
+    public void testOGNLBodyEmptyList() throws Exception {
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        map.put("list", new ArrayList<String>());
+
+        exchange.getIn().setBody(map);
+
+        assertExpression("${in.body?.get('list')[0].toString}", null);
+    }
+
+    public void testOGNLBodyExpression() throws Exception {
+        exchange.getIn().setBody("hello world");
+        assertPredicate("${body} == 'hello world'", true);
+        assertPredicate("${body.toUpperCase()} == 'HELLO WORLD'", true);
+    }
+
+    public void testOGNLBodyAsExpression() throws Exception {
+        byte[] body = "hello world".getBytes();
+        exchange.getIn().setBody(body);
+
+        // there is no upper case method on byte array, but we can convert to String as below
+        try {
+            assertPredicate("${body.toUpperCase()} == 'HELLO WORLD'", true);
+            fail("Should throw exception");
+        } catch (RuntimeBeanExpressionException e) {
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
+            assertEquals("toUpperCase()", cause.getMethodName());
+        }
+
+        assertPredicate("${bodyAs(String)} == 'hello world'", true);
+        assertPredicate("${bodyAs(String).toUpperCase()} == 'HELLO WORLD'", true);
+
+        // and body on exchange should not be changed
+        assertSame(body, exchange.getIn().getBody());
+    }
+
+    public void testOGNLMandatoryBodyAsExpression() throws Exception {
+        byte[] body = "hello world".getBytes();
+        exchange.getIn().setBody(body);
+
+        // there is no upper case method on byte array, but we can convert to String as below
+        try {
+            assertPredicate("${body.toUpperCase()} == 'HELLO WORLD'", true);
+            fail("Should throw exception");
+        } catch (RuntimeBeanExpressionException e) {
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
+            assertEquals("toUpperCase()", cause.getMethodName());
+        }
+
+        assertPredicate("${mandatoryBodyAs(String)} == 'hello world'", true);
+        assertPredicate("${mandatoryBodyAs(String).toUpperCase()} == 'HELLO WORLD'", true);
+
+        // and body on exchange should not be changed
+        assertSame(body, exchange.getIn().getBody());
+    }
+
+    public void testOGNLCallReplace() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("cool", "Camel rocks");
+        map.put("dude", "Hey dude");
+        exchange.getIn().setHeaders(map);
+
+        assertExpression("${headers.cool.replaceAll(\"rocks\", \"is so cool\")}", "Camel is so cool");
+    }
+
     public void testOGNLBodyListAndMapAndMethod() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("camel", new OrderLine(123, "Camel in Action"));
@@ -239,36 +350,45 @@ public class SimpleTest extends LanguageTestSupport {
         lines.add("ActiveMQ in Action");
         exchange.setProperty("wicket", lines);
 
-        assertExpression("${property.wicket[0]}", "Camel in Action");
-        assertExpression("${property.wicket[1]}", "ActiveMQ in Action");
+        assertExpression("${exchangeProperty.wicket[0]}", "Camel in Action");
+        assertExpression("${exchangeProperty.wicket[1]}", "ActiveMQ in Action");
         try {
-            assertExpression("${property.wicket[2]}", "");
+            assertExpression("${exchangeProperty.wicket[2]}", "");
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Index: 2, Size: 2", cause.getMessage());
+            if (getJavaMajorVersion() <= 8) {
+                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());    
+            } else {
+                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            }
+            
         }
-        assertExpression("${property.unknown[cool]}", null);
+        assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
-    
+
     public void testOGNLPropertyLinesList() throws Exception {
         List<OrderLine> lines = new ArrayList<OrderLine>();
         lines.add(new OrderLine(123, "Camel in Action"));
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
         exchange.setProperty("wicket", lines);
 
-        assertExpression("${property.wicket[0].getId}", 123);
-        assertExpression("${property.wicket[1].getName}", "ActiveMQ in Action");
+        assertExpression("${exchangeProperty.wicket[0].getId}", 123);
+        assertExpression("${exchangeProperty.wicket[1].getName}", "ActiveMQ in Action");
         try {
-            assertExpression("${property.wicket[2]}", "");
+            assertExpression("${exchangeProperty.wicket[2]}", "");
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Index: 2, Size: 2", cause.getMessage());
+            if (getJavaMajorVersion() <= 8) {
+                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            } else {
+                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            }
         }
         assertExpression("${property.unknown[cool]}", null);
     }
-    
+
     public void testOGNLPropertyMap() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("cool", "Camel rocks");
@@ -284,31 +404,56 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${property?.unknown[cool]}", null);
         assertExpression("${property.unknown[cool]}", null);
     }
-   
+
+    public void testOGNLExchangePropertyMap() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("cool", "Camel rocks");
+        map.put("dude", "Hey dude");
+        map.put("code", 4321);
+        exchange.setProperty("wicket", map);
+
+        assertExpression("${exchangeProperty.wicket[cool]}", "Camel rocks");
+        assertExpression("${exchangeProperty.wicket[dude]}", "Hey dude");
+        assertExpression("${exchangeProperty.wicket[unknown]}", null);
+        assertExpression("${exchangeProperty.wicket[code]}", 4321);
+        // no header named unknown
+        assertExpression("${exchangeProperty?.unknown[cool]}", null);
+        assertExpression("${exchangeProperty.unknown[cool]}", null);
+    }
+
     public void testOGNLPropertyMapWithDot() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("this.code", "This code");
         exchange.setProperty("wicket", map);
 
-        assertExpression("${property.wicket[this.code]}", "This code");
+        assertExpression("${exchangeProperty.wicket[this.code]}", "This code");
     }
-    
+
     public void testOGNLPropertyMapNotMap() throws Exception {
         try {
-            assertExpression("${property.foobar[bar]}", null);
+            assertExpression("${exchangeProperty.foobar[bar]}", null);
             fail("Should have thrown an exception");
         } catch (RuntimeBeanExpressionException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
             assertEquals("Key: bar not found in bean: cba of type: java.lang.String using OGNL path [[bar]]", cause.getMessage());
         }
     }
-    
+
     public void testOGNLPropertyMapIllegalSyntax() throws Exception {
         try {
             assertExpression("${property.foobar[bar}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Valid syntax: ${property.OGNL} was: property.foobar[bar at location 0"));
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: property.foobar[bar at location 0"));
+        }
+    }
+
+    public void testOGNLExchangePropertyMapIllegalSyntax() throws Exception {
+        try {
+            assertExpression("${exchangeProperty.foobar[bar}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -338,13 +483,15 @@ public class SimpleTest extends LanguageTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         exchange.getIn().setHeader("birthday", cal.getTime());
 
+        assertExpression("date:header.birthday", cal.getTime());
         assertExpression("date:header.birthday:yyyyMMdd", "19740420");
+        assertExpression("date:header.birthday+24h:yyyyMMdd", "19740421");
 
         try {
             assertExpression("date:yyyyMMdd", "19740420");
             fail("Should thrown an exception");
-        } catch (SimpleParserException e) {
-            assertEquals("Valid syntax: ${date:command:pattern} was: date:yyyyMMdd", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertEquals("Command not supported for dateExpression: yyyyMMdd", e.getMessage());
         }
     }
 
@@ -354,7 +501,24 @@ public class SimpleTest extends LanguageTestSupport {
         cal.set(Calendar.MILLISECOND, 123);
         exchange.getIn().setHeader("birthday", cal.getTime());
 
+        assertExpression("date:header.birthday - 10s:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:37:123");
         assertExpression("date:header.birthday:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:47:123");
+    }
+
+    public void testDateWithTimezone() throws Exception {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        cal.set(1974, Calendar.APRIL, 20, 8, 55, 47);
+        cal.set(Calendar.MILLISECOND, 123);
+        exchange.getIn().setHeader("birthday", cal.getTime());
+
+        assertExpression("date-with-timezone:header.birthday:GMT+8:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T08:55:47:123");
+        assertExpression("date-with-timezone:header.birthday:GMT:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T00:55:47:123");
+    }
+
+    public void testDatePredicates() throws Exception {
+        assertPredicate("${date:now} < ${date:now+60s}");
+        assertPredicate("${date:now-2s+2s} == ${date:now}");
     }
 
     public void testLanguagesInContext() throws Exception {
@@ -489,6 +653,35 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.headers[foo]}", "abc");
     }
 
+    public void testOnglOnHeadersWithBracket() throws Exception {
+        assertOnglOnHeadersWithSquareBrackets("order");
+        assertOnglOnHeadersWithSquareBrackets("purchase.order");
+        assertOnglOnHeadersWithSquareBrackets("foo.bar.qux");
+        assertOnglOnHeadersWithSquareBrackets("purchase order");
+    }
+
+    private void assertOnglOnHeadersWithSquareBrackets(String key) {
+        exchange.getIn().setHeader(key, new OrderLine(123, "Camel in Action"));
+        assertExpression("headers[" + key + "].name", "Camel in Action");
+        assertExpression("${headers[" + key + "].name}", "Camel in Action");
+        assertExpression("${in.headers[" + key + "].name}", "Camel in Action");
+        assertExpression("${in.headers['" + key + "'].name}", "Camel in Action");
+    }
+
+    public void testOnglOnExchangePropertiesWithBracket() throws Exception {
+        assertOnglOnExchangePropertiesWithBracket("order");
+        assertOnglOnExchangePropertiesWithBracket("purchase.order");
+        assertOnglOnExchangePropertiesWithBracket("foo.bar.qux");
+        assertOnglOnExchangePropertiesWithBracket("purchase order");
+    }
+
+    public void assertOnglOnExchangePropertiesWithBracket(String key) throws Exception {
+        exchange.setProperty(key, new OrderLine(123, "Camel in Action"));
+        assertExpression("exchangeProperty[" + key + "].name", "Camel in Action");
+        assertExpression("${exchangeProperty[" + key + "].name}", "Camel in Action");
+        assertExpression("${exchangeProperty['" + key + "'].name}", "Camel in Action");
+    }
+
     public void testIsInstanceOfEmptyBody() throws Exception {
         // set an empty body
         exchange.getIn().setBody(null);
@@ -511,6 +704,24 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.headers}", headers);
     }
 
+    public void testHeaderKeyWithSpace() throws Exception {
+        Map<String, Object> headers = exchange.getIn().getHeaders();
+        headers.put("some key", "Some Value");
+        assertEquals(3, headers.size());
+
+        assertExpression("${headerAs(foo,String)}", "abc");
+        assertExpression("${headerAs(some key,String)}", "Some Value");
+        assertExpression("${headerAs('some key',String)}", "Some Value");
+
+        assertExpression("${header[foo]}", "abc");
+        assertExpression("${header[some key]}", "Some Value");
+        assertExpression("${header['some key']}", "Some Value");
+
+        assertExpression("${headers[foo]}", "abc");
+        assertExpression("${headers[some key]}", "Some Value");
+        assertExpression("${headers['some key']}", "Some Value");
+    }
+
     public void testHeaderAs() throws Exception {
         assertExpression("${headerAs(foo,String)}", "abc");
 
@@ -521,7 +732,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${headerAs('bar','Integer')}", 123);
         assertExpression("${headerAs('bar',\"int\")}", 123);
         assertExpression("${headerAs(bar,String)}", "123");
-        
+
         assertExpression("${headerAs(unknown,String)}", null);
 
         try {
@@ -529,6 +740,13 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
             assertTrue(e.getMessage().startsWith("Valid syntax: ${headerAs(key, type)} was: headerAs(unknown String)"));
+        }
+
+        try {
+            assertExpression("${headerAs(fool,String).test}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${headerAs(key, type)} was: headerAs(fool,String).test"));
         }
 
         try {
@@ -575,7 +793,11 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Index: 2, Size: 2", cause.getMessage());
+            if (getJavaMajorVersion() <= 8) {
+                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            } else {
+                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            }
         }
         assertExpression("${header.unknown[cool]}", null);
     }
@@ -593,7 +815,11 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Index: 2, Size: 2", cause.getMessage());
+            if (getJavaMajorVersion() <= 8) {
+                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            } else {
+                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            }
         }
         assertExpression("${header.unknown[cool]}", null);
     }
@@ -658,7 +884,7 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${in.body[foo.bar]}", "Camel");
     }
-    
+
     public void testBodyOGNLAsMapShorthand() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("foo", "Camel");
@@ -761,7 +987,7 @@ public class SimpleTest extends LanguageTestSupport {
         lines.add(new OrderLine(123, "Camel in Action"));
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
         Order order = new Order(lines);
-        
+
         exchange.getIn().setBody(order);
 
         assertExpression("${in.body.getLines[0].getId}", 123);
@@ -977,7 +1203,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.getLines[0]?.getRating}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
             assertEquals("getRating", cause.getMethodName());
         }
     }
@@ -994,7 +1220,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.lines[0]?.rating}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause().getCause());
+            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
             assertEquals("rating", cause.getMethodName());
         }
     }
@@ -1019,8 +1245,8 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.getFriend.getFriend.getName}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .getFriend.getFriend.getName on null due to: java.lang.NullPointerException", e.getMessage());
-            assertIsInstanceOf(NullPointerException.class, e.getCause());
+            assertEquals("Failed to invoke method: .getFriend.getFriend.getName on org.apache.camel.language.simple.SimpleTest.Animal"
+                + " due last method returned null and therefore cannot continue to invoke method .getName on a null instance", e.getMessage());
         }
     }
 
@@ -1045,8 +1271,8 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.friend.friend.name}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .friend.friend.name on null due to: java.lang.NullPointerException", e.getMessage());
-            assertIsInstanceOf(NullPointerException.class, e.getCause());
+            assertEquals("Failed to invoke method: .friend.friend.name on org.apache.camel.language.simple.SimpleTest.Animal"
+                + " due last method returned null and therefore cannot continue to invoke method .name on a null instance", e.getMessage());
         }
     }
 
@@ -1085,7 +1311,7 @@ public class SimpleTest extends LanguageTestSupport {
     public void testBodyOGNLBoolean() throws Exception {
         Animal tiger = new Animal("Tony the Tiger", 13);
         exchange.getIn().setBody(tiger);
-        
+
         assertExpression("${body.isDangerous}", "true");
         assertExpression("${body.dangerous}", "true");
 
@@ -1192,7 +1418,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.getClass.getSimpleName}", "Animal");
         assertExpression("${body.class.simpleName}", "Animal");
     }
-    
+
     public void testExceptionClassSimpleName() throws Exception {
         Animal tiger = new Animal("Tony the Tiger", 13);
         exchange.getIn().setBody(tiger);
@@ -1245,6 +1471,13 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("$${body}", "$Something");
     }
 
+    public void testEscapeEndFunction() throws Exception {
+        exchange.getIn().setBody("Something");
+
+        assertExpression("{hello\\}", "{hello}");
+        assertExpression("${body}{hello\\}", "Something{hello}");
+    }
+
     public void testCamelContextOGNL() throws Exception {
         assertExpression("${camelContext.getName()}", context.getName());
         assertExpression("${camelContext.version}", context.getVersion());
@@ -1259,6 +1492,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${type:org.apache.camel.ExchangePattern.UNKNOWN}", null);
     }
 
+    public void testTypeConstantInnerClass() throws Exception {
+        assertExpression("${type:org.apache.camel.language.simple.Constants$MyInnerStuff.FOO}", 123);
+        assertExpression("${type:org.apache.camel.language.simple.Constants.BAR}", 456);
+    }
+
     public void testStringArrayLength() throws Exception {
         exchange.getIn().setBody(new String[]{"foo", "bar"});
         assertExpression("${body[0]}", "foo");
@@ -1269,8 +1507,24 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.length}", 3);
     }
 
+    public void testByteArrayLength() throws Exception {
+        exchange.getIn().setBody(new byte[]{65, 66, 67});
+        assertExpression("${body[0]}", 65);
+        assertExpression("${body[1]}", 66);
+        assertExpression("${body[2]}", 67);
+        assertExpression("${body.length}", 3);
+    }
+
+    public void testIntArrayLength() throws Exception {
+        exchange.getIn().setBody(new int[]{1, 20, 300});
+        assertExpression("${body[0]}", 1);
+        assertExpression("${body[1]}", 20);
+        assertExpression("${body[2]}", 300);
+        assertExpression("${body.length}", 3);
+    }
+
     public void testSimpleMapBoolean() throws Exception {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         exchange.getIn().setBody(map);
 
         map.put("isCredit", true);
@@ -1287,6 +1541,189 @@ public class SimpleTest extends LanguageTestSupport {
         assertPredicate("${body[isCredit]} == false", true);
         assertPredicate("${body['isCredit']} == true", false);
         assertPredicate("${body['isCredit']} == false", true);
+    }
+
+    public void testSimpleRegexp() throws Exception {
+        exchange.getIn().setBody("12345678");
+        assertPredicate("${body} regex '\\d+'", true);
+        assertPredicate("${body} regex '\\w{1,4}'", false);
+
+        exchange.getIn().setBody("tel:+97444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", true);
+
+        exchange.getIn().setBody("97444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", true);
+
+        exchange.getIn().setBody("tel:+87444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
+
+        exchange.getIn().setBody("87444549697");
+        assertPredicate("${body} regex '^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)'", false);
+    }
+
+    public void testCollateEven() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        data.add("E");
+        data.add("F");
+        exchange.getIn().setBody(data);
+
+        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
+        List chunk = (List) it.next();
+        List chunk2 = (List) it.next();
+        assertFalse(it.hasNext());
+
+        assertEquals(3, chunk.size());
+        assertEquals(3, chunk2.size());
+
+        assertEquals("A", chunk.get(0));
+        assertEquals("B", chunk.get(1));
+        assertEquals("C", chunk.get(2));
+        assertEquals("D", chunk2.get(0));
+        assertEquals("E", chunk2.get(1));
+        assertEquals("F", chunk2.get(2));
+    }
+
+    public void testCollateOdd() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        data.add("E");
+        data.add("F");
+        data.add("G");
+        exchange.getIn().setBody(data);
+
+        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
+        List chunk = (List) it.next();
+        List chunk2 = (List) it.next();
+        List chunk3 = (List) it.next();
+        assertFalse(it.hasNext());
+
+        assertEquals(3, chunk.size());
+        assertEquals(3, chunk2.size());
+        assertEquals(1, chunk3.size());
+
+        assertEquals("A", chunk.get(0));
+        assertEquals("B", chunk.get(1));
+        assertEquals("C", chunk.get(2));
+        assertEquals("D", chunk2.get(0));
+        assertEquals("E", chunk2.get(1));
+        assertEquals("F", chunk2.get(2));
+        assertEquals("G", chunk3.get(0));
+    }
+
+    public void testRandomExpression() throws Exception {
+        int min = 1;
+        int max = 10;
+        int iterations = 30;
+        int i = 0;
+        for (i = 0; i < iterations; i++) {
+            Expression expression = SimpleLanguage.simple("${random(1,10)}", Integer.class);
+            assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+        }
+        for (i = 0; i < iterations; i++) {
+            Expression expression = SimpleLanguage.simple("${random(10)}", Integer.class);
+            assertTrue(0 <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+        }
+        Expression expression = SimpleLanguage.simple("${random(1, 10)}", Integer.class);
+        assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+
+        Expression expression1 = SimpleLanguage.simple("${random( 10)}", Integer.class);
+        assertTrue(0 <= expression1.evaluate(exchange, Integer.class) && expression1.evaluate(exchange, Integer.class) < max);
+
+        try {
+            assertExpression("${random(10,21,30)}", null);
+            fail("Should have thrown exception");
+        } catch (Exception e) {
+            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random(10,21,30)", e.getCause().getMessage());
+        }
+        try {
+            assertExpression("${random()}", null);
+            fail("Should have thrown exception");
+        } catch (Exception e) {
+            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random()", e.getCause().getMessage());
+        }
+
+        exchange.getIn().setHeader("max", 20);
+        Expression expression3 = SimpleLanguage.simple("${random(10,${header.max})}", Integer.class);
+        int num = expression3.evaluate(exchange, Integer.class);
+        assertTrue("Should be 10..20", num >= 0 && num < 20);
+    }
+
+    public void testListRemoveByInstance() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        exchange.getIn().setBody(data);
+
+        assertEquals(2, data.size());
+
+        Expression expression = SimpleLanguage.simple("${body.remove('A')}");
+        expression.evaluate(exchange, Object.class);
+
+        assertEquals(1, data.size());
+        assertEquals("B", data.get(0));
+    }
+
+    public void testListRemoveIndex() throws Exception {
+        List<Object> data = new ArrayList<Object>();
+        data.add("A");
+        data.add("B");
+        exchange.getIn().setBody(data);
+
+        assertEquals(2, data.size());
+
+        Expression expression = SimpleLanguage.simple("${body.remove(0)}");
+        expression.evaluate(exchange, Object.class);
+
+        assertEquals(1, data.size());
+        assertEquals("B", data.get(0));
+    }
+
+    public void testBodyOgnlOnAnimalWithOgnlParams() throws Exception {
+        exchange.getIn().setBody(new Animal("tiger", 13));
+        exchange.getIn().setHeader("friend", new Animal("donkey", 4));
+        assertExpression("${body.setFriend(${header.friend})}", null);
+
+        Animal animal = exchange.getIn().getBody(Animal.class);
+        assertEquals("tiger", animal.getName());
+        assertEquals(13, animal.getAge());
+        assertNotNull("Should have a friend", animal.getFriend());
+        assertEquals("donkey", animal.getFriend().getName());
+        assertEquals(4, animal.getFriend().getAge());
+    }
+
+    public void testNestedTypeFunction() throws Exception {
+        // when using type: function we need special logic to not lazy evaluate it so its evaluated only once
+        // and won't fool Camel to think its a nested OGNL method call expression instead (CAMEL-10664)
+        exchange.setProperty(Exchange.AUTHENTICATION, 123);
+        String exp = "${exchangeProperty.${type:org.apache.camel.Exchange.AUTHENTICATION}.toString()}";
+        assertExpression(exp, "123");
+
+        exchange.getIn().setHeader("whichOne", "AUTHENTICATION");
+        exchange.setProperty(Exchange.AUTHENTICATION, 456);
+        exp = "${exchangeProperty.${type:org.apache.camel.Exchange.${header.whichOne}}.toString()}";
+        assertExpression(exp, "456");
+    }
+
+    public void testListIndexByNestedFunction() throws Exception {
+        List<String> alist = new ArrayList<>();
+        alist.add("1");
+        alist.add("99");
+        exchange.getIn().setHeader("ITEMS", alist);
+        exchange.getIn().setHeader("TOTAL_LOOPS", alist.size());
+
+        String exp = "${header.ITEMS[${exchangeProperty.CamelLoopIndex}]}";
+
+        exchange.setProperty(Exchange.LOOP_INDEX, 0);
+        assertExpression(exp, "1");
+        exchange.setProperty(Exchange.LOOP_INDEX, 1);
+        assertExpression(exp, "99");
     }
 
     protected String getLanguageName() {
@@ -1369,6 +1806,12 @@ public class SimpleTest extends LanguageTestSupport {
 
         public String getName() {
             return name;
+        }
+    }
+
+    public static class MyClass {
+        public Object[] getMyArray() {
+            return new Object[]{"Hallo", "World", "!"};
         }
     }
 }

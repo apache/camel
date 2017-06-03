@@ -29,6 +29,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ShutdownableService;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  *
  * @version 
  */
-public class InterceptSendToEndpoint implements Endpoint {
+public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
 
     private static final Logger LOG = LoggerFactory.getLogger(InterceptSendToEndpoint.class);
 
@@ -88,6 +89,7 @@ public class InterceptSendToEndpoint implements Endpoint {
         return delegate.createExchange(pattern);
     }
 
+    @Deprecated
     public Exchange createExchange(Exchange exchange) {
         return delegate.createExchange(exchange);
     }
@@ -112,6 +114,7 @@ public class InterceptSendToEndpoint implements Endpoint {
                 return producer.createExchange(pattern);
             }
 
+            @Deprecated
             public Exchange createExchange(Exchange exchange) {
                 return producer.createExchange(exchange);
             }
@@ -130,8 +133,6 @@ public class InterceptSendToEndpoint implements Endpoint {
                     detour.process(exchange);
                 } catch (Exception e) {
                     exchange.setException(e);
-                    callback.done(true);
-                    return true;
                 }
 
                 // Decide whether to continue or not; similar logic to the Pipeline
@@ -227,6 +228,11 @@ public class InterceptSendToEndpoint implements Endpoint {
 
     public void stop() throws Exception {
         ServiceHelper.stopServices(delegate, detour);
+    }
+
+    @Override
+    public void shutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(delegate, detour);
     }
 
     @Override

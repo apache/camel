@@ -1,0 +1,10 @@
+{#example_1}
+<div>
+Earth to {$headers.name}. Come in, {$headers.name}.
+</div>
+{#}
+{#example_2}
+<div>
+Mars to {$headers.name}. Come in, {$headers.name}. This is the body: {$body}
+</div>
+{#}

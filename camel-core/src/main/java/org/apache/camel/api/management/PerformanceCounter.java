@@ -26,6 +26,13 @@ import org.apache.camel.Exchange;
 public interface PerformanceCounter {
 
     /**
+     * Executed when an {@link org.apache.camel.Exchange} is about to be processed.
+     *
+     * @param exchange the exchange
+     */
+    void processExchange(Exchange exchange);
+
+    /**
      * Executed when an {@link org.apache.camel.Exchange} is complete.
      *
      * @param exchange the exchange

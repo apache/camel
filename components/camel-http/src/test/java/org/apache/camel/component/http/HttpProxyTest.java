@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.httpclient.HttpClient;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class HttpProxyTest extends CamelTestSupport {
 

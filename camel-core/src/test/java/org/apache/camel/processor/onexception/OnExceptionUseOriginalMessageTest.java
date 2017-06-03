@@ -34,9 +34,9 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
 
     public void testOnExceptionError() throws Exception {
         getMockEndpoint("mock:middle").expectedBodiesReceived(HELLO_WORLD);
-        getMockEndpoint("mock:middle").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:end").expectedBodiesReceived(HELLO_WORLD);
-        getMockEndpoint("mock:end").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
         
         template.sendBody("direct:a", "Hello World");
 
@@ -46,9 +46,9 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     public void testOnExceptionStreamReset() throws Exception {
         
         getMockEndpoint("mock:middle").expectedMessageCount(1);
-        getMockEndpoint("mock:middle").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:end").expectedMessageCount(1);
-        getMockEndpoint("mock:end").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
     
         InputStreamCache cache = new InputStreamCache(TEST_STRING.getBytes());
         

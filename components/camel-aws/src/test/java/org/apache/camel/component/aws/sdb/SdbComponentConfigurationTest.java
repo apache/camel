@@ -25,17 +25,22 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
+        AmazonSDBClientMock mock = new AmazonSDBClientMock();
+        
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+            .bind("amazonSDBClient", mock);
+        
         SdbComponent component = new SdbComponent(context);
         SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint(
-                "aws-sdb://TestDomain?accessKey=xxx&secretKey=yyy");
+                "aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&accessKey=xxx&secretKey=yyy");
         
         assertEquals("TestDomain", endpoint.getConfiguration().getDomainName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
-        assertNull(endpoint.getConfiguration().getAmazonSDBClient());
+        assertNotNull(endpoint.getConfiguration().getAmazonSDBClient());
         assertEquals(SdbOperations.PutAttributes, endpoint.getConfiguration().getOperation());
         assertNull(endpoint.getConfiguration().getAmazonSdbEndpoint());
-        assertNull(endpoint.getConfiguration().getConsistentRead());
+        assertFalse(endpoint.getConfiguration().isConsistentRead());
         assertNull(endpoint.getConfiguration().getMaxNumberOfDomains());
     }
     
@@ -56,24 +61,28 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
         assertSame(mock, endpoint.getConfiguration().getAmazonSDBClient());
         assertEquals(SdbOperations.PutAttributes, endpoint.getConfiguration().getOperation());
         assertNull(endpoint.getConfiguration().getAmazonSdbEndpoint());
-        assertNull(endpoint.getConfiguration().getConsistentRead());
+        assertFalse(endpoint.getConfiguration().isConsistentRead());
         assertNull(endpoint.getConfiguration().getMaxNumberOfDomains());
     }
 
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
+        AmazonSDBClientMock mock = new AmazonSDBClientMock();
+        
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+            .bind("amazonSDBClient", mock);
         SdbComponent component = new SdbComponent(context);
         SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint(
-                "aws-sdb://TestDomain?accessKey=xxx&secretKey=yyy&operation=DeleteAttributes&consistentRead=true"
+                "aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&accessKey=xxx&secretKey=yyy&operation=DeleteAttributes&consistentRead=true"
                 + "&maxNumberOfDomains=5");
         
         assertEquals("TestDomain", endpoint.getConfiguration().getDomainName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
-        assertNull(endpoint.getConfiguration().getAmazonSDBClient());
+        assertNotNull(endpoint.getConfiguration().getAmazonSDBClient());
         assertEquals(SdbOperations.DeleteAttributes, endpoint.getConfiguration().getOperation());
         assertNull(endpoint.getConfiguration().getAmazonSdbEndpoint());
-        assertTrue(endpoint.getConfiguration().getConsistentRead());
+        assertTrue(endpoint.getConfiguration().isConsistentRead());
         assertEquals(new Integer(5), endpoint.getConfiguration().getMaxNumberOfDomains());
     }
     
@@ -99,5 +108,16 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         SdbComponent component = new SdbComponent(context);
         component.createEndpoint("aws-sdb://TestDomain?accessKey=xxx");
+    }
+    
+    @Test
+    public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
+        AmazonSDBClientMock mock = new AmazonSDBClientMock();
+        
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+            .bind("amazonSDBClient", mock);
+        
+        SdbComponent component = new SdbComponent(context);
+        component.createEndpoint("aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient");
     }
 }

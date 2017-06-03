@@ -27,7 +27,7 @@ import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
-import org.apache.camel.component.cxf.common.message.DefaultCxfMesssageMapper;
+import org.apache.camel.component.cxf.common.message.DefaultCxfMessageMapper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -39,13 +39,11 @@ import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.transport.AbstractConduit;
 import org.apache.cxf.transport.AbstractDestination;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
-import org.apache.cxf.wsdl.EndpointReferenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,7 +149,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
     protected void incoming(org.apache.camel.Exchange camelExchange) {
         LOG.debug("server received request: ", camelExchange);
-        DefaultCxfMesssageMapper beanBinding = new DefaultCxfMesssageMapper();
+        DefaultCxfMessageMapper beanBinding = new DefaultCxfMessageMapper();
         org.apache.cxf.message.Message inMessage =
             beanBinding.createCxfMessageFromCamelExchange(camelExchange, headerFilterStrategy);
 
@@ -195,13 +193,12 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     // this should deal with the cxf message
-    protected class BackChannelConduit extends AbstractConduit {
+    protected class BackChannelConduit extends AbstractBackChannelConduit {
         protected Message inMessage;
         Exchange camelExchange;
         org.apache.cxf.message.Exchange cxfExchange;
 
         BackChannelConduit(Message message) {
-            super(EndpointReferenceUtils.getAnonymousEndpointReference());
             inMessage = message;
             cxfExchange = inMessage.getExchange();
             camelExchange = cxfExchange.get(Exchange.class);
@@ -256,7 +253,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         // copy the camel in message header to the out message
         camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
         CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage,
-                                            camelExchange.getOut().getHeaders(), camelExchange);
+                                            camelExchange.getOut(), camelExchange);
     }
 
     /**
@@ -265,7 +262,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     private class CamelOutputStream extends CachedOutputStream {
         private Message outMessage;
 
-        public CamelOutputStream(Message m) {
+        CamelOutputStream(Message m) {
             outMessage = m;
         }
 

@@ -27,6 +27,8 @@ public class UriConfigurationTest extends Assert {
 
     @Test
     public void testTrapReceiverConfiguration() throws Exception {
+        context.start();
+
         Endpoint endpoint = context.getEndpoint("snmp:0.0.0.0:1662?protocol=udp&type=TRAP&oids=1.3.6.1.2.1.7.5.1");
         assertTrue("Endpoint not an SnmpEndpoint: " + endpoint, endpoint instanceof SnmpEndpoint);
         SnmpEndpoint snmpEndpoint = (SnmpEndpoint) endpoint;
@@ -38,6 +40,8 @@ public class UriConfigurationTest extends Assert {
 
     @Test
     public void testTrapReceiverWithoutPortConfiguration() throws Exception {
+        context.start();
+
         Endpoint endpoint = context.getEndpoint("snmp:0.0.0.0?protocol=udp&type=TRAP&oids=1.3.6.1.2.1.7.5.1");
         assertTrue("Endpoint not an SnmpEndpoint: " + endpoint, endpoint instanceof SnmpEndpoint);
         SnmpEndpoint snmpEndpoint = (SnmpEndpoint) endpoint;
@@ -49,6 +53,8 @@ public class UriConfigurationTest extends Assert {
 
     @Test
     public void testOidPollerConfiguration() throws Exception {
+        context.start();
+
         Endpoint endpoint = context.getEndpoint("snmp:127.0.0.1:1662?protocol=udp&type=POLL&oids=1.3.6.1.2.1.7.5.1");
         assertTrue("Endpoint not an SnmpEndpoint: " + endpoint, endpoint instanceof SnmpEndpoint);
         SnmpEndpoint snmpEndpoint = (SnmpEndpoint) endpoint;

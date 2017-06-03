@@ -29,9 +29,9 @@ public class SplitterCompletedPropertyTest extends ContextTestSupport {
     public void testSplitterCompleted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Hello World", "Bye World", "Bye Moon");
-        mock.message(0).property(Exchange.SPLIT_COMPLETE).isEqualTo(false);
-        mock.message(1).property(Exchange.SPLIT_COMPLETE).isEqualTo(false);
-        mock.message(2).property(Exchange.SPLIT_COMPLETE).isEqualTo(true);
+        mock.message(0).exchangeProperty(Exchange.SPLIT_COMPLETE).isEqualTo(false);
+        mock.message(1).exchangeProperty(Exchange.SPLIT_COMPLETE).isEqualTo(false);
+        mock.message(2).exchangeProperty(Exchange.SPLIT_COMPLETE).isEqualTo(true);
 
         template.sendBody("direct:start", "Hello World,Bye World,Bye Moon");
 
@@ -41,9 +41,9 @@ public class SplitterCompletedPropertyTest extends ContextTestSupport {
     public void testSplitterStreamingCompleted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Hello World", "Bye World", "Bye Moon");
-        mock.message(0).property(Exchange.SPLIT_COMPLETE).isEqualTo(false);
-        mock.message(1).property(Exchange.SPLIT_COMPLETE).isEqualTo(false);
-        mock.message(2).property(Exchange.SPLIT_COMPLETE).isEqualTo(true);
+        mock.message(0).exchangeProperty(Exchange.SPLIT_COMPLETE).isEqualTo(false);
+        mock.message(1).exchangeProperty(Exchange.SPLIT_COMPLETE).isEqualTo(false);
+        mock.message(2).exchangeProperty(Exchange.SPLIT_COMPLETE).isEqualTo(true);
 
         template.sendBody("direct:streaming", "Hello World,Bye World,Bye Moon");
 

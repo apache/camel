@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.bindy.model.fix.simple;
 
+import java.util.Date;
+
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
@@ -52,6 +54,10 @@ public class Order {
     @KeyValuePairField(tag = 58)
     // Free text
     private String text;
+
+    @KeyValuePairField(tag = 777, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT-3")
+    // created
+    private Date created;
 
     public Header getHeader() {
         return header;
@@ -117,11 +123,19 @@ public class Order {
         this.text = text;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
     @Override
     public String toString() {
 
         return Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId + ", 22: " + this.iDSource + ", 48: " + this.securityId + ", 54: " + this.side
-               + ", 58: " + this.text;
+               + ", 58: " + this.text + ", 777: " + this.created;
 
     }
 

@@ -19,25 +19,24 @@ package org.apache.camel.rx.support;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
-
 import rx.Observable;
+import rx.functions.Func1;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
-import rx.util.functions.Func1;
 
 /**
  * A base class for implementing a {@link Processor} which provides access to an {@link Observable}
  * so that the messages can be processed using the <a href="https://github.com/Netflix/RxJava/wiki">RX Java API</a>
  */
 public abstract class ObservableProcessor<T> extends ServiceSupport implements Processor {
-    private final Subject observable = PublishSubject.create();
-    private final ProcessorToObserver processor;
+    private final Subject<T, T> observable = PublishSubject.create();
+    private final ProcessorToObserver<T> processor;
 
-    @SuppressWarnings("unchecked")
     protected ObservableProcessor(Func1<Exchange, T> func) {
-        this.processor = new ProcessorToObserver(func, observable);
+        this.processor = new ProcessorToObserver<T>(func, observable);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         processor.process(exchange);
     }
@@ -46,7 +45,6 @@ public abstract class ObservableProcessor<T> extends ServiceSupport implements P
      * Returns the {@link Observable} for this {@link Processor} so that the messages that are received
      * can be processed using the <a href="https://github.com/Netflix/RxJava/wiki">RX Java API</a>
      */
-    @SuppressWarnings("unchecked")
     public Observable<T> getObservable() {
         return observable;
     }
@@ -57,10 +55,12 @@ public abstract class ObservableProcessor<T> extends ServiceSupport implements P
      */
     protected abstract void configure(Observable<T> observable);
 
+    @Override
     protected void doStart() throws Exception {
         configure(getObservable());
     }
 
+    @Override
     protected void doStop() throws Exception {
         // noop
     }

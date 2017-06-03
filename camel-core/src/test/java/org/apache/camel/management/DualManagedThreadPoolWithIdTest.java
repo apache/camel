@@ -34,7 +34,7 @@ public class DualManagedThreadPoolWithIdTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=\"myThreads(threads)\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"myThreads(threads)\"");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(15, corePoolSize.intValue());
@@ -51,7 +51,7 @@ public class DualManagedThreadPoolWithIdTest extends ManagementTestSupport {
         String route = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", route);
 
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=\"myOtherThreads(threads)\"");
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"myOtherThreads(threads)\"");
 
         corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(1, corePoolSize.intValue());

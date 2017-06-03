@@ -97,6 +97,9 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         if (token instanceof ShiroSecurityToken) {
             ShiroSecurityToken sst = (ShiroSecurityToken) token;
             encryptedToken = ShiroSecurityHelper.encrypt(sst, policy.getPassPhrase(), policy.getCipherService());
+            // Remove unencrypted token + replace with an encrypted token
+            exchange.getIn().removeHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN);
+            exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encryptedToken);
         } else if (token instanceof String) {
             String data = (String) token;
             if (policy.isBase64()) {
@@ -169,19 +172,36 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
     private void authorizeUser(Subject currentUser, Exchange exchange) throws CamelAuthorizationException {
         boolean authorized = false;
         if (!policy.getPermissionsList().isEmpty()) {
-            for (Permission permission : policy.getPermissionsList()) {
-                if (currentUser.isPermitted(permission)) {
-                    authorized = true;
-                    break;
+            if (policy.isAllPermissionsRequired()) {
+                authorized = currentUser.isPermittedAll(policy.getPermissionsList());
+            } else {
+                for (Permission permission : policy.getPermissionsList()) {
+                    if (currentUser.isPermitted(permission)) {
+                        authorized = true;
+                        break;
+                    }
+                }
+            }
+        } else if (!policy.getRolesList().isEmpty()) {
+            if (policy.isAllRolesRequired()) {
+                authorized = currentUser.hasAllRoles(policy.getRolesList());
+            } else {
+                for (String role : policy.getRolesList()) {
+                    if (currentUser.hasRole(role)) {
+                        authorized = true;
+                        break;
+                    }
                 }
             }
         } else {
-            LOG.trace("Valid Permissions List not specified for ShiroSecurityPolicy. No authorization checks will be performed for current user.");
+            LOG.trace("Valid Permissions or Roles List not specified for ShiroSecurityPolicy. "
+                      + "No authorization checks will be performed for current user.");
             authorized = true;
         }
 
         if (!authorized) {
-            throw new CamelAuthorizationException("Authorization Failed. Subject's role set does not have the necessary permissions to perform further processing.", exchange);
+            throw new CamelAuthorizationException("Authorization Failed. Subject's role set does "
+                                                  + "not have the necessary roles or permissions to perform further processing.", exchange);
         }
 
         LOG.debug("Current user {} is successfully authorized.", currentUser.getPrincipal());

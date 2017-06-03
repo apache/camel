@@ -16,10 +16,13 @@
  */
 package org.apache.camel.spring.spi;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.AugmentedPropertyNameAwarePropertiesParser;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.springframework.beans.BeansException;
@@ -49,6 +52,11 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     private String configuredValueSeparator;
     private Boolean configuredIgnoreUnresolvablePlaceholders;
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_FALLBACK;
+    private Boolean ignoreResourceNotFound;
+
+    public int getSystemPropertiesMode() {
+        return systemPropertiesMode;
+    }
 
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
@@ -105,17 +113,38 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         super.setIgnoreUnresolvablePlaceholders(ignoreUnresolvablePlaceholders);
         this.configuredIgnoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
     }
+    
+    @Override
+    public void setIgnoreResourceNotFound(boolean ignoreResourceNotFound) {
+        super.setIgnoreResourceNotFound(ignoreResourceNotFound);
+        this.ignoreResourceNotFound = ignoreResourceNotFound;
+    }
+    
+    @Override
+    protected String resolvePlaceholder(String placeholder, Properties props) {
+        String value = props.getProperty(placeholder);
+        if (parser != null) {
+            // Just apply the parser to the place holder value to avoid configuring the other placeholder configure twice for the inside and outside camel context
+            return parser.parseProperty(placeholder, value, props);
+        } else {
+            return value;
+        }
+    }
 
     @Override
-    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
+    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
         // return the spring properties, if it
         Properties answer = new Properties();
-        for (String u : uri) {
-            String ref = "ref:" + id;
-            if (ref.equals(u)) {
+        for (PropertiesLocation location : locations) {
+            if ("ref".equals(location.getResolver()) && id.equals(location.getPath())) {
                 answer.putAll(properties);
             } else if (resolver != null) {
-                Properties p = resolver.resolveProperties(context, ignoreMissingLocation, u);
+                boolean flag = ignoreMissingLocation;
+                // Override the setting by using ignoreResourceNotFound
+                if (ignoreResourceNotFound != null) {
+                    flag = ignoreResourceNotFound;
+                }
+                Properties p = resolver.resolveProperties(context, flag, Collections.singletonList(location));
                 if (p != null) {
                     answer.putAll(p);
                 }
@@ -127,13 +156,13 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
     @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken,
-                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty) throws IllegalArgumentException {
+                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
 
         // first let Camel parse the text as it may contain Camel placeholders
         String answer;
         if (parser instanceof AugmentedPropertyNameAwarePropertiesParser) {
             answer = ((AugmentedPropertyNameAwarePropertiesParser) parser).parseUri(text, properties, prefixToken, suffixToken,
-                    propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
+                    propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
         } else {
             answer = parser.parseUri(text, properties, prefixToken, suffixToken);
         }
@@ -185,23 +214,25 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     }
 
     public void setParser(PropertiesParser parser) {
-        this.parser = parser;
+        if (this.parser != null) {
+            // use a bridge if there is already a parser configured
+            this.parser = new BridgePropertiesParser(this.parser, parser);
+        } else {
+            this.parser = parser;
+        }
     }
 
-    /**
-     * {@link PropertyPlaceholderHelper.PlaceholderResolver} to support using
-     */
     private class BridgePropertyPlaceholderResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
 
         private final Properties properties;
 
-        public BridgePropertyPlaceholderResolver(Properties properties) {
+        BridgePropertyPlaceholderResolver(Properties properties) {
             this.properties = properties;
         }
 
         public String resolvePlaceholder(String placeholderName) {
             String propVal = null;
-            if (systemPropertiesMode  == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            if (systemPropertiesMode == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
                 propVal = resolveSystemProperty(placeholderName);
             }
             if (propVal == null) {
@@ -214,5 +245,39 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
     }
 
+    private final class BridgePropertiesParser implements PropertiesParser {
+
+        private final PropertiesParser delegate;
+        private final PropertiesParser parser;
+
+        private BridgePropertiesParser(PropertiesParser delegate, PropertiesParser parser) {
+            this.delegate = delegate;
+            this.parser = parser;
+        }
+
+        @Override
+        public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
+            String answer = null;
+            if (delegate != null) {
+                answer = delegate.parseUri(text, properties, prefixToken, suffixToken);
+            }
+            if (answer != null) {
+                text = answer;
+            }
+            return parser.parseUri(text, properties, prefixToken, suffixToken);
+        }
+
+        @Override
+        public String parseProperty(String key, String value, Properties properties) {
+            String answer = null;
+            if (delegate != null) {
+                answer = delegate.parseProperty(key, value, properties);
+            }
+            if (answer != null) {
+                value = answer;
+            }
+            return parser.parseProperty(key, value, properties);
+        }
+    }
 
 }

@@ -17,7 +17,9 @@
 package org.apache.camel.component.controlbus;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  *
@@ -77,6 +79,18 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
         assertEquals("Started", status);
     }
 
+    public void testControlBusCurrentRouteStatus() throws Exception {
+        assertTrue(context.getRouteStatus("current").isStarted());
+
+        MockEndpoint mock = getMockEndpoint("mock:current");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived(ServiceStatus.Started.name());
+
+        sendBody("seda:current", null);
+
+        mock.assertIsSatisfied();
+    }
+
     public void testControlBusStatusLevelWarn() throws Exception {
         assertEquals("Stopped", context.getRouteStatus("foo").name());
 
@@ -96,6 +110,9 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("seda:foo").routeId("foo").noAutoStartup()
                     .to("mock:foo");
+                from("seda:current").routeId("current")
+                    .to("controlbus:route?routeId=current&action=status&loggingLevel=WARN")
+                    .to("mock:current");
             }
         };
     }

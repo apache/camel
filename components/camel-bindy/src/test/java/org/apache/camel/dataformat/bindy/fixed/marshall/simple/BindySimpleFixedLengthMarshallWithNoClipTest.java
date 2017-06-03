@@ -42,7 +42,7 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                BindyFixedLengthDataFormat bindy = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed.marshall.simple");
+                BindyFixedLengthDataFormat bindy = new BindyFixedLengthDataFormat(Order.class);
 
                 from("direct:start")
                     .marshal(bindy)

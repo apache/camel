@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.websocket;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.jetty.websocket.WebSocket;
-
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -49,13 +48,19 @@ public class WebsocketComponentServletTest {
     @Mock
     private NodeSynchronization sync;
     @Mock
-    private HttpServletRequest request;
+    private ServletUpgradeRequest request;
 
     private WebsocketComponentServlet websocketComponentServlet;
 
+    private Map<String, WebSocketFactory> socketFactory;
+    
+    
     @Before
     public void setUp() throws Exception {
-        websocketComponentServlet = new WebsocketComponentServlet(sync);
+        socketFactory = new HashMap<String, WebSocketFactory>();
+        socketFactory.put("default", new DefaultWebsocketFactory());
+        
+        websocketComponentServlet = new WebsocketComponentServlet(sync, null, socketFactory);
     }
 
     @Test
@@ -73,10 +78,10 @@ public class WebsocketComponentServletTest {
     @Test
     public void testDoWebSocketConnect() {
         websocketComponentServlet.setConsumer(consumer);
-        WebSocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
+        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
-        DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;
+        DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);
@@ -86,10 +91,10 @@ public class WebsocketComponentServletTest {
 
     @Test
     public void testDoWebSocketConnectConsumerIsNull() {
-        WebSocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
+        DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
-        DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;
+        DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);

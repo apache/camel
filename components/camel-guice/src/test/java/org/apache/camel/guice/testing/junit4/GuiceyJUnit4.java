@@ -59,7 +59,6 @@ public class GuiceyJUnit4 extends BlockJUnit4ClassRunner {
 
     @Override
     protected Statement withBefores(FrameworkMethod frameworkMethod, final Object test, Statement statement) {
-        @SuppressWarnings("deprecation")
         final Statement parent = super.withBefores(frameworkMethod, test, statement);
         return new Statement() {
             @Override
@@ -71,7 +70,6 @@ public class GuiceyJUnit4 extends BlockJUnit4ClassRunner {
         };
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected Statement withAfters(FrameworkMethod frameworkMethod, final Object test, Statement statement) {
         final Statement parent = super.withBefores(frameworkMethod, test, statement);

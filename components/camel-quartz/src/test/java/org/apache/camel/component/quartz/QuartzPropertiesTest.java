@@ -19,14 +19,13 @@ package org.apache.camel.component.quartz;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.quartz.SchedulerException;
 
 /**
  * @version 
  */
-public class QuartzPropertiesTest extends CamelTestSupport {
+public class QuartzPropertiesTest extends BaseQuartzTest {
 
     private QuartzComponent quartz;
 
@@ -49,7 +48,7 @@ public class QuartzPropertiesTest extends CamelTestSupport {
 
         quartz.start();
 
-        assertEquals("MyScheduler", quartz.getScheduler().getSchedulerName());
+        assertEquals("MyScheduler-" + context.getName(), quartz.getScheduler().getSchedulerName());
         assertEquals("2", quartz.getScheduler().getSchedulerInstanceId());
     }
 
@@ -63,7 +62,7 @@ public class QuartzPropertiesTest extends CamelTestSupport {
             quartz.start();
             fail("Should have thrown exception");
         } catch (SchedulerException e) {
-            assertEquals("Quartz properties file not found in classpath: doesnotexist.properties", e.getMessage());
+            assertEquals("Error loading Quartz properties file: doesnotexist.properties", e.getMessage());
         }
     }
 
@@ -78,7 +77,7 @@ public class QuartzPropertiesTest extends CamelTestSupport {
 
         quartz.start();
 
-        assertEquals("MyScheduler", quartz.getScheduler().getSchedulerName());
+        assertEquals("MyScheduler-" + context.getName(), quartz.getScheduler().getSchedulerName());
         assertEquals("2", quartz.getScheduler().getSchedulerInstanceId());
     }
 

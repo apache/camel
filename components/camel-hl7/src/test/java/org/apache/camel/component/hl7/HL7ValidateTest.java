@@ -19,11 +19,18 @@ package org.apache.camel.component.hl7;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v24.message.ADT_A01;
+import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.validation.ValidationContext;
+import ca.uhn.hl7v2.validation.ValidationException;
+import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
-
+import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -73,8 +80,38 @@ public class HL7ValidateTest extends CamelTestSupport {
         template.sendBody("direct:unmarshalOkCustom", body);
 
         assertMockEndpointsSatisfied();
-    }    
+    }
+    
+    @Test
+    public void testMarshalWithValidation() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:end");
+        mock.expectedMessageCount(0);
 
+        Message message = createADT01Message();
+        try {
+            template.sendBody("direct:start1", message);
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(HL7Exception.class, e.getCause());
+            assertIsInstanceOf(ValidationException.class, e.getCause().getCause());
+            System.out.println(e.getCause().getCause().getMessage());
+            assertTrue("Should be a validation error message", e.getCause().getCause().getMessage().startsWith("Validation failed:"));
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testMarshalWithoutValidation() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:end");
+        mock.expectedMessageCount(1);
+
+        Message message = createADT01Message();
+        template.sendBody("direct:start2", message);
+
+        assertMockEndpointsSatisfied();
+    }
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         HapiContext hapiContext = new DefaultHapiContext();
         hapiContext.setValidationContext(new NoValidation());
@@ -82,11 +119,33 @@ public class HL7ValidateTest extends CamelTestSupport {
         hl7 = new HL7DataFormat();
         hl7.setParser(p);
         
+        /*
+         * Let's start by adding a validation rule to the default validation
+         * that disallows PID-2 to be empty.
+         */
+        ValidationRuleBuilder builder = new ValidationRuleBuilder() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void configure() {
+                forVersion(Version.V24)
+                        .message("ADT", "*")
+                        .terser("PID-2", not(empty()));
+            }
+        };
+        ValidationContext customValidationContext = ValidationContextFactory.fromBuilder(builder);
+        
+        HapiContext customContext = new DefaultHapiContext(customValidationContext);
+        final Parser customParser = new GenericParser(customContext);
+        
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:unmarshalFailed").unmarshal().hl7().to("mock:unmarshal");
                 from("direct:unmarshalOk").unmarshal().hl7(false).to("mock:unmarshal");
                 from("direct:unmarshalOkCustom").unmarshal(hl7).to("mock:unmarshal");
+                from("direct:start1").marshal().hl7(customParser).to("mock:end");
+                from("direct:start2").marshal().hl7(true).to("mock:end");
+                
             }
         };
     }
@@ -118,6 +177,20 @@ public class HL7ValidateTest extends CamelTestSupport {
         body.append("\r");
         body.append(line8);
         return body.toString();
+    }
+    
+    private static Message createADT01Message() throws Exception {
+        ADT_A01 adt = new ADT_A01();
+        adt.initQuickstart("ADT", "A01", "P");
+
+        // Populate the PID Segment
+        PID pid = adt.getPID();
+        pid.getPatientName(0).getFamilyName().getSurname().setValue("Doe");
+        pid.getPatientName(0).getGivenName().setValue("John");
+        pid.getPhoneNumberBusiness(0).getPhoneNumber().setValue("333123456");
+        pid.getPatientIdentifierList(0).getID().setValue("123456");
+       
+        return adt;
     }
 
 }

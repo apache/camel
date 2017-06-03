@@ -37,6 +37,14 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
         assertEquals("'Hello'", exp.evaluate(exchange, String.class));
     }
+    
+    public void testSimpleStringList() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("\"Hello\" \"World\"", true);
+        Expression exp = parser.parseExpression();
+
+        assertEquals("\"Hello\" \"World\"", exp.evaluate(exchange, String.class));
+    }
+    
 
     public void testSimpleSingleQuoteWithFunction() throws Exception {
         exchange.getIn().setBody("World");

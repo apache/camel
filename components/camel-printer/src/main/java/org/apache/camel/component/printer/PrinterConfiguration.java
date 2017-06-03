@@ -21,26 +21,48 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import javax.print.DocFlavor;
 import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.Sides;
 
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
+@UriParams
 public class PrinterConfiguration {
     private URI uri;
-    private String hostname;
-    private int port;
-    private String printername;
-    private String printerPrefix;
-    private int copies = 1;
-    private String flavor;
-    private DocFlavor docFlavor;
-    private String mimeType;
-    private String mediaSize;
     private MediaSizeName mediaSizeName;
-    private String sides;
     private Sides internalSides;
+    private OrientationRequested internalOrientation;
+
+    @UriPath @Metadata(required = "true")
+    private String hostname;
+    @UriPath
+    private int port;
+    @UriPath
+    private String printername;
+    @UriParam
+    private String printerPrefix;
+    @UriParam(defaultValue = "1")
+    private int copies = 1;
+    @UriParam
+    private String flavor;
+    @UriParam
+    private DocFlavor docFlavor;
+    @UriParam
+    private String mimeType;
+    @UriParam(defaultValue = "na-letter")
+    private String mediaSize;
+    @UriParam(defaultValue = "one-sided", enums = "one-sided,duplex,tumble,two-sided-short-edge,two-sided-long-edge")
+    private String sides;
+    @UriParam(defaultValue = "portrait", enums = "portrait,landscape,reverse-portrait,reverse-landscape")
+    private String orientation;
+    @UriParam(defaultValue = "true")
     private boolean sendToPrinter = true;
+    @UriParam
     private String mediaTray;
 
     public PrinterConfiguration() {
@@ -49,10 +71,10 @@ public class PrinterConfiguration {
     public PrinterConfiguration(URI uri) throws URISyntaxException {
         this.uri = uri;
     }
-    
+
     public void parseURI(URI uri) throws Exception {
         String protocol = uri.getScheme();
-        
+
         if (!protocol.equalsIgnoreCase("lpr")) {
             throw new IllegalArgumentException("Unrecognized Print protocol: " + protocol + " for uri: " + uri);
         }
@@ -66,21 +88,23 @@ public class PrinterConfiguration {
         path = ObjectHelper.removeStartingCharacters(path, '/');
         path = ObjectHelper.removeStartingCharacters(path, '\\');
         setPrintername(path);
-        
+
         Map<String, Object> printSettings = URISupport.parseParameters(uri);
-        setFlavor((String)printSettings.get("flavor"));
-        setMimeType((String)printSettings.get("mimeType"));
+        setFlavor((String) printSettings.get("flavor"));
+        setMimeType((String) printSettings.get("mimeType"));
         setDocFlavor(assignDocFlavor(flavor, mimeType));
-        
-        setPrinterPrefix((String)printSettings.get("printerPrefix"));
-        
+
+        setPrinterPrefix((String) printSettings.get("printerPrefix"));
+
         if (printSettings.containsKey("copies")) {
             setCopies(Integer.valueOf((String) printSettings.get("copies")));
         }
-        setMediaSize((String)printSettings.get("mediaSize"));
-        setSides((String)printSettings.get("sides"));
-        setMediaSizeName(assignMediaSize(mediaSize));       
+        setMediaSize((String) printSettings.get("mediaSize"));
+        setSides((String) printSettings.get("sides"));
+        setOrientation((String) printSettings.get("orientation"));
+        setMediaSizeName(assignMediaSize(mediaSize));
         setInternalSides(assignSides(sides));
+        setInternalOrientation(assignOrientation(orientation));
         if (printSettings.containsKey("sendToPrinter")) {
             if (!(Boolean.valueOf((String) printSettings.get("sendToPrinter")))) {
                 setSendToPrinter(false);
@@ -100,7 +124,7 @@ public class PrinterConfiguration {
         if (flavor == null) {
             flavor = "DocFlavor.BYTE_ARRAY";
         }
-        
+
         DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         DocFlavorAssigner docFlavorAssigner = new DocFlavorAssigner();
         if (mimeType.equalsIgnoreCase("AUTOSENSE")) {
@@ -150,10 +174,10 @@ public class PrinterConfiguration {
         } else if (mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
             d = docFlavorAssigner.forMimeTypeRENDERABLEIMAGE(flavor);
         }
-        
+
         return d;
     }
-    
+
     private MediaSizeName assignMediaSize(String size) {
         MediaSizeAssigner mediaSizeAssigner = new MediaSizeAssigner();
 
@@ -171,7 +195,7 @@ public class PrinterConfiguration {
         } else {
             answer = mediaSizeAssigner.selectMediaSizeNameOther(size);
         }
-        
+
         return answer;
     }
 
@@ -194,10 +218,31 @@ public class PrinterConfiguration {
         } else {
             answer = Sides.ONE_SIDED;
         }
-        
+
         return answer;
     }
-    
+
+    public OrientationRequested assignOrientation(final String orientation) {
+        OrientationRequested answer;
+
+        if (orientation == null) {
+            // default to portrait
+            answer = OrientationRequested.PORTRAIT;
+        } else if (orientation.equalsIgnoreCase("portrait")) {
+            answer = OrientationRequested.PORTRAIT;
+        } else if (orientation.equalsIgnoreCase("landscape")) {
+            answer = OrientationRequested.LANDSCAPE;
+        } else if (orientation.equalsIgnoreCase("reverse-portrait")) {
+            answer = OrientationRequested.REVERSE_PORTRAIT;
+        } else if (orientation.equalsIgnoreCase("reverse-landscape")) {
+            answer = OrientationRequested.REVERSE_LANDSCAPE;
+        } else {
+            answer = OrientationRequested.PORTRAIT;
+        }
+
+        return answer;
+    }
+
     public URI getUri() {
         return uri;
     }
@@ -210,6 +255,9 @@ public class PrinterConfiguration {
         return hostname;
     }
 
+    /**
+     * Hostname of the printer
+     */
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -218,6 +266,9 @@ public class PrinterConfiguration {
         return port;
     }
 
+    /**
+     * Port number of the printer
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -226,6 +277,9 @@ public class PrinterConfiguration {
         return printername;
     }
 
+    /**
+     * Name of the printer
+     */
     public void setPrintername(String printername) {
         this.printername = printername;
     }
@@ -234,6 +288,9 @@ public class PrinterConfiguration {
         return copies;
     }
 
+    /**
+     * Number of copies to print
+     */
     public void setCopies(int copies) {
         this.copies = copies;
     }
@@ -242,6 +299,9 @@ public class PrinterConfiguration {
         return flavor;
     }
 
+    /**
+     * Sets DocFlavor to use.
+     */
     public void setFlavor(String flavor) {
         this.flavor = flavor;
     }
@@ -250,6 +310,9 @@ public class PrinterConfiguration {
         return docFlavor;
     }
 
+    /**
+     * Sets DocFlavor to use.
+     */
     public void setDocFlavor(DocFlavor docFlavor) {
         this.docFlavor = docFlavor;
     }
@@ -258,6 +321,11 @@ public class PrinterConfiguration {
         return mediaSize;
     }
 
+    /**
+     * Sets the stationary as defined by enumeration names in the javax.print.attribute.standard.MediaSizeName API.
+     * The default setting is to use North American Letter sized stationary.
+     * The value's case is ignored, e.g. values of iso_a4 and ISO_A4 may be used.
+     */
     public void setMediaSize(String mediaSize) {
         this.mediaSize = mediaSize;
     }
@@ -266,6 +334,9 @@ public class PrinterConfiguration {
         return sides;
     }
 
+    /**
+     * Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API
+     */
     public void setSides(String sides) {
         this.sides = sides;
     }
@@ -286,10 +357,32 @@ public class PrinterConfiguration {
         this.internalSides = internalSides;
     }
 
+    public OrientationRequested getInternalOrientation() {
+        return internalOrientation;
+    }
+
+    public void setInternalOrientation(OrientationRequested internalOrientation) {
+        this.internalOrientation = internalOrientation;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    /**
+     * Sets the page orientation.
+     */
+    public void setOrientation(String orientation) {
+        this.orientation = orientation;
+    }
+
     public String getMimeType() {
         return mimeType;
     }
 
+    /**
+     * Sets mimeTypes supported by the javax.print.DocFlavor API
+     */
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
@@ -298,6 +391,9 @@ public class PrinterConfiguration {
         return sendToPrinter;
     }
 
+    /**
+     * etting this option to false prevents sending of the print data to the printer
+     */
     public void setSendToPrinter(boolean sendToPrinter) {
         this.sendToPrinter = sendToPrinter;
     }
@@ -306,6 +402,9 @@ public class PrinterConfiguration {
         return mediaTray;
     }
 
+    /**
+     * Sets MediaTray supported by the javax.print.DocFlavor API, for example upper,middle etc.
+     */
     public void setMediaTray(String mediaTray) {
         this.mediaTray = mediaTray;
     }
@@ -314,6 +413,9 @@ public class PrinterConfiguration {
         return printerPrefix;
     }
 
+    /**
+     * Sets the prefix name of the printer, it is useful when the printer name does not start with //hostname/printer
+     */
     public void setPrinterPrefix(String printerPrefix) {
         this.printerPrefix = printerPrefix;
     }

@@ -33,7 +33,7 @@ public class AhcProduceWithClientConfigUriParametersTest extends BaseAhcTest {
     
     @Override
     protected String getAhcEndpointUri() {
-        return super.getAhcEndpointUri() + "?clientConfig.maxRequestRetry=3&clientConfig.followRedirects=true";
+        return super.getAhcEndpointUri() + "?clientConfig.maxRequestRetry=3&clientConfig.followRedirect=true";
     }
 
     @Override

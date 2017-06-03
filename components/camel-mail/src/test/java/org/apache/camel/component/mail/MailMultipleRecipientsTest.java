@@ -61,7 +61,7 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         // START SNIPPET: e2
         // here we have pre configured the to receivers to claus and willem. Notice we use comma to separate
         // the two recipients. Camel also support using colon as separator char
-        template.sendBody("smtp://localhost?To=claus@localhost,willem@localhost&CC=james@localhost", "Hello World");
+        template.sendBody("smtp://localhost?to=claus@localhost,willem@localhost&cc=james@localhost", "Hello World");
         // END SNIPPET: e2
 
         assertMockEndpointsSatisfied();

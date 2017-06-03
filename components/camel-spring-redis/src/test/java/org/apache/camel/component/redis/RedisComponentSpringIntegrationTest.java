@@ -26,7 +26,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Ignore
+@Ignore ("IntegrationTest")
 public class RedisComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "direct:start")

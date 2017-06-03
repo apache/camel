@@ -18,35 +18,12 @@ package org.apache.camel.component.hbase;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.camel.ProducerTemplate;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.hadoop.hbase.TableExistsException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class HBaseConsumerTest extends CamelHBaseTestSupport {
-
-    @Before
-    public void setUp() throws Exception {
-        if (systemReady) {
-            try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), families);
-            } catch (TableExistsException ex) {
-                //Ignore if table exists
-            }
-
-            super.setUp();
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (systemReady) {
-            super.tearDown();
-        }
-    }
 
     @Test
     public void testPutMultiRowsAndConsume() throws Exception {
@@ -54,14 +31,12 @@ public class HBaseConsumerTest extends CamelHBaseTestSupport {
             MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
             mockEndpoint.expectedMessageCount(3);
 
-            ProducerTemplate template = context.createProducerTemplate();
-            Map<String, Object> headers = new HashMap<String, Object>();
-
+            Map<String, Object> headers = new HashMap<>();
             for (int row = 0; row < key.length; row++) {
-                headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(row + 1), key[row]);
-                headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(row + 1), family[0]);
-                headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(row + 1), column[0][0]);
-                headers.put(HbaseAttribute.HBASE_VALUE.asHeader(row + 1), body[row][0][0]);
+                headers.put(HBaseAttribute.HBASE_ROW_ID.asHeader(row + 1), key[row]);
+                headers.put(HBaseAttribute.HBASE_FAMILY.asHeader(row + 1), family[0]);
+                headers.put(HBaseAttribute.HBASE_QUALIFIER.asHeader(row + 1), column[0][0]);
+                headers.put(HBaseAttribute.HBASE_VALUE.asHeader(row + 1), body[row][0][0]);
             }
             headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
 
@@ -81,10 +56,9 @@ public class HBaseConsumerTest extends CamelHBaseTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("hbase://" + PERSON_TABLE);
-
+                    .to("hbase://" + PERSON_TABLE);
                 from("hbase://" + PERSON_TABLE)
-                        .to("mock:result");
+                    .to("mock:result");
             }
         };
     }

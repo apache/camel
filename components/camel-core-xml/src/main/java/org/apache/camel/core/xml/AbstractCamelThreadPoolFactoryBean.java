@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -38,21 +39,32 @@ import org.apache.camel.util.CamelContextHelper;
 public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFactoryBean<ExecutorService> {
 
     @XmlAttribute(required = true)
+    @Metadata(description = "Sets the core pool size (threads to keep minimum in pool)")
     private String poolSize;
     @XmlAttribute
+    @Metadata(description = "Sets the maximum pool size")
     private String maxPoolSize;
     @XmlAttribute
+    @Metadata(description = "Sets the keep alive time for inactive threads")
     private String keepAliveTime;
     @XmlAttribute
     @XmlJavaTypeAdapter(TimeUnitAdapter.class)
+    @Metadata(description = "Sets the time unit used for keep alive time", defaultValue = "SECONDS")
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     @XmlAttribute
+    @Metadata(description = "Sets the maximum number of tasks in the work queue. Use -1 for an unbounded queue")
     private String maxQueueSize;
     @XmlAttribute
+    @Metadata(description = "Sets whether to allow core threads to timeout")
+    private String allowCoreThreadTimeOut;
+    @XmlAttribute
+    @Metadata(description = "Sets the handler for tasks which cannot be executed by the thread pool.", defaultValue = "CallerRuns")
     private ThreadPoolRejectedPolicy rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns;
     @XmlAttribute(required = true)
+    @Metadata(description = "To use a custom thread name / pattern")
     private String threadName;
     @XmlAttribute
+    @Metadata(description = "Whether to use a scheduled thread pool", defaultValue = "false")
     private Boolean scheduled;
 
     public ExecutorService getObject() throws Exception {
@@ -76,11 +88,17 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
             queueSize = CamelContextHelper.parseInteger(getCamelContext(), maxQueueSize);
         }
 
+        boolean allow = false;
+        if (allowCoreThreadTimeOut != null) {
+            allow = CamelContextHelper.parseBoolean(getCamelContext(), allowCoreThreadTimeOut);
+        }
+
         ThreadPoolProfile profile = new ThreadPoolProfileBuilder(getId())
                 .poolSize(size)
                 .maxPoolSize(max)
                 .keepAliveTime(keepAlive, timeUnit)
                 .maxQueueSize(queueSize)
+                .allowCoreThreadTimeOut(allow)
                 .rejectedPolicy(rejectedPolicy)
                 .build();
 
@@ -137,6 +155,14 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         this.maxQueueSize = maxQueueSize;
     }
 
+    public String getAllowCoreThreadTimeOut() {
+        return allowCoreThreadTimeOut;
+    }
+
+    public void setAllowCoreThreadTimeOut(String allowCoreThreadTimeOut) {
+        this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
+    }
+
     public ThreadPoolRejectedPolicy getRejectedPolicy() {
         return rejectedPolicy;
     }
@@ -160,4 +186,5 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     public void setScheduled(Boolean scheduled) {
         this.scheduled = scheduled;
     }
+
 }

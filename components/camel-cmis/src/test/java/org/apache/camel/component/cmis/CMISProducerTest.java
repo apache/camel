@@ -16,19 +16,22 @@
  */
 package org.apache.camel.component.cmis;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.Produce;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
 import org.junit.Test;
 
 public class CMISProducerTest extends CMISTestSupport {
@@ -62,7 +65,7 @@ public class CMISProducerTest extends CMISTestSupport {
         String newNodeId = exchange.getOut().getBody(String.class);
 
         CmisObject cmisObject = retrieveCMISObjectByIdFromServer(newNodeId);
-        Document doc = (Document)cmisObject;
+        Document doc = (Document) cmisObject;
         assertEquals("text/plain", doc.getPropertyValue(PropertyIds.CONTENT_STREAM_MIME_TYPE));
     }
 
@@ -91,7 +94,7 @@ public class CMISProducerTest extends CMISTestSupport {
         assertNotNull(newNodeId);
 
         CmisObject cmisObject = retrieveCMISObjectByIdFromServer(newNodeId);
-        Document doc = (Document)cmisObject;
+        Document doc = (Document) cmisObject;
         assertEquals("cmis:document", doc.getPropertyValue(PropertyIds.OBJECT_TYPE_ID));
     }
 
@@ -124,7 +127,26 @@ public class CMISProducerTest extends CMISTestSupport {
                 newNode.getPropertyValue(PropertyIds.CONTENT_STREAM_MIME_TYPE));
     }
 
-    @Test(expected = ResolveEndpointFailedException.class)
+    @Test
+    public void cmisSecondaryTypePropertiesAreStored() throws Exception {
+
+        List<String> secondaryTypes = Arrays.asList("MySecondaryType");
+
+        Exchange exchange = createExchangeWithInBody("Some content to be store");
+        exchange.getIn().getHeaders().put(PropertyIds.CONTENT_STREAM_MIME_TYPE, "text/plain; charset=UTF-8");
+        exchange.getIn().getHeaders().put(PropertyIds.NAME, "test.txt");
+        exchange.getIn().getHeaders().put(PropertyIds.SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
+        exchange.getIn().getHeaders().put("SecondaryStringProp", "secondaryTypePropValue");
+
+        template.send(exchange);
+        String newNodeId = exchange.getOut().getBody(String.class);
+        CmisObject newNode = retrieveCMISObjectByIdFromServer(newNodeId);
+
+        assertEquals(1, newNode.getSecondaryTypes().size());
+        assertEquals("secondaryTypePropValue", newNode.getPropertyValue("SecondaryStringProp"));
+    }
+
+    @Test(expected = CmisInvalidArgumentException.class)
     public void failConnectingToNonExistingRepository() throws Exception {
         Endpoint endpoint = context.getEndpoint("cmis://" + getUrl()
                 + "?username=admin&password=admin&repositoryId=NON_EXISTING_ID");
@@ -149,7 +171,7 @@ public class CMISProducerTest extends CMISTestSupport {
         template.send(exchange);
         String newNodeId = exchange.getOut().getBody(String.class);
 
-        Document document = (Document)retrieveCMISObjectByIdFromServer(newNodeId);
+        Document document = (Document) retrieveCMISObjectByIdFromServer(newNodeId);
         String documentFullPath = document.getPaths().get(0);
         assertEquals(existingFolderStructure + "/test.file", documentFullPath);
     }

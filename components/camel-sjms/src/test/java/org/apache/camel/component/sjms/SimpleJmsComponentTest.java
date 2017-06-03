@@ -34,7 +34,7 @@ public class SimpleJmsComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=true");
+                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
                 SjmsComponent component = new SjmsComponent();
                 component.setConnectionFactory(connectionFactory);
                 getContext().addComponent("sjms", component);

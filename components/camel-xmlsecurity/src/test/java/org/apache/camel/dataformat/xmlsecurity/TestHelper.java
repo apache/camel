@@ -19,9 +19,12 @@ package org.apache.camel.dataformat.xmlsecurity;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -29,15 +32,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
-
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-
 import org.junit.Assert;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +87,27 @@ public class TestHelper {
         HAS_3DES = ok;
     }
     
+    static final boolean UNRESTRICTED_POLICIES_INSTALLED;
+    static {
+        boolean ok = false;
+        try {
+            byte[] data = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+
+            SecretKey key192 = new SecretKeySpec(
+                new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                            0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+                            0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17},
+                            "AES");
+            Cipher c = Cipher.getInstance("AES");
+            c.init(Cipher.ENCRYPT_MODE, key192);
+            c.doFinal(data);
+            ok = true;
+        } catch (Exception e) {
+            //
+        }
+        UNRESTRICTED_POLICIES_INSTALLED = ok;
+    }
+    
     Logger log = LoggerFactory.getLogger(TestHelper.class);
 
     protected void sendText(final String fragment, CamelContext context) throws Exception {
@@ -104,7 +124,7 @@ public class TestHelper {
         });
     }
       
-    protected void testEncryption(String fragment, CamelContext context) throws Exception {
+    protected Document testEncryption(String fragment, CamelContext context) throws Exception {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:encrypted", MockEndpoint.class);
         resultEndpoint.setExpectedMessageCount(1);
         context.start();
@@ -116,6 +136,7 @@ public class TestHelper {
             logMessage(exchange, inDoc);
         }
         Assert.assertTrue("The XML message has no encrypted data.", hasEncryptedData(inDoc));
+        return inDoc;
     }
     
 

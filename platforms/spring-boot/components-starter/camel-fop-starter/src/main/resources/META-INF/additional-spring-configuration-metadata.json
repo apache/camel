@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.fop.enabled",
+      "description": "Enable fop component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

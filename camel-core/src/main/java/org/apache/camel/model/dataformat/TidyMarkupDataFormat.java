@@ -25,20 +25,23 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
-
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a wellformed HTML document (XML well Formed) {@link DataFormat}
+ * Tidymark (wellformed HTML) data format
  */
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "TidyMarkup")
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TidyMarkupDataFormat extends DataFormatDefinition {
-    @XmlAttribute(name = "dataObjectType")
+    @XmlAttribute(name = "dataObjectType") @Metadata(defaultValue = "org.w3c.dom.Node")
     private String dataObjectTypeName;
+    @XmlAttribute
+    private Boolean omitXmlDeclaration;
     @XmlTransient
     private Class<?> dataObjectType;
 
@@ -55,6 +58,11 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         this.setDataObjectType(dataObjectType);
     }
 
+    /**
+     * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+     * <p/>
+     * Is by default org.w3c.dom.Node
+     */
     public void setDataObjectType(Class<?> dataObjectType) {
         this.dataObjectType = dataObjectType;
     }
@@ -67,8 +75,24 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         return dataObjectTypeName;
     }
 
+    /**
+     * What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String.
+     * <p/>
+     * Is by default org.w3c.dom.Node
+     */
     public void setDataObjectTypeName(String dataObjectTypeName) {
         this.dataObjectTypeName = dataObjectTypeName;
+    }
+
+    public Boolean getOmitXmlDeclaration() {
+        return omitXmlDeclaration;
+    }
+
+    /**
+     * When returning a String, do we omit the XML declaration in the top.
+     */
+    public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
+        this.omitXmlDeclaration = omitXmlDeclaration;
     }
 
     @Override
@@ -88,6 +112,9 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (dataObjectType != null) {
             setProperty(camelContext, dataFormat, "dataObjectType", dataObjectType);
+        }
+        if (omitXmlDeclaration != null) {
+            setProperty(camelContext, dataFormat, "omitXmlDeclaration", omitXmlDeclaration);
         }
     }
 

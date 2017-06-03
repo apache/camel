@@ -42,14 +42,16 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Node;
 
+import org.xml.sax.EntityResolver;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.jaxp.StAX2SAXSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.converter.jaxp.XmlErrorListener;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
@@ -78,8 +80,9 @@ public class XsltBuilder implements Processor {
     private boolean failOnNullBody = true;
     private URIResolver uriResolver;
     private boolean deleteOutputFile;
-    private ErrorListener errorListener = new XsltErrorListener();
-    private boolean allowStAX;
+    private ErrorListener errorListener;
+    private boolean allowStAX = true;
+    private EntityResolver entityResolver;
 
     public XsltBuilder() {
     }
@@ -104,10 +107,9 @@ public class XsltBuilder implements Processor {
 
         Transformer transformer = getTransformer();
         configureTransformer(transformer, exchange);
-        transformer.setErrorListener(new DefaultTransformErrorHandler());
+
         ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
         Result result = resultHandler.getResult();
-
         // let's copy the headers before we invoke the transform in case they modify them
         Message out = exchange.getOut();
         out.copyFrom(exchange.getIn());
@@ -124,6 +126,17 @@ public class XsltBuilder implements Processor {
                 Object body = exchange.getIn().getBody();
                 source = getSource(exchange, body);
             }
+
+            if (source instanceof StAXSource) {
+                // Always convert StAXSource to SAXSource.
+                // * Xalan and Saxon-B don't support StAXSource.
+                // * The JDK default implementation (XSLTC) doesn't handle CDATA events
+                //   (see com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX).
+                // * Saxon-HE/PE/EE seem to support StAXSource, but don't advertise this
+                //   officially (via TransformerFactory.getFeature(StAXSource.FEATURE))
+                source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
+            }
+
             LOG.trace("Using {} as source", source);
             transformer.transform(source, result);
             LOG.trace("Transform complete with result {}", result);
@@ -134,7 +147,7 @@ public class XsltBuilder implements Processor {
             IOHelper.close(is);
         }
     }
-
+    
     // Builder methods
     // -------------------------------------------------------------------------
 
@@ -244,8 +257,14 @@ public class XsltBuilder implements Processor {
         setAllowStAX(true);
         return this;
     }
-    
-    
+
+    /**
+     * Used for caching {@link Transformer}s.
+     * <p/>
+     * By default no caching is in use.
+     *
+     * @param numberToCache  the maximum number of transformers to cache
+     */
     public XsltBuilder transformerCacheSize(int numberToCache) {
         if (numberToCache > 0) {
             transformers = new ArrayBlockingQueue<Transformer>(numberToCache);
@@ -255,7 +274,15 @@ public class XsltBuilder implements Processor {
         return this;
     }
 
-    // Properties
+    /**
+     * Uses a custom {@link javax.xml.transform.ErrorListener}.
+     */
+    public XsltBuilder errorListener(ErrorListener errorListener) {
+        setErrorListener(errorListener);
+        return this;
+    }
+
+        // Properties
     // -------------------------------------------------------------------------
 
     public Map<String, Object> getParameters() {
@@ -309,7 +336,12 @@ public class XsltBuilder implements Processor {
      */
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
         TransformerFactory factory = converter.getTransformerFactory();
-        factory.setErrorListener(errorListener);
+        if (errorListener != null) {
+            factory.setErrorListener(errorListener);
+        } else {
+            // use a logger error listener so users can see from the logs what the error may be
+            factory.setErrorListener(new XsltErrorListener());
+        }
         if (getUriResolver() != null) {
             factory.setURIResolver(getUriResolver());
         }
@@ -366,6 +398,10 @@ public class XsltBuilder implements Processor {
         this.uriResolver = uriResolver;
     }
 
+    public void setEntityResolver(EntityResolver entityResolver) {
+        this.entityResolver = entityResolver;
+    }
+
     public boolean isDeleteOutputFile() {
         return deleteOutputFile;
     }
@@ -391,15 +427,19 @@ public class XsltBuilder implements Processor {
         }
     }
 
-    private Transformer getTransformer() throws TransformerConfigurationException {
+    private Transformer getTransformer() throws Exception {
         Transformer t = null; 
         if (transformers != null) {
             t = transformers.poll();
         }
         if (t == null) {
-            t = getTemplate().newTransformer();
+            t = createTransformer();
         }
         return t;
+    }
+
+    protected Transformer createTransformer() throws Exception {
+        return getTemplate().newTransformer();
     }
 
     /**
@@ -440,7 +480,7 @@ public class XsltBuilder implements Processor {
      * <p/>
      * This implementation will prefer to source in the following order:
      * <ul>
-     *   <li>StAX - Is StAX is allowed</li>
+     *   <li>StAX - If StAX is allowed</li>
      *   <li>SAX - SAX as 2nd choice</li>
      *   <li>Stream - Stream as 3rd choice</li>
      *   <li>DOM - DOM as 4th choice</li>
@@ -452,16 +492,15 @@ public class XsltBuilder implements Processor {
             return (Source) body;
         }
         Source source = null;
-        if (body instanceof InputStream) {
-            return new StreamSource((InputStream)body);
-        }
         if (body != null) {
             if (isAllowStAX()) {
+                // try StAX if enabled
                 source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
             }
             if (source == null) {
                 // then try SAX
                 source = exchange.getContext().getTypeConverter().tryConvertTo(SAXSource.class, exchange, body);
+                tryAddEntityResolver((SAXSource)source);
             }
             if (source == null) {
                 // then try stream
@@ -494,22 +533,33 @@ public class XsltBuilder implements Processor {
         return source;
     }
 
+    private void tryAddEntityResolver(SAXSource source) {
+        //expecting source to have not null XMLReader
+        if (this.entityResolver != null && source != null) {
+            source.getXMLReader().setEntityResolver(this.entityResolver);
+        }
+    }
+
     /**
      * Configures the transformer with exchange specific parameters
      */
-    protected void configureTransformer(Transformer transformer, Exchange exchange) {
+    protected void configureTransformer(Transformer transformer, Exchange exchange) throws Exception {
         if (uriResolver == null) {
-            uriResolver = new XsltUriResolver(exchange.getContext().getClassResolver(), null);
+            uriResolver = new XsltUriResolver(exchange.getContext(), null);
         }
         transformer.setURIResolver(uriResolver);
-        transformer.setErrorListener(new XmlErrorListener());
+        if (errorListener == null) {
+            // set our error listener so we can capture errors and report them back on the exchange
+            transformer.setErrorListener(new DefaultTransformErrorHandler(exchange));
+        } else {
+            // use custom error listener
+            transformer.setErrorListener(errorListener);
+        }
 
         transformer.clearParameters();
-
         addParameters(transformer, exchange.getProperties());
         addParameters(transformer, exchange.getIn().getHeaders());
         addParameters(transformer, getParameters());
-
         transformer.setParameter("exchange", exchange);
         transformer.setParameter("in", exchange.getIn());
         transformer.setParameter("out", exchange.getOut());

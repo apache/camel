@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.twitter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -64,6 +66,34 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
             log.info("Tweet: " + e.getIn().getBody(String.class));
         }
     }
+    
+    @Test
+    public void testSearchTimelineWithDynamicQuerySinceId() throws Exception {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(TwitterConstants.TWITTER_KEYWORDS, "java");
+        headers.put(TwitterConstants.TWITTER_SINCEID, new Long(258347905419730944L));
+        templateHeader.sendBodyAndHeaders(null, headers);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.assertIsSatisfied();
+        List<Exchange> tweets = mock.getExchanges();
+        for (Exchange e : tweets) {
+            log.info("Tweet: " + e.getIn().getBody(String.class));
+        }
+    }
+    
+    @Test
+    public void testSearchTimelineWithDynamicQuerySinceIdAndMaxId() throws Exception {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(TwitterConstants.TWITTER_KEYWORDS, "java");
+        headers.put(TwitterConstants.TWITTER_SINCEID, new Long(258347905419730944L));
+        headers.put(TwitterConstants.TWITTER_MAXID, new Long(258348815243960320L));
+        templateHeader.sendBodyAndHeaders(null, headers);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(0);
+    }
 
     @Test
     public void testDoubleSearchKeepingOld() throws Exception {
@@ -90,17 +120,17 @@ public class SearchByExchangeDirectTest extends CamelTwitterTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .toF("twitter://search?%s&keywords=java", getUriTokens())
+                        .toF("twitter-search://foo?%s&keywords=java", getUriTokens())
                         .split().body()
                         .to("mock:result");
 
                 from("direct:header")
-                        .toF("twitter://search?%s", getUriTokens())
+                        .toF("twitter-search://foo?%s", getUriTokens())
                         .split().body()
                         .to("mock:result");
 
                 from("direct:double")
-                        .toF("twitter://search?filterOld=false&%s", getUriTokens())
+                        .toF("twitter-search://foo?filterOld=false&%s", getUriTokens())
                         .split().body()
                         .to("mock:result");
             }

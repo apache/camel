@@ -30,17 +30,9 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
 
-    public RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:a")
-                    .loadBalance().failover(IOException.class)
-                        .to("mock:a")
-                        .to("mock:b")
-                    .end();
-            }
-        };
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
     class AdviceWithRouteBuilder extends RouteBuilder {
@@ -65,8 +57,20 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
     }
 
     public void testFailover() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:a")
+                    .loadBalance().failover(IOException.class)
+                        .to("mock:a")
+                        .to("mock:b")
+                    .end();
+            }
+        });
+
         RouteDefinition routeDefinition = context.getRouteDefinitions().get(0);
         routeDefinition.adviceWith(context, new AdviceWithRouteBuilder());
+        context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedBodiesReceived("Intercepted SQL!");

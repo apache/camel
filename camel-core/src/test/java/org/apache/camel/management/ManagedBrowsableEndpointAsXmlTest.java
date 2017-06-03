@@ -56,7 +56,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
         String out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{0, true}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
@@ -120,7 +120,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
         String out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{0, false}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
@@ -151,7 +151,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
         String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[]{true}, new String[]{"java.lang.Boolean"});
         assertNotNull(out);
@@ -179,7 +179,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         List<Exchange> exchanges = getMockEndpoint("mock:result").getReceivedExchanges();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
         String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[]{false}, new String[]{"java.lang.Boolean"});
         assertNotNull(out);
@@ -209,7 +209,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
         String out = (String) mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[]{0, 1, true}, new String[]{"java.lang.Integer", "java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
@@ -238,7 +238,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
         String out = (String) mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[]{0, 1, false}, new String[]{"java.lang.Integer", "java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
@@ -258,7 +258,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
         try {
             mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[]{3, 1, false}, new String[]{"java.lang.Integer", "java.lang.Integer", "java.lang.Boolean"});

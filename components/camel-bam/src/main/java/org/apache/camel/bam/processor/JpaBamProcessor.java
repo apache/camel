@@ -16,6 +16,8 @@
  */
 package org.apache.camel.bam.processor;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.bam.model.ActivityState;
@@ -23,7 +25,6 @@ import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -37,13 +38,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
     private static final Logger LOG = LoggerFactory.getLogger(JpaBamProcessor.class);
 
-    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression correlationKeyExpression, ActivityRules activityRules) {
-        super(transactionTemplate, template, correlationKeyExpression, activityRules);
+    public JpaBamProcessor(TransactionTemplate transactionTemplate, EntityManagerFactory entityManagerFactory, Expression correlationKeyExpression, ActivityRules activityRules) {
+        super(transactionTemplate, entityManagerFactory, correlationKeyExpression, activityRules);
     }
 
-    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression correlationKeyExpression, 
+    public JpaBamProcessor(TransactionTemplate transactionTemplate, EntityManagerFactory entityManagerFactory, Expression correlationKeyExpression,
                            ActivityRules activityRules, Class<ProcessInstance> entitytype) {
-        super(transactionTemplate, template, correlationKeyExpression, activityRules, entitytype);
+        super(transactionTemplate, entityManagerFactory, correlationKeyExpression, activityRules, entitytype);
     }
 
     protected void processEntity(Exchange exchange, ProcessInstance process) throws Exception {

@@ -102,9 +102,10 @@ public class AbstractCamelTestNGSpringContextTestsPlainTest
     @Test
     public void testStopwatch() {
         StopWatch stopWatch = StopWatchTestExecutionListener.getStopWatch();
-        
+
+        // some servers is slower
         assertNotNull(stopWatch);
-        assertTrue(stopWatch.taken() < 100);
+        assertTrue(stopWatch.taken() < 1000);
     }
     
     @Test
@@ -118,10 +119,4 @@ public class AbstractCamelTestNGSpringContextTestsPlainTest
         assertNull(camelContext2.getDebugger());
     }
     
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testLazyLoadTypeConverters() {
-        assertTrue(camelContext.isLazyLoadTypeConverters());
-        assertTrue(camelContext2.isLazyLoadTypeConverters());
-    }
 }

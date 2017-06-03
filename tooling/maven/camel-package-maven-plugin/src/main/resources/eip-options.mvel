@@ -1,0 +1,9 @@
+The @{title} EIP supports @{eipOptions.size()} options which are listed below:
+
+@if{!eipOptions.isEmpty()}
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+@foreach{row : eipOptions}| @{row.name} | @{row.shortJavaType} | @{row.description}
+@end{}|=======================================================================
+@end{}

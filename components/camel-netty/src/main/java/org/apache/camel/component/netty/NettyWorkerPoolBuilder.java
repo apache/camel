@@ -62,19 +62,9 @@ public final class NettyWorkerPoolBuilder {
     /**
      * Creates a new worker pool.
      */
-    WorkerPool build() {
+    public WorkerPool build() {
         int count = workerCount > 0 ? workerCount : NettyHelper.DEFAULT_IO_THREADS;
         workerPool = new NioWorkerPool(Executors.newCachedThreadPool(), count, new CamelNettyThreadNameDeterminer(pattern, name));
         return workerPool;
-    }
-
-    /**
-     * Shutdown the created worker pool
-     */
-    public void destroy() {
-        if (workerPool != null) {
-            workerPool.shutdown();
-            workerPool = null;
-        }
     }
 }

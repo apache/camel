@@ -21,10 +21,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Random;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +46,16 @@ public final class FileUtil {
     private static final File USER_DIR = new File(System.getProperty(USER_DIR_KEY));
     private static File defaultTempDir;
     private static Thread shutdownHook;
+    private static boolean windowsOs = initWindowsOs();
 
     private FileUtil() {
         // Utils method
+    }
+
+    private static boolean initWindowsOs() {
+        // initialize once as System.getProperty is not fast
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+        return osName.contains("windows");
     }
 
     public static File getUserDir() {
@@ -70,10 +78,12 @@ public final class FileUtil {
             return path.replace('\\', '/');
         }
     }
-    
+
+    /**
+     * Returns true, if the OS is windows
+     */
     public static boolean isWindows() {
-        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.indexOf("windows") > -1;
+        return windowsOs;
     }
 
     @Deprecated
@@ -182,14 +192,53 @@ public final class FileUtil {
     }
 
     public static String stripExt(String name) {
+        return stripExt(name, false);
+    }
+
+    public static String stripExt(String name, boolean singleMode) {
         if (name == null) {
             return null;
         }
-        int pos = name.lastIndexOf('.');
-        if (pos != -1) {
-            return name.substring(0, pos);
+
+        // the name may have a leading path
+        int posUnix = name.lastIndexOf('/');
+        int posWin = name.lastIndexOf('\\');
+        int pos = Math.max(posUnix, posWin);
+
+        if (pos > 0) {
+            String onlyName = name.substring(pos + 1);
+            int pos2 = singleMode ? onlyName.lastIndexOf('.') : onlyName.indexOf('.');
+            if (pos2 > 0) {
+                return name.substring(0, pos + pos2 + 1);
+            }
+        } else {
+            // if single ext mode, then only return last extension
+            int pos2 = singleMode ? name.lastIndexOf('.') : name.indexOf('.');
+            if (pos2 > 0) {
+                return name.substring(0, pos2);
+            }
         }
+
         return name;
+    }
+
+    public static String onlyExt(String name) {
+        return onlyExt(name, false);
+    }
+
+    public static String onlyExt(String name, boolean singleMode) {
+        if (name == null) {
+            return null;
+        }
+        name = stripPath(name);
+
+        // extension is the first dot, as a file may have double extension such as .tar.gz
+        // if single ext mode, then only return last extension
+        int pos = singleMode ? name.lastIndexOf('.') : name.indexOf('.');
+        if (pos != -1) {
+            return name.substring(pos + 1);
+        }
+        return null;
     }
 
     /**
@@ -219,14 +268,23 @@ public final class FileUtil {
      * and uses OS specific file separators (eg {@link java.io.File#separator}).
      */
     public static String compactPath(String path) {
-        return compactPath(path, File.separatorChar);
+        return compactPath(path, "" + File.separatorChar);
+    }
+
+    /**
+     * Compacts a path by stacking it and reducing <tt>..</tt>,
+     * and uses the given separator.
+     *
+     */
+    public static String compactPath(String path, char separator) {
+        return compactPath(path, "" + separator);
     }
 
     /**
      * Compacts a path by stacking it and reducing <tt>..</tt>,
      * and uses the given separator.
      */
-    public static String compactPath(String path, char separator) {
+    public static String compactPath(String path, String separator) {
         if (path == null) {
             return null;
         }
@@ -245,7 +303,7 @@ public final class FileUtil {
         // preserve starting slash if given in input path
         boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
         
-        Stack<String> stack = new Stack<String>();
+        Deque<String> stack = new ArrayDeque<>();
 
         // separator can either be windows or unix style
         String separatorRegex = "\\\\|/";
@@ -267,8 +325,9 @@ public final class FileUtil {
         if (startsWithSlash) {
             sb.append(separator);
         }
-        
-        for (Iterator<String> it = stack.iterator(); it.hasNext();) {
+
+        // now we build back using FIFO so need to use descending
+        for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append(separator);
@@ -315,13 +374,28 @@ public final class FileUtil {
                                    + " does not exist, please set java.io.tempdir"
                                    + " to an existing directory");
         }
+        
+        if (!checkExists.canWrite()) {
+            throw new RuntimeException("The directory "
+                + checkExists.getAbsolutePath()
+                + " is not writable, please set java.io.tempdir"
+                + " to a writable directory");
+        }
 
         // create a sub folder with a random number
         Random ran = new Random();
         int x = ran.nextInt(1000000);
-
         File f = new File(s, "camel-tmp-" + x);
+        int count = 0;
+        // Let us just try 100 times to avoid the infinite loop
         while (!f.mkdir()) {
+            count++;
+            if (count >= 100) {
+                throw new RuntimeException("Camel cannot a temp directory from"
+                    + checkExists.getAbsolutePath()
+                    + " 100 times , please set java.io.tempdir"
+                    + " to a writable directory");
+            }
             x = ran.nextInt(1000000);
             f = new File(s, "camel-tmp-" + x);
         }
@@ -416,12 +490,7 @@ public final class FileUtil {
         if (!renamed && copyAndDeleteOnRenameFail) {
             // now do a copy and delete as all rename attempts failed
             LOG.debug("Cannot rename file from: {} to: {}, will now use a copy/delete approach instead", from, to);
-            copyFile(from, to);
-            if (!deleteFile(from)) {
-                throw new IOException("Renaming file from: " + from + " to: " + to + " failed due cannot delete from file: " + from + " after copy succeeded");
-            } else {
-                renamed = true;
-            }
+            renamed = renameFileUsingCopy(from, to);
         }
 
         if (LOG.isDebugEnabled() && count > 0) {
@@ -430,10 +499,44 @@ public final class FileUtil {
         return renamed;
     }
 
+    /**
+     * Rename file using copy and delete strategy. This is primarily used in
+     * environments where the regular rename operation is unreliable.
+     * 
+     * @param from the file to be renamed
+     * @param to the new target file
+     * @return <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
+     * @throws IOException If an I/O error occurs during copy or delete operations.
+     */
+    public static boolean renameFileUsingCopy(File from, File to) throws IOException {
+        // do not try to rename non existing files
+        if (!from.exists()) {
+            return false;
+        }
+
+        LOG.debug("Rename file '{}' to '{}' using copy/delete strategy.", from, to);
+
+        copyFile(from, to);
+        if (!deleteFile(from)) {
+            throw new IOException("Renaming file from '" + from + "' to '" + to + "' failed: Cannot delete file '" + from + "' after copy succeeded");
+        }
+
+        return true;
+    }
+
+    /**
+     * Copies the file
+     *
+     * @param from  the source file
+     * @param to    the destination file
+     * @throws IOException If an I/O error occurs during copy operation
+     */
     public static void copyFile(File from, File to) throws IOException {
-        FileChannel in = new FileInputStream(from).getChannel();
-        FileChannel out = new FileOutputStream(to).getChannel();
+        FileChannel in = null;
+        FileChannel out = null;
         try {
+            in = new FileInputStream(from).getChannel();
+            out = new FileOutputStream(to).getChannel();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using FileChannel to copy from: " + in + " to: " + out);
             }
@@ -449,6 +552,14 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Deletes the file.
+     * <p/>
+     * This implementation will attempt to delete the file up till three times with one second delay, which
+     * can mitigate problems on deleting files on some platforms such as Windows.
+     *
+     * @param file  the file to delete
+     */
     public static boolean deleteFile(File file) {
         // do not try to delete non existing files
         if (!file.exists()) {
@@ -508,9 +619,15 @@ public final class FileUtil {
      * @throws IOException is thrown if error creating the new file
      */
     public static boolean createNewFile(File file) throws IOException {
+        // need to check first
+        if (file.exists()) {
+            return false;
+        }
         try {
             return file.createNewFile();
         } catch (IOException e) {
+            // and check again if the file was created as createNewFile may create the file
+            // but throw a permission error afterwards when using some NAS
             if (file.exists()) {
                 return true;
             } else {

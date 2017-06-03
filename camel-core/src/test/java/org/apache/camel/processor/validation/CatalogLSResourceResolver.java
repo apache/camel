@@ -55,7 +55,7 @@ public class CatalogLSResourceResolver implements LSResourceResolver {
         private String systemId;
         private String baseURI;
 
-        public LSInputSource(String namespaceURI, String publicId, String systemId, String baseURI) {
+        LSInputSource(String namespaceURI, String publicId, String systemId, String baseURI) {
             if (publicId == null) {
                 publicId = namespaceURI;
             }

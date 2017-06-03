@@ -23,7 +23,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.CamelContext;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -46,12 +46,12 @@ public class XsltUriResolver implements URIResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltUriResolver.class);
 
-    private final ClassResolver resolver;
+    private final CamelContext context;
     private final String location;
     private final String baseScheme;
 
-    public XsltUriResolver(ClassResolver resolver, String location) {
-        this.resolver = resolver;
+    public XsltUriResolver(CamelContext context, String location) {
+        this.context = context;
         this.location = location;
         if (ResourceHelper.hasScheme(location)) {
             baseScheme = ResourceHelper.getScheme(location);
@@ -61,7 +61,12 @@ public class XsltUriResolver implements URIResolver {
         }
     }
 
+    @Override
     public Source resolve(String href, String base) throws TransformerException {
+        // supports the empty href
+        if (ObjectHelper.isEmpty(href)) {
+            href = location;
+        }
         if (ObjectHelper.isEmpty(href)) {
             throw new TransformerException("include href is empty");
         }
@@ -82,7 +87,7 @@ public class XsltUriResolver implements URIResolver {
 
             InputStream is;
             try {
-                is = ResourceHelper.resolveMandatoryResourceAsInputStream(resolver, href);
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, href);
             } catch (IOException e) {
                 throw new TransformerException(e);
             }

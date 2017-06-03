@@ -24,6 +24,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -51,22 +53,35 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
         super(startToken, endToken, true);
         // namespace token is optional
         this.inheritNamespaceToken = inheritNamespaceToken;
-
-        // must be XML tokens
-        if (!startToken.startsWith("<") || !startToken.endsWith(">")) {
-            throw new IllegalArgumentException("Start token must be a valid XML token, was: " + startToken);
-        }
-        if (!endToken.startsWith("<") || !endToken.endsWith(">")) {
-            throw new IllegalArgumentException("End token must be a valid XML token, was: " + endToken);
-        }
-        if (inheritNamespaceToken != null && (!inheritNamespaceToken.startsWith("<") || !inheritNamespaceToken.endsWith(">"))) {
-            throw new IllegalArgumentException("Namespace token must be a valid XML token, was: " + inheritNamespaceToken);
-        }
     }
 
     @Override
-    protected Iterator<?> createIterator(InputStream in, String charset) {
-        XMLTokenPairIterator iterator = new XMLTokenPairIterator(startToken, endToken, inheritNamespaceToken, in, charset);
+    protected Iterator<?> createIterator(Exchange exchange, InputStream in, String charset) {
+        String start = startToken;
+        if (SimpleLanguage.hasSimpleFunction(start)) {
+            start = SimpleLanguage.expression(start).evaluate(exchange, String.class);
+        }
+        String end = endToken;
+        if (SimpleLanguage.hasSimpleFunction(end)) {
+            end = SimpleLanguage.expression(end).evaluate(exchange, String.class);
+        }
+        String inherit = inheritNamespaceToken;
+        if (inherit != null && SimpleLanguage.hasSimpleFunction(inherit)) {
+            inherit = SimpleLanguage.expression(inherit).evaluate(exchange, String.class);
+        }
+
+        // must be XML tokens
+        if (!start.startsWith("<") || !start.endsWith(">")) {
+            throw new IllegalArgumentException("Start token must be a valid XML token, was: " + start);
+        }
+        if (!end.startsWith("<") || !end.endsWith(">")) {
+            throw new IllegalArgumentException("End token must be a valid XML token, was: " + end);
+        }
+        if (inherit != null && (!inherit.startsWith("<") || !inherit.endsWith(">"))) {
+            throw new IllegalArgumentException("Namespace token must be a valid XML token, was: " + inherit);
+        }
+
+        XMLTokenPairIterator iterator = new XMLTokenPairIterator(start, end, inherit, in, charset);
         iterator.init();
         return iterator;
     }

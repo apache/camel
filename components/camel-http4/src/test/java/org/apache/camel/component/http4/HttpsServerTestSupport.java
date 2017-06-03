@@ -51,8 +51,8 @@ public abstract class HttpsServerTestSupport extends HttpServerTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        System.getProperties().remove("javax.net.ssl.trustStorePassword");
-        System.getProperties().remove("javax.net.ssl.trustStore");
+        System.clearProperty("javax.net.ssl.trustStorePassword");
+        System.clearProperty("javax.net.ssl.trustStore");
     }
 
     @Override

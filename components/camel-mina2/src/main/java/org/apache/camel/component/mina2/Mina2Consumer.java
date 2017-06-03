@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.Charset;
@@ -31,7 +32,10 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.future.CloseFuture;
+import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoAcceptor;
+import org.apache.mina.core.service.IoConnector;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.session.IoSession;
@@ -46,6 +50,7 @@ import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.apache.mina.transport.vmpipe.VmPipeAcceptor;
 import org.apache.mina.transport.vmpipe.VmPipeAddress;
 import org.slf4j.Logger;
@@ -54,28 +59,34 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.
  *
- * @version 
+ * @version
  */
 public class Mina2Consumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Mina2Consumer.class);
+    private IoSession session;
+    private IoConnector connector;
     private SocketAddress address;
     private IoAcceptor acceptor;
-    private Mina2Configuration configuration;
+    private final Mina2Configuration configuration;
     private ExecutorService workerPool;
 
     public Mina2Consumer(final Mina2Endpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.configuration = endpoint.getConfiguration();
         //
-        // All mina2 endpoints are InOut. The endpoints are asynchronous. 
+        // All mina2 endpoints are InOut. The endpoints are asynchronous.
         // Endpoints can send "n" messages and receive "m" messages.
         //
         this.getEndpoint().setExchangePattern(ExchangePattern.InOut);
 
         String protocol = configuration.getProtocol();
         if (protocol.equals("tcp")) {
-            setupSocketProtocol(protocol, configuration);
+            if (configuration.isClientMode()) {
+                setupClientSocketProtocol(protocol, configuration);
+            } else {
+                setupSocketProtocol(protocol, configuration);
+            }
         } else if (configuration.isDatagramProtocol()) {
             setupDatagramProtocol(protocol, configuration);
         } else if (protocol.equals("vm")) {
@@ -86,16 +97,42 @@ public class Mina2Consumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        acceptor.setHandler(new ReceiveHandler());
-        acceptor.bind(address);
-        LOG.info("Bound to server address: {} using acceptor: {}", address, acceptor);
+        if (configuration.isClientMode() && configuration.getProtocol().equals("tcp")) {
+            connector.setHandler(new ReceiveHandler());
+            ConnectFuture future = connector.connect(address);
+            future.awaitUninterruptibly();
+            session = future.getSession();
+            LOG.info("Connected to server address: {} using connector: {} timeout: {} millis.", new Object[]{address, connector, configuration.getTimeout()});
+        } else {
+            acceptor.setHandler(new ReceiveHandler());
+            acceptor.bind(address);
+            LOG.info("Bound to server address: {} using acceptor: {}", address, acceptor);
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Unbinding from server address: {} using acceptor: {}", address, acceptor);
-        acceptor.unbind(address);
+        if (configuration.isClientMode() && configuration.getProtocol().equals("tcp")) {
+            LOG.info("Disconnect from server address: {} using connector: {}", address, connector);
+            if (session != null) {
+                CloseFuture closeFuture = session.closeNow();
+                closeFuture.awaitUninterruptibly();
+            }
+            connector.dispose(true);
+        } else {
+            LOG.info("Unbinding from server address: {} using acceptor: {}", address, acceptor);
+            if (address instanceof InetSocketAddress) {
+                // need to check if the address is IPV4 all network address
+                if ("0.0.0.0".equals(((InetSocketAddress)address).getAddress().getHostAddress())) {
+                    LOG.info("Unbind the server address {}", acceptor.getLocalAddresses());
+                    acceptor.unbind(acceptor.getLocalAddresses());
+                } else {
+                    acceptor.unbind(address);
+                }
+            } else {
+                acceptor.unbind(address);
+            }
+        }
         super.doStop();
     }
 
@@ -104,10 +141,12 @@ public class Mina2Consumer extends DefaultConsumer {
         if (workerPool != null) {
             workerPool.shutdown();
         }
+        if (acceptor != null) {
+            acceptor.dispose(true);
+        }
         super.doShutdown();
     }
-
-
+   
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void setupVmProtocol(String uri, Mina2Configuration configuration) {
@@ -156,10 +195,39 @@ public class Mina2Consumer extends DefaultConsumer {
         }
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(), configuration.isAutoStartTls());
-            filter.setUseClientMode(true);
+            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()), configuration.isAutoStartTls());
+            filter.setUseClientMode(false);
             acceptor.getFilterChain().addFirst("sslFilter", filter);
         }
+    }
+    
+    protected void setupClientSocketProtocol(String uri, Mina2Configuration configuration) throws Exception {
+        boolean minaLogger = configuration.isMinaLogger();
+        long timeout = configuration.getTimeout();
+        List<IoFilter> filters = configuration.getFilters();
+
+        address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
+
+        final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
+        connector = new NioSocketConnector(processorCount);
+
+        if (configuration.isOrderedThreadPoolExecutor()) {
+            workerPool = new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        } else {
+            workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        }
+        connector.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
+        if (minaLogger) {
+            connector.getFilterChain().addLast("logger", new LoggingFilter());
+        }
+        appendIoFiltersToChain(filters, connector.getFilterChain());
+        if (configuration.getSslContextParameters() != null) {
+            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()), configuration.isAutoStartTls());
+            filter.setUseClientMode(true);
+            connector.getFilterChain().addFirst("sslFilter", filter);
+        }
+        configureCodecFactory("Mina2Consumer", connector, configuration);
+        connector.setConnectTimeoutMillis(timeout);
     }
 
     protected void configureCodecFactory(String type, IoService service, Mina2Configuration configuration) {
@@ -193,7 +261,6 @@ public class Mina2Consumer extends DefaultConsumer {
             addCodecFactory(service, codecFactory);
             LOG.debug("{}: Using ObjectSerializationCodecFactory: {}", type, codecFactory);
         }
-
     }
 
     protected void setupDatagramProtocol(String uri, Mina2Configuration configuration) {
@@ -204,9 +271,15 @@ public class Mina2Consumer extends DefaultConsumer {
         acceptor = new NioDatagramAcceptor();
 
         // acceptor connectorConfig
-        configureDataGramCodecFactory("MinaConsumer", acceptor, configuration);
+        configureDataGramCodecFactory("Mina2Consumer", acceptor, configuration);
         acceptor.setCloseOnDeactivation(true);
         // reuse address is default true for datagram
+        if (configuration.isOrderedThreadPoolExecutor()) {
+            workerPool = new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        } else {
+            workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        }
+        acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -302,10 +375,14 @@ public class Mina2Consumer extends DefaultConsumer {
 
         @Override
         public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+            if (cause instanceof IOException) {
+                LOG.debug("IOExceptions are automatically handled by MINA");
+                return;
+            }
             // close invalid session
             if (session != null) {
                 LOG.warn("Closing session as an exception was thrown from MINA");
-                session.close(true);
+                session.closeNow();
             }
 
             // must wrap and rethrow since cause can be of Throwable and we must only throw Exception
@@ -341,8 +418,12 @@ public class Mina2Consumer extends DefaultConsumer {
             //
             boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
             Object response = null;
-            response = Mina2PayloadHelper.getOut(getEndpoint(), exchange);
-
+            if (exchange.hasOut()) {
+                response = Mina2PayloadHelper.getOut(getEndpoint(), exchange);
+            } else {
+                response = Mina2PayloadHelper.getIn(getEndpoint(), exchange);
+            }
+            
             boolean failed = exchange.isFailed();
             if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
                 if (exchange.getException() != null) {
@@ -375,7 +456,7 @@ public class Mina2Consumer extends DefaultConsumer {
             }
             if (disconnect) {
                 LOG.debug("Closing session when complete at address: {}", address);
-                session.close(true);
+                session.closeNow();
             }
         }
     }

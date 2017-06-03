@@ -21,24 +21,28 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * @version 
  */
-public class SmppComponent extends DefaultComponent {
+public class SmppComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private SmppConfiguration configuration;
 
     public SmppComponent() {
+        super(SmppEndpoint.class);
     }
 
     public SmppComponent(SmppConfiguration configuration) {
+        this();
         this.configuration = configuration;
     }
 
     public SmppComponent(CamelContext context) {
-        super(context);
+        super(context, SmppEndpoint.class);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -86,6 +90,9 @@ public class SmppComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared SmppConfiguration as configuration.
+     */
     public void setConfiguration(SmppConfiguration configuration) {
         this.configuration = configuration;
     }

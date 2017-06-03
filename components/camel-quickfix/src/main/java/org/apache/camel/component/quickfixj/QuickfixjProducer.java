@@ -43,6 +43,7 @@ public class QuickfixjProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         try {
+            getEndpoint().ensureInitialized();
             sendMessage(exchange, exchange.getIn());
         } catch (Exception e) {
             exchange.setException(e);
@@ -76,6 +77,7 @@ public class QuickfixjProducer extends DefaultProducer {
 
         if (callable != null) {
             Message reply = callable.call();
+            exchange.getOut().getHeaders().putAll(camelMessage.getHeaders());
             exchange.getOut().setBody(reply);
         }
     }

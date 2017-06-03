@@ -22,10 +22,10 @@ import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeProperties;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.Properties;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
@@ -73,7 +73,7 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").beanRef("myBean");
+                from("direct:in").bean("myBean");
             }
         };
     }
@@ -87,7 +87,7 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
             return "MyBean[foo: " + foo + " bar: " + bar + "]";
         }
 
-        public void myMethod(@Properties Map<?, ?> foo, @Headers Map<?, ?> bar) {
+        public void myMethod(@ExchangeProperties Map<?, ?> foo, @Headers Map<?, ?> bar) {
             this.foo = foo;
             this.bar = bar;
             LOG.info("myMethod() method called on " + this);

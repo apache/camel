@@ -23,15 +23,14 @@ import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 case class SSplitDefinition(override val target: SplitDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[SplitDefinition] {
-  
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SSplitDefinition]
-  
   def aggregationStrategy(aggregationStrategy: AggregationStrategy) = wrap(target.aggregationStrategy(aggregationStrategy))
   
   def aggregationStrategyRef(ref: String) = wrap(target.aggregationStrategyRef(ref))
   
   def parallelProcessing = wrap(target.parallelProcessing)
-  
+
+  def parallelAggregate = wrap(target.parallelAggregate)
+
   def streaming = wrap(target.streaming)
   
   def stopOnException = wrap(target.stopOnException)

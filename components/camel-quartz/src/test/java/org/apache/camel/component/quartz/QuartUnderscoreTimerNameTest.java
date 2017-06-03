@@ -18,10 +18,9 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class QuartUnderscoreTimerNameTest extends CamelTestSupport {
+public class QuartUnderscoreTimerNameTest extends BaseQuartzTest {
 
     @Test
     public void testQuartzCronRouteUnderscore() throws Exception {

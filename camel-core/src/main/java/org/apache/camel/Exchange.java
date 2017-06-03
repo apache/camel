@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +78,9 @@ public interface Exchange {
     String AGGREGATED_TIMEOUT               = "CamelAggregatedTimeout";
     String AGGREGATED_COMPLETED_BY          = "CamelAggregatedCompletedBy";
     String AGGREGATED_CORRELATION_KEY       = "CamelAggregatedCorrelationKey";
+    String AGGREGATED_COLLECTION_GUARD      = "CamelAggregatedCollectionGuard";
     String AGGREGATION_STRATEGY             = "CamelAggregationStrategy";
+    String AGGREGATION_COMPLETE_CURRENT_GROUP = "CamelAggregationCompleteCurrentGroup";
     String AGGREGATION_COMPLETE_ALL_GROUPS  = "CamelAggregationCompleteAllGroups";
     String AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE  = "CamelAggregationCompleteAllGroupsInclusive";
     String ASYNC_WAIT                       = "CamelAsyncWait";
@@ -86,35 +89,42 @@ public interface Exchange {
     String BATCH_SIZE                 = "CamelBatchSize";
     String BATCH_COMPLETE             = "CamelBatchComplete";
     String BEAN_METHOD_NAME           = "CamelBeanMethodName";
+    @Deprecated
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
     String BINDING                    = "CamelBinding";
     // do not prefix with Camel and use lower-case starting letter as its a shared key
     // used across other Apache products such as AMQ, SMX etc.
     String BREADCRUMB_ID              = "breadcrumbId";
 
-    String CHARSET_NAME      = "CamelCharsetName";
-    String CREATED_TIMESTAMP = "CamelCreatedTimestamp";
-    String CONTENT_ENCODING  = "Content-Encoding";
-    String CONTENT_LENGTH    = "Content-Length";
-    String CONTENT_TYPE      = "Content-Type";
-    String CORRELATION_ID    = "CamelCorrelationId";
+    String CHARSET_NAME          = "CamelCharsetName";
+    String CIRCUIT_BREAKER_STATE = "CamelCircuitBreakerState";
+    String CREATED_TIMESTAMP     = "CamelCreatedTimestamp";
+    String CONTENT_ENCODING      = "Content-Encoding";
+    String CONTENT_LENGTH        = "Content-Length";
+    String CONTENT_TYPE          = "Content-Type";
+    String COOKIE_HANDLER        = "CamelCookieHandler";
+    String CORRELATION_ID        = "CamelCorrelationId";
 
     String DATASET_INDEX             = "CamelDataSetIndex";
     String DEFAULT_CHARSET_PROPERTY  = "org.apache.camel.default.charset";
     String DESTINATION_OVERRIDE_URL = "CamelDestinationOverrideUrl";
     String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
     String DUPLICATE_MESSAGE         = "CamelDuplicateMessage";
+    
+    String DOCUMENT_BUILDER_FACTORY = "CamelDocumentBuilderFactory";
 
-    String EXCEPTION_CAUGHT           = "CamelExceptionCaught";
-    String EXCEPTION_HANDLED          = "CamelExceptionHandled";
-    String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
-    String ERRORHANDLER_HANDLED       = "CamelErrorHandlerHandled";
-    String EXTERNAL_REDELIVERED       = "CamelExternalRedelivered";
+    String EXCEPTION_CAUGHT              = "CamelExceptionCaught";
+    String EXCEPTION_HANDLED             = "CamelExceptionHandled";
+    String EVALUATE_EXPRESSION_RESULT    = "CamelEvaluateExpressionResult";
+    String ERRORHANDLER_CIRCUIT_DETECTED = "CamelFErrorHandlerCircuitDetected";
+    String ERRORHANDLER_HANDLED          = "CamelErrorHandlerHandled";
+    String EXTERNAL_REDELIVERED          = "CamelExternalRedelivered";
 
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
     String FAILURE_ROUTE_ID     = "CamelFailureRouteId";
-    String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
+    String FATAL_FALLBACK_ERROR_HANDLER  = "CamelFatalFallbackErrorHandler";
+    String FILE_CONTENT_TYPE    = "CamelFileContentType";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME            = "CamelFileName";
     String FILE_NAME_ONLY       = "CamelFileNameOnly";
@@ -124,9 +134,12 @@ public interface Exchange {
     String FILE_PARENT          = "CamelFileParent";
     String FILE_LAST_MODIFIED   = "CamelFileLastModified";
     String FILE_LENGTH          = "CamelFileLength";
-    String FILTER_MATCHED       = "CamelFilterMatched";
-    String FILE_LOCK_FILE_ACQUIRED   = "CamelFileLockFileAcquired"; 
+    String FILE_LOCK_FILE_ACQUIRED = "CamelFileLockFileAcquired";
     String FILE_LOCK_FILE_NAME  = "CamelFileLockFileName";
+    String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
+    String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
+    String FILTER_MATCHED       = "CamelFilterMatched";
+    String FILTER_NON_XML_CHARS = "CamelFilterNonXmlChars";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     
@@ -136,7 +149,9 @@ public interface Exchange {
     String HTTP_PATH               = "CamelHttpPath";
     String HTTP_PROTOCOL_VERSION   = "CamelHttpProtocolVersion";
     String HTTP_QUERY              = "CamelHttpQuery";
+    String HTTP_RAW_QUERY          = "CamelHttpRawQuery";
     String HTTP_RESPONSE_CODE      = "CamelHttpResponseCode";
+    String HTTP_RESPONSE_TEXT      = "CamelHttpResponseText";
     String HTTP_URI                = "CamelHttpUri";
     String HTTP_URL                = "CamelHttpUrl";
     String HTTP_CHUNKED            = "CamelHttpChunked";
@@ -149,12 +164,17 @@ public interface Exchange {
     String LANGUAGE_SCRIPT          = "CamelLanguageScript";
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
     String LOG_DEBUG_BODY_STREAMS   = "CamelLogDebugStreams";
+    String LOG_EIP_NAME             = "CamelLogEipName";
     String LOOP_INDEX               = "CamelLoopIndex";
     String LOOP_SIZE                = "CamelLoopSize";
 
     String MAXIMUM_CACHE_POOL_SIZE     = "CamelMaximumCachePoolSize";
     String MAXIMUM_ENDPOINT_CACHE_SIZE = "CamelMaximumEndpointCacheSize";
+    String MAXIMUM_TRANSFORMER_CACHE_SIZE = "CamelMaximumTransformerCacheSize";
+    String MAXIMUM_VALIDATOR_CACHE_SIZE = "CamelMaximumValidatorCacheSize";
     String MESSAGE_HISTORY             = "CamelMessageHistory";
+    String MESSAGE_HISTORY_HEADER_FORMAT      = "CamelMessageHistoryHeaderFormat";
+    String MESSAGE_HISTORY_OUTPUT_FORMAT      = "CamelMessageHistoryOutputFormat";
     String MULTICAST_INDEX             = "CamelMulticastIndex";
     String MULTICAST_COMPLETE          = "CamelMulticastComplete";
 
@@ -164,7 +184,8 @@ public interface Exchange {
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
-
+    String STREAM_CACHE_UNIT_OF_WORK = "CamelStreamCacheUnitOfWork";
+    
     String RECIPIENT_LIST_ENDPOINT = "CamelRecipientListEndpoint";
     String RECEIVED_TIMESTAMP      = "CamelReceivedTimestamp";
     String REDELIVERED             = "CamelRedelivered";
@@ -172,12 +193,21 @@ public interface Exchange {
     String REDELIVERY_MAX_COUNTER  = "CamelRedeliveryMaxCounter";
     String REDELIVERY_EXHAUSTED    = "CamelRedeliveryExhausted";
     String REDELIVERY_DELAY        = "CamelRedeliveryDelay";
+    String REST_HTTP_URI           = "CamelRestHttpUri";
+    String REST_HTTP_QUERY         = "CamelRestHttpQuery";
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
     String ROUTE_STOP              = "CamelRouteStop";
 
+    String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
+    String COMPILE_SCRIPT = "CamelCompileScript";
+    
+    String SAXPARSER_FACTORY   = "CamelSAXParserFactory";
+
+    String SCHEDULER_POLLED_MESSAGES = "CamelSchedulerPolledMessages";
     String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
+    String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding"; 
     String SLIP_ENDPOINT      = "CamelSlipEndpoint";
     String SPLIT_INDEX        = "CamelSplitIndex";
     String SPLIT_COMPLETE     = "CamelSplitComplete";
@@ -193,16 +223,21 @@ public interface Exchange {
     String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
+    String TRY_ROUTE_BLOCK       = "TryRouteBlock";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
 
     String UNIT_OF_WORK_EXHAUSTED    = "CamelUnitOfWorkExhausted";
+    
     /**
      * @deprecated UNIT_OF_WORK_PROCESS_SYNC is not in use and will be removed in future Camel release
      */
     @Deprecated
     String UNIT_OF_WORK_PROCESS_SYNC = "CamelUnitOfWorkProcessSync";
 
-    String XSLT_FILE_NAME = "CamelXsltFileName";
+    String XSLT_FILE_NAME   = "CamelXsltFileName";
+    String XSLT_ERROR       = "CamelXsltError";
+    String XSLT_FATAL_ERROR = "CamelXsltFatalError";
+    String XSLT_WARNING     = "CamelXsltWarning";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
@@ -280,6 +315,24 @@ public interface Exchange {
      */
     Object removeProperty(String name);
 
+    /**
+     * Remove all of the properties associated with the exchange matching a specific pattern
+     *
+     * @param pattern pattern of names
+     * @return boolean whether any properties matched
+     */
+    boolean removeProperties(String pattern);
+    
+    /**
+     * Removes the properties from this exchange that match the given <tt>pattern</tt>, 
+     * except for the ones matching one ore more <tt>excludePatterns</tt>
+     * 
+     * @param pattern pattern of names that should be removed
+     * @param excludePatterns one or more pattern of properties names that should be excluded (= preserved)
+     * @return boolean whether any properties matched
+     */ 
+    boolean removeProperties(String pattern, String... excludePatterns);
+    
     /**
      * Returns all of the properties associated with the exchange
      *
@@ -438,8 +491,19 @@ public interface Exchange {
     /**
      * Creates a copy of the current message exchange so that it can be
      * forwarded to another destination
+     * <p/>
+     * Notice this operation invokes <tt>copy(false)</tt>
      */
     Exchange copy();
+
+    /**
+     * Creates a copy of the current message exchange so that it can be
+     * forwarded to another destination
+     *
+     * @param safeCopy whether to copy exchange properties and message headers safely to a new map instance,
+     *                 or allow sharing the same map instances in the returned copy.
+     */
+    Exchange copy(boolean safeCopy);
 
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint
@@ -521,5 +585,10 @@ public interface Exchange {
      * @return the on completions
      */
     List<Synchronization> handoverCompletions();
+
+    /**
+     * Gets the timestamp when this exchange was created.
+     */
+    Date getCreated();
 
 }

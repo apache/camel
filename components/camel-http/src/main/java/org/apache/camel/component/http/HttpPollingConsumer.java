@@ -21,7 +21,8 @@ import java.io.IOException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.ServicePoolAware;
+import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.httpclient.Header;
@@ -32,9 +33,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 /**
  * A polling HTTP consumer which by default performs a GET
  *
- * @version 
  */
-public class HttpPollingConsumer extends PollingConsumerSupport {
+public class HttpPollingConsumer extends PollingConsumerSupport implements ServicePoolAware {
     private final HttpEndpoint endpoint;
     private HttpClient httpClient;
 
@@ -90,6 +90,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
                 }
             }
             message.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+            message.setHeader(Exchange.HTTP_RESPONSE_TEXT, method.getStatusText());
 
             return exchange;
         } catch (IOException e) {
@@ -101,6 +102,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
 
     // Properties
     //-------------------------------------------------------------------------
+
     public HttpClient getHttpClient() {
         return httpClient;
     }
@@ -111,6 +113,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
 
     // Implementation methods
     //-------------------------------------------------------------------------
+
     protected HttpMethod createMethod(Exchange exchange) {
         String uri = HttpHelper.createURL(exchange, endpoint);
         return new GetMethod(uri);

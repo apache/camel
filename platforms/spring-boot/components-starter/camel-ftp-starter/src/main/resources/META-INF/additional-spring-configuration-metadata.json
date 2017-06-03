@@ -1,0 +1,22 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.ftps.enabled",
+      "description": "Enable ftps component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.sftp.enabled",
+      "description": "Enable sftp component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.ftp.enabled",
+      "description": "Enable ftp component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

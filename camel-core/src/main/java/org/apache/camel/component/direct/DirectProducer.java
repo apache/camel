@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DirectProducer extends DefaultAsyncProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
     private final DirectEndpoint endpoint;
 
     public DirectProducer(DirectEndpoint endpoint) {
@@ -38,8 +38,11 @@ public class DirectProducer extends DefaultAsyncProducer {
 
     public void process(Exchange exchange) throws Exception {
         if (endpoint.getConsumer() == null) {
-            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
-            throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+            if (endpoint.isFailIfNoConsumers()) {
+                throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+            } else {
+                LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+            }
         } else {
             endpoint.getConsumer().getProcessor().process(exchange);
         }
@@ -47,9 +50,12 @@ public class DirectProducer extends DefaultAsyncProducer {
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (endpoint.getConsumer() == null) {
-            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
-            // indicate its done synchronously
-            exchange.setException(new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
+            if (endpoint.isFailIfNoConsumers()) {
+                // indicate its done synchronously
+                exchange.setException(new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
+            } else {
+                LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+            }
             callback.done(true);
             return true;
         } else {

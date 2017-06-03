@@ -27,6 +27,7 @@ import org.apache.camel.cxf.multipart.types.InE;
 import org.apache.camel.cxf.multipart.types.ObjectFactory;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -53,9 +54,7 @@ public class CXFMultiPartTest extends CamelTestSupport {
     @After
     public void tearDown() throws Exception {
 
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
         super.tearDown();
     }
 

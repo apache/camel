@@ -29,11 +29,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ProducerCache;
 import org.jivesoftware.smack.packet.Message;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
+@Ignore("Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target")
 public class XmppRouteTest extends TestCase {
     protected static boolean enabled;
     protected static String xmppUrl;
@@ -52,6 +53,7 @@ public class XmppRouteTest extends TestCase {
         TestRunner.run(XmppRouteTest.class);
     }
 
+    @Test
     public void testXmppRouteWithTextMessage() throws Exception {
         String expectedBody = "Hello there!";
         sendExchange(expectedBody);

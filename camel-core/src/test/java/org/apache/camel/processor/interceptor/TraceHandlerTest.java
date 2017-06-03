@@ -37,6 +37,23 @@ public class TraceHandlerTest extends TracingTestBase {
         return contextLocal;
     }
 
+    protected void validateTestTracerInOnly() {
+        assertEquals(6, tracedMessages.size());
+        for (StringBuilder tracedMessage : tracedMessages) {
+            String message = tracedMessage.toString();
+            assertTrue(message.startsWith("Complete:"));
+        }
+    }
+
+    protected void validateTestTracerInOut() {
+        assertEquals(6, tracedMessages.size());
+        for (StringBuilder tracedMessage : tracedMessages) {
+            String message = tracedMessage.toString();
+            assertTrue(message.startsWith("In:"));
+            assertTrue(message.contains("Out:"));
+        }
+    }
+
     @Override
     protected void prepareTestTracerExceptionInOut() {
         ((TraceHandlerTestHandler) ((Tracer) context.getDefaultTracer()).getTraceHandlers().get(0)).setTraceAllNodes(true);

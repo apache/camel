@@ -32,8 +32,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -48,10 +46,8 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public class StaxConverter {
-    private static final Logger LOG = LoggerFactory.getLogger(XmlErrorListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StaxConverter.class);
 
-    // TODO: do not use a cxf system property
-    // TODO: make higher default pool size as 20 is not much in high end systems
     private static final BlockingQueue<XMLInputFactory> INPUT_FACTORY_POOL;
     private static final BlockingQueue<XMLOutputFactory> OUTPUT_FACTORY_POOL;
     static {
@@ -68,9 +64,23 @@ public class StaxConverter {
             //ignore 
             i = 20;
         }
+        try {
+            // if we have more cores than 20, then use that
+            int cores = Runtime.getRuntime().availableProcessors();
+            if (cores > i) {
+                i = cores;
+            }
+        } catch (Throwable t) {
+            // ignore
+            i = 20;
+        }
+
         if (i <= 0) {
             i = 20;
         }
+
+        LOG.debug("StaxConverter pool size: {}", i);
+
         INPUT_FACTORY_POOL = new LinkedBlockingQueue<XMLInputFactory>(i);
         OUTPUT_FACTORY_POOL = new LinkedBlockingQueue<XMLOutputFactory>(i);
     }
@@ -102,12 +112,6 @@ public class StaxConverter {
     public XMLEventWriter createXMLEventWriter(Result result) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
-            if (result instanceof DOMResult && !isWoodstox(factory)) {
-                //FIXME - if not woodstox, this will likely not work well
-                //likely should copy CXF's W3CDOM stuff
-                LOG.info("DOMResult is known to have issues with {0}. We suggest using Woodstox",
-                         factory.getClass());
-            }
             return factory.createXMLEventWriter(result);
         } finally {
             returnXMLOutputFactory(factory);
@@ -138,12 +142,6 @@ public class StaxConverter {
     public XMLStreamWriter createXMLStreamWriter(Result result) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
-            if (result instanceof DOMResult && !isWoodstox(factory)) {
-                //FIXME - if not woodstox, this will likely not work well
-                //likely should copy CXF's W3CDOM stuff
-                LOG.info("DOMResult is known to have issues with {0}. We suggest using Woodstox",
-                         factory.getClass());
-            }
             return factory.createXMLStreamWriter(result);
         } finally {
             returnXMLOutputFactory(factory);
@@ -167,7 +165,12 @@ public class StaxConverter {
     public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
-            return factory.createXMLStreamReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange, false));
+            String charsetName = IOHelper.getCharsetName(exchange, false);
+            if (charsetName == null) {
+                return factory.createXMLStreamReader(IOHelper.buffered(in));
+            } else {
+                return factory.createXMLStreamReader(IOHelper.buffered(in), charsetName);
+            }
         } finally {
             returnXMLInputFactory(factory);
         }
@@ -197,12 +200,6 @@ public class StaxConverter {
     public XMLStreamReader createXMLStreamReader(Source in) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
-            if (in instanceof DOMSource && !isWoodstox(factory)) {
-                //FIXME - if not woodstox, this will likely not work well
-                //likely should copy CXF's W3CDOM stuff
-                LOG.info("DOMSource is known to have issues with {0}. We suggest using Woodstox",
-                         factory.getClass());
-            }
             return factory.createXMLStreamReader(in);
         } finally {
             returnXMLInputFactory(factory);
@@ -236,7 +233,12 @@ public class StaxConverter {
     public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
-            return factory.createXMLEventReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange, false));
+            String charsetName = IOHelper.getCharsetName(exchange, false);
+            if (charsetName == null) {
+                return factory.createXMLEventReader(IOHelper.buffered(in));
+            } else {
+                return factory.createXMLEventReader(IOHelper.buffered(in), charsetName);
+            }
         } finally {
             returnXMLInputFactory(factory);
         }
@@ -276,18 +278,34 @@ public class StaxConverter {
     public XMLEventReader createXMLEventReader(Source in) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
-            if (in instanceof DOMSource && !isWoodstox(factory)) {
-                //FIXME - if not woodstox, this will likely not work well
-                LOG.info("DOMSource is known to have issues with {0}. We suggest using Woodstox",
-                         factory.getClass());
-            }
             return factory.createXMLEventReader(in);
         } finally {
             returnXMLInputFactory(factory);
         }
     }
 
-    private boolean isWoodstox(Object factory) {
+    @Converter
+    public InputStream createInputStream(XMLStreamReader reader, Exchange exchange) {
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            String charsetName = IOHelper.getCharsetName(exchange, false);
+            return new XMLStreamReaderInputStream(reader, charsetName, factory);
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
+    }
+
+    @Converter
+    public Reader createReader(XMLStreamReader reader, Exchange exchange) {
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            return new XMLStreamReaderReader(reader, factory);
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
+    }
+
+    private static boolean isWoodstox(Object factory) {
         return factory.getClass().getPackage().getName().startsWith("com.ctc.wstx");
     }
 
@@ -332,6 +350,14 @@ public class StaxConverter {
                 throw new XMLStreamException("Reading external entities is disabled");
             }
         });
+
+        if (isWoodstox(factory)) {
+            // just log a debug as we are good then
+            LOG.debug("Created Woodstox XMLInputFactory: {}", factory);
+        } else {
+            // log a hint that woodstock may be a better factory to use
+            LOG.info("Created XMLInputFactory: {}. DOMSource/DOMResult may have issues with {}. We suggest using Woodstox.", factory, factory);
+        }
         return factory;
     }
     

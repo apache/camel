@@ -21,20 +21,27 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 
 /**
- * Camel endpoint for communication with a kestrel based queue.
+ * The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
  */
+@UriEndpoint(firstVersion = "2.6.0", scheme = "kestrel", title = "Kestrel", syntax = "kestrel:addresses/queue", consumerClass = KestrelConsumer.class, label = "messaging")
 public class KestrelEndpoint extends DefaultEndpoint {
 
     /**
      * The configuration of this endpoint
      */
+    @UriParam
     private KestrelConfiguration configuration;
 
     /**
      * The queue we are polling
      */
+    @UriPath @Metadata(required = "true")
     private String queue;
 
     /**
@@ -82,12 +89,7 @@ public class KestrelEndpoint extends DefaultEndpoint {
         return component.getMemcachedClient(configuration, queue);
     }
 
-    @Override
-    public boolean isLenientProperties() {
-        return false;
-    }
-
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 }

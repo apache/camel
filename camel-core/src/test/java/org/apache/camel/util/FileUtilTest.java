@@ -110,6 +110,15 @@ public class FileUtilTest extends TestCase {
         assertEquals("/foo/bar", FileUtil.stripExt("/foo/bar.xml"));
     }
 
+    public void testOnlyExt() {
+        assertEquals(null, FileUtil.onlyExt(null));
+        assertEquals(null, FileUtil.onlyExt("foo"));
+        assertEquals("xml", FileUtil.onlyExt("foo.xml"));
+        assertEquals("xml", FileUtil.onlyExt("/foo/bar.xml"));
+        assertEquals("tar.gz", FileUtil.onlyExt("/foo/bigfile.tar.gz"));
+        assertEquals("tar.gz", FileUtil.onlyExt("/foo.bar/bigfile.tar.gz"));
+    }
+
     public void testOnlyPath() {
         assertEquals(null, FileUtil.onlyPath(null));
         assertEquals(null, FileUtil.onlyPath("foo"));
@@ -175,6 +184,12 @@ public class FileUtilTest extends TestCase {
         }
     }
 
+    public void testCompactWindowsStylePath() {
+        String path = "E:\\workspace\\foo\\bar\\some-thing\\.\\target\\processes\\2";
+        String expected = "E:\\workspace\\foo\\bar\\some-thing\\target\\processes\\2";
+        assertEquals(expected, FileUtil.compactPath(path, '\\'));
+    }
+
     public void testCompactPathSeparator() {
         assertEquals(null, FileUtil.compactPath(null, '\''));
         assertEquals("..\\foo", FileUtil.compactPath("..\\foo", '\\'));
@@ -221,4 +236,15 @@ public class FileUtilTest extends TestCase {
         assertFalse(tmpDir.exists());
     }
 
+    public void testRenameUsingDelete() throws Exception {
+        File file = new File("target/foo.txt");
+        if (!file.exists()) {
+            FileUtil.createNewFile(file);
+        }
+        
+        File target = new File("target/bar.txt");
+        FileUtil.renameFileUsingCopy(file, target);
+        assertTrue("File not copied", target.exists());
+        assertFalse("File not deleted", file.exists());
+    }
 }

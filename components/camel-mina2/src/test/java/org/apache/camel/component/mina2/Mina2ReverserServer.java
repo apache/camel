@@ -30,7 +30,7 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
  */
 public class Mina2ReverserServer {
 
-    protected int port = 6321;
+    protected final int port;
     private IoAcceptor acceptor;
 
     public Mina2ReverserServer(int port) {

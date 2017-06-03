@@ -23,6 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -30,13 +33,24 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
+    @UriPath @Metadata(required = "true")
     protected String feedUri;
+    @UriParam(defaultValue = "true")
     protected boolean splitEntries = true;
+    @UriParam
     protected Date lastUpdate;
+    @UriParam(defaultValue = "true")
     protected boolean filter = true;
+    @UriParam(defaultValue = "true")
     private boolean feedHeader = true;
+    @UriParam
     private boolean sortEntries;
+    @UriParam(defaultValue = "true")
     private boolean throttleEntries = true;
+    @UriParam
+    private String username;
+    @UriParam
+    private String password;
 
     public FeedEndpoint() {
     }
@@ -118,6 +132,9 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         return feedUri;
     }
 
+    /**
+     * The URI to the feed to poll.
+     */
     public void setFeedUri(String feedUri) {
         this.feedUri = feedUri;
     }
@@ -194,6 +211,28 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
     public boolean isThrottleEntries() {
         return this.throttleEntries;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets the username to be used for basic authentication when polling from a HTTP feed
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets the password to be used for basic authentication when polling from a HTTP feed
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     // Implementation methods

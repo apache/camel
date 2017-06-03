@@ -40,6 +40,16 @@ public class JmsRouteTest extends CamelTestSupport {
         assertSendAndReceiveBody("Hello there!");
     }
 
+    @Test
+    public void testSendEmptyMessage() throws Exception {
+        resultEndpoint.expectedMessageCount(2);
+
+        sendExchange("");
+        sendExchange(null);
+
+        resultEndpoint.assertIsSatisfied();
+    }
+
     protected void assertSendAndReceiveBody(Object expectedBody) throws InterruptedException {
         resultEndpoint.expectedBodiesReceived(expectedBody);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);

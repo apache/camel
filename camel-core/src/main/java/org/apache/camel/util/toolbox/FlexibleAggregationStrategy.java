@@ -53,7 +53,6 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
         CompletionAwareAggregationStrategy, TimeoutAwareAggregationStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlexibleAggregationStrategy.class);
-    private static final String COLLECTION_AGGR_GUARD_PROPERTY = "CamelFlexAggrStrCollectionGuard";
 
     private Expression pickExpression = ExpressionBuilder.bodyExpression();
     private Predicate conditionPredicate;
@@ -233,7 +232,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
         if (collectionType == null) {
             injectAsRawValue(exchange, picked);
         } else {
-            injectAsCollection(exchange, picked);
+            injectAsCollection(exchange, picked, collectionType);
         }
 
         return exchange;
@@ -260,8 +259,8 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
         injector.setValue(oldExchange, picked);
     }
 
-    private void injectAsCollection(Exchange oldExchange, E picked) {
-        Collection<E> col = injector.getValueAsCollection(oldExchange);
+    private void injectAsCollection(Exchange oldExchange, E picked, Class<? extends Collection> collectionType) {
+        Collection<E> col = injector.getValueAsCollection(oldExchange, collectionType);
         col = safeInsertIntoCollection(oldExchange, col, picked);
         injector.setValueAsCollection(oldExchange, col);
     }
@@ -270,16 +269,16 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
     private Collection<E> safeInsertIntoCollection(Exchange oldExchange, Collection<E> oldValue, E toInsert) {
         Collection<E> collection = null;
         try {
-            if (oldValue == null || oldExchange.getProperty(COLLECTION_AGGR_GUARD_PROPERTY, Boolean.class) == null) {
+            if (oldValue == null || oldExchange.getProperty(Exchange.AGGREGATED_COLLECTION_GUARD, Boolean.class) == null) {
                 try {
-                    collection = (Collection<E>) collectionType.newInstance();
+                    collection = collectionType.newInstance();
                 } catch (Exception e) {
                     LOG.warn("Could not instantiate collection of type {}. Aborting aggregation.", collectionType);
                     throw ObjectHelper.wrapCamelExecutionException(oldExchange, e);
                 }
-                oldExchange.setProperty(COLLECTION_AGGR_GUARD_PROPERTY, Boolean.FALSE);
+                oldExchange.setProperty(Exchange.AGGREGATED_COLLECTION_GUARD, Boolean.FALSE);
             } else {
-                collection = (Collection<E>) collectionType.cast(oldValue);
+                collection = collectionType.cast(oldValue);
             }
             
             if (collection != null) {
@@ -305,7 +304,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
     private abstract class FlexibleAggregationStrategyInjector {
         protected Class<E> type;
         
-        public FlexibleAggregationStrategyInjector(Class<E> type) {
+        FlexibleAggregationStrategyInjector(Class<E> type) {
             this.type = type;
         }
         
@@ -316,14 +315,14 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
         public abstract void prepareAggregationExchange(Exchange exchange);
         public abstract E getValue(Exchange exchange);
         public abstract void setValue(Exchange exchange, E obj);
-        public abstract Collection<E> getValueAsCollection(Exchange exchange);
+        public abstract Collection<E> getValueAsCollection(Exchange exchange, Class<? extends Collection> type);
         public abstract void setValueAsCollection(Exchange exchange, Collection<E> obj);
     }
     
     private class PropertyInjector extends FlexibleAggregationStrategyInjector {
         private String propertyName;
         
-        public PropertyInjector(Class<E> type, String propertyName) {
+        PropertyInjector(Class<E> type, String propertyName) {
             super(type);
             this.propertyName = propertyName;
         }
@@ -344,8 +343,14 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
         }
 
         @Override @SuppressWarnings("unchecked")
-        public Collection<E> getValueAsCollection(Exchange exchange) {
-            return (Collection<E>) exchange.getProperty(propertyName, Collection.class);
+        public Collection<E> getValueAsCollection(Exchange exchange, Class<? extends Collection> type) {
+            Object value = exchange.getProperty(propertyName);
+            if (value == null) {
+                // empty so create a new collection to host this
+                return exchange.getContext().getInjector().newInstance(type);
+            } else {
+                return exchange.getProperty(propertyName, type);
+            }
         }
 
         @Override
@@ -358,7 +363,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
     private class HeaderInjector extends FlexibleAggregationStrategyInjector {
         private String headerName;
         
-        public HeaderInjector(Class<E> type, String headerName) {
+        HeaderInjector(Class<E> type, String headerName) {
             super(type);
             this.headerName = headerName;
         }
@@ -379,8 +384,14 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
         }
 
         @Override @SuppressWarnings("unchecked")
-        public Collection<E> getValueAsCollection(Exchange exchange) {
-            return (Collection<E>) exchange.getIn().getHeader(headerName, Collection.class);
+        public Collection<E> getValueAsCollection(Exchange exchange, Class<? extends Collection> type) {
+            Object value = exchange.getIn().getHeader(headerName);
+            if (value == null) {
+                // empty so create a new collection to host this
+                return exchange.getContext().getInjector().newInstance(type);
+            } else {
+                return exchange.getIn().getHeader(headerName, type);
+            }
         }
         
         @Override
@@ -390,7 +401,7 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
     }
     
     private class BodyInjector extends FlexibleAggregationStrategyInjector {
-        public BodyInjector(Class<E> type) {
+        BodyInjector(Class<E> type) {
             super(type);
         }
 
@@ -410,8 +421,14 @@ public class FlexibleAggregationStrategy<E extends Object> implements Aggregatio
         }
 
         @Override @SuppressWarnings("unchecked")
-        public Collection<E> getValueAsCollection(Exchange exchange) {
-            return (Collection<E>) exchange.getIn().getBody(Collection.class);
+        public Collection<E> getValueAsCollection(Exchange exchange, Class<? extends Collection> type) {
+            Object value = exchange.getIn().getBody();
+            if (value == null) {
+                // empty so create a new collection to host this
+                return exchange.getContext().getInjector().newInstance(type);
+            } else {
+                return exchange.getIn().getBody(type);
+            }
         }
         
         @Override

@@ -17,32 +17,29 @@
 package org.apache.camel.karaf.commands.completers;
 
 import java.util.List;
+import java.util.Map;
 
-import jline.console.completer.StringsCompleter;
-import org.apache.camel.Route;
-import org.apache.camel.karaf.commands.CamelController;
-import org.apache.karaf.shell.console.Completer;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.api.console.CommandLine;
+import org.apache.karaf.shell.api.console.Completer;
+import org.apache.karaf.shell.api.console.Session;
+import org.apache.karaf.shell.support.completers.StringsCompleter;
 
 /**
- * A Jline completer for the Camel routes.
+ * A completer for the Camel routes.
  */
-public class RouteCompleter implements Completer {
+@Service
+public class RouteCompleter extends CamelControllerImpl implements Completer {
 
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public int complete(String buffer, int cursor, List candidates) {
+    public int complete(Session session, CommandLine commandLine, List<String> candidates) {
         try {
             StringsCompleter delegate = new StringsCompleter();
-            List<Route> routes = camelController.getRoutes(null);
-            for (Route route : routes) {
-                delegate.getStrings().add(route.getId());
+            List<Map<String, String>> routes = getRoutes(null);
+            for (Map<String, String> row : routes) {
+                delegate.getStrings().add(row.get("routeId"));
             }
-            return delegate.complete(buffer, cursor, candidates);
+            return delegate.complete(session, commandLine, candidates);
         } catch (Exception e) {
             // nothing to do, no completion
         }

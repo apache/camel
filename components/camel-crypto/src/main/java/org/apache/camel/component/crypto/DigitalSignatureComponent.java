@@ -22,21 +22,21 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * <code>DigitalSignatureComponent</code>
- */
-public class DigitalSignatureComponent extends DefaultComponent {
+public class DigitalSignatureComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private DigitalSignatureConfiguration configuration;
 
     public DigitalSignatureComponent() {
+        super(DigitalSignatureEndpoint.class);
     }
 
     public DigitalSignatureComponent(CamelContext context) {
-        super(context);
+        super(context, DigitalSignatureEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -62,6 +62,9 @@ public class DigitalSignatureComponent extends DefaultComponent {
         return configuration;
     }
 
+    /**
+     * To use the shared DigitalSignatureConfiguration as configuration
+     */
     public void setConfiguration(DigitalSignatureConfiguration configuration) {
         this.configuration = configuration;
     }

@@ -16,10 +16,26 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.mina.filter.codec.textline.LineDelimiter;
+
 /**
  * Possible text line delimiters to be used with the textline codec.
  */
 public enum Mina2TextLineDelimiter {
 
-    DEFAULT, AUTO, UNIX, WINDOWS, MAC
+    DEFAULT(LineDelimiter.DEFAULT),
+    AUTO(LineDelimiter.AUTO),
+    UNIX(LineDelimiter.UNIX),
+    WINDOWS(LineDelimiter.WINDOWS),
+    MAC(LineDelimiter.MAC);
+
+    private final LineDelimiter lineDelimiter;
+
+    Mina2TextLineDelimiter(LineDelimiter lineDelimiter) {
+        this.lineDelimiter = lineDelimiter;
+    }
+
+    public LineDelimiter getLineDelimiter() {
+        return lineDelimiter;
+    }
 }

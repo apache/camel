@@ -22,26 +22,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.Bus;
+import org.apache.cxf.BusException;
 import org.apache.cxf.common.injection.NoJSR250Annotations;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.AbstractTransportFactory;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
+import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.DestinationFactory;
+import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
 /**
  * @version 
  */
-@NoJSR250Annotations(unlessNull = "bus")
+@NoJSR250Annotations
 public class CamelTransportFactory extends AbstractTransportFactory implements ConduitInitiator, DestinationFactory, CamelContextAware {
 
     public static final String TRANSPORT_ID = "http://cxf.apache.org/transports/camel";
@@ -50,6 +51,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
 
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean checkException;
+    private Bus bus;
 
     static {
         URI_PREFIXES.add("camel://");        
@@ -64,18 +66,16 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
         headerFilterStrategy = defaultHeaderFilterStrategy;
     }
     public CamelTransportFactory(Bus b) {
-        super(DEFAULT_NAMESPACES, b);
+        super(DEFAULT_NAMESPACES);
+        bus = b;
+        registerFactory();
+
         CxfHeaderFilterStrategy defaultHeaderFilterStrategy = new CxfHeaderFilterStrategy();
         // Doesn't filter the camel relates headers by default
         defaultHeaderFilterStrategy.setOutFilterPattern(null);
         headerFilterStrategy = defaultHeaderFilterStrategy;
     }
 
-    @Resource(name = "cxf")
-    public void setBus(Bus b) {
-        super.setBus(b);
-    }
-    
     public void setCheckException(boolean check) {
         checkException = check;
     }
@@ -85,15 +85,15 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     }
 
     public Conduit getConduit(EndpointInfo targetInfo) throws IOException {
-        return getConduit(targetInfo, null);
+        return getConduit(targetInfo, null, bus);
     }
 
     public Conduit getConduit(EndpointInfo endpointInfo, EndpointReferenceType target) throws IOException {
-        return new CamelConduit(camelContext, bus, endpointInfo, target, headerFilterStrategy);
+        return getConduit(endpointInfo, target, bus);
     }
 
     public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
-        return new CamelDestination(camelContext, bus, this, endpointInfo, headerFilterStrategy, checkException);
+        return getDestination(endpointInfo, bus);
     }
 
     public Set<String> getUriPrefixes() {
@@ -114,7 +114,70 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     public void setCamelContext(CamelContext c) {
         camelContext = c;
     }
+    public Destination getDestination(EndpointInfo ei, Bus b) throws IOException {
+        return new CamelDestination(camelContext, b, this, ei, headerFilterStrategy, checkException);
+    }
+    public Conduit getConduit(EndpointInfo targetInfo, Bus b) throws IOException {
+        return getConduit(targetInfo, null, b);
+    }
+    public Conduit getConduit(EndpointInfo localInfo, EndpointReferenceType target, Bus b)
+        throws IOException {
+        return new CamelConduit(camelContext, b, localInfo, target, headerFilterStrategy);
+    }
 
+    // CXF 2.x support methods    
+    public void setBus(Bus b) {
+        unregisterFactory();
+        bus = b;
+        registerFactory();
+    }
+    public final void registerFactory() {
+        if (null == bus) {
+            return;
+        }
+        DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
+        if (null != dfm && getTransportIds() != null) {
+            for (String ns : getTransportIds()) {
+                dfm.registerDestinationFactory(ns, this);
+            }
+        }
+        ConduitInitiatorManager cim = bus.getExtension(ConduitInitiatorManager.class);
+        if (cim != null && getTransportIds() != null) {
+            for (String ns : getTransportIds()) {
+                cim.registerConduitInitiator(ns, this);
+            }
+        }
+    }
+    
+    public final void unregisterFactory() {
+        if (null == bus) {
+            return;
+        }
+        DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
+        if (null != dfm && getTransportIds() != null) {
+            for (String ns : getTransportIds()) {
+                try {
+                    if (dfm.getDestinationFactory(ns) == this) {
+                        dfm.deregisterDestinationFactory(ns);
+                    }
+                } catch (BusException e) {
+                    //ignore
+                }
+            }
+        }
+        ConduitInitiatorManager cim = bus.getExtension(ConduitInitiatorManager.class);
+        if (cim != null && getTransportIds() != null) {
+            for (String ns : getTransportIds()) {
+                try {
+                    if (cim.getConduitInitiator(ns) == this) {
+                        cim.deregisterConduitInitiator(ns);
+                    }
+                } catch (BusException e) {
+                    //ignore
+                }
+            }
+        }
+    }
 }
 
 

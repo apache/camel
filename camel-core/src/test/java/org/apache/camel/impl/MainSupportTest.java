@@ -17,13 +17,11 @@
 package org.apache.camel.impl;
 
 import java.util.Map;
-import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
-import org.apache.camel.view.ModelFileGenerator;
 
 /**
  * @version 
@@ -39,15 +37,16 @@ public class MainSupportTest extends ContextTestSupport {
         protected Map<String, CamelContext> getCamelContextMap() {
             return null;
         }
-
-        protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-            return null;
-        }
     }
 
     public void testMainSupport() throws Exception {
         MyMainSupport my = new MyMainSupport();
-        my.run(new String[]{"-d", "1s"});
+        my.run(new String[]{"-d", "1"});
+    }
+
+    public void testMainSupportMaxMessages() throws Exception {
+        MyMainSupport my = new MyMainSupport();
+        my.run(new String[]{"-d", "1", "-dm", "2"});
     }
 
     public void testMainSupportHelp() throws Exception {

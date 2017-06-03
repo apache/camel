@@ -74,7 +74,7 @@ public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
                         
                         //attempt 2) in stead of XPATH, browse the DOM-tree
                         CxfPayload<SoapHeader> payload = (CxfPayload<SoapHeader>) request;
-                        Element el = (Element) payload.getBody().get(0);
+                        Element el = payload.getBody().get(0);
                         Element el2 = (Element) el.getFirstChild();
                         Text textnode = (Text) el2.getFirstChild();
                         receivedMessageByDom = textnode.getNodeValue();
@@ -93,7 +93,7 @@ public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
 
                         //build some dummy response 
                         XmlConverter converter = new XmlConverter();
-                        Document outDocument = converter.toDOMDocument(ECHO_RESPONSE);
+                        Document outDocument = converter.toDOMDocument(ECHO_RESPONSE, exchange);
                         List<Source> outElements = new ArrayList<Source>();
                         outElements.add(new DOMSource(outDocument.getDocumentElement()));
                         // set the payload header with null

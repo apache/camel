@@ -33,14 +33,14 @@ public class TransactionalClientDataSourceTransactionErrorHandlerTest extends Tr
 
                 from("direct:okay")
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Elephant in Action")).bean("bookService");
 
                 // marks this route as transacted that will use the single policy defined in the registry
                 from("direct:fail")
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Donkey in Action")).bean("bookService");
                 // END SNIPPET: e1
             }
         };

@@ -23,39 +23,60 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
+/**
+ * The spring-batch component allows to send messages to Spring Batch for further processing.
+ */
+@UriEndpoint(firstVersion = "2.10.0", scheme = "spring-batch", title = "Spring Batch", syntax = "spring-batch:jobName", producerOnly = true, label = "spring,batch,scheduling")
 public class SpringBatchEndpoint extends DefaultEndpoint {
+
+    @UriPath
+    @Metadata(required = "true")
+    private String jobName;
+
+    @UriParam
+    private boolean jobFromHeader;
 
     /**
      * @deprecated will be removed in Camel 3.0
      * use jobLauncher instead
      */
+    @Deprecated
     private String jobLauncherRef;
 
+    @UriParam
     private JobLauncher jobLauncher;
 
     private JobLauncher defaultResolvedJobLauncher;
-
     private Map<String, JobLauncher> allResolvedJobLaunchers;
-
-    private final Job job;
+    private Job job;
+    
+    @UriParam
+    private JobRegistry jobRegistry;
 
     public SpringBatchEndpoint(String endpointUri, Component component,
                                JobLauncher jobLauncher, JobLauncher defaultResolvedJobLauncher,
-                               Map<String, JobLauncher> allResolvedJobLaunchers,
-                               Job job) {
+                               Map<String, JobLauncher> allResolvedJobLaunchers, String jobName,
+                               JobRegistry jobRegistry) {
         super(endpointUri, component);
         this.jobLauncher = jobLauncher;
         this.defaultResolvedJobLauncher = defaultResolvedJobLauncher;
         this.allResolvedJobLaunchers = allResolvedJobLaunchers;
-        this.job = job;
+        this.jobName = jobName;
+        this.jobRegistry = jobRegistry;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new SpringBatchProducer(this, jobLauncher, job);
+        return new SpringBatchProducer(this, jobLauncher, job, jobRegistry);
     }
 
     @Override
@@ -72,6 +93,13 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         if (jobLauncher == null) {
             jobLauncher = resolveJobLauncher();
+        } 
+        if (job == null && jobName != null && !jobFromHeader) {
+            if (jobRegistry != null) {
+                job = jobRegistry.getJob(jobName);
+            } else {
+                job = CamelContextHelper.mandatoryLookup(getCamelContext(), jobName, Job.class);
+            }
         }
     }
 
@@ -97,11 +125,62 @@ public class SpringBatchEndpoint extends DefaultEndpoint {
         throw new IllegalStateException("Cannot find Spring Batch JobLauncher.");
     }
 
+    public String getJobName() {
+        return jobName;
+    }
+
+    /**
+     * The name of the Spring Batch job located in the registry.
+     */
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
+    @Deprecated
+    public String getJobLauncherRef() {
+        return jobLauncherRef;
+    }
+
+    /**
+     * Explicitly specifies a JobLauncher to be used looked up from the registry.
+     */
+    @Deprecated
     public void setJobLauncherRef(String jobLauncherRef) {
         this.jobLauncherRef = jobLauncherRef;
     }
 
+    public JobLauncher getJobLauncher() {
+        return jobLauncher;
+    }
+
+    /**
+     * Explicitly specifies a JobLauncher to be used.
+     */
     public void setJobLauncher(JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
     }
+
+    /**
+     * Explicitly defines if the jobName should be taken from the headers instead of the URI.
+     */
+    public void setJobFromHeader(boolean jobFromHeader) {
+        this.jobFromHeader = jobFromHeader;
+    }
+
+    public boolean getJobFromHeader() {
+        return jobFromHeader;
+    }
+
+    public JobRegistry getJobRegistry() {
+        return jobRegistry;
+    }
+
+    /**
+     * Explicitly specifies a JobRegistry to be used.
+     */    
+    public void setJobRegistry(JobRegistry jobRegistry) {
+        this.jobRegistry = jobRegistry;
+    }
+
+    
 }

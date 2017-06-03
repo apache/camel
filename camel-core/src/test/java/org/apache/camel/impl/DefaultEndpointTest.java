@@ -16,7 +16,10 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -39,6 +42,13 @@ public class DefaultEndpointTest extends ContextTestSupport {
             URISupport.sanitizeUri("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=qi472qfberu33dqjncq"));
     }
 
+    public void testToString() {
+        final String epstr = "myep:///test";
+        MyEndpoint ep = new MyEndpoint();
+        ep.setEndpointUri(epstr);
+        assertTrue(ep.toString().contains(epstr));
+    }
+
     /**
      * Ensures that the Uri was not changed because no password was found.
      *
@@ -48,4 +58,20 @@ public class DefaultEndpointTest extends ContextTestSupport {
         assertEquals(uri, URISupport.sanitizeUri(uri));
     }
 
+    private static class MyEndpoint extends DefaultEndpoint {
+        @Override
+        public Producer createProducer() throws Exception {
+            return null;
+        }
+
+        @Override
+        public Consumer createConsumer(Processor processor) throws Exception {
+            return null;
+        }
+
+        @Override
+        public boolean isSingleton() {
+            return false;
+        }
+    }
 }

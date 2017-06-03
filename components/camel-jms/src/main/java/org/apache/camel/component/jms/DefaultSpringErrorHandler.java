@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.impl.LoggingExceptionHandler;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.springframework.util.ErrorHandler;
 
 /**
@@ -28,8 +29,8 @@ public class DefaultSpringErrorHandler implements ErrorHandler {
     private final LoggingExceptionHandler handler;
     private final boolean logStackTrace;
 
-    public DefaultSpringErrorHandler(Class<?> owner, LoggingLevel level, boolean logStackTrace) {
-        this.handler = new LoggingExceptionHandler(owner, level);
+    public DefaultSpringErrorHandler(CamelContext camelContext, Class<?> owner, LoggingLevel level, boolean logStackTrace) {
+        this.handler = new LoggingExceptionHandler(camelContext, owner, level);
         this.logStackTrace = logStackTrace;
     }
 

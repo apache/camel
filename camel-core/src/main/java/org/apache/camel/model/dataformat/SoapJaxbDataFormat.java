@@ -25,7 +25,12 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 
+/**
+ * SOAP data format
+ */
+@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,xml", title = "SOAP")
 @XmlRootElement(name = "soapjaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SoapJaxbDataFormat extends DataFormatDefinition {
@@ -37,10 +42,12 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
     private String elementNameStrategyRef;
     @XmlTransient
     private Object elementNameStrategy;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1.1")
     private String version;
     @XmlAttribute
     private String namespacePrefixRef;
+    @XmlAttribute
+    private String schema;
 
     public SoapJaxbDataFormat() {
         super("soapjaxb");
@@ -63,6 +70,9 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         setElementNameStrategy(elementNameStrategy);
     }
 
+    /**
+     * Package name where your JAXB classes are located.
+     */
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
@@ -71,6 +81,9 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         return contextPath;
     }
 
+    /**
+     * To overrule and use a specific encoding
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -79,6 +92,22 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         return encoding;
     }
 
+    /**
+     * Refers to an element strategy to lookup from the registry.
+     * <p/>
+     * An element name strategy is used for two purposes. The first is to find a xml element name for a given object
+     * and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name.
+     * <p/>
+     * The following three element strategy class name is provided out of the box.
+     * QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported
+     * TypeNameStrategy - Uses the name and namespace from the @XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported
+     * ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault
+     * <p/>
+     * All three classes is located in the package name org.apache.camel.dataformat.soap.name
+     * <p/>
+     * If you have generated the web service stub code with cxf-codegen or a similar tool then you probably
+     * will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy.
+     */
     public void setElementNameStrategyRef(String elementNameStrategyRef) {
         this.elementNameStrategyRef = elementNameStrategyRef;
     }
@@ -91,10 +120,31 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         return version;
     }
 
+    /**
+     * SOAP version should either be 1.1 or 1.2.
+     * <p/>
+     * Is by default 1.1
+     */
     public void setVersion(String version) {
         this.version = version;
     }
 
+    /**
+     * Sets an element strategy instance to use.
+     * <p/>
+     * An element name strategy is used for two purposes. The first is to find a xml element name for a given object
+     * and soap action when marshaling the object into a SOAP message. The second is to find an Exception class for a given soap fault name.
+     * <p/>
+     * The following three element strategy class name is provided out of the box.
+     * QNameStrategy - Uses a fixed qName that is configured on instantiation. Exception lookup is not supported
+     * TypeNameStrategy - Uses the name and namespace from the @XMLType annotation of the given type. If no namespace is set then package-info is used. Exception lookup is not supported
+     * ServiceInterfaceStrategy - Uses information from a webservice interface to determine the type name and to find the exception class for a SOAP fault
+     * <p/>
+     * All three classes is located in the package name org.apache.camel.dataformat.soap.name
+     * <p/>
+     * If you have generated the web service stub code with cxf-codegen or a similar tool then you probably
+     * will want to use the ServiceInterfaceStrategy. In the case you have no annotated service interface you should use QNameStrategy or TypeNameStrategy.
+     */
     public void setElementNameStrategy(Object elementNameStrategy) {
         this.elementNameStrategy = elementNameStrategy;
     }
@@ -107,8 +157,25 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         return namespacePrefixRef;
     }
 
+    /**
+     * When marshalling using JAXB or SOAP then the JAXB implementation will automatic assign namespace prefixes,
+     * such as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer to a map which contains the desired mapping.
+     */
     public void setNamespacePrefixRef(String namespacePrefixRef) {
         this.namespacePrefixRef = namespacePrefixRef;
+    }
+    
+    public String getSchema() {
+        return schema;
+    }
+
+    /**
+     * To validate against an existing schema.
+     * Your can use the prefix classpath:, file:* or *http: to specify how the resource should by resolved.
+     * You can separate multiple schema files by using the ',' character.
+     */
+    public void setSchema(String schema) {
+        this.schema = schema;
     }
 
     @Override
@@ -127,6 +194,9 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         }
         if (namespacePrefixRef != null) {
             setProperty(camelContext, dataFormat, "namespacePrefixRef", namespacePrefixRef);
+        }
+        if (schema != null) {
+            setProperty(camelContext, dataFormat, "schema", schema);
         }
         setProperty(camelContext, dataFormat, "contextPath", contextPath);
     }

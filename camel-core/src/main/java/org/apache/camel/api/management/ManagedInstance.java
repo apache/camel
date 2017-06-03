@@ -17,6 +17,8 @@
 package org.apache.camel.api.management;
 
 /**
+ * Holds the instance being managed.
+ *
  * @version 
  */
 public interface ManagedInstance {

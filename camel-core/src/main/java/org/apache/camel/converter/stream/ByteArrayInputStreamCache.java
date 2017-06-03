@@ -17,10 +17,12 @@
 package org.apache.camel.converter.stream;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
@@ -30,12 +32,14 @@ import org.apache.camel.util.IOHelper;
 public class ByteArrayInputStreamCache extends FilterInputStream implements StreamCache {
 
     private final int length;
+    private byte[] byteArrayForCopy;
 
     public ByteArrayInputStreamCache(ByteArrayInputStream in) {
         super(in);
         this.length = in.available();
     }
 
+    @Override
     public void reset() {
         try {
             super.reset();
@@ -44,9 +48,20 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
         }
     }
 
-
     public void writeTo(OutputStream os) throws IOException {
         IOHelper.copyAndCloseInput(in, os);
+    }
+
+    public StreamCache copy(Exchange exchange) throws IOException {
+        if (byteArrayForCopy == null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(in.available());
+            IOHelper.copy(in, baos);
+            // reset so that the stream can be reused
+            reset();
+            // cache the byte array, in order not to copy the byte array in the next call again
+            byteArrayForCopy = baos.toByteArray();
+        }
+        return new InputStreamCache(byteArrayForCopy);
     }
 
     public boolean inMemory() {

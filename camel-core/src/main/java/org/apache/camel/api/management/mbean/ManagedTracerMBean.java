@@ -20,6 +20,12 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedTracerMBean {
 
+    @ManagedAttribute(description = "Camel ID")
+    String getCamelId();
+
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
     @ManagedAttribute(description = "Tracer enabled")
     boolean getEnabled();
 

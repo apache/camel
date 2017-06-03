@@ -1,0 +1,19 @@
+{
+  "baseScheme": "${baseScheme}",
+  "baseGroupId": "${baseGroupId}",
+  "baseArtifactId": "${baseArtifactId}",
+  "baseVersion": "${baseVersion}",
+  "name": "${name}",
+  "scheme": "${scheme}",
+  "javaType": "${package}.${name}Component",
+  "groupId": "${groupId}",
+  "artifactId": "${artifactId}",
+  "version": "${version}",
+  "description": "${description}",
+  "labels" : [ "foo", "bar" ],
+  "pattern": "From",
+  "endpointOptions" : [ "foo", "bar" ],
+  "endpointValues" : {
+    "foo" : "2"
+  }
+}

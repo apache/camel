@@ -52,10 +52,10 @@ public final class CamelConverter {
     }
 
     @Converter
-    public static Processor toProcessor(final Expression expresion) {
+    public static Processor toProcessor(final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Object answer = expresion.evaluate(exchange, Object.class);
+                Object answer = expression.evaluate(exchange, Object.class);
                 Message out = exchange.getOut();
                 out.copyFrom(exchange.getIn());
                 out.setBody(answer);

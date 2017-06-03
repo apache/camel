@@ -20,17 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.ComparisonOperator;
-import com.amazonaws.services.dynamodb.model.Condition;
-import com.amazonaws.services.dynamodb.model.Key;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
+import com.amazonaws.services.dynamodbv2.model.ConsumedCapacity;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class ScanCommandTest {
@@ -60,11 +59,15 @@ public class ScanCommandTest {
 
         command.execute();
 
+        Map<String, AttributeValue> mapAssert = new HashMap<String, AttributeValue>();
+        mapAssert.put("1", new AttributeValue("LAST_KEY"));
+
+        ConsumedCapacity consumed = (ConsumedCapacity) exchange.getIn().getHeader(DdbConstants.CONSUMED_CAPACITY);
         assertEquals(scanFilter, ddbClient.scanRequest.getScanFilter());
         assertEquals(Integer.valueOf(10), exchange.getIn().getHeader(DdbConstants.SCANNED_COUNT, Integer.class));
         assertEquals(Integer.valueOf(1), exchange.getIn().getHeader(DdbConstants.COUNT, Integer.class));
-        assertEquals(Double.valueOf(1.0), exchange.getIn().getHeader(DdbConstants.CONSUMED_CAPACITY, Double.class));
-        assertEquals(new Key(new AttributeValue("LAST_KEY")), exchange.getIn().getHeader(DdbConstants.LAST_EVALUATED_KEY, Key.class));
+        assertEquals(Double.valueOf(1.0), consumed.getCapacityUnits());
+        assertEquals(mapAssert, exchange.getIn().getHeader(DdbConstants.LAST_EVALUATED_KEY, Map.class));
 
         Map<?, ?> items = (Map<?, ?>) exchange.getIn().getHeader(DdbConstants.ITEMS, List.class).get(0);
         assertEquals(new AttributeValue("attrValue"), items.get("attrName"));

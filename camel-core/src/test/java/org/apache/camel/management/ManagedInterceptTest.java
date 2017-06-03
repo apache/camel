@@ -41,15 +41,15 @@ public class ManagedInterceptTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
         Long queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(1, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://intercept\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://intercept\"");
         queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(2, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"log-foo\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"log-foo\"");
         mbeanServer.isRegistered(name);
         
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");

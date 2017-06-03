@@ -16,25 +16,15 @@
  */
 package org.apache.camel.converter.stream;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
-import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.converter.stream.FileInputStreamCache.TempFileManager;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This output stream will store the content into a File if the stream context size is exceed the
@@ -45,8 +35,8 @@ import org.slf4j.LoggerFactory;
  * system property of "java.io.tmpdir".
  * <p/>
  * You can get a cached input stream of this stream. The temp file which is created with this 
- * output stream will be deleted when you close this output stream or the all cached 
- * fileInputStream is closed after the exchange is completed.
+ * output stream will be deleted when you close this output stream or the cached 
+ * fileInputStream(s) is/are closed after all the exchanges using the temp file are completed.
  */
 public class CachedOutputStream extends OutputStream {
     @Deprecated
@@ -57,45 +47,24 @@ public class CachedOutputStream extends OutputStream {
     public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
     @Deprecated
     public static final String CIPHER_TRANSFORMATION = "CamelCachedOutputStreamCipherTransformation";
-    private static final Logger LOG = LoggerFactory.getLogger(CachedOutputStream.class);
 
     private final StreamCachingStrategy strategy;
     private OutputStream currentStream;
     private boolean inMemory = true;
     private int totalLength;
-    private File tempFile;
-    private FileInputStreamCache fileInputStreamCache;
-    private CipherPair ciphers;
+    private final TempFileManager tempFileManager;
+    private final boolean closedOnCompletion;
 
     public CachedOutputStream(Exchange exchange) {
         this(exchange, true);
     }
 
-    public CachedOutputStream(Exchange exchange, boolean closedOnCompletion) {
+    public CachedOutputStream(Exchange exchange, final boolean closedOnCompletion) {
+        this.closedOnCompletion = closedOnCompletion;
+        tempFileManager = new TempFileManager(closedOnCompletion);
+        tempFileManager.addExchange(exchange);
         this.strategy = exchange.getContext().getStreamCachingStrategy();
         currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());
-        
-        if (closedOnCompletion) {
-            // add on completion so we can cleanup after the exchange is done such as deleting temporary files
-            exchange.addOnCompletion(new SynchronizationAdapter() {
-                @Override
-                public void onDone(Exchange exchange) {
-                    try {
-                        if (fileInputStreamCache != null) {
-                            fileInputStreamCache.close();
-                        }
-                        close();
-                    } catch (Exception e) {
-                        LOG.warn("Error deleting temporary cache file: " + tempFile, e);
-                    }
-                }
-    
-                @Override
-                public String toString() {
-                    return "OnCompletion[CachedOutputStream]";
-                }
-            });
-        }
     }
 
     public void flush() throws IOException {
@@ -104,7 +73,11 @@ public class CachedOutputStream extends OutputStream {
 
     public void close() throws IOException {
         currentStream.close();
-        cleanUpTempFile();
+        // need to clean up the temp file this time
+        if (!closedOnCompletion) {
+            tempFileManager.closeFileInputStreams();
+            tempFileManager.cleanUpTempFile();
+        }
     }
 
     public boolean equals(Object obj) {
@@ -148,29 +121,12 @@ public class CachedOutputStream extends OutputStream {
     }
 
     public InputStream getInputStream() throws IOException {
-        flush();
-
-        if (inMemory) {
-            if (currentStream instanceof CachedByteArrayOutputStream) {
-                return ((CachedByteArrayOutputStream) currentStream).newInputStreamCache();
-            } else {
-                throw new IllegalStateException("CurrentStream should be an instance of CachedByteArrayOutputStream but is: " + currentStream.getClass().getName());
-            }
-        } else {
-            try {
-                if (fileInputStreamCache == null) {
-                    fileInputStreamCache = new FileInputStreamCache(tempFile, ciphers);
-                }
-                return fileInputStreamCache;
-            } catch (FileNotFoundException e) {
-                throw new IOException("Cached file " + tempFile + " not found", e);
-            }
-        }
+        return (InputStream)newStreamCache();
     }    
 
     public InputStream getWrappedInputStream() throws IOException {
         // The WrappedInputStream will close the CachedOutputStream when it is closed
-        return new WrappedInputStream(this, getInputStream());
+        return new WrappedInputStream(this, (InputStream)newStreamCache());
     }
 
     /**
@@ -194,35 +150,17 @@ public class CachedOutputStream extends OutputStream {
                 throw new IllegalStateException("CurrentStream should be an instance of CachedByteArrayOutputStream but is: " + currentStream.getClass().getName());
             }
         } else {
-            try {
-                if (fileInputStreamCache == null) {
-                    fileInputStreamCache = new FileInputStreamCache(tempFile, ciphers);
-                }
-                return fileInputStreamCache;
-            } catch (FileNotFoundException e) {
-                throw new IOException("Cached file " + tempFile + " not found", e);
-            }
+            return tempFileManager.newStreamCache();
         }
     }
-
-    private void cleanUpTempFile() {
-        // cleanup temporary file
-        if (tempFile != null) {
-            FileUtil.deleteFile(tempFile);
-            tempFile = null;
-        }
-    }
+    
 
     private void pageToFileStream() throws IOException {
         flush();
-
         ByteArrayOutputStream bout = (ByteArrayOutputStream)currentStream;
-        tempFile = FileUtil.createTempFile("cos", ".tmp", strategy.getSpoolDirectory());
-
-        LOG.trace("Creating temporary stream cache file: {}", tempFile);
-
         try {
-            currentStream = createOutputStream(tempFile);
+            // creates an tmp file and a file output stream
+            currentStream = tempFileManager.createOutputStream(strategy);
             bout.writeTo(currentStream);
         } finally {
             // ensure flag is flipped to file based
@@ -274,26 +212,4 @@ public class CachedOutputStream extends OutputStream {
         }
     }
 
-    private OutputStream createOutputStream(File file) throws IOException {
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-        if (ObjectHelper.isNotEmpty(strategy.getSpoolChiper())) {
-            try {
-                if (ciphers == null) {
-                    ciphers = new CipherPair(strategy.getSpoolChiper());
-                }
-            } catch (GeneralSecurityException e) {
-                throw new IOException(e.getMessage(), e);
-            }
-            out = new CipherOutputStream(out, ciphers.getEncryptor()) {
-                boolean closed;
-                public void close() throws IOException {
-                    if (!closed) {
-                        super.close();
-                        closed = true;
-                    }
-                }
-            };
-        }
-        return out;
-    }
 }

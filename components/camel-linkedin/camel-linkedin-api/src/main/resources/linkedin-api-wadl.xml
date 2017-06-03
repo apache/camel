@@ -1,0 +1,1013 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<wadl:application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:wadl="http://wadl.dev.java.net/2009/02"
+                  xmlns:tns="http://camel.apache.org/component/linkedin/api/model"
+                  xsi:schemaLocation="http://camel.apache.org/component/linkedin/api/model linkedin-api-schema.xsd
+                  http://wadl.dev.java.net/2009/02 http://www.w3.org/Submission/wadl/wadl.xsd">
+
+  <wadl:grammars>
+    <wadl:include href="linkedin-api-schema.xsd"/>
+  </wadl:grammars>
+
+  <wadl:resources base="http://api.linkedin.com/v1/">
+
+    <!-- People -->
+    <wadl:resource path="people" id="People">
+
+      <wadl:resource path="~{fields}">
+        <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/profile-api]]></wadl:doc>
+        <wadl:method name="GET" id="getPerson">
+          <wadl:request>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#secure-urls"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#person"/>
+          </wadl:response>
+        </wadl:method>
+
+      </wadl:resource>
+
+      <wadl:resource path="~/connections{fields}">
+        <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/connections-api]]></wadl:doc>
+        <wadl:method name="GET" id="getConnections">
+          <wadl:request>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#secure-urls"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#connections"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="~/shares">
+        <wadl:method name="POST" id="share">
+          <wadl:request>
+            <wadl:representation mediaType="application/xml" element="tns:share"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation mediaType="application/xml" element="tns:update"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="~/network">
+        <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/get-network-updates-and-statistics-api]]></wadl:doc>
+
+        <wadl:resource path="updates{fields}">
+          <wadl:param href="#scope"/>
+          <wadl:param href="#type"/>
+          <wadl:param href="#count"/>
+          <wadl:param href="#start"/>
+          <wadl:param href="#after"/>
+          <wadl:param href="#before"/>
+          <wadl:param href="#show-hidden-members"/>
+
+          <wadl:method name="GET" id="getNetworkUpdates">
+            <wadl:request>
+              <wadl:param href="#fields-selector"/>
+              <wadl:param href="#secure-urls"/>
+            </wadl:request>
+            <wadl:response>
+              <wadl:representation href="#updates"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
+
+        <wadl:resource path="updates/key={update-key}">
+          <wadl:resource path="update-comments{fields}">
+            <wadl:method name="GET" id="getUpdateComments">
+              <wadl:request>
+                <wadl:param href="#update-key"/>
+                <wadl:param href="#fields-selector"/>
+                <wadl:param href="#secure-urls"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation href="#update-comments"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+          <wadl:resource path="update-comments">
+            <wadl:method name="POST" id="addUpdateComment">
+              <wadl:request>
+                <wadl:param href="#update-key"/>
+                <wadl:representation mediaType="application/xml" element="tns:updatecomment"/>
+              </wadl:request>
+            </wadl:method>
+          </wadl:resource>
+
+          <wadl:resource path="likes{fields}">
+            <wadl:method name="GET" id="getUpdateLikes">
+              <wadl:request>
+                <wadl:param href="#update-key"/>
+                <wadl:param href="#fields-selector"/>
+                <wadl:param href="#secure-urls"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation mediaType="application/xml" element="tns:likes"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+          <wadl:resource path="is-liked">
+            <wadl:method name="PUT" id="likeUpdate">
+              <wadl:request>
+                <wadl:param href="#update-key"/>
+                <wadl:representation href="#is-liked"/>
+              </wadl:request>
+            </wadl:method>
+          </wadl:resource>
+
+        </wadl:resource>
+
+        <wadl:resource path="network-stats">
+          <wadl:method name="GET" id="getNetworkStats">
+            <wadl:response>
+              <wadl:representation mediaType="application/xml" element="tns:networkstats"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
+
+      </wadl:resource>
+
+      <wadl:resource path="~/person-activities">
+        <wadl:method name="POST" id="addActivity">
+          <wadl:request>
+            <wadl:representation mediaType="application/xml" element="tns:activity"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="~/mailbox">
+        <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/invitation-api]]></wadl:doc>
+        <wadl:method name="POST" id="addInvite">
+          <wadl:request>
+            <wadl:representation mediaType="application/xml" element="tns:mailboxitem"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="~/group-memberships{fields}">
+        <wadl:param name="membership-state" style="query" type="tns:membershipstatecode"/>
+        <wadl:param href="#fields-selector"/>
+        <wadl:method name="GET" id="getGroupMemberships">
+          <wadl:request>
+            <wadl:param href="#count"/>
+            <wadl:param href="#start"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#groupmemberships"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="~/group-memberships">
+        <wadl:method name="POST" id="addGroupMembership">
+          <wadl:request>
+            <wadl:representation href="#groupmembership"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="~/group-memberships/{group-id}{fields}">
+        <wadl:method name="GET" id="getGroupMembershipSettings">
+          <wadl:request>
+            <wadl:param href="#group-id"/>
+            <wadl:param href="#fields-selector"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#groupmembership"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="~/group-memberships/{group-id}">
+        <wadl:method name="PUT" id="updateGroupMembership">
+          <wadl:request>
+            <wadl:param href="#group-id"/>
+            <wadl:representation href="#groupmembership"/>
+          </wadl:request>
+        </wadl:method>
+
+        <wadl:method name="DELETE" id="removeGroupMembership">
+          <wadl:request>
+            <wadl:param href="#group-id"/>
+          </wadl:request>
+        </wadl:method>
+
+        <wadl:resource path="posts{fields}">
+          <wadl:method name="GET" id="getPosts">
+            <wadl:request>
+              <wadl:param href="#group-id"/>
+              <wadl:param href="#start"/>
+              <wadl:param href="#count"/>
+              <wadl:param href="#order"/>
+              <wadl:param href="#post-role"/>
+              <wadl:param href="#category"/>
+              <wadl:param href="#modified-since"/>
+              <wadl:param href="#fields-selector"/>
+            </wadl:request>
+            <wadl:response>
+              <wadl:representation href="#posts"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
+
+      </wadl:resource>
+
+      <wadl:resource path="~/job-bookmarks">
+
+        <wadl:method name="GET" id="getJobBookmarks">
+          <wadl:response>
+            <wadl:representation href="#job-bookmarks"/>
+          </wadl:response>
+        </wadl:method>
+
+        <wadl:method name="POST" id="addJobBookmark">
+          <wadl:request>
+            <wadl:representation href="#job-bookmark"/>
+          </wadl:request>
+        </wadl:method>
+
+        <wadl:resource path="{job-id}">
+          <wadl:method name="DELETE" id="removeJobBookmark">
+            <wadl:request>
+              <wadl:param href="#job-id"/>
+            </wadl:request>
+          </wadl:method>
+        </wadl:resource>
+      </wadl:resource>
+
+      <wadl:resource path="~/suggestions">
+
+        <wadl:resource path="groups{fields}">
+          <wadl:method name="GET" id="getSuggestedGroups">
+            <wadl:request>
+              <wadl:param href="#fields-selector"/>
+            </wadl:request>
+            <wadl:response>
+              <wadl:representation href="#groups"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
+
+        <wadl:resource path="groups">
+
+          <wadl:resource path="{group-id}">
+            <wadl:method name="DELETE" id="removeGroupSuggestion">
+              <wadl:request>
+                <wadl:param href="#group-id"/>
+              </wadl:request>
+            </wadl:method>
+
+            <wadl:resource path="posts{fields}">
+              <wadl:method name="GET" id="getSuggestedGroupPosts">
+                <wadl:request>
+                  <wadl:param href="#group-id"/>
+                  <wadl:param href="#start"/>
+                  <wadl:param href="#count"/>
+                  <wadl:param href="#order"/>
+                  <wadl:param href="#category"/>
+                  <wadl:param href="#modified-since"/>
+                  <wadl:param href="#fields-selector"/>
+                </wadl:request>
+                <wadl:response>
+                  <wadl:representation href="#posts"/>
+                </wadl:response>
+              </wadl:method>
+            </wadl:resource>
+
+          </wadl:resource>
+        </wadl:resource>
+
+        <wadl:resource path="to-follow/companies{fields}">
+          <wadl:method name="GET" id="getSuggestedCompanies">
+            <wadl:request>
+              <wadl:param href="#fields-selector"/>
+            </wadl:request>
+            <wadl:response>
+              <wadl:representation href="#companies"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
+
+        <wadl:resource path="job-suggestions{fields}">
+          <wadl:method name="GET" id="getSuggestedJobs">
+            <wadl:request>
+              <wadl:param href="#fields-selector"/>
+            </wadl:request>
+            <wadl:response>
+              <wadl:representation mediaType="application/xml" element="tns:jobsuggestions"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
+
+      </wadl:resource>
+
+      <wadl:resource path="~/following/companies{fields}">
+        <wadl:method name="GET" id="getFollowedCompanies">
+          <wadl:request>
+            <wadl:param href="#fields-selector"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#companies"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="~/following/companies">
+        <wadl:method name="POST" id="followCompany">
+          <wadl:request>
+            <wadl:representation href="#company"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="~/following/companies/id={company-id}">
+        <wadl:method name="DELETE" id="stopFollowingCompany">
+          <wadl:request>
+            <wadl:param href="#company-id"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="id={person-id}{fields}">
+        <wadl:method name="GET" id="getPersonById">
+          <wadl:request>
+            <wadl:param href="#person-id"/>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#secure-urls"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#person"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="id={person-id}/connections{fields}">
+        <wadl:method name="GET" id="getConnectionsById">
+          <wadl:request>
+            <wadl:param href="#person-id"/>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#secure-urls"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#connections"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="id={person-id}/network/updates{fields}">
+        <wadl:param href="#scope"/>
+        <wadl:param href="#type"/>
+        <wadl:param href="#count"/>
+        <wadl:param href="#start"/>
+        <wadl:param href="#after"/>
+        <wadl:param href="#before"/>
+        <wadl:param href="#show-hidden-members"/>
+        <wadl:method name="GET" id="getNetworkUpdatesById">
+          <wadl:request>
+            <wadl:param href="#person-id"/>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#secure-urls"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#updates"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="url={public-profile-url}{fields}">
+        <wadl:method name="GET" id="getPersonByUrl">
+          <wadl:request>
+            <wadl:param href="#public-profile-url"/>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#secure-urls"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#person"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="url={public-profile-url}/connections{fields}">
+        <wadl:method name="GET" id="getConnectionsByUrl">
+          <wadl:request>
+            <wadl:param href="#public-profile-url"/>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#secure-urls"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#connections"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+    </wadl:resource>
+
+    <!-- Groups Resource -->
+    <wadl:resource path="groups" id="Groups">
+      <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/groups-api]]></wadl:doc>
+
+      <wadl:resource path="{group-id}{fields}">
+        <wadl:method name="GET" id="getGroup">
+          <wadl:request>
+            <wadl:param href="#group-id"/>
+            <wadl:param href="#fields-selector"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#group"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="{group-id}">
+        <wadl:resource path="posts{fields}">
+          <wadl:method name="GET" id="getPosts">
+            <wadl:request>
+              <wadl:param href="#group-id"/>
+              <wadl:param href="#start"/>
+              <wadl:param href="#count"/>
+              <wadl:param href="#order"/>
+              <wadl:param href="#category"/>
+              <wadl:param href="#modified-since"/>
+              <wadl:param href="#fields-selector"/>
+            </wadl:request>
+            <wadl:response>
+              <wadl:representation href="#posts"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
+
+        <wadl:resource path="posts">
+          <wadl:method name="POST" id="addPost">
+            <wadl:request>
+              <wadl:param href="#group-id"/>
+              <wadl:representation href="#post"/>
+            </wadl:request>
+          </wadl:method>
+        </wadl:resource>
+      </wadl:resource>
+
+    </wadl:resource>
+
+    <!-- Posts Resource -->
+    <wadl:resource path="posts" id="Posts">
+      <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/commenting-reading-comments-and-likes-network-updates]]></wadl:doc>
+
+      <wadl:resource path="{post-id}{fields}">
+        <wadl:method name="GET" id="getPost">
+          <wadl:request>
+            <wadl:param href="#post-id"/>
+            <wadl:param href="#count"/>
+            <wadl:param href="#start"/>
+            <wadl:param href="#fields-selector"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#post"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="{post-id}/relation-to-viewer/is-liked">
+        <wadl:method name="PUT" id="likePost">
+          <wadl:request>
+            <wadl:param href="#post-id"/>
+            <wadl:representation href="#is-liked"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="{post-id}/relation-to-viewer/is-following">
+        <wadl:method name="PUT" id="followPost">
+          <wadl:request>
+            <wadl:param href="#post-id"/>
+            <wadl:representation href="#is-following"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="{post-id}/category/code">
+        <wadl:method name="PUT" id="flagCategory">
+          <wadl:request>
+            <wadl:param href="#post-id"/>
+            <wadl:representation mediaType="application/xml" element="tns:postcategorycode"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="{post-id}">
+        <wadl:method name="DELETE" id="removePost">
+          <wadl:request>
+            <wadl:param href="#post-id"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="{post-id}/comments{fields}">
+        <wadl:method name="GET" id="getPostComments">
+          <wadl:request>
+            <wadl:param href="#post-id"/>
+            <wadl:param href="#count"/>
+            <wadl:param href="#start"/>
+            <wadl:param href="#fields-selector"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#comments"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="{post-id}/comments">
+        <wadl:method name="POST" id="addComment">
+          <wadl:request>
+            <wadl:param href="#post-id"/>
+            <wadl:representation href="#comment"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+    </wadl:resource>
+
+    <!-- Comments Resource -->
+    <wadl:resource path="comments" id="Comments">
+      <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/commenting-reading-comments-and-likes-network-updates]]></wadl:doc>
+
+      <wadl:resource path="{comment-id}{fields}">
+        <wadl:method name="GET" id="getComment">
+          <wadl:request>
+            <wadl:param href="#comment-id"/>
+            <wadl:param href="#fields-selector"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#comment"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="{comment-id}">
+        <wadl:method name="DELETE" id="removeComment">
+          <wadl:request>
+            <wadl:param href="#comment-id"/>
+          </wadl:request>
+        </wadl:method>
+      </wadl:resource>
+
+    </wadl:resource>
+
+    <!--Companies Resource -->
+    <wadl:resource id="Companies">
+      <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/companies]]></wadl:doc>
+
+      <wadl:resource path="companies{fields}">
+        <wadl:method name="GET" id="getCompanies">
+          <wadl:request>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param name="email-domain" style="query"/>
+            <wadl:param name="is-company-admin" style="query" type="xsd:boolean"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#companies"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="companies">
+
+        <wadl:resource path="{company-id}{fields}">
+          <wadl:method name="GET" id="getCompanyById">
+            <wadl:request>
+              <wadl:param href="#company-id"/>
+              <wadl:param href="#fields-selector"/>
+            </wadl:request>
+            <wadl:response>
+              <wadl:representation href="#company"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
+
+        <wadl:resource path="universal-name={universal-name}{fields}">
+          <wadl:method name="GET" id="getCompanyByName">
+            <wadl:request>
+              <wadl:param name="universal-name" style="template"/>
+              <wadl:param href="#fields-selector"/>
+            </wadl:request>
+            <wadl:response>
+              <wadl:representation href="#company"/>
+            </wadl:response>
+          </wadl:method>
+        </wadl:resource>
+
+        <wadl:resource path="{company-id}">
+
+          <!-- Company updates -->
+          <wadl:resource path="updates{fields}">
+            <wadl:method name="GET" id="getCompanyUpdates">
+              <wadl:request>
+                <wadl:param href="#company-id"/>
+                <wadl:param href="#fields-selector"/>
+                <wadl:param href="#event-type"/>
+                <wadl:param href="#start"/>
+                <wadl:param href="#count"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation href="#updates"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+          <wadl:resource path="updates/key={update-key}">
+            <wadl:resource path="update-comments{fields}">
+              <wadl:method name="GET" id="getCompanyUpdateComments">
+                <wadl:request>
+                  <wadl:param href="#company-id"/>
+                  <wadl:param href="#update-key"/>
+                  <wadl:param href="#fields-selector"/>
+                  <wadl:param href="#secure-urls"/>
+                </wadl:request>
+                <wadl:response>
+                  <wadl:representation href="#update-comments"/>
+                </wadl:response>
+              </wadl:method>
+            </wadl:resource>
+
+            <wadl:resource path="update-comments-as-company">
+              <wadl:method name="POST" id="addCompanyUpdateCommentAsCompany">
+                <wadl:request>
+                  <wadl:param href="#company-id"/>
+                  <wadl:param href="#update-key"/>
+                  <wadl:representation href="#update-comment"/>
+                </wadl:request>
+              </wadl:method>
+            </wadl:resource>
+
+            <wadl:resource path="likes{fields}">
+              <wadl:method name="GET" id="getCompanyUpdateLikes">
+                <wadl:request>
+                  <wadl:param href="#company-id"/>
+                  <wadl:param href="#update-key"/>
+                  <wadl:param href="#fields-selector"/>
+                  <wadl:param href="#secure-urls"/>
+                </wadl:request>
+                <wadl:response>
+                  <wadl:representation mediaType="application/xml" element="tns:likes"/>
+                </wadl:response>
+              </wadl:method>
+            </wadl:resource>
+
+          </wadl:resource>
+
+          <!-- Company shares -->
+          <wadl:resource path="shares">
+            <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/share-api]]></wadl:doc>
+            <wadl:method name="POST" id="addShare">
+              <wadl:request>
+                <wadl:param href="#company-id"/>
+                <wadl:representation mediaType="application/xml" element="tns:share"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation mediaType="application/xml" element="tns:update"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+          <wadl:resource path="is-company-share-enabled">
+            <wadl:method name="GET" id="isShareEnabled">
+              <wadl:request>
+                <wadl:param href="#company-id"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation mediaType="application/xml" element="tns:iscompanyshareenabled"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+          <wadl:resource path="relation-to-viewer/is-company-share-enabled">
+            <wadl:method name="GET" id="isViewerShareEnabled">
+              <wadl:request>
+                <wadl:param href="#company-id"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation mediaType="application/xml" element="tns:iscompanyshareenabled"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+          <!-- Company Analytics -->
+          <wadl:resource path="historical-follow-statistics">
+            <wadl:method name="GET" id="getHistoricalFollowStatistics">
+              <wadl:request>
+                <wadl:param href="#company-id"/>
+                <wadl:param href="#start-timestamp"/>
+                <wadl:param href="#end-timestamp"/>
+                <wadl:param href="#time-granularity"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation mediaType="application/xml" element="tns:historicalfollowstatistics"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+          <wadl:resource path="historical-status-update-statistics">
+            <wadl:method name="GET" id="getHistoricalStatusUpdateStatistics">
+              <wadl:request>
+                <wadl:param href="#company-id"/>
+                <wadl:param href="#start-timestamp"/>
+                <wadl:param href="#end-timestamp"/>
+                <wadl:param href="#time-granularity"/>
+                <wadl:param name="update-key" style="query"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation mediaType="application/xml" element="tns:historicalstatusupdatestatistics"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+          <wadl:resource path="company-statistics">
+            <wadl:method name="GET" id="getStatistics">
+              <wadl:request>
+                <wadl:param href="#company-id"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation mediaType="application/xml" element="tns:companystatistics"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+          <wadl:resource path="num-followers">
+            <wadl:method name="GET" id="getNumberOfFollowers">
+              <wadl:request>
+                <wadl:param href="#company-id"/>
+                <wadl:param name="geos" style="query" repeating="true"/>
+                <wadl:param name="companySizes" style="query" repeating="true"/>
+                <wadl:param name="jobFunc" style="query" repeating="true"/>
+                <wadl:param name="industries" style="query" repeating="true"/>
+                <wadl:param name="seniorities" style="query" repeating="true"/>
+              </wadl:request>
+              <wadl:response>
+                <wadl:representation mediaType="application/xml" element="tns:numfollowers"/>
+              </wadl:response>
+            </wadl:method>
+          </wadl:resource>
+
+        </wadl:resource>
+
+      </wadl:resource>
+
+    </wadl:resource>
+
+    <!-- Jobs -->
+    <wadl:resource path="jobs" id="Jobs">
+      <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/jobs]]></wadl:doc>
+
+      <wadl:method name="POST" id="addJob">
+        <wadl:request>
+          <wadl:representation mediaType="application/xml" element="tns:job"/>
+        </wadl:request>
+      </wadl:method>
+
+      <wadl:resource path="{job-id}${fields}">
+        <wadl:method name="GET" id="getJob">
+          <wadl:request>
+            <wadl:param href="#job-id"/>
+            <wadl:param href="#fields-selector"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation mediaType="application/xml" element="tns:job"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <wadl:resource path="partner-job-id={partner-job-id}">
+
+        <wadl:method name="PUT" id="editJob">
+          <wadl:request>
+            <wadl:param href="#partner-job-id"/>
+            <wadl:representation mediaType="application/xml" element="tns:job"/>
+          </wadl:request>
+        </wadl:method>
+
+        <wadl:method name="DELETE" id="removeJob">
+          <wadl:request>
+            <wadl:param href="#partner-job-id"/>
+          </wadl:request>
+        </wadl:method>
+
+      </wadl:resource>
+
+    </wadl:resource>
+
+    <!-- Search -->
+    <wadl:resource id="SearchResource">
+
+      <!-- People Search -->
+      <wadl:resource path="people-search{fields}">
+        <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/people-search-api]]></wadl:doc>
+        <wadl:method name="GET" id="searchPeople">
+          <wadl:request>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#keywords"/>
+            <wadl:param name="first-name" style="query" type="tns:first-name"/>
+            <wadl:param name="last-name" style="query" type="tns:last-name"/>
+            <wadl:param href="#company-name"/>
+            <wadl:param name="current-company" style="query" type="tns:current-company"/>
+            <wadl:param name="title" style="query" type="tns:title"/>
+            <wadl:param name="current-title" style="query" type="tns:current-title"/>
+            <wadl:param name="school-name" style="query" type="tns:school-name"/>
+            <wadl:param name="current-school" style="query" type="tns:current-school"/>
+            <wadl:param href="#country-code"/>
+            <wadl:param href="#postal-code"/>
+            <wadl:param href="#distance"/>
+            <wadl:param href="#facet"/>
+            <wadl:param href="#facets"/>
+            <wadl:param href="#start"/>
+            <wadl:param href="#count"/>
+            <wadl:param name="sort" style="query"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation mediaType="application/xml" element="tns:peoplesearch"/>
+          </wadl:response>
+        </wadl:method>
+
+      </wadl:resource>
+
+      <!-- Company Search -->
+      <wadl:resource path="company-search{fields}">
+        <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/company-search]]></wadl:doc>
+        <wadl:method name="GET" id="searchCompanies">
+          <wadl:request>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#keywords"/>
+            <wadl:param name="hq-only" style="query"/>
+            <wadl:param href="#facet"/>
+            <wadl:param href="#facets"/>
+            <wadl:param href="#start"/>
+            <wadl:param href="#count"/>
+            <wadl:param name="sort" style="query"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#company-search"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+      <!-- Job Search -->
+      <wadl:resource path="job-search{fields}">
+        <wadl:doc><![CDATA[https://developer-programs.linkedin.com/documents/job-search-api]]></wadl:doc>
+        <wadl:method name="GET" id="searchJobs">
+          <wadl:request>
+            <wadl:param href="#fields-selector"/>
+            <wadl:param href="#keywords"/>
+            <wadl:param href="#company-name"/>
+            <wadl:param name="job-title" style="query"/>
+            <wadl:param href="#country-code"/>
+            <wadl:param href="#postal-code"/>
+            <wadl:param href="#distance"/>
+            <wadl:param href="#facet"/>
+            <wadl:param href="#facets"/>
+            <wadl:param href="#start"/>
+            <wadl:param href="#count"/>
+            <wadl:param name="sort" style="query"/>
+          </wadl:request>
+          <wadl:response>
+            <wadl:representation href="#job-search"/>
+          </wadl:response>
+        </wadl:method>
+      </wadl:resource>
+
+    </wadl:resource>
+
+  </wadl:resources>
+
+  <!-- id path param -->
+  <wadl:param name="person-id" style="template" required="true" id="person-id"/>
+
+  <!-- field selector suffix -->
+  <wadl:param name="fields" style="template" id="fields-selector"/>
+
+  <!-- return secure urls in profile -->
+  <wadl:param name="secure-urls" style="query" type="xsd:boolean" id="secure-urls"/>
+
+  <!-- public profile url param -->
+  <wadl:param name="public-profile-url" style="template" id="public-profile-url"/>
+
+  <!-- group Id param -->
+  <wadl:param name="group-id" style="template" type="xsd:integer" required="true" id="group-id"/>
+
+  <!-- post Id param -->
+  <wadl:param name="post-id" style="template" required="true" id="post-id"/>
+
+  <!-- comment Id param -->
+  <wadl:param name="comment-id" style="template" required="true" id="comment-id"/>
+
+  <!-- company Id param -->
+  <wadl:param name="company-id" style="template" type="xsd:integer" required="true" id="company-id"/>
+
+  <!-- job Id param -->
+  <wadl:param name="job-id" style="template" type="xsd:integer" required="true" id="job-id"/>
+
+  <!-- partner-job Id param -->
+  <wadl:param name="partner-job-id" style="template" type="xsd:integer" required="true" id="partner-job-id"/>
+
+  <!-- posts params -->
+  <wadl:param name="order" style="query" id="order" type="tns:order"/>
+
+  <wadl:param name="role" style="query" id="post-role" type="tns:post-role"/>
+
+  <wadl:param name="category" style="query" id="category" type="tns:postcategorycode"/>
+
+  <wadl:param name="modified-since" style="query" id="modified-since" type="xsd:integer"/>
+
+  <wadl:param name="scope" style="query" type="tns:scope" id="scope"/>
+
+  <wadl:param name="type" style="query" id="type" type="tns:networkupdatereturntype"/>
+
+  <wadl:param name="keywords" style="query" type="tns:keywords" id="keywords"/>
+
+  <wadl:param name="facet" style="query" id="facet"/>
+
+  <wadl:param name="facets" style="query" id="facets"/>
+
+  <wadl:param name="start" style="query" type="xsd:integer" id="start"/>
+
+  <wadl:param name="count" style="query" type="xsd:integer" id="count"/>
+
+  <wadl:param name="company-name" style="query" type="tns:company-name" id="company-name"/>
+
+  <wadl:param name="country-code" style="query" type="tns:country-code" id="country-code"/>
+
+  <wadl:param name="postal-code" style="query" type="tns:postal-code" id="postal-code"/>
+
+  <wadl:param name="distance" style="query" type="tns:distance" id="distance"/>
+
+  <wadl:param name="after" style="query" type="xsd:integer" id="after"/>
+
+  <wadl:param name="before" style="query" type="xsd:integer" id="before"/>
+
+  <wadl:param name="show-hidden-members" style="query" type="xsd:boolean" id="show-hidden-members"/>
+
+  <!-- update-key path param -->
+  <wadl:param name="update-key" style="template" id="update-key"/>
+
+  <wadl:param name="event-type" style="query" id="event-type" type="tns:eventtype"/>
+
+  <wadl:param name="start-timestamp" style="query" type="xsd:integer" id="start-timestamp"/>
+  <wadl:param name="end-timestamp" style="query" type="xsd:integer" id="end-timestamp"/>
+  <wadl:param name="time-granularity" style="query" id="time-granularity" type="tns:time-granularity"/>
+
+  <!-- representation types -->
+  <wadl:representation mediaType="application/xml" element="tns:person" id="person"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:connections" id="connections"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:updates" id="updates"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:groupmembership" id="groupmembership"/>
+  <wadl:representation mediaType="application/xml" element="tns:groupmemberships" id="groupmemberships"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:group" id="group"/>
+  <wadl:representation mediaType="application/xml" element="tns:groups" id="groups"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:post" id="post"/>
+  <wadl:representation mediaType="application/xml" element="tns:posts" id="posts"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:comment" id="comment"/>
+  <wadl:representation mediaType="application/xml" element="tns:comments" id="comments"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:company" id="company"/>
+  <wadl:representation mediaType="application/xml" element="tns:companies" id="companies"/>
+  <wadl:representation mediaType="application/xml" element="tns:companysearch" id="company-search"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:isliked" id="is-liked"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:isfollowing" id="is-following"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:updatecomment" id="update-comment"/>
+  <wadl:representation mediaType="application/xml" element="tns:updatecomments" id="update-comments"/>
+
+  <wadl:representation mediaType="application/xml" element="tns:jobbookmark" id="job-bookmark"/>
+  <wadl:representation mediaType="application/xml" element="tns:jobbookmarks" id="job-bookmarks"/>
+  <wadl:representation mediaType="application/xml" element="tns:jobsearch" id="job-search"/>
+
+</wadl:application>

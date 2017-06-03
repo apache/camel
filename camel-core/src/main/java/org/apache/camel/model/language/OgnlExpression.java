@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * For OGNL expressions and predicates
  *
  * @version 
  */
+@Metadata(firstVersion = "1.1.0", label = "language,java", title = "OGNL")
 @XmlRootElement(name = "ognl")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OgnlExpression extends ExpressionDefinition {

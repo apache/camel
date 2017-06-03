@@ -19,7 +19,7 @@ package org.apache.camel.component.direct;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.ShutdownAware;
 
@@ -28,7 +28,7 @@ import org.apache.camel.spi.ShutdownAware;
  *
  * @version 
  */
-public class DirectConsumer extends DefaultConsumer implements ShutdownAware, SuspendableService {
+public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Suspendable {
 
     private DirectEndpoint endpoint;
 
@@ -44,6 +44,7 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
         // add consumer to endpoint
         boolean existing = this == endpoint.getConsumer();
         if (!existing && endpoint.hasConsumer(this)) {
@@ -57,6 +58,7 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
     @Override
     protected void doStop() throws Exception {
         endpoint.removeConsumer(this);
+        super.doStop();
     }
 
     @Override
@@ -82,7 +84,7 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
         return 0;
     }
 
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // noop
     }
 }

@@ -16,7 +16,12 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import java.util.Map;
+import javax.management.openmbean.TabularData;
+
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedComponentMBean {
 
@@ -29,4 +34,18 @@ public interface ManagedComponentMBean {
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
+    @ManagedOperation(description = "Component information as JSon")
+    String informationJson();
+
+    @ManagedOperation(description = "Explain how this component is configured")
+    TabularData explain(boolean allOptions);
+
+    @ManagedAttribute(description = "Whether this component support verification (parameters or connectivity)")
+    boolean isVerifySupported();
+
+    @ManagedOperation(description = "Verify options against a given scope")
+    ComponentVerifier.Result verify(String scope, Map<String, String> options);
 }

@@ -17,6 +17,8 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -33,6 +35,9 @@ import org.slf4j.LoggerFactory;
 public class GenericFile<T> implements WrappedFile<T>  {
     private static final Logger LOG = LoggerFactory.getLogger(GenericFile.class);
 
+    private final boolean probeContentType;
+
+    private String copyFromAbsoluteFilePath;
     private String endpointPath;
     private String fileName;
     private String fileNameOnly;
@@ -45,6 +50,15 @@ public class GenericFile<T> implements WrappedFile<T>  {
     private boolean absolute;
     private boolean directory;
     private String charset;
+    private Map<String, Object> extendedAttributes;
+
+    public GenericFile() {
+        this(false);
+    }
+
+    public GenericFile(boolean probeContentType) {
+        this.probeContentType = probeContentType;
+    }
 
     public char getFileSeparator() {
         return File.separatorChar;
@@ -64,6 +78,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
+        result.setCopyFromAbsoluteFilePath(source.getAbsoluteFilePath());
         result.setEndpointPath(source.getEndpointPath());
         result.setAbsolute(source.isAbsolute());
         result.setDirectory(source.isDirectory());
@@ -131,6 +146,20 @@ public class GenericFile<T> implements WrappedFile<T>  {
             message.setHeader(Exchange.FILE_NAME_CONSUMED, getFileName());
             message.setHeader("CamelFileAbsolute", isAbsolute());
             message.setHeader("CamelFileAbsolutePath", getAbsoluteFilePath());
+
+            if (extendedAttributes != null) {
+                message.setHeader("CamelFileExtendedAttributes", extendedAttributes);
+            }
+            
+            if (probeContentType && file instanceof File) {
+                File f = (File) file;
+                Path path = f.toPath();
+                try {
+                    message.setHeader(Exchange.FILE_CONTENT_TYPE, Files.probeContentType(path));
+                } catch (Throwable e) {
+                    // just ignore the exception
+                }
+            }
     
             if (isAbsolute()) {
                 message.setHeader(Exchange.FILE_PATH, getAbsoluteFilePath());
@@ -171,7 +200,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
 
         // Make sure the names is normalized.
         String newFileName = FileUtil.normalizePath(newName);
-        String newEndpointPath = FileUtil.normalizePath(endpointPath);
+        String newEndpointPath = FileUtil.normalizePath(endpointPath.endsWith("" + File.separatorChar) ? endpointPath : endpointPath + File.separatorChar);
 
         LOG.trace("Normalized endpointPath: {}", newEndpointPath);
         LOG.trace("Normalized newFileName: ()", newFileName);
@@ -266,6 +295,14 @@ public class GenericFile<T> implements WrappedFile<T>  {
         this.charset = charset;
     }
 
+    public Map<String, Object> getExtendedAttributes() {
+        return extendedAttributes;
+    }
+
+    public void setExtendedAttributes(Map<String, Object> extendedAttributes) {
+        this.extendedAttributes = extendedAttributes;
+    }
+
     @Override
     public T getFile() {
         return file;
@@ -351,6 +388,14 @@ public class GenericFile<T> implements WrappedFile<T>  {
 
     public void setDirectory(boolean directory) {
         this.directory = directory;
+    }
+
+    public String getCopyFromAbsoluteFilePath() {
+        return copyFromAbsoluteFilePath;
+    }
+
+    public void setCopyFromAbsoluteFilePath(String copyFromAbsoluteFilePath) {
+        this.copyFromAbsoluteFilePath = copyFromAbsoluteFilePath;
     }
 
     /**

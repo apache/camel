@@ -25,9 +25,9 @@ public class HazelcastSedaInOutTransactedTest extends HazelcastSedaInOutTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").to("hazelcast:seda:foo");
+                from("direct:foo").to("hazelcast-seda:foo");
 
-                from("hazelcast:seda:foo?transacted=true").to("mock:result");
+                from("hazelcast-seda:foo?transacted=true").to("mock:result");
             }
         };
     }

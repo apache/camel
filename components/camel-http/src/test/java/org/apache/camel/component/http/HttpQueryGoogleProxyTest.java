@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class HttpQueryGoogleProxyTest extends CamelTestSupport {
 
@@ -35,7 +35,7 @@ public class HttpQueryGoogleProxyTest extends CamelTestSupport {
         HttpConfiguration config = new HttpConfiguration();
         config.setProxyHost("myProxyHost");
         config.setProxyPort(8877);
-        config.setProxyAuthMethod(AuthMethod.Basic);
+        config.setProxyAuthMethod("Basic");
         config.setAuthMethodPriority("Digest,Basic");
         config.setProxyAuthUsername("myProxyUsername");
         config.setProxyAuthPassword("myProxyPassword");

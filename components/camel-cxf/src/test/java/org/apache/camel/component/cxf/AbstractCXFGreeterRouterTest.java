@@ -21,9 +21,10 @@ import javax.xml.ws.Service;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.HttpOperationFailedException;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
 import org.junit.After;
@@ -66,9 +67,7 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     @After
     public void tearDown() throws Exception {
         
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
         super.tearDown();
     }
     

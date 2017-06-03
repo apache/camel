@@ -16,46 +16,83 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.builder.xml.ResultHandlerFactory;
-import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An <a href="http://camel.apache.org/xslt.html">XSLT Component</a>
- * for performing XSLT transforms of messages
+ * The <a href="http://camel.apache.org/xslt.html">XSLT Component</a> is for performing XSLT transformations of messages
  */
-public class XsltComponent extends DefaultComponent {
+public class XsltComponent extends UriEndpointComponent {
 
-    private static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
     private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
+
+    @Metadata(label = "advanced")
     private XmlConverter xmlConverter;
+    @Metadata(label = "advanced", description = "To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'.")
     private URIResolver uriResolver;
+    @Metadata(label = "advanced", description = "To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'.")
+    private XsltUriResolverFactory uriResolverFactory;
+    @Metadata(defaultValue = "true")
+    @UriParam(label = "advanced")
+    private Object saxonConfiguration;
+    @Metadata(label = "advanced")
+    private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
+    @UriParam(label = "advanced", javaType = "java.lang.String")
+    private List<Object> saxonExtensionFunctions;
     private boolean contentCache = true;
     private boolean saxon;
+
+    public XsltComponent() {
+        super(XsltEndpoint.class);
+    }
 
     public XmlConverter getXmlConverter() {
         return xmlConverter;
     }
 
+    /**
+     * To use a custom implementation of {@link org.apache.camel.converter.jaxp.XmlConverter}
+     */
     public void setXmlConverter(XmlConverter xmlConverter) {
         this.xmlConverter = xmlConverter;
+    }
+    
+    
+
+    public XsltUriResolverFactory getUriResolverFactory() {
+        return uriResolverFactory;
+    }
+
+    /**
+     * To use a custom javax.xml.transform.URIResolver which depends on a dynamic endpoint resource URI or which is a subclass of {@link XsltUriResolver}.
+     *  Do not use in combination with uriResolver.
+     * See also {@link #setUriResolver(URIResolver)}.
+     */
+    public void setUriResolverFactory(XsltUriResolverFactory uriResolverFactory) {
+        this.uriResolverFactory = uriResolverFactory;
     }
 
     public URIResolver getUriResolver() {
         return uriResolver;
     }
 
+    /**
+     * To use a custom javax.xml.transform.URIResolver. Do not use in combination with uriResolverFactory.
+     * See also {@link #setUriResolverFactory(XsltUriResolverFactory)}.
+     */
     public void setUriResolver(URIResolver uriResolver) {
         this.uriResolver = uriResolver;
     }
@@ -64,6 +101,11 @@ public class XsltComponent extends DefaultComponent {
         return contentCache;
     }
 
+    /**
+     * Cache for the resource content (the stylesheet file) when it is loaded.
+     * If set to false Camel will reload the stylesheet file on each message processing. This is good for development.
+     * A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
+     */
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
     }
@@ -72,108 +114,110 @@ public class XsltComponent extends DefaultComponent {
         return saxon;
     }
 
+    /**
+     * Whether to use Saxon as the transformerFactoryClass.
+     * If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
+     */
     public void setSaxon(boolean saxon) {
         this.saxon = saxon;
     }
 
+    public List<Object> getSaxonExtensionFunctions() {
+        return saxonExtensionFunctions;
+    }
+
+    /**
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
+     * You would need to add camel-saxon to the classpath.
+     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     */
+    public void setSaxonExtensionFunctions(List<Object> extensionFunctions) {
+        this.saxonExtensionFunctions = extensionFunctions;
+    }
+
+    /**
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
+     * You would need to add camel-saxon to the classpath.
+     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     */
+    public void setSaxonExtensionFunctions(String extensionFunctions) {
+        this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
+            getCamelContext(),
+            extensionFunctions,
+            Object.class
+        );
+    }
+
+    public Object getSaxonConfiguration() {
+        return saxonConfiguration;
+    }
+
+    /**
+     * To use a custom Saxon configuration
+     */
+    public void setSaxonConfiguration(Object saxonConfiguration) {
+        this.saxonConfiguration = saxonConfiguration;
+    }
+
+    public Map<String, Object> getSaxonConfigurationProperties() {
+        return saxonConfigurationProperties;
+    }
+
+    /**
+     * To set custom Saxon configuration properties
+     */
+    public void setSaxonConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.saxonConfigurationProperties = configurationProperties;
+    }
+
+    @Override
     protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters) throws Exception {
+        XsltEndpoint endpoint = new XsltEndpoint(uri, this);
+        endpoint.setConverter(getXmlConverter());
+        endpoint.setContentCache(isContentCache());
+        endpoint.setSaxon(isSaxon());
+        endpoint.setSaxonConfiguration(saxonConfiguration);
+        endpoint.setSaxonConfigurationProperties(saxonConfigurationProperties);
+        endpoint.setSaxonExtensionFunctions(saxonExtensionFunctions);
+
         String resourceUri = remaining;
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
-        final XsltBuilder xslt = getCamelContext().getInjector().newInstance(XsltBuilder.class);
-
-        // lets allow the converter to be configured
-        XmlConverter converter = resolveAndRemoveReferenceParameter(parameters, "converter", XmlConverter.class);
-        if (converter == null) {
-            converter = getXmlConverter();
-        }
-        if (converter != null) {
-            xslt.setConverter(converter);
-        }
-
-        String transformerFactoryClassName = getAndRemoveParameter(parameters, "transformerFactoryClass", String.class);
-        Boolean saxon = getAndRemoveParameter(parameters, "saxon", Boolean.class, isSaxon());
-        if (transformerFactoryClassName == null && saxon) {
-            transformerFactoryClassName = SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
-        }
-
-        TransformerFactory factory = null;
-        if (transformerFactoryClassName != null) {
-            // provide the class loader of this component to work in OSGi environments
-            Class<?> factoryClass = getCamelContext().getClassResolver().resolveMandatoryClass(transformerFactoryClassName, XsltComponent.class.getClassLoader());
-            LOG.debug("Using TransformerFactoryClass {}", factoryClass);
-            factory = (TransformerFactory) getCamelContext().getInjector().newInstance(factoryClass);
-        }
-
-        if (parameters.get("transformerFactory") != null) {
-            factory = resolveAndRemoveReferenceParameter(parameters, "transformerFactory", TransformerFactory.class);
-        }
-
-        if (factory != null) {
-            LOG.debug("Using TransformerFactory {}", factory);
-            xslt.getConverter().setTransformerFactory(factory);
-        }
-
-        ResultHandlerFactory resultHandlerFactory = resolveAndRemoveReferenceParameter(parameters, "resultHandlerFactory", ResultHandlerFactory.class);
-        if (resultHandlerFactory != null) {
-            xslt.setResultHandlerFactory(resultHandlerFactory);
-        }
-
-        Boolean failOnNullBody = getAndRemoveParameter(parameters, "failOnNullBody", Boolean.class);
-        if (failOnNullBody != null) {
-            xslt.setFailOnNullBody(failOnNullBody);
-        }
-        String output = getAndRemoveParameter(parameters, "output", String.class);
-        configureOutput(xslt, output);
-        
-        Integer cs = getAndRemoveParameter(parameters, "transformerCacheSize", Integer.class, Integer.valueOf(0));
-        xslt.transformerCacheSize(cs);
-
-        // default to use the cache option from the component if the endpoint did not have the contentCache parameter
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
 
         // if its a http uri, then append additional parameters as they are part of the uri
         if (ResourceHelper.isHttpUri(resourceUri)) {
             resourceUri = ResourceHelper.appendParameters(resourceUri, parameters);
         }
+        LOG.debug("{} using schema resource: {}", this, resourceUri);
+        endpoint.setResourceUri(resourceUri);
 
         // lookup custom resolver to use
         URIResolver resolver = resolveAndRemoveReferenceParameter(parameters, "uriResolver", URIResolver.class);
         if (resolver == null) {
             // not in endpoint then use component specific resolver
             resolver = getUriResolver();
-        }
+        }       
         if (resolver == null) {
-            // fallback to use a Camel specific resolver
-            resolver = new XsltUriResolver(getCamelContext().getClassResolver(), remaining);
+            // lookup custom resolver factory to use
+            XsltUriResolverFactory resolverFactory = resolveAndRemoveReferenceParameter(parameters, "uriResolverFactory", XsltUriResolverFactory.class);
+            if (resolverFactory == null) {
+                // not in endpoint then use component specific resolver factory
+                resolverFactory = getUriResolverFactory();
+            }
+            if (resolverFactory == null) {
+                // fallback to use the Default URI resolver factory
+                resolverFactory = new DefaultXsltUriResolverFactory();
+            }
+            
+            resolver = resolverFactory.createUriResolver(getCamelContext(), remaining);
         }
-        // set resolver before input stream as resolver is used when loading the input stream
-        xslt.setUriResolver(resolver);
-        
-        configureXslt(xslt, uri, remaining, parameters);
+        endpoint.setUriResolver(resolver);
 
-        return new XsltEndpoint(uri, this, xslt, resourceUri, cache);
-    }
-
-    protected void configureXslt(XsltBuilder xslt, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        setProperties(xslt, parameters);
-    }
-
-    protected void configureOutput(XsltBuilder xslt, String output) throws Exception {
-        if (ObjectHelper.isEmpty(output)) {
-            return;
+        setProperties(endpoint, parameters);
+        if (!parameters.isEmpty()) {
+            // additional parameters need to be stored on endpoint as they can be used to configure xslt builder additionally
+            endpoint.setParameters(parameters);
         }
 
-        if ("string".equalsIgnoreCase(output)) {
-            xslt.outputString();
-        } else if ("bytes".equalsIgnoreCase(output)) {
-            xslt.outputBytes();
-        } else if ("DOM".equalsIgnoreCase(output)) {
-            xslt.outputDOM();
-        } else if ("file".equalsIgnoreCase(output)) {
-            xslt.outputFile();
-        } else {
-            throw new IllegalArgumentException("Unknown output type: " + output);
-        }
+        return endpoint;
     }
 
 }

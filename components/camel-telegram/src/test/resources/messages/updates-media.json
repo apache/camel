@@ -1,0 +1,67 @@
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 525704898,
+      "message": {
+        "message_id": 179,
+        "from": {
+          "id": 1585844777,
+          "first_name": "John",
+          "last_name": "Doe"
+        },
+        "chat": {
+          "id": -45658,
+          "title": "A chat group",
+          "type": "group"
+        },
+        "date": 1463436626,
+        "text": "a message"
+      }
+    },
+    {
+      "update_id": 525704899,
+      "message": {
+        "message_id": 180,
+        "from": {
+          "id": 1585844777,
+          "first_name": "John",
+          "last_name": "Doe"
+        },
+        "chat": {
+          "id": 158584478,
+          "first_name": "John",
+          "last_name": "Doe",
+          "type": "private"
+        },
+        "date": 1463479642,
+        "photo": [
+          {
+            "file_id": "AgADBAADq6cxG0bQcwnUb4Cga-eXxnodQxkABLXiiSI1vzZK8XXXXXXX",
+            "file_size": 1253,
+            "width": 67,
+            "height": 90
+          },
+          {
+            "file_id": "AgADBAADq6cxG0bQcwnUb4Cga-eXxnodQxkABO89ObzhYdRo7XXXXXXX",
+            "file_size": 14901,
+            "width": 240,
+            "height": 320
+          },
+          {
+            "file_id": "AgADBAADq6cxG0bQcwnUb4Cga-eXxnodQxkABP0k5b4ZzS4-7XXXXXXX",
+            "file_size": 66807,
+            "width": 600,
+            "height": 800
+          },
+          {
+            "file_id": "AgADBAADq6cxG0bQcwnUb4Cga-eXxnodQxkABDnWBzFwvqpw7XXXXXXX",
+            "file_size": 120343,
+            "width": 960,
+            "height": 1280
+          }
+        ]
+      }
+    }
+  ]
+}

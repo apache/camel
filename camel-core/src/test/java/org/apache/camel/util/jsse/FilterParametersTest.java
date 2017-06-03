@@ -90,7 +90,7 @@ public class FilterParametersTest extends AbstractJsseParametersTest {
     
     public void test() {
         FilterParameters filter = new FilterParameters();
-        filter.getInclude().add("asdfsadfsadfsadf");
+        filter.getInclude().add("asdf.*");
         filter.getExclude().add("aa");
         
         FilterParameters.Patterns patterns = filter.getPatterns();

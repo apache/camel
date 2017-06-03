@@ -127,7 +127,7 @@ public final class NettyHttpHelper {
         String statusText = response.getStatus().getReasonPhrase();
 
         if (responseCode >= 300 && responseCode < 400) {
-            String redirectLocation = response.getHeader("location");
+            String redirectLocation = response.headers().get("location");
             if (redirectLocation != null) {
                 return new NettyHttpOperationFailedException(uri, responseCode, statusText, redirectLocation, response);
             } else {
@@ -137,7 +137,7 @@ public final class NettyHttpHelper {
         }
 
         if (transferException) {
-            String contentType = response.getHeader(Exchange.CONTENT_TYPE);
+            String contentType = response.headers().get(Exchange.CONTENT_TYPE);
             if (NettyHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
                 // if the response was a serialized exception then use that
                 InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, response);
@@ -193,8 +193,35 @@ public final class NettyHttpHelper {
             throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uri, exchange, e);
         }
 
+        // append HTTP_PATH to HTTP_URI if it is provided in the header
+        String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+        // NOW the HTTP_PATH is just related path, we don't need to trim it
+        if (path != null) {
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            
+            if (path.length() > 0) {
+                // inject the dynamic path before the query params, if there are any
+                int idx = uri.indexOf("?");
+
+                // if there are no query params
+                if (idx == -1) {
+                    // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
+                    uri = uri.endsWith("/") ? uri : uri + "/";
+                    uri = uri.concat(path);
+                } else {
+                    // there are query params, so inject the relative path in the right place
+                    String base = uri.substring(0, idx);
+                    base = base.endsWith("/") ? base : base + "/";
+                    base = base.concat(path);
+                    uri = base.concat(uri.substring(idx));
+                }
+            }
+        }
+
         // ensure uri is encoded to be valid
-        uri = UnsafeUriCharactersEncoder.encode(uri);
+        uri = UnsafeUriCharactersEncoder.encodeHttpURI(uri);
 
         return uri;
     }
@@ -209,18 +236,35 @@ public final class NettyHttpHelper {
      */
     public static URI createURI(Exchange exchange, String url, NettyHttpEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
-        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        // is a query string provided in the endpoint URI or in a header
+        // (header overrules endpoint, raw query header overrules query header)
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        if (queryString == null) {
+            queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
         if (queryString == null) {
             // use raw as we encode just below
             queryString = uri.getRawQuery();
         }
         if (queryString != null) {
             // need to encode query string
-            queryString = UnsafeUriCharactersEncoder.encode(queryString);
+            queryString = UnsafeUriCharactersEncoder.encodeHttpURI(queryString);
             uri = URISupport.createURIWithQuery(uri, queryString);
         }
         return uri;
+    }
+
+    /**
+     * Checks whether the given http status code is within the ok range
+     *
+     * @param statusCode the status code
+     * @param okStatusCodeRange the ok range (inclusive)
+     * @return <tt>true</tt> if ok, <tt>false</tt> otherwise
+     */
+    public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
+        int from = Integer.valueOf(ObjectHelper.before(okStatusCodeRange, "-"));
+        int to = Integer.valueOf(ObjectHelper.after(okStatusCodeRange, "-"));
+        return statusCode >= from && statusCode <= to;
     }
 
 }

@@ -29,16 +29,19 @@ import org.apache.camel.component.bean.ParameterInfo;
  */
 public class AggregationStrategyMethodInfo {
 
-    private final CamelContext camelContext;
-    private final Class<?> type;
     private final Method method;
     private final List<ParameterInfo> oldParameters;
     private final List<ParameterInfo> newParameters;
 
+    
+    @Deprecated
     public AggregationStrategyMethodInfo(CamelContext camelContext, Class<?> type, Method method,
                                          List<ParameterInfo> oldParameters, List<ParameterInfo> newParameters) {
-        this.camelContext = camelContext;
-        this.type = type;
+        this(method, oldParameters, newParameters);
+    }
+    public AggregationStrategyMethodInfo(Method method,
+                                         List<ParameterInfo> oldParameters, 
+                                         List<ParameterInfo> newParameters) {
         this.method = method;
         this.oldParameters = oldParameters;
         this.newParameters = newParameters;

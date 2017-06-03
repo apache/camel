@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.infinispan.processor.idempotent;
 
+import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.manager.DefaultCacheManager;
 import org.junit.Test;
 
 import static org.jgroups.util.Util.assertFalse;
@@ -25,7 +27,8 @@ public class InfinispanDefaultIdempotentRepositoryTest {
 
     @Test
     public void createsRepositoryUsingInternalCache() throws Exception {
-        InfinispanIdempotentRepository repository = InfinispanIdempotentRepository.infinispanIdempotentRepository();
+        DefaultCacheManager basicCacheContainer = new DefaultCacheManager(new ConfigurationBuilder().build());
+        InfinispanIdempotentRepository repository = InfinispanIdempotentRepository.infinispanIdempotentRepository(basicCacheContainer, "default");
 
         assertFalse(repository.contains("One"));
         assertFalse(repository.remove("One"));
@@ -37,5 +40,22 @@ public class InfinispanDefaultIdempotentRepositoryTest {
 
         assertFalse(repository.contains("One"));
         assertFalse(repository.remove("One"));
+        
+        assertTrue(repository.add("One"));
+        assertTrue(repository.add("Two"));
+        assertTrue(repository.add("Three"));
+        assertTrue(repository.add("Four"));
+        
+        assertTrue(repository.contains("One"));
+        assertTrue(repository.contains("Two"));
+        assertTrue(repository.contains("Three"));
+        assertTrue(repository.contains("Four"));
+        
+        repository.clear();
+        
+        assertFalse(repository.contains("One"));
+        assertFalse(repository.contains("Two"));
+        assertFalse(repository.contains("Three"));
+        assertFalse(repository.contains("Four"));        
     }
 }

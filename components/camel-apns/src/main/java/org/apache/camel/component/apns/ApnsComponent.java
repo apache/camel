@@ -19,33 +19,30 @@ package org.apache.camel.component.apns;
 import java.util.Map;
 
 import com.notnoop.apns.ApnsService;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the component that manages {@link ApnsEndpoint}. It holds the list
- * of named apns endpoints.
+ * For sending notifications to Apple iOS devices
  */
-public class ApnsComponent extends DefaultComponent {
+public class ApnsComponent extends UriEndpointComponent {
 
+    @Metadata(required = "true")
     private ApnsService apnsService;
 
     public ApnsComponent() {
+        super(ApnsEndpoint.class);
     }
 
     public ApnsComponent(ApnsService apnsService) {
-        ObjectHelper.notNull(apnsService, "apnsService");
+        this();
         this.apnsService = apnsService;
-    }
-
-    public ApnsComponent(CamelContext context) {
-        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ApnsEndpoint endpoint = new ApnsEndpoint(uri, this);
+        endpoint.setName(remaining);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -54,6 +51,11 @@ public class ApnsComponent extends DefaultComponent {
         return apnsService;
     }
 
+    /**
+     * The ApnsService to use.
+     * <p/>
+     * The {@link org.apache.camel.component.apns.factory.ApnsServiceFactory} can be used to build a {@link ApnsService}
+     */
     public void setApnsService(ApnsService apnsService) {
         this.apnsService = apnsService;
     }

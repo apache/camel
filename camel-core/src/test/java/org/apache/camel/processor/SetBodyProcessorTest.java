@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -52,13 +53,22 @@ public class SetBodyProcessorTest extends ContextTestSupport {
 
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                MyMessage my = new MyMessage();
+                MyMessage my = new MyMessage(exchange.getContext());
                 my.setBody("World");
                 my.setHeader("foo", 123);
                 exchange.setIn(my);
             }
         });
 
+        assertMockEndpointsSatisfied();
+    }
+    
+    public void testSetBodyWithHeader() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:test");
+        result.expectedBodiesReceived("bbb");
+        result.expectedHeaderReceived("text", "aab");
+        template.sendBodyAndHeader("direct:start2", "aab", "text", "aab");
+        
         assertMockEndpointsSatisfied();
     }
 
@@ -71,15 +81,22 @@ public class SetBodyProcessorTest extends ContextTestSupport {
                     .to("mock:foo")
                     .setBody(simple("Bye ${body}"))
                     .to("mock:result");
+                
+                from("direct:start2")
+                    .setBody(simple("header.text.replace('a','b')")).to("mock:test");
             }
         };
     }
 
     private static class MyMessage extends DefaultMessage {
 
+        public MyMessage(CamelContext camelContext) {
+            super(camelContext);
+        }
+
         @Override
         public MyMessage newInstance() {
-            return new MyMessage();
+            return new MyMessage(getCamelContext());
         }
     }
 }

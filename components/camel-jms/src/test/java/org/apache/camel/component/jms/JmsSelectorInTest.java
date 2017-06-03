@@ -41,6 +41,10 @@ public class JmsSelectorInTest extends CamelTestSupport {
         template.sendBodyAndHeader("activemq:queue:foo", "Santa Rita", "drink", "wine");
 
         mock.assertIsSatisfied();
+
+        // and there should also only be 2 if browsing as the selector was configured in the route builder
+        JmsQueueEndpoint endpoint = context.getEndpoint("activemq:queue:foo", JmsQueueEndpoint.class);
+        assertEquals(2, endpoint.getExchanges().size());
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -58,7 +62,7 @@ public class JmsSelectorInTest extends CamelTestSupport {
                 JmsEndpoint endpoint = context.getEndpoint("activemq:queue:foo", JmsEndpoint.class);
                 endpoint.setSelector("drink IN ('beer', 'wine')");
 
-                from(endpoint).to("mock:result");
+                from(endpoint).to("log:drink").to("mock:result");
             }
         };
     }

@@ -25,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.interceptor.Fault;
 import org.junit.After;
@@ -65,16 +66,14 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
 
     @After
     public void tearDown() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
         super.tearDown();
     }
     
     @Test
     public void testInvokingServiceFromCamel() throws Exception {
         try {
-            template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world" , CxfConstants.OPERATION_NAME, "echo");
+            template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world", CxfConstants.OPERATION_NAME, "echo");
             fail("Should have thrown an exception");
         } catch (Exception ex) {
             Throwable result = ex.getCause();

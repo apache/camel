@@ -16,26 +16,46 @@
  */
 package org.apache.camel.component.aws.ddb;
 
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 
-/**
- * The AWS SDB component configuration properties
- * 
- */
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
+
+@UriParams
 public class DdbConfiguration {
-    
-    private String accessKey;
-    private String secretKey;
-    private AmazonDynamoDB amazonDDBClient;
-    private String amazonDdbEndpoint;
-    private String tableName;
-    private Boolean consistentRead;
-    private DdbOperations operation = DdbOperations.PutItem;
-    private Long readCapacity;
-    private Long writeCapacity;
-    private String keyAttributeName;
-    private String keyAttributeType;
 
+    @UriPath @Metadata(required = "true")
+    private String tableName;
+    @UriParam
+    private String accessKey;
+    @UriParam
+    private String secretKey;
+    @UriParam
+    private AmazonDynamoDB amazonDDBClient;
+    @UriParam
+    private String amazonDdbEndpoint;
+    @UriParam
+    private boolean consistentRead;
+    @UriParam(defaultValue = "PutItem")
+    private DdbOperations operation = DdbOperations.PutItem;
+    @UriParam
+    private Long readCapacity;
+    @UriParam
+    private Long writeCapacity;
+    @UriParam
+    private String keyAttributeName;
+    @UriParam
+    private String keyAttributeType;
+    @UriParam
+    private String proxyHost;
+    @UriParam
+    private Integer proxyPort;
+
+    /**
+     * The region with which the AWS-DDB client wants to work with.
+     */
     public void setAmazonDdbEndpoint(String amazonDdbEndpoint) {
         this.amazonDdbEndpoint = amazonDdbEndpoint;
     }
@@ -48,6 +68,9 @@ public class DdbConfiguration {
         return accessKey;
     }
 
+    /**
+     * Amazon AWS Access Key
+     */
     public void setAccessKey(String accessKey) {
         this.accessKey = accessKey;
     }
@@ -56,6 +79,9 @@ public class DdbConfiguration {
         return secretKey;
     }
 
+    /**
+     * Amazon AWS Secret Key
+     */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
@@ -64,6 +90,9 @@ public class DdbConfiguration {
         return amazonDDBClient;
     }
 
+    /**
+     * To use the AmazonDynamoDB as the client
+     */
     public void setAmazonDDBClient(AmazonDynamoDB amazonDDBClient) {
         this.amazonDDBClient = amazonDDBClient;
     }
@@ -72,6 +101,9 @@ public class DdbConfiguration {
         return tableName;
     }
 
+    /**
+     * The name of the table currently worked with.
+     */
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
@@ -80,15 +112,21 @@ public class DdbConfiguration {
         return operation;
     }
 
+    /**
+     * What operation to perform
+     */
     public void setOperation(DdbOperations operation) {
         this.operation = operation;
     }
 
-    public Boolean getConsistentRead() {
+    public boolean isConsistentRead() {
         return consistentRead;
     }
 
-    public void setConsistentRead(Boolean consistentRead) {
+    /**
+     * Determines whether or not strong consistency should be enforced when data is read.
+     */
+    public void setConsistentRead(boolean consistentRead) {
         this.consistentRead = consistentRead;
     }
 
@@ -96,6 +134,9 @@ public class DdbConfiguration {
         return readCapacity;
     }
 
+    /**
+     * The provisioned throughput to reserve for reading resources from your table
+     */
     public void setReadCapacity(Long readCapacity) {
         this.readCapacity = readCapacity;
     }
@@ -104,6 +145,9 @@ public class DdbConfiguration {
         return writeCapacity;
     }
 
+    /**
+     * The provisioned throughput to reserved for writing resources to your table
+     */
     public void setWriteCapacity(Long writeCapacity) {
         this.writeCapacity = writeCapacity;
     }
@@ -112,6 +156,9 @@ public class DdbConfiguration {
         return keyAttributeName;
     }
 
+    /**
+     * Attribute name when creating table
+     */
     public void setKeyAttributeName(String keyAttributeName) {
         this.keyAttributeName = keyAttributeName;
     }
@@ -120,7 +167,32 @@ public class DdbConfiguration {
         return keyAttributeType;
     }
 
+    /**
+     * Attribute type when creating table
+     */
     public void setKeyAttributeType(String keyAttributeType) {
         this.keyAttributeType = keyAttributeType;
+    }
+    
+    /**
+     * To define a proxy host when instantiating the SQS client
+     */
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    /**
+     * To define a proxy port when instantiating the SQS client
+     */
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
     }
 }

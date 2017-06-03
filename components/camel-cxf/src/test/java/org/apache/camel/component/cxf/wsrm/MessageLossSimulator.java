@@ -30,7 +30,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptor;
-import org.apache.cxf.ws.addressing.AddressingProperties;
 import org.apache.cxf.ws.rm.RMContextUtils;
 
 import org.slf4j.Logger;
@@ -46,15 +45,24 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
         addBefore(MessageSenderInterceptor.class.getName());
     }
 
-    
+    private static String getAction(Object map) {
+        if (map == null) {
+            return null;
+        }
+        try {
+            Object o = map.getClass().getMethod("getAction").invoke(map);
+            return (String)o.getClass().getMethod("getValue").invoke(o);
+        } catch (Throwable t) {
+            throw new Fault(t);
+        }
+    }
+
     public void handleMessage(Message message) throws Fault {
-        AddressingProperties maps =
+        Object maps =
             RMContextUtils.retrieveMAPs(message, false, true);
         // RMContextUtils.ensureExposedVersion(maps);
-        String action = null;
-        if (maps != null && null != maps.getAction()) {
-            action = maps.getAction().getValue();
-        }
+        String action = getAction(maps);
+
         if (RMContextUtils.isRMProtocolMessage(action)) { 
             return;
         }
@@ -95,7 +103,7 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
 
         private Message outMessage;
 
-        public WrappedOutputStream(Message m) {
+        WrappedOutputStream(Message m) {
             this.outMessage = m;
         }
 
@@ -113,7 +121,7 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
 
         @Override
         public void write(int b) throws IOException {
-            // TODO Auto-generated method stub
+            // noop
         }
     }
 }

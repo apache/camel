@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.IOException;
 import java.util.Map;
-import javax.activation.DataHandler;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with Mail
@@ -35,31 +37,37 @@ public class MailMessage extends DefaultMessage {
     // mail content, see more in MailBinding
     private Message originalMailMessage;
     private Message mailMessage;
+    private boolean mapMailMessage;
 
     public MailMessage() {
     }
 
     public MailMessage(Message message) {
+        this(message, true);
+    }
+
+    public MailMessage(Message message, boolean mapMailMessage) {
         this.originalMailMessage = this.mailMessage = message;
+        this.mapMailMessage = mapMailMessage;
     }
 
     @Override
     public String toString() {
-        if (mailMessage != null) {
-            return "MailMessage: " + MailUtils.dumpMessage(mailMessage);
-        } else {
-            return "MailMessage: " + getBody();
-        }
+        // do not dump the mail content, as it requires live connection to the mail server
+        return "MailMessage@" + ObjectHelper.getIdentityHashCode(this);
     }
 
     public MailMessage copy() {
         MailMessage answer = (MailMessage)super.copy();
         answer.originalMailMessage = originalMailMessage;
         answer.mailMessage = mailMessage;
-        // force attachments to be created (by getting attachments) to ensure they are always available due Camel error handler
-        // makes defensive copies, and we have optimized it to avoid populating initial attachments, when not needed,
-        // as all other Camel components do not use attachments
-        getAttachments();
+
+        if (mapMailMessage) {
+            // force attachments to be created (by getting attachments) to ensure they are always available due Camel error handler
+            // makes defensive copies, and we have optimized it to avoid populating initial attachments, when not needed,
+            // as all other Camel components do not use attachments
+            getAttachments();
+        }
         return answer;
     }
 
@@ -86,7 +94,9 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public MailMessage newInstance() {
-        return new MailMessage();
+        MailMessage answer = new MailMessage(null, this.mapMailMessage);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     @Override
@@ -108,12 +118,14 @@ public class MailMessage extends DefaultMessage {
                 }
             } catch (MessagingException e) {
                 throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
+            } catch (IOException e) {
+                throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
             }
         }
     }
 
     @Override
-    protected void populateInitialAttachments(Map<String, DataHandler> map) {
+    protected void populateInitialAttachments(Map<String, Attachment> map) {
         if (mailMessage != null) {
             try {
                 MailBinding binding = ExchangeHelper.getBinding(getExchange(), MailBinding.class);
@@ -127,11 +139,20 @@ public class MailMessage extends DefaultMessage {
     }
 
     public void copyFrom(org.apache.camel.Message that) {
-        super.copyFrom(that);
+        // only do a deep copy if we need to (yes when that is not a mail message, or if the mapMailMessage is true)
+        boolean needCopy = !(that instanceof MailMessage) || (((MailMessage) that).mapMailMessage);
+        if (needCopy) {
+            super.copyFrom(that);
+        } else {
+            // no deep copy needed, but copy message id
+            setMessageId(that.getMessageId());
+            setFault(that.isFault());
+        }
         if (that instanceof MailMessage) {
             MailMessage mailMessage = (MailMessage) that;
             this.originalMailMessage = mailMessage.originalMailMessage;
             this.mailMessage = mailMessage.mailMessage;
+            this.mapMailMessage = mailMessage.mapMailMessage;
         }
     }
 

@@ -46,7 +46,7 @@ public class ManagedRouteAddSecondRouteTest extends ManagementTestSupport {
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"foo\"");
+        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
 
         // should be started
         String state = (String) mbeanServer.getAttribute(route1, "State");
@@ -63,7 +63,7 @@ public class ManagedRouteAddSecondRouteTest extends ManagementTestSupport {
         log.info(">>>>>>>>>>>>>>>>> adding 2nd route DONE <<<<<<<<<<<<<<");
 
         // find the 2nd route
-        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"bar\"");
+        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"bar\"");
 
         // should be started
         state = (String) mbeanServer.getAttribute(route2, "State");

@@ -20,15 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
- * <code>ContextScanDefinition</code> represents a &lt;contextScan/&gt element.
+ * Scans for Java {@link org.apache.camel.builder.RouteBuilder} instances in the context {@link org.apache.camel.spi.Registry}.
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "contextScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContextScanDefinition {
+    @XmlAttribute
+    private Boolean includeNonSingletons;
     @XmlElement(name = "excludes")
     private List<String> excludes = new ArrayList<String>();
     @XmlElement(name = "includes")
@@ -37,18 +43,37 @@ public class ContextScanDefinition {
     public ContextScanDefinition() {
     }
 
+    public Boolean getIncludeNonSingletons() {
+        return includeNonSingletons;
+    }
+
+    /**
+     * Whether to include non-singleton beans (prototypes)
+     * <p/>
+     * By default only singleton beans is included in the context scan
+     */
+    public void setIncludeNonSingletons(Boolean includeNonSingletons) {
+        this.includeNonSingletons = includeNonSingletons;
+    }
+
     public List<String> getExcludes() {
         return excludes;
+    }
+
+    /**
+     * Exclude finding route builder from these java package names.
+     */
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
     }
 
     public List<String> getIncludes() {
         return includes;
     }
 
-    public void setExcludes(List<String> excludes) {
-        this.excludes = excludes;
-    }
-
+    /**
+     * Include finding route builder from these java package names.
+     */
     public void setIncludes(List<String> includes) {
         this.includes = includes;
     }

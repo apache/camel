@@ -26,10 +26,13 @@ import java.lang.annotation.Target;
  * Used to denote fields which are required to be specified for validation purposes
  * particularly in tooling.
  *
+ * @deprecated use {@link org.apache.camel.spi.Metadata}
+ *
  * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
+@Deprecated
 public @interface Required {
 }

@@ -19,25 +19,45 @@ package org.apache.camel.component.file.remote;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Proxy;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
- * Secure FTP endpoint
+ *  The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
  */
+@UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP",
+        syntax = "sftp:host:port/directoryName", consumerClass = SftpConsumer.class, label = "file",
+        excludeProperties = "binary,passiveMode,receiveBufferSize,siteCommand,useList")
 public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
-    Proxy proxy;
+    @UriParam
+    protected SftpConfiguration configuration;
+    @UriParam(label = "advanced")
+    protected Proxy proxy;
     
     public SftpEndpoint() {
     }
 
-    public SftpEndpoint(String uri, SftpComponent component, RemoteFileConfiguration configuration) {
+    public SftpEndpoint(String uri, SftpComponent component, SftpConfiguration configuration) {
         super(uri, component, configuration);
+        this.configuration = configuration;
     }
 
     @Override
     public SftpConfiguration getConfiguration() {
-        return (SftpConfiguration) this.configuration;
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(GenericFileConfiguration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("SftpConfiguration expected");
+        }
+        // need to set on both
+        this.configuration = (SftpConfiguration) configuration;
+        super.setConfiguration(configuration);
     }
 
     @Override
@@ -55,12 +75,20 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
         return operations;
     }
 
+    public Proxy getProxy() {
+        return proxy;
+    }
+
+    /**
+     * To use a custom configured com.jcraft.jsch.Proxy.
+     * This proxy is used to consume/send messages from the target SFTP host.
+     */
+    public void setProxy(Proxy proxy) {
+        this.proxy = proxy;
+    }
+
     @Override
     public String getScheme() {
         return "sftp";
-    }
-
-    public void setProxy(Proxy proxy) {
-        this.proxy = proxy;
     }
 }

@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * Some helper methods for working with {@link EndpointConfiguration} instances
  *
  */
+@Deprecated
 public final class ConfigurationHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationHelper.class);

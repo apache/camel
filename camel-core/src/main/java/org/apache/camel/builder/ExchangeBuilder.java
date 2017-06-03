@@ -25,6 +25,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultExchange;
 
+/**
+ * Builder to create {@link Exchange} and add headers and set body on the Exchange {@link Message}.
+ * <p/>
+ * Use the {@link #build()} method when done setting up the exchange.
+ */
 public final class ExchangeBuilder {
     private CamelContext context;
     private ExchangePattern pattern;
@@ -38,6 +43,7 @@ public final class ExchangeBuilder {
 
     /**
      * Create the exchange by setting the camel context
+     *
      * @param context the camel context 
      * @return exchange builder
      */
@@ -47,7 +53,8 @@ public final class ExchangeBuilder {
 
     /**
      * Set the in message body on the exchange
-     * @param body
+     *
+     * @param body the body
      * @return exchange builder
      */
     public ExchangeBuilder withBody(Object body) {
@@ -57,6 +64,7 @@ public final class ExchangeBuilder {
 
     /**
      * Set the message header of the in message on the exchange
+     *
      * @param key the key of the header
      * @param value the value of the header
      * @return exchange builder
@@ -68,6 +76,7 @@ public final class ExchangeBuilder {
 
     /**
      * Set the message exchange pattern on the exchange
+     *
      * @param pattern exchange pattern
      * @return exchange builder
      */
@@ -78,7 +87,9 @@ public final class ExchangeBuilder {
     
     /**
      * Set the exchange property
-     * @param pattern exchange pattern
+     *
+     * @param key the key of the exchange property
+     * @param value the value of the exchange property
      * @return exchange builder
      */
     public ExchangeBuilder withProperty(String key, Object value) {
@@ -88,6 +99,7 @@ public final class ExchangeBuilder {
 
     /**
      * Build up the exchange from the exchange builder
+     *
      * @return exchange 
      */
     public Exchange build() {

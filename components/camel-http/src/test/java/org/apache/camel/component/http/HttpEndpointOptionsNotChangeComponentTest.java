@@ -17,6 +17,8 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -24,7 +26,6 @@ import org.junit.Test;
 /**
  * Having custom endpoint options should not override or change any component configured options.
  *
- * @version 
  */
 public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport {
 

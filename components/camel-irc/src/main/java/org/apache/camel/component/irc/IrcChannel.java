@@ -31,7 +31,6 @@ public final class IrcChannel {
     public void setName(String name) {
         if (name == null || name.isEmpty()) {
             name = "";
-            return;
         }
         this.name = name.startsWith("#") || name.startsWith("&") ? name : "#" + name;
     }

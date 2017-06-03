@@ -37,6 +37,11 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     protected long sleepForConnection = 3000;
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected void setUp() throws Exception {
         releaseMBeanServers();
         super.setUp();

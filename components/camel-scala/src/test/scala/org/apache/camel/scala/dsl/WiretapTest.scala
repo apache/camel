@@ -45,6 +45,12 @@ class WiretapTest extends ScalaTestSupport {
   def testBlockTapWithBody() {
     doTestWiretapWithBody("direct:d", "mock:d")
   }
+
+
+  @Test
+  def testBuilderWiretap() {
+    doTestWiretap("direct:e", "mock:e")
+  }
   
   def doTestWiretap(from: String, to: String) {
     to expect { _.received("Calling Elvis", "Calling Paul")}
@@ -87,6 +93,8 @@ class WiretapTest extends ScalaTestSupport {
         }) to "mock:tap"
        
        "direct:tap-with-body" to "mock:tap-with-body"
+
+       from("direct:e").wireTap("direct:tap").setBody("Calling " + _.in[Adult].name).to("mock:e")
     }
 
 }

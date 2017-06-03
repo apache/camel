@@ -17,6 +17,7 @@
 package org.apache.camel.component.dataformat;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -27,13 +28,24 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ServiceHelper;
 
+/**
+ * The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
+ */
+@UriEndpoint(firstVersion = "2.12.0", scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation", producerOnly = true,
+        label = "core,transformation", lenientProperties = true)
 public class DataFormatEndpoint extends DefaultEndpoint {
 
+    private AsyncProcessor processor;
     private DataFormat dataFormat;
-    private MarshalProcessor marshal;
-    private UnmarshalProcessor unmarshal;
+
+    @UriPath(description = "Name of data format") @Metadata(required = "true")
+    private String name;
+    @UriPath(enums = "marshal,unmarshal") @Metadata(required = "true")
     private String operation;
 
     public DataFormatEndpoint() {
@@ -42,6 +54,14 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     public DataFormatEndpoint(String endpointUri, Component component, DataFormat dataFormat) {
         super(endpointUri, component);
         this.dataFormat = dataFormat;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public DataFormat getDataFormat() {
@@ -56,6 +76,9 @@ public class DataFormatEndpoint extends DefaultEndpoint {
         return operation;
     }
 
+    /**
+     * Operation to use either marshal or unmarshal
+     */
     public void setOperation(String operation) {
         this.operation = operation;
     }
@@ -65,11 +88,7 @@ public class DataFormatEndpoint extends DefaultEndpoint {
         return new DefaultAsyncProducer(this) {
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
-                if (marshal != null) {
-                    return marshal.process(exchange, callback);
-                } else {
-                    return unmarshal.process(exchange, callback);
-                }
+                return processor.process(exchange, callback);
             }
 
             @Override
@@ -90,22 +109,34 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public boolean isLenientProperties() {
+        return true;
+    }
+
+    @Override
     protected void doStart() throws Exception {
+        if (dataFormat == null && name != null) {
+            dataFormat = getCamelContext().resolveDataFormat(name);
+        }
         if (operation.equals("marshal")) {
-            marshal = new MarshalProcessor(dataFormat);
+            MarshalProcessor marshal = new MarshalProcessor(dataFormat);
             marshal.setCamelContext(getCamelContext());
+
+            processor = marshal;
         } else {
-            unmarshal = new UnmarshalProcessor(dataFormat);
+            UnmarshalProcessor unmarshal = new UnmarshalProcessor(dataFormat);
             unmarshal.setCamelContext(getCamelContext());
+
+            processor = unmarshal;
         }
 
-        ServiceHelper.startServices(dataFormat, marshal, unmarshal);
+        ServiceHelper.startServices(dataFormat, processor);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(marshal, unmarshal, dataFormat);
+        ServiceHelper.stopServices(processor, dataFormat);
         super.doStop();
     }
 }

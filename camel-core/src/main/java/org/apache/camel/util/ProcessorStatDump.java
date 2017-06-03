@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * A model of a route stat dump from {@link org.apache.camel.api.management.mbean.ManagedRouteMBean#dumpRouteAsXml()}.
+ * A model of a route stat dump from {@link org.apache.camel.api.management.mbean.ManagedRouteMBean#dumpRouteStatsAsXml(boolean, boolean)}.
  */
 @XmlRootElement(name = "processorStat")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -33,6 +33,9 @@ public final class ProcessorStatDump {
 
     @XmlAttribute
     private Integer index;
+
+    @XmlAttribute
+    private String state;
 
     @XmlAttribute
     private Long exchangesCompleted;
@@ -108,6 +111,14 @@ public final class ProcessorStatDump {
 
     public void setIndex(Integer index) {
         this.index = index;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public Long getExchangesCompleted() {

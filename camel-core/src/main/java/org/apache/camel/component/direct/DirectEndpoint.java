@@ -24,22 +24,31 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a direct endpoint that synchronously invokes the consumer of the
- * endpoint when a producer sends a message to it.
+ * The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
  *
- * @version 
+ * This endpoint can be used to connect existing routes in the same CamelContext.
  */
+@UriEndpoint(firstVersion = "1.0.0", scheme = "direct", title = "Direct", syntax = "direct:name", consumerClass = DirectConsumer.class, label = "core,endpoint")
 public class DirectEndpoint extends DefaultEndpoint {
 
     private volatile Map<String, DirectConsumer> consumers;
-    @UriParam
+
+    @UriPath(description = "Name of direct endpoint") @Metadata(required = "true")
+    private String name;
+
+    @UriParam(label = "producer")
     private boolean block;
-    @UriParam
+    @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
+    @UriParam(label = "producer")
+    private boolean failIfNoConsumers = true;
 
     public DirectEndpoint() {
         this.consumers = new HashMap<String, DirectConsumer>();
@@ -96,6 +105,10 @@ public class DirectEndpoint extends DefaultEndpoint {
         return block;
     }
 
+    /**
+     * If sending a message to a direct endpoint which has no active consumer,
+     * then we can tell the producer to block and wait for the consumer to become active.
+     */
     public void setBlock(boolean block) {
         this.block = block;
     }
@@ -104,8 +117,24 @@ public class DirectEndpoint extends DefaultEndpoint {
         return timeout;
     }
 
+    /**
+     * The timeout value to use if block is enabled.
+     *
+     * @param timeout the timeout value
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public boolean isFailIfNoConsumers() {
+        return failIfNoConsumers;
+    }
+
+    /**
+     * Whether the producer should fail by throwing an exception, when sending to a DIRECT endpoint with no active consumers.
+     */
+    public void setFailIfNoConsumers(boolean failIfNoConsumers) {
+        this.failIfNoConsumers = failIfNoConsumers;
     }
 
     protected String getKey() {

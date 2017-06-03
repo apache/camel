@@ -18,7 +18,9 @@ package org.apache.camel.test.blueprint;
 
 import org.junit.Test;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.blueprint.container.BlueprintEvent;
 
 /**
  *
@@ -48,7 +50,17 @@ public class BlueprintPropertiesTest extends CamelBlueprintTestSupport {
             // Expected timeout
         }
 
-        camelCore.start();
+        CamelBlueprintHelper.waitForBlueprintContainer(null, test.getBundleContext(), getClass().getSimpleName(), BlueprintEvent.CREATED,
+                new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    camelCore.start();
+                } catch (BundleException e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
+            }
+        });
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=" + getClass().getSimpleName() + ")", 500);
     }
 

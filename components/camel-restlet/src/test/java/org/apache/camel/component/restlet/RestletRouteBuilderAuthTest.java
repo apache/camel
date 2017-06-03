@@ -21,8 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
+import org.restlet.data.MediaType;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RestletRouteBuilderAuthTest extends CamelSpringTestSupport {
@@ -36,10 +38,11 @@ public class RestletRouteBuilderAuthTest extends CamelSpringTestSupport {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(RestletConstants.RESTLET_LOGIN, "admin");
         headers.put(RestletConstants.RESTLET_PASSWORD, "foo");
+        headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_XML);
         headers.put("id", id);
         
-        String response = (String)template.requestBodyAndHeaders(
-            "direct:start-auth", "<order foo='1'/>", headers);
+        String response = template.requestBodyAndHeaders(
+            "direct:start-auth", "<order foo='1'/>", headers, String.class);
         // END SNIPPET: auth_request
 
         assertEquals("received [<order foo='1'/>] as an order id = " + id, response);

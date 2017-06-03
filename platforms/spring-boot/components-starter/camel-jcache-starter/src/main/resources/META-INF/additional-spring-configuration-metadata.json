@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jcache.enabled",
+      "description": "Enable jcache component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

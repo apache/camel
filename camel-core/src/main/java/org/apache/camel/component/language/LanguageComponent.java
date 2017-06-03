@@ -20,21 +20,24 @@ import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Expression;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
- * The <a href="http://camel.apache.org/language-component.html">language component</a> to send
- * {@link org.apache.camel.Exchange}s to a given language and have the script being executed.
+ * The <a href="http://camel.apache.org/language-component.html">Language component</a> enables sending
+ * {@link org.apache.camel.Exchange}s to a given language in order to have a script executed.
  *
  * @version 
  */
-public class LanguageComponent extends DefaultComponent {
+public class LanguageComponent extends UriEndpointComponent {
 
     public static final String RESOURCE = "resource:";
+
+    public LanguageComponent() {
+        super(LanguageEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String name = ObjectHelper.before(remaining, ":");
@@ -49,7 +52,6 @@ public class LanguageComponent extends DefaultComponent {
         }
         Language language = getCamelContext().resolveLanguage(name);
 
-        Expression expression = null;
         String resourceUri = null;
         String resource = script;
         if (resource != null) {
@@ -59,12 +61,20 @@ public class LanguageComponent extends DefaultComponent {
             if (ResourceHelper.hasScheme(resource)) {
                 // the script is a uri for a resource
                 resourceUri = resource;
+                // then the script should be null
+                script = null;
             } else {
                 // the script is provided as text in the uri, so decode to utf-8
-                expression = language.createExpression(URLDecoder.decode(script, "UTF-8"));
+                script = URLDecoder.decode(script, "UTF-8");
+                // then the resource should be null
+                resourceUri = null;
             }
         }
 
-        return new LanguageEndpoint(uri, this, language, expression, resourceUri);
+        LanguageEndpoint endpoint = new LanguageEndpoint(uri, this, language, null, resourceUri);
+        endpoint.setScript(script);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
+
 }

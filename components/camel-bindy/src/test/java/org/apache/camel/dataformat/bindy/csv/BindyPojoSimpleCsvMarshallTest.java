@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy.csv;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
@@ -52,7 +53,7 @@ public class BindyPojoSimpleCsvMarshallTest extends AbstractJUnit4SpringContextT
     @DirtiesContext
     public void testMarshallMessage() throws Exception {
 
-        expected = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
+        expected = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009,17-02-2010 23:27:59\r\n";
 
         result.expectedBodiesReceived(expected);
 
@@ -79,6 +80,13 @@ public class BindyPojoSimpleCsvMarshallTest extends AbstractJUnit4SpringContextT
         calendar.set(2009, 0, 14);
         order.setOrderDate(calendar.getTime());
 
+        calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        // 4 hour shift
+        // 16-02-2010 23:21:59 by GMT+4
+        calendar.set(2010, 1, 17, 19, 27, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+        order.setOrderDateTime(calendar.getTime());
+
         return order;
     }
 
@@ -86,7 +94,7 @@ public class BindyPojoSimpleCsvMarshallTest extends AbstractJUnit4SpringContextT
 
         public void configure() {
             BindyCsvDataFormat camelDataFormat = 
-                new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
             camelDataFormat.setLocale("en");
 
             Tracer tracer = new Tracer();

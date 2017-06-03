@@ -19,17 +19,32 @@ package org.apache.camel.component.dataformat;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
-public class DataFormatComponent extends DefaultComponent {
+/**
+ * The <a href="http://camel.apache.org/dataformat-component.html">Data Format Component</a> enables using <a href="https://camel.apache.org/data-format.html">Data Format</a> as a component.
+ *
+ * @version
+ */
+public class DataFormatComponent extends UriEndpointComponent {
+
+    public DataFormatComponent() {
+        super(DataFormatEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String name = ObjectHelper.before(remaining, ":");
+
+        // try to lookup data format in the registry or create it from resource
         DataFormat df = getCamelContext().resolveDataFormat(name);
+        if (df == null) {
+            // if not, try to find a factory in the registry
+            df = getCamelContext().createDataFormat(name);
+        }
         if (df == null) {
             throw new IllegalArgumentException("Cannot find data format with name: " + name);
         }

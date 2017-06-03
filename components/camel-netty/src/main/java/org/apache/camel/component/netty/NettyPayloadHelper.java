@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
+import org.jboss.netty.buffer.ChannelBuffer;
 
 /**
  * Helper to get and set the correct payload when transferring data using camel-netty.
@@ -39,8 +40,13 @@ public final class NettyPayloadHelper {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange);
         } else {
-            // normal transfer using the body only
-            return exchange.getIn().getBody();
+            if (endpoint.getConfiguration().isUseChannelBuffer()) {
+                // The NettyConverter could help us for it
+                return exchange.getIn().getBody(ChannelBuffer.class);
+            } else {
+                // normal transfer using the body only
+                return exchange.getIn().getBody();
+            }
         }
     }
 

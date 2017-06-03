@@ -61,7 +61,7 @@ public class MulticastParallelMiddleTimeoutTest extends ContextTestSupport {
 
                 from("direct:a").setBody(constant("A"));
 
-                from("direct:b").delay(3000).setBody(constant("B"));
+                from("direct:b").delay(4000).setBody(constant("B"));
 
                 from("direct:c").delay(500).setBody(constant("C"));
             }

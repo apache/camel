@@ -20,26 +20,38 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 
-public abstract class HeaderFilterStrategyComponent extends DefaultComponent implements HeaderFilterStrategyAware {
-    
+/**
+ * Base class for components to support configuring a {@link org.apache.camel.spi.HeaderFilterStrategy}.
+ */
+public abstract class HeaderFilterStrategyComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
+
+    @Metadata(label = "filter", description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
     
-    public HeaderFilterStrategyComponent() {
+    public HeaderFilterStrategyComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
     }
 
-    public HeaderFilterStrategyComponent(CamelContext context) {
-        super(context);
+    public HeaderFilterStrategyComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
+        super(context, endpointClass);
     }
     
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
     }
-    
+
+    /**
+     * Sets the header filter strategy to use from the given endpoint if the endpoint is a {@link HeaderFilterStrategyAware} type.
+     */
     public void setEndpointHeaderFilterStrategy(Endpoint endpoint) {
         if (headerFilterStrategy != null && endpoint instanceof HeaderFilterStrategyAware) {
             ((HeaderFilterStrategyAware)endpoint).setHeaderFilterStrategy(headerFilterStrategy);

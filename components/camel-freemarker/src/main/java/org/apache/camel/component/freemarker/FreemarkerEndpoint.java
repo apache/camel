@@ -19,24 +19,31 @@ package org.apache.camel.component.freemarker;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Map;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Freemarker endpoint
+ * Transforms the message using a FreeMarker template.
  */
+@UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
+    @UriParam
     private String encoding;
+    @UriParam
+    private int templateUpdateDelay;
+    @UriParam
     private Configuration configuration;
 
     public FreemarkerEndpoint() {
@@ -70,6 +77,17 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
 
     public String getEncoding() {
         return encoding;
+    }
+
+    public int getTemplateUpdateDelay() {
+        return templateUpdateDelay;
+    }
+
+    /**
+     * Number of seconds the loaded template resource will remain in the cache.
+     */
+    public void setTemplateUpdateDelay(int templateUpdateDelay) {
+        this.templateUpdateDelay = templateUpdateDelay;
     }
 
     public Configuration getConfiguration() {
@@ -118,16 +136,18 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(FreemarkerConstants.FREEMARKER_TEMPLATE);
         }
-
-        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+        Object dataModel = exchange.getIn().getHeader(FreemarkerConstants.FREEMARKER_DATA_MODEL, Object.class);
+        if (dataModel == null) {
+            dataModel = ExchangeHelper.createVariableMap(exchange);
+        }
         // let freemarker parse and generate the result in buffer
         Template template;
 
         if (reader != null) {
-            log.debug("Freemarker is evaluating template read from header {} using context: {}", FreemarkerConstants.FREEMARKER_TEMPLATE, variableMap);
+            log.debug("Freemarker is evaluating template read from header {} using context: {}", FreemarkerConstants.FREEMARKER_TEMPLATE, dataModel);
             template = new Template("temp", reader, new Configuration());
         } else {
-            log.debug("Freemarker is evaluating {} using context: {}", path, variableMap);
+            log.debug("Freemarker is evaluating {} using context: {}", path, dataModel);
             if (getEncoding() != null) {
                 template = configuration.getTemplate(path, getEncoding());
             } else {
@@ -135,7 +155,7 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
             }
         }
         StringWriter buffer = new StringWriter();
-        template.process(variableMap, buffer);
+        template.process(dataModel, buffer);
         buffer.flush();
 
         // now lets output the results to the exchange

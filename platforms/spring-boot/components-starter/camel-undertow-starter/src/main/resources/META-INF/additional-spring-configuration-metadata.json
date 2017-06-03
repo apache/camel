@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.undertow.enabled",
+      "description": "Enable undertow component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

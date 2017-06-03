@@ -29,6 +29,7 @@ import org.junit.Test;
  * @version 
  */
 public class UnmarshalThenMarshalTest extends CamelTestSupport {
+    
     @Test
     public void testSendXmlAndUnmarshal() throws Exception {
 
@@ -56,13 +57,13 @@ public class UnmarshalThenMarshalTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").
-                        marshal().xstream().
+                        marshal().xstream(PurchaseOrder.class).
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 log.debug("marshalled: " + exchange.getIn().getBody(String.class));
                             }
                         }).
-                        unmarshal().xstream().
+                        unmarshal().xstream(PurchaseOrder.class).
                         to("mock:result");
             }
         };

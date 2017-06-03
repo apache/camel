@@ -79,7 +79,9 @@ public class LdapProducer extends DefaultProducer {
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
             exchange.getOut().setAttachments(exchange.getIn().getAttachments());
         } finally {
-            dirContext.close();
+            if (dirContext != null) {
+                dirContext.close();
+            }
         }
     }
 

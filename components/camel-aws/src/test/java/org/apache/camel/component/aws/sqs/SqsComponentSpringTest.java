@@ -52,6 +52,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
+        assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ATTRIBUTES));
         
         assertNotNull(exchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
@@ -75,6 +76,7 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
+        assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ATTRIBUTES));
         
         assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));

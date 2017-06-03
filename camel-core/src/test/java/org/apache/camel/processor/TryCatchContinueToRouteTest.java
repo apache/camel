@@ -29,9 +29,9 @@ public class TryCatchContinueToRouteTest extends ContextTestSupport {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:catch").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:catch").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:c").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:c").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:c").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
 

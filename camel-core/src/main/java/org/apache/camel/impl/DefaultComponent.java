@@ -20,6 +20,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -27,6 +29,7 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
@@ -39,13 +42,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default component to use for base for components implementations.
- *
- * @version 
  */
 public abstract class DefaultComponent extends ServiceSupport implements Component {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);
+    private static final Pattern RAW_PATTERN = Pattern.compile("RAW(.*&&.*)");
 
     private CamelContext camelContext;
+
+    @Metadata(label = "advanced", defaultValue = "true",
+        description = "Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.")
+    private boolean resolvePropertyPlaceholders = true;
 
     public DefaultComponent() {
     }
@@ -56,15 +62,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     @Deprecated
     protected String preProcessUri(String uri) {
-        // Give components a chance to preprocess URIs and migrate to URI syntax that discourages invalid URIs
-        // (see CAMEL-4425)
-        // check URI string to the unsafe URI characters
-        String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
-        if (!encodedUri.equals(uri)) {
-            // uri supplied is not really valid
-            LOG.warn("Supplied URI '{}' contains unsafe characters, please check encoding", uri);
-        }
-        return encodedUri;
+        return UnsafeUriCharactersEncoder.encode(uri);
     }
 
     public Endpoint createEndpoint(String uri) throws Exception {
@@ -72,22 +70,20 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         // check URI string to the unsafe URI characters
         String encodedUri = preProcessUri(uri);
         URI u = new URI(encodedUri);
-        String path = useRawUri() ? u.getRawSchemeSpecificPart() : u.getSchemeSpecificPart();
-
-        // lets trim off any query arguments
-        if (path.startsWith("//")) {
-            path = path.substring(2);
-        }
-        int idx = path.indexOf('?');
-        if (idx > -1) {
-            path = path.substring(0, idx);
+        String path;
+        if (u.getScheme() != null) {
+            // if there is a scheme then there is also a path
+            path = URISupport.extractRemainderPath(u, useRawUri());
+        } else {
+            // this uri has no context-path as the leading text is the component name (scheme)
+            path = null;
         }
 
         Map<String, Object> parameters;
         if (useRawUri()) {
             // when using raw uri then the query is taking from the uri as is
             String query;
-            idx = uri.indexOf('?');
+            int idx = uri.indexOf('?');
             if (idx > -1) {
                 query = uri.substring(idx + 1);
             } else {
@@ -112,7 +108,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         validateURI(uri, path, parameters);
         if (LOG.isTraceEnabled()) {
             // at trace level its okay to have parameters logged, that may contain passwords
-            LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", new Object[]{URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters});
+            LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters);
         } else if (LOG.isDebugEnabled()) {
             // but at debug level only output sanitized uris
             LOG.debug("Creating endpoint uri=[{}], path=[{}]", new Object[]{URISupport.sanitizeUri(uri), URISupport.sanitizePath(path)});
@@ -122,17 +118,15 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             return null;
         }
 
-        if (!parameters.isEmpty()) {
-            endpoint.configureProperties(parameters);
-            if (useIntrospectionOnEndpoint()) {
-                setProperties(endpoint, parameters);
-            }
+        endpoint.configureProperties(parameters);
+        if (useIntrospectionOnEndpoint()) {
+            setProperties(endpoint, parameters);
+        }
 
-            // if endpoint is strict (not lenient) and we have unknown parameters configured then
-            // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
-            if (!endpoint.isLenientProperties()) {
-                validateParameters(uri, parameters, null);
-            }
+        // if endpoint is strict (not lenient) and we have unknown parameters configured then
+        // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
+        if (!endpoint.isLenientProperties()) {
+            validateParameters(uri, parameters, null);
         }
 
         afterConfiguration(uri, path, endpoint, parameters);
@@ -144,15 +138,33 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         return new DefaultComponentConfiguration(this);
     }
 
+    @Override
     public EndpointConfiguration createConfiguration(String uri) throws Exception {
         MappedEndpointConfiguration config = new MappedEndpointConfiguration(getCamelContext());
         config.setURI(new URI(uri));
         return config;
     }
 
+    @Override
     public boolean useRawUri() {
         // should use encoded uri by default
         return false;
+    }
+
+    /**
+     * Whether the component should resolve property placeholders on itself when starting.
+     * Only properties which are of String type can use property placeholders.
+     */
+    public void setResolvePropertyPlaceholders(boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    /**
+     * Whether the component should resolve property placeholders on itself when starting.
+     * Only properties which are of String type can use property placeholders.
+     */
+    public boolean isResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
     }
 
     /**
@@ -180,6 +192,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
     protected void validateParameters(String uri, Map<String, Object> parameters, String optionPrefix) {
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+
         Map<String, Object> param = parameters;
         if (optionPrefix != null) {
             param = IntrospectionSupport.extractProperties(parameters, optionPrefix);
@@ -202,16 +218,14 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
     protected void validateURI(String uri, String path, Map<String, Object> parameters) {
-        // check for uri containing & but no ? marker
-        if (uri.contains("&") && !uri.contains("?")) {
-            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: no ? marker however the uri "
-                + "has & parameter separators. Check the uri if its missing a ? marker.");
-        }
-
-        // check for uri containing double && markers
+        // check for uri containing double && markers without include by RAW
         if (uri.contains("&&")) {
-            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Double && marker found. "
-                + "Check the uri and remove the duplicate & marker.");
+            Matcher m = RAW_PATTERN.matcher(uri);
+            // we should skip the RAW part
+            if (!m.find()) {
+                throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Double && marker found. "
+                    + "Check the uri and remove the duplicate & marker.");
+            }
         }
 
         // if we have a trailing & then that is invalid as well
@@ -231,6 +245,17 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
+
+        if (isResolvePropertyPlaceholders()) {
+            // only resolve property placeholders if its in use
+            Component existing = CamelContextHelper.lookupPropertiesComponent(camelContext, false);
+            if (existing != null) {
+                LOG.debug("Resolving property placeholders on component: {}", this);
+                CamelContextHelper.resolvePropertyPlaceholders(camelContext, this);
+            } else {
+                LOG.debug("Cannot resolve property placeholders on component: {} as PropertiesComponent is not in use", this);
+            }
+        }
     }
 
     protected void doStop() throws Exception {
@@ -258,10 +283,20 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param bean  the bean
      * @param parameters  properties to set
      */
-    protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {        
+    protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
+        setProperties(getCamelContext(), bean, parameters);
+    }
+
+    /**
+     * Sets the bean properties on the given bean using the given {@link CamelContext}
+     * @param camelContext  the {@link CamelContext} to use
+     * @param bean  the bean
+     * @param parameters  properties to set
+     */
+    protected void setProperties(CamelContext camelContext, Object bean, Map<String, Object> parameters) throws Exception {
         // set reference properties first as they use # syntax that fools the regular properties setter
-        EndpointHelper.setReferenceProperties(getCamelContext(), bean, parameters);
-        EndpointHelper.setProperties(getCamelContext(), bean, parameters);
+        EndpointHelper.setReferenceProperties(camelContext, bean, parameters);
+        EndpointHelper.setProperties(camelContext, bean, parameters);
     }
 
     /**
@@ -275,11 +310,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Gets the parameter and remove it from the parameter map. This method doesn't resolve
      * reference parameters in the registry.
-     * 
+     *
      * @param parameters the parameters
      * @param key        the key
      * @param type       the requested type to convert the value from the parameter
-     * @return  the converted value parameter, <tt>null</tt> if parameter does not exists.
+     * @return the converted value parameter, <tt>null</tt> if parameter does not exists.
      * @see #resolveAndRemoveReferenceParameter(Map, String, Class)
      */
     public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type) {
@@ -294,7 +329,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param key           the key
      * @param type          the requested type to convert the value from the parameter
      * @param defaultValue  use this default value if the parameter does not contain the key
-     * @return  the converted value parameter
+     * @return the converted value parameter
      * @see #resolveAndRemoveReferenceParameter(Map, String, Class, Object)
      */
     public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
@@ -310,8 +345,42 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
+     * Gets the parameter and remove it from the parameter map. This method resolves
+     * reference parameters in the registry as well.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @return the converted value parameter
+     */
+    public <T> T getAndRemoveOrResolveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type) {
+        return getAndRemoveOrResolveReferenceParameter(parameters, key, type, null);
+    }
+
+    /**
+     * Gets the parameter and remove it from the parameter map. This method resolves
+     * reference parameters in the registry as well.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @param defaultValue  use this default value if the parameter does not contain the key
+     * @return the converted value parameter
+     */
+    public <T> T getAndRemoveOrResolveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
+        String value = getAndRemoveParameter(parameters, key, String.class);
+        if (value == null) {
+            return defaultValue;
+        } else if (EndpointHelper.isReferenceParameter(value)) {
+            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value, type);
+        } else {
+            return getCamelContext().getTypeConverter().convertTo(type, value);
+        }
+    }
+
+    /**
      * Resolves a reference parameter in the registry and removes it from the map. 
-     * 
+     *
      * @param <T>           type of object to lookup in the registry.
      * @param parameters    parameter map.
      * @param key           parameter map key.
@@ -322,12 +391,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      *         registry.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type) {
-        return resolveAndRemoveReferenceParameter(parameters, key, type, null); 
+        return resolveAndRemoveReferenceParameter(parameters, key, type, null);
     }
 
     /**
      * Resolves a reference parameter in the registry and removes it from the map. 
-     * 
+     *
      * @param <T>           type of object to lookup in the registry.
      * @param parameters    parameter map.
      * @param key           parameter map key.
@@ -343,63 +412,56 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         if (value == null) {
             return defaultValue;
         } else {
-            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value.toString(), type);
+            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value, type);
         }
-    }
-    
-    /**
-     * Resolves a reference list parameter in the registry and removes it from
-     * the map.
-     * 
-     * @param parameters
-     *            parameter map.
-     * @param key
-     *            parameter map key.
-     * @param elementType
-     *            result list element type.
-     * @return the list of referenced objects or an empty list if the parameter
-     *         map doesn't contain the key.
-     * @throws IllegalArgumentException if any of the referenced objects was 
-     *         not found in registry.
-     * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
-     */
-    public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType) {
-        return resolveAndRemoveReferenceListParameter(parameters, key, elementType, new ArrayList<T>(0));
     }
 
     /**
      * Resolves a reference list parameter in the registry and removes it from
      * the map.
-     * 
-     * @param parameters
-     *            parameter map.
-     * @param key
-     *            parameter map key.
-     * @param elementType
-     *            result list element type.
-     * @param defaultValue
-     *            default value to use if the parameter map doesn't
+     *
+     * @param parameters parameter map.
+     * @param key parameter map key.
+     * @param elementType result list element type.
+     * @return the list of referenced objects or an empty list if the parameter
+     *         map doesn't contain the key.
+     * @throws IllegalArgumentException if any of the referenced objects was
+     *         not found in registry.
+     * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
+     */
+    public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType) {
+        return resolveAndRemoveReferenceListParameter(parameters, key, elementType, new ArrayList<>(0));
+    }
+
+    /**
+     * Resolves a reference list parameter in the registry and removes it from
+     * the map.
+     *
+     * @param parameters parameter map.
+     * @param key parameter map key.
+     * @param elementType result list element type.
+     * @param defaultValue default value to use if the parameter map doesn't
      *            contain the key.
      * @return the list of referenced objects or the default value.
      * @throws IllegalArgumentException if any of the referenced objects was 
      *         not found in registry.
      * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
      */
-    public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType, List<T>  defaultValue) {
+    public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType, List<T> defaultValue) {
         String value = getAndRemoveParameter(parameters, key, String.class);
-        
+
         if (value == null) {
             return defaultValue;
         } else {
-            return EndpointHelper.resolveReferenceListParameter(getCamelContext(), value.toString(), elementType);
+            return EndpointHelper.resolveReferenceListParameter(getCamelContext(), value, elementType);
         }
     }
-    
+
     /**
      * Returns the reminder of the text if it starts with the prefix.
      * <p/>
      * Is useable for string parameters that contains commands.
-     * 
+     *
      * @param prefix  the prefix
      * @param text  the text
      * @return the reminder, or null if no reminder

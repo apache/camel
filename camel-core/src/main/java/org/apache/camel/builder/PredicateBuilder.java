@@ -29,7 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
-
 /**
  * A helper class for working with predicates
  *
@@ -86,7 +85,8 @@ public final class PredicateBuilder {
     }
 
     /**
-     * A helper method to combine multiple predicates by a logical OR
+     * A helper method to combine two predicates by a logical OR.
+     * If you want to combine multiple predicates see {@link #in(Predicate...)}
      */
     public static Predicate or(final Predicate left, final Predicate right) {
         notNull(left, "left");
@@ -101,6 +101,36 @@ public final class PredicateBuilder {
                 return "(" + left + ") or (" + right + ")";
             }
         };
+    }
+
+    /**
+     * Concat the given predicates into a single predicate, which matches
+     * if at least one predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate or(List<Predicate> predicates) {
+        Predicate answer = null;
+        for (Predicate predicate : predicates) {
+            if (answer == null) {
+                answer = predicate;
+            } else {
+                answer = or(answer, predicate);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Concat the given predicates into a single predicate, which matches
+     * if at least one predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate or(Predicate... predicates) {
+        return or(Arrays.asList(predicates));
     }
 
     /**
@@ -126,6 +156,13 @@ public final class PredicateBuilder {
         };
     }
 
+    /**
+     * A helper method to return true if any of the predicates matches.
+     */
+    public static Predicate in(List<Predicate> predicates) {
+        return in(predicates.toArray(new Predicate[0]));
+    }
+
     public static Predicate isEqualTo(final Expression left, final Expression right) {
         return new BinaryPredicateSupport(left, right) {
 
@@ -143,6 +180,27 @@ public final class PredicateBuilder {
 
             protected String getOperationText() {
                 return "==";
+            }
+        };
+    }
+
+    public static Predicate isEqualToIgnoreCase(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
+
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                if (leftValue == null && rightValue == null) {
+                    // they are equal
+                    return true;
+                } else if (leftValue == null || rightValue == null) {
+                    // only one of them is null so they are not equal
+                    return false;
+                }
+
+                return ObjectHelper.typeCoerceEquals(exchange.getContext().getTypeConverter(), leftValue, rightValue, true);
+            }
+
+            protected String getOperationText() {
+                return "=~";
             }
         };
     }
@@ -440,6 +498,17 @@ public final class PredicateBuilder {
             }
         }
         return answer;
+    }
+
+    /**
+     * Concat the given predicates into a single predicate, which only matches
+     * if all the predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate and(Predicate... predicates) {
+        return and(Arrays.asList(predicates));
     }
 
     /**

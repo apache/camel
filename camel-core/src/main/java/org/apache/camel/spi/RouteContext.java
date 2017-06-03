@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeConfiguration;
 import org.apache.camel.model.FromDefinition;
@@ -32,14 +33,7 @@ import org.apache.camel.model.RouteDefinition;
  *
  * @version 
  */
-public interface RouteContext extends RuntimeConfiguration {
-
-    /**
-     * Gets the endpoint
-     *
-     * @return the endpoint
-     */
-    Endpoint getEndpoint();
+public interface RouteContext extends RuntimeConfiguration, EndpointAware {
 
     /**
      * Gets the from type

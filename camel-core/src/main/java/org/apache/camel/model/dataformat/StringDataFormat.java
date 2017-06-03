@@ -23,18 +23,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the String (text based) {@link DataFormat}
+ * String (text based) data format
  *
  * @version 
  */
+@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation,core", title = "String Encoding")
 @XmlRootElement(name = "string")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StringDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String charset;
+
+    public StringDataFormat() {
+        super("string");
+    }
 
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
@@ -45,6 +51,11 @@ public class StringDataFormat extends DataFormatDefinition {
         return charset;
     }
 
+    /**
+     * Sets an encoding to use.
+     * <p/>
+     * Will by default use the JVM platform default charset.
+     */
     public void setCharset(String charset) {
         this.charset = charset;
     }

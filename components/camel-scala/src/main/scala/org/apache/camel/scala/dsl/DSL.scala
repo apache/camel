@@ -43,6 +43,7 @@ trait DSL {
   def dynamicRouter(expression: Exchange => Any) : DSL
 
   def enrich(uri:String, strategy: AggregationStrategy) : DSL
+  def enrich(uri:String, strategy: AggregationStrategy, aggregateOnException: Boolean) : DSL
 
   def filter(predicate: Exchange => Any) : SFilterDefinition
 
@@ -61,6 +62,7 @@ trait DSL {
   def loop(expression: Exchange => Any) : SLoopDefinition
 
   def marshal(format : DataFormatDefinition) : DSL
+  def marshal(dataFormatRef: String) : DSL
   def multicast : SMulticastDefinition
 
   def onCompletion : SOnCompletionDefinition
@@ -71,33 +73,46 @@ trait DSL {
   def pipeline : SPipelineDefinition
   def policy(policy: Policy) : DSL
   def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) : DSL
+  def pollEnrich(uri: String, strategy: AggregationStrategy, timeout: Long, aggregateOnException: Boolean) : DSL
   def process(function: Exchange => Unit) : DSL
   def process(processor: Processor) : DSL
 
   def recipients(expression: Exchange => Any) : DSL
+  def removeHeader(name: String): DSL
+  def removeHeaders(pattern: String): DSL
+  def removeHeaders(pattern: String, excludePatterns: String*): DSL
   def resequence(expression: Exchange => Any) : SResequenceDefinition
   def rollback : DSL
+  def routeId(id: String) : DSL
+  def routeDescription(description: String): DSL
   def routingSlip(header: String) : DSL
   def routingSlip(header: String, separator: String) : DSL
   def routingSlip(expression: Exchange => Any) : DSL
 
+  def script(expression: Exchange => Any) : DSL
   def setBody(expression: Exchange => Any) : DSL
   def setFaultBody(expression: Exchange => Any) : DSL
   def setHeader(header: String, expression: Exchange => Any) : DSL
+  def setExchangePattern(mep: ExchangePattern) : DSL
   def setProperty(header: String, expression: Exchange => Any) : DSL
   def sort[T](expression: Exchange => Any, comparator: Comparator[T] = null) : DSL
   def split(expression: Exchange => Any) : SSplitDefinition
+  def startupOrder(startupOrder :Int) : DSL
   def stop : DSL
 
   def threads : SThreadsDefinition
   def throttle(frequency: Frequency) : SThrottleDefinition
   def throwException(exception: Exception) : DSL
+  def throwException(exceptionType: Class[_ <: Exception], message: String) : DSL
   def to(uris: String*) : DSL
+  def toD(uri: String) : DSL
+  def toD(uri: String, ignoreInvalidEndpoint: Boolean) : DSL
   def transacted : DSL
   def transacted(ref: String) : DSL
   def transform(expression: Exchange => Any) : DSL
 
   def unmarshal(format: DataFormatDefinition) : DSL
+  def unmarshal(dataFormatRef: String) : DSL
 
   def validate(expression: Exchange => Any) : DSL
 

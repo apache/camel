@@ -40,7 +40,7 @@ public class FilterNotTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).property(Exchange.FILTER_MATCHED).isEqualTo(true);
+        resultEndpoint.message(0).exchangeProperty(Exchange.FILTER_MATCHED).isEqualTo(true);
 
         template.sendBody("direct:start", "<notMatched/>");
 

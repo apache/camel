@@ -31,6 +31,12 @@ public class QuickfixjConsumer extends DefaultConsumer {
         super(endpoint, processor);
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ((QuickfixjEndpoint)getEndpoint()).ensureInitialized();
+        super.doStart();
+    }
+
     public void onExchange(Exchange exchange) throws Exception {
         if (isStarted()) {
             try {

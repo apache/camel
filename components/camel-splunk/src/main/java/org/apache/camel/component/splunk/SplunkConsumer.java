@@ -20,11 +20,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.apache.camel.component.splunk.support.SplunkDataReader;
+import org.apache.camel.component.splunk.support.SplunkResultProcessor;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -56,9 +58,40 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
     @Override
     protected int poll() throws Exception {
         try {
-            List<SplunkEvent> events = dataReader.read();
-            Queue<Exchange> exchanges = createExchanges(events);
-            return processBatch(CastUtils.cast(exchanges));
+            if (endpoint.getConfiguration().isStreaming()) {
+                dataReader.read(new SplunkResultProcessor() {
+
+                    @Override
+                    public void process(SplunkEvent splunkEvent) {
+                        final Exchange exchange = getEndpoint().createExchange();
+                        Message message = exchange.getIn();
+                        message.setBody(splunkEvent);
+
+                        try {
+                            LOG.trace("Processing exchange [{}]...", exchange);
+                            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                                @Override
+                                public void done(boolean doneSync) {
+                                    LOG.trace("Done processing exchange [{}]...", exchange);
+                                }
+                            });
+                        } catch (Exception e) {
+                            exchange.setException(e);
+                        }
+                        if (exchange.getException() != null) {
+                            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                        }
+                        
+                    }
+
+                });
+                // Return 0: no exchanges returned by poll, as exchanges have been returned asynchronously
+                return 0;
+            } else {
+                List<SplunkEvent> events = dataReader.read();
+                Queue<Exchange> exchanges = createExchanges(events);
+                return processBatch(CastUtils.cast(exchanges));
+            }
         } catch (Exception e) {
             endpoint.reset(e);
             getExceptionHandler().handleException(e);

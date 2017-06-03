@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import junit.framework.TestCase;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
@@ -38,9 +39,7 @@ public abstract class ApplicationContextTestSupport extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
     }
 
 

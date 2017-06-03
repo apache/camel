@@ -40,6 +40,8 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         map.put("To", "davsclaus@apache.org");
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
+        map.put("CamelFileName", "fileOne");
+        map.put("org.apache.camel.test", "value");
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
         template.sendBodyAndHeaders("smtp://davsclaus@apache.org", body, map);
@@ -50,6 +52,9 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("jstrachan@apache.org", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
+        
+        assertNull("We should not get the message header here", msg.getHeader("CamelFileName"));
+        assertNull("We should not get the message header here", msg.getHeader("org.apache.camel.test"));
     }
 
     @Test
@@ -67,6 +72,7 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertEquals("James Strachan <jstrachan@apache.org>", msg.getFrom()[0].toString());
         assertEquals("Camel rocks", msg.getSubject());
+        
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

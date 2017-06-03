@@ -16,10 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.LoggingExceptionHandler;
+import org.apache.camel.util.UnitOfWorkHelper;
 
 /**
  * An {@link ExceptionHandler} that uses the {@link DefaultConsumer} to
@@ -39,7 +41,7 @@ import org.apache.camel.spi.ExceptionHandler;
 public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
 
     private final LoggingExceptionHandler fallback;
-    private final Consumer consumer;
+    private final DefaultConsumer consumer;
     private final Processor bridge;
 
     public BridgeExceptionHandlerToErrorHandler(DefaultConsumer consumer) {
@@ -71,10 +73,15 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
         // and mark as redelivery exhausted as we cannot do redeliveries
         exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
 
+        // wrap in UoW
+        UnitOfWork uow = null;
         try {
+            uow = consumer.createUoW(exchange);
             bridge.process(exchange);
         } catch (Exception e) {
             fallback.handleException("Error handling exception " + exception.getMessage(), exchange, e);
+        } finally {
+            UnitOfWorkHelper.doneUow(uow, exchange);
         }
     }
 }

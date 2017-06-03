@@ -1,0 +1,30 @@
+{
+  "component": {
+    "kind": "component",
+    "baseScheme": "twitter",
+    "scheme": "twitter-search",
+    "syntax": "twitter-search:kind",
+    "title": "TwitterSearch",
+    "description": "Search for twitter",
+    "label": "twitter",
+    "deprecated": false,
+    "async": false,
+    "consumerOnly": true,
+    "lenientProperties": false,
+    "javaType": "org.foo.search.TwitterSearchComponent",
+    "groupId": "org.foo",
+    "artifactId": "twitter-search-connector",
+    "version": "2.20.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "accessToken": { "kind": "property", "displayName": "Access Token", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token" },
+    "accessTokenSecret": { "kind": "property", "displayName": "Access Token Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token secret" },
+    "consumerKey": { "kind": "property", "displayName": "Consumer Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer key" },
+    "consumerSecret": { "kind": "property", "displayName": "Consumer Secret", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer secret" }
+  },
+  "properties": {
+    "filterOld": { "kind": "parameter", "displayName": "Filter Old", "group": "filter", "label": "consumer,filter", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": true, "description": "Filter out old tweets that has previously been polled. This state is stored in memory only and based on last tweet id." },
+    "keywords": { "kind": "parameter", "displayName": "Keywords", "group": "filter", "label": "consumer,filter", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Can be used for search and streaming/filter. Multiple values can be separated with comma." },
+    "delay": { "kind": "parameter", "displayName": "Delay", "group": "scheduler", "label": "consumer,scheduler", "required": false, "type": "integer", "javaType": "long", "optionalPrefix": "consumer.", "deprecated": false, "secret": false, "defaultValue": 5000, "description": "Milliseconds before the next poll." }
+  }
+}

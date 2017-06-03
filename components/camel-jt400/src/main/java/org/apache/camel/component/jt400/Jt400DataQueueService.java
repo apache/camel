@@ -39,7 +39,7 @@ class Jt400DataQueueService implements Service {
     /**
      * Endpoint which this service connects to.
      */
-    private final Jt400DataQueueEndpoint endpoint;
+    private final Jt400Endpoint endpoint;
     
     /**
      * Data queue object that corresponds to the endpoint of this service (null if stopped).
@@ -52,7 +52,7 @@ class Jt400DataQueueService implements Service {
      * 
      * @param endpoint endpoint which this service connects to
      */
-    Jt400DataQueueService(Jt400DataQueueEndpoint endpoint) {
+    Jt400DataQueueService(Jt400Endpoint endpoint) {
         ObjectHelper.notNull(endpoint, "endpoint", this);
         this.endpoint = endpoint;
     }

@@ -22,6 +22,7 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  * Factory to create the trace interceptor.
  */
+@Deprecated
 public interface TraceInterceptorFactory {
 
     /**

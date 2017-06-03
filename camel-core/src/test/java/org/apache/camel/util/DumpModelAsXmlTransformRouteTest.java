@@ -16,8 +16,13 @@
  */
 package org.apache.camel.util;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.ModelHelper;
 
 /**
@@ -26,11 +31,24 @@ import org.apache.camel.model.ModelHelper;
 public class DumpModelAsXmlTransformRouteTest extends ContextTestSupport {
 
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myRoute"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("<simple>Hello ${body}</simple>"));
+        Document doc = new XmlConverter().toDOMDocument(xml);
+        NodeList nodes = doc.getElementsByTagName("simple");
+        assertEquals(1, nodes.getLength());
+        Element node = (Element)nodes.item(0);
+        assertNotNull("Node <simple> expected to be instanceof Element", node);
+        assertEquals("Hello ${body}", node.getTextContent());
+
+        nodes = doc.getElementsByTagName("to");
+        assertEquals(1, nodes.getLength());
+        node = (Element)nodes.item(0);
+        assertNotNull("Node <to> expected to be instanceof Element", node);
+        assertEquals("mock:result", node.getAttribute("uri"));
+        assertEquals("myMock", node.getAttribute("id"));
+        assertEquals("true", node.getAttribute("customId"));
     }
 
     @Override
@@ -40,7 +58,7 @@ public class DumpModelAsXmlTransformRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
                    .transform().simple("Hello ${body}")
-                   .to("mock:result");
+                   .to("mock:result").id("myMock");
             }
         };
     }

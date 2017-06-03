@@ -78,18 +78,18 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
                 from("amq:queue:inbox")
                     .to("mock:inbox")
                     .inOnly("amq:topic:orderServiceNotification")
-                    .beanRef("orderService", "handleOrder");
+                    .bean("orderService", "handleOrder");
 
                 // this route collects an order request notification
                 // and sends back an acknowledgment back to a queue
                 from("amq:topic:orderServiceNotification")
-                    .beanRef("orderServiceNotificationWithAck-1", "handleOrderNotificationWithAck")
+                    .bean("orderServiceNotificationWithAck-1", "handleOrderNotificationWithAck")
                     .to("amq:queue:orderServiceNotificationAck");
                 
                 // this route collects an order request notification
                 // and sends back an acknowledgment back to a queue
                 from("amq:topic:orderServiceNotification")
-                    .beanRef("orderServiceNotificationWithAck-2", "handleOrderNotificationWithAck")
+                    .bean("orderServiceNotificationWithAck-2", "handleOrderNotificationWithAck")
                     .to("amq:queue:orderServiceNotificationAck");
 
                 // this route collects all order notifications acknowledgments

@@ -23,6 +23,12 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedBacklogTracerMBean {
 
+    @ManagedAttribute(description = "Camel ID")
+    String getCamelId();
+
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
     @ManagedAttribute(description = "Is tracing enabled")
     boolean isEnabled();
 

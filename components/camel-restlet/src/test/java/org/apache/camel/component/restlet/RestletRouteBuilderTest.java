@@ -17,9 +17,10 @@
 package org.apache.camel.component.restlet;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -76,42 +77,56 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
                             + exchange.getIn().getHeader("x"));
                     }
                 });
+
+                // Restlet consumer to handler FORM POST method
+                from("restlet:http://localhost:" + portNum + "/login?restletMethod=post").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setBody(
+                            "received user: "
+                            + exchange.getIn().getHeader("user")
+                            + "password: "
+                            + exchange.getIn().getHeader("passwd"));
+                    }
+                });
             }
         };
     }
 
     @Test
     public void testProducer() throws IOException {
-        String response = (String)template.requestBody("direct:start", "<order foo='1'/>");
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_XML);
+        
+        String response = template.requestBodyAndHeaders("direct:start", "<order foo='1'/>", headers, String.class);
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
         
-        response = (String)template.sendBodyAndHeader(
+        headers.put("id", "89531");
+        
+        response = template.requestBodyAndHeaders(
             "restlet:http://localhost:" + portNum + "/orders?restletMethod=post&foo=bar", 
-            ExchangePattern.InOut,
-            "<order foo='1'/>", "id", "89531");
+            "<order foo='1'/>", headers, String.class);
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
     }
 
     @Test
     public void testProducerJSON() throws IOException {
-        String response = (String)template.sendBodyAndHeader(
+        String response = template.requestBodyAndHeader(
             "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
-            ExchangePattern.InOut,
             JSON,
             Exchange.CONTENT_TYPE,
-            MediaType.APPLICATION_JSON);
+            MediaType.APPLICATION_JSON,
+            String.class);
            
         assertEquals(JSON, response);
     }
 
     @Test
     public void testProducerJSONFailure() throws IOException {
-        String response = (String)template.sendBodyAndHeader(
+        String response = template.requestBodyAndHeader(
             "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
-            ExchangePattern.InOut,
             "{'JSON'}",
             Exchange.CONTENT_TYPE,
-            MediaType.APPLICATION_JSON);
+            MediaType.APPLICATION_JSON, String.class);
            
         assertEquals("{'JSON'}", response);
     }
@@ -131,7 +146,37 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
         Response response = client.handle(new Request(Method.POST, 
             "http://localhost:" + portNum + "/orders/99991/6"));
         // expect error status as no Restlet consumer to handle POST method
+        assertEquals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED, response.getStatus());
+        assertNotNull(response.getEntity().getText());
+    }
+
+    @Test
+    public void testNotFound() throws IOException {
+        Client client = new Client(Protocol.HTTP);
+        Response response = client.handle(new Request(Method.POST,
+            "http://localhost:" + portNum + "/unknown"));
+        // expect error status as no Restlet consumer to handle POST method
         assertEquals(Status.CLIENT_ERROR_NOT_FOUND, response.getStatus());
         assertNotNull(response.getEntity().getText());
+    }
+    
+    @Test
+    public void testFormsProducer() throws IOException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_WWW_FORM);
+        
+        String response = template.requestBodyAndHeaders("restlet:http://localhost:" + portNum + "/login?restletMethod=post", "user=jaymandawg&passwd=secret$%", headers, String.class);
+        assertEquals("received user: jaymandawgpassword: secret$%", response);
+    }
+    
+    @Test
+    public void testFormsProducerMapBody() throws IOException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(Exchange.CONTENT_TYPE, MediaType.APPLICATION_WWW_FORM);
+        Map<String, String> body = new HashMap<>();
+        body.put("user", "jaymandawg");
+        body.put("passwd", "secret$%");
+        String response = template.requestBodyAndHeaders("restlet:http://localhost:" + portNum + "/login?restletMethod=post", body, headers, String.class);
+        assertEquals("received user: jaymandawgpassword: secret$%", response);
     }
 }

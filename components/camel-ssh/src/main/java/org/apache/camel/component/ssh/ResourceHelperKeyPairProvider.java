@@ -28,8 +28,13 @@ import org.apache.camel.util.ResourceHelper;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.util.IoUtils;
 import org.apache.sshd.common.util.SecurityUtils;
-import org.bouncycastle.openssl.PEMReader;
+import org.bouncycastle.openssl.PEMDecryptorProvider;
+import org.bouncycastle.openssl.PEMEncryptedKeyPair;
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PasswordFinder;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +95,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
     }
 
     @Override
-    protected KeyPair[] loadKeys() {
+    public Iterable<KeyPair> loadKeys() {
         if (!SecurityUtils.isBouncyCastleRegistered()) {
             throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
         }
@@ -99,19 +104,31 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
                 new ArrayList<KeyPair>(this.resources.length);
 
         for (String resource : resources) {
-            PEMReader r = null;
+            PEMParser r = null;
             InputStreamReader isr = null;
             InputStream is = null;
             try {
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, resource);
                 isr = new InputStreamReader(is);
-                r = new PEMReader(isr, passwordFinder);
+                r = new PEMParser(isr);
 
                 Object o = r.readObject();
-
-                if (o instanceof KeyPair) {
+                
+                JcaPEMKeyConverter pemConverter = new JcaPEMKeyConverter();
+                pemConverter.setProvider("BC");
+                if (passwordFinder != null && o instanceof PEMEncryptedKeyPair) {
+                    JcePEMDecryptorProviderBuilder decryptorBuilder = new JcePEMDecryptorProviderBuilder();
+                    PEMDecryptorProvider pemDecryptor = decryptorBuilder.build(passwordFinder.getPassword());
+                    o = pemConverter.getKeyPair(((PEMEncryptedKeyPair) o).decryptKeyPair(pemDecryptor));
+                }
+                
+                if (o instanceof PEMKeyPair) {
+                    o = pemConverter.getKeyPair((PEMKeyPair)o);
+                    keys.add((KeyPair) o);
+                } else if (o instanceof KeyPair) {
                     keys.add((KeyPair) o);
                 }
+                
             } catch (Exception e) {
                 log.warn("Unable to read key", e);
             } finally {
@@ -119,6 +136,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
             }
         }
 
-        return keys.toArray(new KeyPair[keys.size()]);
+        return keys;
     }
+    
 }

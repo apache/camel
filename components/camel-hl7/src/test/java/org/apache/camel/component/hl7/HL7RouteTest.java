@@ -63,7 +63,7 @@ public class HL7RouteTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = (String) template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString());
+        String out = template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString(), String.class);
 
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);
@@ -78,7 +78,7 @@ public class HL7RouteTest extends HL7TestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Message.class);
 
-        String line1 = "MSH|^~\\&|MYSENDER|MYSENDERAPP|MYCLIENT|MYCLIENTAPP|200612211200||ADT^A01|1234|P|2.4";
+        String line1 = "MSH|^~\\&|MYSENDER|MYSENDERAPP|MYCLIENT|MYCLIENTAPP|200612211200||ADT^A01|123|P|2.4";
         String line2 = "PID|||123456||Doe^John";
 
         StringBuilder in = new StringBuilder();
@@ -86,10 +86,10 @@ public class HL7RouteTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = (String) template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString());
+        String out = template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", in.toString(), String.class);
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADT^A01||||123", lines[0]);
-        assertEquals("PID|||123456||Doe^John", lines[1]);
+        assertEquals("PID|||123||Doe^John", lines[1]);
 
         assertMockEndpointsSatisfied();
     }
@@ -129,11 +129,11 @@ public class HL7RouteTest extends HL7TestSupport {
                     .choice()
                         // where we choose that A19 queries invoke the handleA19 method on our hl7service bean
                         .when(header("CamelHL7TriggerEvent").isEqualTo("A19"))
-                            .beanRef("hl7service", "handleA19")
+                            .bean("hl7service", "handleA19")
                             .to("mock:a19")
                         // and A01 should invoke the handleA01 method on our hl7service bean
                         .when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("mock:a01")
-                            .beanRef("hl7service", "handleA01")
+                            .bean("hl7service", "handleA01")
                             .to("mock:a19")
                         // other types should go to mock:unknown
                         .otherwise()
@@ -164,7 +164,7 @@ public class HL7RouteTest extends HL7TestSupport {
             // here you can have your business logic for A01 messages
             assertTrue(msg instanceof ADT_A01);
             // just return the same dummy response
-            return createADT01Message();
+            return createADT01Message(((ADT_A01)msg).getMSH().getMessageControlID().getValue());
         }
     }
     // END SNIPPET: e2
@@ -193,7 +193,7 @@ public class HL7RouteTest extends HL7TestSupport {
         return adr.getMessage();
     }
 
-    private static Message createADT01Message() throws Exception {
+    private static Message createADT01Message(String msgId) throws Exception {
         ADT_A01 adt = new ADT_A01();
 
         // Populate the MSH Segment
@@ -210,7 +210,7 @@ public class HL7RouteTest extends HL7TestSupport {
         PID pid = adt.getPID();
         pid.getPatientName(0).getFamilyName().getSurname().setValue("Doe");
         pid.getPatientName(0).getGivenName().setValue("John");
-        pid.getPatientIdentifierList(0).getID().setValue("123456");
+        pid.getPatientIdentifierList(0).getID().setValue(msgId);
 
         return adt;
     }

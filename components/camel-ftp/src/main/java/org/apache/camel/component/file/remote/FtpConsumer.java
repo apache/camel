@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -33,10 +35,38 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     protected String endpointPath;
+   
+    private transient String ftpConsumerToString;
 
     public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
         super(endpoint, processor, fileOperations);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // turn off scheduler first, so autoCreate is handled before scheduler starts
+        boolean startScheduler = isStartScheduler();
+        setStartScheduler(false);
+        try {
+            super.doStart();
+            if (endpoint.isAutoCreate()) {
+                log.debug("Auto creating directory: {}", endpoint.getConfiguration().getDirectory());
+                try {
+                    connectIfNecessary();
+                    operations.buildDirectory(endpoint.getConfiguration().getDirectory(), true);
+                } catch (GenericFileOperationFailedException e) {
+                    // log a WARN as we want to start the consumer.
+                    log.warn("Error auto creating directory: " + endpoint.getConfiguration().getDirectory()
+                            + " due " + e.getMessage() + ". This exception is ignored.", e);
+                }
+            }
+        } finally {
+            if (startScheduler) {
+                setStartScheduler(true);
+                startScheduler();
+            }
+        }
     }
 
     @Override
@@ -59,7 +89,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList, int depth) {
-        boolean answer = doPollDirectory(absolutePath, dirName, fileList, depth);
+        boolean answer = doSafePollSubDirectory(absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         if (isStepwise()) {
             operations.changeToParentDirectory();
@@ -126,7 +156,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             }
 
             if (file.isDirectory()) {
-                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file);
+                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getName();
@@ -137,7 +167,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     }
                 }
             } else if (file.isFile()) {
-                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file);
+                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
                 if (depth >= endpoint.getMinDepth() && isValidFile(remote, false, files)) {
                     // matched file so add
                     fileList.add(remote);
@@ -167,18 +197,28 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     @Override
     protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
         if (getEndpoint().getConfiguration().isIgnoreFileNotFoundOrPermissionError()) {
-            // error code 550 is file not found
-            int code = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_CODE, 0, int.class);
-            if (code == 550) {
-                return true;
+            if (exchange != null) {
+                // error code 550 is file not found
+                int code = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_CODE, 0, int.class);
+                if (code == 550) {
+                    return true;
+                }
+            }
+            if (cause != null && cause instanceof GenericFileOperationFailedException) {
+                GenericFileOperationFailedException generic = ObjectHelper.getException(GenericFileOperationFailedException.class, cause);
+                //exchange is null and cause has the reason for failure to read directories
+                if (generic.getCode() == 550) {
+                    return true;
+                }
             }
         }
         return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
-    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file) {
+    private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file, String charset) {
         RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();
 
+        answer.setCharset(charset);
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
@@ -211,8 +251,21 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         // the file name should be the relative path
         answer.setFileName(answer.getRelativeFilePath());
 
-        answer.setCharset(endpoint.getCharset());
         return answer;
+    }
+
+    @Override
+    protected void updateFileHeaders(GenericFile<FTPFile> file, Message message) {
+        long length = file.getFile().getSize();
+        long modified = file.getFile().getTimestamp() != null ? file.getFile().getTimestamp().getTimeInMillis() : -1;
+        file.setFileLength(length);
+        file.setLastModified(modified);
+        if (length >= 0) {
+            message.setHeader(Exchange.FILE_LENGTH, length);
+        }
+        if (modified >= 0) {
+            message.setHeader(Exchange.FILE_LAST_MODIFIED, modified);
+        }
     }
 
     private boolean isStepwise() {
@@ -227,6 +280,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     @Override
     public String toString() {
-        return "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (ftpConsumerToString == null) {
+            ftpConsumerToString = "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return ftpConsumerToString;
     }
 }

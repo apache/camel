@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.salesforce.internal.dto;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * DTO for Salesforce login error

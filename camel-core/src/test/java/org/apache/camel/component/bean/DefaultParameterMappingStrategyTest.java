@@ -86,19 +86,19 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").logStackTrace(false).disableRedelivery());
 
-                onException(Exception.class).handled(true).beanRef("foo", "withException").to("mock:result");
+                onException(Exception.class).handled(true).bean("foo", "withException").to("mock:result");
 
-                from("direct:a").beanRef("foo", "withExchange").to("mock:result");
+                from("direct:a").bean("foo", "withExchange").to("mock:result");
 
-                from("direct:b").beanRef("foo", "withMessage").to("mock:result");
+                from("direct:b").bean("foo", "withMessage").to("mock:result");
 
                 from("direct:c").to("mock:foo");
 
-                from("direct:d").beanRef("foo", "withTypeConverter").to("mock:result");
+                from("direct:d").bean("foo", "withTypeConverter").to("mock:result");
 
-                from("direct:e").beanRef("foo", "withRegistry").to("mock:result");
+                from("direct:e").bean("foo", "withRegistry").to("mock:result");
 
-                from("direct:f").beanRef("foo", "withCamelContext").to("mock:result");
+                from("direct:f").bean("foo", "withCamelContext").to("mock:result");
             }
         };
     }

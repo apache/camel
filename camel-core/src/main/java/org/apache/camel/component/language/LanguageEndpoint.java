@@ -29,27 +29,46 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 /**
- * Language endpoint.
+ * The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
  *
- * @version 
+ * By having a component to execute language scripts, it allows more dynamic routing capabilities.
+ * For example by using the Routing Slip or Dynamic Router EIPs you can send messages to language endpoints
+ * where the script is dynamic defined as well.
+ *
+ * This component is provided out of the box in camel-core and hence no additional JARs is needed.
+ * You only have to include additional Camel components if the language of choice mandates it,
+ * such as using Groovy or JavaScript languages.
  */
+@UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri", producerOnly = true, label = "core,script")
 public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
-    @UriParam
+    private boolean contentResolvedFromResource;
+    @UriPath(enums = "bean,constant,el,exchangeProperty,file,groovy,header,javascript,jsonpath,jxpath,mvel,ognl,php,python"
+            + ",ref,ruby,simple,spel,sql,terser,tokenize,xpath,xquery,xtokenize")
+    @Metadata(required = "true")
     private String languageName;
+    // resourceUri is optional in the language endpoint
+    @UriPath(description = "Path to the resource, or a reference to lookup a bean in the Registry to use as the resource")
+    @Metadata(required = "false")
+    private String resourceUri;
     @UriParam
     private String script;
-    @UriParam
+    @UriParam(defaultValue = "true")
     private boolean transform = true;
     @UriParam
-    private boolean contentResolvedFromResource;
+    private boolean binary;
+    @UriParam
+    private boolean cacheScript;
 
     public LanguageEndpoint() {
         // enable cache by default
@@ -72,7 +91,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
         }
 
         ObjectHelper.notNull(language, "language", this);
-        if (expression == null && script != null) {
+        if (cacheScript && expression == null && script != null) {
             script = resolveScript(script);
             expression = language.createExpression(script);
         }
@@ -149,6 +168,21 @@ public class LanguageEndpoint extends ResourceEndpoint {
         this.transform = transform;
     }
 
+    public boolean isBinary() {
+        return binary;
+    }
+
+    /**
+     * Whether the script is binary content or text content.
+     * <p/>
+     * By default the script is read as text content (eg <tt>java.lang.String</tt>)
+     *
+     * @param binary <tt>true</tt> to read the script as binary, instead of text based.
+     */
+    public void setBinary(boolean binary) {
+        this.binary = binary;
+    }
+
     /**
      * Sets the name of the language to use
      *
@@ -156,6 +190,21 @@ public class LanguageEndpoint extends ResourceEndpoint {
      */
     public void setLanguageName(String languageName) {
         this.languageName = languageName;
+    }
+
+    /**
+     * Path to the resource, or a reference to lookup a bean in the Registry to use as the resource
+     *
+     * @param resourceUri  the resource path
+     */
+    @Override
+    public void setResourceUri(String resourceUri) {
+        super.setResourceUri(resourceUri);
+    }
+
+    @Override
+    public String getResourceUri() {
+        return super.getResourceUri();
     }
 
     /**
@@ -167,6 +216,10 @@ public class LanguageEndpoint extends ResourceEndpoint {
         this.script = script;
     }
 
+    public String getScript() {
+        return script;
+    }
+
     public boolean isContentResolvedFromResource() {
         return contentResolvedFromResource;
     }
@@ -174,4 +227,26 @@ public class LanguageEndpoint extends ResourceEndpoint {
     public void setContentResolvedFromResource(boolean contentResolvedFromResource) {
         this.contentResolvedFromResource = contentResolvedFromResource;
     }
+
+    public boolean isCacheScript() {
+        return cacheScript;
+    }
+
+    /**
+     * Whether to cache the compiled script and reuse
+     * <p/>
+     * Notice reusing the script can cause side effects from processing one Camel
+     * {@link org.apache.camel.Exchange} to the next {@link org.apache.camel.Exchange}.
+     */
+    public void setCacheScript(boolean cacheScript) {
+        this.cacheScript = cacheScript;
+    }
+
+    public void clearContentCache() {
+        super.clearContentCache();
+        // must also clear expression and script
+        expression = null;
+        script = null;
+    }
+
 }

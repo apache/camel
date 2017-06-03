@@ -21,6 +21,6 @@ package org.apache.camel.component.weather;
  */
 public enum WeatherUnits {
 
-    IMPERIAL, METRIC;
+    IMPERIAL, METRIC
 
 }

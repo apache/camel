@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
+import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
@@ -34,23 +35,21 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     private final Registry registry;
 
     public OsgiDefaultCamelContext(BundleContext bundleContext) {
-        this(bundleContext, null);
+        this(bundleContext, new OsgiServiceRegistry(bundleContext));
     }
 
     public OsgiDefaultCamelContext(BundleContext bundleContext, Registry registry) {
+        super(registry);
         this.bundleContext = bundleContext;
         this.registry = registry;
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
+        // setup the application context classloader with the bundle classloader
+        setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
     }
 
     @Override
     public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
         return BundleContextUtils.findComponents(bundleContext, this);
-    }
-
-    @Override
-    public String getComponentDocumentation(String componentName) throws IOException {
-        return BundleContextUtils.getComponentDocumentation(bundleContext, this, componentName);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
             ctx = bundleContext;
         }
         FactoryFinder finder = new OsgiFactoryFinderResolver(bundleContext).resolveDefaultFactoryFinder(getClassResolver());
-        return new OsgiTypeConverter(ctx, getInjector(), finder);
+        return new OsgiTypeConverter(ctx, this, getInjector(), finder);
     }
 
 }

@@ -32,17 +32,20 @@ public final class SimpleTokenizer {
     // use CopyOnWriteArrayList so we can modify it in the for loop when changing function start/end tokens
     private static final List<SimpleTokenType> KNOWN_TOKENS = new CopyOnWriteArrayList<SimpleTokenType>();
 
+    // optimise to be able to quick check for start functions
+    private static final String[] FUNCTION_START = new String[]{"${", "$simple{"};
+
     static {
         // add known tokens
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "${"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "$simple{"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionEnd, "}"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, " "));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\t"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\n"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.whiteSpace, "\r"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.singleQuote, "'"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.doubleQuote, "\""));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "${"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionStart, "$simple{"));
-        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.functionEnd, "}"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "true"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.booleanValue, "false"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.nullValue, "null"));
@@ -50,6 +53,7 @@ public final class SimpleTokenizer {
 
         // binary operators
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "=="));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "=~"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, ">="));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "<="));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, ">"));
@@ -65,6 +69,8 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "in"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "range"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not range"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "starts with"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "ends with"));
 
         // unary operators
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.unaryOperator, "++"));
@@ -82,6 +88,18 @@ public final class SimpleTokenizer {
         // static methods
     }
 
+    /**
+     * Does the expression include a simple function.
+     *
+     * @param expression the expression
+     * @return <tt>true</tt> if one or more simple function is included in the expression
+     */
+    public static boolean hasFunctionStartToken(String expression) {
+        if (expression != null) {
+            return expression.contains(FUNCTION_START[0]) || expression.contains(FUNCTION_START[1]);
+        }
+        return false;
+    }
 
     /**
      * @see SimpleLanguage#changeFunctionStartToken(String...)
@@ -93,8 +111,18 @@ public final class SimpleTokenizer {
             }
         }
 
+        if (startToken.length > 2) {
+            throw new IllegalArgumentException("At most 2 start tokens is allowed");
+        }
+
+        // reset
+        FUNCTION_START[0] = "";
+        FUNCTION_START[1] = "";
+
         // add in start of list as its a more common token to be used
-        for (String token : startToken) {
+        for (int i = 0; i < startToken.length; i++) {
+            String token = startToken[i];
+            FUNCTION_START[i] = token;
             KNOWN_TOKENS.add(0, new SimpleTokenType(TokenType.functionStart, token));
         }
     }
@@ -109,9 +137,17 @@ public final class SimpleTokenizer {
             }
         }
 
-        // add in start of list as its a more common token to be used
+        // add after the start tokens
+        int pos = 0;
+        for (SimpleTokenType type : KNOWN_TOKENS) {
+            if (type.getType() == TokenType.functionStart) {
+                pos++;
+            }
+        }
+
+        // add after function start of list as its a more common token to be used
         for (String token : endToken) {
-            KNOWN_TOKENS.add(0, new SimpleTokenType(TokenType.functionEnd, token));
+            KNOWN_TOKENS.add(pos, new SimpleTokenType(TokenType.functionEnd, token));
         }
     }
 
@@ -189,6 +225,9 @@ public final class SimpleTokenizer {
                     special = true;
                 } else if ('r' == next) {
                     sb.append("\r");
+                    special = true;
+                } else if ('}' == next) {
+                    sb.append("}");
                     special = true;
                 } else {
                     // not special just a regular character

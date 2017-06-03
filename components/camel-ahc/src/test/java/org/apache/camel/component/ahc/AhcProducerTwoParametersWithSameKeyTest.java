@@ -37,12 +37,6 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
         assertFalse("Should not fail", out.isFailed());
         assertEquals("OK", out.getOut().getBody(String.class));
         assertEquals("yes", out.getOut().getHeader("bar"));
-
-        List<?> foo = out.getOut().getHeader("foo", List.class);
-        assertNotNull(foo);
-        assertEquals(2, foo.size());
-        assertEquals("123", foo.get(0));
-        assertEquals("456", foo.get(1));
     }
 
     @Test
@@ -63,11 +57,7 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
         assertEquals("OK", out.getOut().getBody(String.class));
         assertEquals("yes", out.getOut().getHeader("bar"));
 
-        List<?> foo = out.getOut().getHeader("foo", List.class);
-        assertNotNull(foo);
-        assertEquals(2, foo.size());
-        assertEquals("123", foo.get(0));
-        assertEquals("456", foo.get(1));
+
     }
 
     @Override

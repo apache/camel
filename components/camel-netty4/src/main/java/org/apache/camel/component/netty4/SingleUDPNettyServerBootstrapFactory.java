@@ -18,34 +18,36 @@ package org.apache.camel.component.netty4;
 
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.FixedRecvByteBufAllocator;
+import io.netty.channel.epoll.EpollDatagramChannel;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.socket.DatagramChannel;
+import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Suspendable;
+import org.apache.camel.component.netty4.util.SubnetUtils;
 import org.apache.camel.support.ServiceSupport;
-import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.FixedReceiveBufferSizePredictorFactory;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.ChannelGroupFuture;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
-import org.jboss.netty.channel.socket.DatagramChannel;
-import org.jboss.netty.channel.socket.DatagramChannelFactory;
-import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
-import org.jboss.netty.channel.socket.nio.NioDatagramWorkerPool;
-import org.jboss.netty.channel.socket.nio.WorkerPool;
-import org.jboss.netty.handler.ipfilter.IpV4Subnet;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A {@link NettyServerBootstrapFactory} which is used by a single consumer (not shared).
  */
-public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
+public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory, Suspendable {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
     private static final String LOOPBACK_INTERFACE = "lo";
@@ -54,22 +56,22 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
-    private ChannelPipelineFactory pipelineFactory;
-    private DatagramChannelFactory datagramChannelFactory;
-    private ConnectionlessBootstrap connectionlessBootstrap;
-    private WorkerPool workerPool;
+    private ChannelInitializer<Channel> pipelineFactory;
+    private NetworkInterface multicastNetworkInterface;
+    private Channel channel;
+    private EventLoopGroup workerGroup;
 
     public SingleUDPNettyServerBootstrapFactory() {
-        this.allChannels = new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
+        this.allChannels = new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
-    public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+    public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
     }
 
-    public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+    public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
@@ -104,56 +106,90 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         stopServerBootstrap();
     }
 
-    protected void startServerBootstrap() throws UnknownHostException, SocketException {
+    @Override
+    protected void doResume() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        // noop
+    }
+
+    protected void startServerBootstrap() throws Exception {
         // create non-shared worker pool
-        int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : NettyHelper.DEFAULT_IO_THREADS;
-        workerPool = new NioDatagramWorkerPool(Executors.newCachedThreadPool(), count);
-
-        datagramChannelFactory = new NioDatagramChannelFactory(workerPool);
-
-        connectionlessBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
-        connectionlessBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
-        connectionlessBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
-        connectionlessBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
-        connectionlessBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-        connectionlessBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
-        connectionlessBootstrap.setOption("child.broadcast", configuration.isBroadcast());
-        connectionlessBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
-        connectionlessBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
+        EventLoopGroup wg = configuration.getWorkerGroup();
+        if (wg == null) {
+            // create new pool which we should shutdown when stopping as its not shared
+            workerGroup = new NettyWorkerPoolBuilder()
+                    .withNativeTransport(configuration.isNativeTransport())
+                    .withWorkerCount(configuration.getWorkerCount())
+                    .withName("NettyServerTCPWorker")
+                    .build();
+            wg = workerGroup;
+        }
+        
+        Bootstrap bootstrap = new Bootstrap();
+        if (configuration.isNativeTransport()) {
+            bootstrap.group(wg).channel(EpollDatagramChannel.class);
+        } else {
+            bootstrap.group(wg).channel(NioDatagramChannel.class);
+        }
+        // We cannot set the child option here      
+        bootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
+        bootstrap.option(ChannelOption.SO_SNDBUF, configuration.getSendBufferSize());
+        bootstrap.option(ChannelOption.SO_RCVBUF, configuration.getReceiveBufferSize());
+        bootstrap.option(ChannelOption.SO_BROADCAST, configuration.isBroadcast());
+        bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
+        
         // only set this if user has specified
         if (configuration.getReceiveBufferSizePredictor() > 0) {
-            connectionlessBootstrap.setOption("receiveBufferSizePredictorFactory",
-                    new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
+            bootstrap.option(ChannelOption.RCVBUF_ALLOCATOR,
+                    new FixedRecvByteBufAllocator(configuration.getReceiveBufferSizePredictor()));
         }
+        
         if (configuration.getBacklog() > 0) {
-            connectionlessBootstrap.setOption("backlog", configuration.getBacklog());
+            bootstrap.option(ChannelOption.SO_BACKLOG, configuration.getBacklog());
         }
 
-        // set any additional netty options
-        if (configuration.getOptions() != null) {
-            for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
-                connectionlessBootstrap.setOption(entry.getKey(), entry.getValue());
+        Map<String, Object> options = configuration.getOptions();
+        if (options != null) {
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                String value = entry.getValue().toString();
+                ChannelOption<Object> option = ChannelOption.valueOf(entry.getKey());
+                //For all netty options that aren't of type String
+                //TODO: find a way to add primitive Netty options without having to add them to the Camel registry.
+                if (EndpointHelper.isReferenceParameter(value)) {
+                    String name = value.substring(1);
+                    Object o = CamelContextHelper.mandatoryLookup(camelContext, name);
+                    bootstrap.option(option, o);
+                } else {
+                    bootstrap.option(option, value);
+                }
             }
         }
-
-        LOG.debug("Created ConnectionlessBootstrap {} with options: {}", connectionlessBootstrap, connectionlessBootstrap.getOptions());
+        LOG.debug("Created Bootstrap {}", bootstrap);
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
-        connectionlessBootstrap.setPipelineFactory(pipelineFactory);
+        bootstrap.handler(pipelineFactory);
 
         InetSocketAddress hostAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        IpV4Subnet multicastSubnet = new IpV4Subnet(MULTICAST_SUBNET);
+        SubnetUtils multicastSubnet = new SubnetUtils(MULTICAST_SUBNET);
 
-        if (multicastSubnet.contains(configuration.getHost())) {
-            DatagramChannel channel = (DatagramChannel)connectionlessBootstrap.bind(hostAddress);
+        if (multicastSubnet.getInfo().isInRange(configuration.getHost())) {
+            ChannelFuture channelFuture = bootstrap.bind(configuration.getPort()).sync();
+            channel = channelFuture.channel();
+            DatagramChannel datagramChannel = (DatagramChannel) channel;
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
-            NetworkInterface multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
+            multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
+            ObjectHelper.notNull(multicastNetworkInterface, "No network interface found for '" + networkInterface + "'.");
             LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", new Object[]{configuration.getHost(), configuration.getPort(), multicastNetworkInterface.getName()});
-            channel.joinGroup(hostAddress, multicastNetworkInterface);
-            allChannels.add(channel);
+            datagramChannel.joinGroup(hostAddress, multicastNetworkInterface).syncUninterruptibly();
+            allChannels.add(datagramChannel);
         } else {
             LOG.info("ConnectionlessBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-            Channel channel = connectionlessBootstrap.bind(hostAddress);
+            ChannelFuture channelFuture = bootstrap.bind(hostAddress).sync();
+            channel = channelFuture.channel();
             allChannels.add(channel);
         }
     }
@@ -163,19 +199,12 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         LOG.info("ConnectionlessBootstrap disconnecting from {}:{}", configuration.getHost(), configuration.getPort());
 
         LOG.trace("Closing {} channels", allChannels.size());
-        ChannelGroupFuture future = allChannels.close();
-        future.awaitUninterruptibly();
-
-        // close server external resources
-        if (datagramChannelFactory != null) {
-            datagramChannelFactory.releaseExternalResources();
-            datagramChannelFactory = null;
-        }
-
+        allChannels.close().awaitUninterruptibly();
+        
         // and then shutdown the thread pools
-        if (workerPool != null) {
-            workerPool.shutdown();
-            workerPool = null;
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully();
+            workerGroup = null;
         }
     }
 

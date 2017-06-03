@@ -32,4 +32,9 @@ public interface NamespaceAware {
      * @param namespaces the XML namespaces with the key of prefixes and the value the URIs
      */
     void setNamespaces(Map<String, String> namespaces);
+
+    /**
+     * Gets the XML Namespaces
+     */
+    Map<String, String> getNamespaces();
 }

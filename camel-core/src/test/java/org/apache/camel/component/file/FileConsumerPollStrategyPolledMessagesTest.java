@@ -47,8 +47,8 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/pollstrategy");
+        super.setUp();
     }
 
     public void testPolledMessages() throws Exception {

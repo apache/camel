@@ -23,13 +23,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.processor.RemoveHeadersProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;removeHeaders/&gt; element
+ * Removes message headers whose name matches a specified pattern
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "removeHeaders")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDefinition> {
@@ -59,11 +61,6 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
     }
 
     @Override
-    public String getShortName() {
-        return "removeHeaders";
-    }
-
-    @Override
     public String getLabel() {
         return "removeHeaders[" + getPattern() + "]";
     }
@@ -72,14 +69,17 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPattern(), "patterns", this);
         if (getExcludePatterns() != null) {
-            return ProcessorBuilder.removeHeaders(getPattern(), getExcludePatterns());
+            return new RemoveHeadersProcessor(getPattern(), getExcludePatterns());
         } else if (getExcludePattern() != null) {
-            return ProcessorBuilder.removeHeaders(getPattern(), getExcludePattern());
+            return new RemoveHeadersProcessor(getPattern(), new String[]{getExcludePattern()});
         } else {
-            return ProcessorBuilder.removeHeaders(getPattern());
+            return new RemoveHeadersProcessor(getPattern(), null);
         }
     }
 
+    /**
+     * Name or pattern of headers to remove
+     */
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
@@ -92,6 +92,9 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
         return excludePatterns;
     }
 
+    /**
+     * Name or pattern of headers to not remove
+     */
     public void setExcludePatterns(String[] excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
@@ -100,6 +103,9 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
         return excludePattern;
     }
 
+    /**
+     * Name or patter of headers to not remove
+     */
     public void setExcludePattern(String excludePattern) {
         this.excludePattern = excludePattern;
     }

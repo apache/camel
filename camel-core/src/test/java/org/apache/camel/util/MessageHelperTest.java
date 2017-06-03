@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
@@ -29,6 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
@@ -37,10 +39,11 @@ import org.apache.camel.impl.DefaultMessage;
 public class MessageHelperTest extends TestCase {
     
     private Message message;
+    private CamelContext camelContext = new DefaultCamelContext();
     
     @Override
     protected void setUp() throws Exception {
-        message = new DefaultMessage();
+        message = new DefaultMessage(camelContext);
     }
 
     /*
@@ -61,6 +64,10 @@ public class MessageHelperTest extends TestCase {
 
             public void writeTo(OutputStream os) throws IOException {
                 // noop
+            }
+
+            public StreamCache copy(Exchange exchange) throws IOException {
+                return null;
             }
 
             public boolean inMemory() {
@@ -88,7 +95,7 @@ public class MessageHelperTest extends TestCase {
 
     public void testCopyHeaders() throws Exception {
         Message source = message;
-        Message target = new DefaultMessage();
+        Message target = new DefaultMessage(camelContext);
 
         source.setHeader("foo", 123);
         source.setHeader("bar", 456);
@@ -102,7 +109,7 @@ public class MessageHelperTest extends TestCase {
 
     public void testCopyHeadersOverride() throws Exception {
         Message source = message;
-        Message target = new DefaultMessage();
+        Message target = new DefaultMessage(camelContext);
 
         source.setHeader("foo", 123);
         source.setHeader("bar", 456);
@@ -112,6 +119,29 @@ public class MessageHelperTest extends TestCase {
 
         assertEquals(123, target.getHeader("foo"));
         assertEquals(456, target.getHeader("bar"));
+    }
+    
+    public void testCopyHeadersWithHeaderFilterStrategy() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+        
+        Message source = message;
+        Message target = message.getExchange().getOut();
+        
+        DefaultHeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+        headerFilterStrategy.setInFilterPattern("foo");
+        
+        source.setHeader("foo", 123);
+        source.setHeader("bar", 456);
+        target.setHeader("bar", "yes");
+        
+        MessageHelper.copyHeaders(source, target, headerFilterStrategy, true);
+        
+        assertEquals(null, target.getHeader("foo"));
+        assertEquals(456, target.getHeader("bar"));
+        context.stop();
     }
 
     public void testDumpAsXmlPlainBody() throws Exception {
@@ -209,5 +239,7 @@ public class MessageHelperTest extends TestCase {
         assertEquals("java.lang.Integer", dump.getHeaders().get(0).getType());
         assertEquals("123", dump.getHeaders().get(0).getValue());
     }
+    
+   
 
 }

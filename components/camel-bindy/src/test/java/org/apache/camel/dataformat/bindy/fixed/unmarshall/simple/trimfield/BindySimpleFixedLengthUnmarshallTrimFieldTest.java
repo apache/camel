@@ -18,8 +18,6 @@ package org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trimfield;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -53,7 +51,7 @@ public class BindySimpleFixedLengthUnmarshallTrimFieldTest extends AbstractJUnit
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
 
-        expected = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009  Hello   ";
+        expected = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009  Hello###";
 
         template.sendBody(expected);
 
@@ -61,17 +59,17 @@ public class BindySimpleFixedLengthUnmarshallTrimFieldTest extends AbstractJUnit
         result.assertIsSatisfied();
 
         // check the model
-        Map<?, ?> map = (Map<?, ?>) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        BindySimpleFixedLengthUnmarshallTrimFieldTest.Order order = (BindySimpleFixedLengthUnmarshallTrimFieldTest.Order) map.values().iterator().next();
+        
+        BindySimpleFixedLengthUnmarshallTrimFieldTest.Order order = result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallTrimFieldTest.Order.class);
         Assert.assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         Assert.assertEquals("Pauline", order.getFirstName());
         Assert.assertEquals("M    ", order.getLastName()); // no trim
-        Assert.assertEquals("Hello", order.getComment());
+        Assert.assertEquals("  Hello", order.getComment());
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trimfield");
+        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat(Order.class);
 
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
@@ -115,7 +113,7 @@ public class BindySimpleFixedLengthUnmarshallTrimFieldTest extends AbstractJUnit
         @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
 
-        @DataField(pos = 66, length = 10, trim = true)
+        @DataField(pos = 66, length = 10, trim = true, align = "L", paddingChar = '#')
         private String comment;
 
         public int getOrderNr() {

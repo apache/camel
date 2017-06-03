@@ -16,8 +16,7 @@
  */
 package org.apache.camel.scala
 
-import org.scalatest.FunSpec
-import org.scalatest.matchers.MustMatchers
+import org.scalatest.{MustMatchers, FunSpec}
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 
@@ -59,11 +58,15 @@ class RouteSpec extends FunSpec with CamelSpec with MustMatchers with Preamble {
     }
     it("should raise exception when trying to set In when function returns Unit") {
       def fn(i: Int) { }
-      evaluating { processExchange(in(classOf[Int]) {fn _} .toIn) { _.in = 1} } must produce [RuntimeTransformException]
+      a [RuntimeTransformException] should be thrownBy {
+        processExchange(in(classOf[Int]) {fn _} .toIn) { _.in = 1}
+      }
     }
     it("should raise exception when trying to set Out when function returns Unit") {
       def fn(i: Int) { }
-      evaluating { processExchange(in(classOf[Int]) {fn _} .toOut) { _.in = 1} } must produce [RuntimeTransformException]
+      a [RuntimeTransformException] should be thrownBy {
+        processExchange(in(classOf[Int]) {fn _} .toOut) { _.in = 1}
+      }
     }
   }
   describe("Predicate/DSL") {
@@ -72,7 +75,9 @@ class RouteSpec extends FunSpec with CamelSpec with MustMatchers with Preamble {
     }
     it("should raise exception when trying to filter when function returns Unit") {
       def fn(i: Int) { }
-      evaluating { filterExchange(in(classOf[Int]) {fn _}) { _.in = 1} } must produce [RuntimeTransformException]
+      a [RuntimeTransformException] should be thrownBy {
+        filterExchange(in(classOf[Int]) {fn _}) { _.in = 1}
+      }
     }
   }
   describe("PartialFunction/DSL") {

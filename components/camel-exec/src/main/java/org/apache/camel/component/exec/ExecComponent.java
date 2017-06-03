@@ -20,13 +20,17 @@ import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link ExecEndpoint}. With the
  * component it is possible to execute system commands.
  */
-public class ExecComponent extends DefaultComponent {
+public class ExecComponent extends UriEndpointComponent {
+
+    public ExecComponent() {
+        super(ExecEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

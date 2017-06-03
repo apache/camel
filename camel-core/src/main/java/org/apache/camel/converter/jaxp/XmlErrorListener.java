@@ -22,6 +22,9 @@ import javax.xml.transform.TransformerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A {@link javax.xml.transform.ErrorListener} that logs the errors.
+ */
 public class XmlErrorListener implements ErrorListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlErrorListener.class);

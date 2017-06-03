@@ -46,7 +46,8 @@ package org.apache.camel;
  * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
  * before using, it applies to this {@link ConsumerTemplate} as well.
  *
- * @version 
+ * @see ProducerTemplate
+ * @see FluentProducerTemplate
  */
 public interface ConsumerTemplate extends Service {
 
@@ -80,6 +81,11 @@ public interface ConsumerTemplate extends Service {
      * @return the size of current cached resources
      */
     int getCurrentCacheSize();
+
+    /**
+     * Cleanup the cache (purging stale entries)
+     */
+    void cleanUp();
 
     // Synchronous methods
     // -----------------------------------------------------------------------

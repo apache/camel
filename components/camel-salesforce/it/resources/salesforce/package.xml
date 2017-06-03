@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiAccessLevel>Unrestricted</apiAccessLevel>
+    <description>Package used in integration test of Apache Camel Salesforce component.</description>
+    <types>
+        <members>MerchandiseRestResource</members>
+        <members>MerchandiseRestResourceTests</members>
+        <members>UpdateProfile</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Warehouse</members>
+        <name>CustomApplication</name>
+    </types>
+    <types>
+        <members>Account.Shipping_Location__c</members>
+        <members>Invoice__c.Status__c</members>
+        <members>Line_Item__c.Merchandise__c</members>
+        <members>Line_Item__c.Unit_Price__c</members>
+        <members>Line_Item__c.Units_Sold__c</members>
+        <members>Merchandise__c.Description__c</members>
+        <members>Merchandise__c.Price__c</members>
+        <members>Merchandise__c.Total_Inventory__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Invoice__c</members>
+        <members>Line_Item__c</members>
+        <members>Merchandise__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Invoice__c</members>
+        <members>Merchandise__c</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>Test_Documents</members>
+        <members>Test_Documents/Test_Document.txt</members>
+        <name>Document</name>
+    </types>
+    <types>
+        <members>Invoice__c-Invoice Layout</members>
+        <members>Line_Item__c-Line Item Layout</members>
+        <members>Merchandise__c-Merchandise Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>Invoice__c.All</members>
+        <members>Merchandise__c.All</members>
+        <name>ListView</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>Profile</name>
+    </types>
+    <types>
+        <members>Test_Reports</members>
+        <members>Test_Reports/Test_Report</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Account.Test_Account_Process</members>
+        <name>ApprovalProcess</name>
+    </types>
+    <types>
+        <members>CamelSalesforceIntegrationTests</members>
+        <name>ConnectedApp</name>
+    </types>
+    <version>38.0</version>
+</Package>

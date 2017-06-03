@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ServiceSupport;
@@ -36,6 +37,8 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default endpoint useful for implementation inheritance.
@@ -52,18 +55,38 @@ import org.apache.camel.util.URISupport;
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpoint.class);
+    private final String id = EndpointHelper.createEndpointId();
+    private transient String endpointUriToString;
     private String endpointUri;
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
-    @UriParam
+    @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
+                    + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
+                    + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
+    private boolean bridgeErrorHandler;
+    @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.", description = "To let the consumer use a custom ExceptionHandler."
+            + " Notice if the option bridgeErrorHandler is enabled then this options is not in use."
+            + " By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
+    private ExceptionHandler exceptionHandler;
+    @UriParam(label = "consumer,advanced",
+            description = "Sets the exchange pattern when the consumer creates an exchange.")
+    // no default value set on @UriParam as the MEP is sometimes InOnly or InOut depending on the component in use
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // option to allow end user to dictate whether async processing should be
     // used or not (if possible)
-    @UriParam
+    @UriParam(defaultValue = "false", label = "advanced",
+            description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous;
-    private final String id = EndpointHelper.createEndpointId();
+    // these options are not really in use any option related to the consumer has a specific option on the endpoint
+    // and consumerProperties was added from the very start of Camel.
     private Map<String, Object> consumerProperties;
+    // pooling consumer options only related to EventDrivenPollingConsumer which are very seldom in use
+    // so lets not expose them in the component docs as it will be included in every component
+    private int pollingConsumerQueueSize = 1000;
+    private boolean pollingConsumerBlockWhenFull = true;
+    private long pollingConsumerBlockTimeout;
 
     /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the
@@ -129,14 +152,27 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public boolean equals(Object object) {
         if (object instanceof DefaultEndpoint) {
             DefaultEndpoint that = (DefaultEndpoint)object;
-            return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri());
+            // must also match the same CamelContext in case we compare endpoints from different contexts
+            String thisContextName = this.getCamelContext() != null ? this.getCamelContext().getName() : null;
+            String thatContextName = that.getCamelContext() != null ? that.getCamelContext().getName() : null;
+            return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri()) && ObjectHelper.equal(thisContextName, thatContextName);
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return String.format("Endpoint[%s]", URISupport.sanitizeUri(getEndpointUri()));
+        if (endpointUriToString == null) {
+            String value = null;
+            try {
+                value = getEndpointUri();
+            } catch (RuntimeException e) {
+                // ignore any exception and use null for building the string value
+            }
+            // ensure to sanitize uri so we do not show sensitive information such as passwords
+            endpointUriToString = URISupport.sanitizeUri(value);
+        }
+        return endpointUriToString;
     }
 
     /**
@@ -170,6 +206,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      *
      * @param endpointConfiguration a custom endpoint configuration to be used.
      */
+    @Deprecated
     public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
         this.endpointConfiguration = endpointConfiguration;
     }
@@ -209,8 +246,15 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     public PollingConsumer createPollingConsumer() throws Exception {
-        // should not configure consumer
-        return new EventDrivenPollingConsumer(this);
+        // should not call configurePollingConsumer when its EventDrivenPollingConsumer
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    new Object[]{getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout()});
+        }
+        EventDrivenPollingConsumer consumer = new EventDrivenPollingConsumer(this, getPollingConsumerQueueSize());
+        consumer.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        consumer.setBlockTimeout(getPollingConsumerBlockTimeout());
+        return consumer;
     }
 
     public Exchange createExchange(Exchange exchange) {
@@ -226,17 +270,14 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Returns the default exchange pattern to use for createExchange().
-     * 
-     * @see #setExchangePattern(ExchangePattern exchangePattern)
+     * Returns the default exchange pattern to use when creating an exchange.
      */
     public ExchangePattern getExchangePattern() {
         return exchangePattern;
     }
 
     /**
-     * Sets the default exchange pattern to use for {@link #createExchange()}.
-     * The default value is {@link ExchangePattern#InOnly}
+     * Sets the default exchange pattern when creating an exchange.
      */
     public void setExchangePattern(ExchangePattern exchangePattern) {
         this.exchangePattern = exchangePattern;
@@ -244,8 +285,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     /**
      * Returns whether synchronous processing should be strictly used.
-     * 
-     * @see #setSynchronous(boolean synchronous)
      */
     public boolean isSynchronous() {
         return synchronous;
@@ -261,11 +300,124 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.synchronous = synchronous;
     }
 
+    public boolean isBridgeErrorHandler() {
+        return bridgeErrorHandler;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and
+     * handled by the routing Error Handler.
+     * <p/>
+     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,
+     * that will be logged at WARN/ERROR level and ignored.
+     */
+    public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
+        this.bridgeErrorHandler = bridgeErrorHandler;
+    }
+
+    public ExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
+    }
+
+    /**
+     * To let the consumer use a custom ExceptionHandler.
+     + Notice if the option bridgeErrorHandler is enabled then this options is not in use.
+     + By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.
+     */
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+    }
+
+    /**
+     * Gets the {@link org.apache.camel.PollingConsumer} queue size, when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
+     * therefore not using the default {@link org.apache.camel.impl.EventDrivenPollingConsumer} implementation.
+     * <p/>
+     * The default value is <tt>1000</tt>
+     */
+    public int getPollingConsumerQueueSize() {
+        return pollingConsumerQueueSize;
+    }
+
+    /**
+     * Sets the {@link org.apache.camel.PollingConsumer} queue size, when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
+     * therefore not using the default {@link org.apache.camel.impl.EventDrivenPollingConsumer} implementation.
+     * <p/>
+     * The default value is <tt>1000</tt>
+     */
+    public void setPollingConsumerQueueSize(int pollingConsumerQueueSize) {
+        this.pollingConsumerQueueSize = pollingConsumerQueueSize;
+    }
+
+    /**
+     * Whether to block when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
+     * therefore not using the default {@link org.apache.camel.impl.EventDrivenPollingConsumer} implementation.
+     * <p/>
+     * Setting this option to <tt>false</tt>, will result in an {@link java.lang.IllegalStateException} being thrown
+     * when trying to add to the queue, and its full.
+     * <p/>
+     * The default value is <tt>true</tt> which will block the producer queue until the queue has space.
+     */
+    public boolean isPollingConsumerBlockWhenFull() {
+        return pollingConsumerBlockWhenFull;
+    }
+
+    /**
+     * Set whether to block when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used. Notice some Camel components may have their own implementation of {@link org.apache.camel.PollingConsumer} and
+     * therefore not using the default {@link org.apache.camel.impl.EventDrivenPollingConsumer} implementation.
+     * <p/>
+     * Setting this option to <tt>false</tt>, will result in an {@link java.lang.IllegalStateException} being thrown
+     * when trying to add to the queue, and its full.
+     * <p/>
+     * The default value is <tt>true</tt> which will block the producer queue until the queue has space.
+     */
+    public void setPollingConsumerBlockWhenFull(boolean pollingConsumerBlockWhenFull) {
+        this.pollingConsumerBlockWhenFull = pollingConsumerBlockWhenFull;
+    }
+
+    /**
+     * Sets the timeout in millis to use when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used.
+     *
+     * @see #setPollingConsumerBlockWhenFull(boolean)
+     */
+    public long getPollingConsumerBlockTimeout() {
+        return pollingConsumerBlockTimeout;
+    }
+
+    /**
+     * Sets the timeout in millis to use when adding to the internal queue off when {@link org.apache.camel.impl.EventDrivenPollingConsumer}
+     * is being used.
+     *
+     * @see #setPollingConsumerBlockWhenFull(boolean)
+     */
+    public void setPollingConsumerBlockTimeout(long pollingConsumerBlockTimeout) {
+        this.pollingConsumerBlockTimeout = pollingConsumerBlockTimeout;
+    }
+
     public void configureProperties(Map<String, Object> options) {
         Map<String, Object> consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
         if (consumerProperties != null && !consumerProperties.isEmpty()) {
             setConsumerProperties(consumerProperties);
         }
+    }
+
+    /**
+     * Sets the bean properties on the given bean.
+     * <p/>
+     * This is the same logical implementation as {@link DefaultComponent#setProperties(Object, java.util.Map)}
+     *
+     * @param bean  the bean
+     * @param parameters  properties to set
+     */
+    protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
+        // set reference properties first as they use # syntax that fools the regular properties setter
+        EndpointHelper.setReferenceProperties(getCamelContext(), bean, parameters);
+        EndpointHelper.setProperties(getCamelContext(), bean, parameters);
     }
 
     /**
@@ -278,6 +430,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * A factory method to lazily create the endpoint configuration if none is specified
      */
+    @Deprecated
     protected EndpointConfiguration createEndpointConfiguration(String uri) {
         // using this factory method to be backwards compatible with the old code
         if (getComponent() != null) {
@@ -340,6 +493,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     protected void configureConsumer(Consumer consumer) throws Exception {
+        // inject CamelContext
+        if (consumer instanceof CamelContextAware) {
+            ((CamelContextAware) consumer).setCamelContext(getCamelContext());
+        }
+
         if (consumerProperties != null) {
             // use a defensive copy of the consumer properties as the methods below will remove the used properties
             // and in case we restart routes, we need access to the original consumer properties again
@@ -376,7 +534,14 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        // the bridgeErrorHandler/exceptionHandler was originally configured with consumer. prefix, such as consumer.bridgeErrorHandler=true
+        // so if they have been configured on the endpoint then map to the old naming style
+        if (bridgeErrorHandler) {
+            getConsumerProperties().put("bridgeErrorHandler", "true");
+        }
+        if (exceptionHandler != null) {
+            getConsumerProperties().put("exceptionHandler", exceptionHandler);
+        }
     }
 
     @Override

@@ -24,9 +24,30 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ThrottlerNullEvalTest extends ContextTestSupport {
 
-    public void testNullEvalTest() throws Exception {
+    public void testFirstNullEvalTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
         getMockEndpoint("mock:dead").expectedBodiesReceived("Kaboom");
+
+        template.sendBodyAndHeader("seda:a", "Kaboom", "max", null);
+        template.sendBodyAndHeader("seda:a", "Hello World", "max", 2);
+        template.sendBodyAndHeader("seda:a", "Bye World", "max", 2);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFirstNoHeaderTest() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
+        getMockEndpoint("mock:dead").expectedBodiesReceived("Kaboom");
+
+        template.sendBody("seda:a", "Kaboom");
+        template.sendBodyAndHeader("seda:a", "Hello World", "max", 2);
+        template.sendBodyAndHeader("seda:a", "Bye World", "max", 2);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testNullEvalTest() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Kaboom", "Bye World");
 
         template.sendBodyAndHeader("seda:a", "Hello World", "max", 2);
         template.sendBodyAndHeader("seda:a", "Kaboom", "max", null);
@@ -36,8 +57,7 @@ public class ThrottlerNullEvalTest extends ContextTestSupport {
     }
 
     public void testNoHeaderTest() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
-        getMockEndpoint("mock:dead").expectedBodiesReceived("Kaboom");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Kaboom", "Bye World");
 
         template.sendBodyAndHeader("seda:a", "Hello World", "max", 2);
         template.sendBody("seda:a", "Kaboom");

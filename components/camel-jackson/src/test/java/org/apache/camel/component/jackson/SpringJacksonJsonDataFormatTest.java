@@ -38,11 +38,31 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Map.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:in", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         assertEquals("{\"name\":\"Camel\"}", marshalledAsString);
+
+        template.sendBody("direct:back", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMarshalAndUnmarshalMapWithPrettyPrint() throws Exception {
+        Map<String, Object> in = new HashMap<String, Object>();
+        in.put("name", "Camel");
+
+        MockEndpoint mock = getMockEndpoint("mock:reverse");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(Map.class);
+        mock.message(0).body().isEqualTo(in);
+
+        Object marshalled = template.requestBody("direct:inPretty", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        String expected = String.format("{%s  \"name\" : \"Camel\"%s}", LS, LS);
+        assertEquals(expected, marshalledAsString);
 
         template.sendBody("direct:back", marshalled);
 
@@ -57,7 +77,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojo");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojo.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inPojo", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
@@ -75,7 +95,7 @@ public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverseAgeView");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojoView.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inAgeView", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);

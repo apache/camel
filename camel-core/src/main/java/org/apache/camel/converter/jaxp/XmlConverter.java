@@ -17,6 +17,7 @@
 package org.apache.camel.converter.jaxp;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,11 +28,15 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.OutputKeys;
@@ -41,6 +46,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
@@ -55,6 +61,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import org.apache.camel.BytesSource;
 import org.apache.camel.Converter;
@@ -62,23 +69,30 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A helper class to transform to and from various JAXB types such as {@link Source} and {@link Document}
  *
- * @version 
+ * @version
  */
 @Converter
 public class XmlConverter {
     @Deprecated
-    //It will be removed in Camel 3.0, please use the Exchange.DEFAULT_CHARSET 
+    //It will be removed in Camel 3.0, please use the Exchange.DEFAULT_CHARSET
     public static final String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
-    
+
     public static final String OUTPUT_PROPERTIES_PREFIX = "org.apache.camel.xmlconverter.output.";
+    public static final String DOCUMENT_BUILDER_FACTORY_FEATURE = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
     public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
-    private DocumentBuilderFactory documentBuilderFactory;
-    private TransformerFactory transformerFactory;
+    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+    private static final Logger LOG = LoggerFactory.getLogger(XmlConverter.class);
+
+    private volatile DocumentBuilderFactory documentBuilderFactory;
+    private volatile TransformerFactory transformerFactory;
+    private volatile XMLReaderPool xmlReaderPool;
 
     public XmlConverter() {
     }
@@ -155,8 +169,8 @@ public class XmlConverter {
 
     /**
      * Converts the given Node to a Source
-     * @throws TransformerException 
-     * @throws ParserConfigurationException 
+     * @throws TransformerException
+     * @throws ParserConfigurationException
      * @deprecated  use toDOMSource instead
      */
     @Deprecated
@@ -166,15 +180,15 @@ public class XmlConverter {
 
     /**
      * Converts the given Node to a Source
-     * @throws TransformerException 
-     * @throws ParserConfigurationException 
+     * @throws TransformerException
+     * @throws ParserConfigurationException
      */
     @Converter
     public DOMSource toDOMSource(Node node) throws ParserConfigurationException, TransformerException {
         Document document = toDOMDocument(node);
         return new DOMSource(document);
     }
-    
+
     /**
      * Converts the given Document to a DOMSource
      */
@@ -213,17 +227,17 @@ public class XmlConverter {
         } else if (source instanceof BytesSource) {
             return new String(((BytesSource) source).getData());
         } else {
-            StringWriter buffer = new StringWriter();           
+            StringWriter buffer = new StringWriter();
             if (exchange != null) {
                 // check the camelContext properties first
                 Properties properties = ObjectHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX, exchange.getContext());
                 if (properties.size() > 0) {
                     toResult(source, new StreamResult(buffer), properties);
                     return buffer.toString();
-                }            
+                }
             }
             // using the old way to deal with it
-            toResult(source, new StreamResult(buffer));            
+            toResult(source, new StreamResult(buffer));
             return buffer.toString();
         }
     }
@@ -233,14 +247,25 @@ public class XmlConverter {
      */
     @Converter
     public byte[] toByteArray(Source source, Exchange exchange) throws TransformerException {
-        String answer = toString(source, exchange);
-        if (exchange != null) {
-            return exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, answer);
+        if (source instanceof BytesSource) {
+            return ((BytesSource)source).getData();
         } else {
-            return answer.getBytes();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            if (exchange != null) {
+                // check the camelContext properties first
+                Properties properties = ObjectHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX,
+                                                                                  exchange.getContext());
+                if (properties.size() > 0) {
+                    toResult(source, new StreamResult(buffer), properties);
+                    return buffer.toByteArray();
+                }
+            }
+            // using the old way to deal with it
+            toResult(source, new StreamResult(buffer));
+            return buffer.toByteArray();
         }
     }
-    
+
     /**
      * Converts the given input Node into text
      *
@@ -250,7 +275,7 @@ public class XmlConverter {
     public String toString(Node node) throws TransformerException {
         return toString(node, null);
     }
-    
+
     /**
      * Converts the given input Node into text
      */
@@ -260,17 +285,45 @@ public class XmlConverter {
     }
 
     /**
+     * Converts the given Document to into text
+     * @param document The document to convert
+     * @param outputOptions The {@link OutputKeys} properties to control various aspects of the XML output
+     * @return The string representation of the document
+     * @throws TransformerException
+     */
+    public String toStringFromDocument(Document document, Properties outputOptions) throws TransformerException {
+        if (document == null) {
+            return null;
+        }
+
+        DOMSource source = new DOMSource(document);
+        StringWriter buffer = new StringWriter();
+        toResult(source, new StreamResult(buffer), outputOptions);
+        return buffer.toString();
+    }
+
+    /**
+     * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
+     * supported (making it easy to derive from this class to add new kinds of conversion).
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
+    @Deprecated
+    public DOMSource toDOMSource(Source source) throws ParserConfigurationException, IOException, SAXException, TransformerException {
+        return toDOMSource(source, null);
+    }
+    
+    /**
      * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
      */
     @Converter
-    public DOMSource toDOMSource(Source source) throws ParserConfigurationException, IOException, SAXException, TransformerException {
+    public DOMSource toDOMSource(Source source, Exchange exchange) throws ParserConfigurationException, IOException, SAXException, TransformerException {
         if (source instanceof DOMSource) {
             return (DOMSource) source;
         } else if (source instanceof SAXSource) {
             return toDOMSourceFromSAX((SAXSource) source);
         } else if (source instanceof StreamSource) {
-            return toDOMSourceFromStream((StreamSource) source);
+            return toDOMSourceFromStream((StreamSource) source, exchange);
         } else if (source instanceof StAXSource) {
             return toDOMSourceFromStAX((StAXSource)source);
         } else {
@@ -285,11 +338,7 @@ public class XmlConverter {
     @Converter
     public DOMSource toDOMSource(String text) throws ParserConfigurationException, IOException, SAXException, TransformerException {
         Source source = toSource(text);
-        if (source != null) {
-            return toDOMSourceFromStream((StreamSource) source);
-        } else {
-            return null;
-        }
+        return toDOMSourceFromStream((StreamSource) source);
     }
 
     /**
@@ -317,7 +366,7 @@ public class XmlConverter {
     public SAXSource toSAXSource(String source) throws IOException, SAXException, TransformerException {
         return toSAXSource(source, null);
     }
-    
+
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
@@ -330,14 +379,14 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
-     * @throws XMLStreamException 
+     * @throws XMLStreamException
      */
     @Converter
     public StAXSource toStAXSource(String source, Exchange exchange) throws XMLStreamException {
         XMLStreamReader r = new StaxConverter().createXMLStreamReader(new StringReader(source));
         return new StAXSource(r);
-    }    
-    
+    }
+
     /**
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
@@ -359,7 +408,7 @@ public class XmlConverter {
     public SAXSource toSAXSource(InputStream source) throws IOException, SAXException, TransformerException {
         return toSAXSource(source, null);
     }
-    
+
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
@@ -381,14 +430,14 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
-     * @throws XMLStreamException 
+     * @throws XMLStreamException
      */
     @Converter
     public StAXSource toStAXSource(InputStream source, Exchange exchange) throws XMLStreamException {
         XMLStreamReader r = new StaxConverter().createXMLStreamReader(source, exchange);
         return new StAXSource(r);
     }
-    
+
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
@@ -402,8 +451,8 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link StAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
-     * @throws FileNotFoundException 
-     * @throws XMLStreamException 
+     * @throws FileNotFoundException
+     * @throws XMLStreamException
      */
     @Converter
     public StAXSource toStAXSource(File file, Exchange exchange) throws FileNotFoundException, XMLStreamException {
@@ -422,7 +471,7 @@ public class XmlConverter {
     public SAXSource toSAXSource(Source source) throws IOException, SAXException, TransformerException {
         return toSAXSource(source, null);
     }
-    
+
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
@@ -434,7 +483,7 @@ public class XmlConverter {
         } else if (source instanceof DOMSource) {
             return toSAXSourceFromDOM((DOMSource) source, exchange);
         } else if (source instanceof StreamSource) {
-            return toSAXSourceFromStream((StreamSource) source);
+            return toSAXSourceFromStream((StreamSource) source, exchange);
         } else if (source instanceof StAXSource) {
             return toSAXSourceFromStAX((StAXSource) source, exchange);
         } else {
@@ -449,7 +498,7 @@ public class XmlConverter {
     public StreamSource toStreamSource(Source source) throws TransformerException {
         return toStreamSource(source, null);
     }
-    
+
     @Converter
     public StreamSource toStreamSource(Source source, Exchange exchange) throws TransformerException {
         if (source instanceof StreamSource) {
@@ -499,7 +548,7 @@ public class XmlConverter {
     public StreamSource toStreamSourceFromSAX(SAXSource source) throws TransformerException {
         return toStreamSourceFromSAX(source, null);
     }
-    
+
     @Converter
     public StreamSource toStreamSourceFromSAX(SAXSource source, Exchange exchange) throws TransformerException {
         InputSource inputSource = source.getInputSource();
@@ -522,7 +571,7 @@ public class XmlConverter {
     public StreamSource toStreamSourceFromDOM(DOMSource source) throws TransformerException {
         return toStreamSourceFromDOM(source, null);
     }
-    
+
     @Converter
     public StreamSource toStreamSourceFromDOM(DOMSource source, Exchange exchange) throws TransformerException {
         String result = toString(source, exchange);
@@ -534,8 +583,16 @@ public class XmlConverter {
         return new StringSource(result);
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
+    @Deprecated
+    public SAXSource toSAXSourceFromStream(StreamSource source) throws SAXException {
+        return toSAXSourceFromStream(source, null);
+    }
+    
     @Converter
-    public SAXSource toSAXSourceFromStream(StreamSource source) {
+    public SAXSource toSAXSourceFromStream(StreamSource source, Exchange exchange) throws SAXException {
         InputSource inputSource;
         if (source.getReader() != null) {
             inputSource = new InputSource(source.getReader());
@@ -544,7 +601,29 @@ public class XmlConverter {
         }
         inputSource.setSystemId(source.getSystemId());
         inputSource.setPublicId(source.getPublicId());
-        return new SAXSource(inputSource);
+
+        XMLReader xmlReader = null;
+        try {
+            // use the SAXPaserFactory which is set from exchange
+            if (exchange != null) {
+                SAXParserFactory sfactory = exchange.getProperty(Exchange.SAXPARSER_FACTORY, SAXParserFactory.class);
+                if (sfactory != null) {
+                    if (!sfactory.isNamespaceAware()) {
+                        sfactory.setNamespaceAware(true);
+                    }
+                    xmlReader = sfactory.newSAXParser().getXMLReader();
+                }
+            }
+            if (xmlReader == null) {
+                if (xmlReaderPool == null) {
+                    xmlReaderPool = new XMLReaderPool(createSAXParserFactory());
+                }
+                xmlReader = xmlReaderPool.createXMLReader();
+            }
+        } catch (Exception ex) {
+            LOG.warn("Cannot create the SAXParser XMLReader, due to {}", ex);
+        }
+        return new SAXSource(xmlReader, inputSource);
     }
 
     /**
@@ -554,7 +633,7 @@ public class XmlConverter {
     public Reader toReaderFromSource(Source src) throws TransformerException {
         return toReaderFromSource(src, null);
     }
-    
+
     @Converter
     public Reader toReaderFromSource(Source src, Exchange exchange) throws TransformerException {
         StreamSource stSrc = toStreamSource(src, exchange);
@@ -565,27 +644,51 @@ public class XmlConverter {
         return r;
     }
 
-    @Converter
+    /**
+    * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+    */
+    @Deprecated
     public DOMSource toDOMSource(InputStream is) throws ParserConfigurationException, IOException, SAXException {
+        return toDOMSource(is, null);
+    }
+    
+    @Converter
+    public DOMSource toDOMSource(InputStream is, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
         InputSource source = new InputSource(is);
         String systemId = source.getSystemId();
-        DocumentBuilder builder = createDocumentBuilder();
+        DocumentBuilder builder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
         Document document = builder.parse(source);
         return new DOMSource(document, systemId);
     }
 
-    @Converter
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
+    @Deprecated
     public DOMSource toDOMSource(File file) throws ParserConfigurationException, IOException, SAXException {
+        return toDOMSource(file, null);
+    }
+    
+    @Converter
+    public DOMSource toDOMSource(File file, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
         InputStream is = IOHelper.buffered(new FileInputStream(file));
-        return toDOMSource(is);
+        return toDOMSource(is, exchange);
     }
 
-    @Converter
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
+    @Deprecated
     public DOMSource toDOMSourceFromStream(StreamSource source) throws ParserConfigurationException, IOException, SAXException {
+        return toDOMSourceFromStream(source, null);
+    }
+    
+    @Converter
+    public DOMSource toDOMSourceFromStream(StreamSource source, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
         Document document;
         String systemId = source.getSystemId();
 
-        DocumentBuilder builder = createDocumentBuilder();
+        DocumentBuilder builder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
         Reader reader = source.getReader();
         if (reader != null) {
             document = builder.parse(new InputSource(reader));
@@ -601,7 +704,7 @@ public class XmlConverter {
         }
         return new DOMSource(document, systemId);
     }
-    
+
     /**
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
@@ -609,7 +712,7 @@ public class XmlConverter {
     public SAXSource toSAXSourceFromDOM(DOMSource source) throws TransformerException {
         return toSAXSourceFromDOM(source, null);
     }
-    
+
     @Converter
     public SAXSource toSAXSourceFromDOM(DOMSource source, Exchange exchange) throws TransformerException {
         String str = toString(source, exchange);
@@ -647,7 +750,7 @@ public class XmlConverter {
         toResult(source, result);
         return result.getNode();
     }
-    
+
     /**
      * Convert a NodeList consisting of just 1 node to a DOM Node.
      * @param nl the NodeList
@@ -657,7 +760,7 @@ public class XmlConverter {
     public Node toDOMNodeFromSingleNodeList(NodeList nl) {
         return nl.getLength() == 1 ? nl.item(0) : null;
     }
-    
+
     /**
      * Convert a NodeList consisting of just 1 node to a DOM Document.
      * Cannot convert NodeList with length > 1 because they require a root node.
@@ -666,7 +769,15 @@ public class XmlConverter {
      */
     @Converter(allowNull = true)
     public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
-        return nl.getLength() == 1 ? toDOMDocument(nl.item(0)) : null;
+        if (nl.getLength() == 1) {
+            return toDOMDocument(nl.item(0));
+        } else if (nl instanceof Node) {
+            // as XML parsers may often have nodes that implement both Node and NodeList then the type converter lookup
+            // may lookup either a type converter from NodeList or Node. So let's fallback and try with Node
+            return toDOMDocument((Node) nl);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -706,15 +817,28 @@ public class XmlConverter {
         }
     }
 
+    
     /**
      * Converts the given data to a DOM document
      *
      * @param data is the data to be parsed
      * @return the parsed document
      */
-    @Converter
+    @Deprecated
     public Document toDOMDocument(byte[] data) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory().newDocumentBuilder();
+        return toDOMDocument(data, null);
+    }
+    
+    /**
+     * Converts the given data to a DOM document
+     *
+     * @param data is the data to be parsed
+     * @param exchange is the exchange to be used when calling the converter
+     * @return the parsed document
+     */
+    @Converter
+    public Document toDOMDocument(byte[] data, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
         return documentBuilder.parse(new ByteArrayInputStream(data));
     }
 
@@ -723,10 +847,23 @@ public class XmlConverter {
      *
      * @param in is the data to be parsed
      * @return the parsed document
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
+    @Deprecated
+    public Document toDOMDocument(InputStream in) throws IOException, SAXException, ParserConfigurationException {
+        return toDOMDocument(in, null);
+    }
+    
+    /**
+     * Converts the given {@link InputStream} to a DOM document
+     *
+     * @param in is the data to be parsed
+     * @param exchange is the exchange to be used when calling the converter
+     * @return the parsed document
      */
     @Converter
-    public Document toDOMDocument(InputStream in) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory().newDocumentBuilder();
+    public Document toDOMDocument(InputStream in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
         return documentBuilder.parse(in);
     }
 
@@ -735,10 +872,23 @@ public class XmlConverter {
      *
      * @param in is the data to be parsed
      * @return the parsed document
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
-    @Converter
+    @Deprecated
     public Document toDOMDocument(Reader in) throws IOException, SAXException, ParserConfigurationException {
         return toDOMDocument(new InputSource(in));
+    }
+    
+    /**
+     * Converts the given {@link InputStream} to a DOM document
+     *
+     * @param in is the data to be parsed
+     * @param exchange is the exchange to be used when calling the converter
+     * @return the parsed document
+     */
+    @Converter
+    public Document toDOMDocument(Reader in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+        return toDOMDocument(new InputSource(in), exchange);
     }
 
     /**
@@ -746,10 +896,23 @@ public class XmlConverter {
      *
      * @param in is the data to be parsed
      * @return the parsed document
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
+    @Deprecated
+    public Document toDOMDocument(InputSource in) throws IOException, SAXException, ParserConfigurationException {
+        return toDOMDocument(in, null);
+    }
+    
+    /**
+     * Converts the given {@link InputSource} to a DOM document
+     *
+     * @param in is the data to be parsed
+     * @param exchange is the exchange to be used when calling the converter
+     * @return the parsed document
      */
     @Converter
-    public Document toDOMDocument(InputSource in) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory().newDocumentBuilder();
+    public Document toDOMDocument(InputSource in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
         return documentBuilder.parse(in);
     }
 
@@ -758,10 +921,23 @@ public class XmlConverter {
      *
      * @param text is the data to be parsed
      * @return the parsed document
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
-    @Converter
+    @Deprecated
     public Document toDOMDocument(String text) throws IOException, SAXException, ParserConfigurationException {
         return toDOMDocument(new StringReader(text));
+    }
+    
+    /**
+     * Converts the given {@link String} to a DOM document
+     *
+     * @param text is the data to be parsed
+     * @param exchange is the exchange to be used when calling the converter
+     * @return the parsed document
+     */
+    @Converter
+    public Document toDOMDocument(String text, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+        return toDOMDocument(new StringReader(text), exchange);
     }
 
     /**
@@ -769,10 +945,23 @@ public class XmlConverter {
      *
      * @param file is the data to be parsed
      * @return the parsed document
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
+    @Deprecated
+    public Document toDOMDocument(File file) throws IOException, SAXException, ParserConfigurationException {
+        return toDOMDocument(file, null);
+    }
+    
+    /**
+     * Converts the given {@link File} to a DOM document
+     *
+     * @param file is the data to be parsed
+     * @param exchange is the exchange to be used when calling the converter
+     * @return the parsed document
      */
     @Converter
-    public Document toDOMDocument(File file) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory().newDocumentBuilder();
+    public Document toDOMDocument(File file, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
         return documentBuilder.parse(file);
     }
 
@@ -827,11 +1016,10 @@ public class XmlConverter {
     public InputStream toInputStream(DOMSource source) throws TransformerException, IOException {
         return toInputStream(source, null);
     }
-    
+
     @Converter
     public InputStream toInputStream(DOMSource source, Exchange exchange) throws TransformerException, IOException {
-        String s = toString(source, exchange);
-        return new ByteArrayInputStream(s.getBytes());
+        return new ByteArrayInputStream(toByteArray(source, exchange));
     }
 
     /**
@@ -841,11 +1029,10 @@ public class XmlConverter {
     public InputStream toInputStream(Document dom) throws TransformerException, IOException {
         return toInputStream(dom, null);
     }
-    
+
     @Converter
     public InputStream toInputStream(Document dom, Exchange exchange) throws TransformerException, IOException {
-        String s = toString(dom, exchange);
-        return new ByteArrayInputStream(s.getBytes());
+        return toInputStream(new DOMSource(dom), exchange);
     }
 
     @Converter
@@ -881,17 +1068,83 @@ public class XmlConverter {
     }
 
     public void setTransformerFactory(TransformerFactory transformerFactory) {
+        if (transformerFactory != null) {
+            configureSaxonTransformerFactory(transformerFactory);
+        }
         this.transformerFactory = transformerFactory;
     }
 
     // Helper methods
     //-------------------------------------------------------------------------
 
+    protected void setupFeatures(DocumentBuilderFactory factory) {
+        Properties properties = System.getProperties();
+        List<String> features = new ArrayList<String>();
+        for (Map.Entry<Object, Object> prop : properties.entrySet()) {
+            String key = (String) prop.getKey();
+            if (key.startsWith(XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE)) {
+                String uri = ObjectHelper.after(key, ":");
+                Boolean value = Boolean.valueOf((String)prop.getValue());
+                try {
+                    factory.setFeature(uri, value);
+                    features.add("feature " + uri + " value " + value);
+                } catch (ParserConfigurationException e) {
+                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", new Object[]{uri, value, e});
+                }
+            }
+        }
+        if (features.size() > 0) {
+            StringBuilder featureString = new StringBuilder();
+            // just log the configured feature
+            for (String feature : features) {
+                if (featureString.length() != 0) {
+                    featureString.append(", ");
+                }
+                featureString.append(feature);
+            }
+            LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString.toString());
+        }
+
+    }
+    
+    public DocumentBuilderFactory getDocumentBuilderFactory(Exchange exchange) {
+        DocumentBuilderFactory answer = getDocumentBuilderFactory();
+        // Get the DocumentBuilderFactory from the exchange header first
+        if (exchange != null) {
+            DocumentBuilderFactory factory = exchange.getProperty(Exchange.DOCUMENT_BUILDER_FACTORY, DocumentBuilderFactory.class);
+            if (factory != null) {
+                answer = factory;
+            }
+        }
+        return answer;
+    }
+ 
     public DocumentBuilderFactory createDocumentBuilderFactory() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setIgnoringElementContentWhitespace(true);
         factory.setIgnoringComments(true);
+        try {
+            // Disable the external-general-entities by default
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (ParserConfigurationException e) {
+            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                     new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
+        }
+        // setup the SecurityManager by default if it's apache xerces
+        try {
+            Class<?> smClass = ObjectHelper.loadClass("org.apache.xerces.util.SecurityManager");
+            if (smClass != null) {
+                Object sm = smClass.newInstance();
+                // Here we just use the default setting of the SeurityManager
+                factory.setAttribute("http://apache.org/xml/properties/security-manager", sm);
+            }
+        } catch (Exception e) {
+            LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
+                     new Object[]{"http://apache.org/xml/properties/security-manager", e});
+        }
+        // setup the feature from the system property
+        setupFeatures(factory);
         return factory;
     }
 
@@ -919,9 +1172,89 @@ public class XmlConverter {
     }
 
     public TransformerFactory createTransformerFactory() {
-        TransformerFactory factory = TransformerFactory.newInstance();
+        TransformerFactory factory;
+        TransformerFactoryConfigurationError cause;
+        try {
+            factory = TransformerFactory.newInstance();
+        } catch (TransformerFactoryConfigurationError e) {
+            cause = e;
+            // try fallback from the JDK
+            try {
+                LOG.debug("Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}", e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
+                factory = TransformerFactory.newInstance(JDK_FALLBACK_TRANSFORMER_FACTORY, null);
+            } catch (Throwable t) {
+                // okay we cannot load fallback then throw original exception
+                throw cause;
+            }
+        }
+        LOG.debug("Created TransformerFactory: {}", factory);
+
+        // Enable the Security feature by default
+        try {
+            factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (TransformerConfigurationException e) {
+            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+        }
         factory.setErrorListener(new XmlErrorListener());
+        configureSaxonTransformerFactory(factory);
         return factory;
     }
 
+    /**
+     * Make a Saxon TransformerFactory more JAXP compliant by configuring it to
+     * send &lt;xsl:message&gt; output to the ErrorListener.
+     *
+     * @param factory
+     *            the TransformerFactory
+     */
+    public void configureSaxonTransformerFactory(TransformerFactory factory) {
+        // check whether we have a Saxon TransformerFactory ("net.sf.saxon" for open source editions (HE / B)
+        // and "com.saxonica" for commercial editions (PE / EE / SA))
+        Class<?> factoryClass = factory.getClass();
+        if (factoryClass.getName().startsWith("net.sf.saxon")
+                || factoryClass.getName().startsWith("com.saxonica")) {
+
+            // just in case there are multiple class loaders with different Saxon versions, use the
+            // TransformerFactory's class loader to find Saxon support classes
+            ClassLoader loader = factoryClass.getClassLoader();
+
+            // try to find Saxon's MessageWarner class that redirects <xsl:message> to the ErrorListener
+            Class<?> messageWarner = null;
+            try {
+                // Saxon >= 9.3
+                messageWarner = loader.loadClass("net.sf.saxon.serialize.MessageWarner");
+            } catch (ClassNotFoundException cnfe) {
+                try {
+                    // Saxon < 9.3 (including Saxon-B / -SA)
+                    messageWarner = loader.loadClass("net.sf.saxon.event.MessageWarner");
+                } catch (ClassNotFoundException cnfe2) {
+                    LOG.warn("Error loading Saxon's net.sf.saxon.serialize.MessageWarner class from the classpath!"
+                            + " <xsl:message> output will not be redirected to the ErrorListener!");
+                }
+            }
+
+            if (messageWarner != null) {
+                // set net.sf.saxon.FeatureKeys.MESSAGE_EMITTER_CLASS
+                factory.setAttribute("http://saxon.sf.net/feature/messageEmitterClass", messageWarner.getName());
+            }
+        }
+    }
+
+    public SAXParserFactory createSAXParserFactory() {
+        SAXParserFactory sfactory = SAXParserFactory.newInstance();
+        // Need to setup XMLReader security feature by default
+        try {
+            sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+        }
+        try {
+            sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
+                     new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
+        }
+        sfactory.setNamespaceAware(true);
+        return sfactory;
+    }
 }

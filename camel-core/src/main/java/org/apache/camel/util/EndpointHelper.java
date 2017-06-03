@@ -16,9 +16,10 @@
  */
 package org.apache.camel.util;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,21 +27,25 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
+import org.apache.camel.runtimecatalog.DefaultRuntimeCamelCatalog;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.after;
+
 /**
  * Some helper methods for working with {@link Endpoint} instances
- *
- * @version 
  */
 public final class EndpointHelper {
 
@@ -59,7 +64,7 @@ public final class EndpointHelper {
     public static void pollEndpoint(Endpoint endpoint, Processor processor, long timeout) throws Exception {
         PollingConsumer consumer = endpoint.createPollingConsumer();
         try {
-            consumer.start();
+            ServiceHelper.startService(consumer);
 
             while (true) {
                 Exchange exchange = consumer.receive(timeout);
@@ -71,9 +76,9 @@ public final class EndpointHelper {
             }
         } finally {
             try {
-                consumer.stop();
+                ServiceHelper.stopAndShutdownService(consumer);
             } catch (Exception e) {
-                LOG.warn("Failed to stop PollingConsumer: " + e, e);
+                LOG.warn("Failed to stop PollingConsumer: " + consumer + ". This example is ignored.", e);
             }
         }
     }
@@ -95,10 +100,10 @@ public final class EndpointHelper {
      * <p/>
      * The match rules are applied in this order:
      * <ul>
-     *   <li>exact match, returns true</li>
-     *   <li>wildcard match (pattern ends with a * and the uri starts with the pattern), returns true</li>
-     *   <li>regular expression match, returns true</li>
-     *   <li>otherwise returns false</li>
+     * <li>exact match, returns true</li>
+     * <li>wildcard match (pattern ends with a * and the uri starts with the pattern), returns true</li>
+     * <li>regular expression match, returns true</li>
+     * <li>otherwise returns false</li>
      * </ul>
      *
      * @param context the Camel context, if <tt>null</tt> then property placeholder resolution is skipped.
@@ -126,14 +131,14 @@ public final class EndpointHelper {
         if (uri.contains("://")) {
             // try without :// also
             String scheme = ObjectHelper.before(uri, "://");
-            String path = ObjectHelper.after(uri, "://");
+            String path = after(uri, "://");
             if (matchPattern(scheme + ":" + path, pattern)) {
                 return true;
             }
         } else {
             // try with :// also
             String scheme = ObjectHelper.before(uri, ":");
-            String path = ObjectHelper.after(uri, ":");
+            String path = after(uri, ":");
             if (matchPattern(scheme + "://" + path, pattern)) {
                 return true;
             }
@@ -145,8 +150,8 @@ public final class EndpointHelper {
 
     /**
      * Matches the endpoint with the given pattern.
-     * @see #matchEndpoint(org.apache.camel.CamelContext, String, String)
      *
+     * @see #matchEndpoint(org.apache.camel.CamelContext, String, String)
      * @deprecated use {@link #matchEndpoint(org.apache.camel.CamelContext, String, String)} instead.
      */
     @Deprecated
@@ -159,10 +164,10 @@ public final class EndpointHelper {
      * <p/>
      * The match rules are applied in this order:
      * <ul>
-     *   <li>exact match, returns true</li>
-     *   <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
-     *   <li>regular expression match, returns true</li>
-     *   <li>otherwise returns false</li>
+     * <li>exact match, returns true</li>
+     * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     * <li>regular expression match, returns true</li>
+     * <li>otherwise returns false</li>
      * </ul>
      *
      * @param name    the name
@@ -196,8 +201,8 @@ public final class EndpointHelper {
      * <p/>
      * The match rules are applied in this order:
      * <ul>
-     *   <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
-     *   <li>otherwise returns false</li>
+     * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     * <li>otherwise returns false</li>
      * </ul>
      *
      * @param name    the name
@@ -217,8 +222,8 @@ public final class EndpointHelper {
      * <p/>
      * The match rules are applied in this order:
      * <ul>
-     *   <li>regular expression match, returns true</li>
-     *   <li>otherwise returns false</li>
+     * <li>regular expression match, returns true</li>
+     * <li>otherwise returns false</li>
      * </ul>
      *
      * @param name    the name
@@ -309,12 +314,12 @@ public final class EndpointHelper {
      * @param value   reference parameter value.
      * @param type    type of object to lookup.
      * @return lookup result (or <code>null</code> only if
-     *         <code>mandatory</code> is <code>false</code>).
+     * <code>mandatory</code> is <code>false</code>).
      * @throws IllegalArgumentException if object was not found in registry and
      *                                  <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
-        String valueNoHash = value.replaceAll("#", "");
+        String valueNoHash = StringHelper.replaceAll(value, "#", "");
         if (mandatory) {
             return CamelContextHelper.mandatoryLookup(context, valueNoHash, type);
         } else {
@@ -326,21 +331,21 @@ public final class EndpointHelper {
      * Resolves a reference list parameter by making lookups in the registry.
      * The parameter value must be one of the following:
      * <ul>
-     *   <li>a comma-separated list of references to beans of type T</li>
-     *   <li>a single reference to a bean type T</li>
-     *   <li>a single reference to a bean of type java.util.List</li>
+     * <li>a comma-separated list of references to beans of type T</li>
+     * <li>a single reference to a bean type T</li>
+     * <li>a single reference to a bean of type java.util.List</li>
      * </ul>
      *
      * @param context     Camel context to use for lookup.
      * @param value       reference parameter value.
      * @param elementType result list element type.
-     * @return list of lookup results.
+     * @return list of lookup results, will always return a list.
      * @throws IllegalArgumentException if any referenced object was not found in registry.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> List<T> resolveReferenceListParameter(CamelContext context, String value, Class<T> elementType) {
         if (value == null) {
-            return Collections.emptyList();
+            return new ArrayList<T>();
         }
         List<String> elements = Arrays.asList(value.split(","));
         if (elements.size() == 1) {
@@ -350,7 +355,9 @@ public final class EndpointHelper {
                 return (List) bean;
             } else {
                 // The bean is a list element
-                return Arrays.asList(elementType.cast(bean));
+                List<T> singleElementList = new ArrayList<T>();
+                singleElementList.add(elementType.cast(bean));
+                return singleElementList;
             }
         } else { // more than one list element
             List<T> result = new ArrayList<T>(elements.size());
@@ -362,9 +369,38 @@ public final class EndpointHelper {
     }
 
     /**
+     * Resolves a parameter, by doing a reference lookup if the parameter is a reference, and converting
+     * the parameter to the given type.
+     *
+     * @param <T>     type of object to convert the parameter value as.
+     * @param context Camel context to use for lookup.
+     * @param value   parameter or reference parameter value.
+     * @param type    type of object to lookup.
+     * @return lookup result if it was a reference parameter, or the value converted to the given type
+     * @throws IllegalArgumentException if referenced object was not found in registry.
+     */
+    public static <T> T resolveParameter(CamelContext context, String value, Class<T> type) {
+        T result;
+        if (EndpointHelper.isReferenceParameter(value)) {
+            result = EndpointHelper.resolveReferenceParameter(context, value, type);
+        } else {
+            result = context.getTypeConverter().convertTo(type, value);
+        }
+        return result;
+    }
+
+    /**
+     * @deprecated use {@link #resolveParameter(org.apache.camel.CamelContext, String, Class)}
+     */
+    @Deprecated
+    public static <T> T resloveStringParameter(CamelContext context, String value, Class<T> type) {
+        return resolveParameter(context, value, type);
+    }
+
+    /**
      * Gets the route id for the given endpoint in which there is a consumer listening.
      *
-     * @param endpoint  the endpoint
+     * @param endpoint the endpoint
      * @return the route id, or <tt>null</tt> if none found
      */
     public static String getRouteIdFromEndpoint(Endpoint endpoint) {
@@ -393,7 +429,7 @@ public final class EndpointHelper {
     /**
      * Lookup the id the given endpoint has been enlisted with in the {@link org.apache.camel.spi.Registry}.
      *
-     * @param endpoint  the endpoint
+     * @param endpoint the endpoint
      * @return the endpoint id, or <tt>null</tt> if not found
      */
     public static String lookupEndpointRegistryId(Endpoint endpoint) {
@@ -401,9 +437,15 @@ public final class EndpointHelper {
             return null;
         }
 
+        // it may be a delegate endpoint, which we need to match as well
+        Endpoint delegate = null;
+        if (endpoint instanceof DelegateEndpoint) {
+            delegate = ((DelegateEndpoint) endpoint).getEndpoint();
+        }
+
         Map<String, Endpoint> map = endpoint.getCamelContext().getRegistry().findByTypeWithName(Endpoint.class);
         for (Map.Entry<String, Endpoint> entry : map.entrySet()) {
-            if (entry.getValue().equals(endpoint)) {
+            if (entry.getValue().equals(endpoint) || entry.getValue().equals(delegate)) {
                 return entry.getKey();
             }
         }
@@ -415,9 +457,9 @@ public final class EndpointHelper {
     /**
      * Browses the {@link BrowsableEndpoint} within the given range, and returns the messages as a XML payload.
      *
-     * @param endpoint the browsable endpoint
-     * @param fromIndex  from range
-     * @param toIndex    to range
+     * @param endpoint    the browsable endpoint
+     * @param fromIndex   from range
+     * @param toIndex     to range
      * @param includeBody whether to include the message body in the XML payload
      * @return XML payload with the messages
      * @throws IllegalArgumentException if the from and to range is invalid
@@ -450,5 +492,42 @@ public final class EndpointHelper {
         sb.append("\n</messages>");
         return sb.toString();
     }
-    
+
+    /**
+     * Attempts to resolve if the url has an <tt>exchangePattern</tt> option configured
+     *
+     * @param url the url
+     * @return the exchange pattern, or <tt>null</tt> if the url has no <tt>exchangePattern</tt> configured.
+     * @throws URISyntaxException is thrown if uri is invalid
+     */
+    public static ExchangePattern resolveExchangePatternFromUrl(String url) throws URISyntaxException {
+        int idx = url.indexOf("?");
+        if (idx > 0) {
+            url = url.substring(idx + 1);
+        }
+        Map<String, Object> parameters = URISupport.parseQuery(url, true);
+        String pattern = (String) parameters.get("exchangePattern");
+        if (pattern != null) {
+            return ExchangePattern.asEnum(pattern);
+        }
+        return null;
+    }
+
+    /**
+     * Parses the endpoint uri and builds a map of documentation information for each option which is extracted
+     * from the component json documentation
+     *
+     * @param camelContext the Camel context
+     * @param uri          the endpoint uri
+     * @return a map for each option in the uri with the corresponding information from the json
+     * @throws Exception is thrown in case of error
+     * @deprecated use {@link org.apache.camel.runtimecatalog.RuntimeCamelCatalog#endpointProperties(String)}
+     */
+    @Deprecated
+    public static Map<String, Object> endpointProperties(CamelContext camelContext, String uri) throws Exception {
+        RuntimeCamelCatalog catalog = new DefaultRuntimeCamelCatalog(camelContext, false);
+        Map<String, String> options = catalog.endpointProperties(uri);
+        return new HashMap<>(options);
+    }
+
 }

@@ -212,7 +212,7 @@ public class CxfProducerTest extends Assert {
             public void process(final Exchange exchange) throws Exception {
                 Document document = new XmlConverter().toDOMDocument("<ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
                                  + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">hello world</arg0>"
-                                 + "</ns1:echo>");
+                                 + "</ns1:echo>", exchange);
                 exchange.getIn().setBody(CxfPayloadConverter.documentToCxfPayload(document, exchange));
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
                 

@@ -23,14 +23,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionAdapter;
 
 /**
- * Represents an XML &lt;interceptFrom/&gt; element
+ * Intercepts incoming messages
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "interceptFrom")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptFromDefinition extends InterceptDefinition {
@@ -47,11 +49,6 @@ public class InterceptFromDefinition extends InterceptDefinition {
     @Override
     public String toString() {
         return "InterceptFrom[" + getOutputs() + "]";
-    }
-
-    @Override
-    public String getShortName() {
-        return "interceptFrom";
     }
 
     @Override
@@ -96,6 +93,10 @@ public class InterceptFromDefinition extends InterceptDefinition {
         return uri;
     }
 
+    /**
+     * Intercept incoming messages from the uri or uri pattern.
+     * If this option is not configured, then all incoming messages is intercepted.
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }

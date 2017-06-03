@@ -58,17 +58,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      */
     public <T> T lookup(Class<T> type) {
         ApplicationContext context = getApplicationContext();
-        String[] names = context.getBeanNamesForType(type, true, true);
-        if (names != null) {
-            int count = names.length;
-            if (count == 1) {
-                // lets instantiate the single bean
-                return context.getBean(names[0], type);
-            } else if (count > 1) {
-                throw new IllegalArgumentException("Too many beans in the application context of type: " + type + ". Found: " + count);
-            }
-        }
-        throw new IllegalArgumentException("No bean available in the application context of type: " + type);
+        return context.getBean(type);
     }
 
     /**

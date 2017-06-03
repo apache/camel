@@ -18,7 +18,7 @@ package org.apache.camel.component.apns.factory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import javax.net.ssl.SSLContext;
+import java.security.GeneralSecurityException;
 
 import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsDelegate;
@@ -36,6 +36,7 @@ import org.apache.camel.component.apns.util.ParamUtils;
 import org.apache.camel.component.apns.util.ResourceUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 public class ApnsServiceFactory implements CamelContextAware {
 
@@ -48,7 +49,7 @@ public class ApnsServiceFactory implements CamelContextAware {
     private String certificatePassword;
     private ConnectionStrategy connectionStrategy;
     private ReconnectionPolicy reconnectionPolicy;
-    private SSLContext sslContext;
+    private SSLContextParameters sslContextParameters;
     private int poolSize = DEFAULT_POOL_SIZE;
     private String gatewayHost;
     private int gatewayPort;
@@ -149,20 +150,25 @@ public class ApnsServiceFactory implements CamelContextAware {
         this.connectionStrategy = connectionStrategy;
     }
 
-    public SSLContext getSslContext() {
-        return sslContext;
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
     }
 
-    public void setSslContext(SSLContext sslContext) {
-        this.sslContext = sslContext;
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public ApnsDelegate getApnsDelegate() {
         return apnsDelegate;
     }
 
+    public void setApnsDelegate(ApnsDelegate apnsDelegate) {
+        this.apnsDelegate = apnsDelegate;
+    }
+
     public ApnsService getApnsService() {
         ApnsServiceBuilder builder = APNS.newService();
+        builder = configureServiceBuilder(builder);
 
         configureConnectionStrategy(builder);
         configureReconnectionPolicy(builder);
@@ -172,15 +178,21 @@ public class ApnsServiceFactory implements CamelContextAware {
             configureApnsCertificate(builder);
         } catch (IOException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (GeneralSecurityException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
         ApnsService apnsService = builder.build();
         return apnsService;
     }
 
-    private void configureApnsCertificate(ApnsServiceBuilder builder) throws IOException {
-        if (getSslContext() != null) {
-            builder.withSSLContext(getSslContext());
+    protected ApnsServiceBuilder configureServiceBuilder(ApnsServiceBuilder serviceBuilder) {
+        return serviceBuilder;
+    }
+
+    private void configureApnsCertificate(ApnsServiceBuilder builder) throws IOException, GeneralSecurityException {
+        if (getSslContextParameters() != null) {
+            builder.withSSLContext(getSslContextParameters().createSSLContext(getCamelContext()));
             return;
         }
 
@@ -190,7 +202,7 @@ public class ApnsServiceFactory implements CamelContextAware {
 
         InputStream certificateInputStream = null;
         try {
-            certificateInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), getCertificatePath());
+            certificateInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, getCertificatePath());
             builder.withCert(certificateInputStream, getCertificatePassword());
         } finally {
             ResourceUtils.close(certificateInputStream);

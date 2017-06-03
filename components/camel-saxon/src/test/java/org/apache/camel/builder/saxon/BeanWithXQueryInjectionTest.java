@@ -53,7 +53,7 @@ public class BeanWithXQueryInjectionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").beanRef("myBean");
+                from("direct:in").bean("myBean");
             }
         };
     }

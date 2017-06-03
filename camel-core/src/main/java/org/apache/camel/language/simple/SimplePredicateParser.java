@@ -16,10 +16,12 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Expression;
@@ -86,6 +88,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     && !unaryOperator()
                     && !binaryOperator()
                     && !logicalOperator()
+                    && !isBooleanValue()
                     && !token.getType().isWhitespace()
                     && !token.getType().isEol()) {
                 // okay the symbol was not one of the above, so its not supported
@@ -320,7 +323,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * graph of nodes which represent the input expression.
      */
     private void prepareBinaryExpressions() {
-        Stack<SimpleNode> stack = new Stack<SimpleNode>();
+        Deque<SimpleNode> stack = new ArrayDeque<>();
 
         SimpleNode left = null;
         for (int i = 0; i < nodes.size(); i++) {
@@ -365,6 +368,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         nodes.clear();
         nodes.addAll(stack);
+        // must reverse as it was added from a stack that is reverse
+        Collections.reverse(nodes);
     }
 
     /**
@@ -379,7 +384,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * graph of nodes which represent the input expression.
      */
     private void prepareLogicalExpressions() {
-        Stack<SimpleNode> stack = new Stack<SimpleNode>();
+        Deque<SimpleNode> stack = new ArrayDeque<>();
 
         SimpleNode left = null;
         for (int i = 0; i < nodes.size(); i++) {
@@ -424,6 +429,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         nodes.clear();
         nodes.addAll(stack);
+        // must reverse as it was added from a stack that is reverse
+        Collections.reverse(nodes);
     }
 
     /**
@@ -448,6 +455,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
     // --------------------------------------------------------------
 
     // the predicate parser understands a lot more than the expression parser
+    // - boolean value = either true or false value (literal)
     // - single quoted = block of nodes enclosed by single quotes
     // - double quoted = block of nodes enclosed by double quotes
     // - single quoted with functions = block of nodes enclosed by single quotes allowing embedded functions
@@ -459,6 +467,13 @@ public class SimplePredicateParser extends BaseSimpleParser {
     // - unary operator = operator attached to the left hand side node
     // - binary operator = operator attached to both the left and right hand side nodes
     // - logical operator = operator attached to both the left and right hand side nodes
+
+    protected boolean isBooleanValue() {
+        if (accept(TokenType.booleanValue)) {
+            return true;
+        }
+        return false;
+    }
 
     protected boolean singleQuotedLiteralWithFunctionsText() {
         if (accept(TokenType.singleQuote)) {

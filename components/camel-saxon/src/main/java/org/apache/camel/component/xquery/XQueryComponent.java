@@ -17,38 +17,43 @@
 package org.apache.camel.component.xquery;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ResourceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An <a href="http://camel.apache.org/xquery.html">XQuery Component</a>
  * for performing transforming messages
  */
-public class XQueryComponent extends DefaultComponent {
+public class XQueryComponent extends UriEndpointComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XQueryComponent.class);
+    @Metadata(label = "advanced")
     private ModuleURIResolver moduleURIResolver = new XQueryModuleURIResolver(this);
+    @Metadata(label = "advanced")
+    private Configuration configuration;
+    @Metadata(label = "advanced")
+    private Map<String, Object> configurationProperties = new HashMap<>();
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String resourceUri = remaining;
-        URL url = resolveModuleResource(resourceUri);
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
-
-        XQueryBuilder xslt = XQueryBuilder.xquery(url);
-        xslt.setModuleURIResolver(getModuleURIResolver());
-        configureXslt(xslt, uri, remaining, parameters);
-        return new ProcessorEndpoint(uri, this, xslt);
+    public XQueryComponent() {
+        super(XQueryEndpoint.class);
     }
 
-    protected void configureXslt(XQueryBuilder xQueryBuilder, String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        setProperties(xQueryBuilder, parameters);
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        XQueryEndpoint answer = new XQueryEndpoint(uri, this);
+        answer.setConfiguration(configuration);
+        answer.setConfigurationProperties(getConfigurationProperties());
+        setProperties(answer, parameters);
+
+        answer.setResourceUri(remaining);
+        answer.setModuleURIResolver(getModuleURIResolver());
+
+        return answer;
     }
 
     public URL resolveModuleResource(String uri) throws Exception {
@@ -59,7 +64,32 @@ public class XQueryComponent extends DefaultComponent {
         return moduleURIResolver;
     }
 
+    /**
+     * To use the custom {@link ModuleURIResolver}
+     */
     public void setModuleURIResolver(ModuleURIResolver moduleURIResolver) {
         this.moduleURIResolver = moduleURIResolver;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * To use a custom Saxon configuration
+     */
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    /**
+     * To set custom Saxon configuration properties
+     */
+    public void setConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.configurationProperties = configurationProperties;
     }
 }

@@ -60,6 +60,9 @@ public class XmlRootElementPreferringElementNameStrategyTest {
     @XmlType(name = "", propOrder = {LOCAL_NAME})
     @XmlRootElement(name = LOCAL_NAME, namespace = CUSTOM_NS)
     public class Request implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
     }
 
 }

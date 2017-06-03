@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Implementation-Title: Camel :: Connector :: Camel Connector Maven Plugin
+Implementation-Vendor: The Apache Software Foundation
+Implementation-Vendor-Id: org.apache.camel

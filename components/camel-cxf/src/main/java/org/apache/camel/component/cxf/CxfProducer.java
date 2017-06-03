@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
@@ -34,14 +36,17 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.transport.Conduit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,11 +77,28 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     
     @Override
     protected void doStart() throws Exception {
+        // failsafe as cxf may not ensure the endpoint is started (CAMEL-8956)
+        ServiceHelper.startService(endpoint);
+
         if (client == null) {
             client = endpoint.createClient();
         }
+        Conduit conduit = client.getConduit();
+        if (conduit.getClass().getName().endsWith("JMSConduit")) {
+            java.lang.reflect.Method getJmsConfig = conduit.getClass().getMethod("getJmsConfig");
+            Object jmsConfig = getJmsConfig.invoke(conduit);
+            java.lang.reflect.Method getMessageType = jmsConfig.getClass().getMethod("getMessageType");
+            boolean isTextPayload = "text".equals(getMessageType.invoke(jmsConfig));
+            if (isTextPayload && endpoint.getDataFormat().equals(DataFormat.MESSAGE)) {
+                //throw Exception as the Text JMS mesasge won't send as stream
+                throw new RuntimeException("Text JMS message coundn't be a stream");
+            }
+        }
+
+
+        endpoint.getChainedCxfEndpointConfigurer().configureClient(client);
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
@@ -106,8 +128,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
             invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
             
-            CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, 
-                                                                        endpoint.getCxfBinding());
+            CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
             // send the CXF async request
             client.invoke(cxfClientCallback, boi, getParams(endpoint, camelExchange), 
                           invocationContext, cxfExchange);
@@ -152,10 +173,17 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         } catch (Exception exception) {
             camelExchange.setException(exception);
         } finally {
+            // add cookies to the cookie store
+            if (endpoint.getCookieHandler() != null) {
+                try {
+                    Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfExchange.getInMessage().get(Message.PROTOCOL_HEADERS));
+                    endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
+                } catch (IOException e) {
+                    LOG.error("Cannot store cookies", e);
+                }
+            }
             // bind the CXF response to Camel exchange
             if (!boi.getOperationInfo().isOneWay()) {
-                // copy the InMessage header to OutMessage header
-                camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
                         responseContext);
             }
@@ -191,7 +219,27 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // bind the request CXF exchange
         endpoint.getCxfBinding().populateCxfRequestFromExchange(cxfExchange, camelExchange, 
                 requestContext);
-        
+
+        // add appropriate cookies from the cookie store to the protocol headers
+        if (endpoint.getCookieHandler() != null) {
+            try {
+                Map<String, List<String>> transportHeaders = CastUtils.cast((Map<?, ?>)requestContext.get(Message.PROTOCOL_HEADERS));
+                boolean added;
+                if (transportHeaders == null) {
+                    transportHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+                    added = true;
+                } else {
+                    added = false;
+                }
+                transportHeaders.putAll(endpoint.getCookieHandler().loadCookies(camelExchange, endpoint.getRequestUri(camelExchange)));
+                if (added && transportHeaders.size() > 0) {
+                    requestContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
+                }
+            } catch (IOException e) {
+                LOG.warn("Cannot load cookies", e);
+            }
+        }
+
         // Remove protocol headers from scopes.  Otherwise, response headers can be
         // overwritten by request headers when SOAPHandlerInterceptor tries to create
         // a wrapped message context by the copyScoped() method.
@@ -199,7 +247,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         
         return requestContext.getWrappedMap();
     }
-    
+
     private BindingOperationInfo prepareBindingOperation(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
         // get binding operation info
         BindingOperationInfo boi = getBindingOperationInfo(camelExchange);
@@ -273,13 +321,15 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     /**
      * Get the parameters for the web service operation
      */
-    @SuppressWarnings("deprecation")
     private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) 
         throws org.apache.camel.InvalidPayloadException {
       
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
             Object body = exchange.getIn().getBody();
+            if (body == null) {
+                return new Object[0];
+            }
             if (body instanceof Object[]) {
                 params = (Object[])body;
             } else if (body instanceof List) {
@@ -327,18 +377,26 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     }
 
     /**
-     * Get operation name from header and use it to lookup and return a 
-     * {@link BindingOperationInfo}.
+     * <p>Get operation name from header and use it to lookup and return a 
+     * {@link BindingOperationInfo}.</p>
+     * <p>CxfProducer lookups the operation name lookup with below order, and it uses the first found one which is not null:</p>
+     *  <ul>
+     *    <li> Using the in message header "operationName". </li>
+     *    <li> Using the defaultOperationName option value from the CxfEndpoint. </li>
+     *    <li> Using the first operation which is find from the CxfEndpoint Operations list. </li>
+     *  <ul>
      */
     private BindingOperationInfo getBindingOperationInfo(Exchange ex) {
         CxfEndpoint endpoint = (CxfEndpoint)this.getEndpoint();
         BindingOperationInfo answer = null;
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
         if (lp == null) {
+            LOG.debug("CxfProducer cannot find the {} from message header, trying with defaultOperationName", CxfConstants.OPERATION_NAME);
             lp = endpoint.getDefaultOperationName();
         }
         if (lp == null) {
-            LOG.debug("Try to find a default operation. You should set '{}' in header.", CxfConstants.OPERATION_NAME);
+            LOG.debug("CxfProducer cannot find the {} from message header and there is no DefaultOperationName setting, CxfProducer will pick up the first available operation.",
+                     CxfConstants.OPERATION_NAME);
             Collection<BindingOperationInfo> bois = 
                 client.getEndpoint().getEndpointInfo().getBinding().getOperations();
             

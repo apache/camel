@@ -21,16 +21,18 @@ import java.io.IOException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http4.helper.HttpHelper;
+import org.apache.camel.ServicePoolAware;
+import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.impl.PollingConsumerSupport;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.util.EntityUtils;
 
 /**
@@ -38,7 +40,7 @@ import org.apache.http.util.EntityUtils;
  *
  * @version 
  */
-public class HttpPollingConsumer extends PollingConsumerSupport {
+public class HttpPollingConsumer extends PollingConsumerSupport implements ServicePoolAware {
     private final HttpEndpoint endpoint;
     private HttpClient httpClient;
 
@@ -63,16 +65,18 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     protected Exchange doReceive(int timeout) {
         Exchange exchange = endpoint.createExchange();
         HttpRequestBase method = createMethod(exchange);
+        HttpClientContext httpClientContext = new HttpClientContext();
 
         // set optional timeout in millis
         if (timeout > 0) {
-            HttpConnectionParams.setSoTimeout(method.getParams(), timeout);
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).build();
+            httpClientContext.setRequestConfig(requestConfig);
         }
 
         HttpEntity responeEntity = null;
         try {
             // execute request
-            HttpResponse response = httpClient.execute(method);
+            HttpResponse response = httpClient.execute(method, httpClientContext);
             int responseCode = response.getStatusLine().getStatusCode();
             responeEntity = response.getEntity();
             Object body = HttpHelper.readResponseBodyFromInputStream(responeEntity.getContent(), exchange);
@@ -96,6 +100,9 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
                 }
             }
             message.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+            if (response.getStatusLine() != null) {
+                message.setHeader(Exchange.HTTP_RESPONSE_TEXT, response.getStatusLine().getReasonPhrase());
+            }
 
             return exchange;
         } catch (IOException e) {

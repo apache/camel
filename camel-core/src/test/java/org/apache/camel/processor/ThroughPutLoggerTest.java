@@ -17,27 +17,34 @@
 package org.apache.camel.processor;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.CamelLogger;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
-import org.slf4j.Marker;
 
 public class ThroughPutLoggerTest extends TestCase {
 
     public void testLogStringDurationIsNotZero() throws Exception {
+        CamelContext camel = new DefaultCamelContext();
+        camel.start();
+
         Logger logger = EasyMock.createMock(Logger.class);
         logger.isInfoEnabled();
         EasyMock.expectLastCall().andReturn(true).atLeastOnce();
-        logger.info(EasyMock.<Marker>isNull(), EasyMock.startsWith("Received: 10"));
+        logger.info(EasyMock.startsWith("Received: 10"));
         EasyMock.expectLastCall().once();
-        logger.info(EasyMock.<Marker>isNull(), EasyMock.startsWith("Received: 20"));
+        logger.info(EasyMock.startsWith("Received: 20"));
         EasyMock.expectLastCall().once();
         EasyMock.replay(logger);
         ThroughputLogger underTest = new ThroughputLogger(new CamelLogger(logger));
         underTest.setGroupSize(10);
         for (int i = 0; i < 25; i++) {
-            underTest.process(null);
+            underTest.process(new DefaultExchange(camel));
         }
         EasyMock.verify(logger);
+
+        camel.stop();
     }
 }

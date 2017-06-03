@@ -18,28 +18,32 @@ package org.apache.camel.component.paxlogging;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 
 /**
- * The pax-logging component allows receiving log events from OPS4j PaxLogging
- * and send them to camel routes.
+ * The OSGi pax-logging component allows receiving log events from OPS4j PaxLogging
+ * and send them to Camel routes.
  */
-public class PaxLoggingComponent extends DefaultComponent {
+public class PaxLoggingComponent extends UriEndpointComponent {
 
-    public static final String NAME = "paxlogging";
+    private BundleContext bundleContext;
 
-    private final BundleContext bundleContext;
-
-    public PaxLoggingComponent(CamelContext context, BundleContext bundleContext) {
-        super(context);
-        this.bundleContext = bundleContext;
+    public PaxLoggingComponent() {
+        super(PaxLoggingEndpoint.class);
     }
 
     public BundleContext getBundleContext() {
         return bundleContext;
+    }
+
+    /**
+     * The OSGi BundleContext is automatic injected by Camel
+     */
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 
     @Override
@@ -49,4 +53,9 @@ public class PaxLoggingComponent extends DefaultComponent {
         return endpoint;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ObjectHelper.notNull(bundleContext, "BundleContext", this);
+    }
 }

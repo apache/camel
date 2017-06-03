@@ -23,7 +23,6 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.DefaultManagementNamingStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -41,11 +40,8 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         context.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return context;
@@ -59,7 +55,7 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
     public void testJmsEndpoint() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"activemq://queue:start\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"activemq://queue:start\"");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("activemq://queue:start", uri);
 
@@ -87,6 +83,9 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
 
         size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(1, size.intValue());
+
+        String body = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{0}, new String[]{"java.lang.Integer"});
+        assertEquals("Hi World", body);
     }
 
     @Override

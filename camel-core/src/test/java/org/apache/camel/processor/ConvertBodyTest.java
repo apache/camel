@@ -53,7 +53,7 @@ public class ConvertBodyTest extends ContextTestSupport {
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         // do not propagate charset to avoid side effects with double conversion etc
-        getMockEndpoint("mock:foo").message(0).property(Exchange.CHARSET_NAME).isNull();
+        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isNull();
 
         template.sendBody("direct:foo", "Hello World");
 
@@ -130,7 +130,7 @@ public class ConvertBodyTest extends ContextTestSupport {
     public void testConvertToStringCharsetFail() throws Exception {
 
         // does not work on AIX
-        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         boolean aix = osName.indexOf("aix") > -1;
         if (aix) {
             return;

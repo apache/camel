@@ -57,13 +57,13 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
             public void configure() throws Exception {
                 from("file://target/transacted/okay")
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("file://target/transacted/fail?delay=1000")
                     .transacted()
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Donkey in Action")).beanRef("bookService");
+                    .setBody(constant("Tiger in Action")).bean("bookService")
+                    .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

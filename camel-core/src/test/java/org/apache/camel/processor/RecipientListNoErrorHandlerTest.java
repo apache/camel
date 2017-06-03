@@ -27,7 +27,7 @@ public class RecipientListNoErrorHandlerTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
-        getMockEndpoint("mock:dead").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:dead").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:start", "Hello World");
 

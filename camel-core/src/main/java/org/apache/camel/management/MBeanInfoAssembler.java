@@ -59,10 +59,11 @@ public class MBeanInfoAssembler implements Service {
     // which could prevent classloader to unload classes if being referenced from this cache
     private final LRUCache<Class<?>, MBeanAttributesAndOperations> cache = new LRUWeakCache<Class<?>, MBeanAttributesAndOperations>(1000);
 
-    private final CamelContext camelContext;
+    public MBeanInfoAssembler() {
+    }
 
+    @Deprecated
     public MBeanInfoAssembler(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
     @Override
@@ -97,7 +98,7 @@ public class MBeanInfoAssembler implements Service {
      */
     public ModelMBeanInfo getMBeanInfo(Object defaultManagedBean, Object customManagedBean, String objectName) throws JMException {
         // skip proxy classes
-        if (Proxy.isProxyClass(defaultManagedBean.getClass())) {
+        if (defaultManagedBean != null && Proxy.isProxyClass(defaultManagedBean.getClass())) {
             LOG.trace("Skip creating ModelMBeanInfo due proxy class {}", defaultManagedBean.getClass());
             return null;
         }
@@ -110,10 +111,12 @@ public class MBeanInfoAssembler implements Service {
         Set<ModelMBeanNotificationInfo> mBeanNotifications = new LinkedHashSet<ModelMBeanNotificationInfo>();
 
         // extract details from default managed bean
-        extractAttributesAndOperations(defaultManagedBean.getClass(), attributes, operations);
-        extractMbeanAttributes(defaultManagedBean, attributes, mBeanAttributes, mBeanOperations);
-        extractMbeanOperations(defaultManagedBean, operations, mBeanOperations);
-        extractMbeanNotifications(defaultManagedBean, mBeanNotifications);
+        if (defaultManagedBean != null) {
+            extractAttributesAndOperations(defaultManagedBean.getClass(), attributes, operations);
+            extractMbeanAttributes(defaultManagedBean, attributes, mBeanAttributes, mBeanOperations);
+            extractMbeanOperations(defaultManagedBean, operations, mBeanOperations);
+            extractMbeanNotifications(defaultManagedBean, mBeanNotifications);
+        }
 
         // extract details from custom managed bean
         if (customManagedBean != null) {

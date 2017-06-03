@@ -56,6 +56,7 @@ public class DisruptorReference {
             .newSetFromMap(new WeakHashMap<DisruptorEndpoint, Boolean>(4));
     private final DisruptorComponent component;
     private final String uri;
+    private final String name;
 
     //The mark on the reference indicates if we are in the process of reconfiguring the Disruptor:
     //(ref,   mark) : Description
@@ -82,10 +83,11 @@ public class DisruptorReference {
 
     private int uniqueConsumerCount;
 
-    DisruptorReference(final DisruptorComponent component, final String uri, final int size,
+    DisruptorReference(final DisruptorComponent component, final String uri, final String name, final int size,
                        final DisruptorProducerType producerType, final DisruptorWaitStrategy waitStrategy) throws Exception {
         this.component = component;
         this.uri = uri;
+        this.name = name;
         this.size = size;
         this.producerType = producerType;
         this.waitStrategy = waitStrategy;
@@ -258,8 +260,16 @@ public class DisruptorReference {
             LOGGER.debug("Resizing existing executor to {} threads", newSize);
             //our thread pool executor is of type ThreadPoolExecutor, we know how to resize it
             final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor)executor;
-            threadPoolExecutor.setCorePoolSize(newSize);
-            threadPoolExecutor.setMaximumPoolSize(newSize);
+            //Java 9 support, checkout http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setCorePoolSize-int- 
+            // and http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setMaximumPoolSize-int-
+            //for more information
+            if (newSize <= threadPoolExecutor.getCorePoolSize()) {
+                threadPoolExecutor.setCorePoolSize(newSize);
+                threadPoolExecutor.setMaximumPoolSize(newSize);
+            } else {
+                threadPoolExecutor.setMaximumPoolSize(newSize);
+                threadPoolExecutor.setCorePoolSize(newSize);
+            }
         } else if (newSize > 0) {
             LOGGER.debug("Shutting down old and creating new executor with {} threads", newSize);
             //hmmm...no idea what kind of executor this is...just kill it and start fresh
@@ -318,6 +328,10 @@ public class DisruptorReference {
         resizeThreadPoolExecutor(0);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public long getRemainingCapacity() throws DisruptorNotStartedException {
         return getCurrentDisruptor().getRingBuffer().remainingCapacity();
     }
@@ -362,7 +376,7 @@ public class DisruptorReference {
             shutdownExecutor();
         }
         endpoints.remove(disruptorEndpoint);
-        LOGGER.debug("Endpoint removed: {}, new total endpoints {}", disruptorEndpoint, endpoints.size());
+        LOGGER.debug("Endpoint removed: {}, new total endpoints {}", disruptorEndpoint, getEndpointCount());
     }
 
     public synchronized int getEndpointCount() {

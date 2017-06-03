@@ -90,9 +90,34 @@ public class MailConvertersTest extends CamelTestSupport {
         assertNotNull(mailMessage);
 
         Object content = mailMessage.getContent();
-        Multipart mp = assertIsInstanceOf(Multipart.class, content);
+        assertIsInstanceOf(Multipart.class, content);
 
-        InputStream is = MailConverters.toInputStream(mp);
+        InputStream is = mock.getReceivedExchanges().get(0).getIn().getBody(InputStream.class);
+        assertNotNull(is);
+        assertEquals("Alternative World", context.getTypeConverter().convertTo(String.class, is));
+    }
+
+    @Test
+    public void testMultipartToByteArray() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+                exchange.getIn().setHeader(MailConstants.MAIL_ALTERNATIVE_BODY, "Alternative World");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
+        assertNotNull(mailMessage);
+
+        Object content = mailMessage.getContent();
+        assertIsInstanceOf(Multipart.class, content);
+
+        byte[] is = mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class);
         assertNotNull(is);
         assertEquals("Alternative World", context.getTypeConverter().convertTo(String.class, is));
     }

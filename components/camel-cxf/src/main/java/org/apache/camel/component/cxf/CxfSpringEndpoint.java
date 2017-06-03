@@ -17,17 +17,15 @@
 package org.apache.camel.component.cxf;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.Provider;
 
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
-import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
-import org.apache.cxf.version.Version;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -172,7 +170,12 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
         if (cls == null) {
             if (!getDataFormat().equals(DataFormat.POJO)) {
-                answer = new ServerFactoryBean(new WSDLServiceFactoryBean());
+                answer = new JaxWsServerFactoryBean(new WSDLServiceFactoryBean()) {
+                    {
+                        doInit = false;
+                    }
+                };
+                cls = Provider.class;
             } else {
                 ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
             }
@@ -279,20 +282,11 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         return qn.getNamespaceURI();
     }
     
-
-    @SuppressWarnings("deprecation")
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         applicationContext = ctx;
 
         if (bus == null) {
-            if (Version.getCurrentVersion().startsWith("2.3")) {
-                // Don't relate on the DefaultBus
-                BusFactory factory = new SpringBusFactory(ctx);
-                bus = factory.createBus();               
-                BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(bus, ctx);
-            } else {
-                bus = BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx);
-            }
+            bus = BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx);
         }
     }
     

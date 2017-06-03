@@ -97,8 +97,8 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
         FileSystem fs = FileSystem.get(new Configuration());
         FileStatus[] status = fs.listStatus(new Path("file:///" + BASE_FILE.toUri() + routeNr));
         assertEquals(10, status.length);
-        for (int i = 0; i < status.length; i++) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(status[i].getPath())));
+        for (FileStatus fileStatus : status) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(fileStatus.getPath())));
             assertTrue(br.readLine().startsWith("CIAO"));
             assertNull(br.readLine());
         }
@@ -123,11 +123,11 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start1").to("hdfs:///" + BASE_FILE.toUri() + "1?fileSystemType=LOCAL&splitStrategy=MESSAGES:1");
-                from("direct:start2").to("hdfs:///" + BASE_FILE.toUri() + "2?fileSystemType=LOCAL&splitStrategy=BYTES:5");
-                from("direct:start3").to("hdfs:///" + BASE_FILE.toUri() + "3?fileSystemType=LOCAL&splitStrategy=IDLE:1000");
-                from("direct:start4").to("hdfs:///" + BASE_FILE.toUri() + "4?fileSystemType=LOCAL&splitStrategy=IDLE:1000,MESSAGES:1");
-                from("direct:start5").to("hdfs:///" + BASE_FILE.toUri() + "5?fileSystemType=LOCAL&splitStrategy=IDLE:1000,BYTES:5");
+                from("direct:start1").to("hdfs:localhost/" + BASE_FILE.toUri() + "1?fileSystemType=LOCAL&splitStrategy=MESSAGES:1");
+                from("direct:start2").to("hdfs:localhost/" + BASE_FILE.toUri() + "2?fileSystemType=LOCAL&splitStrategy=BYTES:5");
+                from("direct:start3").to("hdfs:localhost/" + BASE_FILE.toUri() + "3?fileSystemType=LOCAL&splitStrategy=IDLE:1000");
+                from("direct:start4").to("hdfs:localhost/" + BASE_FILE.toUri() + "4?fileSystemType=LOCAL&splitStrategy=IDLE:1000,MESSAGES:1");
+                from("direct:start5").to("hdfs:localhost/" + BASE_FILE.toUri() + "5?fileSystemType=LOCAL&splitStrategy=IDLE:1000,BYTES:5");
             }
         };
     }

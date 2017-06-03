@@ -22,10 +22,10 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.BeforeClass;
 
@@ -42,13 +42,13 @@ public abstract class RestletTestSupport extends CamelTestSupport {
     }
     
     public HttpResponse doExecute(HttpUriRequest method) throws Exception {
-        HttpClient client = new DefaultHttpClient();
+        CloseableHttpClient client = HttpClientBuilder.create().build();
         try {
             HttpResponse response = client.execute(method);
             response.setEntity(new BufferedHttpEntity(response.getEntity()));
             return response;
         } finally {
-            client.getConnectionManager().shutdown();
+            client.close();
         }
     }
 

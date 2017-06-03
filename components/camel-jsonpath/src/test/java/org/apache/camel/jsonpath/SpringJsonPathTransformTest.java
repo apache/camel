@@ -39,7 +39,7 @@ public class SpringJsonPathTransformTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List authors = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> authors = getMockEndpoint("mock:authors").getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals("Nigel Rees", authors.get(0));
         assertEquals("Evelyn Waugh", authors.get(1));
     }

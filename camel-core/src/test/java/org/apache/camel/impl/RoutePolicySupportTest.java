@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.RoutePolicySupport;
 import org.junit.Test;
 
 public class RoutePolicySupportTest extends ContextTestSupport {

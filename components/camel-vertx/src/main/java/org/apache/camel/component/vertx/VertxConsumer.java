@@ -16,20 +16,25 @@
  */
 package org.apache.camel.component.vertx;
 
+import io.vertx.core.Handler;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.eventbus.MessageConsumer;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.eventbus.Message;
+
+import static org.apache.camel.component.vertx.VertxHelper.getVertxBody;
 
 public class VertxConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(VertxConsumer.class);
     private final VertxEndpoint endpoint;
+    private transient MessageConsumer messageConsumer;
 
-    private Handler<? extends Message> handler = new Handler<Message>() {
+    private Handler<Message<Object>> handler = new Handler<Message<Object>>() {
         public void handle(Message event) {
             onEventBusEvent(event);
         }
@@ -43,14 +48,21 @@ public class VertxConsumer extends DefaultConsumer {
     protected void onEventBusEvent(final Message event) {
         LOG.debug("onEvent {}", event);
 
-        final Exchange exchange = endpoint.createExchange();
+        final boolean reply = event.replyAddress() != null;
+        final Exchange exchange = endpoint.createExchange(reply ? ExchangePattern.InOut : ExchangePattern.InOnly);
         exchange.getIn().setBody(event.body());
 
         try {
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    // noop
+                    if (reply) {
+                        Object body = getVertxBody(exchange);
+                        if (body != null) {
+                            LOG.debug("Sending reply to: {} with body: {}", event.replyAddress(), body);
+                            event.reply(body);
+                        }
+                    }
                 }
             });
         } catch (Exception e) {
@@ -63,7 +75,9 @@ public class VertxConsumer extends DefaultConsumer {
             LOG.debug("Registering EventBus handler on address {}", endpoint.getAddress());
         }
 
-        endpoint.getEventBus().registerHandler(endpoint.getAddress(), handler);
+        if (endpoint.getEventBus() != null) {
+            messageConsumer = endpoint.getEventBus().consumer(endpoint.getAddress(), handler);
+        }
         super.doStart();
     }
 
@@ -72,7 +86,16 @@ public class VertxConsumer extends DefaultConsumer {
             LOG.debug("Unregistering EventBus handler on address {}", endpoint.getAddress());
         }
 
-        endpoint.getEventBus().unregisterHandler(endpoint.getAddress(), handler);
+        try {
+            if (messageConsumer != null && messageConsumer.isRegistered()) {
+                messageConsumer.unregister();
+                messageConsumer = null;
+            }
+        } catch (IllegalStateException e) {
+            LOG.warn("EventBus already stopped on address {}", endpoint.getAddress());
+            // ignore if already stopped as vertx throws this exception if its already stopped etc.
+            // unfortunately it does not provide an nicer api to know its state
+        }
         super.doStop();
     }
 }

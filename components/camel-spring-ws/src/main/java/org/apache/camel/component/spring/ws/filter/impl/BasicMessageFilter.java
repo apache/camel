@@ -36,7 +36,6 @@ import org.springframework.ws.soap.SoapMessage;
  * instance.
  */
 public class BasicMessageFilter implements MessageFilter {
-    private static final String LOWERCASE_BREADCRUMB_ID = "breadcrumbid";
 
     @Override
     public void filterProducer(Exchange exchange, WebServiceMessage response) {
@@ -88,14 +87,6 @@ public class BasicMessageFilter implements MessageFilter {
      * key a value with the QName object, it is directly added as a new header
      * element. If it contains only a String value, it is transformed into a
      * header attribute. Following headers are excluded:
-     * {@code LOWERCASE_BREADCRUMB_ID}
-     * 
-     * @see SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, @see
-     *      SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION), @see
-     *      SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI This the convinient
-     *      method for overriding.
-     * @param inOrOut
-     * @param soapMessage
      */
     protected void doProcessSoapHeader(Message inOrOut, SoapMessage soapMessage) {
         SoapHeader soapHeader = soapMessage.getSoapHeader();
@@ -104,15 +95,21 @@ public class BasicMessageFilter implements MessageFilter {
 
         HashSet<String> headerKeySet = new HashSet<String>(headers.keySet());
 
-        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION.toLowerCase());
-        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI.toLowerCase());
-        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION.toLowerCase());
-        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO.toLowerCase());
-        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO.toLowerCase());
-        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION.toLowerCase());
-        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION.toLowerCase());
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION);
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI);
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION);
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO);
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO);
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION);
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION);
+        // This gets repeated again in the below 'for loop' and gets added as attribute to soapenv:header. 
+        // This would have already been processed in SpringWebserviceProducer/Consumer instance.
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER);
 
-        headerKeySet.remove(LOWERCASE_BREADCRUMB_ID);
+        // Replaced local constant 'BreadcrumbId' with the actual constant key in header 'breadcrumbId'
+        // from org.apache.camel.Exchange.BREADCRUMB_ID. Because of this case mismatch, this key never
+        // gets removed from header rather gets added to soapHeader all the time.
+        headerKeySet.remove(Exchange.BREADCRUMB_ID);
 
         for (String name : headerKeySet) {
             Object value = headers.get(name);

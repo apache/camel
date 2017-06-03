@@ -31,7 +31,7 @@ public class RegExPredicateIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:a")
                     .choice()
-                        .when(body(String.class).regex("^0.*$")).to("mock:result")
+                        .when(bodyAs(String.class).regex("^0.*$")).to("mock:result")
                         .otherwise().to("mock:other")
                     .end();
             }

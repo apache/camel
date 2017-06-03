@@ -37,6 +37,7 @@ public class ManagedResourceTest extends ManagementTestSupport {
                 from("direct:start")
                         .bean(MyManagedBean.class).id("myManagedBean")
                         .log("${body}")
+                        .to("seda:foo")
                         .to("mock:result");
             }
         };
@@ -63,11 +64,11 @@ public class ManagedResourceTest extends ManagementTestSupport {
         LOG.info("managementName = {}", managementName);
 
         // Get the Camel Context MBean
-        ObjectName onContext = ObjectName.getInstance(mBeanServerDefaultDomain + ":context=localhost/" + managementName + ",type=context,name=\"" + context.getName() + "\"");
+        ObjectName onContext = ObjectName.getInstance(mBeanServerDefaultDomain + ":context=" + managementName + ",type=context,name=\"" + context.getName() + "\"");
         TestCase.assertTrue("Should be registered", mBeanServer.isRegistered(onContext));
 
         // Get myManagedBean
-        ObjectName onManagedBean = ObjectName.getInstance(mBeanServerDefaultDomain + ":context=localhost/" + managementName + ",type=processors,name=\"myManagedBean\"");
+        ObjectName onManagedBean = ObjectName.getInstance(mBeanServerDefaultDomain + ":context=" + managementName + ",type=processors,name=\"myManagedBean\"");
         LOG.info("Canonical Name = {}", onManagedBean.getCanonicalName());
         TestCase.assertTrue("Should be registered", mBeanServer.isRegistered(onManagedBean));
 
@@ -84,5 +85,14 @@ public class ManagedResourceTest extends ManagementTestSupport {
 
         camelsSeenCount = (Integer) mBeanServer.getAttribute(onManagedBean, "CamelsSeenCount");
         TestCase.assertEquals(0, camelsSeenCount);
+
+        String camelId = (String) mBeanServer.getAttribute(onManagedBean, "CamelId");
+        assertEquals(context.getName(), camelId);
+
+        String state = (String) mBeanServer.getAttribute(onManagedBean, "State");
+        assertEquals("Started", state);
+
+        String fqn = (String) mBeanServer.getAttribute(onManagedBean, "BeanClassName");
+        assertEquals(MyManagedBean.class.getCanonicalName(), fqn);
     }
 }

@@ -62,7 +62,7 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").beanRef("myBean", "route").to("mock:result");
+                from("direct:start").bean("myBean", "route").to("mock:result");
 
                 from("direct:a").delay(2000).setBody(constant("A"));
 

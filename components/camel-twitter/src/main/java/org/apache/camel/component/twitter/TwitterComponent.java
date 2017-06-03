@@ -18,77 +18,64 @@ package org.apache.camel.component.twitter;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.VerifiableComponent;
+import org.apache.camel.component.twitter.data.ConsumerType;
 import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Twitter component
+ * 
+ * @deprecated Use
+ * {@link org.apache.camel.component.twitter.directmessage.TwitterDirectMessageComponent},
+ * {@link org.apache.camel.component.twitter.search.TwitterSearchComponent},
+ * {@link org.apache.camel.component.twitter.streaming..TwitterStreamingComponent} or
+ * {@link org.apache.camel.component.twitter.timeline.TwitterTimelineComponent}
+ * instead.
  */
-public class TwitterComponent extends DefaultComponent {
+@Deprecated
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
+public class TwitterComponent extends AbstractTwitterComponent {
 
-    private String consumerKey;
-    private String consumerSecret;
-    private String accessToken;
-    private String accessTokenSecret;
+    private static final Logger LOG = LoggerFactory.getLogger(TwitterComponent.class);
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    public TwitterComponent() {
+    }
 
-        TwitterConfiguration properties = new TwitterConfiguration();
+    public TwitterComponent(CamelContext context) {
+        super(context);
+    }
 
-        // set options from component
-        properties.setConsumerKey(consumerKey);
-        properties.setConsumerSecret(consumerSecret);
-        properties.setAccessToken(accessToken);
-        properties.setAccessTokenSecret(accessTokenSecret);
-
-        // and then override from parameters
-        setProperties(properties, parameters);
+    protected Endpoint doCreateEndpoint(TwitterConfiguration properties, String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        String[] tokens = remaining.split("/");
+        LOG.warn("The scheme syntax 'twitter:{}' has been deprecated. Use 'twitter-{}' instead.", tokens[0], tokens[0]);
 
         TwitterEndpoint endpoint;
-        switch (EndpointType.fromUri(properties.getType())) {
+
+        switch (properties.getType()) {
         case POLLING:
-            endpoint = new TwitterEndpointPolling(uri, this, properties);
+            endpoint = new TwitterEndpointPolling(uri, remaining, this, properties);
             break;
         case EVENT:
-            endpoint = new TwitterEndpointEvent(uri, this, properties);
+            endpoint = new TwitterEndpointEvent(uri,  remaining, this, properties);
             break;
         default:
-            endpoint = new TwitterEndpointDirect(uri, this, properties);
+            endpoint = new TwitterEndpointDirect(uri, remaining, this, properties);
             break;
         }
         return endpoint;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getAccessTokenSecret() {
-        return accessTokenSecret;
-    }
-
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
-    }
-
-    public String getConsumerKey() {
-        return consumerKey;
-    }
-
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    public String getConsumerSecret() {
-        return consumerSecret;
-    }
-
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
+    /**
+     * Get a verifier for the twitter component.
+     */
+    public ComponentVerifier getVerifier() {
+        return new DefaultTwitterComponentVerifier(this);
     }
 }

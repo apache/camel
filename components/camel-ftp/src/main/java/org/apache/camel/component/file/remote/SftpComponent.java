@@ -29,10 +29,12 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 public class SftpComponent extends RemoteFileComponent<ChannelSftp.LsEntry> {
 
     public SftpComponent() {
+        setEndpointClass(SftpEndpoint.class);
     }
 
     public SftpComponent(CamelContext context) {
         super(context);
+        setEndpointClass(SftpEndpoint.class);
     }
 
     @Override
@@ -48,6 +50,8 @@ public class SftpComponent extends RemoteFileComponent<ChannelSftp.LsEntry> {
         // lets make sure we create a new configuration as each endpoint can
         // customize its own version
         SftpConfiguration config = new SftpConfiguration(new URI(baseUri));
+
+        FtpUtils.ensureRelativeFtpDirectory(this, config);
 
         return new SftpEndpoint(uri, this, config);
     }

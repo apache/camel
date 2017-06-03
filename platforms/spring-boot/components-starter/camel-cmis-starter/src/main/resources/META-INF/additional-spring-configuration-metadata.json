@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.cmis.enabled",
+      "description": "Enable cmis component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

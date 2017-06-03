@@ -221,7 +221,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
         }
 
         // create the method info which has adapted to the pojo
-        AggregationStrategyBeanInfo bi = new AggregationStrategyBeanInfo(getCamelContext(), type, found);
+        AggregationStrategyBeanInfo bi = new AggregationStrategyBeanInfo(type, found);
         mi = bi.createMethodInfo();
 
         // in case the POJO is CamelContextAware

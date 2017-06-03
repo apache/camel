@@ -22,21 +22,26 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.processor.InterceptEndpointProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.URISupport;
 
 /**
- * Represents an XML &lt;interceptToEndpoint/&gt; element
+ * Intercepts messages being sent to an endpoint
  *
  * @version 
  */
-@XmlRootElement(name = "interceptToEndpoint")
+@Metadata(label = "configuration")
+@XmlRootElement(name = "interceptSendToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {
 
@@ -65,11 +70,6 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     }
 
     @Override
-    public String getShortName() {
-        return "interceptSendToEndpoint";
-    }
-
-    @Override
     public String getLabel() {
         return "interceptSendToEndpoint[" + uri + "]";
     }
@@ -88,6 +88,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     public Processor createProcessor(final RouteContext routeContext) throws Exception {
         // create the detour
         final Processor detour = this.createChildProcessor(routeContext, true);
+        final String matchURI = getUri();
 
         // register endpoint callback so we can proxy the endpoint
         routeContext.getCamelContext().addRegisterEndpointCallback(new EndpointStrategy() {
@@ -95,10 +96,10 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
                 if (endpoint instanceof InterceptSendToEndpoint) {
                     // endpoint already decorated
                     return endpoint;
-                } else if (getUri() == null || EndpointHelper.matchEndpoint(routeContext.getCamelContext(), uri, getUri())) {
+                } else if (matchURI == null || matchPattern(routeContext.getCamelContext(), uri, matchURI)) {
                     // only proxy if the uri is matched decorate endpoint with our proxy
                     // should be false by default
-                    boolean skip = isSkipSendToOriginalEndpoint();
+                    boolean skip = getSkipSendToOriginalEndpoint() != null && getSkipSendToOriginalEndpoint();
                     InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, skip);
                     proxy.setDetour(detour);
                     return proxy;
@@ -117,7 +118,30 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         List<ProcessorDefinition<?>> outputs = route.getOutputs();
         outputs.remove(this);
 
-        return new InterceptEndpointProcessor(uri, detour);
+        return new InterceptEndpointProcessor(matchURI, detour);
+    }
+
+    /**
+     * Does the uri match the pattern.
+     *
+     * @param camelContext the CamelContext
+     * @param uri the uri
+     * @param pattern the pattern, which can be an endpoint uri as well
+     * @return <tt>true</tt> if matched and we should intercept, <tt>false</tt> if not matched, and not intercept.
+     */
+    protected boolean matchPattern(CamelContext camelContext, String uri, String pattern) {
+        // match using the pattern as-is
+        boolean match = EndpointHelper.matchEndpoint(camelContext, uri, pattern);
+        if (!match) {
+            try {
+                // the pattern could be an uri, so we need to normalize it before matching again
+                pattern = URISupport.normalizeUri(pattern);
+                match = EndpointHelper.matchEndpoint(camelContext, uri, pattern);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return match;
     }
 
     /**
@@ -126,7 +150,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
      * @param predicate  the predicate
      * @return the builder
      */
-    public InterceptSendToEndpointDefinition when(Predicate predicate) {
+    public InterceptSendToEndpointDefinition when(@AsPredicate Predicate predicate) {
         WhenDefinition when = new WhenDefinition(predicate);
         addOutput(when);
         return this;
@@ -187,18 +211,21 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         return skipSendToOriginalEndpoint;
     }
 
+    /**
+     * If set to true then the message is not sent to the original endpoint.
+     * By default (false) the message is both intercepted and then sent to the original endpoint.
+     */
     public void setSkipSendToOriginalEndpoint(Boolean skipSendToOriginalEndpoint) {
         this.skipSendToOriginalEndpoint = skipSendToOriginalEndpoint;
     }
     
-    public boolean isSkipSendToOriginalEndpoint() {
-        return skipSendToOriginalEndpoint != null && skipSendToOriginalEndpoint;
-    }
-
     public String getUri() {
         return uri;
     }
 
+    /**
+     * Intercept sending to the uri or uri pattern.
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }

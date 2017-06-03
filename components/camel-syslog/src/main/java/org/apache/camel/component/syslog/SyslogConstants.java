@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.syslog;
 
 public final class SyslogConstants {
@@ -23,6 +22,7 @@ public final class SyslogConstants {
      * The socket address of local machine that received the message.
      */
     public static final String SYSLOG_LOCAL_ADDRESS = "CamelSyslogLocalAddress";
+
     /**
      * The socket address of the remote machine that send the message.
      */

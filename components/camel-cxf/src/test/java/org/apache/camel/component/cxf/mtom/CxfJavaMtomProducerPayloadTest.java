@@ -26,7 +26,8 @@ import org.junit.Test;
 
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
     protected static final String MTOM_ENDPOINT_URI_MTOM_ENABLE = 
-        MTOM_ENDPOINT_URI + "&properties.mtom-enabled=true";
+        MTOM_ENDPOINT_URI + "&properties.mtom-enabled=true"
+        + "&defaultOperationName=Detail";
     
     @SuppressWarnings("unchecked")
     @Test

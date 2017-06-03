@@ -27,8 +27,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 
  */
 public class EventRouteTest extends SpringTestSupport {
+
     protected Object expectedBody = "Hello there!";
-    protected String uri = "spring-event:default";
+    protected String uri = "spring-event:foo";
 
     public void testSendingCamelExchangeToEndpointResultsInValidApplicationEventAfterTheRefreshEvent() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);

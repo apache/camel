@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.mustache.enabled",
+      "description": "Enable mustache component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

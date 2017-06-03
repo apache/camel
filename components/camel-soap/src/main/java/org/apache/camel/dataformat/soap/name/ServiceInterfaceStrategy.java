@@ -96,7 +96,6 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         // parameter types are returned in declaration order
         Class<?>[] types = method.getParameterTypes();
         if (types.length == 0) {
-            typeInfos.add(new TypeInfo(null, null));
             return typeInfos;
         }
         if (requestWrapper != null && requestWrapper.className() != null) {
@@ -140,7 +139,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
      * Determines how the parameter object of the service method will be named
      * in xml. It will use either the RequestWrapper annotation of the method if
      * present or the WebParam method of the parameter.
-     * 
+     *
      * @param method
      */
     private MethodInfo analyzeMethod(Method method) {
@@ -158,13 +157,15 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             MethodInfo info = analyzeMethod(method);
             for (int i = 0; i < info.getIn().length; i++) {
                 TypeInfo ti = info.getIn()[i];
-                if (inTypeNameToQName.containsKey(ti.getTypeName())
-                    && (!(ti.getTypeName().equals("javax.xml.ws.Holder")))
-                    && (!(inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())))) {
-                    LOG.warn("Ambiguous QName mapping. The type [ "
-                                                    + ti.getTypeName()
-                                                    + " ] is already mapped to a QName in this context.");
-                    continue;
+                if (inTypeNameToQName.containsKey(ti.getTypeName())) {
+                    if (ti.getTypeName() != null) {
+                        if (!(ti.getTypeName().equals("javax.xml.ws.Holder"))
+                            && (!(inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())))) {
+                            LOG.warn("Ambiguous QName mapping. The type [ " + ti.getTypeName()
+                                     + " ] is already mapped to a QName in this context.");
+                            continue;
+                        }
+                    }
                 }
                 inTypeNameToQName.put(ti.getTypeName(), ti.getElName());
             }

@@ -115,16 +115,17 @@ public final class SmppUtils {
         }
     }
 
-    public static Alphabet parseAlphabetFromDataCoding(byte dataCoding) {
-        /* Both the 3.4 and 5.0 SMPP specs clearly state that 0x02 is
-         * 'Octet-unspecified (8-bit)', but jsmpp doesn't account for this for
-         * some reason.
-         */
-        return dataCoding == 0x02
-            ? Alphabet.ALPHA_8_BIT
-            : Alphabet.valueOf((byte)(dataCoding & Alphabet.MASK_ALPHABET));
+    public static boolean is8Bit(Alphabet alphabet) {
+        return alphabet == Alphabet.ALPHA_UNSPECIFIED_2 || alphabet == Alphabet.ALPHA_8_BIT;
     }
 
+    /**
+     * Decides if the characters in the argument are GSM 3.38 encodeable.
+     * @param aMessage must be a set of characters encoded in ISO-8859-1
+     *                 or a compatible character set.  In particular,
+     *                 UTF-8 encoded text should not be passed to this method.
+     * @return true if the characters can be represented in GSM 3.38
+     */
     public static boolean isGsm0338Encodeable(byte[] aMessage) {
     outer:
         for (int i = 0; i < aMessage.length; i++) {
@@ -153,7 +154,7 @@ public final class SmppUtils {
         dest.setDestAddrNpi(src.getDestAddrNpi());
         dest.setDestAddrTon(src.getDestAddrTon());
         dest.setEsmClass(src.getEsmClass());
-        dest.setOptionalParametes(src.getOptionalParametes());
+        dest.setOptionalParameters(src.getOptionalParameters());
         dest.setPriorityFlag(src.getPriorityFlag());
         dest.setProtocolId(src.getProtocolId());
         dest.setRegisteredDelivery(src.getRegisteredDelivery());
@@ -244,7 +245,7 @@ public final class SmppUtils {
         dest.setDestAddrNpi(src.getDestAddrNpi());
         dest.setDestAddrTon(src.getDestAddrTon());
         dest.setEsmClass(src.getEsmClass());
-        dest.setOptionalParametes(src.getOptionalParametes());
+        dest.setOptionalParameters(src.getOptionalParameters());
         dest.setRegisteredDelivery(src.getRegisteredDelivery());
         dest.setSequenceNumber(src.getSequenceNumber());
         dest.setServiceType(src.getServiceType());

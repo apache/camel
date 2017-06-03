@@ -43,7 +43,7 @@ public class DynamicRouter extends RoutingSlip {
     }
 
     @Override
-    protected RoutingSlipIterator createRoutingSlipIterator(Exchange exchange) throws Exception {
+    protected RoutingSlipIterator createRoutingSlipIterator(Exchange exchange, Expression expression) throws Exception {
         return new DynamicRoutingSlipIterator(expression);
     }
 

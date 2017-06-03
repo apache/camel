@@ -75,7 +75,9 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // lets setup the heartbeats
-                from("bean:service1?method=status").to("activemq:topic:registry.heartbeats");
+                from("timer:heartbeats?delay=100")
+                    .to("bean:service1?method=status")
+                    .to("activemq:topic:registry.heartbeats");
 
                 // defer shutting this route down as the first route depends upon it to
                 // be running so it can complete its current exchanges

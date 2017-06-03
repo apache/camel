@@ -20,6 +20,7 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Service;
 
 /**
@@ -64,6 +65,15 @@ public interface ManagementAgent extends Service {
      * @return <tt>true</tt> if registered
      */
     boolean isRegistered(ObjectName name);
+
+    /**
+     * Creates a new proxy client
+     *
+     * @param name   the mbean name
+     * @param mbean  the client interface, such as from the {@link org.apache.camel.api.management.mbean} package.
+     * @return the client or <tt>null</tt> if mbean does not exists
+     */
+    <T> T newProxyClient(ObjectName name, Class<T> mbean);
 
     /**
      * Get the MBeanServer which hosts managed objects.
@@ -259,4 +269,100 @@ public interface ManagementAgent extends Service {
      * This option is default <tt>false</tt>.
      */
     void setMask(Boolean sanitize);
+
+    /**
+     * Gets whether host name is included in MBean names.
+     *
+     * @return <tt>true</tt> if included
+     */
+    Boolean getIncludeHostName();
+
+    /**
+     * Sets whether to include host name in the {@link ManagementNamingStrategy}.
+     * <p/>
+     * By default this is turned off from Camel 2.13 onwards, but this option
+     * can be set to <tt>true</tt> to include the hostname as Camel 2.12 or
+     * older releases does.
+     *
+     * @param includeHostName <tt>true</tt> to include host name in the MBean names.
+     */
+    void setIncludeHostName(Boolean includeHostName);
+
+    /**
+     * The naming pattern for creating the CamelContext management name.
+     * <p/>
+     * The default pattern is <tt>#name#</tt>
+     */
+    String getManagementNamePattern();
+
+    /**
+     * The naming pattern for creating the CamelContext management name.
+     * <p/>
+     * The default pattern is <tt>#name#</tt>
+     */
+    void setManagementNamePattern(String managementNamePattern);
+
+    /**
+     * Sets whether load statistics is enabled (gathers load statistics using a background thread per CamelContext).
+     * <p/>
+     * The default value is <tt>false</tt>
+     *
+     * @param flag <tt>true</tt> to enable load statistics
+     */
+    void setLoadStatisticsEnabled(Boolean flag);
+
+    /**
+     * Gets whether load statistics is enabled
+     *
+     * @return <tt>true</tt> if enabled
+     */
+    Boolean getLoadStatisticsEnabled();
+
+    /**
+     * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
+     * <p/>
+     * The default value is <tt>false</tt>
+     *
+     * @param flag <tt>true</tt> to enable endpoint runtime statistics
+     */
+    void setEndpointRuntimeStatisticsEnabled(Boolean flag);
+
+    /**
+     * Gets whether endpoint runtime statistics is enabled
+     *
+     * @return <tt>true</tt> if enabled
+     */
+    Boolean getEndpointRuntimeStatisticsEnabled();
+
+    /**
+     * Sets the statistics level
+     * <p/>
+     * Default is {@link org.apache.camel.ManagementStatisticsLevel#Default}
+     * <p/>
+     * The level can be set to <tt>Extended</tt> to gather additional information
+     *
+     * @param level the new level
+     */
+    void setStatisticsLevel(ManagementStatisticsLevel level);
+
+    /**
+     * Gets the statistics level
+     *
+     * @return the level
+     */
+    ManagementStatisticsLevel getStatisticsLevel();
+    
+    /**
+     * Gets whether host IP Address to be used instead of host name.
+     *
+     * @return <tt>true</tt> if included
+     */
+    Boolean getUseHostIPAddress();
+
+    /**
+     * Sets whether to use host IP Address 
+     * @param useHostIPAddress <tt>true</tt> to use IP Address.
+     */
+    void setUseHostIPAddress(Boolean useHostIPAddress);
+
 }

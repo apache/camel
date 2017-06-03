@@ -44,13 +44,13 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
         Thread.sleep(3000);
         log.info("==== stopping route foo ====");
         context.stopRoute("foo");
-        watch.stop();
+        long taken = watch.taken();
 
         getMockEndpoint("mock:deadLetter").assertIsSatisfied();
 
         log.info("OnRedelivery processor counter {}", counter.get());
 
-        assertTrue("Should stop route faster, was " + watch.taken(), watch.taken() < 7000);
+        assertTrue("Should stop route faster, was " + taken, taken < 7000);
         assertTrue("Redelivery counter should be >= 2 and < 12, was: " + counter.get(), counter.get() >= 2 && counter.get() < 12);
     }
 

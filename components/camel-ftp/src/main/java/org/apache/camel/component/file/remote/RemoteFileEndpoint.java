@@ -24,8 +24,8 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileProducer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -33,10 +33,17 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
+    @UriParam(label = "advanced")
     private int maximumReconnectAttempts = 3;
+    @UriParam(label = "advanced")
     private long reconnectDelay = 1000;
+    @UriParam(label = "common")
     private boolean disconnect;
+    @UriParam(label = "producer,advanced")
+    private boolean disconnectOnBatchComplete;   
+    @UriParam(label = "common,advanced")
     private boolean fastExistsCheck;
+    @UriParam(label = "consumer,advanced")
     private boolean download = true;
 
     public RemoteFileEndpoint() {
@@ -44,6 +51,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         // for ftp we need to use higher interval/checkout that for files
         setReadLockTimeout(20000);
         setReadLockCheckInterval(5000);
+        // explicitly set RemoteFilePollingConsumerPollStrategy otherwise
+        // DefaultPollingConsumerPollStrategy is be used
+        setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
     public RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileConfiguration configuration) {
@@ -52,6 +62,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         // for ftp we need to use higher interval/checkout that for files
         setReadLockTimeout(20000);
         setReadLockCheckInterval(5000);
+        // explicitly set RemoteFilePollingConsumerPollStrategy otherwise
+        // DefaultPollingConsumerPollStrategy is be used
+        setPollStrategy(new RemoteFilePollingConsumerPollStrategy());
     }
 
     @Override
@@ -61,7 +74,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     @Override
     public Exchange createExchange(GenericFile<T> file) {
-        Exchange answer = new DefaultExchange(this);
+        Exchange answer = super.createExchange();
         if (file != null) {
             file.bindToExchange(answer);
         }
@@ -177,6 +190,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         return maximumReconnectAttempts;
     }
 
+    /**
+     * Specifies the maximum reconnect attempts Camel performs when it tries to connect to the remote FTP server. Use 0 to disable this behavior.
+     */
     public void setMaximumReconnectAttempts(int maximumReconnectAttempts) {
         this.maximumReconnectAttempts = maximumReconnectAttempts;
     }
@@ -185,6 +201,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         return reconnectDelay;
     }
 
+    /**
+     * Delay in millis Camel will wait before performing a reconnect attempt.
+     */
     public void setReconnectDelay(long reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }
@@ -193,14 +212,38 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         return disconnect;
     }
 
+    /**
+     * Whether or not to disconnect from remote FTP server right after use.
+     * Disconnect will only disconnect the current connection to the FTP server.
+     * If you have a consumer which you want to stop, then you need to stop the consumer/route instead.
+     */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
+    }
+
+    public boolean isDisconnectOnBatchComplete() {
+        return disconnectOnBatchComplete;
+    }
+
+    /**
+     * Whether or not to disconnect from remote FTP server right after a Batch upload is complete.
+     * disconnectOnBatchComplete will only disconnect the current connection to the FTP server.
+     */
+    public void setDisconnectOnBatchComplete(boolean disconnectOnBatchComplete) {
+        this.disconnectOnBatchComplete = disconnectOnBatchComplete;
     }
 
     public boolean isFastExistsCheck() {
         return fastExistsCheck;
     }
 
+    /**
+     * If set this option to be true, camel-ftp will use the list file directly to check if the file exists.
+     * Since some FTP server may not support to list the file directly, if the option is false,
+     * camel-ftp will use the old way to list the directory and check if the file exists.
+     * This option also influences readLock=changed to control whether it performs a fast check to update file information or not.
+     * This can be used to speed up the process if the FTP server has a lot of files.
+     */
     public void setFastExistsCheck(boolean fastExistsCheck) {
         this.fastExistsCheck = fastExistsCheck;
     }
@@ -209,6 +252,11 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         return this.download;
     }
 
+    /**
+     * Whether the FTP consumer should download the file.
+     * If this option is set to false, then the message body will be null, but the consumer will still trigger a Camel
+     * Exchange that has details about the file such as file name, file size, etc. It's just that the file will not be downloaded.
+     */
     public void setDownload(boolean download) {
         this.download = download;
     }

@@ -16,22 +16,26 @@
  */
 package org.apache.camel.component.salesforce.internal.dto;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Salesforce Enumeration DTO for picklist NotifyForFields
  */
 public enum NotifyForFieldsEnum {
 
-    SELECT("Select"),
-    WHERE("Where"),
+    // All
+    ALL("All"),
+    // Referenced
     REFERENCED("Referenced"),
-    ALL("All");
+    // Select
+    SELECT("Select"),
+    // Where
+    WHERE("Where");
 
     final String value;
 
-    private NotifyForFieldsEnum(String value) {
+    NotifyForFieldsEnum(String value) {
         this.value = value;
     }
 

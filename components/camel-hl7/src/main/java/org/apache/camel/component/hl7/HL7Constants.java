@@ -32,6 +32,8 @@ public final class HL7Constants {
     public static final String HL7_MESSAGE_CONTROL = "CamelHL7MessageControl";
     public static final String HL7_PROCESSING_ID = "CamelHL7ProcessingId";
     public static final String HL7_VERSION_ID = "CamelHL7VersionId";
+    public static final String HL7_CONTEXT = "CamelHL7Context";
+    public static final String HL7_CHARSET = "CamelHL7Charset";
 
     private HL7Constants() {
     }

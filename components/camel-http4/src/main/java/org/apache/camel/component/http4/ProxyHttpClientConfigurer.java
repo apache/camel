@@ -21,9 +21,8 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * Strategy for configuring the HttpClient with a proxy
@@ -52,8 +51,8 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
         this.ntHost = ntHost;
     }
 
-    public void configureHttpClient(HttpClient client) {
-        client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(host, port, scheme));
+    public void configureHttpClient(HttpClientBuilder clientBuilder) {
+        clientBuilder.setProxy(new HttpHost(host, port, scheme));
 
         if (username != null && password != null) {
             Credentials defaultcreds;
@@ -62,7 +61,11 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
             } else {
                 defaultcreds = new UsernamePasswordCredentials(username, password);
             }
-            ((DefaultHttpClient) client).getCredentialsProvider().setCredentials(AuthScope.ANY, defaultcreds);
+            BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, defaultcreds);
+            clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
     }
+
+
 }

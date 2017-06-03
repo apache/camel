@@ -68,10 +68,8 @@ public class FtpSimpleConsumeStreamingPartialReadTest extends FtpServerTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // notice we use an absolute starting path: /tmp/mytemp
-                // - we must remember to use // slash because of the url separator
                 from("ftp://localhost:" + getPort()
-                         + "//tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true"
+                         + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true&streamDownload=true"
                          + "&move=done&moveFailed=failed")
                     .routeId("foo").noAutoStartup()
                     .process(new Processor() {

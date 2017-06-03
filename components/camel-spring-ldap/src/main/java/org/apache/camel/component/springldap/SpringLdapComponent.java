@@ -20,14 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Registry;
 import org.springframework.ldap.core.LdapTemplate;
 
 /**
  * Creates endpoints for the Spring LDAP component.
  */
-public class SpringLdapComponent extends DefaultComponent {
+public class SpringLdapComponent extends UriEndpointComponent {
+
+    public SpringLdapComponent() {
+        super(SpringLdapEndpoint.class);
+    }
 
     /**
      * creates a Spring LDAP endpoint
@@ -37,17 +41,14 @@ public class SpringLdapComponent extends DefaultComponent {
      * 'operation' is defined in org.apache.camel.component.springldap.LdapOperation.
      * 'scope' must be one of "object", "onelevel", or "subtree".
      */
-    
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining,
-            Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CamelContext camelContext = getCamelContext();
+
         Registry registry = camelContext.getRegistry();
-        LdapTemplate ldapTemplate = registry.lookupByNameAndType(remaining,
-                LdapTemplate.class);
+        LdapTemplate ldapTemplate = registry.lookupByNameAndType(remaining, LdapTemplate.class);
 
         Endpoint endpoint = new SpringLdapEndpoint(remaining, ldapTemplate);
-
         setProperties(endpoint, parameters);
         return endpoint;
     }

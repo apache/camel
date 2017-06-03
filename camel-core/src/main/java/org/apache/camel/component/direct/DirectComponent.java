@@ -20,23 +20,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * Represents the component that manages {@link DirectEndpoint}. It holds the
- * list of named direct endpoints.
+ * The <a href="http://camel.apache.org/direct.html">Direct Component</a> manages {@link DirectEndpoint} and holds the list of named direct endpoints.
  *
- * @version 
+ * @version
  */
-public class DirectComponent extends DefaultComponent {
+public class DirectComponent extends UriEndpointComponent {
 
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
     // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
     private final Map<String, DirectConsumer> consumers = new HashMap<String, DirectConsumer>();
+    @Metadata(label = "producer")
     private boolean block;
+    @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
+
+    public DirectComponent() {
+        super(DirectEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DirectEndpoint endpoint = new DirectEndpoint(uri, this, consumers);
@@ -57,6 +63,10 @@ public class DirectComponent extends DefaultComponent {
         return block;
     }
 
+    /**
+     * If sending a message to a direct endpoint which has no active consumer,
+     * then we can tell the producer to block and wait for the consumer to become active.
+     */
     public void setBlock(boolean block) {
         this.block = block;
     }
@@ -65,6 +75,9 @@ public class DirectComponent extends DefaultComponent {
         return timeout;
     }
 
+    /**
+     * The timeout value to use if block is enabled.
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }

@@ -59,6 +59,7 @@ public class DefaultCamelContextNameStrategy implements CamelContextNameStrategy
     }
 
     public static int getNextCounter() {
+        // we want to start counting from 1, so increment first
         return CONTEXT_COUNTER.incrementAndGet();
     }
 

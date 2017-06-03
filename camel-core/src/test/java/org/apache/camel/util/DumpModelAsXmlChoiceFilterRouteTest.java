@@ -26,17 +26,17 @@ import org.apache.camel.model.ModelHelper;
 public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
 
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myRoute"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
         assertTrue(xml.contains("<header>gold</header>"));
         assertTrue(xml.contains("<header>extra-gold</header>"));
-        assertTrue(xml.contains("<simple>${body} contains Camel</simple>"));
+        assertTrue(xml.contains("<simple>${body} contains 'Camel'</simple>"));
     }
 
     public void testDumpModelAsXmAl() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("a"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("a"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -57,7 +57,7 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
                             .filter().header("extra-gold")
                                 .to("mock:extra-gold")
                             .endChoice()
-                        .when().simple("${body} contains Camel")
+                        .when().simple("${body} contains 'Camel'")
                             .to("mock:camel")
                         .otherwise()
                             .to("mock:other")

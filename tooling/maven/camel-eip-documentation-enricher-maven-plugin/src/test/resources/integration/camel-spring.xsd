@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://camel.apache.org/schema/spring" elementFormDefault="qualified" targetNamespace="http://camel.apache.org/schema/spring" version="1.0">
+
+  <xs:element name="aop" type="tns:aopDefinition">
+
+  </xs:element>
+
+  <xs:complexType name="aopDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:output">
+        <xs:sequence/>
+        <xs:attribute name="beforeUri" type="xs:string">
+        </xs:attribute>
+        <xs:attribute name="afterUri" type="xs:string">
+        </xs:attribute>
+        <xs:attribute name="afterFinallyUri" type="xs:string">
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="skip"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="output">
+    <xs:complexContent>
+      <xs:extension base="tns:processorDefinition">
+        <xs:sequence>
+          <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element ref="tns:aop"/>
+            <xs:element ref="tns:aggregate"/>
+            <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:doCatch"/>
+            <xs:element ref="tns:when"/>
+            <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:otherwise"/>
+            <xs:element ref="tns:convertBodyTo"/>
+            <xs:element ref="tns:delay"/>
+            <xs:element ref="tns:dynamicRouter"/>
+            <xs:element ref="tns:enrich"/>
+            <xs:element ref="tns:filter"/>
+            <xs:element ref="tns:doFinally"/>
+            <xs:element ref="tns:idempotentConsumer"/>
+            <xs:element ref="tns:inOnly"/>
+            <xs:element ref="tns:inOut"/>
+            <xs:element ref="tns:intercept"/>
+            <xs:element ref="tns:interceptFrom"/>
+            <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:loadBalance"/>
+            <xs:element ref="tns:log"/>
+            <xs:element ref="tns:loop"/>
+            <xs:element ref="tns:marshal"/>
+            <xs:element ref="tns:multicast"/>
+            <xs:element ref="tns:onCompletion"/>
+            <xs:element ref="tns:onException"/>
+            <xs:element ref="tns:pipeline"/>
+            <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:pollEnrich"/>
+            <xs:element ref="tns:process"/>
+            <xs:element ref="tns:recipientList"/>
+            <xs:element ref="tns:removeHeader"/>
+            <xs:element ref="tns:removeHeaders"/>
+            <xs:element ref="tns:removeProperties"/>
+            <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:rollback"/>
+            <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routingSlip"/>
+            <xs:element ref="tns:sample"/>
+            <xs:element ref="tns:setBody"/>
+            <xs:element ref="tns:setExchangePattern"/>
+            <xs:element ref="tns:setFaultBody"/>
+            <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setOutHeader"/>
+            <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:sort"/>
+            <xs:element ref="tns:split"/>
+            <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
+            <xs:element ref="tns:throwException"/>
+            <xs:element ref="tns:to"/>
+            <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transform"/>
+            <xs:element ref="tns:doTry"/>
+            <xs:element ref="tns:unmarshal"/>
+            <xs:element ref="tns:validate"/>
+            <xs:element ref="tns:whenSkipSendToEndpoint"/>
+            <xs:element ref="tns:wireTap"/>
+            <xs:element ref="tns:restBinding"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="skip"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType abstract="true" name="processorDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:optionalIdentifiedDefinition">
+        <xs:sequence/>
+        <xs:attribute name="inheritErrorHandler" type="xs:boolean"/>
+        <xs:anyAttribute namespace="##other" processContents="skip"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType abstract="true" name="optionalIdentifiedDefinition">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:description"/>
+    </xs:sequence>
+    <xs:attribute name="customId" type="xs:boolean"/>
+    <xs:attribute name="id" type="xs:string">
+    </xs:attribute>
+  </xs:complexType>
+</xs:schema>

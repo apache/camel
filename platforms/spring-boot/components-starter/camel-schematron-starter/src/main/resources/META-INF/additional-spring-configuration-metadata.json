@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.schematron.enabled",
+      "description": "Enable schematron component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

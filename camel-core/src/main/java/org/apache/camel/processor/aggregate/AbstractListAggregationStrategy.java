@@ -62,7 +62,7 @@ public abstract class AbstractListAggregationStrategy<V> implements CompletionAw
 
     @SuppressWarnings("unchecked")
     public void onCompletion(Exchange exchange) {
-        if (isStoreAsBodyOnCompletion()) {
+        if (exchange != null && isStoreAsBodyOnCompletion()) {
             List<V> list = (List<V>) exchange.removeProperty(Exchange.GROUPED_EXCHANGE);
             if (list != null) {
                 exchange.getIn().setBody(list);
@@ -100,7 +100,7 @@ public abstract class AbstractListAggregationStrategy<V> implements CompletionAw
     private List<V> getList(Exchange exchange) {
         List<V> list = exchange.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
         if (list == null) {
-            list = new GroupedExchangeList();
+            list = new GroupedExchangeList<V>();
             exchange.setProperty(Exchange.GROUPED_EXCHANGE, list);
         }
         return list;
@@ -109,7 +109,9 @@ public abstract class AbstractListAggregationStrategy<V> implements CompletionAw
     /**
      * A list to contains grouped {@link Exchange}s.
      */
-    private static final class GroupedExchangeList extends ArrayList {
+    private static final class GroupedExchangeList<E> extends ArrayList<E> {
+
+        private static final long serialVersionUID = 1L;
 
         @Override
         public String toString() {

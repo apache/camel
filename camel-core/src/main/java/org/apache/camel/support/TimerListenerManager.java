@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
  * leaking memory.
  *
  * @see TimerListener
+ * @see org.apache.camel.management.ManagedLoadTimer
  */
 public class TimerListenerManager extends ServiceSupport implements Runnable, CamelContextAware, StaticService {
 

@@ -109,19 +109,18 @@ public interface ShutdownStrategy extends StaticService {
     /**
      * Set an timeout to wait for the shutdown to complete.
      * <p/>
-     * Setting a value of 0 or negative will disable timeout and wait until complete
-     * (potential blocking forever)
+     * You must set a positive value. If you want to wait (forever) then use
+     * a very high value such as {@link Long#MAX_VALUE}
      * <p/>
      * The default timeout unit is <tt>SECONDS</tt>
      *
+     * @throws IllegalArgumentException if the timeout value is 0 or negative
      * @param timeout timeout
      */
     void setTimeout(long timeout);
 
     /**
      * Gets the timeout.
-     * <p/>
-     * Use positive value to set the timeout
      * <p/>
      * The default timeout unit is <tt>SECONDS</tt>
      *
@@ -202,6 +201,20 @@ public interface ShutdownStrategy extends StaticService {
      * @return <tt>true</tt> if routes should be shutdown in reverse order.
      */
     boolean isShutdownRoutesInReverseOrder();
+
+    /**
+     * Sets whether to log information about the inflight {@link org.apache.camel.Exchange}s which are still running
+     * during a shutdown which didn't complete without the given timeout.
+     *
+     * @param logInflightExchangesOnTimeout <tt>true</tt> to log information about the inflight exchanges, <tt>false</tt> to not log
+     */
+    void setLogInflightExchangesOnTimeout(boolean logInflightExchangesOnTimeout);
+
+    /**
+     * Whether to log information about the inflight {@link org.apache.camel.Exchange}s which are still running
+     * during a shutdown which didn't complete without the given timeout.
+     */
+    boolean isLogInflightExchangesOnTimeout();
 
     /**
      * Whether a service is forced to shutdown.

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.customerrelations;
+import org.apache.camel.util.IOHelper;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,12 +41,7 @@ public class CustomerServicesWsAddressingTest extends Assert {
             assertNotNull("We should get Customer here", customer);
         } finally {
             // we're done so let's properly close the application context
-            if (clientContext != null) {
-                clientContext.close();
-            }
-            if (serverContext != null) {
-                serverContext.close();
-            }
+            IOHelper.close(clientContext, serverContext);
         }
     }
 

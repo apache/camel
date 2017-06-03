@@ -94,7 +94,7 @@ public class Key extends org.apache.avro.specific.SpecificRecordBase implements 
     private Builder(org.apache.camel.avro.generated.Key other) {
             super(org.apache.camel.avro.generated.Key.SCHEMA$);
       if (isValidValue(fields()[0], other.key)) {
-        this.key = (java.lang.CharSequence) data().deepCopy(fields()[0].schema(), other.key);
+        this.key = data().deepCopy(fields()[0].schema(), other.key);
         fieldSetFlags()[0] = true;
       }
     }

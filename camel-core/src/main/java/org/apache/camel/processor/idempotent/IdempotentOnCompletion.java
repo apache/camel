@@ -17,6 +17,7 @@
 package org.apache.camel.processor.idempotent;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.ExchangeIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.ExchangeHelper;
@@ -67,9 +68,17 @@ public class IdempotentOnCompletion implements Synchronization {
     protected void onCompletedMessage(Exchange exchange, String messageId) {
         if (!eager) {
             // if not eager we should add the key when its complete
-            idempotentRepository.add(messageId);
+            if (idempotentRepository instanceof ExchangeIdempotentRepository) {
+                ((ExchangeIdempotentRepository<String>) idempotentRepository).add(exchange, messageId);
+            } else {
+                idempotentRepository.add(messageId);
+            }
         }
-        idempotentRepository.confirm(messageId);
+        if (idempotentRepository instanceof ExchangeIdempotentRepository) {
+            ((ExchangeIdempotentRepository<String>) idempotentRepository).confirm(exchange, messageId);
+        } else {
+            idempotentRepository.confirm(messageId);
+        }
     }
 
     /**
@@ -81,7 +90,11 @@ public class IdempotentOnCompletion implements Synchronization {
      */
     protected void onFailedMessage(Exchange exchange, String messageId) {
         if (removeOnFailure) {
-            idempotentRepository.remove(messageId);
+            if (idempotentRepository instanceof ExchangeIdempotentRepository) {
+                ((ExchangeIdempotentRepository<String>) idempotentRepository).remove(exchange, messageId);
+            } else {
+                idempotentRepository.remove(messageId);
+            }
             LOG.debug("Removed from repository as exchange failed: {} with id: {}", exchange, messageId);
         }
     }

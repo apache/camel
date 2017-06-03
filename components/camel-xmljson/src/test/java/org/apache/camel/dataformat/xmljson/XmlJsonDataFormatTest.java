@@ -27,29 +27,34 @@ import javax.xml.transform.sax.SAXSource;
 import org.w3c.dom.Document;
 
 import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
 /**
  * Basic tests for the XML JSON data format
  */
-public class XmlJsonDataFormatTest extends CamelTestSupport {
+public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
 
     @Test
     public void testMarshalAndUnmarshal() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.xml");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockJSON = getMockEndpoint("mock:json");
         mockJSON.expectedMessageCount(1);
+        mockJSON.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/json");
         mockJSON.message(0).body().isInstanceOf(byte[].class);
 
         MockEndpoint mockXML = getMockEndpoint("mock:xml");
         mockXML.expectedMessageCount(1);
+        mockXML.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
         mockXML.message(0).body().isInstanceOf(String.class);
 
         Object json = template.requestBody("direct:marshal", in);
@@ -65,7 +70,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testUnmarshalJSONObject() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.json");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.json");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
         JSON json = JSONSerializer.toJSON(in);
 
@@ -82,11 +87,11 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testMarshalXMLSources() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.xml");
         DOMSource inDOM = context.getTypeConverter().convertTo(DOMSource.class, inStream);
-        inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        inStream = getClass().getResourceAsStream("testMessage1.xml");
         SAXSource inSAX = context.getTypeConverter().convertTo(SAXSource.class, inStream);
-        inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        inStream = getClass().getResourceAsStream("testMessage1.xml");
         Document inDocument = context.getTypeConverter().convertTo(Document.class, inStream);
 
         // save the expected body of the message to set it later
@@ -114,7 +119,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testMarshalAndUnmarshalInline() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.xml");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockJSON = getMockEndpoint("mock:jsonInline");
@@ -138,7 +143,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testNamespacesDroppedInlineWithOptions() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage2-namespaces.xml");
+        InputStream inStream = getClass().getResourceAsStream("testMessage2-namespaces.xml");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockJSON = getMockEndpoint("mock:jsonInlineOptions");
@@ -162,7 +167,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testUnmarshalToXMLInlineOptions() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.json");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.json");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockXML = getMockEndpoint("mock:xmlInlineOptions");
@@ -175,6 +180,32 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
         assertEquals("The number of direct child elements of newRoot with tag d (expandable property) is not 3", 3, document.getDocumentElement().getElementsByTagName("d").getLength());
         assertEquals("The number of direct child elements of newRoot with tag e (expandable property) is not 3", 3, document.getDocumentElement().getElementsByTagName("e").getLength());
         mockXML.assertIsSatisfied();
+    }
+
+    @Test
+    public void testJsonArraysToXml() throws Exception {
+        MockEndpoint mockXML = getMockEndpoint("mock:xmlInlineOptionsArray");
+        mockXML.expectedMessageCount(1);
+        mockXML.message(0).body().isInstanceOf(String.class);
+
+        Object marshalled = template.requestBody("direct:unmarshalInlineOptionsArray", "[1, 2, 3, 4]");
+        Document document = context.getTypeConverter().convertTo(Document.class, marshalled);
+        assertEquals("There should be exactly 4 XML elements with tag 'el' (each array element)", 4, document.getDocumentElement().getElementsByTagName("el").getLength());
+        assertEquals("The document root should be named 'ar' (the array root)", "ar", document.getDocumentElement().getLocalName());
+        mockXML.assertIsSatisfied();
+    }
+
+    @Test
+    public void testXmlArraysToJson() throws Exception {
+        MockEndpoint mockJSON = getMockEndpoint("mock:jsonInlineOptionsArray");
+        mockJSON.expectedMessageCount(1);
+        mockJSON.message(0).body().isInstanceOf(byte[].class);
+
+        Object json = template.requestBody("direct:marshalInlineOptionsArray", "<ar><el>1</el><el>2</el><el>3</el><el>4</el></ar>");
+        String jsonString = context.getTypeConverter().convertTo(String.class, json);
+        JSONArray array = (JSONArray) JSONSerializer.toJSON(jsonString);
+        assertTrue("Expected a JSON array with string elements: 1, 2, 3, 4", array.containsAll(Arrays.asList("1", "2", "3", "4")));
+        mockJSON.assertIsSatisfied();
     }
 
     @Override
@@ -191,7 +222,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
 
                 // from XML to JSON - inline dataformat
                 from("direct:marshalInline").marshal().xmljson().to("mock:jsonInline");
-                // form JSON to XML - inline dataformat
+                // from JSON to XML - inline dataformat
                 from("direct:unmarshalInline").unmarshal().xmljson().to("mock:xmlInline");
                 
                 Map<String, String> xmlJsonOptions = new HashMap<String, String>();
@@ -205,8 +236,18 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
 
                 // from XML to JSON - inline dataformat w/ options
                 from("direct:marshalInlineOptions").marshal().xmljson(xmlJsonOptions).to("mock:jsonInlineOptions");
-                // form JSON to XML - inline dataformat w/ options
+                // from JSON to XML - inline dataformat w/ options
                 from("direct:unmarshalInlineOptions").unmarshal().xmljson(xmlJsonOptions).to("mock:xmlInlineOptions");
+
+                Map<String, String> xmlJsonOptionsArrays = new HashMap<String, String>();
+                xmlJsonOptionsArrays.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.ELEMENT_NAME, "el");
+                xmlJsonOptionsArrays.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.ARRAY_NAME, "ar");
+
+                // from XML arrays to JSON - inline dataformat w/ options
+                from("direct:marshalInlineOptionsArray").marshal().xmljson(xmlJsonOptionsArrays).to("mock:jsonInlineOptionsArray");
+                // from JSON arrays to XML - inline dataformat w/ options
+                from("direct:unmarshalInlineOptionsArray").unmarshal().xmljson(xmlJsonOptionsArrays).to("mock:xmlInlineOptionsArray");
+
 
             }
         };

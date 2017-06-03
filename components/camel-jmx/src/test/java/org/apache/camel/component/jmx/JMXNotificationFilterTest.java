@@ -69,13 +69,15 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
         return super.buildFromURI().withNotificationFilter("#myFilter").withFormat("raw");
     }
 
-    @SuppressWarnings("serial")
     @Override
     protected void initRegistry() {
         super.initRegistry();
 
         // initialize the registry with our filter
         getRegistry().put("myFilter", new NotificationFilter() {
+
+            private static final long serialVersionUID = 1L;
+
             public boolean isNotificationEnabled(Notification aNotification) {
                 // only accept even notifications
                 boolean enabled = aNotification.getSequenceNumber() % 2 == 0;

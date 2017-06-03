@@ -52,6 +52,12 @@ public class TrustManagersParameters extends JsseParameters {
      * standard algorithm names.
      */
     protected String algorithm;
+
+    /**
+     * To use a existing configured trust manager instead of using {@link TrustManagerFactory} to
+     * get the {@link TrustManager}.
+     */
+    protected TrustManager trustManager;
     
     /**
      * Creates {@link TrustManager}s based on this instance's configuration and the
@@ -70,6 +76,10 @@ public class TrustManagersParameters extends JsseParameters {
      * @see KeyStoreParameters#createKeyStore()
      */
     public TrustManager[] createTrustManagers() throws GeneralSecurityException, IOException {
+        if (trustManager != null) {
+            // use existing trust manager
+            return new TrustManager[]{trustManager};
+        }
         
         LOG.trace("Creating TrustManager[] from TrustManagersParameters [{}]", this);
 
@@ -152,18 +162,34 @@ public class TrustManagersParameters extends JsseParameters {
         this.algorithm = value;
     }
 
+    public TrustManager getTrustManager() {
+        return trustManager;
+    }
+
+    /**
+     * To use a existing configured trust manager instead of using {@link TrustManagerFactory} to
+     * get the {@link TrustManager}.
+     */
+    public void setTrustManager(TrustManager trustManager) {
+        this.trustManager = trustManager;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("TrustManagerType [keyStore=");
-        builder.append(keyStore);
-        builder.append(", provider=");
-        builder.append(provider);
-        builder.append(", algorithm=");
-        builder.append(algorithm);
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
-        builder.append("]");
+        if (trustManager != null) {
+            builder.append("TrustManagerType[trustManager=");
+            builder.append(trustManager);
+            builder.append("]");
+        } else {
+            builder.append("TrustManagerType[keyStore=");
+            builder.append(keyStore);
+            builder.append(", provider=");
+            builder.append(provider);
+            builder.append(", algorithm=");
+            builder.append(algorithm);
+            builder.append("]");
+        }
         return builder.toString();
     }
 }

@@ -30,6 +30,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
     private boolean loggedIn;
     
+    private transient String remoteFileProducerToString;
+    
     protected RemoteFileProducer(RemoteFileEndpoint<T> endpoint, RemoteFileOperations<T> operations) {
         super(endpoint, operations);
     }
@@ -44,9 +46,22 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         return name;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
+        // store any existing file header which we want to keep and propagate
+        final String existing = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+
+        // create the target file name
         String target = createFileName(exchange);
-        processExchange(exchange, target);
+
+        try {
+            processExchange(exchange, target);
+        } finally {
+            // remove the write file name header as we only want to use it once (by design)
+            exchange.getIn().removeHeader(Exchange.OVERRULE_FILE_NAME);
+            // and restore existing file name
+            exchange.getIn().setHeader(Exchange.FILE_NAME, existing);
+        }
     }
 
     protected RemoteFileOperations<T> getOperations() {
@@ -93,17 +108,22 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         // before writing send a noop to see if the connection is alive and works
         boolean noop = false;
         if (loggedIn) {
-            try {
-                noop = getOperations().sendNoop();
-            } catch (Exception e) {
-                // ignore as we will try to recover connection
-                noop = false;
-                // mark as not logged in, since the noop failed
-                loggedIn = false;
+            if (getEndpoint().getConfiguration().isSendNoop()) {
+                try {
+                    noop = getOperations().sendNoop();
+                } catch (Exception e) {
+                    // ignore as we will try to recover connection
+                    noop = false;
+                    // mark as not logged in, since the noop failed
+                    loggedIn = false;
+                }
+                log.trace("preWriteCheck send noop success: {}", noop);
+            } else {
+                // okay send noop is disabled then we would regard the op as success
+                noop = true;
+                log.trace("preWriteCheck send noop disabled");
             }
         }
-
-        log.trace("preWriteCheck send noop success: {}", noop);
 
         // if not alive then reconnect
         if (!noop) {
@@ -124,8 +144,13 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     @Override
-    public void postWriteCheck() {
+    public void postWriteCheck(Exchange exchange) {
         try {
+            boolean isLast = exchange.getProperty(Exchange.BATCH_COMPLETE, false, Boolean.class);
+            if (isLast && getEndpoint().isDisconnectOnBatchComplete()) {
+                log.trace("postWriteCheck disconnect on batch complete from: {}", getEndpoint());
+                disconnect();
+            }
             if (getEndpoint().isDisconnect()) {
                 log.trace("postWriteCheck disconnect from: {}", getEndpoint());
                 disconnect();
@@ -176,21 +201,21 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
         // recover by re-creating operations which should most likely be able to recover
         if (!loggedIn) {
-            log.debug("Trying to recover connection to: {} with a fresh client.", getEndpoint());
+            log.debug("Trying to recover connection to: {} with a new FTP client.", getEndpoint());
             setOperations(getEndpoint().createRemoteFileOperations());
             connectIfNecessary();
         }
     }
 
     protected void connectIfNecessary() throws GenericFileOperationFailedException {
-        if (!getOperations().isConnected()) {
+        if (!loggedIn || !getOperations().isConnected()) {
             log.debug("Not already connected/logged in. Connecting to: {}", getEndpoint());
             RemoteFileConfiguration config = getEndpoint().getConfiguration();
             loggedIn = getOperations().connect(config);
             if (!loggedIn) {
                 return;
             }
-            log.info("Connected and logged in to: " + getEndpoint());
+            log.debug("Connected and logged in to: " + getEndpoint());
         }
     }
 
@@ -201,6 +226,9 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
     @Override
     public String toString() {
-        return "RemoteFileProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (remoteFileProducerToString == null) {
+            remoteFileProducerToString = "RemoteFileProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return remoteFileProducerToString;
     }
 }

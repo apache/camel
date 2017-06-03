@@ -25,6 +25,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    private transient String consumerToString;
     private final Endpoint endpoint;
     private final Processor processor;
     private volatile AsyncProcessor asyncProcessor;
@@ -54,7 +56,10 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
     @Override
     public String toString() {
-        return "Consumer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+        if (consumerToString == null) {
+            consumerToString = "Consumer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+        }
+        return consumerToString;
     }
 
     public Route getRoute() {
@@ -83,7 +88,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
             exchange.setFromRouteId(route.getId());
         }
 
-        UnitOfWork uow = UnitOfWorkHelper.createUoW(exchange);
+        UnitOfWork uow = endpoint.getCamelContext().getUnitOfWorkFactory().createUnitOfWork(exchange);
         exchange.setUnitOfWork(uow);
         uow.start();
         return uow;

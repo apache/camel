@@ -5,7 +5,7 @@
 =========================================================================
 
 Apache Camel
-Copyright 2007-2013 The Apache Software Foundation
+Copyright 2007-2016 The Apache Software Foundation
 
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
@@ -33,4 +33,11 @@ The names "Spring" and "Spring Framework" must not be used to
 endorse or promote products derived from this software without
 prior written permission. For written permission, please contact
 rod.johnson@interface21.com or juergen.hoeller@interface21.com.
+
+=========================================================================
+==  OpenShift Notice                                                   ==
+=========================================================================
+
+This product includes software developed by
+the OpenShift Project (https://github.com/openshift/openshift-java-client/).
 

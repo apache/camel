@@ -38,6 +38,18 @@ public class DdbComponentTest extends CamelTestSupport {
                 "aws-ddb://creatibleTable?amazonDDBClient=#amazonDDBClient");
         assertEquals("creatibleTable", amazonDDBClient.createTableRequest.getTableName());
     }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void createEndpointWithOnlySecretKeyConfiguration() throws Exception {
+        DdbComponent component = new DdbComponent(context);
+        component.createEndpoint("aws-ddb://activeTable?secretKey=xxx");
+    }
+    
+    @Test
+    public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
+        DdbComponent component = new DdbComponent(context);
+        component.createEndpoint("aws-ddb://activeTable?amazonDDBClient=#amazonDDBClient");
+    }
 
 
 

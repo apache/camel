@@ -77,14 +77,19 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Creates a processor which sets the body of the FAULT message (FAULT must be OUT) to the value of the expression
+     * Creates a processor which sets the body of the FAULT message to the value of the expression
      */
     public static Processor setFaultBody(final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
                 Object newBody = expression.evaluate(exchange, Object.class);
-                exchange.getOut().setFault(true);
-                exchange.getOut().setBody(newBody);
+                if (exchange.hasOut()) {
+                    exchange.getOut().setFault(true);
+                    exchange.getOut().setBody(newBody);
+                } else {
+                    exchange.getIn().setFault(true);
+                    exchange.getIn().setBody(newBody);
+                }
             }
 
             @Override
@@ -136,14 +141,19 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Sets the header on the FAULT message (FAULT must be OUT)
+     * Sets the header on the FAULT message
      */
     public static Processor setFaultHeader(final String name, final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                exchange.getOut().setFault(true);
-                exchange.getOut().setHeader(name, value);
+                if (exchange.hasOut()) {
+                    exchange.getOut().setFault(true);
+                    exchange.getOut().setHeader(name, value);
+                } else {
+                    exchange.getIn().setFault(true);
+                    exchange.getIn().setHeader(name, value);
+                }
             }
 
             @Override
@@ -261,6 +271,38 @@ public final class ProcessorBuilder {
             @Override
             public String toString() {
                 return "removeProperty(" + name +  ")";
+            }
+        };
+    }
+    
+    /**
+     * Removes the properties on the exchange
+     */
+    public static Processor removeProperties(final String pattern) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                exchange.removeProperties(pattern);
+            }
+
+            @Override
+            public String toString() {
+                return "removeProperties(" + pattern +  ")";
+            }
+        };
+    }
+    
+    /**
+     * Removes all properties on the exchange, except for the ones provided in the <tt>names</tt> parameter
+     */
+    public static Processor removeProperties(final String pattern, final String... exceptionPatterns) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                exchange.removeProperties(pattern, exceptionPatterns);
+            }
+
+            @Override
+            public String toString() {
+                return "removeProperties(" + pattern + ", " + Arrays.toString(exceptionPatterns) + ")";
             }
         };
     }

@@ -23,11 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rx.Observable;
-import rx.util.functions.Action1;
-import rx.util.functions.Func1;
 
-/**
- */
 public class ToObservableAndMapTest extends RxTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ToObservableAndMapTest.class);
 
@@ -40,18 +36,11 @@ public class ToObservableAndMapTest extends RxTestSupport {
                 "timer://foo?fixedRate=true&period=100");
 
         // transform the stream
-        Observable<String> observable = observableMessage.map(new Func1<Message, String>() {
-            public String call(Message message) {
-                return "Transformed value: headers " + message.getHeaders();
-            }
-        });
+        Observable<String> observable = observableMessage.map(message -> "Transformed value: headers " + message.getHeaders());
 
-        observable.take(4).subscribe(new Action1<String>() {
-            @Override
-            public void call(String body) {
-                LOG.info(body);
-                producerTemplate.sendBody(mockEndpoint, body);
-            }
+        observable.take(4).subscribe(body -> {
+            LOG.info(body);
+            producerTemplate.sendBody(mockEndpoint, body);
         });
 
         mockEndpoint.assertIsSatisfied();

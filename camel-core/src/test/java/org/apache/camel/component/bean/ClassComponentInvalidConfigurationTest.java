@@ -55,7 +55,7 @@ public class ClassComponentInvalidConfigurationTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("class:org.apache.camel.component.bean.MyPrefixBean?foo=bar")
+                    .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.foo=bar")
                     .to("mock:result");
             }
         });

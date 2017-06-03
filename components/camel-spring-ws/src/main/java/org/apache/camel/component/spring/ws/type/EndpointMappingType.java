@@ -26,11 +26,12 @@ public enum EndpointMappingType {
     SOAP_ACTION("soapaction:"),
     XPATHRESULT("xpathresult:"),
     URI("uri:"),
+    URI_PATH("uripath:"),
     BEANNAME("beanname:");
 
     private String prefix;
 
-    private EndpointMappingType(String prefix) {
+    EndpointMappingType(String prefix) {
         this.prefix = prefix;
     }
 

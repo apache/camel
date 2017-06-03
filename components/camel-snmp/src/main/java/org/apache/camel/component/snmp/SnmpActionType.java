@@ -17,5 +17,5 @@
 package org.apache.camel.component.snmp;
 
 public enum SnmpActionType {
-    TRAP, POLL
+    TRAP, POLL, GET_NEXT
 }

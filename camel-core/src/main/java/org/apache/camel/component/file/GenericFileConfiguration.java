@@ -18,8 +18,10 @@ package org.apache.camel.component.file;
 
 import java.net.URI;
 
+import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.FileUtil;
 
+@UriParams
 public class GenericFileConfiguration {
 
     protected String directory;

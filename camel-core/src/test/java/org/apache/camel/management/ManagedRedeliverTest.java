@@ -45,7 +45,7 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
 
         Long num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, num.longValue());
@@ -56,7 +56,7 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
         num = (Long) mbeanServer.getAttribute(on, "FailuresHandled");
         assertEquals(1, num.longValue());
 
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"myprocessor\"");
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myprocessor\"");
 
         num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(0, num.longValue());

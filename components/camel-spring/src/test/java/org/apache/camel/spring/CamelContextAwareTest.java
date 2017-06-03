@@ -32,10 +32,10 @@ public class CamelContextAwareTest extends SpringTestSupport {
 
     public void testInjectionPoints() throws Exception {
         assertNotNull("No CamelContext injected!", bean1.getCamelContext());
-        Map<String, String> properties  = bean1.getCamelContext().getProperties();
-        assertNotNull("the properties should not been null", properties);
-        assertEquals("No properties injected", properties.size(), 1);
-        assertEquals("Should get the value of org.apache.camel.test", properties.get("org.apache.camel.test"), "this is a test first");
+        Map<String, String> globalOptions  = bean1.getCamelContext().getGlobalOptions();
+        assertNotNull("The global options reference should not be null", globalOptions);
+        assertEquals("No global options injected", globalOptions.size(), 1);
+        assertEquals("Should get the value of org.apache.camel.test", globalOptions.get("org.apache.camel.test"), "this is a test first");
     }
     
     public void testCamelTemplates() throws Exception {

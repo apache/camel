@@ -17,12 +17,11 @@
 package org.apache.camel.component.solr;
 
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class InitSolrEndpointTest extends CamelTestSupport {
+public class InitSolrEndpointTest extends SolrTestSupport {
 
-    private String solrUrl = "solr://localhost:8999/solr";
+    private String solrUrl = "solr://localhost:" + getPort() + "/solr";
 
     @Test
     public void endpointCreatedCorrectlyWithAllOptions() throws Exception {

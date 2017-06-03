@@ -20,15 +20,19 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
-import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-import com.googlecode.concurrentlinkedhashmap.EvictionListener;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.RemovalCause;
+import com.github.benmanes.caffeine.cache.RemovalListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Least Recently Used Cache.
+ * A cache that uses a near optional LRU Cache.
+ * <p/>
+ * The Cache is implemented by Caffeine which provides an <a href="https://github.com/ben-manes/caffeine/wiki/Efficiency">efficient cache</a>.
  * <p/>
  * If this cache stores {@link org.apache.camel.Service} then this implementation will on eviction
  * invoke the {@link org.apache.camel.Service#stop()} method, to auto-stop the service.
@@ -36,16 +40,17 @@ import org.slf4j.LoggerFactory;
  * @see LRUSoftCache
  * @see LRUWeakCache
  */
-public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serializable {
-    private static final long serialVersionUID = -342098639681884414L;
+public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(LRUCache.class);
-    
+
+    protected final LongAdder hits = new LongAdder();
+    protected final LongAdder misses = new LongAdder();
+    protected final LongAdder evicted = new LongAdder();
+
     private int maxCacheSize = 10000;
     private boolean stopOnEviction;
-    private final AtomicLong hits = new AtomicLong();
-    private final AtomicLong misses = new AtomicLong();
-    private final AtomicLong evicted = new AtomicLong();
-    private ConcurrentLinkedHashMap<K, V> map;
+    private final Cache<K, V> cache;
+    private final Map<K, V> map;
 
     /**
      * Constructs an empty <tt>LRUCache</tt> instance with the
@@ -55,7 +60,7 @@ public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serial
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public LRUCache(int maximumCacheSize) {
-        this(maximumCacheSize, maximumCacheSize);
+        this(16, maximumCacheSize); // 16 is the default initial capacity in ConcurrentLinkedHashMap
     }
 
     /**
@@ -80,10 +85,40 @@ public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serial
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public LRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
-        map = new ConcurrentLinkedHashMap.Builder<K, V>()
+        this(initialCapacity, maximumCacheSize, stopOnEviction, false, false, false);
+    }
+
+    /**
+     * Constructs an empty <tt>LRUCache</tt> instance with the
+     * specified initial capacity, maximumCacheSize,load factor and ordering mode.
+     *
+     * @param initialCapacity  the initial capacity.
+     * @param maximumCacheSize the max capacity.
+     * @param stopOnEviction   whether to stop service on eviction.
+     * @param soft             whether to use soft values a soft cache  (default is false)
+     * @param weak             whether to use weak keys/values as a weak cache  (default is false)
+     * @param syncListener     whether to use synchronous call for the eviction listener (default is false)
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
+    public LRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction,
+                    boolean soft, boolean weak, boolean syncListener) {
+        Caffeine<K, V> caffeine = Caffeine.newBuilder()
                 .initialCapacity(initialCapacity)
-                .maximumWeightedCapacity(maximumCacheSize)
-                .listener(this).build();
+                .maximumSize(maximumCacheSize)
+                .removalListener(this);
+        if (soft) {
+            caffeine.softValues();
+        }
+        if (weak) {
+            caffeine.weakKeys();
+            caffeine.weakValues();
+        }
+        if (syncListener) {
+            caffeine.executor(Runnable::run);
+        }
+
+        this.cache = caffeine.build();
+        this.map = cache.asMap();
         this.maxCacheSize = maximumCacheSize;
         this.stopOnEviction = stopOnEviction;
     }
@@ -92,9 +127,9 @@ public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serial
     public V get(Object o) {
         V answer = map.get(o);
         if (answer != null) {
-            hits.incrementAndGet();
+            hits.increment();
         } else {
-            misses.incrementAndGet();
+            misses.increment();
         }
         return answer;
     }
@@ -130,7 +165,7 @@ public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serial
     }
 
     public void putAll(Map<? extends K, ? extends V> map) {
-        this.map.putAll(map);
+        this.cache.putAll(map);
     }
 
     @Override
@@ -141,29 +176,31 @@ public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serial
 
     @Override
     public Set<K> keySet() {
-        return map.ascendingKeySet();
+        return map.keySet();
     }
 
     @Override
     public Collection<V> values() {
-        return map.ascendingMap().values();
+        return map.values();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return map.ascendingMap().entrySet();
+        return map.entrySet();
     }
 
     @Override
-    public void onEviction(K key, V value) {
-        evicted.incrementAndGet();
-        LOG.trace("onEviction {} -> {}", key, value);
-        if (stopOnEviction) {
-            try {
-                // stop service as its evicted from cache
-                ServiceHelper.stopService(value);
-            } catch (Exception e) {
-                LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
+    public void onRemoval(K key, V value, RemovalCause cause) {
+        if (cause.wasEvicted()) {
+            evicted.increment();
+            LOG.trace("onRemoval {} -> {}", key, value);
+            if (stopOnEviction) {
+                try {
+                    // stop service as its evicted from cache
+                    ServiceHelper.stopService(value);
+                } catch (Exception e) {
+                    LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
+                }
             }
         }
     }
@@ -172,21 +209,21 @@ public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serial
      * Gets the number of cache hits
      */
     public long getHits() {
-        return hits.get();
+        return hits.longValue();
     }
 
     /**
      * Gets the number of cache misses.
      */
     public long getMisses() {
-        return misses.get();
+        return misses.longValue();
     }
 
     /**
      * Gets the number of evicted entries.
      */
     public long getEvicted() {
-        return evicted.get();
+        return evicted.longValue();
     }
 
     /**
@@ -200,9 +237,13 @@ public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serial
      * Rest the cache statistics such as hits and misses.
      */
     public void resetStatistics() {
-        hits.set(0);
-        misses.set(0);
-        evicted.set(0);
+        hits.reset();
+        misses.reset();
+        evicted.reset();
+    }
+
+    public void cleanUp() {
+        cache.cleanUp();
     }
 
     @Override

@@ -22,6 +22,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.security.cert.X509Certificate;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -29,14 +30,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.util.Timer;
 
-public class NettyEndpoint extends DefaultEndpoint {
+/**
+ * Socket level networking using TCP or UDP with the Netty 3.x library.
+ */
+@UriEndpoint(firstVersion = "2.3.0", scheme = "netty", title = "Netty", syntax = "netty:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
+public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
+    @UriParam
     private NettyConfiguration configuration;
+    @UriParam(label = "advanced", javaType = "org.apache.camel.component.netty.NettyServerBootstrapConfiguration",
+            description = "To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.")
+    private Object bootstrapConfiguration; // to include in component docs as NettyServerBootstrapConfiguration is a @UriParams class
     private Timer timer;
 
     public NettyEndpoint(String endpointUri, NettyComponent component, NettyConfiguration configuration) {
@@ -94,7 +105,7 @@ public class NettyEndpoint extends DefaultEndpoint {
     @Override
     protected String createEndpointUri() {
         ObjectHelper.notNull(configuration, "configuration");
-        return "netty:" + getConfiguration().getProtocol() + "://" + getConfiguration().getHost() + ":" + getConfiguration().getPort();
+        return "netty:" + getConfiguration().getProtocol() + "://" + getConfiguration().getHost() + ":" + getConfiguration().getPort(); 
     }
 
     @Override

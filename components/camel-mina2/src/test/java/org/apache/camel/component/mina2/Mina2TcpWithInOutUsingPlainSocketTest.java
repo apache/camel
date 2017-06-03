@@ -25,10 +25,11 @@ import java.net.Socket;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 /**
- * To test camel-mina component using a TCP client that communicates using TCP socket communication.
+ * To test camel-mina2 component using a TCP client that communicates using TCP socket communication.
  *
  * @version 
  */
@@ -74,19 +75,29 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         assertTrue("out should not be the same as in when the exchange has failed", !"force-exception".equals(out));
         assertEquals("should get the exception here", out, "java.lang.IllegalArgumentException: Forced exception");
     }
+    
+    @Test
+    public void testExchangeWithInOnly() throws IOException {
+        String out = sendAndReceive("force-set-in-body");
+        assertEquals("Get a wrong response message", "Update the in message!", out);
+    }
 
     private String sendAndReceive(String input) throws IOException {
+        return sendAndReceive(input, getPort());
+    }
+    
+    private String sendAndReceive(String input, int port) throws IOException {
         byte buf[] = new byte[128];
 
         Socket soc = new Socket();
-        soc.connect(new InetSocketAddress("localhost", getPort()));
+        soc.connect(new InetSocketAddress("localhost", port));
 
         // Send message using plain Socket to test if this works
         OutputStream os = null;
         InputStream is = null;
         try {
             os = soc.getOutputStream();
-            // must append newline at the end to flag end of textline to Camel-Mina
+            // must append newline at the end to flag end of textline to camel-mina2
             os.write((input + LS).getBytes());
 
             is = soc.getInputStream();
@@ -96,12 +107,7 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
                 return null;
             }
         } finally {
-            if (is != null) {
-                is.close();
-            }
-            if (os != null) {
-                os.close();
-            }
+            IOHelper.close(is, os);
             soc.close();
         }
 
@@ -136,9 +142,11 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
                                 // clear out before throwing exception
                                 e.getOut().setBody(null);
                                 throw new IllegalArgumentException("Forced exception");
+                            } else if ("force-set-in-body".equals(in)) {
+                                e.getIn().setBody("Update the in message!");
                             } else {
                                 e.getOut().setBody("Hello " + in);
-                            }
+                            } 
                         }
                     });
             }

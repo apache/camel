@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.servlet.enabled",
+      "description": "Enable servlet component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

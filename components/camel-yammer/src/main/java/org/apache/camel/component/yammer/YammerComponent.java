@@ -20,15 +20,20 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the component that manages {@link YammerEndpoint}.
  */
 public class YammerComponent extends DefaultComponent {
 
+    @Metadata(label = "security", secret = true)
     private String consumerKey;
+    @Metadata(label = "security", secret = true)
     private String consumerSecret;
+    @Metadata(label = "security", secret = true)
     private String accessToken;
+    @Metadata(label = "advanced")
     private YammerConfiguration config;
     
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -43,6 +48,7 @@ public class YammerComponent extends DefaultComponent {
         endpointConfig.setConsumerSecret(consumerSecret);
         endpointConfig.setAccessToken(accessToken);
         endpointConfig.setFunction(remaining);
+        endpointConfig.setFunctionType(YammerFunctionType.fromUri(remaining));
         
         // and then override from parameters
         setProperties(endpointConfig, parameters);
@@ -56,6 +62,9 @@ public class YammerComponent extends DefaultComponent {
         return consumerKey;
     }
 
+    /**
+     * The consumer key
+     */
     public void setConsumerKey(String consumerKey) {
         this.consumerKey = consumerKey;
     }
@@ -64,6 +73,9 @@ public class YammerComponent extends DefaultComponent {
         return consumerSecret;
     }
 
+    /**
+     * The consumer secret
+     */
     public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
@@ -72,6 +84,9 @@ public class YammerComponent extends DefaultComponent {
         return accessToken;
     }
 
+    /**
+     * The access token
+     */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
@@ -80,6 +95,9 @@ public class YammerComponent extends DefaultComponent {
         return config;
     }
 
+    /**
+     * To use a shared yammer configuration
+     */
     public void setConfig(YammerConfiguration config) {
         this.config = config;
     }

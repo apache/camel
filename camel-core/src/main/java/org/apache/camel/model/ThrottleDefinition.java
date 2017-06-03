@@ -27,15 +27,17 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Throttler;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;throttle/&gt; element
+ * Controls the rate at which messages are passed to the next node in the route
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
@@ -45,12 +47,14 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1000")
     private Long timePeriodMillis;
     @XmlAttribute
     private Boolean asyncDelayed;
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
+    @XmlAttribute
+    private Boolean rejectExecution;
     
     public ThrottleDefinition() {
     }
@@ -69,11 +73,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     @Override
-    public String getShortName() {
-        return "throttle";
-    }
-
-    @Override
     public String getLabel() {
         return "throttle[" + description() + "]";
     }
@@ -82,9 +81,10 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isAsyncDelayed());
-        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this, isAsyncDelayed());
-
+        boolean async = getAsyncDelayed() != null && getAsyncDelayed();
+        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, async);
+        ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this, async);
+        
         // should be default 1000 millis
         long period = getTimePeriodMillis() != null ? getTimePeriodMillis() : 1000L;
 
@@ -94,12 +94,10 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
             throw new IllegalArgumentException("MaxRequestsPerPeriod expression must be provided on " + this);
         }
 
-        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool);
+        boolean reject = getRejectExecution() != null && getRejectExecution();
+        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject);
 
-        if (getAsyncDelayed() != null) {
-            answer.setAsyncDelayed(getAsyncDelayed());
-        }
-        
+        answer.setAsyncDelayed(async);
         if (getCallerRunsWhenRejected() == null) {
             // should be true by default
             answer.setCallerRunsWhenRejected(true);
@@ -110,11 +108,10 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     private Expression createMaxRequestsPerPeriodExpression(RouteContext routeContext) {
-        if (getExpression() != null) {
-            if (ObjectHelper.isNotEmpty(getExpression().getExpression()) || getExpression().getExpressionValue() != null) {
-                return getExpression().createExpression(routeContext);
-            } 
-        } 
+        ExpressionDefinition expr = getExpression();
+        if (expr != null) {
+            return expr.createExpression(routeContext);
+        }
         return null;
     }
     
@@ -137,7 +134,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      * @param maximumRequestsPerPeriod  the maximum request count number per time period
      * @return the builder
      */
-    public ThrottleDefinition maximumRequestsPerPeriod(Long maximumRequestsPerPeriod) {
+    public ThrottleDefinition maximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
         setExpression(ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
         return this;
     }
@@ -156,7 +153,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>noy</b> block while delaying.
+     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
      *
      * @return the builder
      */
@@ -164,12 +161,37 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         setAsyncDelayed(true);
         return this;
     }
+    
+    /**
+     * Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit
+     * <p/>
+     * Is by default <tt>false</tt>
+     *
+     * @param rejectExecution throw the RejectExecutionException if the exchange exceeds the request limit 
+     * @return the builder
+     */
+    public ThrottleDefinition rejectExecution(boolean rejectExecution) {
+        setRejectExecution(rejectExecution);
+        return this;
+    }
 
+    /**
+     * To use a custom thread pool (ScheduledExecutorService) by the throttler.
+     *
+     * @param executorService  the custom thread pool (must be scheduled)
+     * @return the builder
+     */
     public ThrottleDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
     }
 
+    /**
+     * To use a custom thread pool (ScheduledExecutorService) by the throttler.
+     *
+     * @param executorServiceRef the reference id of the thread pool (must be scheduled)
+     * @return the builder
+     */
     public ThrottleDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
@@ -177,6 +199,15 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     // Properties
     // -------------------------------------------------------------------------
+
+    /**
+     * Expression to configure the maximum number of messages to throttle per request
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
 
     public Long getTimePeriodMillis() {
         return timePeriodMillis;
@@ -192,10 +223,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     public void setAsyncDelayed(Boolean asyncDelayed) {
         this.asyncDelayed = asyncDelayed;
-    }
-
-    public boolean isAsyncDelayed() {
-        return asyncDelayed != null && asyncDelayed;
     }
 
     public Boolean getCallerRunsWhenRejected() {
@@ -220,5 +247,13 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
+    }
+    
+    public Boolean getRejectExecution() {
+        return rejectExecution;
+    }
+
+    public void setRejectExecution(Boolean rejectExecution) {
+        this.rejectExecution = rejectExecution;
     }
 }

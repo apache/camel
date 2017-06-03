@@ -54,18 +54,16 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.headers.Header.Direction;
 import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.helpers.DOMUtils;
-import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.outofband.header.OutofBandHeader;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -416,10 +414,10 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         String requestBody = "<ns2:inoutHeader xmlns:ns2=\"http://apache.org/camel/component/cxf/soap/headers\">" 
             + "<requestType>CXF user</requestType></ns2:inoutHeader>";
         List<Source> elements = new ArrayList<Source>();
-        elements.add(new DOMSource(DOMUtils.readXml(new StringReader(requestBody)).getDocumentElement()));
+        elements.add(new DOMSource(StaxUtils.read(new StringReader(requestBody)).getDocumentElement()));
         final List<SoapHeader> headers = new ArrayList<SoapHeader>();
         headers.add(new SoapHeader(qname,
-                                   DOMUtils.readXml(new StringReader(requestHeader)).getDocumentElement()));
+                                   StaxUtils.read(new StringReader(requestHeader)).getDocumentElement()));
         final CxfPayload<SoapHeader> cxfPayload = new CxfPayload<SoapHeader>(headers, elements, null);
         
         Exchange exchange = template.request(uri, new Processor() {
@@ -441,8 +439,10 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         String responseExp = "<ns2:inoutHeaderResponse xmlns:ns2=\"http://apache.org/camel/" 
             + "component/cxf/soap/headers\"><responseType>pass</responseType>" 
             + "</ns2:inoutHeaderResponse>";
-        String response = XMLUtils.toString(out.getBody().get(0));
-        assertTrue(response, response.contains(responseExp));
+        String response = StaxUtils.toString(out.getBody().get(0));
+        //REVISIT use a more reliable comparison to tolerate some namespaces being added to the root element
+        assertTrue(response, response.startsWith(responseExp.substring(0, 87)) 
+                   && response.endsWith(responseExp.substring(88, responseExp.length())));
     }
 
     @Test
@@ -704,7 +704,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
                 + "<name>New_testOobHeader</name><value>New_testOobHeaderValue</value></outofbandHeader>";
             
             SoapHeader newHeader = new SoapHeader(soapHeaders.get(0).getName(),
-                                                  DOMUtils.readXml(new StringReader(xml)).getDocumentElement());
+                                                  StaxUtils.read(new StringReader(xml)).getDocumentElement());
             // make sure direction is IN since it is a request message.
             newHeader.setDirection(Direction.DIRECTION_IN);
             //newHeader.setMustUnderstand(false);
@@ -732,7 +732,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
                 + "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:mustUnderstand=\"1\">"
                 + "<name>New_testOobHeader</name><value>New_testOobHeaderValue</value></outofbandHeader>";
             SoapHeader newHeader = new SoapHeader(soapHeaders.get(0).getName(),
-                           DOMUtils.readXml(new StringReader(xml)).getDocumentElement());
+                                                  StaxUtils.read(new StringReader(xml)).getDocumentElement());
             // make sure direction is OUT since it is a response message.
             newHeader.setDirection(Direction.DIRECTION_OUT);
             //newHeader.setMustUnderstand(false);

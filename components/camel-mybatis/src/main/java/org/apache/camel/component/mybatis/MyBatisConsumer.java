@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -33,40 +34,25 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Consumer to read data from a database.
- *
- * @version 
  */
 public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyBatisConsumer.class);
 
-    private static final class DataHolder {
-        private Exchange exchange;
-        private Object data;
+    static final class DataHolder {
+        Exchange exchange;
+        Object data;
 
-        private DataHolder() {
+        DataHolder() {
         }
     }
 
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
 
-    /**
-     * Statement to run after data has been processed in the route
-     */
     private String onConsume;
-
-    /**
-     * Process resultset individually or as a list
-     */
     private boolean useIterator = true;
-
-    /**
-     * Whether allow empty resultset to be routed to the next hop
-     */
     private boolean routeEmptyResultSet;
-
-    private int maxMessagesPerPoll;
 
     public MyBatisConsumer(MyBatisEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -121,7 +107,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total + " messages in this poll.");
             total = maxMessagesPerPoll;
         }
 
@@ -150,6 +136,16 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
             } catch (Exception e) {
                 handleException(e);
             }
+
+            if (getEndpoint().isTransacted() && exchange.isFailed()) {
+                // break out as we are transacted and should rollback
+                Exception cause = exchange.getException();
+                if (cause != null) {
+                    throw cause;
+                } else {
+                    throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
+                }
+            }
         }
 
         return total;
@@ -158,9 +154,14 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     private Exchange createExchange(Object data) {
         final MyBatisEndpoint endpoint = getEndpoint();
         final Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
+        final String outputHeader = getEndpoint().getOutputHeader();
 
         Message msg = exchange.getIn();
-        msg.setBody(data);
+        if (outputHeader != null) {
+            msg.setHeader(outputHeader, data);
+        } else {
+            msg.setBody(data);
+        }
         msg.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, endpoint.getStatement());
 
         return exchange;

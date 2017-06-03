@@ -153,6 +153,7 @@ public class QuickfixjProducerTest {
         
         Mockito.verify(mockExchange, Mockito.never()).setException(Matchers.isA(IllegalStateException.class));
         Mockito.verify(mockSession).send(inboundFixMessage);
+        Mockito.verify(mockOutboundCamelMessage).getHeaders();
         Mockito.verify(mockOutboundCamelMessage).setBody(outboundFixMessage);
     }
     

@@ -27,13 +27,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.processor.SamplingThrottler;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;sample/&gt; element
+ * Extract a sample of the messages passing through a route
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "sample")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
@@ -42,12 +44,12 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     // TODO: Camel 3.0 Should extend NoOutputDefinition
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "1")
     private Long samplePeriod;
     @XmlAttribute
     private Long messageFrequency;
     @XmlAttribute
-    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
+    @XmlJavaTypeAdapter(TimeUnitAdapter.class) @Metadata(defaultValue = "SECONDS")
     private TimeUnit units;
 
     public SamplingDefinition() {
@@ -74,11 +76,6 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
             TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
             return "1 Exchange per " + getSamplePeriod() + " " + tu.toString().toLowerCase(Locale.ENGLISH);
         }
-    }
-
-    @Override
-    public String getShortName() {
-        return "sample";
     }
 
     @Override
@@ -144,6 +141,9 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         return samplePeriod;
     }
 
+    /**
+     * Sets the sample period during which only a single Exchange will pass through.
+     */
     public void setSamplePeriod(Long samplePeriod) {
         this.samplePeriod = samplePeriod;
     }
@@ -152,14 +152,23 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
         return messageFrequency;
     }
 
+    /**
+     * Sets the sample message count which only a single Exchange will pass through after this many received.
+     */
     public void setMessageFrequency(Long messageFrequency) {
         this.messageFrequency = messageFrequency;
     }
-    
+
+    /**
+     * Sets the time units for the sample period, defaulting to seconds.
+     */
     public void setUnits(String units) {
         this.units = TimeUnit.valueOf(units);
     }
 
+    /**
+     * Sets the time units for the sample period, defaulting to seconds.
+     */
     public void setUnits(TimeUnit units) {
         this.units = units;
     }

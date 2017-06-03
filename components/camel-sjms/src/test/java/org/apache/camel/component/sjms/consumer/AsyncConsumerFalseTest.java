@@ -46,7 +46,7 @@ public class AsyncConsumerFalseTest extends CamelTestSupport {
         camelContext.addComponent("async", new MyAsyncComponent());
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                "vm://broker?broker.persistent=false");
+                "vm://broker?broker.persistent=false&broker.useJmx=false");
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);

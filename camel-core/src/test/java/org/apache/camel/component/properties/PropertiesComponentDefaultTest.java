@@ -103,6 +103,35 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testIgnoreMissingPropertySystemPropertyOnClasspath() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("properties:bar.end?locations=${my.home}/unknown.properties,org/apache/camel/component/properties/bar.properties"
+                        + "&ignoreMissingLocation=true");
+            }
+        });
+        context.start();
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testNotIgnoreMissingPropertySystemPropertyOnClasspath() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("properties:bar.end?locations=${my.home}/unknown.properties,org/apache/camel/component/properties/bar.properties"
+                        + "&ignoreMissingLocation=false");
+            }
+        });
+        try {
+            context.start();
+            fail("Should have thrown exception");
+        } catch (FailedToCreateRouteException e) {
+            assertEquals("Cannot find JVM system property with key: my.home", e.getCause().getCause().getMessage());
+        }
+    }
 
     @Override
     public boolean isUseRouteBuilder() {

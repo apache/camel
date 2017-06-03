@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.helpers.DOMUtils;
+import org.apache.cxf.staxutils.StaxUtils;
 
 // SET the fault message directly on the out message
 public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultTest {
@@ -41,7 +41,7 @@ public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultT
             public void configure() {
                 from(fromURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
-                        Element details = DOMUtils.readXml(new StringReader(FAULTS)).getDocumentElement();
+                        Element details = StaxUtils.read(new StringReader(FAULTS)).getDocumentElement();
                         List<Element> outElements = new ArrayList<Element>();
                         outElements.add(details);
                         CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements);

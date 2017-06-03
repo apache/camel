@@ -23,14 +23,14 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.direct.DirectConsumer;
+import org.apache.camel.impl.DefaultConsumer;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.Topic;
 
-public class RedisConsumer extends DirectConsumer implements MessageListener {
+public class RedisConsumer extends DefaultConsumer implements MessageListener {
     private final RedisConfiguration redisConfiguration;
 
     public RedisConsumer(RedisEndpoint redisEndpoint, Processor processor,
@@ -48,14 +48,15 @@ public class RedisConsumer extends DirectConsumer implements MessageListener {
 
     private Collection<Topic> toTopics(String channels) {
         String[] channelsArrays = channels.split(",");
-        List<Topic> topics = new ArrayList<Topic>();
+        List<Topic> topics = new ArrayList<>();
         for (String channel : channelsArrays) {
-            if (Command.PSUBSCRIBE.toString().equals(redisConfiguration.getCommand())) {
-                topics.add(new PatternTopic(channel));
-            } else if (Command.SUBSCRIBE.toString().equals(redisConfiguration.getCommand())) {
-                topics.add(new ChannelTopic(channel));
+            String name = channel.trim();
+            if (Command.PSUBSCRIBE.equals(redisConfiguration.getCommand())) {
+                topics.add(new PatternTopic(name));
+            } else if (Command.SUBSCRIBE.equals(redisConfiguration.getCommand())) {
+                topics.add(new ChannelTopic(name));
             } else {
-                throw new RuntimeException("Unsupported Command");
+                throw new IllegalArgumentException("Unsupported Command " + redisConfiguration.getCommand());
             }
         }
         return topics;

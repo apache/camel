@@ -98,7 +98,7 @@ public class GeoCoderProducer extends DefaultProducer {
 
     protected void processCurrentLocation(Exchange exchange) throws Exception {
         LOG.debug("Geocode for current address");
-        String json = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("http://freegeoip.net/json/"));
+        String json = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("https://freegeoip.net/json/"));
         if (isEmpty(json)) {
             throw new IllegalStateException("Got the unexpected value '" + json + "' for the geolocation");
         }
@@ -197,11 +197,7 @@ public class GeoCoderProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        if (endpoint.getClientId() != null) {
-            geocoder = new Geocoder(endpoint.getClientId(), endpoint.getClientKey());
-        } else {
-            geocoder = new Geocoder();
-        }
+        geocoder = endpoint.createGeocoder();
     }
 
 }

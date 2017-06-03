@@ -1,0 +1,21 @@
+{
+  "dataformat": {
+    "name": "dummyformat",
+    "kind": "dataformat",
+    "modelName": "dummyformat",
+    "title": "DummyFormat",
+    "description": "Camel dummy data format support",
+    "label": "dataformat,transformation",
+    "javaType": "org.foo.camel.DummyDataFormat",
+    "groupId": "org.foo.camel",
+    "artifactId": "dummy",
+    "version": "1.0"
+  },
+  "properties": {
+    "lineLength": { "kind": "attribute", "displayName": "Line Length", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "defaultValue": "76", "description": "To specific a maximum line length for the encoded data. By default 76 is used." },
+    "lineSeparator": { "kind": "attribute", "displayName": "Line Separator", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "defaultValue": "\r\n", "description": "The line separators to use. By default \r\n is used." },
+    "urlSafe": { "kind": "attribute", "displayName": "Url Safe", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "defaultValue": false, "description": "Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes. Is by default false." },
+    "id": { "kind": "attribute", "displayName": "Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "description": "Sets the value of the id property." }
+  }
+}
+

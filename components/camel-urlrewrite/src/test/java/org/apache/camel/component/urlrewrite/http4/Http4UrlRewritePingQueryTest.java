@@ -18,6 +18,7 @@ package org.apache.camel.component.urlrewrite.http4;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.urlrewrite.BaseUrlRewriteTest;
+import org.apache.camel.component.urlrewrite.HttpUrlRewrite;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class Http4UrlRewritePingQueryTest extends BaseUrlRewriteTest {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
-        Http4UrlRewrite myRewrite = new Http4UrlRewrite();
+        HttpUrlRewrite myRewrite = new HttpUrlRewrite();
         myRewrite.setConfigFile("example/urlrewrite-ping.xml");
         myRewrite.setUseQueryString(true);
 

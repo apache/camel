@@ -22,23 +22,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.StopProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;stop/&gt; element
+ * Stops the processing of the current message
  *
  * @version 
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "stop")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StopDefinition extends NoOutputDefinition<StopDefinition> {
 
     public StopDefinition() {
-    }
-
-    @Override
-    public String getShortName() {
-        return "stop";
     }
 
     @Override

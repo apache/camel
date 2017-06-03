@@ -26,7 +26,18 @@ import org.junit.Test;
 public class Mina2TcpTest extends BaseMina2Test {
 
     @Test
-    public void testMinaRoute() throws Exception {
+    public void testMinaRoute1() throws Exception {
+        MockEndpoint endpoint = getMockEndpoint("mock:result");
+        Object body = "Hello there!";
+        endpoint.expectedBodiesReceived(body);
+
+        template.sendBodyAndHeader(String.format("mina2:tcp://localhost:%1$s?sync=false&minaLogger=true", getPort()), body, "cheese", 123);
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testMinaRoute2() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
@@ -40,7 +51,7 @@ public class Mina2TcpTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina2:tcp://localhost:%1$s?sync=false&minaLogger=true", getPort())).to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
+                from(String.format("mina2:tcp://0.0.0.0:%1$s?sync=false&minaLogger=true", getPort())).to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
             }
         };
     }

@@ -50,6 +50,15 @@ public final class JmxSystemPropertyKeys {
     // whether all processors or only processors with a custom id given should be registered
     public static final String ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID = "org.apache.camel.jmx.onlyRegisterProcessorWithCustomId";
 
+    // whether to enable gathering load statistics in the background
+    public static final String LOAD_STATISTICS_ENABLED = "org.apache.camel.jmx.loadStatisticsEnabled";
+
+    // whether to enable gathering endpoint runtime statistics
+    public static final String ENDPOINT_RUNTIME_STATISTICS_ENABLED = "org.apache.camel.jmx.endpointRuntimeStatisticsEnabled";
+
+    // the level of statistics enabled
+    public static final String STATISTICS_LEVEL = "org.apache.camel.jmx.statisticsLevel";
+
     // whether to register always
     public static final String REGISTER_ALWAYS = "org.apache.camel.jmx.registerAlways";
 
@@ -58,6 +67,16 @@ public final class JmxSystemPropertyKeys {
 
     // Whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
     public static final String MASK = "org.apache.camel.jmx.mask";
+
+    // Whether to include host name in MBean names
+    public static final String INCLUDE_HOST_NAME = "org.apache.camel.jmx.includeHostName";
+
+    // To configure the default management name pattern using a JVM system property
+    public static final String MANAGEMENT_NAME_PATTERN = "org.apache.camel.jmx.managementNamePattern";
+    
+    // flag to enable host ip address instead of host name 
+    public static final String USE_HOST_IP_ADDRESS = "org.apache.camel.jmx.useHostIPAddress";
+
 
     private JmxSystemPropertyKeys() {
         // not instantiated

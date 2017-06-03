@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,12 +26,13 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.ConvertBodyProcessor;
-import org.apache.camel.spi.Required;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;convertBodyTo/&gt; element
+ * Converts the message body to another type
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "convertBodyTo")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinition> {
@@ -52,12 +52,12 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
     public ConvertBodyDefinition(Class<?> typeClass) {
         setTypeClass(typeClass);
-        setType(typeClass.getName());
+        setType(typeClass.getCanonicalName());
     }
 
     public ConvertBodyDefinition(Class<?> typeClass, String charset) {
         setTypeClass(typeClass);
-        setType(typeClass.getName());
+        setType(typeClass.getCanonicalName());
         setCharset(charset);
     }
 
@@ -66,11 +66,6 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
         return "ConvertBodyTo[" + getType() + "]";
     }
 
-    @Override
-    public String getShortName() {
-        return "convertBodyTo";
-    }
-    
     @Override
     public String getLabel() {
         return "convertBodyTo[" + getType() + "]";
@@ -104,7 +99,9 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
         return type;
     }
 
-    @Required
+    /**
+     * The java type to convert to
+     */
     public void setType(String type) {
         this.type = type;
     }
@@ -121,6 +118,9 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
         return charset;
     }
 
+    /**
+     * To use a specific charset when converting
+     */
     public void setCharset(String charset) {
         this.charset = charset;
     }

@@ -36,9 +36,9 @@ import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Test;
 
 
@@ -63,7 +63,7 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
     protected final String serviceAddress = "http://localhost:" + CXFTestSupport.getPort1() 
         + "/" + getClass().getSimpleName() + "/PersonService";
     protected final String fromURI = "cxf://" + serviceAddress + "?" 
-        + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=" + DataFormat.PAYLOAD;
+        + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload";
     
     @Override
     public boolean isCreateCamelContextPerClass() {
@@ -77,7 +77,7 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
                     public void process(final Exchange exchange) throws Exception {
                         QName faultCode = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");
                         SoapFault fault = new SoapFault("Get the null value of person name", faultCode);
-                        Element details = DOMUtils.readXml(new StringReader(DETAILS)).getDocumentElement();
+                        Element details = StaxUtils.read(new StringReader(DETAILS)).getDocumentElement();
                         fault.setDetail(details);
                         exchange.setException(fault);
                         

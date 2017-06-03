@@ -47,8 +47,16 @@ public class DelegatePerformanceCounter implements PerformanceCounter {
         this.counter.setStatisticsEnabled(statisticsEnabled);
     }
 
+    public void processExchange(Exchange exchange) {
+        if (counter != null) {
+            counter.processExchange(exchange);
+        }
+    }
+
     public void completedExchange(Exchange exchange, long time) {
-        counter.completedExchange(exchange, time);
+        if (counter != null) {
+            counter.completedExchange(exchange, time);
+        }
     }
 
     public void failedExchange(Exchange exchange) {

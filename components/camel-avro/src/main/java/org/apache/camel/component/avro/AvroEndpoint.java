@@ -19,15 +19,23 @@ package org.apache.camel.component.avro;
 import org.apache.avro.Protocol;
 import org.apache.avro.Schema;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
-public abstract class AvroEndpoint extends DefaultEndpoint {
+/**
+ * Working with Apache Avro for data serialization.
+ */
+@UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro", syntax = "avro:transport:host:port/messageName", consumerClass = AvroConsumer.class, label = "messaging,transformation")
+public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
+    @UriParam
     private AvroConfiguration configuration;
 
     /**

@@ -16,23 +16,29 @@
  */
 package org.apache.camel.component.vertx;
 
+import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.EventBus;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.eventbus.EventBus;
+import org.apache.camel.spi.UriPath;
 
 /**
- * A Camel Endpoint for working with <a href="http://vertx.io/">vert.x</a> event bus endpoints
+ * The vertx component is used for sending and receive messages from a vertx event bus.
  */
-@UriEndpoint(scheme = "vertx", consumerClass = VertxConsumer.class)
-public class VertxEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "2.12.0", scheme = "vertx", title = "Vert.x", syntax = "vertx:address", consumerClass = VertxConsumer.class, label = "eventbus,reactive")
+public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
 
-    @UriParam
+    @UriPath @Metadata(required = "true")
     private String address;
+    @UriParam
+    private Boolean pubSub;
 
     public VertxEndpoint(String uri, VertxComponent component, String address) {
         super(uri, component);
@@ -58,8 +64,17 @@ public class VertxEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    @Override
+    public boolean isMultipleConsumersSupported() {
+        return true;
+    }
+
     public EventBus getEventBus() {
-        return getVertx().eventBus();
+        if (getVertx() != null) {
+            return getVertx().eventBus();
+        } else {
+            return null;
+        }
     }
 
     public Vertx getVertx() {
@@ -76,4 +91,20 @@ public class VertxEndpoint extends DefaultEndpoint {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public boolean isPubSub() {
+        return pubSub != null && pubSub;
+    }
+
+    public Boolean getPubSub() {
+        return pubSub;
+    }
+
+    /**
+     * Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint.
+     */
+    public void setPubSub(Boolean pubSub) {
+        this.pubSub = pubSub;
+    }
+
 }

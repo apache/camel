@@ -23,12 +23,6 @@ import org.jclouds.blobstore.BlobStore;
 
 public class JcloudsBlobStoreEndpoint extends JcloudsEndpoint {
 
-    private String locationId;
-    private String container;
-    private String directory;
-    private String blobName;
-    private String operation;
-
     private BlobStore blobStore;
 
     public JcloudsBlobStoreEndpoint(String uri, JcloudsComponent component, BlobStore blobStore) {
@@ -48,43 +42,4 @@ public class JcloudsBlobStoreEndpoint extends JcloudsEndpoint {
         return answer;
     }
 
-    public String getLocationId() {
-        return locationId;
-    }
-
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
-    }
-
-    public String getContainer() {
-        return container;
-    }
-
-    public void setContainer(String container) {
-        this.container = container;
-    }
-
-    public String getDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(String directory) {
-        this.directory = directory;
-    }
-
-    public String getBlobName() {
-        return blobName;
-    }
-
-    public void setBlobName(String blobName) {
-        this.blobName = blobName;
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
 }

@@ -20,12 +20,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.apache.camel.processor.ExchangeAwareDelayCalcBean.BEAN_DELAYER_HEADER;
+
 /**
  * @version 
  */
 public class DelayerTest extends ContextTestSupport {
 
     private MyDelayCalcBean bean = new MyDelayCalcBean();
+
+    private ExchangeAwareDelayCalcBean exchangeAwareBean = new ExchangeAwareDelayCalcBean();
 
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -47,7 +51,7 @@ public class DelayerTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         // should at least take 1 sec to complete
-        resultEndpoint.setMinimumResultWaitTime(900);
+        resultEndpoint.setResultMinimumWaitTime(900);
         template.sendBody("seda:b", "<hello>world!</hello>");
         resultEndpoint.assertIsSatisfied();
     }
@@ -56,8 +60,17 @@ public class DelayerTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         // should at least take 1 sec to complete
-        resultEndpoint.setMinimumResultWaitTime(900);
+        resultEndpoint.setResultMinimumWaitTime(900);
         template.sendBody("seda:c", "<hello>world!</hello>");
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    public void testExchangeAwareDelayBean() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        // should at least take 1 sec to complete
+        resultEndpoint.setResultMinimumWaitTime(900);
+        template.sendBodyAndHeader("seda:d", "<hello>world!</hello>", BEAN_DELAYER_HEADER, 1000);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -75,6 +88,8 @@ public class DelayerTest extends ContextTestSupport {
                 // START SNIPPET: ex3
                 from("seda:c").delay().method(bean, "delayMe").to("mock:result");
                 // END SNIPPET: ex3
+
+                from("seda:d").delay().method(exchangeAwareBean, "delayMe").to("mock:result");
             }
         };
     }

@@ -43,7 +43,8 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
         // use fire and forget
         template.sendBody("seda:start", "Camel");
 
-        setAssertPeriod(200);
+        setAssertPeriod(500);
+
         assertMockEndpointsSatisfied();
     }
 

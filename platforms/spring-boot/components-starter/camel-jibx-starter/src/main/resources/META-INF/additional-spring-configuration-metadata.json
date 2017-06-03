@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.jibx.enabled",
+      "description": "Enable jibx dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

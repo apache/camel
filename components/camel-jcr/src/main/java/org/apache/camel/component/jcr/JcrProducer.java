@@ -19,6 +19,8 @@ package org.apache.camel.component.jcr;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -28,8 +30,10 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.jackrabbit.util.Text;
 
 public class JcrProducer extends DefaultProducer {
@@ -41,17 +45,26 @@ public class JcrProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         TypeConverter converter = exchange.getContext().getTypeConverter();
         Session session = openSession();
-        String operation = determineOperation(exchange);
+        Message message = exchange.getIn();
+        String operation = determineOperation(message);
         try {
             if (JcrConstants.JCR_INSERT.equals(operation)) {
-                Node base = findOrCreateNode(session.getRootNode(), getJcrEndpoint().getBase());
-                Node node = findOrCreateNode(base, getNodeName(exchange));
-                for (String key : exchange.getProperties().keySet()) {
-                    Value value = converter.convertTo(Value.class, exchange, exchange.getProperty(key));
-                    node.setProperty(key, value);
+                Node base = findOrCreateNode(session.getRootNode(), getJcrEndpoint().getBase(), "");
+                Node node = findOrCreateNode(base, getNodeName(message), getNodeType(message));
+                Map<String, Object> headers = filterComponentHeaders(message.getHeaders());
+                for (String key : headers.keySet()) {
+                    Object header = message.getHeader(key);
+                    if (header != null && Object[].class.isAssignableFrom(header.getClass())) {
+                        Value[] value = converter.convertTo(Value[].class, exchange, header);
+                        node.setProperty(key, value);
+                    } else {
+                        Value value = converter.convertTo(Value.class, exchange, header);
+                        node.setProperty(key, value);
+                    }
                 }
                 node.addMixin("mix:referenceable");
                 exchange.getOut().setBody(node.getIdentifier());
+                session.save();
             } else if (JcrConstants.JCR_GET_BY_ID.equals(operation)) {
                 Node node = session.getNodeByIdentifier(exchange.getIn()
                         .getMandatoryBody(String.class));
@@ -59,21 +72,35 @@ public class JcrProducer extends DefaultProducer {
                 while (properties.hasNext()) {
                     Property property = properties.nextProperty();
                     Class<?> aClass = classForJCRType(property);
-                    Object value = converter.convertTo(aClass, exchange, property.getValue());
-                    exchange.setProperty(property.getName(), value);
+                    Object value;
+                    if (property.isMultiple()) {
+                        value = converter.convertTo(aClass, exchange, property.getValues());
+                    } else {
+                        value = converter.convertTo(aClass, exchange, property.getValue());
+                    }
+                    message.setHeader(property.getName(), value);
                 }
             } else {
                 throw new RuntimeException("Unsupported operation: " + operation);
             }
-
         } finally {
-            session.save();
             if (session != null && session.isLive()) {
                 session.logout();
             }
         }
     }
 
+    private Map<String, Object> filterComponentHeaders(Map<String, Object> properties) {
+        Map<String, Object> result = new HashMap<String, Object>(properties.size());
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            if (!key.equals(JcrConstants.JCR_NODE_NAME) && !key.equals(JcrConstants.JCR_OPERATION) && !key.equals(JcrConstants.JCR_NODE_TYPE)) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
+    }
+    
     private Class<?> classForJCRType(Property property) throws RepositoryException {
         switch (property.getType()) {
         case PropertyType.STRING:
@@ -107,31 +134,46 @@ public class JcrProducer extends DefaultProducer {
         }
     }
 
-    private String determineOperation(Exchange exchange) {
-        String operation = exchange.getIn().getHeader(JcrConstants.JCR_OPERATION, String.class);
+    private String determineOperation(Message message) {
+        String operation = message.getHeader(JcrConstants.JCR_OPERATION, String.class);
         return operation != null ? operation : JcrConstants.JCR_INSERT;
     }
 
-    private String getNodeName(Exchange exchange) {
-        if (exchange.getProperty(JcrConstants.JCR_NODE_NAME) != null) {
-            return exchange.getProperty(JcrConstants.JCR_NODE_NAME, String.class);
-        }
-        return exchange.getExchangeId();
+    private String getNodeName(Message message) {
+        String nodeName = message.getHeader(JcrConstants.JCR_NODE_NAME, String.class);
+        return nodeName != null ? nodeName : message.getExchange().getExchangeId();
     }
 
-    private Node findOrCreateNode(Node parent, String path) throws RepositoryException {
+    private String getNodeType(Message message) {
+        String nodeType = message.getHeader(JcrConstants.JCR_NODE_TYPE, String.class);
+        return nodeType != null ? nodeType : "";
+    }
+
+    private Node findOrCreateNode(Node parent, String path, String nodeType) throws RepositoryException {
         Node result = parent;
         for (String component : path.split("/")) {
             component = Text.escapeIllegalJcrChars(component);
-            if (component.length() > 0 && !result.hasNode(component)) {
-                result = result.addNode(component);
+            if (component.length() > 0) {
+                if (result.hasNode(component)) {
+                    result = result.getNode(component);
+                } else {
+                    if (ObjectHelper.isNotEmpty(nodeType)) {
+                        result = result.addNode(component, nodeType);
+                    } else {
+                        result = result.addNode(component);
+                    }
+                }
             }
         }
         return result;
     }
 
     protected Session openSession() throws RepositoryException {
-        return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+        if (ObjectHelper.isEmpty(getJcrEndpoint().getWorkspaceName())) { 
+            return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
+        } else {
+            return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials(), getJcrEndpoint().getWorkspaceName());
+        }
     }
 
     private JcrEndpoint getJcrEndpoint() {

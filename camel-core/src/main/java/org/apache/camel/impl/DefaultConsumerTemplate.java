@@ -65,6 +65,12 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return consumerCache.size();
     }
 
+    public void cleanUp() {
+        if (consumerCache != null) {
+            consumerCache.cleanUp();
+        }
+    }
+
     /**
      * @deprecated use {@link #getCamelContext()}
      */

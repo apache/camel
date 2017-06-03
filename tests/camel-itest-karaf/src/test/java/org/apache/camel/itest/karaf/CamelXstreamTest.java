@@ -16,37 +16,20 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.JsonDataFormat;
-import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith(JUnit4TestRunner.class)
-public class CamelXstreamTest extends AbstractFeatureTest {
+@RunWith(PaxExam.class)
+public class CamelXstreamTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelXstreamTest.class);
-    
-    protected DataFormatDefinition createDataformatDefinition(String format) {
-        if (format.equals("xstream")) {
-            return new XStreamDataFormat();
-        } else {
-            return new JsonDataFormat();
-        }
-    }
 
     @Test
     public void test() throws Exception {
-        testDataFormat(COMPONENT);
-        testDataFormat("json");
+        testDataFormat(COMPONENT, "json-xstream");
+        testDataFormat(COMPONENT, "xstream");
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
 
 }

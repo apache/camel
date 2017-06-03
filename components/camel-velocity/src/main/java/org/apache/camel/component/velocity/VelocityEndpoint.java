@@ -28,6 +28,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -38,11 +40,19 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.CommonsLogLogChute;
 
+/**
+ * Transforms the message using a Velocity template.
+ */
+@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
 public class VelocityEndpoint extends ResourceEndpoint {
-    
+
     private VelocityEngine velocityEngine;
+
+    @UriParam(defaultValue = "true")
     private boolean loaderCache = true;
+    @UriParam
     private String encoding;
+    @UriParam
     private String propertiesFile;
 
     public VelocityEndpoint() {
@@ -85,7 +95,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
             // load the velocity properties from property file which may overrides the default ones
             if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
-                InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), getPropertiesFile());
+                InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
                 try {
                     properties.load(reader);
                     log.info("Loaded the velocity configuration file " + getPropertiesFile());
@@ -95,7 +105,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
             }
 
             log.debug("Initializing VelocityEngine with properties {}", properties);
-            // help the velocityEngine to load the CamelVelocityClasspathResourceLoader 
+            // help the velocityEngine to load the CamelVelocityClasspathResourceLoader
             ClassLoader old = Thread.currentThread().getContextClassLoader();
             try {
                 ClassLoader delegate = new CamelVelocityDelegateClassLoader(old);
@@ -118,13 +128,14 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
     /**
      * Enables / disables the velocity resource loader cache which is enabled by default
-     *
-     * @param loaderCache a flag to enable/disable the cache
      */
     public void setLoaderCache(boolean loaderCache) {
         this.loaderCache = loaderCache;
     }
 
+    /**
+     * Character encoding of the resource content.
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
@@ -133,6 +144,9 @@ public class VelocityEndpoint extends ResourceEndpoint {
         return encoding;
     }
 
+    /**
+     * The URI of the properties file which is used for VelocityEngine initialization.
+     */
     public void setPropertiesFile(String file) {
         propertiesFile = file;
     }
@@ -182,12 +196,22 @@ public class VelocityEndpoint extends ResourceEndpoint {
         // getResourceAsInputStream also considers the content cache
         StringWriter buffer = new StringWriter();
         String logTag = getClass().getName();
-        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
-        Context velocityContext = new VelocityContext(variableMap);
+        Context velocityContext = exchange.getIn().getHeader(VelocityConstants.VELOCITY_CONTEXT, Context.class);
+        if (velocityContext == null) {
+            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> supplementalMap = exchange.getIn().getHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT, Map.class);
+            if (supplementalMap != null) {
+                variableMap.putAll(supplementalMap);
+            }
+
+            velocityContext = new VelocityContext(variableMap);
+        }
 
         // let velocity parse and generate the result in buffer
         VelocityEngine engine = getVelocityEngine();
-        log.debug("Velocity is evaluating using velocity context: {}", variableMap);
+        log.debug("Velocity is evaluating using velocity context: {}", velocityContext);
         engine.evaluate(velocityContext, buffer, logTag, reader);
 
         // now lets output the results to the exchange

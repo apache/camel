@@ -20,13 +20,13 @@ package org.apache.camel.component.cxf.jaxrs;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -60,8 +60,8 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test
     public void testGetCustomer() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/123");
-        get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        get.addHeader("Accept", "application/json");
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -69,7 +69,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
             assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", 
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -77,8 +77,8 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test
     public void testGetCustomerWithQuery() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers?id=123");
-        get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        get.addHeader("Accept", "application/json");
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -86,15 +86,15 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
             assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", 
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
     @Test
     public void testGetCustomers() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/");
-        get.addHeader("Accept" , "application/xml");
-        HttpClient httpclient = new DefaultHttpClient();
+        get.addHeader("Accept", "application/xml");
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -109,15 +109,15 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
                 fail("Not expected body returned: " + s);
             }
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
     @Test
     public void testGetSubResource() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/orders/223/products/323");
-        get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        get.addHeader("Accept", "application/json");
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -125,7 +125,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
             assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", 
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -135,25 +135,25 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         put.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(put);
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("", EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
     @Test
     public void testPostConsumer() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(post);
@@ -162,9 +162,11 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
                          EntityUtils.toString(response.getEntity()));
             
             HttpDelete del = new HttpDelete("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/124/");
-            httpclient.execute(del);
+            response = httpclient.execute(del);
+            // need to check the response of delete method
+            assertEquals(200, response.getStatusLine().getStatusCode());
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
 
     }
@@ -172,11 +174,11 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
     @Test
     public void testPostConsumerUniqueResponseCode() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customersUniqueResponseCode");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(post);
@@ -185,9 +187,11 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
                          EntityUtils.toString(response.getEntity()));
 
             HttpDelete del = new HttpDelete("http://localhost:" + getPort() + "/CxfRsRouterTest/route/customerservice/customers/124/");
-            httpclient.execute(del);
+            response = httpclient.execute(del);
+            // need to check the response of delete method
+            assertEquals(200, response.getStatusLine().getStatusCode());
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
 }

@@ -26,14 +26,13 @@ import org.apache.camel.spring.issues.MyHelloBean;
  */
 public class MyHelloRoute extends RouteBuilder {
 
-    @SuppressWarnings("unused")
     @Resource(name = "myHelloBean")
     private MyHelloBean hello;
 
     @Override
     public void configure() throws Exception {
         from("direct:start")
-            .beanRef("myHelloBean", "hello")
+            .bean("myHelloBean", "hello")
             .to("mock:result");
     }
 

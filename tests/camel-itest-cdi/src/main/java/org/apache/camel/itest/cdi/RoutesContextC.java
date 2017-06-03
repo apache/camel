@@ -28,29 +28,30 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Uses contextC implicitly using that context for all injection points without
- * having to mention them on each camel annotation
- */
 @ContextName("contextC")
 public class RoutesContextC extends RouteBuilder {
+
     private static final Logger LOG = LoggerFactory.getLogger(RoutesContextC.class);
 
-    @Inject @Uri("seda:C.a")
+    @Inject
+    @ContextName("contextC")
+    @Uri("seda:C.a")
     Endpoint a;
 
-    @EndpointInject(uri = "mock:C.b")
+    @EndpointInject(uri = "mock:C.b", context = "contextC")
     MockEndpoint b;
 
-    @Inject @Uri("seda:C.a")
+    @Inject
+    @ContextName("contextC")
+    @Uri("seda:C.a")
     ProducerTemplate producer;
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from(a).to(b);
     }
 
-    public void sendMessages() {
+    void sendMessages() {
         for (Object expectedBody : Constants.EXPECTED_BODIES_C) {
             LOG.info("Sending " + expectedBody + " to " + producer.getDefaultEndpoint());
             producer.sendBody(expectedBody);

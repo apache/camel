@@ -25,15 +25,16 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.spi.Required;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;setOutHeader/&gt; element
+ * Sets the value of a header on the outbound message
  *
  * @deprecated not really needed, will be removed in the future
  */
+@Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setOutHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Deprecated
@@ -65,18 +66,24 @@ public class SetOutHeaderDefinition extends NoOutputExpressionNode {
     }
 
     @Override
-    public String getShortName() {
-        return "setOutHeader";
-    }
-
-    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getHeaderName(), "headerName", this);
         Expression expr = getExpression().createExpression(routeContext);
         return ProcessorBuilder.setOutHeader(getHeaderName(), expr);
     }
 
-    @Required
+    /**
+     * Expression to return the value of the header
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
+    }
+
+    /**
+     * Name of message header to set a new value
+     */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }

@@ -16,26 +16,22 @@
  */
 package org.apache.camel.component.rmi;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class RmiIllegalArgumentExceptionTest extends CamelTestSupport {
+public class RmiIllegalArgumentExceptionTest extends RmiRouteTestSupport {
+    private boolean created;
 
-    private static boolean created;
-
-    protected int getPort() {
-        return 37545;
+    protected int getStartPort() {
+        return 37502;
     }
 
     @Override
@@ -81,33 +77,14 @@ public class RmiIllegalArgumentExceptionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // setup the jmi server endpoint
-                RmiEndpoint echo = (RmiEndpoint)endpoint("rmi://localhost:37545/echo");
+                RmiEndpoint echo = (RmiEndpoint)endpoint("rmi://localhost:" + getPort() + "/echo");
                 echo.setRemoteInterfaces(IEcho.class);
                 from(echo).to("bean:echo");
 
                 // and our route where we call the server
-                from("direct:echo").to("rmi://localhost:37545/echo?method=foo").to("mock:result");
+                from("direct:echo").to("rmi://localhost:" + getPort() + "/echo?method=foo").to("mock:result");
             }
         };
     }
 
-    private boolean classPathHasSpaces() {
-        ClassLoader cl = getClass().getClassLoader();
-        if (cl instanceof URLClassLoader) {
-            URLClassLoader ucl = (URLClassLoader)cl;
-            URL[] urls = ucl.getURLs();
-            for (URL url : urls) {
-                if (url.getPath().contains(" ")) {
-                    log.error("=======================================================================");
-                    log.error(" TEST Skipped: " + this.getClass().getName());
-                    log.error("   Your probably on windows.  We detected that the classpath");
-                    log.error("   has a space in it.  Try running maven with the following option: ");
-                    log.error("   -Dmaven.repo.local=C:\\DOCUME~1\\userid\\.m2\\repository");
-                    log.error("=======================================================================");
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }

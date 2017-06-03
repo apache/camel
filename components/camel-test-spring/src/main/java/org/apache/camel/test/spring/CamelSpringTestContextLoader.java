@@ -23,8 +23,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
@@ -38,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -46,7 +49,6 @@ import org.springframework.test.context.support.AbstractContextLoader;
 import org.springframework.test.context.support.AbstractGenericContextLoader;
 import org.springframework.test.context.support.GenericXmlContextLoader;
 import org.springframework.util.StringUtils;
-
 import static org.apache.camel.test.spring.CamelSpringTestHelper.getAllMethods;
 
 /**
@@ -79,7 +81,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         }
         
         try {            
-            GenericApplicationContext context = createContext(testClass);
+            GenericApplicationContext context = createContext(testClass, mergedConfig);
             context.getEnvironment().setActiveProfiles(mergedConfig.getActiveProfiles());
             loadBeanDefinitions(context, mergedConfig);
             return loadContext(context, testClass);
@@ -111,7 +113,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         }
         
         try {
-            GenericApplicationContext context = createContext(testClass);
+            GenericApplicationContext context = createContext(testClass, null);
             loadBeanDefinitions(context, locations);
             return loadContext(context, testClass);
         } finally {
@@ -155,8 +157,8 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         handleShutdownTimeout(context, testClass);
         handleMockEndpoints(context, testClass);
         handleMockEndpointsAndSkip(context, testClass);
-        handleLazyLoadTypeConverters(context, testClass);
-        
+        handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
+
         // CamelContext(s) startup
         handleCamelContextStartup(context, testClass);
         
@@ -196,8 +198,14 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      * @param testClass the test class that is being executed
      * @return the loaded Spring context
      */
-    protected GenericApplicationContext createContext(Class<?> testClass) {
+    protected GenericApplicationContext createContext(Class<?> testClass, MergedContextConfiguration mergedConfig) {
+        ApplicationContext parentContext = null;
         GenericApplicationContext routeExcludingContext = null;
+        
+        if (mergedConfig != null) {
+            parentContext = mergedConfig.getParentApplicationContext();
+
+        }
         
         if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
             Class<?>[] excludedClasses = testClass.getAnnotation(ExcludeRoutes.class).value();
@@ -208,7 +216,11 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                             + "annotation was found. Excluding [" + StringUtils.arrayToCommaDelimitedString(excludedClasses) + "].");
                 }
                 
-                routeExcludingContext = new GenericApplicationContext();
+                if (parentContext == null) {
+                    routeExcludingContext = new GenericApplicationContext();
+                } else {
+                    routeExcludingContext = new GenericApplicationContext(parentContext);
+                }
                 routeExcludingContext.registerBeanDefinition("excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
                 routeExcludingContext.refresh();
                 
@@ -228,7 +240,11 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         if (routeExcludingContext != null) {
             context = new GenericApplicationContext(routeExcludingContext);
         } else {
-            context = new GenericApplicationContext();
+            if (parentContext != null) {
+                context = new GenericApplicationContext(parentContext);
+            } else {
+                context = new GenericApplicationContext();
+            }
         }
         
         return context;
@@ -383,36 +399,68 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                 @Override
                 public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                    LOG.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpoints, contextName);
-                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints, true));
+                    // resovle the property place holders of the mockEndpoints 
+                    String mockEndpointsValue = camelContext.resolvePropertyPlaceholders(mockEndpoints);
+                    LOG.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpointsValue, contextName);
+                    camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
                 }
             });
         }
     }
     
-    @SuppressWarnings("deprecation")
-    protected void handleLazyLoadTypeConverters(GenericApplicationContext context, Class<?> testClass) throws Exception {
-        final boolean lazy;
-        
-        if (testClass.isAnnotationPresent(LazyLoadTypeConverters.class)) {
-            lazy = testClass.getAnnotation(LazyLoadTypeConverters.class).value();
-        } else {
-            lazy = true;
+    /**
+     * Handles override this method to include and override properties with the Camel {@link org.apache.camel.component.properties.PropertiesComponent}.
+     *
+     * @param context the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    protected void handleUseOverridePropertiesWithPropertiesComponent(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
+        Collection<Method> methods = getAllMethods(testClass);
+        final List<Properties> properties = new LinkedList<Properties>();
+
+        for (Method method : methods) {
+            if (AnnotationUtils.findAnnotation(method, UseOverridePropertiesWithPropertiesComponent.class) != null) {
+                Class<?>[] argTypes = method.getParameterTypes();
+                if (argTypes.length > 0) {
+                    throw new IllegalArgumentException("Method [" + method.getName()
+                            + "] is annotated with UseOverridePropertiesWithPropertiesComponent but is not a no-argument method.");
+                } else if (!Properties.class.isAssignableFrom(method.getReturnType())) {
+                    throw new IllegalArgumentException("Method [" + method.getName()
+                            + "] is annotated with UseOverridePropertiesWithPropertiesComponent but does not return a java.util.Properties.");
+                } else if (!Modifier.isStatic(method.getModifiers())) {
+                    throw new IllegalArgumentException("Method [" + method.getName()
+                            + "] is annotated with UseOverridePropertiesWithPropertiesComponent but is not static.");
+                } else if (!Modifier.isPublic(method.getModifiers())) {
+                    throw new IllegalArgumentException("Method [" + method.getName()
+                            + "] is annotated with UseOverridePropertiesWithPropertiesComponent but is not public.");
+                }
+
+                try {
+                    properties.add((Properties) method.invoke(null));
+                } catch (Exception e) {
+                    throw new RuntimeException("Method [" + method.getName()
+                            + "] threw exception during evaluation.", e);
+                }
+            }
         }
-         
-        if (lazy) {
+
+        if (properties.size() != 0) {
             CamelSpringTestHelper.doToSpringCamelContexts(context, new DoToSpringCamelContextsStrategy() {
-                
-                @Override
-                public void execute(String contextName, SpringCamelContext camelContext)
-                    throws Exception {
-                    LOG.info("Enabling lazy loading of type converters on CamelContext with name [{}].", contextName);
-                    camelContext.setLazyLoadTypeConverters(lazy);
+                public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
+                    PropertiesComponent pc = camelContext.getComponent("properties", PropertiesComponent.class);
+                    Properties extra = new Properties();
+                    for (Properties prop : properties) {
+                        extra.putAll(prop);
+                    }
+                    if (!extra.isEmpty()) {
+                        LOG.info("Using {} properties to override any existing properties on the PropertiesComponent on CamelContext with name [{}].", extra.size(), contextName);
+                        pc.setOverrideProperties(extra);
+                    }
                 }
             });
         }
     }
-    
+
     /**
      * Handles starting of Camel contexts based on {@link UseAdviceWith} and other state in the JVM.
      *

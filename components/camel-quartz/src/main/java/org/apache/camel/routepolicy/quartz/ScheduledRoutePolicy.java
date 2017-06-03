@@ -20,10 +20,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.quartz.QuartzComponent;
-import org.apache.camel.impl.RoutePolicySupport;
+import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -32,7 +34,7 @@ import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants {
+public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants, NonManagedService {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
     protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<String, ScheduledRouteDetails>();
     private Scheduler scheduler;
@@ -75,6 +77,16 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
                 LOG.warn("Route is not in a started state and cannot be resumed. The current route state is {}", routeStatus);
             }
         }       
+    }
+    
+    @Override
+    public void onRemove(Route route) {
+        try {
+            // stop and un-schedule jobs
+            doStop();
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public void scheduleRoute(Action action, Route route) throws Exception {

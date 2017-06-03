@@ -18,11 +18,17 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -30,18 +36,33 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * File endpoint.
+ * The file component is used for reading or writing files.
  */
-@UriEndpoint(scheme = "file", consumerClass = FileConsumer.class)
+@UriEndpoint(firstVersion = "1.0.0", scheme = "file", title = "File", syntax = "file:directoryName", consumerClass = FileConsumer.class, label = "core,file")
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
+    private static final Integer CHMOD_WRITE_MASK = 02;
+    private static final Integer CHMOD_READ_MASK = 04;
+    private static final Integer CHMOD_EXECUTE_MASK = 01;
+
     private final FileOperations operations = new FileOperations(this);
-    @UriPath
+
+    @UriPath(name = "directoryName") @Metadata(required = "true")
     private File file;
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean copyAndDeleteOnRenameFail = true;
-    @UriParam
+    @UriParam(label = "advanced")
+    private boolean renameUsingCopy;
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean forceWrites = true;
+    @UriParam(label = "consumer,advanced")
+    private boolean probeContentType;
+    @UriParam(label = "consumer,advanced")
+    private String extendedAttributes;
+    @UriParam(label = "producer,advanced")
+    private String chmod;
+    @UriParam(label = "producer,advanced")
+    private String chmodDirectory;
 
     public FileEndpoint() {
         // use marker file as default exclusive read locks
@@ -101,9 +122,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     public GenericFileProducer<File> createProducer() throws Exception {
         ObjectHelper.notNull(operations, "operations");
 
-        // you cannot use temp prefix and file exists append
-        if (getFileExist() == GenericFileExist.Append && getTempPrefix() != null) {
-            throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix options");
+        // you cannot use temp file and file exists append
+        if (getFileExist() == GenericFileExist.Append && ((getTempPrefix() != null) || (getTempFileName() != null))) {
+            throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix/tempFileName options");
         }
 
         // ensure fileExist and moveExisting is configured correctly if in use
@@ -139,6 +160,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return file;
     }
 
+    /**
+     * The starting directory
+     */
     public void setFile(File file) {
         this.file = file;
         // update configuration as well
@@ -170,15 +194,200 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return copyAndDeleteOnRenameFail;
     }
 
+    /**
+     * Whether to fallback and do a copy and delete file, in case the file could not be renamed directly. This option is not available for the FTP component.
+     */
     public void setCopyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
         this.copyAndDeleteOnRenameFail = copyAndDeleteOnRenameFail;
+    }
+
+    public boolean isRenameUsingCopy() {
+        return renameUsingCopy;
+    }
+
+    /**
+     * Perform rename operations using a copy and delete strategy.
+     * This is primarily used in environments where the regular rename operation is unreliable (e.g. across different file systems or networks).
+     * This option takes precedence over the copyAndDeleteOnRenameFail parameter that will automatically fall back to the copy and delete strategy,
+     * but only after additional delays.
+     */
+    public void setRenameUsingCopy(boolean renameUsingCopy) {
+        this.renameUsingCopy = renameUsingCopy;
     }
 
     public boolean isForceWrites() {
         return forceWrites;
     }
 
+    /**
+     * Whether to force syncing writes to the file system.
+     * You can turn this off if you do not want this level of guarantee, for example if writing to logs / audit logs etc; this would yield better performance.
+     */
     public void setForceWrites(boolean forceWrites) {
         this.forceWrites = forceWrites;
     }
+
+    public boolean isProbeContentType() {
+        return probeContentType;
+    }
+
+    /**
+     * Whether to enable probing of the content type. If enable then the consumer uses {@link Files#probeContentType(java.nio.file.Path)} to
+     * determine the content-type of the file, and store that as a header with key {@link Exchange#FILE_CONTENT_TYPE} on the {@link Message}.
+     */
+    public void setProbeContentType(boolean probeContentType) {
+        this.probeContentType = probeContentType;
+    }
+
+    public String getExtendedAttributes() {
+        return extendedAttributes;
+    }
+
+    /**
+     * To define which file attributes of interest. Like posix:permissions,posix:owner,basic:lastAccessTime,
+     * it supports basic wildcard like posix:*, basic:lastAccessTime
+     */
+    public void setExtendedAttributes(String extendedAttributes) {
+        this.extendedAttributes = extendedAttributes;
+    }
+
+    /**
+     * Chmod value must be between 000 and 777; If there is a leading digit like in 0755 we will ignore it.
+     */
+    public boolean chmodPermissionsAreValid(String chmod) {
+        if (chmod == null || chmod.length() < 3 || chmod.length() > 4) {
+            return false;
+        }
+        String permissionsString = chmod.trim().substring(chmod.length() - 3);  // if 4 digits chop off leading one
+        for (int i = 0; i < permissionsString.length(); i++) {
+            Character c = permissionsString.charAt(i);
+            if (!Character.isDigit(c) || Integer.parseInt(c.toString()) > 7) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Set<PosixFilePermission> getPermissions() {
+        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
+        if (ObjectHelper.isEmpty(chmod)) {
+            return permissions;
+        }
+
+        String chmodString = chmod.substring(chmod.length() - 3);  // if 4 digits chop off leading one
+
+        Integer ownerValue = Integer.parseInt(chmodString.substring(0, 1));
+        Integer groupValue = Integer.parseInt(chmodString.substring(1, 2));
+        Integer othersValue = Integer.parseInt(chmodString.substring(2, 3));
+
+        if ((ownerValue & CHMOD_WRITE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OWNER_WRITE);
+        }
+        if ((ownerValue & CHMOD_READ_MASK) > 0) {
+            permissions.add(PosixFilePermission.OWNER_READ);
+        }
+        if ((ownerValue & CHMOD_EXECUTE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OWNER_EXECUTE);
+        }
+
+        if ((groupValue & CHMOD_WRITE_MASK) > 0) {
+            permissions.add(PosixFilePermission.GROUP_WRITE);
+        }
+        if ((groupValue & CHMOD_READ_MASK) > 0) {
+            permissions.add(PosixFilePermission.GROUP_READ);
+        }
+        if ((groupValue & CHMOD_EXECUTE_MASK) > 0) {
+            permissions.add(PosixFilePermission.GROUP_EXECUTE);
+        }
+
+        if ((othersValue & CHMOD_WRITE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OTHERS_WRITE);
+        }
+        if ((othersValue & CHMOD_READ_MASK) > 0) {
+            permissions.add(PosixFilePermission.OTHERS_READ);
+        }
+        if ((othersValue & CHMOD_EXECUTE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
+        }
+
+        return permissions;
+    }
+
+    public String getChmod() {
+        return chmod;
+    }
+
+    /**
+     * Specify the file permissions which is sent by the producer, the chmod value must be between 000 and 777;
+     * If there is a leading digit like in 0755 we will ignore it.
+     */
+    public void setChmod(String chmod) throws Exception {
+        if (ObjectHelper.isNotEmpty(chmod) && chmodPermissionsAreValid(chmod)) {
+            this.chmod = chmod.trim();
+        } else {
+            throw new IllegalArgumentException("chmod option [" + chmod + "] is not valid");
+        }
+    }
+
+    public Set<PosixFilePermission> getDirectoryPermissions() {
+        Set<PosixFilePermission> permissions = new HashSet<PosixFilePermission>();
+        if (ObjectHelper.isEmpty(chmodDirectory)) {
+            return permissions;
+        }
+
+        String chmodString = chmodDirectory.substring(chmodDirectory.length() - 3);  // if 4 digits chop off leading one
+
+        Integer ownerValue = Integer.parseInt(chmodString.substring(0, 1));
+        Integer groupValue = Integer.parseInt(chmodString.substring(1, 2));
+        Integer othersValue = Integer.parseInt(chmodString.substring(2, 3));
+
+        if ((ownerValue & CHMOD_WRITE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OWNER_WRITE);
+        }
+        if ((ownerValue & CHMOD_READ_MASK) > 0) {
+            permissions.add(PosixFilePermission.OWNER_READ);
+        }
+        if ((ownerValue & CHMOD_EXECUTE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OWNER_EXECUTE);
+        }
+
+        if ((groupValue & CHMOD_WRITE_MASK) > 0) {
+            permissions.add(PosixFilePermission.GROUP_WRITE);
+        }
+        if ((groupValue & CHMOD_READ_MASK) > 0) {
+            permissions.add(PosixFilePermission.GROUP_READ);
+        }
+        if ((groupValue & CHMOD_EXECUTE_MASK) > 0) {
+            permissions.add(PosixFilePermission.GROUP_EXECUTE);
+        }
+
+        if ((othersValue & CHMOD_WRITE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OTHERS_WRITE);
+        }
+        if ((othersValue & CHMOD_READ_MASK) > 0) {
+            permissions.add(PosixFilePermission.OTHERS_READ);
+        }
+        if ((othersValue & CHMOD_EXECUTE_MASK) > 0) {
+            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
+        }
+
+        return permissions;
+    }
+
+    public String getChmodDirectory() {
+        return chmodDirectory;
+    }
+
+    /**
+     * Specify the directory permissions used when the producer creates missing directories, the chmod value must be between 000 and 777;
+     * If there is a leading digit like in 0755 we will ignore it.
+     */
+    public void setChmodDirectory(String chmodDirectory) throws Exception {
+        if (ObjectHelper.isNotEmpty(chmodDirectory) && chmodPermissionsAreValid(chmodDirectory)) {
+            this.chmodDirectory = chmodDirectory.trim();
+        } else {
+            throw new IllegalArgumentException("chmodDirectory option [" + chmodDirectory + "] is not valid");
+        }
+    }
+
 }

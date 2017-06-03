@@ -18,15 +18,17 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
 /**
- * <code>PackageScanDefinition</code> represents a &lt;packageScan/&gt element.
+ * Scans for Java {@link org.apache.camel.builder.RouteBuilder} classes in java packages
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "packageScan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PackageScanDefinition {
@@ -52,14 +54,23 @@ public class PackageScanDefinition {
         return packages;
     }
 
+    /**
+     * Sets the java package names to use for scanning for route builder classes
+     */
     public void setPackages(List<String> packages) {
         this.packages = packages;
     }
 
+    /**
+     * Exclude finding route builder from these java package names.
+     */
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
     }
 
+    /**
+     * Include finding route builder from these java package names.
+     */
     public void setIncludes(List<String> includes) {
         this.includes = includes;
     }

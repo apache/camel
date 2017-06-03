@@ -25,10 +25,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSPasswordCallback;
-
-
 public class KeystorePasswordCallback implements CallbackHandler {
     
     private Map<String, String> passwords = 
@@ -46,27 +42,44 @@ public class KeystorePasswordCallback implements CallbackHandler {
      */
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (Callback callback : callbacks) {
-            WSPasswordCallback pc = (WSPasswordCallback)callback;
-            String pass = passwords.get(pc.getIdentifier());
-            String type = getPasswordType(pc);
-            if (WSConstants.PASSWORD_DIGEST.equals(type)) {
+            String pass = passwords.get(getIdentifier(callback));
+            String type = getPasswordType(callback);
+            if (type.endsWith("#PasswordDigest")) {
                 if (pass != null) {
-                    pc.setPassword(pass);
+                    setPassword(callback, pass);
                     return;
                 }
             } 
-            if (WSConstants.PASSWORD_TEXT.equals(type)) {
+            if (type.endsWith("#PasswordText")) {
                 // Code for CXF 2.4.X
-                if (pc.getPassword() == null) {
-                    pc.setPassword(pass);
+                if (getPassword(callback) == null) {
+                    setPassword(callback, pass);
                     return;
                 }
-                // Code for CXF 2.3.x
-                // As the PasswordType is not PasswordDigest, we need to do the authentication in the call back
-                if (!pass.equals(pc.getPassword())) {
-                    throw new IOException("Wrong password!");
-                }
             }
+        }
+    }
+    
+    private void setPassword(Callback callback, String pass) {
+        try {
+            callback.getClass().getMethod("setPassword", String.class).invoke(callback, pass);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private String getPassword(Callback callback) {
+        try {
+            return (String)callback.getClass().getMethod("getPassword").invoke(callback);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getIdentifier(Callback cb) {
+        try {
+            return (String)cb.getClass().getMethod("getIdentifier").invoke(cb);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
     
@@ -77,20 +90,20 @@ public class KeystorePasswordCallback implements CallbackHandler {
         passwords.put(alias, password);
     }
     
-    private String getPasswordType(WSPasswordCallback pc) {
+    private String getPasswordType(Callback pc) {
         try {
             Method getType = null;
             try {
-                getType = pc.getClass().getMethod("getPasswordType", new Class[0]);
+                getType = pc.getClass().getMethod("getPasswordType");
             } catch (NoSuchMethodException ex) {
                 // keep looking 
             } catch (SecurityException ex) {
                 // keep looking
             }
             if (getType == null) {
-                getType = pc.getClass().getMethod("getType", new Class[0]);
+                getType = pc.getClass().getMethod("getType");
             }
-            String result = (String)getType.invoke(pc, new Object[0]);
+            String result = (String)getType.invoke(pc);
             return result;
             
         } catch (Exception ex) {

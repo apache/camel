@@ -15,7 +15,5 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 BatchResequencerConfig
-PropertiesDefinition
-PropertyDefinition
 ResequencerConfig
 StreamResequencerConfig

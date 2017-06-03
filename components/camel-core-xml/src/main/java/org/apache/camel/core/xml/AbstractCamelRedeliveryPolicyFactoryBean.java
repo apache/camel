@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
@@ -34,43 +35,70 @@ import org.apache.camel.util.CamelContextHelper;
 public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractCamelFactoryBean<RedeliveryPolicy> {
 
     @XmlAttribute
+    @Metadata(description = "Sets the maximum number of times a message exchange will be redelivered. Setting a negative value will retry forever.")
     private String maximumRedeliveries;
     @XmlAttribute
+    @Metadata(defaultValue = "1000", description = "Sets the maximum redelivery delay. Use -1 if you wish to have no maximum")
     private String redeliveryDelay;
     @XmlAttribute
+    @Metadata(defaultValue = "false", description = "Sets whether asynchronous delayed redelivery is allowed. This is disabled by default. "
+        + "When enabled it allows Camel to schedule a future task for delayed redelivery which prevents current thread from blocking while waiting. "
+        + "Exchange which is transacted will however always use synchronous delayed redelivery because the transaction must execute in the same thread context.")
     private String asyncDelayedRedelivery;
     @XmlAttribute
+    @Metadata(defaultValue = "2", description = "Sets the multiplier used to increase the delay between redeliveries if useExponentialBackOff is enabled")
     private String backOffMultiplier;
     @XmlAttribute
+    @Metadata(defaultValue = "false", description = "Enables/disables exponential backoff using the backOffMultiplier to increase the time between retries")
     private String useExponentialBackOff;
     @XmlAttribute
+    @Metadata(defaultValue = "0.15", description = "Sets the factor used for collision avoidance if enabled via useCollisionAvoidance.")
     private String collisionAvoidanceFactor;
     @XmlAttribute
+    @Metadata(defaultValue = "false", description = "Enables/disables collision avoidance which adds some randomization to the backoff timings to reduce contention probability")
     private String useCollisionAvoidance;
     @XmlAttribute
+    @Metadata(defaultValue = "60000", description = "Sets the maximum redelivery delay. Use -1 if you wish to have no maximum")
     private String maximumRedeliveryDelay;
     @XmlAttribute
+    @Metadata(defaultValue = "ERROR", description = "Sets the logging level to use for log messages when retries have been exhausted.")
     private LoggingLevel retriesExhaustedLogLevel;
     @XmlAttribute
+    @Metadata(defaultValue = "DEBUG", description = "Sets the logging level to use for log messages when retries are attempted.")
     private LoggingLevel retryAttemptedLogLevel;
     @XmlAttribute
+    @Metadata(defaultValue = "true", description = "Sets whether to log retry attempts")
     private String logRetryAttempted;
     @XmlAttribute
+    @Metadata(defaultValue = "true", description = "Sets whether stack traces should be logged or not")
     private String logStackTrace;
     @XmlAttribute
+    @Metadata(defaultValue = "false", description = "Sets whether stack traces should be logged or not")
     private String logRetryStackTrace;
     @XmlAttribute
+    @Metadata(defaultValue = "false", description = "Sets whether errors should be logged even if its handled")
     private String logHandled;
     @XmlAttribute
+    @Metadata(defaultValue = "false", description = "Sets whether errors should be logged even if its continued")
     private String logContinued;
     @XmlAttribute
+    @Metadata(defaultValue = "true", description = "Sets whether exhausted exceptions should be logged or not")
     private String logExhausted;
     @XmlAttribute
+    @Metadata(defaultValue = "false", description = "Sets whether to log exhausted errors including message history")
+    private String logExhaustedMessageHistory;
+    @XmlAttribute
+    @Metadata(defaultValue = "false", description = "Disables redelivery by setting maximum redeliveries to 0.")
     private String disableRedelivery;
     @XmlAttribute
+    @Metadata(description = "Sets an optional delay pattern to use instead of fixed delay.")
     private String delayPattern;
     @XmlAttribute
+    @Metadata(defaultValue = "true", description = "Controls whether to allow redelivery while stopping/shutting down a route that uses error handling.")
     private String allowRedeliveryWhileStopping;
+    @XmlAttribute
+    @Metadata(description = "Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.")
+    private String exchangeFormatterRef;
 
     public RedeliveryPolicy getObject() throws Exception {
         RedeliveryPolicy answer = new RedeliveryPolicy();
@@ -127,6 +155,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         if (logExhausted != null) {
             answer.setLogExhausted(CamelContextHelper.parseBoolean(context, logExhausted));
         }
+        if (logExhaustedMessageHistory != null) {
+            answer.setLogExhaustedMessageHistory(CamelContextHelper.parseBoolean(context, logExhaustedMessageHistory));
+        }
         if (disableRedelivery != null) {
             if (CamelContextHelper.parseBoolean(context, disableRedelivery)) {
                 answer.setMaximumRedeliveries(0);
@@ -137,6 +168,9 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         }
         if (allowRedeliveryWhileStopping != null) {
             answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, allowRedeliveryWhileStopping));
+        }
+        if (exchangeFormatterRef != null) {
+            answer.setExchangeFormatterRef(exchangeFormatterRef);
         }
 
         return answer;
@@ -274,6 +308,14 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         this.logExhausted = logExhausted;
     }
 
+    public String getLogExhaustedMessageHistory() {
+        return logExhaustedMessageHistory;
+    }
+
+    public void setLogExhaustedMessageHistory(String logExhaustedMessageHistory) {
+        this.logExhaustedMessageHistory = logExhaustedMessageHistory;
+    }
+
     public String getDisableRedelivery() {
         return disableRedelivery;
     }
@@ -296,5 +338,13 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
 
     public void setAllowRedeliveryWhileStopping(String allowRedeliveryWhileStopping) {
         this.allowRedeliveryWhileStopping = allowRedeliveryWhileStopping;
+    }
+
+    public String getExchangeFormatterRef() {
+        return exchangeFormatterRef;
+    }
+
+    public void setExchangeFormatterRef(String exchangeFormatterRef) {
+        this.exchangeFormatterRef = exchangeFormatterRef;
     }
 }

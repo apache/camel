@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one
-  or more contributor license agreements. See the NOTICE file
-  distributed with this work for additional information
-  regarding copyright ownership. The ASF licenses this file
-  to you under the Apache License, Version 2.0 (the
-  "License"); you may not use this file except in compliance
-  with the License. You may obtain a copy of the License at
- 
-  http://www.apache.org/licenses/LICENSE-2.0
- 
-  Unless required by applicable law or agreed to in writing,
-  software distributed under the License is distributed on an
-  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  KIND, either express or implied. See the License for the
-  specific language governing permissions and limitations
-  under the License.
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -24,22 +24,128 @@
        xmlns:http="http://cxf.apache.org/transports/http/configuration"
        xmlns:wsrm-policy="http://schemas.xmlsoap.org/ws/2005/02/rm/policy"
        xmlns:wsrm-mgr="http://cxf.apache.org/ws/rm/manager"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:p="http://cxf.apache.org/policy"
        xsi:schemaLocation="
        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
        http://schemas.xmlsoap.org/ws/2005/02/rm/policy http://schemas.xmlsoap.org/ws/2005/02/rm/wsrm-policy.xsd
        http://cxf.apache.org/ws/rm/manager http://cxf.apache.org/schemas/configuration/wsrm-manager.xsd
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+       http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
+       http://www.w3.org/ns/ws-policy http://www.w3.org/2007/02/ws-policy.xsd">
  
     <cxf:bus>
         <cxf:features>
             <cxf:logging/>
-            <!-- wsa:addressing/-->
         </cxf:features>
     </cxf:bus>
     
-    <http:conduit name="{http://cxf.apache.org/hello_world_soap_http}GreeterPort.http-conduit">
-      <http:client DecoupledEndpoint="http://localhost:9990/decoupled_endpoint"/>
-    </http:conduit>
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+    
+    <jaxws:endpoint xmlns:s="http://camel.apache.org/hello_world_soap_http" 
+        id="Signature" 
+        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSignaturePort" 
+        serviceName="s:GreeterService" 
+        endpointName="s:GreeterSignaturePort" 
+        implementor="org.apache.camel.component.cxf.wssecurity.server.GreeterImpl" 
+        wsdlLocation="hello_world_wssec.wsdl">
+        <jaxws:outInterceptors>
+            <bean class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+                <constructor-arg>
+                    <map>
+                        <entry key="action" value="Signature Timestamp"/>
+                        <entry key="passwordCallbackClass" value="org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback"/>
+                        <entry key="user" value="serverx509v1"/>
+                        <entry key="signaturePropFile" value="wssecurity/etc/Server_Decrypt.properties"/>
+                        <entry key="signatureKeyIdentifier" value="DirectReference"/>
+                        <entry key="signatureParts" 
+                               value="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp"/>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </jaxws:outInterceptors>
+        <jaxws:inInterceptors>
+            <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+                <constructor-arg>
+                    <map>
+                        <entry key="action" value="Signature Timestamp"/>
+                        <entry key="signaturePropFile" value="wssecurity/etc/Server_SignVerf.properties"/>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </jaxws:inInterceptors>
+    </jaxws:endpoint>
+    
+    <jaxws:endpoint xmlns:s="http://camel.apache.org/hello_world_soap_http" 
+        id="UsernameToken" 
+        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterUsernameTokenPort" 
+        serviceName="s:GreeterService" 
+        endpointName="s:GreeterUsernameTokenPort" 
+        implementor="org.apache.camel.component.cxf.wssecurity.server.GreeterImpl" 
+        wsdlLocation="hello_world_wssec.wsdl">
+        <jaxws:inInterceptors>
+            <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+                <constructor-arg>
+                    <map>
+                        <entry key="action" value="UsernameToken"/>
+                        <entry key="passwordCallbackClass" value="org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback"/>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </jaxws:inInterceptors>
+    </jaxws:endpoint>
+    
+    <jaxws:endpoint xmlns:s="http://camel.apache.org/hello_world_soap_http" 
+        id="Encryption" 
+        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterEncryptionPort" 
+        serviceName="s:GreeterService" 
+        endpointName="s:GreeterEncryptionPort" 
+        implementor="org.apache.camel.component.cxf.wssecurity.server.GreeterImpl" 
+        wsdlLocation="hello_world_wssec.wsdl">
+        <jaxws:outInterceptors>
+            <bean class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+                <constructor-arg>
+                    <map>
+                        <entry key="action" value="Encrypt"/>
+                        <entry key="user" value="clientx509v1"/>
+                        <entry key="encryptionPropFile" value="wssecurity/etc/Server_SignVerf.properties"/>
+                        <entry key="encryptionKeyIdentifier" value="IssuerSerial"/>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </jaxws:outInterceptors>
+        <jaxws:inInterceptors>
+            <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+                <constructor-arg>
+                    <map>
+                        <entry key="action" value="Encrypt"/>
+                        <entry key="decryptionPropFile" value="wssecurity/etc/Server_Decrypt.properties"/>
+                        <entry key="passwordCallbackClass" value="org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback"/>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </jaxws:inInterceptors>
+    </jaxws:endpoint>
+    
+    <jaxws:endpoint xmlns:s="http://camel.apache.org/hello_world_soap_http" 
+        id="SecurityPolicy" 
+        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
+        serviceName="s:GreeterService" 
+        endpointName="s:GreeterSecurityPolicyPort" 
+        implementor="org.apache.camel.component.cxf.wssecurity.server.GreeterImpl" 
+        wsdlLocation="hello_world_wssec.wsdl">
+        <jaxws:properties>
+            <entry key="ws-security.callback-handler" value="org.apache.camel.component.cxf.wssecurity.client.UTPasswordCallback"/>
+            <entry key="ws-security.signature.properties" value="wssecurity/etc/Server_Decrypt.properties"/>
+        </jaxws:properties>
+        <jaxws:features>
+            <p:policies>
+                <wsp:PolicyReference xmlns:wsp="http://www.w3.org/ns/ws-policy" 
+                    URI="classpath:/org/apache/camel/component/cxf/wssecurity/encrypted-supp-token-policy.xml"/>
+            </p:policies>
+        </jaxws:features>
+    </jaxws:endpoint>
 
 </beans>

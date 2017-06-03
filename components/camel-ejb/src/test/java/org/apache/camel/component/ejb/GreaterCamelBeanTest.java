@@ -54,7 +54,7 @@ public class GreaterCamelBeanTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .beanRef("GreaterImplLocal", "hello")
+                    .bean("GreaterImplLocal", "hello")
                     .to("mock:result");
             }
         };

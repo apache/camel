@@ -36,6 +36,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
     protected static final String SELECT_ALL_STRING = "SELECT messageId FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
+    protected static final String CLEAR_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected JdbcTemplate jdbcTemplate;
@@ -111,13 +112,15 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         template.sendBodyAndHeader("direct:start", "three", "messageId", "3");
 
         assertMockEndpointsSatisfied();
+        
+        jdbcTemplate.update(CLEAR_STRING, PROCESSOR_NAME);
 
         // only message 1 and 3 should be in jdbc repo
         List<String> receivedMessageIds = jdbcTemplate.queryForList(SELECT_ALL_STRING, String.class, PROCESSOR_NAME);
 
-        assertEquals(2, receivedMessageIds.size());
-        assertTrue("Should contain message 1", receivedMessageIds.contains("1"));
-        assertTrue("Should contain message 3", receivedMessageIds.contains("3"));
+        assertEquals(0, receivedMessageIds.size());
+        assertFalse("Should not contain message 1", receivedMessageIds.contains("1"));
+        assertFalse("Should not contain message 3", receivedMessageIds.contains("3"));
     }
     
     @Override

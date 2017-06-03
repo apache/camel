@@ -45,7 +45,6 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
             fail("Should throw a CamelExchangeException");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("The OUT message was not received within"));
         }
 
         mock.assertIsSatisfied();
@@ -74,7 +73,7 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
                     throws Exception {
                     // close session instead of returning a reply
-                    ioSession.close(true);
+                    ioSession.closeNow();
                 }
 
                 public void dispose(IoSession ioSession) throws Exception {
@@ -90,7 +89,7 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
                 public void decode(IoSession ioSession, IoBuffer in,
                                    ProtocolDecoderOutput out) throws Exception {
                     // close session instead of returning a reply
-                    ioSession.close(true);
+                    ioSession.closeNow();
                 }
 
                 public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput)

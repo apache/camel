@@ -35,7 +35,4 @@ case class SPipelineDefinition(override val target: PipelineDefinition)(implicit
   }
 
   override def apply(block: => Unit) = wrap(super.apply(block))
-
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SPipelineDefinition]
-
 }

@@ -35,7 +35,7 @@ public class ManagedStatisticsWithSplitterTest extends ManagementTestSupport {
         // get the status for the route
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route-a\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route-a\"");
 
         // use route to get the total time
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
@@ -50,22 +50,22 @@ public class ManagedStatisticsWithSplitterTest extends ManagementTestSupport {
         assertEquals(2, completed.longValue());
 
         // should be 2 on the foo
-        ObjectName foo = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"foo\"");
+        ObjectName foo = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"foo\"");
         completed = (Long) mbeanServer.getAttribute(foo, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
 
         // should be 5 on the split sub route
-        ObjectName bar = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"bar\"");
+        ObjectName bar = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"bar\"");
         completed = (Long) mbeanServer.getAttribute(bar, "ExchangesCompleted");
         assertEquals(5, completed.longValue());
 
         // should be 2 on the mock
-        ObjectName mock = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mock\"");
+        ObjectName mock = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mock\"");
         completed = (Long) mbeanServer.getAttribute(mock, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
 
         // should be 5 on route-b
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route-b\"");
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route-b\"");
         completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(5, completed.longValue());
     }

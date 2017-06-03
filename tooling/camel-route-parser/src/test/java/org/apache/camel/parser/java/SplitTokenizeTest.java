@@ -1,0 +1,126 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.parser.java;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+
+public class SplitTokenizeTest extends CamelTestSupport {
+
+    public void testSplitTokenizerA() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedBodiesReceived("Claus", "James", "Willem");
+
+        template.sendBody("direct:a", "Claus,James,Willem");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSplitTokenizerB() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedBodiesReceived("Claus", "James", "Willem");
+
+        template.sendBodyAndHeader("direct:b", "Hello World", "myHeader", "Claus,James,Willem");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSplitTokenizerC() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedBodiesReceived("Claus", "James", "Willem");
+
+        template.sendBody("direct:c", "Claus James Willem");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSplitTokenizerD() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedBodiesReceived("[Claus]", "[James]", "[Willem]");
+
+        template.sendBody("direct:d", "[Claus][James][Willem]");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSplitTokenizerE() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedBodiesReceived("<person>Claus</person>", "<person>James</person>", "<person>Willem</person>");
+
+        String xml = "<persons><person>Claus</person><person>James</person><person>Willem</person></persons>";
+        template.sendBody("direct:e", xml);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSplitTokenizerEWithSlash() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        String xml = "<persons><person attr='/' /></persons>";
+        mock.expectedBodiesReceived("<person attr='/' />");
+        template.sendBody("direct:e", xml);
+        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSplitTokenizerF() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedBodiesReceived("<person name=\"Claus\"/>", "<person>James</person>", "<person>Willem</person>");
+
+        String xml = "<persons><person/><person name=\"Claus\"/><person>James</person><person>Willem</person></persons>";
+        template.sendBody("direct:f", xml);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+
+                from("direct:a")
+                        .split().tokenize(",")
+                        .to("mock:split");
+
+                from("direct:b")
+                        .split().tokenize(",", "myHeader")
+                        .to("mock:split");
+
+                from("direct:c")
+                        .split().tokenize("(\\W+)\\s*", null, true)
+                        .to("mock:split");
+
+                from("direct:d")
+                        .split().tokenizePair("[", "]", true)
+                        .to("mock:split");
+
+                from("direct:e")
+                        .split().tokenizeXML("person")
+                        .to("mock:split");
+
+                from("direct:f")
+                        .split().xpath("//person")
+                        // To test the body is not empty
+                        // it will call the ObjectHelper.evaluateValuePredicate()
+                        .filter().simple("${body}")
+                        .to("mock:split");
+
+            }
+        };
+    }
+}

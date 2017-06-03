@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.language.el.enabled",
+      "description": "Enable el language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

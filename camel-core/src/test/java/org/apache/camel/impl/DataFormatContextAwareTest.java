@@ -47,7 +47,7 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
         assertNotNull(me.getCamelContext());
     }
 
-    private static class MyDataFormat implements DataFormat, CamelContextAware {
+    private static class MyDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, CamelContextAware {
 
         private CamelContext camelContext;
 
@@ -66,6 +66,16 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
         @Override
         public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
             return null;
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            // noop
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            // noop
         }
     }
 }

@@ -29,6 +29,9 @@ public class JacksonJsonDataFormatTest extends JacksonMarshalTest {
                 from("direct:in").marshal().json(JsonLibrary.Jackson);
                 from("direct:back").unmarshal().json(JsonLibrary.Jackson).to("mock:reverse");
 
+                from("direct:inPretty").marshal().json(JsonLibrary.Jackson, true);
+                from("direct:backPretty").unmarshal().json(JsonLibrary.Jackson).to("mock:reverse");
+
                 from("direct:inPojo").marshal().json(JsonLibrary.Jackson);
                 from("direct:backPojo").unmarshal().json(JsonLibrary.Jackson, TestPojo.class).to("mock:reversePojo");
             }

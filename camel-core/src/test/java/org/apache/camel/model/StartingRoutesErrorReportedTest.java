@@ -63,7 +63,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
                 public void configure() throws Exception {
                     from("direct:start").routeId("route3")
                         .to("mock:foo")
-                        .beanRef("");
+                        .bean("");
                 }
             });
             context.start();

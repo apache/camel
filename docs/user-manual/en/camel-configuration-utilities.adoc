@@ -1,0 +1,647 @@
+[[CamelConfigurationUtilities-JSSEUtility]]
+JSSE Utility
+~~~~~~~~~~~~
+
+The JSSE Utility, available as of *2.8*, allows you to easily configure
+aspects of the
+http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html[Java
+Secure Socket Extension] (JSSE) API in order to greatly simplify the use
+of custom transport layer security (TLS) settings on Camel components.
+
+[[CamelConfigurationUtilities-SupportedComponents]]
+Supported Components
+^^^^^^^^^^^^^^^^^^^^
+
+The following Camel components directly support the use of this
+configuration utility:
+
+* link:http4.html[HTTP4]
+* link:jetty.html[Jetty]
+* link:ahc.html[AHC]
+* link:netty.html[Netty]
+* link:cometd.html[Cometd]
+* link:ftp2.html[FTP2]
+* link:irc.html[IRC]
+* link:mail.html[Mail]
+* MINA 2
+
+The following Camel components indirectly support the use of this
+configuration utility:
+
+* link:cxf.html[CXF]
+* link:http.html[HTTP]
+
+[[CamelConfigurationUtilities-Configuration]]
+Configuration
+^^^^^^^^^^^^^
+
+The key component in configuring TLS through the JSSE API is the
+SSLContext.  The
+http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLContext[SSLContext]
+provides socket factories for both
+http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLSocketFactory[client-side]
+and
+http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLSocketFactory[server-side]
+sockets as well as another component called an
+http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#SSLENG[SSLEngine]
+that is used by non-blocking IO to support TLS.  The JSSE configuration
+utility provides an easy to use builder for configuring these JSSE
+components, among others, in a manner that allows you to provide all
+configuration options up front during the initialization of your
+application such that you don't have to customize library code or dig
+though the inner workings of a third-party library in order to inject
+hooks for the configuration of each component in the JSSE API.  The
+central builder in the JSSE configuration utility is the
+SSLContextParameters.  This class serves as the entry point for most
+configuration in the JSSE utility.
+
+[NOTE]
+=====================================
+All non-native classes are in the org.apache.camel.util.jsse package. 
+All non-W3C schema defined types are in the
+http://camel.apache.org/schema/spring[http://camel.apache.org/schema/spring]
+or
+http://camel.apache.org/schema/blueprint[http://camel.apache.org/schema/blueprint]
+namespaces for Spring and Blueprint based configuration, respectively.
+=====================================
+
+
+[[CamelConfigurationUtilities-SSLContextParameters]]
+SSLContextParameters
+++++++++++++++++++++
+
+SSLContextParameters (sslContextParameters) contain the following elements:
+
+* provider (attribute)
+* secureSocketProtocol (attribute)
+* certAlias (attribute)
+* sessionTimeout (attribute)
+* cipherSuites (element)
+* cipherSuitesFilter (element)
+* secureSocketProtocols (element)
+* secureSocketProtocolsFilter (element)
+* keyManagers (element)
+* trustManagers (element)
+* secureRandom (element)
+* clientParameters (element)
+* serverParameters (elment)
+
+provider::
+The optional provider identifier for the JSSE implementation to use when
+constructing the SSLContext.  If omitted, the standard provider look-up
+mechanism is used to resolve the provider.
+secureSocketProtocol::
+The optional secure socket protocol. See http://download.oracle.com/javase/6/docs/technotes/guides//security/jsse/JSSERefGuide.html#AppA[Appendix
+A] in the Java Secure Socket Extension Reference Guide for information
+about standard protocol names.  If omitted, TLS is used by default. 
+Note that this property is related to but distinctly different from the
+secureSocketProtocols and secureSocketProtocolsFilter properties.
+certAlias::
+*Camel 2.13:* An optional certificate alias to use. This is useful when
+the keystore has multiple certificates.
+sessionTimeout::
+This optional property defines the timeout period, in seconds, for
+sessions on both the client and server side as well as in the SSLEngine.
+cipherSuites::
+This optional property represents a collection of explicitly named
+cipher suites to enable on both the client and server side as well as in
+the SSLEngine.  These values take precedence over filters supplied in
+cipherSuitesFilter.  The utility attempts to enable the listed cipher
+suites regardless of whether or not the JSSE provider actually supports
+them or not.  This behavior guarantees that listed cipher suites are
+always enabled when listed.  For a more lenient option, use
+cipherSuitesFilter.
+cipherSuitesFilter::
+This optional property represents a collection of include and exclude
+patterns for cipher suites to enable on both the client and server side
+as well as in the SSLEngine.  The patterns are applied over only the
+available cipher suites.  The exclude patterns have precedence over the
+include patterns.  If no cipherSuites and no cipherSuitesFilter are
+present, the default patterns applied are: +
+Includes .\*; Excludes .*_NULL_.*, .\*_anon_.*
+, .\*DES.* *Camel 2.15.4*, .\*EXPORT.* *Camel 2.15.4*.
+secureSocketProtocols::
+This optional property represents a collection of explicitly named
+secure socket protocols, such as SSLv3/TLS/etc., to enable on both the
+client and server side as well as in the SSLEngine.  These values take
+precedence over filters supplied in secureSocketProtocolsFilter.  The
+utility attempts to enable the listed protocols regardless of whether or
+not the JSSE provider actually supports them or not.  This behavior
+guarantees that listed protocols are always enabled when listed.  For a
+more lenient option, use secureSocketProtocolsFilter.
+secureSocketProtocolsFilter::
+This optional property represents a collection of include and exclude
+patterns for secure socket protocols to enable on both the client and
+server side as well as in the SSLEngine.  The patterns are applied over
+only the available protocols.  The exclude patterns have precedence over
+the include patterns.  If no secureSocketProtocols and no
+secureSocketProtocolsFilter are present, the default patterns applied
+are: Includes .*
+
+keyManagers::
+see <<CamelConfigurationUtilities-KeyManagersParameters>>.This optional property configures the source of key material for
+providing identity of client and server side connections as well as in
+the SSLEngine.  If omitted, no source of key material is provided and
+the SSLContext is suitable only for client-side usage when mutual
+authentication is not in use.  You typically configure this property
+with a key store containing a client or server private key.
+trustManagers::
+see <<CamelConfigurationUtilities-TrustManagersParameters>>. This optional property configures the source of material for verifying
+trust of key material used in the handshake process.  If omitted, the
+default trust manager is automatically used.  See the
+http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CustomizingStores[JSSE
+documentation] for more information on how the default trust manager is
+configured.  You typically configure this property with a key store
+containing trusted CA certificates.
+secureRandom::
+This optional property configures the secure random number generator
+used by the client and server side as well as in the SSLEngine.  If
+omitted, the default secure random number generator is used.
+clientParameters::
+see <<CamelConfigurationUtilities-SSLContextClientParameters>>. This optional property configures additional settings that apply only to
+the client side aspects of the SSLContext.  If present, these settings
+override the settings specified at the SSLContextParameters level.
+serverParameters::
+see <<CamelConfigurationUtilities-SSLContextServerParameters>>. This optional property configures additional settings that apply only to
+the server side aspects of the SSLContext.  If present, these settings
+override the settings specified at the SSLContextParameters level.
+
+
+[[CamelConfigurationUtilities-KeyManagersParameters]]
+KeyManagersParameters
++++++++++++++++++++++
+
+KeyManagersParameters contain the following elements:
+
+* keyPassword (attribute)
+* provider (attribute)
+* algorithm (attribute)
+* keyStore (element)
+
+keyPassword::
+The optional password for recovering/accessing the private key in the
+key store.  This is typically the password for the private key in the
+configured key store; however, in some cases, such as when using
+PKCS#11, the key password may be provided through other means and is
+omitted entirely in this configuration.
+provider::
+The optional provider identifier for the KeyManagerFactory used to
+create the KeyManagers represented by this object's configuration.  If
+omitted, the default look-up behavior is used.
+algorithm::
+The optional algorithm name for the KeyManagerFactory used to create the
+KeyManager represented by this object's configuration.  See the
+http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html[Java
+Secure Socket Extension Reference Guide] for information about standard
+algorithm names.
+keyStore::
+See <<CamelConfigurationUtilities-KeyStoreParameters>>. This optional property represents the key store that provides key
+material to the key manager.  This is typically configured with a key
+store containing a user or server private key.  In some cases, such as
+when using PKCS#11, the key store is omitted entirely.
+
+[[CamelConfigurationUtilities-TrustManagersParameters]]
+TrustManagersParameters
++++++++++++++++++++++++
+
+TrustManagersParameters contain the following elements:
+
+* provider (attribute)
+* algorithm (attribute)
+* trustManager (attribute)
+* keyStore (element)
+
+provider::
+The optional provider identifier for the TrustManagerFactory used to
+create the TrustManagers represented by this object's configuration.  If
+omitted, the default look-up behavior is used.
+algorithm::
+The optional algorithm name for the TrustManagerFactory used to create
+the TrustManager represented by this object's configuration.  See the
+http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html[Java
+Secure Socket Extension Reference Guide] for information about standard
+algorithm names.
+trustManager::
+*Camel 2.17:* To use a existing configured trust manager instead of using
+TrustManagerFactory to get the TrustManager.
+keyStore::
+See <<CamelConfigurationUtilities-KeyStoreParameters>>. This optional property represents the key store that provides key
+material to the trust manager.  This is typically configured with a key
+store containing trusted CA certificates / public keys.  In some cases,
+such as when using PKCS#11, the key store is omitted entirely.
+
+[[CamelConfigurationUtilities-KeyStoreParameters]]
+KeyStoreParameters
+++++++++++++++++++
+
+KeyStoreParameters contain the following elements:
+
+* type (attribute)
+* password (attribute)
+* provider (attribute)
+* resource (attribute)
+
+type::
+The optional type of the key store.  See Appendix A in the
+http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore[Java
+Cryptography Architecture Standard Algorithm Name Documentation] for
+more information on standard names.  If omitted, defaults to the default
+lookup mechanism as defined by
+http://download.oracle.com/javase/6/docs/api/java/security/KeyStore.html#getDefaultType()[KeyStore.getDefaultType()].
+password::
+The optional password for reading/opening/verifying the key store.
+provider::
+The optional provider identifier for the provider used to create the
+KeyStores represented by this object's configuration.  If omitted, the
+default look-up behavior is used.
+resource::
+This optional property represents the location of the key store resource
+to load the key store from.  In some cases, the resource is omitted as
+the key store content is provided by other means.  The loading of the
+resource, if provided, is attempted by treating the resource as a file
+path, a class path resource, and a URL in that order. An exception is
+thrown if the resource cannot be resolved to readable input stream using
+any of the above methods.
+
+.*OSGi Usage*
+[NOTE]
+====
+For programmatic and Spring based XML configuration in OSGi, a resource
+specified as a classpath resource path may be accessible in the bundle
+containing the XML configuration file or in a package that is imported
+by that bundle.  As Blueprint does not define the thread context
+classloader behavior, only classpath resources in the bundle containing
+the XML configuration file may be resolved from a Blueprint based XML
+configuration.
+====
+
+
+[[CamelConfigurationUtilities-FilterParameters]]
+FilterParameters
+++++++++++++++++
+
+FilterParameters contain the following elements:
+
+* include (element, multiple string)
+* exclude (element, multiple string)
+include::
+This optional property represents zero or more regular expression
+patterns for which matching values should be included.  The list of
+excludes takes precedence over the include patterns.
+exclude::
+This optional property represents zero or more regular expression
+patterns for which matching values should be included.  The list of
+excludes takes precedence over the include patterns.
+
+[[CamelConfigurationUtilities-SecureRandomParameters]]
+SecureRandomParameters
+++++++++++++++++++++++
+SecureRandomParameters contain the following elements:
+
+* algorithm (attribute)
+* provider (attribte)
+algorithm::
+This optional property represents the Random Number Generator (RNG)
+algorithm identifier for the SecureRandom factory method used to create
+the SecureRandom represented by this object's configuration. See
+http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA[Appendix
+A] in the Java Cryptography Architecture API Specification & Reference
+for information about standard RNG algorithm names.
+provider::
+The optional provider identifier for the SecureRandom factory method
+used to create the SecureRandom represented by this object's
+configuration.  If omitted, the default look-up behavior is used.
+
+[[CamelConfigurationUtilities-SSLContextServerParameters]]
+SSLContextServerParameters
+++++++++++++++++++++++++++
+SSLContextServerParameters contain the following elements:
+
+* clientAuthentication (attribute)
+* sessionTimeout (attribute)
+* cipherSuites (element)
+* cipherSuitesFilter (element)
+* secureSocketProtocols (element)
+* secureSocketProtocolsFilter (element)
+
+clientAuthentication::
+This optional property indicates if the server side does not request,
+requests, or requires clients to provide authentication credentials
+during the handshake process.  This is commonly referred to as mutual
+authentication, two direction SSL/TLS, or two-legged SSL/TLS.  +
+ Valid values are: NONE, WANT, REQUIRE
+sessionTimeout::
+This optional property defines the timeout period, in seconds, for
+sessions on the server side.  This setting affects both the
+SSLServerSocketFactory/SSLServerSocket as well as the server side of the
+SSLEngine.
+cipherSuites::
+This optional property overrides the value of this
+setting in the SSLContextParameters. This option has no affect on the
+SSLEngine configuration.
+cipherSuitesFilter::
+This optional property overrides the value of this
+setting in the SSLContextParameters.  This option has no affect on the
+SSLEngine configuration.
+secureSocketProtocols::
+This optional property overrides the
+value of this setting in the SSLContextParameters.  This option has no
+affect on the SSLEngine configuration.
+secureSocketProtocolsFilter::
+This optional property overrides the value of this
+setting in the SSLContextParameters. This option has no affect on the
+SSLEngine configuration.
+
+[[CamelConfigurationUtilities-SSLContextClientParameters]]
+SSLContextClientParameters
+++++++++++++++++++++++++++
+SSLContextClientParameters contains the following elements:
+
+* sniHostNames (elements)
+* sessionTimeout (attribute)
+* cipherSuites (element)
+* cipherSuitesFilter (element)
+* secureSocketProtocols (element)
+* secureSocketProtocolsFilter (element)
+
+sniHostNames::
+Contains a list of sniHostName elements which provides a list
+of SNIHostNames to be used for SSL.
+sessionTimeout::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
+cipherSuites::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
+cipherSuitesFilter::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
+secureSocketProtocols::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
+secureSocketProtocolsFilter::
+See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
+
+[[CamelConfigurationUtilities-Examples]]
+Examples
+^^^^^^^^
+
+[[CamelConfigurationUtilities-ProgrammaticUsage]]
+Programmatic Usage
+++++++++++++++++++
+
+[[CamelConfigurationUtilities-SettingClientAuthenticationOntheServerSide]]
+Setting Client Authentication On the Server Side
+
+This configuration sets the server side aspects of the TLS configuration
+to require client authentication during the handshake process.  This
+configuration uses the default trust store and a custom key store to
+provide key material for both the server and client sides of the
+SSLContext.
+
+[source,java]
+-------------------------------------------------------------------
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/users/home/server/keystore.jks");
+ksp.setPassword("keystorePassword");
+
+KeyManagersParameters kmp = new KeyManagersParameters();
+kmp.setKeyStore(ksp);
+kmp.setKeyPassword("keyPassword");
+
+SSLContextServerParameters scsp = new SSLContextServerParameters();
+scsp.setClientAuthentication(ClientAuthentication.REQUIRE);
+SSLContextParameters scp = new SSLContextParameters();
+scp.setServerParameters(scsp);
+scp.setKeyManagers(kmp);
+
+SSLContext context = scp.createSSLContext();
+SSLEngine engine = scp.createSSLEngine();
+-------------------------------------------------------------------
+
+[[CamelConfigurationUtilities-ConfiguringDifferentOptionsontheClientandServerSide]]
+Configuring Different Options on the Client and Server Side
+
+In this example, both the client and server sides share the same custom
+key store; however, the client side allows any supported cipher suite
+while the server side will use the default cipher suite filter and
+exclude any cipher suites that match the patterns .*_NULL_.* and
+.*_anon_.*.
+
+[source,java]
+-------------------------------------------------------------------
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/users/home/server/keystore.jks");
+ksp.setPassword("keystorePassword");
+
+KeyManagersParameters kmp = new KeyManagersParameters();
+kmp.setKeyStore(ksp);
+kmp.setKeyPassword("keyPassword");
+
+FilterParameters filter = new FilterParameters();
+filter.getInclude().add(".*");
+
+SSLContextClientParameters sccp = new SSLContextClientParameters();
+sccp.setCipherSuitesFilter(filter);
+
+SSLContextParameters scp = new SSLContextParameters();
+scp.setClientParameters(sccp);
+scp.setKeyManagers(kmp);
+
+SSLContext context = scp.createSSLContext();
+SSLEngine engine = scp.createSSLEngine();
+-------------------------------------------------------------------
+
+[[CamelConfigurationUtilities-UsingCamelPropertyPlaceholders]]
+Using Camel Property Placeholders
+
+This configuration utility fully supports the use of property
+placeholders (see link:using-propertyplaceholder.html[Using
+PropertyPlaceholder]) in all configuration fields.  In order to support
+this feature, the configuration utility objects must be configured with
+a reference to a Camel context.  All of the utility classes except for
+CipherSuitesParameters and SecureSocketProtocolsParameters provide a
+setter method for providing the context reference.  Do not confuse the
+lack of a setter on CipherSuitesParameters and
+SecureSocketProtocolsParameters as an indication that you cannot use
+property placeholders when configuring these classes.  The lack of a
+setter is an internal implementation detail and full placeholder support
+is available for both of the configuration classes.
+
+The following example code demonstrates how to create a KeyStore
+instance based on configuration options provided by the Camel Properties
+Component and property placeholder support.
+
+[source,java]
+---------------------------------------------------
+PropertiesComponent pc = new PropertiesComponent();
+pc.setLocation("file:./jsse-test.properties");
+
+CamelContext context = new DefaultCamelContext();
+context.addComponent("properties", pc);
+
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setContext(camelContext);
+ksp.setType("{{keyStoreParameters.type}}");
+ksp.setProvider("{{keyStoreParameters.provider}}");
+ksp.setResource("{{keyStoreParameters.resource}}");
+ksp.setPassword("{{keyStoreParamerers.password}}");
+
+KeyStore keyStore = ksp.createKeyStore();
+---------------------------------------------------
+
+[[CamelConfigurationUtilities-XMLConfiguration]]
+XML Configuration
++++++++++++++++++
+
+[NOTE]
+====
+Note that XML configuration is supported in both Spring and Blueprint
+format.
+====
+
+[[CamelConfigurationUtilities-SettingClientAuthenticationOntheServerSide.1]]
+Setting Client Authentication On the Server Side
+
+This configuration sets the server side aspects of the TLS configuration
+to require client authentication during the handshake process.  This
+configuration uses the default trust store and a custom key store to
+provide key material for both the server and client sides of the
+SSLContext.
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <camel:sslContextParameters
+      id="mySslContext">
+
+    <camel:keyManagers
+        keyPassword="keyPassword">
+      <camel:keyStore
+          resource="/users/home/server/keystore.jks"
+          password="keystorePassword"/>
+    </camel:keyManagers>
+
+    <camel:serverParameters
+        clientAuthentication="WANT"/>
+
+  </camel:sslContextParameters>
+
+</beans>
+---------------------------------------------------------------------------------------------------------------
+
+[[CamelConfigurationUtilities-ConfiguringDifferentOptionsontheClientandServerSide.1]]
+Configuring Different Options on the Client and Server Side
+
+In this example, both the client and server sides share the same custom
+key store; however, the client side allows any supported cipher suite
+while the server side will use the default cipher suite filter and
+exclude any cipher suites that match the patterns .*_NULL_.* and
+.*_anon_.*.
+
+[source,xml]
+--------------------------------------------------------------
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+       xmlns:camel="http://camel.apache.org/schema/blueprint">
+
+  <camel:sslContextParameters
+      id="mySslContext">
+
+    <camel:keyManagers
+        keyPassword="keyPassword">
+      <camel:keyStore
+          resource="/users/home/server/keystore.jks"
+          password="keystorePassword"/>
+    </camel:keyManagers>
+
+    <camel:clientParameters>
+      <camel:cipherSuitesFilter>
+        <camel:include>.*</camel:include>
+      </camel:cipherSuitesFilter>
+    </camel:clientParameters>
+
+  </camel:sslContextParameters>
+
+</blueprint>
+--------------------------------------------------------------
+
+[[CamelConfigurationUtilities-UsingCamelPropertyPlaceholders.1]]
+Using Camel Property Placeholders
+
+This configuration utility fully supports the use of property
+placeholders (see link:using-propertyplaceholder.html[Using
+PropertyPlaceholder]) in all configuration fields for XML based
+configuration as well.  In order to support this feature, the
+configuration utility objects must be configured with a reference to a
+Camel context.  The Spring and Blueprint namespace handlers will
+automatically inject the reference to the context for you when there is
+one Camel context in scope. If you have more than one Camel context
+instance in your XML defined context, you can indicate which context
+reference to configure by specifying the camelContextId attribute in the
+top-level XML element.
+
+The following example code demonstrates how to create a KeyStore
+instance based on configuration options provided by the Camel Properties
+Component and property placeholder support. The Camel context with the
+ID example is used to resolve the property placeholders.
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <camel:camelContext id="example"/>
+
+  <camel:camelContext id="example2"/>
+
+  <camel:keyStoreParameters
+    id="ksp"
+    camelContextId="example"
+    resource="{{keyStoreParameters.resource}}"
+    type="{{keyStoreParameters.type}}"
+    provider="{{keyStoreParameters.provider}}"
+    password="{{keyStoreParamerers.password}}"/>
+
+</beans>
+---------------------------------------------------------------------------------------------------------------
+
+[[CamelConfigurationUtilities-UsingSpringBoot.1]]
+Using Spring-Boot
+
+As of *2.19.0*, Camel provides a global SSL configuration that can be customized using the
+spring-boot _application.properties_ or _application.yml_ file.
+
+Components do not use the global SSL configuration by default, but this behavior can
+be changed using component-specific options. A flag named _useGlobalSslContextParameters_ is
+included in all components that support the global SSL configuration.
+
+The following example shows how to configure global SSL parameters (in _application.yml_) and enable their
+usage in the _camel-undertow_ component.
+
+[source,text]
+---------------------------------------------------------------------------------------------------------------
+camel:
+  # To enable global SSL in undertow
+  component:
+    undertow:
+      use-global-ssl-context-parameters: true
+  ssl:
+    config:
+      key-managers:
+        key-password: "changeit"
+        key-store:
+          resource: "/keystore.p12"
+          password: "changeit"
+          type: "PKCS12"
+      trust-managers:
+        key-store:
+          resource: "/cacerts"
+          password: "changeit"
+          type: "jks"
+---------------------------------------------------------------------------------------------------------------

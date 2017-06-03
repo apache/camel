@@ -35,7 +35,8 @@ public final class MinaHelper {
     }
 
     /**
-     * Writes the given body to MINA session. Will wait until the body has been written.
+     * Asynchronously writes the given body to MINA session. Will wait at most for
+     * 10 seconds until the body has been written.
      *
      * @param session  the MINA session
      * @param body     the body to write (send)
@@ -48,11 +49,10 @@ public final class MinaHelper {
         WriteFuture future = session.write(body);
         // must use a timeout (we use 10s) as in some very high performance scenarios a write can cause 
         // thread hanging forever
-        LOG.trace("Waiting for write to complete");
-        future.join(10 * 1000L);
+        LOG.trace("Waiting for write to complete for body: {} using session: {}", body, session);
+        future.join(10000L);
         if (!future.isWritten()) {
-            LOG.warn("Cannot write body: " + body + " using session: " + session);
-            throw new CamelExchangeException("Cannot write body", exchange);
+            throw new CamelExchangeException("Cannot write body: " + body + " using session: " + session, exchange);
         }
     }
 

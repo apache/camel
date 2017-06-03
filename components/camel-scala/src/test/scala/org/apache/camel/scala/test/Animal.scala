@@ -16,7 +16,7 @@
  */
 package org.apache.camel.scala.test
 
-import _root_.scala.reflect.BeanProperty
+import _root_.scala.beans.BeanProperty
 
 /**
  * Just a simple Animal test class

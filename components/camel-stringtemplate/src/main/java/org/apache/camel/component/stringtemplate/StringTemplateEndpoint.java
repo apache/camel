@@ -24,16 +24,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ExchangeHelper;
 import org.stringtemplate.v4.NoIndentWriter;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 /**
- * @version
+ * Transforms the message using a String template.
  */
+@UriEndpoint(firstVersion = "1.2.0", scheme = "string-template", title = "String Template", syntax = "string-template:resourceUri", producerOnly = true, label = "transformation")
 public class StringTemplateEndpoint extends ResourceEndpoint {
+
+    @UriParam(defaultValue = "<")
     private char delimiterStart = STGroup.defaultGroup.delimiterStartChar;
+    @UriParam(defaultValue = ">")
     private char delimiterStop = STGroup.defaultGroup.delimiterStopChar;
 
     public StringTemplateEndpoint() {
@@ -57,6 +63,9 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         return delimiterStart;
     }
 
+    /**
+     * The variable start delimiter
+     */
     public void setDelimiterStart(char delimiterStart) {
         this.delimiterStart = delimiterStart;
     }
@@ -65,6 +74,9 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         return delimiterStop;
     }
 
+    /**
+     * The variable end delimiter
+     */
     public void setDelimiterStop(char delimiterStop) {
         this.delimiterStop = delimiterStop;
     }
@@ -72,7 +84,12 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         StringWriter buffer = new StringWriter();
-        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> variableMap = exchange.getIn().getHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, Map.class);
+        if (variableMap == null) {
+            variableMap = ExchangeHelper.createVariableMap(exchange);
+        }
 
         // getResourceAsInputStream also considers the content cache
         String text = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, getResourceAsInputStream());

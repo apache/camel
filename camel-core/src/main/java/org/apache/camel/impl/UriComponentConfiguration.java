@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * to use the {@link org.apache.camel.spi.UriParam} and {@link org.apache.camel.spi.UriParams} annotations
  * to denote its parameters which can be specified via URI query parameters.
  */
+@Deprecated
 public class UriComponentConfiguration extends ComponentConfigurationSupport {
     private static final Logger LOG = LoggerFactory.getLogger(UriComponentConfiguration.class);
 

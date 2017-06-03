@@ -63,7 +63,7 @@ public class RecipientListReturnValueTest extends ContextTestSupport {
             public void configure() {
                 getContext().addInterceptStrategy(new Tracer());
                 
-                from("direct:beanRef").beanRef("myBean", "route");
+                from("direct:beanRef").bean("myBean", "route");
                 from("direct:recipientList").recipientList().method("myBean", "recipientList");
 
                 from("direct:a").transform(constant("Hello a")).to("mock:a");

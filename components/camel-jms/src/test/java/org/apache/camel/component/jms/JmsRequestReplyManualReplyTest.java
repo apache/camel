@@ -66,6 +66,8 @@ public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
 
     @Test
     public void testManualRequestReply() throws Exception {
+        context.start();
+
         // send using pure JMS API to set a custom JMSReplyTo
         jms.send(new ActiveMQQueue("foo"), new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {

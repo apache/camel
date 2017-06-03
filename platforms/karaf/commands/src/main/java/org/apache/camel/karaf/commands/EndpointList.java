@@ -16,53 +16,39 @@
  */
 package org.apache.camel.karaf.commands;
 
-import java.util.List;
+import org.apache.camel.commands.EndpointListCommand;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.ServiceStatus;
-import org.apache.camel.StatefulService;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
+@Command(scope = "camel", name = "endpoint-list", description = "Lists Camel endpoints")
+@Service
+public class EndpointList extends CamelControllerImpl implements Action {
 
-/**
- * List the Camel endpoints available in the Karaf instance.
- */
-@Command(scope = "camel", name = "endpoint-list", description = "Lists all Camel endpoints available in CamelContexts.")
-public class EndpointList extends OsgiCommandSupport {
+    @Argument(index = 0, name = "name", description = "The name of the Camel context or a wildcard expression", required = false, multiValued = false)
+    @Completion(CamelContextCompleter.class)
+    String name;
 
-    protected static final String HEADER_FORMAT = "%-20s %-20s %-20s";
-    protected static final String OUTPUT_FORMAT = "[%-18s] [%-18s] [%-18s]";
+    @Option(name = "--decode", aliases = "-d", description = "Whether to decode the endpoint uri so its human readable",
+            required = false, multiValued = false, valueToShowInHelp = "true")
+    boolean decode = true;
 
-    private CamelController camelController;
+    @Option(name = "--verbose", aliases = "-v", description = "Verbose output which does not limit the length of the uri shown, or to explain all options (if explain selected)",
+            required = false, multiValued = false, valueToShowInHelp = "false")
+    boolean verbose;
 
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
+    @Option(name = "--explain", aliases = "-e", description = "Whether to explain the endpoint options",
+            required = false, multiValued = false, valueToShowInHelp = "false")
+    boolean explain;
 
-    protected Object doExecute() throws Exception {
-        System.out.println(String.format(HEADER_FORMAT, "camel-id", "uri", "Status"));
-
-        List<CamelContext> camelContexts = camelController.getCamelContexts();
-        for (CamelContext camelContext : camelContexts) {
-            List<Endpoint> endpoints = (List<Endpoint>) camelContext.getEndpoints();
-            for (Endpoint endpoint : endpoints) {
-                System.out.println(String.format(OUTPUT_FORMAT, camelContext.getName(), endpoint.getEndpointUri(), getState(endpoint)));
-            }
-        }
-
-        return null;
-    }
-
-    protected String getState(Endpoint endpoint) {
-        // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        if (endpoint instanceof StatefulService) {
-            ServiceStatus status = ((StatefulService) endpoint).getStatus();
-            return status.name();
-        }
-
-        // assume started if not a ServiceSupport instance
-        return ServiceStatus.Started.name();
+    public Object execute() throws Exception {
+        EndpointListCommand command = new EndpointListCommand(name, decode, verbose, explain);
+        return command.execute(this, System.out, System.err);
     }
 
 }

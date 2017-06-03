@@ -41,6 +41,13 @@ public interface BeanHolder {
     Processor getProcessor();
 
     /**
+     * Whether a {@link Processor} is supported by this bean holder.
+     *
+     * @return <tt>true</tt> if the holder can supporting using a processor, <tt>false</tt> otherwise
+     */
+    boolean supportProcessor();
+
+    /**
      * Gets bean info for the bean.
      */
     BeanInfo getBeanInfo();

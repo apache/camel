@@ -23,6 +23,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.support.TypeConverterSupport;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
+import org.dozer.metadata.ClassMappingMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>DozerTypeConverter</code> is a standard {@link TypeConverter} that
@@ -30,11 +33,13 @@ import org.dozer.Mapper;
  * types. <code>DozerTypeConverter</code>s are created and installed into a
  * {@link CamelContext} by an instance of {@link DozerTypeConverterLoader}.
  * <p>
- * See <a href="http://dozer.sourceforge.net">dozer project page</a> or more information on configuring Dozer
+ * See <a href="https://github.com/DozerMapper/dozer">dozer project page</a> or more information on configuring Dozer
  *
  * @see DozerTypeConverterLoader
  */
 public class DozerTypeConverter extends TypeConverterSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DozerTypeConverter.class);
 
     private final DozerBeanMapper mapper;
 
@@ -48,6 +53,49 @@ public class DozerTypeConverter extends TypeConverterSupport {
 
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
-        return mapper.map(value, type);
+
+        CamelContext context = exchange != null ? exchange.getContext() : null;
+        ClassLoader appcl = context != null ? context.getApplicationContextClassLoader() : null;
+
+        T result;
+
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            if (appcl != null && appcl != tccl) {
+                LOG.debug("Switching TCCL to: {}", appcl);
+                Thread.currentThread().setContextClassLoader(appcl);
+            }
+
+            // find the map id, so we can provide that when trying to map from source to destination
+            String mapId = null;
+            if (value != null) {
+                Class<?> sourceType = value.getClass();
+                ClassMappingMetadata metadata = getClassMappingMetadata(sourceType, type);
+                if (metadata != null) {
+                    mapId = metadata.getMapId();
+                }
+            }
+
+            result = mapper.map(value, type, mapId);
+
+        } finally {
+            if (appcl != null && appcl != tccl) {
+                Thread.currentThread().setContextClassLoader(tccl);
+                LOG.debug("Restored TCCL to: {}", tccl);
+            }
+        }
+
+        return result;
+    }
+
+    private ClassMappingMetadata getClassMappingMetadata(Class<?> sourceType, Class<?> destType) {
+        ClassMappingMetadata result = null;
+        for (ClassMappingMetadata aux : mapper.getMappingMetadata().getClassMappingsBySource(sourceType)) {
+            if (destType.isAssignableFrom(aux.getDestinationClass())) {
+                result = aux;
+                break;
+            }
+        }
+        return result;
     }
 }

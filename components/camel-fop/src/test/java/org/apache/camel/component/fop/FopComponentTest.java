@@ -36,7 +36,7 @@ public class FopComponentTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
-
+    
     @Override
     @Before
     public void setUp() throws Exception {
@@ -62,19 +62,18 @@ public class FopComponentTest extends CamelTestSupport {
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
         assertEquals("Header value is lost!", "bar", exchange.getIn().getHeader("foo"));
     }
-
+    
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("xslt:xslt/template.xsl")
-                        .setHeader("foo", constant("bar"))
-                        .to("fop:application/pdf")
-                        .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
-                        .to("file:target/data")
-                        .to("mock:result");
-
+                    .to("xslt:xslt/template.xsl")
+                    .setHeader("foo", constant("bar"))
+                    .to("fop:pdf")
+                    .setHeader(Exchange.FILE_NAME, constant("result.pdf"))
+                    .to("file:target/data")
+                    .to("mock:result");
             }
         };
     }

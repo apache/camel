@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.twitter.data;
 
-public enum StreamingType {
-    SAMPLE, FILTER, UNKNOWN;
+import org.apache.camel.component.twitter.TwitterHelper;
 
-    public static StreamingType fromUri(String uri) {
-        for (StreamingType streamType : StreamingType.values()) {
-            if (streamType.name().equalsIgnoreCase(uri)) {
-                return streamType;
-            }
-        }
-        return StreamingType.UNKNOWN;
+public enum StreamingType {
+    SAMPLE, FILTER, USER, UNKNOWN;
+
+    private static final StreamingType[] VALUES = values();
+
+    public static StreamingType fromString(String uri) {
+        return TwitterHelper.enumFromString(VALUES, uri, StreamingType.UNKNOWN);
     }
 }

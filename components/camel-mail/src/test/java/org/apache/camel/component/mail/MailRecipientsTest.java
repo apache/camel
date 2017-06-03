@@ -72,12 +72,12 @@ public class MailRecipientsTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 // all the recipients of this mail are:
-                // To: camel@riders.org , easy@riders.org
-                // CC: me@you.org
-                // BCC: someone@somewhere.org
-                String recipients = "&To=camel@riders.org,easy@riders.org&CC=me@you.org&BCC=someone@somewhere.org";
+                // to: camel@riders.org , easy@riders.org
+                // cc: me@you.org
+                // bcc: someone@somewhere.org
+                String recipients = "&to=camel@riders.org,easy@riders.org&cc=me@you.org&bcc=someone@somewhere.org";
 
-                from("direct:a").to("smtp://you@mymailserver.com?password=secret&From=you@apache.org" + recipients);
+                from("direct:a").to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
                 // END SNIPPET: e1
             }
         };

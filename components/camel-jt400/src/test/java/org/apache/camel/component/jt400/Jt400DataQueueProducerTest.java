@@ -29,9 +29,9 @@ public class Jt400DataQueueProducerTest extends Jt400TestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        Jt400DataQueueEndpoint endpoint = resolveMandatoryEndpoint(
+        Jt400Endpoint endpoint = resolveMandatoryEndpoint(
                 "jt400://user:" + PASSWORD + "@host/qsys.lib/library.lib/queue.dtaq?connectionPool=#mockPool",
-                Jt400DataQueueEndpoint.class);
+                Jt400Endpoint.class);
         producer = new Jt400DataQueueProducer(endpoint);
     }
 

@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -24,7 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
 
@@ -62,10 +62,14 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
         assertFalse(filter.applyFilterToExternalHeaders("warning", "199 Miscellaneous warning", exchange));
         assertFalse(filter.applyFilterToExternalHeaders("Warning", "199 Miscellaneous warning", exchange));
 
-        assertFalse(filter.applyFilterToExternalHeaders("CamelHeader", "test", exchange));
-        assertFalse(filter.applyFilterToExternalHeaders("org.apache.camel.header", "test", exchange));
+        // any Camel header should be filtered
+        assertTrue(filter.applyFilterToExternalHeaders("CamelHeader", "test", exchange));
+        assertTrue(filter.applyFilterToExternalHeaders("org.apache.camel.header", "test", exchange));
 
         assertFalse(filter.applyFilterToExternalHeaders("notFilteredHeader", "test", exchange));
+
+        assertFalse(filter.applyFilterToExternalHeaders("host", "dummy.host.com", exchange));
+        assertFalse(filter.applyFilterToExternalHeaders("Host", "dummy.host.com", exchange));
     }
 
     @Test
@@ -93,10 +97,14 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
         assertTrue(filter.applyFilterToCamelHeaders("warning", "199 Miscellaneous warning", exchange));
         assertTrue(filter.applyFilterToCamelHeaders("Warning", "199 Miscellaneous warning", exchange));
 
+        // any Camel header should be filtered
         assertTrue(filter.applyFilterToCamelHeaders("CamelHeader", "test", exchange));
         assertTrue(filter.applyFilterToCamelHeaders("org.apache.camel.header", "test", exchange));
 
         assertFalse(filter.applyFilterToCamelHeaders("notFilteredHeader", "test", exchange));
+
+        assertTrue(filter.applyFilterToCamelHeaders("host", "dummy.host.com", exchange));
+        assertTrue(filter.applyFilterToCamelHeaders("Host", "dummy.host.com", exchange));
     }
 
 }

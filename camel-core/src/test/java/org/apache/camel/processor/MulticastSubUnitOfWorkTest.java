@@ -60,7 +60,7 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
     }
     
     public void testMulticastException() throws Exception {
-        getMockEndpoint("mock:dead").expectedBodiesReceived("Hello", "Hi", "Bye");
+        getMockEndpoint("mock:dead").expectedBodiesReceived("Hello", "Hello", "Hi", "Hi", "Bye", "Bye");
         template.sendBody("direct:e", "Hello");
         template.sendBody("direct:e", "Hi");
         template.sendBody("direct:e", "Bye");

@@ -28,13 +28,13 @@ public class AhcComponentClientConfigWithClientConfigUriParametersTest extends A
         Endpoint ahcEndpoint = context.getEndpoint(getAhcEndpointUri());
         assertTrue(ahcEndpoint instanceof AhcEndpoint);
         
-        assertEquals(1, ((AhcEndpoint) ahcEndpoint).getClientConfig().getMaxTotalConnections());
+        assertEquals(1, ((AhcEndpoint) ahcEndpoint).getClientConfig().getMaxConnections());
         assertEquals(3, ((AhcEndpoint) ahcEndpoint).getClientConfig().getMaxRequestRetry());
-        assertEquals(true, ((AhcEndpoint) ahcEndpoint).getClientConfig().isRedirectEnabled());
+        assertEquals(true, ((AhcEndpoint) ahcEndpoint).getClientConfig().isFollowRedirect());
     }
 
     @Override
     protected String getAhcEndpointUri() {
-        return super.getAhcEndpointUri() + "?clientConfig.maximumConnectionsTotal=1";
+        return super.getAhcEndpointUri() + "?clientConfig.maxConnections=1";
     }
 }

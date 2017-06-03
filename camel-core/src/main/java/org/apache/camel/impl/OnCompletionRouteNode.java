@@ -22,6 +22,8 @@ import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
+ * {@link org.apache.camel.RouteNode} representing onCompletion.
+ *
  * @version 
  */
 public class OnCompletionRouteNode implements RouteNode {

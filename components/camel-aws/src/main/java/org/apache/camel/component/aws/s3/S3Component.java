@@ -20,18 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Defines the <a href="http://aws.amazon.com/s3/">AWS S3 Component</a> 
- */
-public class S3Component extends DefaultComponent {
+public class S3Component extends UriEndpointComponent {
     
     public S3Component() {
+        super(S3Endpoint.class);
     }
 
     public S3Component(CamelContext context) {
-        super(context);
+        super(context, S3Endpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -41,13 +39,17 @@ public class S3Component extends DefaultComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Bucket name must be specified.");
         }
+        if (remaining.startsWith("arn:")) {
+            remaining = remaining.substring(remaining.lastIndexOf(":") + 1, remaining.length());
+        }
         configuration.setBucketName(remaining);
 
-        if (configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonS3Client or accessKey and secretKey must be specified");
+        if (configuration.getAmazonS3Client() == null) {
+            throw new IllegalArgumentException("AmazonS3Client must be specified");
         }
 
         S3Endpoint endpoint = new S3Endpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 }

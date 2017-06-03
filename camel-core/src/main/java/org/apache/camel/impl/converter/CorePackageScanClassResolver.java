@@ -23,12 +23,15 @@ import java.util.Set;
 
 import org.apache.camel.component.bean.BeanConverter;
 import org.apache.camel.component.file.GenericFileConverter;
+import org.apache.camel.converter.AttachmentConverter;
 import org.apache.camel.converter.CamelConverter;
 import org.apache.camel.converter.CollectionConverter;
 import org.apache.camel.converter.DateTimeConverter;
+import org.apache.camel.converter.DurationConverter;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.NIOConverter;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.converter.SQLConverter;
 import org.apache.camel.converter.TimePatternConverter;
 import org.apache.camel.converter.jaxp.DomConverter;
 import org.apache.camel.converter.jaxp.StaxConverter;
@@ -59,6 +62,7 @@ public class CorePackageScanClassResolver implements PackageScanClassResolver {
         converters.add(ObjectConverter.class);
         converters.add(CollectionConverter.class);
         converters.add(DateTimeConverter.class);
+        converters.add(SQLConverter.class);
         converters.add(IOConverter.class);
         converters.add(NIOConverter.class);
         converters.add(StaxConverter.class);
@@ -71,6 +75,9 @@ public class CorePackageScanClassResolver implements PackageScanClassResolver {
         converters.add(FutureTypeConverter.class);
         converters.add(BeanConverter.class);
         converters.add(GenericFileConverter.class);
+        converters.add(DurationConverter.class);
+        converters.add(AttachmentConverter.class);
+        converters.add(UriTypeConverter.class);
     }
 
     @Override

@@ -23,11 +23,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.RollbackProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;rollback/&gt; element
+ * Forces a rollback by stopping routing the message
  */
+@Metadata(label = "eip,routing")
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
@@ -46,11 +48,6 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
     }
 
     @Override
-    public String getShortName() {
-        return "rollback";
-    }
-
-    @Override
     public String toString() {
         if (message != null) {
             return "Rollback[" + message + "]";
@@ -66,14 +63,17 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
+        boolean isMarkRollbackOnly = getMarkRollbackOnly() != null && getMarkRollbackOnly();
+        boolean isMarkRollbackOnlyLast = getMarkRollbackOnlyLast() != null && getMarkRollbackOnlyLast();
+
         // validate that only either mark rollbacks is chosen and not both
-        if (isMarkRollbackOnly() && isMarkRollbackOnlyLast()) {
+        if (isMarkRollbackOnly && isMarkRollbackOnlyLast) {
             throw new IllegalArgumentException("Only either one of markRollbackOnly and markRollbackOnlyLast is possible to select as true");
         }
 
         RollbackProcessor answer = new RollbackProcessor(message);
-        answer.setMarkRollbackOnly(isMarkRollbackOnly());
-        answer.setMarkRollbackOnlyLast(isMarkRollbackOnlyLast());
+        answer.setMarkRollbackOnly(isMarkRollbackOnly);
+        answer.setMarkRollbackOnlyLast(isMarkRollbackOnlyLast);
         return answer;
     }
 
@@ -81,6 +81,9 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         return message;
     }
 
+    /**
+     * Message to use in rollback exception
+     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -89,23 +92,24 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         return markRollbackOnly;
     }
 
+    /**
+     * Mark the transaction for rollback only (cannot be overruled to commit)
+     */
     public void setMarkRollbackOnly(Boolean markRollbackOnly) {
         this.markRollbackOnly = markRollbackOnly;
-    }
-
-    public boolean isMarkRollbackOnly() {
-        return markRollbackOnly != null && markRollbackOnly;
     }
 
     public Boolean getMarkRollbackOnlyLast() {
         return markRollbackOnlyLast;
     }
 
+    /**
+     * Mark only last sub transaction for rollback only.
+     * <p/>
+     * When using sub transactions (if the transaction manager support this)
+     */
     public void setMarkRollbackOnlyLast(Boolean markRollbackOnlyLast) {
         this.markRollbackOnlyLast = markRollbackOnlyLast;
     }
 
-    public boolean isMarkRollbackOnlyLast() {
-        return markRollbackOnlyLast != null && markRollbackOnlyLast;
-    }
 }

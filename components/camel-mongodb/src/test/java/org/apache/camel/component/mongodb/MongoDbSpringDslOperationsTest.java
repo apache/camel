@@ -19,13 +19,13 @@ package org.apache.camel.component.mongodb;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class MongoDbSpringDslOperationsTest extends MongoDbOperationsTest {
     
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/mongodb/mongoBasicOperationsTest.xml");
+        applicationContext = new AnnotationConfigApplicationContext(MongoBasicOperationsConfiguration.class);
         CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
         return ctx;
     }

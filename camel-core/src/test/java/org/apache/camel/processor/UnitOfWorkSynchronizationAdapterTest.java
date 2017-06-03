@@ -38,6 +38,7 @@ public class UnitOfWorkSynchronizationAdapterTest extends UnitOfWorkTest {
                             @Override
                             public void onComplete(Exchange exchange) {
                                 completed = exchange;
+                                foo = exchange.getIn().getHeader("foo");
                                 doneLatch.countDown();
                             }
                         });
@@ -46,6 +47,7 @@ public class UnitOfWorkSynchronizationAdapterTest extends UnitOfWorkTest {
                             @Override
                             public void onFailure(Exchange exchange) {
                                 failed = exchange;
+                                baz = exchange.getIn().getHeader("baz");
                                 doneLatch.countDown();
                             }
                         });

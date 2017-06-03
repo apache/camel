@@ -20,30 +20,59 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.cxf.message.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>
  */
-public class CxfComponent extends HeaderFilterStrategyComponent {
-    Boolean allowStreaming;
-    
+public class CxfComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
+
+    @Metadata(label = "advanced")
+    private Boolean allowStreaming;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
+
     public CxfComponent() {
+        super(CxfEndpoint.class);
     }
 
     public CxfComponent(CamelContext context) {
-        super(context);
+        super(context, CxfEndpoint.class);
     }
-    
-    public void setAllowStreaming(Boolean b) {
-        allowStreaming = b;
+
+    /**
+     * This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages
+     * into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases.
+     */
+    public void setAllowStreaming(Boolean allowStreaming) {
+        this.allowStreaming = allowStreaming;
     }
-    public Boolean getAllowStreaming() {
+
+    public Boolean isAllowStreaming() {
         return allowStreaming;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     /**
@@ -54,8 +83,16 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        CxfEndpoint result = null;
-        
+        CxfEndpoint result;
+
+        Object value = parameters.remove("setDefaultBus");
+        if (value != null) {
+            LOG.warn("The option setDefaultBus is @deprecated, use name defaultBus instead");
+            if (!parameters.containsKey("defaultBus")) {
+                parameters.put("defaultBus", value);
+            }
+        }
+
         if (allowStreaming != null && !parameters.containsKey("allowStreaming")) {
             parameters.put("allowStreaming", Boolean.toString(allowStreaming));
         }
@@ -67,16 +104,18 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
                 beanId = beanId.substring(2);
             }
 
-            result = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfEndpoint.class);
-            // need to check the CamelContext value 
+            result = createCxfSpringEndpoint(beanId);
+            // need to check the CamelContext value
             if (getCamelContext().equals(result.getCamelContext())) {
                 result.setCamelContext(getCamelContext());
             }
-            
+            result.setBeanId(beanId);
+
         } else {
             // endpoint URI does not specify a bean
-            result = new CxfEndpoint(remaining, this);
+            result = createCxfEndpoint(remaining);
         }
+
         if (result.getCamelContext() == null) {
             result.setCamelContext(getCamelContext());
         }
@@ -93,7 +132,20 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
             result.setMtomEnabled(Boolean.valueOf((String) result.getProperties().get(Message.MTOM_ENABLED)));
         }
 
+        // use global ssl config if set
+        if (result.getSslContextParameters() == null) {
+            result.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         return result;
+    }
+
+    protected CxfEndpoint createCxfSpringEndpoint(String beanId) throws Exception {
+        return CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfEndpoint.class);
+    }
+
+    protected CxfEndpoint createCxfEndpoint(String remaining) {
+        return new CxfEndpoint(remaining, this);
     }
 
     @Override
@@ -101,4 +153,5 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
         cxfEndpoint.updateEndpointUri(uri);
     }
+
 }

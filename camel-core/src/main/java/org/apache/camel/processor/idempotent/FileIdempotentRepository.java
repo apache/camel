@@ -153,6 +153,16 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         // noop
         return true;
     }
+    
+    @ManagedOperation(description = "Clear the store")
+    public void clear() {
+        synchronized (cache) {
+            cache.clear();
+            if (cache instanceof LRUCache) {
+                ((LRUCache) cache).cleanUp();
+            }
+        }
+    }
 
     public File getFileStore() {
         return fileStore;
@@ -212,11 +222,14 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * Reset and clears the store to force it to reload from file
      */
     @ManagedOperation(description = "Reset and reloads the file store")
-    public synchronized void reset() {
+    public synchronized void reset() throws IOException {
         synchronized (cache) {
             // trunk and clear, before we reload the store
             trunkStore();
             cache.clear();
+            if (cache instanceof LRUCache) {
+                ((LRUCache) cache).cleanUp();
+            }
             loadStore();
         }
     }
@@ -230,6 +243,16 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         LOG.debug("Appending {} to idempotent filestore: {}", messageId, fileStore);
         FileOutputStream fos = null;
         try {
+            // create store parent directory if missing
+            File storeParentDirectory = fileStore.getParentFile();
+            if (storeParentDirectory != null && !storeParentDirectory.exists()) {
+                LOG.info("Parent directory of file store {} doesn't exist. Creating.", fileStore);
+                if (fileStore.getParentFile().mkdirs()) {
+                    LOG.info("Parent directory of file store {} successfully created.", fileStore);
+                } else {
+                    LOG.warn("Parent directory of file store {} cannot be created.", fileStore);
+                }
+            }
             // create store if missing
             if (!fileStore.exists()) {
                 FileUtil.createNewFile(fileStore);
@@ -268,12 +291,21 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     /**
      * Loads the given file store into the 1st level cache
      */
-    protected void loadStore() {
-        LOG.trace("Loading to 1st level cache from idempotent filestore: {}", fileStore);
-
+    protected void loadStore() throws IOException {
+        // auto create starting directory if needed
         if (!fileStore.exists()) {
-            return;
+            LOG.debug("Creating filestore: {}", fileStore);
+            File parent = fileStore.getParentFile();
+            if (parent != null) {
+                parent.mkdirs();
+            }
+            boolean created = FileUtil.createNewFile(fileStore);
+            if (!created) {
+                throw new IOException("Cannot create filestore: " + fileStore);
+            }
         }
+
+        LOG.trace("Loading to 1st level cache from idempotent filestore: {}", fileStore);
 
         cache.clear();
         Scanner scanner = null;
@@ -297,6 +329,8 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(fileStore, "fileStore", this);
+
         // init store if not loaded before
         if (init.compareAndSet(false, true)) {
             loadStore();
@@ -308,6 +342,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         // reset will trunk and clear the cache
         trunkStore();
         cache.clear();
+        if (cache instanceof LRUCache) {
+            ((LRUCache) cache).cleanUp();
+        }
         init.set(false);
     }
 

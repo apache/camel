@@ -20,6 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * <code>ZookeeperConfiguration</code> encapsulates the configuration used to
@@ -28,20 +33,30 @@ import org.apache.camel.RuntimeCamelException;
  * {@link ZooKeeperComponent}. A copy of this component's configuration will be
  * injected into any {@link ZooKeeperEndpoint}s the component creates.
  */
+@UriParams
 public class ZooKeeperConfiguration implements Cloneable {
 
-    private int timeout = 5000;
-    private long backoff = 5000;
+    @UriPath @Metadata(required = "true")
+    private String serverUrls;
     private List<String> servers;
-    private boolean changed;
-    private int sessionId;
-    private byte[] password;
+    @UriPath @Metadata(required = "true")
     private String path;
+    @UriParam(defaultValue = "5000")
+    private int timeout = 5000;
+    @UriParam(label = "consumer", defaultValue = "5000")
+    private long backoff = 5000;
+    @UriParam(defaultValue = "true")
+    @Deprecated
     private boolean awaitExistence = true;
+    @UriParam(label = "consumer")
     private boolean repeat;
+    @UriParam
     private boolean listChildren;
-    private boolean shouldCreate;
+    @UriParam(label = "producer")
+    private boolean create;
+    @UriParam(label = "producer", enums = "PERSISTENT,PERSISTENT_SEQUENTIAL,EPHEMERAL,EPHEMERAL_SEQUENTIAL", defaultValue = "EPHEMERAL")
     private String createMode;
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean sendEmptyMessageOnDelete = true;
 
     public void addZookeeperServer(String server) {
@@ -49,13 +64,37 @@ public class ZooKeeperConfiguration implements Cloneable {
             servers = new ArrayList<String>();
         }
         servers.add(server);
-        changed = true;
+    }
+
+    public ZooKeeperConfiguration copy() {
+        try {
+            return (ZooKeeperConfiguration)clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     public List<String> getServers() {
         return servers;
     }
 
+    /**
+     * The zookeeper server hosts (multiple servers can be separated by comma)
+     */
+    public String getServerUrls() {
+        if (servers != null) {
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            for (String server : servers) {
+                csb.append(server);
+            }
+            return csb.toString();
+        }
+        return null;
+    }
+
+    /**
+     * The zookeeper server hosts
+     */
     public void setServers(List<String> servers) {
         this.servers = servers;
     }
@@ -64,25 +103,22 @@ public class ZooKeeperConfiguration implements Cloneable {
         return timeout;
     }
 
+    /**
+     * The time interval to wait on connection before timing out.
+     */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
-        changed = true;
     }
 
-    public boolean listChildren() {
+    public boolean isListChildren() {
         return listChildren;
     }
 
+    /**
+     * Whether the children of the node should be listed
+     */
     public void setListChildren(boolean listChildren) {
         this.listChildren = listChildren;
-    }
-
-    public void clearChanged() {
-        changed = false;
-    }
-
-    public boolean isChanged() {
-        return changed;
     }
 
     public String getConnectString() {
@@ -95,14 +131,9 @@ public class ZooKeeperConfiguration implements Cloneable {
 
     }
 
-    public byte[] getSessionPassword() {
-        return password;
-    }
-
-    public int getSessionId() {
-        return sessionId;
-    }
-
+    /**
+     * The node in the ZooKeeper server (aka znode)
+     */
     public void setPath(String path) {
         this.path = path;
     }
@@ -111,20 +142,15 @@ public class ZooKeeperConfiguration implements Cloneable {
         return path;
     }
 
-    public boolean shouldRepeat() {
+    public boolean isRepeat() {
         return repeat;
     }
 
+    /**
+     * Should changes to the znode be 'watched' and repeatedly processed.
+     */
     public void setRepeat(boolean repeat) {
         this.repeat = repeat;
-    }
-
-    public ZooKeeperConfiguration copy() {
-        try {
-            return (ZooKeeperConfiguration)clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeCamelException(e);
-        }
     }
 
     /**
@@ -136,6 +162,7 @@ public class ZooKeeperConfiguration implements Cloneable {
     }
 
     /**
+     * Not in use
      * @deprecated The usage of this option has no effect at all.
      */
     @Deprecated
@@ -147,22 +174,31 @@ public class ZooKeeperConfiguration implements Cloneable {
         return backoff;
     }
 
+    /**
+     * The time interval to backoff for after an error before retrying.
+     */
     public void setBackoff(long backoff) {
         this.backoff = backoff;
     }
 
-    public void setCreate(boolean shouldCreate) {
-        this.shouldCreate = shouldCreate;
+    public boolean isCreate() {
+        return create;
     }
 
-    public boolean shouldCreate() {
-        return shouldCreate;
+    /**
+     * Should the endpoint create the node if it does not currently exist.
+     */
+    public void setCreate(boolean shouldCreate) {
+        this.create = shouldCreate;
     }
 
     public String getCreateMode() {
         return createMode;
     }
 
+    /**
+     * The create mode that should be used for the newly created node
+     */
     public void setCreateMode(String createMode) {
         this.createMode = createMode;
     }
@@ -171,6 +207,9 @@ public class ZooKeeperConfiguration implements Cloneable {
         return sendEmptyMessageOnDelete;
     }
 
+    /**
+     * Upon the delete of a znode, should an empty message be send to the consumer
+     */
     public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
         this.sendEmptyMessageOnDelete = sendEmptyMessageOnDelete;
     }

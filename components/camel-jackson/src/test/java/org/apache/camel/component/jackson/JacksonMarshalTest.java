@@ -28,14 +28,13 @@ public class JacksonMarshalTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
-
         Map<String, Object> in = new HashMap<String, Object>();
         in.put("name", "Camel");
 
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Map.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:in", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
@@ -47,15 +46,34 @@ public class JacksonMarshalTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMarshalAndUnmarshalPojo() throws Exception {
+    public void testMarshalAndUnmarshalMapWithPrettyPrint() throws Exception {
+        Map<String, Object> in = new HashMap<String, Object>();
+        in.put("name", "Camel");
 
+        MockEndpoint mock = getMockEndpoint("mock:reverse");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(Map.class);
+        mock.message(0).body().isEqualTo(in);
+
+        Object marshalled = template.requestBody("direct:inPretty", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        String expected = String.format("{%s  \"name\" : \"Camel\"%s}", LS, LS);
+        assertEquals(expected, marshalledAsString);
+
+        template.sendBody("direct:backPretty", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMarshalAndUnmarshalPojo() throws Exception {
         TestPojo in = new TestPojo();
         in.setName("Camel");
 
         MockEndpoint mock = getMockEndpoint("mock:reversePojo");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojo.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inPojo", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
@@ -72,17 +90,21 @@ public class JacksonMarshalTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-
                 JacksonDataFormat format = new JacksonDataFormat();
 
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
+                JacksonDataFormat prettyPrintDataFormat = new JacksonDataFormat();
+                prettyPrintDataFormat.setPrettyPrint(true);
+
+                from("direct:inPretty").marshal(prettyPrintDataFormat);
+                from("direct:backPretty").unmarshal(prettyPrintDataFormat).to("mock:reverse");
+
                 JacksonDataFormat formatPojo = new JacksonDataFormat(TestPojo.class);
 
                 from("direct:inPojo").marshal(formatPojo);
                 from("direct:backPojo").unmarshal(formatPojo).to("mock:reversePojo");
-
             }
         };
     }

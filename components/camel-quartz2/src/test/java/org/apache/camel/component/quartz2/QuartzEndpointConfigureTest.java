@@ -17,7 +17,6 @@
 package org.apache.camel.component.quartz2;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
@@ -30,7 +29,7 @@ import org.quartz.TriggerKey;
 /**
  * @version 
  */
-public class QuartzEndpointConfigureTest extends CamelTestSupport {
+public class QuartzEndpointConfigureTest extends BaseQuartzTest {
 
     @Test
     public void testConfigureGroupAndName() throws Exception {
@@ -59,9 +58,9 @@ public class QuartzEndpointConfigureTest extends CamelTestSupport {
         JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(triggerKey.getName(), triggerKey.getGroup()));
 
         assertEquals("getName()", "myName", triggerKey.getName());
-        assertEquals("getGroup()", "Camel", triggerKey.getGroup());
+        assertEquals("getGroup()", "Camel_" + context.getManagementName(), triggerKey.getGroup());
         assertEquals("getJobName", "myName", jobDetail.getKey().getName());
-        assertEquals("getJobGroup", "Camel", jobDetail.getKey().getGroup());
+        assertEquals("getJobGroup", "Camel_" + context.getManagementName(), jobDetail.getKey().getGroup());
     }
 
     @Test

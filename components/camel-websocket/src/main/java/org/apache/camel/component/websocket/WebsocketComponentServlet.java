@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.jetty.websocket.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
+import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,11 +33,15 @@ public class WebsocketComponentServlet extends WebSocketServlet {
 
     private final NodeSynchronization sync;
     private WebsocketConsumer consumer;
+    private String pathSpec;
 
     private ConcurrentMap<String, WebsocketConsumer> consumers = new ConcurrentHashMap<String, WebsocketConsumer>();
+    private Map<String, WebSocketFactory> socketFactory;
 
-    public WebsocketComponentServlet(NodeSynchronization sync) {
+    public WebsocketComponentServlet(NodeSynchronization sync, String pathSpec, Map<String, WebSocketFactory> socketFactory) {
         this.sync = sync;
+        this.socketFactory = socketFactory;
+        this.pathSpec = pathSpec;
     }
 
     public WebsocketConsumer getConsumer() {
@@ -57,9 +62,37 @@ public class WebsocketComponentServlet extends WebSocketServlet {
         consumers.remove(consumer.getPath());
     }
 
-    @Override
-    public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
-        return new DefaultWebsocket(sync, consumer);
+    public DefaultWebsocket doWebSocketConnect(ServletUpgradeRequest request, String protocol) {
+        String protocolKey = protocol;
+
+        if (protocol == null || !socketFactory.containsKey(protocol)) {
+            log.debug("No factory found for the socket protocol: {}, returning default implementation", protocol);
+            protocolKey = "default";
+        }
+
+        WebSocketFactory factory = socketFactory.get(protocolKey);
+        return factory.newInstance(request, protocolKey, 
+                (consumer != null && consumer.getEndpoint() != null) ? WebsocketComponent.createPathSpec(consumer.getEndpoint().getResourceUri()) : null,
+                sync, consumer);
     }
 
+    public Map<String, WebSocketFactory> getSocketFactory() {
+        return socketFactory;
+    }
+
+    public void setSocketFactory(Map<String, WebSocketFactory> socketFactory) {
+        this.socketFactory = socketFactory;
+    }
+
+    @Override
+    public void configure(WebSocketServletFactory factory) {
+        factory.setCreator(new WebSocketCreator() {
+            @Override
+            public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp) {
+                String protocolKey = "default";
+                WebSocketFactory factory = socketFactory.get(protocolKey);
+                return factory.newInstance(req, protocolKey, pathSpec, sync, consumer);
+            }
+        });
+    }
 }

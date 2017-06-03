@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy.classtype;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
@@ -34,7 +35,7 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
 
     @Test
     public void testMarshallMessage() throws Exception {
-        String expected = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
+        String expected = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009,17-02-2010 23:21:59\r\n";
 
         getMockEndpoint("mock:in").expectedBodiesReceived(expected);
 
@@ -48,7 +49,7 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
         getMockEndpoint("mock:out").expectedMessageCount(1);
         getMockEndpoint("mock:out").message(0).body().isInstanceOf(Order.class);
 
-        String data = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
+        String data = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009,16-02-2010 23:21:59\r\n";
         template.sendBody("direct:out", data);
 
         assertMockEndpointsSatisfied();
@@ -64,6 +65,13 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
         assertEquals("XX23456789", order.getInstrumentNumber());
         assertEquals("Share", order.getInstrumentType());
         assertEquals("EUR", order.getCurrency());
+
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        // 4 hour shift
+        // 16-02-2010 23:21:59 by GMT+4
+        calendar.set(2010, 1, 16, 19, 21, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+        assertEquals(calendar.getTime(), order.getOrderDateTime());
     }
 
     public Order generateOrder() {
@@ -82,6 +90,12 @@ public class BindyCsvClassTypeTest extends CamelTestSupport {
         Calendar calendar = new GregorianCalendar();
         calendar.set(2009, 0, 14);
         order.setOrderDate(calendar.getTime());
+
+        calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        // 4 hour shift
+        // 17-02-2010 23:21:59 by GMT+4
+        calendar.set(2010, 1, 17, 19, 21, 59);
+        order.setOrderDateTime(calendar.getTime());
 
         return order;
     }

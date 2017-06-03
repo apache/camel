@@ -26,11 +26,11 @@ public class SplitterPropertyContinuedTest extends ContextTestSupport {
     
     public void testSplitterPropertyContinued() throws Exception {
         getMockEndpoint("mock:end").expectedBodiesReceived("A,Kaboom,B,C");
-        getMockEndpoint("mock:end").message(0).property("errorCode").isNull();
+        getMockEndpoint("mock:end").message(0).exchangeProperty("errorCode").isNull();
         getMockEndpoint("mock:error").expectedBodiesReceived("Kaboom");
-        getMockEndpoint("mock:error").message(0).property("errorCode").isEqualTo("ERR-1");
+        getMockEndpoint("mock:error").message(0).exchangeProperty("errorCode").isEqualTo("ERR-1");
         getMockEndpoint("mock:split").expectedBodiesReceived("A", "B", "C");
-        getMockEndpoint("mock:split").allMessages().property("errorCode").isNull();
+        getMockEndpoint("mock:split").allMessages().exchangeProperty("errorCode").isNull();
         
         template.sendBody("direct:start", "A,Kaboom,B,C");
         

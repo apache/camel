@@ -103,10 +103,12 @@ public class Main {
         addOption(new Option("h", "help", "Displays the help screen") {
             protected void doProcess(String arg, LinkedList<String> remainingArgs) {
                 showOptions();
+                // no need to process further if user just wants help
+                System.exit(0);
             }
         });
 
-        addOption(new ParameterOption("c", "command", "Command either encrypt or decrypt", "command") {
+        addOption(new ParameterOption("c", "command", "Command can be encrypt or decrypt", "command") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 if ("encrypt".equals(parameter) || "decrypt".equals(parameter)) {
                     command = parameter;
@@ -140,7 +142,7 @@ public class Main {
     }
 
     private void showOptions() {
-        System.out.println("Apache Camel Jasypt takes the following options");
+        System.out.println("Apache Camel Jasypt takes the following options:");
         System.out.println();
         for (Option option : options) {
             System.out.println(option.getInformation());

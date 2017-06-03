@@ -18,24 +18,77 @@ package org.apache.camel.converter.xmlbeans;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.Callable;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.xmlbeans.XmlObject;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XmlBeans to marshal to and from XML
  */
-public class XmlBeansDataFormat implements DataFormat {
+public class XmlBeansDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
-    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
-        XmlObject object = ExchangeHelper.convertToMandatoryType(exchange, XmlObject.class, body);
-        object.save(stream);
+    private boolean contentTypeHeader = true;
+
+    @Override
+    public String getDataFormatName() {
+        return "xmlBeans";
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        return XmlObject.Factory.parse(stream);
+    public void marshal(final Exchange exchange, final Object body, final OutputStream stream) throws Exception {
+        ObjectHelper.callWithTCCL(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                XmlObject object = ExchangeHelper.convertToMandatoryType(exchange, XmlObject.class, body);
+                object.save(stream);
+                return null;
+            }
+        }, exchange);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
     }
+
+    public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
+        return ObjectHelper.callWithTCCL(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                return XmlObject.Factory.parse(stream);
+            }
+        }, exchange);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then XmlBeans will set the Content-Type header to <tt>application/xml</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
+    }
+
 }

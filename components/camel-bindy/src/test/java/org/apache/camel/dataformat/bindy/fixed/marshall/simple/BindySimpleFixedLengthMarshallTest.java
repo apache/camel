@@ -110,7 +110,7 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
 
             BindyDataFormat bindy = new BindyDataFormat();
             bindy.setLocale("en");
-            bindy.setPackages(new String[] {"org.apache.camel.dataformat.bindy.fixed.marshall.simple"});
+            bindy.setClassType(Order.class);
             bindy.setType(BindyType.Fixed);
 
             from(URI_DIRECT_START)

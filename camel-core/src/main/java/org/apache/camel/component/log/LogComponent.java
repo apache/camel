@@ -21,59 +21,69 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.processor.CamelLogProcessor;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.processor.DefaultExchangeFormatter;
-import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/log.html">Log Component</a>
- * to log message exchanges to the underlying logging mechanism.
+ * is for logging message exchanges via the underlying logging mechanism.
  *
  * @version 
  */
-public class LogComponent extends DefaultComponent {
+public class LogComponent extends UriEndpointComponent {
+    private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);
 
+    @Metadata(label = "advanced")
     private ExchangeFormatter exchangeFormatter;
-    
+
+    public LogComponent() {
+        super(LogEndpoint.class);
+    }
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
+        Logger providedLogger = getLogger(parameters);
 
+        if (providedLogger == null) {
+            // try to look up the logger in registry
+            Map<String, Logger> availableLoggers = getCamelContext().getRegistry().findByTypeWithName(Logger.class);
+            if (availableLoggers.size() == 1) {
+                providedLogger = availableLoggers.values().iterator().next();
+                LOG.info("Using custom Logger: {}", providedLogger);
+            } else if (availableLoggers.size() > 1) {
+                LOG.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.", Logger.class.getName(), uri);
+            }
+        }
+        
         LogEndpoint endpoint = new LogEndpoint(uri, this);
         endpoint.setLevel(level.name());
         setProperties(endpoint, parameters);
-
-        CamelLogger camelLogger = new CamelLogger(remaining, level, endpoint.getMarker());
-        Processor logger;
-        if (endpoint.getGroupSize() != null) {
-            logger = new ThroughputLogger(camelLogger, endpoint.getGroupSize());
-        } else if (endpoint.getGroupInterval() != null) {
-            Boolean groupActiveOnly = endpoint.getGroupActiveOnly() != null ? endpoint.getGroupActiveOnly() : Boolean.TRUE;
-            Long groupDelay = endpoint.getGroupDelay();
-            logger = new ThroughputLogger(camelLogger, this.getCamelContext(), endpoint.getGroupInterval(), groupDelay, groupActiveOnly);
+      
+        if (providedLogger == null) {
+            endpoint.setLoggerName(remaining);
         } else {
-            // first, try to use the user-specified formatter (or the one picked up from the Registry and transferred to 
-            // the property by a previous endpoint initialisation); if null, try to pick it up from the Registry now
-            ExchangeFormatter localFormatter = exchangeFormatter;
-            if (localFormatter == null) {
-                localFormatter = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
-                if (localFormatter != null) {
-                    exchangeFormatter = localFormatter;
-                    setProperties(exchangeFormatter, parameters);
-                }
-            }
-            // if no formatter is available in the Registry, create a local one of the default type, for a single use
-            if (localFormatter == null) {
-                localFormatter = new DefaultExchangeFormatter();
-                setProperties(localFormatter, parameters);
-            }
-            logger = new CamelLogProcessor(camelLogger, localFormatter);
+            endpoint.setProvidedLogger(providedLogger);
         }
 
-        endpoint.setLogger(logger);
+        // first, try to pick up the ExchangeFormatter from the registry
+        ExchangeFormatter localFormatter = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
+        if (localFormatter != null) {
+            setProperties(localFormatter, parameters);
+        } else if (localFormatter == null && exchangeFormatter != null) {
+            // do not set properties, the exchangeFormatter is explicitly set, therefore the
+            // user would have set its properties explicitly too
+            localFormatter = exchangeFormatter;
+        } else {
+            // if no formatter is available in the Registry, create a local one of the default type, for a single use
+            localFormatter = new DefaultExchangeFormatter();
+            setProperties(localFormatter, parameters);
+        }
+        endpoint.setLocalFormatter(localFormatter);
         return endpoint;
     }
 
@@ -83,6 +93,17 @@ public class LogComponent extends DefaultComponent {
     protected LoggingLevel getLoggingLevel(Map<String, Object> parameters) {
         String levelText = getAndRemoveParameter(parameters, "level", String.class, "INFO");
         return LoggingLevel.valueOf(levelText.toUpperCase(Locale.ENGLISH));
+    }
+
+    /**
+     * Gets optional {@link Logger} instance from parameters. If non-null, the provided instance will be used as
+     * {@link Logger} in {@link CamelLogger}
+     *
+     * @param parameters the parameters
+     * @return the Logger object from the parameter
+     */
+    protected Logger getLogger(Map<String, Object> parameters) {
+        return getAndRemoveOrResolveReferenceParameter(parameters, "logger", Logger.class);
     }
 
     public ExchangeFormatter getExchangeFormatter() {

@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import java.io.ByteArrayInputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
@@ -45,6 +46,12 @@ public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
             assertTrue("We should get a RuntimeCamelException", ex instanceof RuntimeCamelException);
         }
     }
+    
+    @Test
+    public void testSendFormRequestMessage() throws Exception {
+        String out = template.requestBodyAndHeader("http://localhost:" + port2 + "/form", "username=abc&pass=password", Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded", String.class);
+        assertEquals("Get a wrong response message", "username=abc&pass=password", out);
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -65,6 +72,19 @@ public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
                         .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("netty-http:http://localhost:" + port1 + "?matchOnUriPrefix=true").process(serviceProc);
+                
+                // check the from request
+                from("netty-http:http://localhost:" + port2 + "/form?bridgeEndpoint=true")
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            // just take out the message body and send it back
+                            Message in = exchange.getIn();
+                            String request = in.getBody(String.class);
+                            exchange.getOut().setBody(request);
+                        }
+                        
+                    });
             }
         };
     }

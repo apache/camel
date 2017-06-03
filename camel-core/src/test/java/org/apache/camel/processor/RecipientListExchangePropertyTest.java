@@ -17,44 +17,55 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
  */
 public class RecipientListExchangePropertyTest extends ContextTestSupport {
 
-    public void testRecipientExchangeProperty() throws Exception {
-        getMockEndpoint("mock:a").expectedPropertyReceived(Exchange.RECIPIENT_LIST_ENDPOINT, "direct://a");
-        getMockEndpoint("mock:a").expectedPropertyReceived(Exchange.TO_ENDPOINT, "mock://a");
-        getMockEndpoint("mock:b").expectedPropertyReceived(Exchange.RECIPIENT_LIST_ENDPOINT, "direct://b");
-        getMockEndpoint("mock:b").expectedPropertyReceived(Exchange.TO_ENDPOINT, "mock://b");
-        getMockEndpoint("mock:c").expectedPropertyReceived(Exchange.RECIPIENT_LIST_ENDPOINT, "direct://c");
-        getMockEndpoint("mock:c").expectedPropertyReceived(Exchange.TO_ENDPOINT, "mock://c");
+    private final MyStuff myStuff = new MyStuff("Blah");
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello c");
-        // would be the last one
-        mock.expectedPropertyReceived(Exchange.RECIPIENT_LIST_ENDPOINT, "direct://c");
+    public void testExchangeProperty() throws Exception {
+        getMockEndpoint("mock:x").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:x").message(0).exchangeProperty("foo").isEqualTo(myStuff);
+        getMockEndpoint("mock:y").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:y").message(0).exchangeProperty("foo").isEqualTo(myStuff);
+        getMockEndpoint("mock:z").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:z").message(0).exchangeProperty("foo").isEqualTo(myStuff);
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").message(0).exchangeProperty("foo").isEqualTo(myStuff);
 
-        String out = template.requestBodyAndHeader("direct:start", "Hello World", "slip", "direct:a,direct:b,direct:c", String.class);
-        assertEquals("Hello c", out);
+        template.sendBodyAndProperty("direct:a", "Hello World", "foo", myStuff);
 
         assertMockEndpointsSatisfied();
+
+        MyStuff stuff = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getProperty("foo", MyStuff.class);
+        assertSame("Should be same instance", myStuff, stuff);
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").recipientList(header("slip")).to("mock:result");
-
-                from("direct:a").to("mock:a").transform(constant("Hello a"));
-                from("direct:b").to("mock:b").transform(constant("Hello b"));
-                from("direct:c").to("mock:c").transform(constant("Hello c"));
+                from("direct:a")
+                        .recipientList(constant("mock:x,mock:y,mock:z"))
+                        .to("mock:result");
             }
         };
+
+    }
+
+    private static final class MyStuff {
+
+        private String name;
+
+        private MyStuff(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
 }

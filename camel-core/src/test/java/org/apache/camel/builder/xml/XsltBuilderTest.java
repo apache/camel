@@ -267,7 +267,6 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
         assertNotNull(builder.getResultHandlerFactory());
-        
         builder.outputBytes();
         assertIsInstanceOf(StreamResultHandlerFactory.class, builder.getResultHandlerFactory());
 

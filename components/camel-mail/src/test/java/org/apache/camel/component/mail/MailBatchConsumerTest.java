@@ -47,17 +47,17 @@ public class MailBatchConsumerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(5);
         mock.expectsAscending(body());
-        mock.message(0).property(Exchange.BATCH_INDEX).isEqualTo(0);
-        mock.message(1).property(Exchange.BATCH_INDEX).isEqualTo(1);
-        mock.message(2).property(Exchange.BATCH_INDEX).isEqualTo(2);
-        mock.message(3).property(Exchange.BATCH_INDEX).isEqualTo(3);
-        mock.message(4).property(Exchange.BATCH_INDEX).isEqualTo(4);
-        mock.message(0).property(Exchange.BATCH_COMPLETE).isEqualTo(false);
-        mock.message(1).property(Exchange.BATCH_COMPLETE).isEqualTo(false);
-        mock.message(2).property(Exchange.BATCH_COMPLETE).isEqualTo(false);
-        mock.message(3).property(Exchange.BATCH_COMPLETE).isEqualTo(false);
-        mock.message(3).property(Exchange.BATCH_COMPLETE).isEqualTo(false);
-        mock.message(4).property(Exchange.BATCH_COMPLETE).isEqualTo(true);
+        mock.message(0).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(0);
+        mock.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);
+        mock.message(2).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(2);
+        mock.message(3).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(3);
+        mock.message(4).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(4);
+        mock.message(0).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(false);
+        mock.message(1).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(false);
+        mock.message(2).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(false);
+        mock.message(3).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(false);
+        mock.message(3).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(false);
+        mock.message(4).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(true);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 5);
 
         assertMockEndpointsSatisfied();
@@ -77,6 +77,7 @@ public class MailBatchConsumerTest extends CamelTestSupport {
         Message[] messages = new Message[5];
         for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
+            messages[i].setHeader("Message-ID", "" + i);
             messages[i].setText("Message " + i);
         }
         folder.appendMessages(messages);

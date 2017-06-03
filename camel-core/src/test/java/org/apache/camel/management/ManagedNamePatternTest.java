@@ -44,7 +44,7 @@ public class ManagedNamePatternTest extends ManagementTestSupport {
 
         assertTrue(context.getManagementName().startsWith("cool"));
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + context.getManagementName() + ",type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + context.getManagementName() + ",type=context,name=\"camel-1\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
     }
 

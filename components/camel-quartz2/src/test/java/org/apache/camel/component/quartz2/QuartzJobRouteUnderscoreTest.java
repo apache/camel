@@ -18,14 +18,13 @@ package org.apache.camel.component.quartz2;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.quartz.JobDetail;
 
 /**
  * @version 
  */
-public class QuartzJobRouteUnderscoreTest extends CamelTestSupport {
+public class QuartzJobRouteUnderscoreTest extends BaseQuartzTest {
 
     @Test
     public void testQuartzRoute() throws Exception {

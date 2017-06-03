@@ -39,7 +39,7 @@ public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementT
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:tap").expectedMessageCount(1);
@@ -101,7 +101,7 @@ public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementT
                 // create a new thread pool to use for wire tap
                 myThreadPool = Executors.newFixedThreadPool(1);
 
-                from("seda:foo").routeId("foo").wireTap("direct:tap").executorService(myThreadPool).to("mock:result");
+                from("seda:foo").routeId("foo").wireTap("direct:tap", myThreadPool).to("mock:result");
                 from("direct:tap").routeId("tap").to("mock:tap");
             }
         };

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Body;
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
@@ -115,7 +116,7 @@ public class SplitterPojoTest extends ContextTestSupport {
          * @param body the payload of the incoming message
          * @return a list containing each part splitted
          */
-        public List<Message> splitMessage(@Header(value = "user") String header, @Body String body) {
+        public List<Message> splitMessage(@Header(value = "user") String header, @Body String body, CamelContext camelContext) {
             // we can leverage the Parameter Binding Annotations  
             // http://camel.apache.org/parameter-binding-annotations.html
             // to access the message header and body at same time, 
@@ -125,7 +126,7 @@ public class SplitterPojoTest extends ContextTestSupport {
             List<Message> answer = new ArrayList<Message>();
             String[] parts = header.split(",");
             for (String part : parts) {
-                DefaultMessage message = new DefaultMessage();
+                DefaultMessage message = new DefaultMessage(camelContext);
                 message.setHeader("user", part);
                 message.setBody(body);
                 answer.add(message);

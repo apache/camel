@@ -19,25 +19,28 @@ package org.apache.camel.component.spring.batch;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.springframework.batch.core.Job;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
-public class SpringBatchComponent extends DefaultComponent {
+public class SpringBatchComponent extends UriEndpointComponent {
 
     private static final String DEFAULT_JOB_LAUNCHER_REF_NAME = "jobLauncher";
 
-    private JobLauncher jobLauncher;
-
     private JobLauncher defaultResolvedJobLauncher;
-
     private Map<String, JobLauncher> allResolvedJobLaunchers;
+
+    private JobLauncher jobLauncher;
+    private JobRegistry jobRegistry;
+
+    public SpringBatchComponent() {
+        super(SpringBatchEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Job resolvedJob = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, Job.class);
-        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(uri, this, jobLauncher, defaultResolvedJobLauncher, allResolvedJobLaunchers, resolvedJob);
+        SpringBatchEndpoint endpoint = new SpringBatchEndpoint(uri, this, jobLauncher, defaultResolvedJobLauncher, 
+                allResolvedJobLaunchers, remaining, jobRegistry);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -48,8 +51,25 @@ public class SpringBatchComponent extends DefaultComponent {
         allResolvedJobLaunchers = getCamelContext().getRegistry().findByTypeWithName(JobLauncher.class);
     }
 
+    public JobLauncher getJobLauncher() {
+        return jobLauncher;
+    }
+
+    /**
+     * Explicitly specifies a JobLauncher to be used.
+     */
     public void setJobLauncher(JobLauncher jobLauncher) {
         this.jobLauncher = jobLauncher;
     }
 
+    public JobRegistry getJobRegistry() {
+        return jobRegistry;
+    }
+
+    /**
+     * Explicitly specifies a JobRegistry to be used.
+     */    
+    public void setJobRegistry(JobRegistry jobRegistry) {
+        this.jobRegistry = jobRegistry;
+    }
 }

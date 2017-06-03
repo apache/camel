@@ -28,8 +28,10 @@ public interface DdbConstants {
     String CONSUMED_CAPACITY = "CamelAwsDdbConsumedCapacity";
     String COUNT = "CamelAwsDdbCount";
     String CREATION_DATE = "CamelAwsDdbCreationDate";
-    String EXACT_COUNT = "CamelAwsDdbExactCount";
-    String HASH_KEY_VALUE = "CamelAwsDdbHashKeyValue";
+    // Removed from DynamoDB v1 to v2
+    // String EXACT_COUNT = "CamelAwsDdbExactCount";
+    // Removed from DynamoDB v1 to v2
+    // String HASH_KEY_VALUE = "CamelAwsDdbHashKeyValue";
     String ITEM = "CamelAwsDdbItem";
     String ITEMS = "CamelAwsDdbItems";
     String ITEM_COUNT = "CamelAwsDdbTableItemCount";
@@ -37,6 +39,8 @@ public interface DdbConstants {
     String MESSAGE_ID = "CamelAwsDdbMessageId";
     String NEXT_TOKEN = "CamelAwsDdbNextToken";
     String KEY = "CamelAwsDdbKey";
+    // Added from DynamoDB v1 to v2
+    String KEY_CONDITIONS = "CamelAwsDdbKeyConditions";
     String KEY_SCHEMA = "CamelAwsDdbKeySchema";
     String LAST_EVALUATED_KEY = "CamelAwsDdbLastEvaluatedKey";
     String LIMIT = "CamelAwsDdbLimit";
@@ -46,7 +50,8 @@ public interface DdbConstants {
     String RETURN_VALUES = "CamelAwsDdbReturnValues";
     String SCANNED_COUNT = "CamelAwsDdbScannedCount";
     String SCAN_INDEX_FORWARD = "CamelAwsDdbScanIndexForward";
-    String SCAN_RANGE_KEY_CONDITION = "CamelAwsDdbScanRangeKeyCondition";
+    // Removed from DynamoDB v1 to v2
+    // String SCAN_RANGE_KEY_CONDITION = "CamelAwsDdbScanRangeKeyCondition";
     String SCAN_FILTER = "CamelAwsDdbScanFilter";
     String START_KEY = "CamelAwsDdbStartKey";
     String TABLE_NAME = "CamelAwsDdbTableName";

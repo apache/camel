@@ -36,7 +36,7 @@ public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=\"threads1(threads)\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"threads1(threads)\"");
 
         Integer corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(5, corePoolSize.intValue());
@@ -56,7 +56,7 @@ public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
         String profile = (String) mbeanServer.getAttribute(on, "ThreadPoolProfileId");
         assertEquals("custom", profile);
 
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=\"threads2(threads)\"");
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=threadpools,name=\"threads2(threads)\"");
 
         corePoolSize = (Integer) mbeanServer.getAttribute(on, "CorePoolSize");
         assertEquals(5, corePoolSize.intValue());

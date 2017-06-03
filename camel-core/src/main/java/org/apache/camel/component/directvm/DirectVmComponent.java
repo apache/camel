@@ -24,13 +24,14 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the component that manages {@link DirectVmEndpoint}. It holds the
- * list of named direct-vm endpoints.
+ * The <a href="http://camel.apache.org/direct-vm.html">Direct VM Component</a> manages {@link DirectVmEndpoint} and holds the list of named direct-vm endpoints.
  */
-public class DirectVmComponent extends DefaultComponent {
+public class DirectVmComponent extends UriEndpointComponent {
 
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
@@ -38,8 +39,17 @@ public class DirectVmComponent extends DefaultComponent {
     // later in case the DirectVmEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
     private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
+    @Metadata(label = "producer")
     private boolean block;
+    @Metadata(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
+    private HeaderFilterStrategy headerFilterStrategy;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean propagateProperties = true;
+
+    public DirectVmComponent() {
+        super(DirectVmEndpoint.class);
+    }
 
     /**
      * Gets all the consumer endpoints.
@@ -59,7 +69,9 @@ public class DirectVmComponent extends DefaultComponent {
         DirectVmEndpoint answer = new DirectVmEndpoint(uri, this);
         answer.setBlock(block);
         answer.setTimeout(timeout);
+        answer.setPropagateProperties(propagateProperties);
         answer.configureProperties(parameters);
+        setProperties(answer, parameters);
         return answer;
     }
 
@@ -109,6 +121,10 @@ public class DirectVmComponent extends DefaultComponent {
         return block;
     }
 
+    /**
+     * If sending a message to a direct endpoint which has no active consumer,
+     * then we can tell the producer to block and wait for the consumer to become active.
+     */
     public void setBlock(boolean block) {
         this.block = block;
     }
@@ -117,7 +133,35 @@ public class DirectVmComponent extends DefaultComponent {
         return timeout;
     }
 
+    /**
+     * The timeout value to use if block is enabled.
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * Sets a {@link HeaderFilterStrategy} that will only be applied on producer endpoints (on both directions: request and response).
+     * <p>Default value: none.</p>
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public boolean isPropagateProperties() {
+        return propagateProperties;
+    }
+
+    /**
+     * Whether to propagate or not properties from the producer side to the consumer side, and vice versa.
+     * <p>Default value: true.</p>
+     */
+    public void setPropagateProperties(boolean propagateProperties) {
+        this.propagateProperties = propagateProperties;
+    }
+
 }

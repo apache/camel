@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.After;
@@ -42,9 +43,7 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
     @After
     public void tearDown() throws Exception {
         
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
         super.tearDown();
     }
     

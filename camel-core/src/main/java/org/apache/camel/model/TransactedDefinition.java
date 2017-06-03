@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.processor.WrapProcessor;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
@@ -38,10 +39,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents an XML &lt;transacted/&gt; element
+ * Enables transaction on the route
  *
  * @version 
  */
+@Metadata(label = "configuration")
 @XmlRootElement(name = "transacted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {
@@ -71,7 +73,12 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
 
     @Override
     public String toString() {
-        return "Transacted[" + description() + "]";
+        String desc = description();
+        if (ObjectHelper.isEmpty(desc)) {
+            return "Transacted";
+        } else {
+            return "Transacted[" + desc + "]";
+        }
     }
     
     protected String description() {
@@ -85,13 +92,13 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     }
 
     @Override
-    public String getShortName() {
-        return "transacted";
-    }
-
-    @Override
     public String getLabel() {
-        return "transacted[" + description() + "]";
+        String desc = description();
+        if (ObjectHelper.isEmpty(desc)) {
+            return "transacted";
+        } else {
+            return "transacted[" + desc + "]";
+        }
     }
 
     @Override

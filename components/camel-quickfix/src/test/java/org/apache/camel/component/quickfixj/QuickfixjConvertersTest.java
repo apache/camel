@@ -17,25 +17,19 @@
 package org.apache.camel.component.quickfixj;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import javax.management.JMException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.mina.common.TransportType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import quickfix.Acceptor;
-import quickfix.ConfigError;
 import quickfix.DataDictionary;
-import quickfix.FieldConvertError;
 import quickfix.Initiator;
 import quickfix.Message;
 import quickfix.SessionFactory;
@@ -44,6 +38,7 @@ import quickfix.SessionSettings;
 import quickfix.field.HopCompID;
 import quickfix.field.MsgType;
 import quickfix.fix44.Message.Header.NoHops;
+import quickfix.mina.ProtocolFactory;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -71,8 +66,8 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
         Thread.currentThread().setContextClassLoader(testClassLoader);
         
         settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, TransportType.VM_PIPE.toString());
-        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, TransportType.VM_PIPE.toString());
+        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
+        settings.setString(Initiator.SETTING_SOCKET_CONNECT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
     }
 
     @Override
@@ -94,7 +89,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     @Test
     public void convertToExchange() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent());
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(new DefaultCamelContext()));
         
         Message message = new Message();     
         message.getHeader().setString(MsgType.FIELD, MsgType.ORDER_SINGLE);
@@ -112,7 +107,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     @Test
     public void convertToExchangeWithNullMessage() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent());
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(new DefaultCamelContext()));
         
         Exchange exchange = QuickfixjConverters.toExchange(endpoint, sessionID, null, QuickfixjEventCategory.AppMessageSent);
         
@@ -219,9 +214,9 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
         }
     }
 
-    private void createSession(SessionID sessionID) throws IOException, ConfigError, FieldConvertError, JMException, Exception {
+    private void createSession(SessionID sessionID) throws Exception {
         SessionSettings settings = new SessionSettings();
-        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, TransportType.VM_PIPE.toString());
+        settings.setString(Acceptor.SETTING_SOCKET_ACCEPT_PROTOCOL, ProtocolFactory.getTypeString(ProtocolFactory.VM_PIPE));
         
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);

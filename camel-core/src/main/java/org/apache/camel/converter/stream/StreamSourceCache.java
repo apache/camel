@@ -16,14 +16,12 @@
  */
 package org.apache.camel.converter.stream;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
@@ -32,7 +30,6 @@ import org.apache.camel.util.IOHelper;
  */
 public final class StreamSourceCache extends StreamSource implements StreamCache {
 
-    private final InputStream stream;
     private final StreamCache streamCache;
     private final ReaderCache readCache;
 
@@ -44,33 +41,37 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
             streamCache = cos.newStreamCache();
             readCache = null;
             setSystemId(source.getSystemId());
-            stream = (InputStream) streamCache;
+            setInputStream((InputStream) streamCache);
         } else if (source.getReader() != null) {
             String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, source.getReader());
             readCache = new ReaderCache(data);
             streamCache = null;
             setReader(readCache);
-            stream = new ByteArrayInputStream(data.getBytes());
         } else {
             streamCache = null;
             readCache = null;
-            stream = null;
         }
     }
-
+    
+    public StreamSourceCache(StreamCache streamCache) {
+        this.streamCache = streamCache;
+        if (streamCache instanceof InputStream) {
+            setInputStream((InputStream) streamCache);
+            this.readCache = null;
+        } else if (streamCache instanceof ReaderCache) {
+            this.readCache = (ReaderCache) streamCache;
+            setReader((java.io.Reader) streamCache);
+        } else {
+            this.readCache = null;
+        }
+    }
+    
     public void reset() {
         if (streamCache != null) {
             streamCache.reset();
         }
         if (readCache != null) {
             readCache.reset();
-        }
-        if (stream != null) {
-            try {
-                stream.reset();
-            } catch (IOException e) {
-                throw new RuntimeCamelException(e);
-            }
         }
     }
 
@@ -80,6 +81,16 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         } else if (readCache != null) {
             readCache.writeTo(os);
         }
+    }
+
+    public StreamCache copy(Exchange exchange) throws IOException {
+        if (streamCache != null) {
+            return new StreamSourceCache(streamCache.copy(exchange));
+        }
+        if (readCache != null) {
+            return new StreamSourceCache(readCache.copy(exchange));
+        }
+        return null;
     }
 
     public boolean inMemory() {
@@ -93,6 +104,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
 
+    
     public long length() {
         if (streamCache != null) {
             return streamCache.length();
@@ -102,16 +114,6 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
             // should not happen
             return 0;
         }
-    }
-
-    @Override
-    public InputStream getInputStream() {
-        return stream;
-    }
-
-    @Override
-    public void setInputStream(InputStream inputStream) {
-        // noop as the input stream is from stream or reader cache
     }
 
 }

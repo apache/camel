@@ -19,8 +19,6 @@ package scala
 
 import reflect.{ClassTag, classTag}
 import org.apache.camel.spi.{UnitOfWork, Synchronization}
-import org.apache.camel.{ExchangePattern, Message, Endpoint, Exchange}
-import java.lang.{String, Class}
 
 /**
  * Rich wrapper for Camel's Exchange implementations
@@ -75,6 +73,10 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def removeProperty(name: String) = exchange.removeProperty(name)
 
+  def removeProperties(pattern: String) = exchange.removeProperties(pattern)
+
+  def removeProperties(pattern: String, excludePatterns: String*) = exchange.removeProperties(pattern, excludePatterns: _*)
+
   def isTransacted = exchange.isTransacted
 
   def isExternalRedelivered = exchange.isExternalRedelivered
@@ -123,6 +125,8 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def copy = new RichExchange(exchange.copy)
 
+  def copy(safeCopy: Boolean) = new RichExchange(exchange.copy(safeCopy))
+
   def addOnCompletion(onCompletion: Synchronization) { exchange.addOnCompletion(onCompletion) }
   
   def containsOnCompletion(onCompletion: Synchronization) = exchange.containsOnCompletion(onCompletion)
@@ -130,4 +134,6 @@ class RichExchange(val exchange : Exchange) extends Exchange {
   def handoverCompletions(exchange : Exchange) { exchange.handoverCompletions(exchange) }
 
   def handoverCompletions = exchange.handoverCompletions
+
+  def getCreated = exchange.getCreated
 }

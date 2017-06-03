@@ -20,18 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Defines the <a href="http://aws.amazon.com/simpledb/">AWS SDB component</a> 
- */
-public class SdbComponent extends DefaultComponent {
+public class SdbComponent extends UriEndpointComponent {
 
     public SdbComponent() {
+        super(SdbEndpoint.class);
     }
 
     public SdbComponent(CamelContext context) {
-        super(context);
+        super(context, SdbEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -43,8 +41,8 @@ public class SdbComponent extends DefaultComponent {
         }
         configuration.setDomainName(remaining);
 
-        if (configuration.getAmazonSDBClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("amazonSDBClient or accessKey and secretKey must be specified");
+        if (configuration.getAmazonSDBClient() == null) {
+            throw new IllegalArgumentException("amazonSDBClient must be specified");
         }
 
         SdbEndpoint endpoint = new SdbEndpoint(uri, this, configuration);

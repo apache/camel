@@ -24,7 +24,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.apache.ws.security.WSPasswordCallback;
 
 /**
  */
@@ -47,12 +46,18 @@ public class UTPasswordCallback implements CallbackHandler {
      */
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (Callback callback : callbacks) {
-            WSPasswordCallback pc = (WSPasswordCallback)callback;
+            try {
+                String id = (String)callback.getClass().getMethod("getIdentifier").invoke(callback);
 
-            String pass = passwords.get(pc.getIdentifier());
-            if (pass != null) {
-                pc.setPassword(pass);
-                return;
+                String pass = passwords.get(id);
+                if (pass != null) {
+                    callback.getClass().getMethod("setPassword", String.class).invoke(callback, pass);
+                    return;
+                }
+            } catch (Exception ex) {
+                UnsupportedCallbackException e = new UnsupportedCallbackException(callback);
+                e.initCause(ex);
+                throw e;
             }
         }
     }

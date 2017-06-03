@@ -19,22 +19,25 @@ package org.apache.camel.processor.aggregate;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges
- * in a {@link java.util.List<Exchange>} as the message body.
+ * in a {@link List} of {@link Exchange} as the message body.
+ * <p/>
+ * <b>Important:</b> This strategy is not to be used with the <a href="http://camel.apache.org/content-enricher.html">Content Enricher</a> EIP
+ * which is enrich or pollEnrich.
  *
  * @version 
  */
 public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onCompletion(Exchange exchange) {
         if (isStoreAsBodyOnCompletion()) {
             // lets be backwards compatible
             // TODO: Remove this method in Camel 3.0
-            List list = (List) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
+            List<?> list = (List<?>) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
             if (list != null) {
                 exchange.getIn().setBody(list);
             }
@@ -43,13 +46,12 @@ public class GroupedExchangeAggregationStrategy extends AbstractListAggregationS
 
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        Exchange answer = super.aggregate(oldExchange, newExchange);
         if (oldExchange == null) {
-            // for the first time we must do a copy as the answer, so the outgoing
-            // exchange is not one of the grouped exchanges, as that causes a endless circular reference
-            answer = answer.copy();
+            // for the first time we must create a new empty exchange as the holder, as the outgoing exchange
+            // must not be one of the grouped exchanges, as that causes a endless circular reference
+            oldExchange = new DefaultExchange(newExchange);
         }
-        return answer;
+        return super.aggregate(oldExchange, newExchange);
     }
 
     @Override

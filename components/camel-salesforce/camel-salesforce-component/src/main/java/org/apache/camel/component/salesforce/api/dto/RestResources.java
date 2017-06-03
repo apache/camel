@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -32,6 +33,26 @@ public class RestResources extends AbstractDTOBase {
     private String chatter;
     private String recent;
     private String tooling;
+    private String licensing;
+    private String analytics;
+    private String limits;
+    private String theme;
+    private String queryAll;
+    private String knowledgeManagement;
+    private String process;
+    private String flexiPage;
+    private String quickActions;
+    private String appMenu;
+    private String compactLayouts;
+    private String actions;
+    private String tabs;
+    private String wave;
+    @JsonProperty("async-queries")
+    @XStreamAlias("async-queries")
+    private String asyncQueries;
+    @JsonProperty("exchange-connect")
+    @XStreamAlias("exchange-connect")
+    private String exchangeConnect;
 
     public String getSobjects() {
         return sobjects;
@@ -97,4 +118,131 @@ public class RestResources extends AbstractDTOBase {
         this.tooling = tooling;
     }
 
+    public String getLicensing() {
+        return licensing;
+    }
+
+    public void setLicensing(String licensing) {
+        this.licensing = licensing;
+    }
+
+    public String getAnalytics() {
+        return analytics;
+    }
+
+    public void setAnalytics(String analytics) {
+        this.analytics = analytics;
+    }
+
+    public String getLimits() {
+        return limits;
+    }
+
+    public void setLimits(String limits) {
+        this.limits = limits;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
+    public String getQueryAll() {
+        return queryAll;
+    }
+
+    public void setQueryAll(String queryAll) {
+        this.queryAll = queryAll;
+    }
+
+    public String getKnowledgeManagement() {
+        return knowledgeManagement;
+    }
+
+    public void setKnowledgeManagement(String knowledgeManagement) {
+        this.knowledgeManagement = knowledgeManagement;
+    }
+
+    public String getProcess() {
+        return process;
+    }
+
+    public void setProcess(String process) {
+        this.process = process;
+    }
+
+    public String getFlexiPage() {
+        return flexiPage;
+    }
+
+    public void setFlexiPage(String flexiPage) {
+        this.flexiPage = flexiPage;
+    }
+
+    public String getQuickActions() {
+        return quickActions;
+    }
+
+    public void setQuickActions(String quickActions) {
+        this.quickActions = quickActions;
+    }
+
+    public String getAppMenu() {
+        return appMenu;
+    }
+
+    public void setAppMenu(String appMenu) {
+        this.appMenu = appMenu;
+    }
+
+    public String getCompactLayouts() {
+        return compactLayouts;
+    }
+
+    public void setCompactLayouts(String compactLayouts) {
+        this.compactLayouts = compactLayouts;
+    }
+
+    public String getActions() {
+        return actions;
+    }
+
+    public void setActions(String actions) {
+        this.actions = actions;
+    }
+
+    public String getTabs() {
+        return tabs;
+    }
+
+    public void setTabs(String tabs) {
+        this.tabs = tabs;
+    }
+
+    public String getWave() {
+        return wave;
+    }
+
+    public void setWave(String wave) {
+        this.wave = wave;
+    }
+
+    public String getAsyncQueries() {
+        return asyncQueries;
+    }
+
+    public void setAsyncQueries(String asyncQueries) {
+        this.asyncQueries = asyncQueries;
+    }
+
+    public String getExchangeConnect() {
+        return exchangeConnect;
+    }
+
+    public void setExchangeConnect(String exchangeConnect) {
+        this.exchangeConnect = exchangeConnect;
+    }
 }

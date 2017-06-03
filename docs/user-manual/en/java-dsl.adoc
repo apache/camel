@@ -1,0 +1,200 @@
+[[JavaDSL-JavaDSL]]
+Java DSL
+~~~~~~~~
+
+Apache Camel offers a Java based DSL using the fluent builder style. The
+Java DSL is available by extending the
+link:routebuilder.html[RouteBuilder] class, and implement the
+`configure` method.
+
+This is best illustrate by an example. In the code below we create a new
+class called `MyRouteBuilder` that extends the
+`org.apache.camel.builder.RouteBuilder` from Camel. +
+ In the `configure` method the Java DSL is at our disposal.
+
+[source,java]
+-------------------------------------------------------------------------
+import org.apache.camel.builder.RouteBuilder;
+
+/**
+ * A Camel Java DSL Router
+ */
+public class MyRouteBuilder extends RouteBuilder {
+
+    /**
+     * Let's configure the Camel routing rules using Java code...
+     */
+    public void configure() {
+
+        // here is a sample which processes the input files
+        // (leaving them in place - see the 'noop' flag)
+        // then performs content based routing on the message using XPath
+        from("file:src/data?noop=true")
+            .choice()
+                .when(xpath("/person/city = 'London'"))
+                    .to("file:target/messages/uk")
+                .otherwise()
+                    .to("file:target/messages/others");
+    }
+
+}
+-------------------------------------------------------------------------
+
+In the `configure` method we can define Camel link:routes.html[Routes].
+In the example above we have a single route, which pickup
+https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=File&linkCreation=true&fromPageId=30747520[File]s,
+(eg the from).
+
+[source,java]
+---------------------------------------
+        from("file:src/data?noop=true")
+---------------------------------------
+
+Then we use the link:content-based-router.html[Content Based Router] (eg
+the choice) to route the message depending if the person is from London
+or not.
+
+[source,java]
+-------------------------------------------------------
+            .choice()
+                .when(xpath("/person/city = 'London'"))
+                    .to("file:target/messages/uk")
+                .otherwise()
+                    .to("file:target/messages/others");
+-------------------------------------------------------
+
+[[JavaDSL-Routes]]
+Routes
+~~~~~~
+
+Camel supports the definition of routing rules using a Java
+link:dsl.html[DSL] (domain specific language) which avoids the need for
+cumbersome XML using a link:routebuilder.html[RouteBuilder].
+
+For example a simple route can be created as follows.
+
+[source,java]
+-------------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        errorHandler(deadLetterChannel("mock:error"));
+ 
+        from("direct:a").to("direct:b");
+    }
+};
+-------------------------------------------------------
+
+As you can see from the above Camel uses link:uris.html[URIs] to wire
+endpoints together.
+
+[[JavaDSL-URIStringformatting]]
+URI String formatting
+^^^^^^^^^^^^^^^^^^^^^
+
+*Available as of Camel 2.0*
+
+If you have endpoint URIs that accept options and you want to be able to
+substitute the value, e.g. build the URI by concat the strings together,
+then you can use the `java.lang.String.format` method. But in Camel 2.0
+we have added two convenient methods in the Java DSL so you can do
+`fromF` and `toF` that uses String formatting to build the URI.
+
+[source,java]
+-------------------------------------------------------
+from("direct:start").toF("file://%s?fileName=%s", path, name);
+ 
+fromF("file://%s?include=%s", path, pattern).toF("mock:%s", result);
+-------------------------------------------------------
+
+[[JavaDSL-Filters]]
+Filters
+^^^^^^^
+
+You can combine simple routes with filters which can be arbitrary
+link:predicate.html[Predicate] implementations.
+
+[source,java]
+-------------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        errorHandler(deadLetterChannel("mock:error"));
+ 
+        from("direct:a")
+            .filter(header("foo").isEqualTo("bar"))
+                .to("direct:b");
+    }
+};
+-------------------------------------------------------
+
+[[JavaDSL-Choices]]
+Choices
+^^^^^^^
+
+With a choice you provide a list of predicates and outcomes along with
+an optional default otherwise clause which is invoked if none of the
+conditions are met.
+
+[source,java]
+-------------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        errorHandler(deadLetterChannel("mock:error"));
+ 
+        from("direct:a")
+            .choice()
+                .when(header("foo").isEqualTo("bar"))
+                    .to("direct:b")
+                .when(header("foo").isEqualTo("cheese"))
+                    .to("direct:c")
+                .otherwise()
+                    .to("direct:d");
+    }
+};
+-------------------------------------------------------
+
+[[JavaDSL-Usingacustomprocessor]]
+Using a custom processor
+++++++++++++++++++++++++
+
+Here is an example of using a custom link:processor.html[Processor]
+
+[source,java]
+-------------------------------------------------------
+myProcessor = new Processor() {
+    public void process(Exchange exchange) {
+        log.debug("Called with exchange: " + exchange);
+    }
+};
+ 
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        errorHandler(deadLetterChannel("mock:error"));
+ 
+        from("direct:a")
+            .process(myProcessor);
+    }
+};
+-------------------------------------------------------
+
+You can mix and match custom processors with filters and choices.
+
+[source,java]
+-------------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        errorHandler(deadLetterChannel("mock:error"));
+ 
+        from("direct:a")
+            .filter(header("foo").isEqualTo("bar"))
+                .process(myProcessor);
+    }
+};
+-------------------------------------------------------
+
+[[JavaDSL-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:dsl.html[DSL]
+* link:examples.html[Examples]
+

@@ -50,6 +50,8 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends CamelTestSupport {
 
     @Test
     public void testManualRequestReply() throws Exception {
+        context.start();
+
         // send an InOnly but force Camel to pass JMSReplyTo
         template.send("activemq:queue:foo?preserveMessageQos=true", new Processor() {
             public void process(Exchange exchange) throws Exception {

@@ -21,7 +21,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.jpa.Consumed;
+import org.apache.camel.component.jpa.PreConsumed;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +76,13 @@ public class MultiSteps {
     public void setStep(int step) {
         this.step = step;
     }
+    
+    @PreConsumed
+    public void beforeGoToNextStep(Exchange exchange) {
+        // we could do some thing to update the entity by using the exchange property
+        Assert.assertNotNull(exchange);
+        LOG.info("Calling beforeGoToNextStep");
+    }
 
     /**
      * This method is invoked after the entity bean is processed successfully by a Camel endpoint
@@ -80,7 +90,14 @@ public class MultiSteps {
     @Consumed
     public void goToNextStep() {
         setStep(getStep() + 1);
-
         LOG.info("Invoked the completion complete method. Now updated the step to: {}", getStep());
+    }
+
+    @Override
+    public String toString() {
+        // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters:
+        // 115  camel  WARN   [main] openjpa.Enhance - Detected the following possible violations of the restrictions placed on property access persistent types:
+        // "org.apache.camel.examples.MultiSteps" uses property access, but its field "step" is accessed directly in method "toString" defined in "org.apache.camel.examples.MultiSteps".
+        return "MultiSteps[id: " + getId() + ", address: " + getAddress() + ", step: " + getStep() + "]";
     }
 }

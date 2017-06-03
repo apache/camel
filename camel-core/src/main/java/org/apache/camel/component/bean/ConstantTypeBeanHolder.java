@@ -45,17 +45,36 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
         this(type, new BeanInfo(context, type, parameterMappingStrategy));
     }
 
+    /**
+     * Creates a cached and constant {@link org.apache.camel.component.bean.BeanHolder} from this holder.
+     *
+     * @return a new {@link org.apache.camel.component.bean.BeanHolder} that has cached the lookup of the bean.
+     */
+    public ConstantBeanHolder createCacheHolder() throws Exception {
+        Object bean = getBean();
+        return new ConstantBeanHolder(bean, beanInfo);
+    }
+
     @Override
     public String toString() {
         return type.toString();
     }
 
     public Object getBean()  {
-        return null;
+        // only create a bean if we have constructors
+        if (beanInfo.hasPublicConstructors()) {
+            return getBeanInfo().getCamelContext().getInjector().newInstance(type);
+        } else {
+            return null;
+        }
     }
 
     public Processor getProcessor() {
         return null;
+    }
+
+    public boolean supportProcessor() {
+        return false;
     }
 
     public BeanInfo getBeanInfo() {

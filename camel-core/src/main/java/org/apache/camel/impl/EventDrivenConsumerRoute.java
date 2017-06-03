@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Consumer;
@@ -24,8 +25,11 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.RouteAware;
 import org.apache.camel.Service;
+import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.EndpointHelper;
 
 /**
  * A {@link DefaultRoute} which starts with an
@@ -94,11 +98,37 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
         return null;
     }
 
+    public List<Processor> filter(String pattern) {
+        List<Processor> match = new ArrayList<Processor>();
+        doFilter(pattern, navigate(), match);
+        return match;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void doFilter(String pattern, Navigate<Processor> nav, List<Processor> match) {
+        List<Processor> list = nav.next();
+        if (list != null) {
+            for (Processor proc : list) {
+                String id = null;
+                if (proc instanceof IdAware) {
+                    id = ((IdAware) proc).getId();
+                }
+                if (EndpointHelper.matchPattern(id, pattern)) {
+                    match.add(proc);
+                }
+                if (proc instanceof Navigate) {
+                    Navigate<Processor> child = (Navigate<Processor>) proc;
+                    doFilter(pattern, child, match);
+                }
+            }
+        }
+    }
+
     public Consumer getConsumer() {
         return consumer;
     }
 
     public boolean supportsSuspension() {
-        return consumer instanceof SuspendableService;
+        return consumer instanceof Suspendable && consumer instanceof SuspendableService;
     }
 }

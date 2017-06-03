@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageListener;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jms.JmsEndpoint;
+import org.springframework.jms.listener.SessionAwareMessageListener;
 
 /**
  * The {@link ReplyManager} is responsible for handling <a href="http://camel.apache.org/request-reply.html">request-reply</a>
@@ -32,7 +33,7 @@ import org.apache.camel.component.jms.JmsEndpoint;
  *
  * @version 
  */
-public interface ReplyManager extends MessageListener {
+public interface ReplyManager extends SessionAwareMessageListener {
 
     /**
      * Sets the belonging {@link org.apache.camel.component.jms.JmsEndpoint}.
@@ -47,9 +48,21 @@ public interface ReplyManager extends MessageListener {
     void setReplyTo(Destination replyTo);
 
     /**
-     * Sets the scheduled to use when checking for timeouts (no reply received within a given time period)
+     * Sets the scheduled thread pool to use when checking for timeouts (no reply received within a given time period)
      */
     void setScheduledExecutorService(ScheduledExecutorService executorService);
+
+    /**
+     * Sets the thread pool to use for continue routing {@link Exchange} when a timeout was triggered
+     * when doing request/reply over JMS.
+     */
+    void setOnTimeoutExecutorService(ExecutorService executorService);
+
+    /**
+     * Sets the JMS message property used for message correlation. If set message correlation will be performed on the
+     * value of this JMS property, JMSCorrelationID will be ignored.
+     */
+    void setCorrelationProperty(String correlationProperty);
 
     /**
      * Gets the reply to queue being used
@@ -69,7 +82,7 @@ public interface ReplyManager extends MessageListener {
      * @param callback        the callback
      * @param originalCorrelationId  an optional original correlation id
      * @param correlationId   the correlation id to expect being used
-     * @param requestTimeout  an optional timeout
+     * @param requestTimeout  the timeout
      * @return the correlation id used
      */
     String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
@@ -85,7 +98,7 @@ public interface ReplyManager extends MessageListener {
      *
      * @param correlationId     the provisional correlation id
      * @param newCorrelationId  the real correlation id
-     * @param requestTimeout    an optional timeout
+     * @param requestTimeout    the timeout
      */
     void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout);
 

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.twitter.enabled",
+      "description": "Enable twitter component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

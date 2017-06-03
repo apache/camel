@@ -86,4 +86,29 @@ public class EndpointHelperTest extends ContextTestSupport {
         assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
 
+    public void testLookupEndpointRegistryIdUsingRef() throws Exception {
+        foo = context.getEndpoint("ref:foo");
+        bar = context.getEndpoint("ref:coolbar");
+
+        assertEquals("foo", EndpointHelper.lookupEndpointRegistryId(foo));
+        assertEquals("coolbar", EndpointHelper.lookupEndpointRegistryId(bar));
+        assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
+    }
+
+    public void testResolveReferenceParameter() throws Exception {
+        Endpoint endpoint = EndpointHelper.resolveReferenceParameter(context, "coolbar", Endpoint.class);
+        assertNotNull(endpoint);
+        assertSame(bar, endpoint);
+    }
+
+    public void testResolveParameter() throws Exception {
+        Endpoint endpoint = EndpointHelper.resolveParameter(context, "#coolbar", Endpoint.class);
+        assertNotNull(endpoint);
+        assertSame(bar, endpoint);
+
+        Integer num = EndpointHelper.resolveParameter(context, "123", Integer.class);
+        assertNotNull(num);
+        assertEquals(123, num.intValue());
+    }
+
 }

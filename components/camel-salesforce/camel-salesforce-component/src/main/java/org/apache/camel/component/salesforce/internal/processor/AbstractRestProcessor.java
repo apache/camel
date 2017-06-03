@@ -17,38 +17,81 @@
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.component.salesforce.NotFoundBehaviour;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequests;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.util.ServiceHelper;
 
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.*;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_METHOD;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.APEX_URL;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.API_VERSION;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_BLOB_FIELD_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_CLASS;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_FIELDS;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_QUERY;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_SEARCH;
 
 public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor {
 
     protected static final String RESPONSE_CLASS = AbstractRestProcessor.class.getName() + ".responseClass";
+    private static final Pattern URL_TEMPLATE = Pattern.compile("\\{([^\\{\\}]+)\\}");
 
     private RestClient restClient;
     private Map<String, Class<?>> classMap;
 
+    private final NotFoundBehaviour notFoundBehaviour;
+
     public AbstractRestProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        final PayloadFormat payloadFormat = endpoint.getConfiguration().getFormat();
+        final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
+        final PayloadFormat payloadFormat = configuration.getFormat();
+        notFoundBehaviour = configuration.getNotFoundBehaviour();
 
-        this.restClient = new DefaultRestClient(httpClient, endpointConfigMap.get(API_VERSION),
+        this.restClient = new DefaultRestClient(httpClient, (String) endpointConfigMap.get(API_VERSION),
                 payloadFormat, session);
 
         this.classMap = endpoint.getComponent().getClassMap();
+    }
+
+    // used in unit tests
+    AbstractRestProcessor(final SalesforceEndpoint endpoint, final RestClient restClient,
+            final Map<String, Class<?>> classMap) {
+        super(endpoint);
+        this.restClient = restClient;
+        this.classMap = classMap;
+        final SalesforceEndpointConfig configuration = endpoint.getConfiguration();
+        notFoundBehaviour = configuration.getNotFoundBehaviour();
     }
 
     @Override
@@ -125,23 +168,41 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             case QUERY_MORE:
                 processQueryMore(exchange, callback);
                 break;
+            case QUERY_ALL:
+                processQueryAll(exchange, callback);
+                break;
             case SEARCH:
                 processSearch(exchange, callback);
                 break;
+            case APEX_CALL:
+                processApexCall(exchange, callback);
+                break;
+            case RECENT:
+                processRecent(exchange, callback);
+                break;
+            case LIMITS:
+                processLimits(exchange, callback);
+                break;
+            case APPROVAL:
+                processApproval(exchange, callback);
+                break;
+            case APPROVALS:
+                processApprovals(exchange, callback);
+                break;
             default:
-                throw new SalesforceException("Unknow operation name: " + operationName, null);
+                throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(
                     String.format("Error processing %s: [%s] \"%s\"",
-                            operationName, e.getStatusCode(), e.getMessage()),
+                            operationName.value(), e.getStatusCode(), e.getMessage()),
                     e));
             callback.done(true);
             return true;
         } catch (RuntimeException e) {
             exchange.setException(new SalesforceException(
                     String.format("Unexpected Error processing %s: \"%s\"",
-                            operationName, e.getMessage()),
+                            operationName.value(), e.getMessage()),
                     e));
             callback.done(true);
             return true;
@@ -149,6 +210,98 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         // continue routing asynchronously
         return false;
+    }
+
+    final void processApproval(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+        final TypeConverter converter = exchange.getContext().getTypeConverter();
+
+        final ApprovalRequest approvalRequestFromHeader = getParameter(SalesforceEndpointConfig.APPROVAL, exchange,
+                IGNORE_BODY, IS_OPTIONAL, ApprovalRequest.class);
+        final boolean requestGivenInHeader = approvalRequestFromHeader != null;
+
+        // find if there is a ApprovalRequest as `approval` in the message header
+        final ApprovalRequest approvalHeader = Optional.ofNullable(approvalRequestFromHeader)
+                .orElse(new ApprovalRequest());
+
+        final Message incomingMessage = exchange.getIn();
+
+        final Map<String, Object> incomingHeaders = incomingMessage.getHeaders();
+
+        final boolean requestGivenInParametersInHeader = processApprovalHeaderValues(approvalHeader, incomingHeaders);
+
+        final boolean nothingInheader = !requestGivenInHeader && !requestGivenInParametersInHeader;
+
+        final Object approvalBody = incomingMessage.getBody();
+
+        final boolean bodyIsIterable = approvalBody instanceof Iterable;
+        final boolean bodyIsIterableButEmpty = bodyIsIterable && !((Iterable) approvalBody).iterator().hasNext();
+
+        // body contains nothing of interest if it's null, holds an empty iterable or cannot be converted to
+        // ApprovalRequest
+        final boolean nothingInBody = !(approvalBody != null && !bodyIsIterableButEmpty);
+
+        // we found nothing in the headers or the body
+        if (nothingInheader && nothingInBody) {
+            throw new SalesforceException("Missing " + SalesforceEndpointConfig.APPROVAL
+                + " parameter in header or ApprovalRequest or List of ApprovalRequests body", 0);
+        }
+
+        // let's try to resolve the request body to send
+        final ApprovalRequests requestsBody;
+        if (nothingInBody) {
+            // nothing in body use the header values only
+            requestsBody = new ApprovalRequests(approvalHeader);
+        } else if (bodyIsIterable) {
+            // multiple ApprovalRequests are found
+            final Iterable<?> approvalRequests = (Iterable<?>) approvalBody;
+
+            // use header values as template and apply them to the body
+            final List<ApprovalRequest> requests = StreamSupport.stream(approvalRequests.spliterator(), false)
+                    .map(value -> converter.convertTo(ApprovalRequest.class, value))
+                    .map(request -> request.applyTemplate(approvalHeader)).collect(Collectors.toList());
+
+            requestsBody = new ApprovalRequests(requests);
+        } else {
+            // we've looked at the body, and are expecting to see something resembling ApprovalRequest in there
+            // but lets see if that is so
+            final ApprovalRequest given = converter.tryConvertTo(ApprovalRequest.class, approvalBody);
+
+            final ApprovalRequest request = Optional.ofNullable(given).orElse(new ApprovalRequest())
+                    .applyTemplate(approvalHeader);
+
+            requestsBody = new ApprovalRequests(request);
+        }
+
+        final InputStream request = getRequestStream(requestsBody);
+
+        restClient.approval(request, (response, exception) -> processResponse(exchange, response, exception, callback));
+    }
+
+    final boolean processApprovalHeaderValues(final ApprovalRequest approvalRequest,
+            final Map<String, Object> incomingHeaderValues) {
+        // loop trough all header values, find those that start with `approval.`
+        // set the property value to the given approvalRequest and return if
+        // any value was set
+        return incomingHeaderValues.entrySet().stream().filter(kv -> kv.getKey().startsWith("approval.")).map(kv -> {
+            final String property = kv.getKey().substring(9);
+            Object value = kv.getValue();
+
+            if (value != null) {
+                try {
+                    setPropertyValue(approvalRequest, property, value);
+
+                    return true;
+                } catch (SalesforceException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+
+            return false;
+        }).reduce(false, (a, b) -> a || b);
+    }
+
+    private void processApprovals(final Exchange exchange, final AsyncCallback callback) {
+        restClient.approvals((response, exception) -> processResponse(exchange, response, exception, callback));
     }
 
     private void processGetVersions(final Exchange exchange, final AsyncCallback callback) {
@@ -244,12 +397,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         }
 
         restClient.createSObject(sObjectName, getRequestStream(exchange),
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                }
+            });
     }
 
     private void processUpdateSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -270,13 +423,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         final String finalsObjectId = sObjectId;
         restClient.updateSObject(sObjectName, sObjectId, getRequestStream(exchange),
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
+                }
+            });
     }
 
     private void processDeleteSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -325,13 +478,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         final Object finalOldValue = oldValue;
         restClient.getSObjectWithId(sObjectName, sObjectExtIdName, sObjectExtIdValue,
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                }
+            });
     }
 
     private void processUpsertSobject(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -357,12 +510,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final Object finalOldValue = oldValue;
         restClient.upsertSObject(sObjectName, sObjectExtIdName, sObjectExtIdValue, getRequestStream(exchange),
             new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
-                    }
-                });
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                }
+            });
     }
 
     private void processDeleteSobjectWithId(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -384,13 +537,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         final Object finalOldValue = oldValue;
         restClient.deleteSObjectWithId(sObjectName, sObjectExtIdName, sObjectExtIdValue,
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                }
+            });
     }
 
     private void processGetBlobField(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
@@ -412,19 +565,19 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final String sObjectId = sObjectIdValue;
 
         restClient.getBlobField(sObjectName, sObjectId, sObjectBlobFieldName,
-                new RestClient.ResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream response, SalesforceException exception) {
-                        processResponse(exchange, response, exception, callback);
-                        restoreFields(exchange, sObjectBase, sObjectId, null, null);
-                    }
-                });
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                    restoreFields(exchange, sObjectBase, sObjectId, null, null);
+                }
+            });
     }
 
     private void processQuery(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
 
-        // use sObject name to load class
+        // use custom response class property
         setResponseClass(exchange, null);
 
         restClient.query(sObjectQuery, new RestClient.ResponseCallback() {
@@ -450,6 +603,20 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         });
     }
 
+    private void processQueryAll(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+        final String sObjectQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
+
+        // use custom response class property
+        setResponseClass(exchange, null);
+
+        restClient.queryAll(sObjectQuery, new RestClient.ResponseCallback() {
+            @Override
+            public void onResponse(InputStream response, SalesforceException exception) {
+                processResponse(exchange, response, exception, callback);
+            }
+        });
+    }
+
     private void processSearch(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
         final String sObjectSearch = getParameter(SOBJECT_SEARCH, exchange, USE_BODY, NOT_OPTIONAL);
 
@@ -459,6 +626,100 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 processResponse(exchange, response, exception, callback);
             }
         });
+    }
+
+    private void processApexCall(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+
+        // HTTP method, URL and query params for APEX call
+        final String apexUrl = getApexUrl(exchange);
+        String apexMethod = getParameter(APEX_METHOD, exchange, IGNORE_BODY, IS_OPTIONAL);
+        // default to GET
+        if (apexMethod == null) {
+            apexMethod = "GET";
+            log.debug("Using HTTP GET method by default for APEX REST call for {}", apexUrl);
+        }
+        final Map<String, Object> queryParams = getQueryParams(exchange);
+
+        // set response class
+        setResponseClass(exchange, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, IS_OPTIONAL));
+
+        // set request stream
+        final Object requestBody = exchange.getIn().getBody();
+        final InputStream requestDto =
+            (requestBody != null && !(requestBody instanceof Map)) ? getRequestStream(exchange) : null;
+
+        restClient.apexCall(apexMethod, apexUrl, queryParams, requestDto,
+            new RestClient.ResponseCallback() {
+                @Override
+                public void onResponse(InputStream response, SalesforceException exception) {
+                    processResponse(exchange, response, exception, callback);
+                }
+            });
+    }
+
+    private String getApexUrl(Exchange exchange) throws SalesforceException {
+        final String apexUrl = getParameter(APEX_URL, exchange, IGNORE_BODY, NOT_OPTIONAL);
+
+        final Matcher matcher = URL_TEMPLATE.matcher(apexUrl);
+        StringBuilder result = new StringBuilder();
+        int start = 0;
+        while (matcher.find()) {
+            // append part before parameter template
+            result.append(apexUrl.substring(start, matcher.start()));
+            start = matcher.end();
+
+            // append template value from exchange header
+            final String parameterName = matcher.group(1);
+            final Object value = exchange.getIn().getHeader(parameterName);
+            if (value == null) {
+                throw new IllegalArgumentException("Missing APEX URL template header " + parameterName);
+            }
+            try {
+                result.append(URLEncoder.encode(String.valueOf(value), "UTF-8").replaceAll("\\+", "%20"));
+            } catch (UnsupportedEncodingException e) {
+                throw new SalesforceException("Unexpected error: " + e.getMessage(), e);
+            }
+        }
+        if (start != 0) {
+            // append remaining URL
+            result.append(apexUrl.substring(start));
+            final String resolvedUrl = result.toString();
+            log.debug("Resolved APEX URL {} to {}", apexUrl, resolvedUrl);
+            return resolvedUrl;
+        }
+        return apexUrl;
+    }
+
+    private void processRecent(Exchange exchange, AsyncCallback callback) throws SalesforceException {
+        final Integer limit = getParameter(SalesforceEndpointConfig.LIMIT, exchange, true, true, Integer.class);
+
+        restClient.recent(limit, (response, exception) -> processResponse(exchange, response, exception, callback));
+    }
+
+    private void processLimits(Exchange exchange, AsyncCallback callback) {
+        restClient.limits((response, exception) -> processResponse(exchange, response, exception, callback));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getQueryParams(Exchange exchange) {
+
+        // use endpoint map
+        Map<String, Object> queryParams = new HashMap<String, Object>(endpoint.getConfiguration().getApexQueryParams());
+
+        // look for individual properties, allowing endpoint properties to be overridden
+        for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+            if (entry.getKey().startsWith(APEX_QUERY_PARAM_PREFIX)) {
+                queryParams.put(entry.getKey().substring(APEX_QUERY_PARAM_PREFIX.length()), entry.getValue());
+            }
+        }
+        // add params from body if it's a map
+        final Object body = exchange.getIn().getBody();
+        if (body instanceof Map) {
+            queryParams.putAll((Map<String, Object>) body);
+        }
+
+        log.debug("Using APEX query params {}", queryParams);
+        return queryParams;
     }
 
     private void restoreFields(Exchange exchange, AbstractSObjectBase sObjectBase,
@@ -481,7 +742,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         }
     }
 
-    private void setPropertyValue(AbstractSObjectBase sObjectBase, String name, Object value) throws SalesforceException {
+    private void setPropertyValue(Object sObjectBase, String name, Object value) throws SalesforceException {
         try {
             // set the value with the set method
             Method setMethod = sObjectBase.getClass().getMethod("set" + name, value.getClass());
@@ -539,6 +800,15 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     // get request stream from In message
     protected abstract InputStream getRequestStream(Exchange exchange) throws SalesforceException;
 
+    /**
+     * Returns {@link InputStream} to serialized form of the given object.
+     * 
+     * @param object
+     *            object to serialize
+     * @return stream to read serialized object from
+     */
+    protected abstract InputStream getRequestStream(Object object) throws SalesforceException;
+
     private void setResponseClass(Exchange exchange, String sObjectName) throws SalesforceException {
         Class<?> sObjectClass;
 
@@ -569,4 +839,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     // process response entity and set out message in exchange
     protected abstract void processResponse(Exchange exchange, InputStream responseEntity, SalesforceException ex, AsyncCallback callback);
 
+    final boolean shouldReport(SalesforceException ex) {
+        return !(ex instanceof NoSuchSObjectException && notFoundBehaviour == NotFoundBehaviour.NULL);
+    }
 }

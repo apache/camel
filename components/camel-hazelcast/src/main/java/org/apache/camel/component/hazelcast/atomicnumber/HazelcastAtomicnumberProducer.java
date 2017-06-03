@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.hazelcast.atomicnumber;
 
+import java.util.Map;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
 
@@ -35,6 +39,14 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
 
+        Map<String, Object> headers = exchange.getIn().getHeaders();
+        
+        long expectedValue = 0L;
+        
+        if (headers.containsKey(HazelcastConstants.EXPECTED_VALUE)) {
+            expectedValue = (long) headers.get(HazelcastConstants.EXPECTED_VALUE);
+        }
+        
         int operation = lookupOperationNumber(exchange);
 
         switch (operation) {
@@ -45,6 +57,14 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
 
         case HazelcastConstants.DECREMENT_OPERATION:
             this.decrement(exchange);
+            break;
+            
+        case HazelcastConstants.COMPARE_AND_SET_OPERATION:
+            this.compare(expectedValue, exchange);
+            break;
+            
+        case HazelcastConstants.GET_AND_ADD_OPERATION:
+            this.getAndAdd(exchange);
             break;
 
         case HazelcastConstants.SETVALUE_OPERATION:
@@ -77,6 +97,19 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
 
     private void decrement(Exchange exchange) {
         exchange.getOut().setBody(this.atomicnumber.decrementAndGet());
+    }
+    
+    private void compare(long expected, Exchange exchange) {
+        long update = exchange.getIn().getBody(Long.class);
+        if (ObjectHelper.isEmpty(expected)) {
+            throw new IllegalArgumentException("Expected value must be specified");
+        }
+        exchange.getOut().setBody(this.atomicnumber.compareAndSet(expected, update));
+    }
+    
+    private void getAndAdd(Exchange exchange) {
+        long delta = exchange.getIn().getBody(Long.class);
+        exchange.getOut().setBody(this.atomicnumber.getAndAdd(delta));
     }
 
     private void set(Exchange exchange) {

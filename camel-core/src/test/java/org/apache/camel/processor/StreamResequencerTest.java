@@ -58,14 +58,6 @@ public class StreamResequencerTest extends ContextTestSupport {
     public void testMultithreaded() throws Exception {
         int numMessages = 100;
 
-        ProducerTemplate producerTemplate = context.createProducerTemplate();
-        ProducerTemplate producerTemplate2 = context.createProducerTemplate();
-
-        ExecutorService service = context.getExecutorServiceManager().newFixedThreadPool(this, getName(), 2);
-
-        service.execute(new Sender(producerTemplate, 0, numMessages, 2));
-        service.execute(new Sender(producerTemplate2, 1, numMessages, 2));
-
         Object[] bodies = new Object[numMessages];
         for (int i = 0; i < numMessages; i++) {
             bodies[i] = "msg" + i;
@@ -73,6 +65,14 @@ public class StreamResequencerTest extends ContextTestSupport {
 
         getMockEndpoint("mock:result").expectedBodiesReceived(bodies);
         getMockEndpoint("mock:result").setResultWaitTime(20000);
+
+        ProducerTemplate producerTemplate = context.createProducerTemplate();
+        ProducerTemplate producerTemplate2 = context.createProducerTemplate();
+
+        ExecutorService service = context.getExecutorServiceManager().newFixedThreadPool(this, getName(), 2);
+
+        service.execute(new Sender(producerTemplate, 0, numMessages, 2));
+        service.execute(new Sender(producerTemplate2, 1, numMessages, 2));
 
         assertMockEndpointsSatisfied();
 
@@ -126,7 +126,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         private final int increment;
         private final Random random;
 
-        public Sender(ProducerTemplate template, int start, int end, int increment) {
+        Sender(ProducerTemplate template, int start, int end, int increment) {
             this.template = template;
             this.start = start;
             this.end = end;

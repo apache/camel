@@ -21,9 +21,10 @@ import java.io.Serializable;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
-@SuppressWarnings("serial")
-@CsvRecord(separator = "," , skipFirstLine = false)
+@CsvRecord(separator = ",", skipFirstLine = false)
 public class MyCsvRecord implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @DataField(pos = 1)
     private String attention;
@@ -45,7 +46,6 @@ public class MyCsvRecord implements Serializable {
     private String dummy2;
 
     public MyCsvRecord() {
-        super();
     }
 
     public String getAttention() {

@@ -32,11 +32,12 @@ case class SOnCompletionDefinition(override val target : OnCompletionDefinition)
   def onFailureOnly = wrap(target.onFailureOnly)
   def onCompleteOnly = wrap(target.onCompleteOnly)
   
-  def useOriginalBody = wrap(target.useOriginalBody())
-  
+  def useOriginalBody = wrap(target.useOriginalBody)
+
+  def modeBeforeConsumer = wrap(target.modeBeforeConsumer)
+  def modeAfterConsumer = wrap(target.modeAfterConsumer)
+
+  def parallelProcessing = wrap(target.parallelProcessing)
   def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
   def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
-
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SOnCompletionDefinition]
-
 }

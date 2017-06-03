@@ -33,6 +33,7 @@ import org.apache.camel.language.LanguageAnnotation;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "sql")
+@Deprecated
 public @interface SQL {
     String value();
 }

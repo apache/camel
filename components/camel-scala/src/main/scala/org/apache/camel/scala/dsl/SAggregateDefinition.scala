@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,6 +45,8 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
 
   def completionSize(count: Int) = wrap(target.completionSize(count))
   def completionTimeout(period: Period) = wrap(target.setCompletionTimeout(period.milliseconds))
+  def completionInterval(period: Period) =
+    wrap(target.setCompletionInterval(period.milliseconds))
 
   def closeCorrelationKeyOnCompletion(count: Int) = wrap(target.setCloseCorrelationKeyOnCompletion(count))
   def parallelProcessing = wrap(target.parallelProcessing)
@@ -59,12 +61,10 @@ case class SAggregateDefinition(override val target: AggregateDefinition)(implic
       = wrap(target.setTimeoutCheckerExecutorService(executorService))
   def executorService(executorService: ExecutorService) = wrap(target.setExecutorService(executorService))
   def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
-  
-  def completionPredicate(filter: Exchange => Any) {
+
+  def completionPredicate(filter: Exchange => Any) = {
      // uses implicit conversion
      val predicate = filter
-     target.completionPredicate(predicate)
+     wrap(target.completionPredicate(predicate))
   }
-
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SAggregateDefinition]
 }

@@ -18,16 +18,27 @@ package org.apache.camel.component.jcr;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * A component for integrating with JSR-170 (JCR) compliant content repositories
  */
-public class JcrComponent extends DefaultComponent {
+public class JcrComponent extends UriEndpointComponent {
+
+    public JcrComponent() {
+        super(JcrEndpoint.class);
+    }
+
+    public JcrComponent(CamelContext context) {
+        super(context, JcrEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
-        return new JcrEndpoint(uri, this);
+        JcrEndpoint endpoint = new JcrEndpoint(uri, this);
+        setProperties(endpoint, properties);
+        return endpoint;
     }
 }

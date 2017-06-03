@@ -23,12 +23,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import junit.framework.TestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version 
  */
 public class DefaultTimeoutMapTest extends TestCase {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTimeoutMapTest.class);
     private ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
 
     public void testDefaultTimeoutMap() throws Exception {
@@ -52,6 +55,10 @@ public class DefaultTimeoutMapTest extends TestCase {
         assertEquals(1, map.size());
 
         Thread.sleep(250);
+        if (map.size() > 0) {
+            LOG.warn("Waiting extra due slow CI box");
+            Thread.sleep(1000);
+        }
 
         assertEquals(0, map.size());
 
@@ -124,6 +131,10 @@ public class DefaultTimeoutMapTest extends TestCase {
 
         Thread.sleep(250);
 
+        if (map.size() > 0) {
+            LOG.warn("Waiting extra due slow CI box");
+            Thread.sleep(1000);
+        }
         // should have been timed out now
         assertEquals(0, map.size());
 
@@ -239,6 +250,10 @@ public class DefaultTimeoutMapTest extends TestCase {
 
         // start and wait for scheduler to purge
         Thread.sleep(250);
+        if (map.size() > 0) {
+            LOG.warn("Waiting extra due slow CI box");
+            Thread.sleep(1000);
+        }
         // now it should be gone
         assertEquals(0, map.size());
 

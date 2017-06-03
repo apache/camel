@@ -21,6 +21,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ManagementAgent;
 import org.junit.Test;
 
@@ -74,6 +76,30 @@ public class DefaultManagementAgentMockTest {
 
         assertFalse(agent.isRegistered(sourceObjectName));
         verify(mbeanServer);
+    }
+
+    @Test
+    public void testShouldUseHostIPAddressWhenFlagisTrue() throws Exception {
+        System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "true");
+        System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
+        CamelContext ctx = new DefaultCamelContext();
+
+        ManagementAgent agent = new DefaultManagementAgent(ctx);
+        agent.start();
+
+        assertTrue(agent.getUseHostIPAddress());
+    }
+
+    @Test
+    public void shouldUseHostNameWhenFlagisFalse() throws Exception {
+        System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "false");
+        System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
+        CamelContext ctx = new DefaultCamelContext();
+
+        ManagementAgent agent = new DefaultManagementAgent(ctx);
+        agent.start();
+
+        assertFalse(agent.getUseHostIPAddress());
     }
 
 }

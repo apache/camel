@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.Map;
+
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,6 +30,8 @@ import org.apache.camel.component.netty.NettyEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
@@ -35,17 +40,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HTTP based {@link NettyEndpoint}
+ * Netty HTTP server and client using the Netty 3.x library.
  */
-public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
+@UriEndpoint(firstVersion = "2.12.0", scheme = "netty-http", extendsScheme = "netty", title = "Netty HTTP",
+        syntax = "netty-http:protocol:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http", lenientProperties = true,
+        excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
+                + ",clientMode,reconnect,reconnectInterval,broadcast")
+public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
+    @UriParam
+    private NettyHttpConfiguration configuration;
+    @UriParam(label = "advanced", name = "configuration", javaType = "org.apache.camel.component.netty.http.NettyHttpConfiguration",
+              description = "To use a custom configured NettyHttpConfiguration for configuring this endpoint.")
+    private Object httpConfiguration; // to include in component docs as NettyHttpConfiguration is a @UriParams class
+    @UriParam(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam(label = "consumer,advanced")
     private boolean traceEnabled;
+    @UriParam(label = "consumer,advanced")
     private String httpMethodRestrict;
+    @UriParam(label = "consumer,advanced")
     private NettySharedHttpServer nettySharedHttpServer;
+    @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;
+    @UriParam(label = "consumer,security", prefix = "securityConfiguration.", multiValue = true)
+    private Map<String, Object> securityOptions; // to include in component docs
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -119,6 +141,12 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     }
 
     @Override
+    public void setConfiguration(NettyConfiguration configuration) {
+        super.setConfiguration(configuration);
+        this.configuration = (NettyHttpConfiguration) configuration;
+    }
+
+    @Override
     public NettyHttpConfiguration getConfiguration() {
         return (NettyHttpConfiguration) super.getConfiguration();
     }
@@ -127,6 +155,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return nettyHttpBinding;
     }
 
+    /**
+     * To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
+     */
     public void setNettyHttpBinding(NettyHttpBinding nettyHttpBinding) {
         this.nettyHttpBinding = nettyHttpBinding;
     }
@@ -135,14 +166,21 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return headerFilterStrategy;
     }
 
+    /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
+     */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+        getNettyHttpBinding().setHeaderFilterStrategy(headerFilterStrategy);
     }
 
     public boolean isTraceEnabled() {
         return traceEnabled;
     }
 
+    /**
+     * Specifies whether to enable HTTP TRACE for this Netty HTTP consumer. By default TRACE is turned off.
+     */
     public void setTraceEnabled(boolean traceEnabled) {
         this.traceEnabled = traceEnabled;
     }
@@ -151,6 +189,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return httpMethodRestrict;
     }
 
+    /**
+     * To disable HTTP methods on the Netty HTTP consumer. You can specify multiple separated by comma.
+     */
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
     }
@@ -159,6 +200,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return nettySharedHttpServer;
     }
 
+    /**
+     * To use a shared Netty HTTP server. See Netty HTTP Server Example for more details.
+     */
     public void setNettySharedHttpServer(NettySharedHttpServer nettySharedHttpServer) {
         this.nettySharedHttpServer = nettySharedHttpServer;
     }
@@ -167,8 +211,22 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         return securityConfiguration;
     }
 
+    /**
+     * Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources.
+     */
     public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
+    }
+
+    public Map<String, Object> getSecurityOptions() {
+        return securityOptions;
+    }
+
+    /**
+     * To configure NettyHttpSecurityConfiguration using key/value pairs from the map
+     */
+    public void setSecurityOptions(Map<String, Object> securityOptions) {
+        this.securityOptions = securityOptions;
     }
 
     @Override

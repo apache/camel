@@ -30,15 +30,6 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
         assertNotNull("Should have created an endpoint", endpoint);
     }
 
-    public void testNoQuestionMarker() throws Exception {
-        try {
-            context.getEndpoint("timer://foo&fixedRate=true&delay=0&period=500");
-            fail("Should have thrown ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
-    }
-
     public void testUnknownParameter() throws Exception {
         try {
             context.getEndpoint("timer://foo?delay=250&unknown=1&period=500");

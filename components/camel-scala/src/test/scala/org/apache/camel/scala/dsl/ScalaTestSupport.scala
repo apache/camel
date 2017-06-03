@@ -44,7 +44,10 @@ abstract class ScalaTestSupport extends CamelTestSupport with RouteBuilderSuppor
   def in(message: Any) : Exchange =  createExchangeWithBody(message)
   
   val builder : RouteBuilder
-  
+
+  /**
+   * Creates the route builder, make sure to use lazy modifier, and create a ScalaRouteBuilder instance
+   */
   override protected def createRouteBuilder = builder
 
   override def setUp() {

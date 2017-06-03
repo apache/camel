@@ -21,8 +21,12 @@ import org.apache.camel.Processor;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.crypto.CipherService;
 import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ShiroSecurityTokenInjector implements Processor {
+    private static final Logger LOG = LoggerFactory.getLogger(ShiroSecurityTokenInjector.class);
+                                                              
     private final byte[] bits128 = {
         (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
         (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
@@ -52,6 +56,9 @@ public class ShiroSecurityTokenInjector implements Processor {
     }
 
     public ByteSource encrypt() throws Exception {
+        if (passPhrase == bits128) {
+            LOG.warn("Using the default encryption key is not secure");
+        }
         return ShiroSecurityHelper.encrypt(securityToken, passPhrase, cipherService);
     }
 

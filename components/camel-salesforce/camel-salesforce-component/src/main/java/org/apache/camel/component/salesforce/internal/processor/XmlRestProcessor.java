@@ -21,10 +21,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
+import com.thoughtworks.xstream.core.TreeMarshallingStrategy;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.naming.NoNameCoder;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
@@ -35,9 +37,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
-import org.apache.camel.component.salesforce.api.JodaTimeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
@@ -45,6 +46,9 @@ import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SearchResults;
 import org.apache.camel.component.salesforce.api.dto.Versions;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
+import org.apache.camel.component.salesforce.api.utils.DateTimeConverter;
+import org.apache.camel.component.salesforce.internal.client.XStreamUtils;
 import org.eclipse.jetty.util.StringUtil;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
@@ -56,22 +60,25 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     // not very efficient when both JSON and XML are used together with a single Thread pool
     // but this will do for now
     private static ThreadLocal<XStream> xStream =
-            new ThreadLocal<XStream>() {
-                @Override
-                protected XStream initialValue() {
-                    // use NoNameCoder to avoid escaping __ in custom field names
-                    // and CompactWriter to avoid pretty printing
-                    XStream result = new XStream(new XppDriver(new NoNameCoder()) {
-                        @Override
-                        public HierarchicalStreamWriter createWriter(Writer out) {
-                            return new CompactWriter(out, getNameCoder());
-                        }
+        new ThreadLocal<XStream>() {
+            @Override
+            protected XStream initialValue() {
+                // use NoNameCoder to avoid escaping __ in custom field names
+                // and CompactWriter to avoid pretty printing
+                XStream result = new XStream(new XppDriver(new NoNameCoder()) {
+                    @Override
+                    public HierarchicalStreamWriter createWriter(Writer out) {
+                        return new CompactWriter(out, getNameCoder());
+                    }
 
-                    });
-                    result.registerConverter(new JodaTimeConverter());
-                    return result;
-                }
-            };
+                });
+                result.ignoreUnknownElements();
+                XStreamUtils.addDefaultPermissions(result);
+                result.registerConverter(new DateTimeConverter());
+                result.setMarshallingStrategy(new TreeMarshallingStrategy());
+                return result;
+            }
+        };
 
     private static final String RESPONSE_ALIAS = XmlRestProcessor.class.getName() + ".responseAlias";
 
@@ -134,6 +141,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
             break;
 
         case QUERY:
+        case QUERY_ALL:
         case QUERY_MORE:
             // need to add alias for Salesforce XML that uses SObject name as root element
             exchange.setProperty(RESPONSE_ALIAS, "QueryResult");
@@ -144,27 +152,33 @@ public class XmlRestProcessor extends AbstractRestProcessor {
             exchange.setProperty(RESPONSE_CLASS, SearchResults.class);
             break;
 
+        case APEX_CALL:
+            // need to add alias for Salesforce XML that uses SObject name as root element
+            exchange.setProperty(RESPONSE_ALIAS, "response");
+            break;
+
+        case APPROVAL:
+            exchange.setProperty(RESPONSE_CLASS, ApprovalResult.class);
+            break;
+        case APPROVALS:
+            throw new SalesforceException("Fetching of approvals (as of 18.11.2016) with XML format results in HTTP status 500."
+                + " To fetch approvals please use JSON format.", 0);
+
         default:
             // ignore, some operations do not require alias or class exchange properties
         }
     }
 
     protected InputStream getRequestStream(Exchange exchange) throws SalesforceException {
-        final XStream localXStream = xStream.get();
         try {
             // get request stream from In message
             Message in = exchange.getIn();
             InputStream request = in.getBody(InputStream.class);
             if (request == null) {
-                AbstractSObjectBase sObject = in.getBody(AbstractSObjectBase.class);
-                if (sObject != null) {
-                    // marshall the SObject
-                    // first process annotations on the class, for things like alias, etc.
-                    localXStream.processAnnotations(sObject.getClass());
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    // make sure we write the XML with the right encoding
-                    localXStream.toXML(sObject, new OutputStreamWriter(out, StringUtil.__UTF8_CHARSET));
-                    request = new ByteArrayInputStream(out.toByteArray());
+                AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
+                if (dto != null) {
+                    // marshall the DTO
+                    request = getRequestStream(dto);
                 } else {
                     // if all else fails, get body as String
                     final String body = in.getBody(String.class);
@@ -173,7 +187,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                             + (in.getBody() == null ? null : in.getBody().getClass());
                         throw new SalesforceException(msg, null);
                     } else {
-                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));
+                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8));
                     }
                 }
             }
@@ -181,16 +195,45 @@ public class XmlRestProcessor extends AbstractRestProcessor {
         } catch (XStreamException e) {
             String msg = "Error marshaling request: " + e.getMessage();
             throw new SalesforceException(msg, e);
+        } catch (UnsupportedEncodingException e) {
+            String msg = "Error marshaling request: " + e.getMessage();
+            throw new SalesforceException(msg, e);
         }
     }
 
     @Override
-    protected void processResponse(Exchange exchange, InputStream responseEntity,
-                                   SalesforceException exception, AsyncCallback callback) {
+    protected InputStream getRequestStream(final Object object) throws SalesforceException {
+        final XStream localXStream = xStream.get();
+        // first process annotations on the class, for things like alias, etc.
+        localXStream.processAnnotations(object.getClass());
+
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        // make sure we write the XML with the right encoding
+        try {
+            localXStream.toXML(object, new OutputStreamWriter(out, StringUtil.__UTF8));
+        } catch (UnsupportedEncodingException e) {
+            String msg = "Error marshaling request: " + e.getMessage();
+            throw new SalesforceException(msg, e);
+        }
+
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    @Override
+    protected void processResponse(final Exchange exchange, final InputStream responseEntity,
+        final SalesforceException exception, final AsyncCallback callback) {
         final XStream localXStream = xStream.get();
         try {
-            // do we need to un-marshal a response
-            if (responseEntity != null) {
+            final Message out = exchange.getOut();
+            final Message in = exchange.getIn();
+            out.copyFromWithNewBody(in, null);
+
+            if (exception != null) {
+                if (shouldReport(exception)) {
+                    exchange.setException(exception);
+                }
+            } else if (responseEntity != null) {
+                // do we need to un-marshal a response
                 final Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 Object response;
                 if (responseClass != null) {
@@ -205,6 +248,8 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                                 mapper.flushCache();
                             }
                         } catch (CannotResolveClassException ignore) {
+                            // recent XStream versions add a ClassNotFoundException to cache
+                            mapper.flushCache();
                         }
                         localXStream.alias(responseAlias, responseClass);
                     }
@@ -214,13 +259,8 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                     // return the response as a stream, for getBlobField
                     response = responseEntity;
                 }
-                exchange.getOut().setBody(response);
-            } else {
-                exchange.setException(exception);
+                out.setBody(response);
             }
-            // copy headers and attachments
-            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
         } catch (XStreamException e) {
             String msg = "Error parsing XML response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));

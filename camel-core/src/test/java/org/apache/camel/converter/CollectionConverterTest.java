@@ -58,7 +58,6 @@ public class CollectionConverterTest extends TestCase {
     }
 
     public void testToArray() {
-        assertEquals(null, CollectionConverter.toArray(null));
         Object[] data = CollectionConverter.toArray(SMURFS);
         assertEquals(4, data.length);
     }

@@ -27,11 +27,11 @@ import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppProducer</code>
@@ -100,7 +100,7 @@ public class SmppProducerLazySessionCreationTest {
         expect(binding.createSmppCommand(session, exchange)).andReturn(command);
         expect(exchange.getIn()).andReturn(in);
         expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn(null);
-        expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn(null);
+        expect(in.getHeader("CamelSmppPassword", String.class)).andReturn(null);
         command.execute(exchange);
         
         replay(session, endpoint, binding, exchange, in, command);
@@ -140,7 +140,7 @@ public class SmppProducerLazySessionCreationTest {
         expect(binding.createSmppCommand(session, exchange)).andReturn(command);
         expect(exchange.getIn()).andReturn(in);
         expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn("smppclient2");
-        expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn("password2");
+        expect(in.getHeader("CamelSmppPassword", String.class)).andReturn("password2");
         command.execute(exchange);
         
         replay(session, endpoint, binding, exchange, in, command);

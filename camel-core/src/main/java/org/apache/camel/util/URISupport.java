@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,7 +41,7 @@ public final class URISupport {
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
-    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=([^&]*)",
+    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=(RAW\\(.*\\)|[^&]*)",
             Pattern.CASE_INSENSITIVE);
     
     // Match the user password in the URI as second capture group
@@ -63,7 +62,7 @@ public final class URISupport {
      * Removes detected sensitive information (such as passwords) from the URI and returns the result.
      *
      * @param uri The uri to sanitize.
-     * @see #SECRETS for the matched pattern
+     * @see #SECRETS and #USERINFO_PASSWORD for the matched pattern
      *
      * @return Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey sanitized.
      */
@@ -91,6 +90,28 @@ public final class URISupport {
             sanitized = PATH_USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1xxxxxx$3");
         }
         return sanitized;
+    }
+
+    /**
+     * Extracts the scheme specific path from the URI that is used as the remainder option when creating endpoints.
+     *
+     * @param u      the URI
+     * @param useRaw whether to force using raw values
+     * @return the remainder path
+     */
+    public static String extractRemainderPath(URI u, boolean useRaw) {
+        String path = useRaw ? u.getRawSchemeSpecificPart() : u.getSchemeSpecificPart();
+
+        // lets trim off any query arguments
+        if (path.startsWith("//")) {
+            path = path.substring(2);
+        }
+        int idx = path.indexOf('?');
+        if (idx > -1) {
+            path = path.substring(0, idx);
+        }
+
+        return path;
     }
 
     /**
@@ -125,13 +146,34 @@ public final class URISupport {
      * @see #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri, boolean useRaw) throws URISyntaxException {
+        return parseQuery(uri, useRaw, false);
+    }
+
+    /**
+     * Parses the query part of the uri (eg the parameters).
+     * <p/>
+     * The URI parameters will by default be URI encoded. However you can define a parameter
+     * values with the syntax: <tt>key=RAW(value)</tt> which tells Camel to not encode the value,
+     * and use the value as is (eg key=value) and the value has <b>not</b> been encoded.
+     *
+     * @param uri the uri
+     * @param useRaw whether to force using raw values
+     * @param lenient whether to parse lenient and ignore trailing & markers which has no key or value which can happen when using HTTP components
+     * @return the parameters, or an empty map if no parameters (eg never null)
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
+     * @see #RAW_TOKEN_START
+     * @see #RAW_TOKEN_END
+     */
+    public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient) throws URISyntaxException {
         // must check for trailing & as the uri.split("&") will ignore those
-        if (uri != null && uri.endsWith("&")) {
-            throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
-                    + "Check the uri and remove the trailing & marker.");
+        if (!lenient) {
+            if (uri != null && uri.endsWith("&")) {
+                throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
+                        + "Check the uri and remove the trailing & marker.");
+            }
         }
 
-        if (ObjectHelper.isEmpty(uri)) {
+        if (uri == null || ObjectHelper.isEmpty(uri)) {
             // return an empty map
             return new LinkedHashMap<String, Object>(0);
         }
@@ -155,7 +197,7 @@ public final class URISupport {
                 char ch = uri.charAt(i);
                 // look ahead of the next char
                 char next;
-                if (i < uri.length() - 2) {
+                if (i <= uri.length() - 2) {
                     next = uri.charAt(i + 1);
                 } else {
                     next = '\u0000';
@@ -235,7 +277,8 @@ public final class URISupport {
         name = URLDecoder.decode(name, CHARSET);
         if (!isRaw) {
             // need to replace % with %25
-            value = URLDecoder.decode(value.replaceAll("%", "%25"), CHARSET);
+            String s = StringHelper.replaceAll(value, "%", "%25");
+            value = URLDecoder.decode(s, CHARSET);
         }
 
         // does the key already exist?
@@ -295,13 +338,31 @@ public final class URISupport {
      * @see #RAW_TOKEN_START
      * @see #RAW_TOKEN_END
      */
+    @SuppressWarnings("unchecked")
     public static void resolveRawParameterValues(Map<String, Object> parameters) {
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             if (entry.getValue() != null) {
-                String value = entry.getValue().toString();
-                if (value.startsWith(RAW_TOKEN_START) && value.endsWith(RAW_TOKEN_END)) {
-                    value = value.substring(4, value.length() - 1);
-                    entry.setValue(value);
+                // if the value is a list then we need to iterate
+                Object value = entry.getValue();
+                if (value instanceof List) {
+                    List list = (List) value;
+                    for (int i = 0; i < list.size(); i++) {
+                        Object obj = list.get(i);
+                        if (obj != null) {
+                            String str = obj.toString();
+                            if (str.startsWith(RAW_TOKEN_START) && str.endsWith(RAW_TOKEN_END)) {
+                                str = str.substring(4, str.length() - 1);
+                                // update the string in the list
+                                list.set(i, str);
+                            }
+                        }
+                    }
+                } else {
+                    String str = entry.getValue().toString();
+                    if (str.startsWith(RAW_TOKEN_START) && str.endsWith(RAW_TOKEN_END)) {
+                        str = str.substring(4, str.length() - 1);
+                        entry.setValue(str);
+                    }
                 }
             }
         }
@@ -321,6 +382,9 @@ public final class URISupport {
         // assemble string as new uri and replace parameters with the query instead
         String s = uri.toString();
         String before = ObjectHelper.before(s, "?");
+        if (before == null) {
+            before = ObjectHelper.before(s, "#");
+        }
         if (before != null) {
             s = before;
         }
@@ -407,8 +471,10 @@ public final class URISupport {
         if (value != null) {
             rc.append("=");
             if (value.startsWith(RAW_TOKEN_START) && value.endsWith(RAW_TOKEN_END)) {
-                // do not encode RAW parameters
-                rc.append(value);
+                // do not encode RAW parameters unless it has %
+                // need to replace % with %25 to avoid losing "%" when decoding
+                String s = StringHelper.replaceAll(value, "%", "%25");
+                rc.append(s);
             } else {
                 rc.append(URLEncoder.encode(value, CHARSET));
             }
@@ -429,6 +495,25 @@ public final class URISupport {
     }
 
     /**
+     * Appends the given parameters to the given URI.
+     * <p/>
+     * It keeps the original parameters and if a new parameter is already defined in
+     * {@code originalURI}, it will be replaced by its value in {@code newParameters}.
+     *
+     * @param originalURI   the original URI
+     * @param newParameters the parameters to add
+     * @return the URI with all the parameters
+     * @throws URISyntaxException           is thrown if the uri syntax is invalid
+     * @throws UnsupportedEncodingException is thrown if encoding error
+     */
+    public static String appendParametersToURI(String originalURI, Map<String, Object> newParameters) throws URISyntaxException, UnsupportedEncodingException {
+        URI uri = new URI(normalizeUri(originalURI));
+        Map<String, Object> parameters = parseParameters(uri);
+        parameters.putAll(newParameters);
+        return createRemainingURI(uri, parameters).toString();
+    }
+
+    /**
      * Normalizes the uri by reordering the parameters so they are sorted and thus
      * we can use the uris for endpoint matching.
      * <p/>
@@ -445,7 +530,7 @@ public final class URISupport {
      */
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
 
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
+        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
         String path = u.getSchemeSpecificPart();
         String scheme = u.getScheme();
 
@@ -464,7 +549,11 @@ public final class URISupport {
             path = path.substring(0, idx);
         }
 
-        path = UnsafeUriCharactersEncoder.encode(path);
+        if (u.getScheme().startsWith("http")) {
+            path = UnsafeUriCharactersEncoder.encodeHttpURI(path);
+        } else {
+            path = UnsafeUriCharactersEncoder.encode(path);
+        }
 
         // okay if we have user info in the path and they use @ in username or password,
         // then we need to encode them (but leave the last @ sign before the hostname)
@@ -493,7 +582,7 @@ public final class URISupport {
         } else {
             // reorder parameters a..z
             List<String> keys = new ArrayList<String>(parameters.keySet());
-            Collections.sort(keys);
+            keys.sort(null);
 
             Map<String, Object> sorted = new LinkedHashMap<String, Object>(parameters.size());
             for (String key : keys) {
@@ -509,5 +598,38 @@ public final class URISupport {
     private static String buildUri(String scheme, String path, String query) {
         // must include :// to do a correct URI all components can work with
         return scheme + "://" + path + (query != null ? "?" + query : "");
+    }
+
+    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
+        Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
+
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
+            if (name.startsWith(optionPrefix)) {
+                Object value = properties.get(name);
+                name = name.substring(optionPrefix.length());
+                rc.put(name, value);
+                it.remove();
+            }
+        }
+
+        return rc;
+    }
+
+    public static String pathAndQueryOf(final URI uri) {
+        final String path = uri.getPath();
+
+        String pathAndQuery = path;
+        if (ObjectHelper.isEmpty(path)) {
+            pathAndQuery = "/";
+        }
+
+        final String query = uri.getQuery();
+        if (ObjectHelper.isNotEmpty(query)) {
+            pathAndQuery += "?" + query;
+        }
+
+        return pathAndQuery;
     }
 }

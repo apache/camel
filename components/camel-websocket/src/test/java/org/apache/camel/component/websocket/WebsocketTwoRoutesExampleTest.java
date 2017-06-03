@@ -21,13 +21,14 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Test;
 
 public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
@@ -49,9 +50,9 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         received.clear();
         latch = new CountDownLatch(1);
 
-        AsyncHttpClient c = new AsyncHttpClient();
+        AsyncHttpClient c = new DefaultAsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/bar").execute(
+        WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/bar").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
                     @Override
@@ -59,10 +60,6 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
                         received.add(message);
                         log.info("received --> " + message);
                         latch.countDown();
-                    }
-
-                    @Override
-                    public void onFragment(String fragment, boolean last) {
                     }
 
                     @Override
@@ -79,7 +76,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
                     }
                 }).build()).get();
 
-        websocket.sendTextMessage("Beer");
+        websocket.sendMessage("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(1, received.size());
@@ -92,9 +89,9 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         received.clear();
         latch = new CountDownLatch(1);
 
-        c = new AsyncHttpClient();
+        c = new DefaultAsyncHttpClient();
 
-        websocket = c.prepareGet("ws://127.0.0.1:" + port + "/pub").execute(
+        websocket = c.prepareGet("ws://localhost:" + port + "/pub").execute(
                 new WebSocketUpgradeHandler.Builder()
                         .addWebSocketListener(new WebSocketTextListener() {
                             @Override
@@ -104,10 +101,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
                                 latch.countDown();
                             }
 
-                            @Override
-                            public void onFragment(String fragment, boolean last) {
-                            }
-
+                                
                             @Override
                             public void onOpen(WebSocket websocket) {
                             }
@@ -122,7 +116,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
                             }
                         }).build()).get();
 
-        websocket.sendTextMessage("wine");
+        websocket.sendMessage("wine");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertEquals(1, received.size());
@@ -136,7 +130,10 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(20);
+                
                 from("websocket://localhost:" + port + "/bar")
                     .log(">>> Message received from BAR WebSocket Client : ${body}")
                     .transform().simple("The bar has ${body}")

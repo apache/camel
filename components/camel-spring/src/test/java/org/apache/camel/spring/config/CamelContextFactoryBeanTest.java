@@ -25,6 +25,7 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -52,10 +53,8 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
         // enable JMX
         System.clearProperty(JmxSystemPropertyKeys.DISABLED);
 
-        if (applicationContext != null) {
-            // we're done so let's properly close the application context
-            applicationContext.close();
-        }
+        // we're done so let's properly close the application context
+        IOHelper.close(applicationContext);
     }
 
     public void testClassPathRouteLoading() throws Exception {

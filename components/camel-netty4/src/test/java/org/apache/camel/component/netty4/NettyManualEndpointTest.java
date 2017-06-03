@@ -19,10 +19,11 @@ package org.apache.camel.component.netty4;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.Delimiters;
+import io.netty.util.CharsetUtil;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.jboss.netty.channel.ChannelHandler;
-import org.jboss.netty.handler.codec.frame.Delimiters;
-import org.jboss.netty.util.CharsetUtil;
 import org.junit.Test;
 
 public class NettyManualEndpointTest extends BaseNettyTest {
@@ -54,10 +55,10 @@ public class NettyManualEndpointTest extends BaseNettyTest {
                 nettyConfig.setSync(false);
 
                 // need to add encoders and decoders manually
-                nettyConfig.setEncoder(ChannelHandlerFactories.newStringEncoder(CharsetUtil.UTF_8));
+                nettyConfig.setEncoder(ChannelHandlerFactories.newStringEncoder(CharsetUtil.UTF_8, "tcp"));
                 List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
-                decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(1000, Delimiters.lineDelimiter()));
-                decoders.add(ChannelHandlerFactories.newStringDecoder(CharsetUtil.UTF_8));
+                decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(1000, Delimiters.lineDelimiter(), "tcp"));
+                decoders.add(ChannelHandlerFactories.newStringDecoder(CharsetUtil.UTF_8, "tcp"));
                 nettyConfig.setDecoders(decoders);
 
                 // create and start component
@@ -69,7 +70,6 @@ public class NettyManualEndpointTest extends BaseNettyTest {
                 // create and start endpoint, pass in null as endpoint uri
                 // as we create this endpoint manually
                 endpoint = new NettyEndpoint(null, component, nettyConfig);
-                endpoint.setTimer(NettyComponent.getTimer());
                 endpoint.start();
 
                 from(endpoint).to("mock:result");

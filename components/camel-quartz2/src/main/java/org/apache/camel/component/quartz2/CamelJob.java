@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.quartz2;
 
+import java.util.Collection;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.DelegateEndpoint;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.quartz.Job;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
@@ -69,7 +75,7 @@ public class CamelJob implements Job {
         }
     }
 
-    private CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
+    protected CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
         SchedulerContext schedulerContext = getSchedulerContext(context);
         String camelContextName = context.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
         CamelContext result = (CamelContext)schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName);
@@ -79,7 +85,7 @@ public class CamelJob implements Job {
         return result;
     }
 
-    private SchedulerContext getSchedulerContext(JobExecutionContext context) throws JobExecutionException {
+    protected SchedulerContext getSchedulerContext(JobExecutionContext context) throws JobExecutionException {
         try {
             return context.getScheduler().getContext();
         } catch (SchedulerException e) {
@@ -87,22 +93,29 @@ public class CamelJob implements Job {
         }
     }
 
-    private QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
+    protected QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
         TriggerKey triggerKey = quartzContext.getTrigger().getKey();
+        JobDetail jobDetail = quartzContext.getJobDetail(); 
+        JobKey jobKey =  jobDetail.getKey();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Looking up existing QuartzEndpoint with triggerKey={}", triggerKey);
         }
-
+        
         // check all active routes for the quartz endpoint this task matches
         // as we prefer to use the existing endpoint from the routes
         for (Route route : camelContext.getRoutes()) {
-            if (route.getEndpoint() instanceof QuartzEndpoint) {
-                QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
+            Endpoint endpoint = route.getEndpoint();
+            if (endpoint instanceof DelegateEndpoint) {
+                endpoint = ((DelegateEndpoint)endpoint).getEndpoint();   
+            }
+            if (endpoint instanceof QuartzEndpoint) {
+                QuartzEndpoint quartzEndpoint = (QuartzEndpoint) endpoint;
                 TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);
                 }
-                if (triggerKey.equals(checkTriggerKey)) {
+                if (triggerKey.equals(checkTriggerKey)
+                    || (jobDetail.requestsRecovery() && jobKey.getGroup().equals(checkTriggerKey.getGroup()) && jobKey.getName().equals(checkTriggerKey.getName()))) {
                     return quartzEndpoint;
                 }
             }
@@ -110,6 +123,7 @@ public class CamelJob implements Job {
 
         // fallback and lookup existing from registry (eg maybe a @Consume POJO with a quartz endpoint, and thus not from a route)
         String endpointUri = quartzContext.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_ENDPOINT_URI);
+        
         QuartzEndpoint result = null;
 
         // Even though the same camelContext.getEndpoint call, but if/else display different log.
@@ -118,6 +132,10 @@ public class CamelJob implements Job {
                 LOG.debug("Getting Endpoint from camelContext.");
             }
             result = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
+        } else if ((result = searchForEndpointMatch(camelContext, endpointUri)) != null) { 
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found match for endpoint URI = " + endpointUri + " by searching endpoint list.");
+            }        
         } else {
             LOG.warn("Cannot find existing QuartzEndpoint with uri: {}. Creating new endpoint instance.", endpointUri);
             result = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
@@ -127,5 +145,15 @@ public class CamelJob implements Job {
         }
 
         return result;
+    }
+
+    protected QuartzEndpoint searchForEndpointMatch(CamelContext camelContext, String endpointUri) {
+        Collection<Endpoint> endpoints = camelContext.getEndpoints();
+        for (Endpoint endpoint : endpoints) {
+            if (endpointUri.equals(endpoint.getEndpointUri())) {
+                return (QuartzEndpoint) endpoint;
+            }
+        }
+        return null;
     }
 }

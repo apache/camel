@@ -24,6 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.apache.camel.component.http.HttpMethods.POST;
 
 public class HttpConnectionManagerSettingTest extends CamelTestSupport {

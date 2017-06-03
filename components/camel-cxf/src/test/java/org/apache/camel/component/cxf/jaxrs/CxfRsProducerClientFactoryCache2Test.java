@@ -41,11 +41,12 @@ public class CxfRsProducerClientFactoryCache2Test extends Assert {
 
     private CamelContext context2;
     private ProducerTemplate template2;
+    private AbstractApplicationContext applicationContext;
 
     @Before
     public void setUp() throws Exception {
-        AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest2.xml");
-        context2 = SpringCamelContext.springCamelContext(ac, false);
+        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest2.xml");
+        context2 = SpringCamelContext.springCamelContext(applicationContext, false);
         context2.start();
 
         template2 = context2.createProducerTemplate();
@@ -58,6 +59,10 @@ public class CxfRsProducerClientFactoryCache2Test extends Assert {
             context2.stop();
             template2.stop();
         }
+        // need to shutdown the application context to shutdown the bus
+        if (applicationContext != null) {
+            applicationContext.close();
+        }
     }
     
     @Test
@@ -66,7 +71,8 @@ public class CxfRsProducerClientFactoryCache2Test extends Assert {
     }
 
     private void doRunTest(ProducerTemplate template, final int clientPort) {
-        Exchange exchange = template.send("direct://http", new Processor() {
+        // use request as we want InOut
+        Exchange exchange = template.request("direct://http", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();

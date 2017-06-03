@@ -17,20 +17,19 @@
 package org.apache.camel.component.aws.cw;
 
 import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
-/**
- * Defines the <a href="http://aws.amazon.com/cloudwatch/">AWS CloudWatch Component</a>
- */
-public class CwComponent extends DefaultComponent {
+public class CwComponent extends UriEndpointComponent {
 
     public CwComponent() {
+        super(CwEndpoint.class);
     }
 
     public CwComponent(CamelContext context) {
-        super(context);
+        super(context, CwEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -42,8 +41,8 @@ public class CwComponent extends DefaultComponent {
         }
         configuration.setNamespace(remaining);
 
-        if (configuration.getAmazonCwClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonCwClient or accessKey and secretKey must be specified");
+        if (configuration.getAmazonCwClient() == null) {
+            throw new IllegalArgumentException("AmazonCwClient must be specified");
         }
 
         CwEndpoint endpoint = new CwEndpoint(uri, this, configuration);

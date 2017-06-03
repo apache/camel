@@ -69,4 +69,19 @@ public class UriConfigurationTest extends Assert {
 
         assertEquals("Camel", xmppEndpoint.getResource());
     }
+    
+    @Test
+    public void testPubSubConfiguration() throws Exception {
+        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123?password=secret&pubsub=true");
+        assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
+        XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
+
+        assertEquals("localhost", xmppEndpoint.getHost());
+        assertEquals(123, xmppEndpoint.getPort());
+        assertEquals("camel-user", xmppEndpoint.getUser());
+        assertEquals("secret", xmppEndpoint.getPassword());
+        assertEquals(true, xmppEndpoint.isPubsub());
+        assertEquals(true, xmppEndpoint.isDoc());
+    }
+    
 }

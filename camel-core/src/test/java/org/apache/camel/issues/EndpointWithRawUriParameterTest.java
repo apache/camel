@@ -16,6 +16,7 @@
  */
 package org.apache.camel.issues;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Component;
@@ -46,6 +47,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         private String username;
         private String password;
+        private List<String> lines;
 
         public MyEndpoint(String endpointUri, Component component) {
             super(endpointUri, component);
@@ -58,6 +60,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
                 public void process(Exchange exchange) throws Exception {
                     exchange.getIn().setHeader("username", getUsername());
                     exchange.getIn().setHeader("password", getPassword());
+                    exchange.getIn().setHeader("lines", getLines());
                 }
             };
         }
@@ -87,17 +90,50 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         public void setPassword(String password) {
             this.password = password;
         }
+
+        public List<String> getLines() {
+            return lines;
+        }
+
+        public void setLines(List<String> lines) {
+            this.lines = lines;
+        }
     }
 
     public void testRawUriParameter() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
-        getMockEndpoint("mock:result").expectedHeaderReceived("password", "++%%w?rd");
+        getMockEndpoint("mock:result").expectedHeaderReceived("password", "++%%w?rd)");
 
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+    }
 
+    public void testUriParameterLines() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:lines", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        List<String> lines = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        assertEquals(2, lines.size());
+        assertEquals("abc", lines.get(0));
+        assertEquals("def", lines.get(1));
+    }
+
+    public void testRawUriParameterLines() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:rawlines", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        List<String> lines = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        assertEquals(2, lines.size());
+        assertEquals("++abc++", lines.get(0));
+        assertEquals("++def++", lines.get(1));
     }
 
     @Override
@@ -108,7 +144,15 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
                 context.addComponent("mycomponent", new MyComponent());
 
                 from("direct:start")
-                    .to("mycomponent:foo?password=RAW(++%%w?rd)&username=scott")
+                    .to("mycomponent:foo?username=scott&password=RAW(++%%w?rd))")
+                    .to("mock:result");
+
+                from("direct:lines")
+                    .to("mycomponent:foo?lines=abc&lines=def")
+                    .to("mock:result");
+
+                from("direct:rawlines")
+                    .to("mycomponent:foo?lines=RAW(++abc++)&lines=RAW(++def++)")
                     .to("mock:result");
             }
         };

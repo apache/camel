@@ -39,7 +39,7 @@ public class CxfEndpointUtilsTest extends Assert {
         + "?serviceClass=org.apache.camel.component.cxf.HelloService"
         + "&portName={http://www.example.com/test}PortName"
         + "&serviceName={http://www.example.com/test}ServiceName"
-        + "&setDefaultBus=true";
+        + "&defaultBus=true";
 
     private static final String NO_SERVICE_CLASS_URI = "cxf://http://www.example.com/testaddress"
         + "?portName={http://www.example.com/test}PortName"

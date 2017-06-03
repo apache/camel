@@ -43,7 +43,7 @@ public class CxfUtilsTest extends Assert {
     private String getSubElementString(String string) throws Exception {
         InputStream is = new ByteArrayInputStream(string.getBytes("UTF-8"));
         XmlConverter converter = new XmlConverter();
-        Element element = converter.toDOMElement(converter.toDOMSource(is));
+        Element element = converter.toDOMElement(converter.toDOMSource(is, null));
         Element subElement = (Element)element.getFirstChild();
         return CxfUtils.elementToString(subElement);
         

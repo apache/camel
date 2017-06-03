@@ -110,7 +110,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZINTERSTORE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         sendHeaders(
@@ -124,7 +124,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZRANGE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         when(zSetOperations.range(anyString(), anyLong(), anyLong())).thenReturn(keys);
@@ -158,7 +158,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZRANGEBYSCORE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         when(zSetOperations.rangeByScore(anyString(), anyDouble(), anyDouble())).thenReturn(keys);
@@ -197,7 +197,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
                 RedisConstants.VALUE, "value");
 
         verify(zSetOperations).remove("key", "value");
-        assertEquals(Long.valueOf(1), result);
+        assertEquals(1L, result);
     }
 
 
@@ -226,7 +226,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZREVRANGE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         when(zSetOperations.reverseRange(anyString(), anyLong(), anyLong())).thenReturn(keys);
@@ -260,7 +260,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZREVRANGEBYSCORE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         when(zSetOperations.reverseRangeByScore(anyString(), anyDouble(), anyDouble())).thenReturn(keys);
@@ -291,7 +291,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZUNIONSTORE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         sendHeaders(

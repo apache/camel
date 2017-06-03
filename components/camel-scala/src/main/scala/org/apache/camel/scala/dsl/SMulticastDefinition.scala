@@ -35,7 +35,12 @@ case class SMulticastDefinition(override val target: MulticastDefinition)(implic
 
   def strategy(strategy: AggregationStrategy) = wrap(target.setAggregationStrategy(strategy))
 
+  @Deprecated
   def parallel = wrap(target.parallelProcessing)
+
+  def parallelProcessing = wrap(target.parallelProcessing)
+
+  def parallelAggregate = wrap(target.parallelAggregate)
 
   def streaming = wrap(target.streaming)
   
@@ -46,7 +51,4 @@ case class SMulticastDefinition(override val target: MulticastDefinition)(implic
   def executorServiceRef(ref: String) = wrap(target.setExecutorServiceRef(ref))
   
   def timeout(timeout: Long) = wrap(target.timeout(timeout))
-
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SMulticastDefinition]
-  
 }

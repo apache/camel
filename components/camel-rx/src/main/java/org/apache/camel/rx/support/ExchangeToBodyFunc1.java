@@ -19,7 +19,7 @@ package org.apache.camel.rx.support;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
-import rx.util.functions.Func1;
+import rx.functions.Func1;
 
 /**
  * A simple {@link Func1} to convert an {@link Exchange} to the given type using the

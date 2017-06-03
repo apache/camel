@@ -43,7 +43,7 @@ public class VelocityLetterTest extends CamelTestSupport {
     public void testVelocityLetter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Dear Ibsen, Claus\n\nThanks for the order of Camel in Action.\n\nRegards Camel Riders Bookstore\nPS: Next beer is on me, James");
+        mock.message(0).body(String.class).contains("Thanks for the order of Camel in Action");
 
         template.send("direct:a", createLetter());
 

@@ -16,41 +16,46 @@
  */
 package org.apache.camel.component.cache;
 
-import java.net.URI;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.ServiceHelper;
 
-public class CacheComponent extends DefaultComponent {
+public class CacheComponent extends UriEndpointComponent {
     private CacheConfiguration configuration;
-    private CacheManagerFactory cacheManagerFactory = new DefaultCacheManagerFactory();
-    
+    @Metadata(label = "advanced")
+    private CacheManagerFactory cacheManagerFactory;
+    @Metadata(defaultValue = "classpath:ehcache.xml")
+    private String configurationFile;
+
     public CacheComponent() {
+        super(CacheEndpoint.class);
         configuration = new CacheConfiguration();
     }
 
     public CacheComponent(CamelContext context) {
-        super(context);
+        super(context, CacheEndpoint.class);
         configuration = new CacheConfiguration();
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         // must use copy as each endpoint can have different options
         ObjectHelper.notNull(configuration, "configuration");
+
         CacheConfiguration config = configuration.copy();
-
-        config.parseURI(new URI(uri));
-
-        setProperties(this, parameters);
         setProperties(config, parameters);
+        config.setCacheName(remaining);
 
         CacheEndpoint cacheEndpoint = new CacheEndpoint(uri, this, config, cacheManagerFactory);
+        setProperties(cacheEndpoint, parameters);
         return cacheEndpoint;
     }
 
@@ -58,6 +63,11 @@ public class CacheComponent extends DefaultComponent {
         return cacheManagerFactory;
     }
 
+    /**
+     * To use the given CacheManagerFactory for creating the CacheManager.
+     * <p/>
+     * By default the DefaultCacheManagerFactory is used.
+     */
     public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
     }
@@ -72,12 +82,33 @@ public class CacheComponent extends DefaultComponent {
      * @param configuration the configuration to use by default for endpoints
      */
     public void setConfiguration(CacheConfiguration configuration) {
-        this.configuration = configuration;
+        this.configuration = configuration.copy();
+    }
+
+    public String getConfigurationFile() {
+        return configurationFile;
+    }
+
+    /**
+     * Sets the location of the <tt>ehcache.xml</tt> file to load from classpath or file system.
+     * <p/>
+     * By default the file is loaded from <tt>classpath:ehcache.xml</tt>
+     */
+    public void setConfigurationFile(String configurationFile) {
+        this.configurationFile = configurationFile;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (cacheManagerFactory == null) {
+            if (configurationFile != null) {
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), configurationFile);
+                cacheManagerFactory = new DefaultCacheManagerFactory(is, configurationFile);
+            } else {
+                cacheManagerFactory = new DefaultCacheManagerFactory();
+            }
+        }
         ServiceHelper.startService(cacheManagerFactory);
     }
 

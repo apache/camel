@@ -40,8 +40,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -54,9 +61,9 @@ import org.apache.camel.Ordered;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * A number of useful helper methods for working with Objects
@@ -66,9 +73,6 @@ import org.slf4j.LoggerFactory;
 public final class ObjectHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
     private static final String DEFAULT_DELIMITER = ",";
-    @SuppressWarnings("unchecked")
-    private static final List<?> PRIMITIVE_ARRAY_TYPES = Arrays.asList(byte[].class, short[].class, int[].class, long[].class,
-                                                                       float[].class, double[].class, char[].class, boolean[].class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -82,6 +86,15 @@ public final class ObjectHelper {
      * a String and Integer type as Camel will be able to coerce the types.
      */
     public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue) {
+        return typeCoerceEquals(converter, leftValue, rightValue, false);
+    }
+
+    /**
+     * A helper method for comparing objects for equality in which it uses type coercion to coerce
+     * types between the left and right values. This allows you test for equality for example with
+     * a String and Integer type as Camel will be able to coerce the types.
+     */
+    public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue, boolean ignoreCase) {
         // sanity check
         if (leftValue == null && rightValue == null) {
             // they are equal
@@ -92,7 +105,7 @@ public final class ObjectHelper {
         }
 
         // try without type coerce
-        boolean answer = equal(leftValue, rightValue);
+        boolean answer = equal(leftValue, rightValue, ignoreCase);
         if (answer) {
             return true;
         }
@@ -104,14 +117,14 @@ public final class ObjectHelper {
 
         // convert left to right
         Object value = converter.tryConvertTo(rightValue.getClass(), leftValue);
-        answer = equal(value, rightValue);
+        answer = equal(value, rightValue, ignoreCase);
         if (answer) {
             return true;
         }
 
         // convert right to left
         value = converter.tryConvertTo(leftValue.getClass(), rightValue);
-        answer = equal(leftValue, value);
+        answer = equal(leftValue, value, ignoreCase);
         return answer;
     }
 
@@ -180,15 +193,34 @@ public final class ObjectHelper {
      * A helper method for comparing objects for equality while handling nulls
      */
     public static boolean equal(Object a, Object b) {
+        return equal(a, b, false);
+    }
+
+    /**
+     * A helper method for comparing objects for equality while handling nulls
+     */
+    public static boolean equal(final Object a, final Object b, final boolean ignoreCase) {
         if (a == b) {
             return true;
         }
 
-        if (a instanceof byte[] && b instanceof byte[]) {
-            return equalByteArray((byte[])a, (byte[])b);
+        if (a == null || b == null) {
+            return false;
         }
 
-        return a != null && b != null && a.equals(b);
+        if (ignoreCase) {
+            if (a instanceof String && b instanceof String) {
+                return ((String) a).equalsIgnoreCase((String) b);
+            }
+        }
+
+        if (a.getClass().isArray() && b.getClass().isArray()) {
+            // uses array based equals
+            return Objects.deepEquals(a, b);
+        } else {
+            // use regular equals
+            return a.equals(b);
+        }
     }
 
     /**
@@ -196,22 +228,7 @@ public final class ObjectHelper {
      * nulls
      */
     public static boolean equalByteArray(byte[] a, byte[] b) {
-        if (a == b) {
-            return true;
-        }
-
-        // loop and compare each byte
-        if (a != null && b != null && a.length == b.length) {
-            for (int i = 0; i < a.length; i++) {
-                if (a[i] != b[i]) {
-                    return false;
-                }
-            }
-            // all bytes are equal
-            return true;
-        }
-
-        return false;
+        return Arrays.equals(a, b);
     }
 
     /**
@@ -321,36 +338,32 @@ public final class ObjectHelper {
     /**
      * Asserts whether the string is <b>not</b> empty.
      *
-     * @param value  the string to test
-     * @param name   the key that resolved the value
+     * @param value the string to test
+     * @param name the key that resolved the value
      * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
+     * @deprecated use {@link StringHelper#notEmpty(String, String)} instead
      */
+    @Deprecated
     public static String notEmpty(String value, String name) {
-        if (isEmpty(value)) {
-            throw new IllegalArgumentException(name + " must be specified and not empty");
-        }
-
-        return value;
+        return StringHelper.notEmpty(value, name);
     }
 
     /**
      * Asserts whether the string is <b>not</b> empty.
      *
-     * @param value  the string to test
-     * @param on     additional description to indicate where this problem occurred (appended as toString())
-     * @param name   the key that resolved the value
+     * @param value the string to test
+     * @param on additional description to indicate where this problem occurred
+     *            (appended as toString())
+     * @param name the key that resolved the value
      * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
+     * @deprecated use {@link StringHelper#notEmpty(String, String, Object)}
+     *             instead
      */
+    @Deprecated
     public static String notEmpty(String value, String name, Object on) {
-        if (on == null) {
-            notNull(value, name);
-        } else if (isEmpty(value)) {
-            throw new IllegalArgumentException(name + " must be specified and not empty on: " + on);
-        }
-
-        return value;
+        return StringHelper.notEmpty(value, name, on);
     }
 
     /**
@@ -364,35 +377,92 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string or an empty collection/map.
      *
      * @param value  the value, if its a String it will be tested for text length as well
      * @return true if <b>not</b> empty
      */
+    @SuppressWarnings("unchecked")
     public static boolean isNotEmpty(Object value) {
         if (value == null) {
             return false;
         } else if (value instanceof String) {
             String text = (String) value;
             return text.trim().length() > 0;
+        } else if (value instanceof Collection) {
+            return !((Collection<?>)value).isEmpty();
+        } else if (value instanceof Map) {
+            return !((Map<?, ?>)value).isEmpty();
         } else {
             return true;
         }
     }
 
-    public static String[] splitOnCharacter(String value, String needle, int count) {
-        String rc[] = new String[count];
-        rc[0] = value;
-        for (int i = 1; i < count; i++) {
-            String v = rc[i - 1];
-            int p = v.indexOf(needle);
-            if (p < 0) {
-                return rc;
+
+    /**
+     * Returns the first non null object <tt>null</tt>.
+     *
+     * @param values the values
+     * @return an Optional
+     */
+    public static Optional<Object> firstNotNull(Object... values) {
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                return Optional.of(values[i]);
             }
-            rc[i - 1] = v.substring(0, p);
-            rc[i] = v.substring(p + 1);
         }
-        return rc;
+
+        return Optional.empty();
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param consumer  the consumer, the operation to be executed against value if not empty
+     */
+    public static <T> void ifNotEmpty(T value, Consumer<T> consumer) {
+        if (isNotEmpty(value)) {
+            consumer.accept(value);
+        }
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map  and transform it using the given function.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param function  the function to be executed against value if not empty
+     */
+    public static <I, R, T extends Throwable> Optional<R> applyIfNotEmpty(I value, ThrowingFunction<I, R, T> function) throws T {
+        if (isNotEmpty(value)) {
+            return Optional.ofNullable(function.apply(value));
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map and transform it using the given function.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param consumer  the function to be executed against value if not empty
+     * @param orElse  the supplier to use to retrieve a result if the given value is empty
+     */
+    public static <I, R, T extends Throwable> R applyIfNotEmpty(I value, ThrowingFunction<I, R, T> consumer, Supplier<R> orElse) throws T {
+        if (isNotEmpty(value)) {
+            return consumer.apply(value);
+        }
+
+        return orElse.get();
+    }
+
+    /**
+     * @deprecated use
+     *             {@link StringHelper#splitOnCharacter(String, String, int)} instead
+     */
+    @Deprecated
+    public static String[] splitOnCharacter(String value, String needle, int count) {
+        return StringHelper.splitOnCharacter(value, needle, count);
     }
 
     /**
@@ -402,59 +472,164 @@ public final class ObjectHelper {
      * @param text the string
      * @param ch the initial characters to remove
      * @return either the original string or the new substring
+     * @deprecated use {@link StringHelper#removeStartingCharacters(String, char)} instead
      */
+    @Deprecated
     public static String removeStartingCharacters(String text, char ch) {
-        int idx = 0;
-        while (text.charAt(idx) == ch) {
-            idx++;
-        }
-        if (idx > 0) {
-            return text.substring(idx);
-        }
-        return text;
+        return StringHelper.removeStartingCharacters(text, ch);
     }
 
+    /**
+     * @deprecated use {@link StringHelper#capitalize(String)} instead
+     */
+    @Deprecated
     public static String capitalize(String text) {
-        if (text == null) {
-            return null;
-        }
-        int length = text.length();
-        if (length == 0) {
-            return text;
-        }
-        String answer = text.substring(0, 1).toUpperCase(Locale.ENGLISH);
-        if (length > 1) {
-            answer += text.substring(1, length);
-        }
-        return answer;
+        return StringHelper.capitalize(text);
     }
 
+    /**
+     * Returns the string after the given token
+     *
+     * @param text  the text
+     * @param after the token
+     * @return the text after the token, or <tt>null</tt> if text does not contain the token
+     * @deprecated use {@link StringHelper#after(String, String)} instead
+     */
+    @Deprecated
     public static String after(String text, String after) {
-        if (!text.contains(after)) {
-            return null;
-        }
-        return text.substring(text.indexOf(after) + after.length());
+        return StringHelper.after(text, after);
     }
 
+    /**
+     * Returns an object after the given token
+     *
+     * @param text the text
+     * @param after the token
+     * @param mapper a mapping function to convert the string after the token to
+     *            type T
+     * @return an Optional describing the result of applying a mapping function
+     *         to the text after the token.
+     * @deprecated use {@link StringHelper#after(String, String, Function)
+     *             StringHelper.after(String, String, Function&lt;String,T&gt;)}
+     *             instead
+     */
+    @Deprecated
+    public static <T> Optional<T> after(String text, String after, Function<String, T> mapper) {
+        return StringHelper.after(text, after, mapper);
+    }
+
+    /**
+     * Returns the string before the given token
+     *
+     * @param text  the text
+     * @param before the token
+     * @return the text before the token, or <tt>null</tt> if text does not contain the token
+     * @deprecated use {@link StringHelper#before(String, String)} instead
+     */
+    @Deprecated
     public static String before(String text, String before) {
-        if (!text.contains(before)) {
-            return null;
-        }
-        return text.substring(0, text.indexOf(before));
+        return StringHelper.before(text, before);
     }
 
+    /**
+     * Returns an object before the given token
+     *
+     * @param text the text
+     * @param before the token
+     * @param mapper a mapping function to convert the string before the token
+     *            to type T
+     * @return an Optional describing the result of applying a mapping function
+     *         to the text before the token.
+     * @deprecated use {@link StringHelper#before(String, String, Function)
+     *             StringHelper.before(String, String, Function&lt;String,T&gt;)}
+     *             instead
+     */
+    @Deprecated
+    public static <T> Optional<T> before(String text, String before, Function<String, T> mapper) {
+        return StringHelper.before(text, before, mapper);
+    }
+
+    /**
+     * Returns the string between the given tokens
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @return the text between the tokens, or <tt>null</tt> if text does not contain the tokens
+     * @deprecated use {@link StringHelper#between(String, String, String)} instead
+     */
+    @Deprecated
     public static String between(String text, String after, String before) {
-        text = after(text, after);
-        if (text == null) {
-            return null;
-        }
-        return before(text, before);
+        return StringHelper.between(text, after, before);
+    }
+
+    /**
+     * Returns an object between the given token
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @param mapper a mapping function to convert the string between the token to type T
+     * @return an Optional describing the result of applying a mapping function to the text between the token.
+     * @deprecated use {@link StringHelper#between(String, String, String, Function)
+     *             StringHelper.between(String, String, String, Function&lt;String,T&gt;)}
+     *             instead
+     */
+    @Deprecated
+    public static <T> Optional<T> between(String text, String after, String before, Function<String, T> mapper) {
+        return StringHelper.between(text, after, before, mapper);
+    }
+
+    /**
+     * Returns the string between the most outer pair of tokens
+     * <p/>
+     * The number of token pairs must be evenly, eg there must be same number of before and after tokens, otherwise <tt>null</tt> is returned
+     * <p/>
+     * This implementation skips matching when the text is either single or double quoted.
+     * For example:
+     * <tt>${body.matches("foo('bar')")</tt>
+     * Will not match the parenthesis from the quoted text.
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @return the text between the outer most tokens, or <tt>null</tt> if text does not contain the tokens
+     * @deprecated use {@link StringHelper#betweenOuterPair(String, char, char)} instead
+     */
+    @Deprecated
+    public static String betweenOuterPair(String text, char before, char after) {
+        return StringHelper.betweenOuterPair(text, before, after);
+    }
+
+    /**
+     * Returns an object between the most outer pair of tokens
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @param mapper a mapping function to convert the string between the most outer pair of tokens to type T
+     * @return an Optional describing the result of applying a mapping function to the text between the most outer pair of tokens.
+     * @deprecated use {@link StringHelper#betweenOuterPair(String, char, char, Function)
+     *             StringHelper.betweenOuterPair(String, char, char, Function&lt;String,T&gt;)}
+     *             instead
+     */
+    @Deprecated
+    public static <T> Optional<T> betweenOuterPair(String text, char before, char after, Function<String, T> mapper) {
+        return StringHelper.betweenOuterPair(text, before, after, mapper);
     }
 
     /**
      * Returns true if the collection contains the specified value
      */
     public static boolean contains(Object collectionOrArray, Object value) {
+        // favor String types
+        if (collectionOrArray != null && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
+            collectionOrArray = collectionOrArray.toString();
+        }
+        if (value != null && (value instanceof StringBuffer || value instanceof StringBuilder)) {
+            value = value.toString();
+        }
+
         if (collectionOrArray instanceof Collection) {
             Collection<?> collection = (Collection<?>)collectionOrArray;
             return collection.contains(value);
@@ -471,6 +646,38 @@ public final class ObjectHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by comma,
+     * or a primitive type array; otherwise to simplify the caller's code,
+     * we just create a singleton collection iterator over a single value
+     * <p/>
+     * Will default use comma for String separating String values.
+     * This method does <b>not</b> allow empty values
+     *
+     * @param value  the value
+     * @return the iterable
+     */
+    public static Iterable<Object> createIterable(Object value) {
+        return createIterable(value, DEFAULT_DELIMITER);
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     * <p/>
+     * This method does <b>not</b> allow empty values
+     *
+     * @param value      the value
+     * @param delimiter  delimiter for separating String values
+     * @return the iterable
+     */
+    public static Iterable<Object> createIterable(Object value, String delimiter) {
+        return createIterable(value, delimiter, false);
     }
 
     /**
@@ -510,8 +717,50 @@ public final class ObjectHelper {
      * Object[], a String with values separated by the given delimiter,
      * or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
-     * 
+     *
      * </p> In case of primitive type arrays the returned {@code Iterator} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
+     * @return the iterator
+     */
+    public static Iterator<Object> createIterator(Object value, String delimiter, boolean allowEmptyValues) {
+        return createIterable(value, delimiter, allowEmptyValues, false).iterator();
+    }
+
+    /**
+     * Creates an iterator over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     *
+     * </p> In case of primitive type arrays the returned {@code Iterator} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
+     * @param pattern           whether the delimiter is a pattern
+     * @return the iterator
+     */
+    public static Iterator<Object> createIterator(Object value, String delimiter,
+                                                  boolean allowEmptyValues, boolean pattern) {
+        return createIterable(value, delimiter, allowEmptyValues, pattern).iterator();
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     * 
+     * </p> In case of primitive type arrays the returned {@code Iterable} iterates
      * over the corresponding Java primitive wrapper objects of the given elements
      * inside the {@code value} array. That's we get an autoboxing of the primitive
      * types here for free as it's also the case in Java language itself.
@@ -519,10 +768,35 @@ public final class ObjectHelper {
      * @param value             the value
      * @param delimiter         delimiter for separating String values
      * @param allowEmptyValues  whether to allow empty values
-     * @return the iterator
+     * @return the iterable
+     * @see java.lang.Iterable
+     */
+    public static Iterable<Object> createIterable(Object value, String delimiter,
+                                                  final boolean allowEmptyValues) {
+        return createIterable(value, delimiter, allowEmptyValues, false);
+    }
+
+    /**
+     * Creates an iterable over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     *
+     * </p> In case of primitive type arrays the returned {@code Iterable} iterates
+     * over the corresponding Java primitive wrapper objects of the given elements
+     * inside the {@code value} array. That's we get an autoboxing of the primitive
+     * types here for free as it's also the case in Java language itself.
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
+     * @param pattern           whether the delimiter is a pattern
+     * @return the iterable
+     * @see java.lang.Iterable
      */
     @SuppressWarnings("unchecked")
-    public static Iterator<Object> createIterator(Object value, String delimiter, final boolean allowEmptyValues) {
+    public static Iterable<Object> createIterable(Object value, String delimiter,
+                                                  final boolean allowEmptyValues, final boolean pattern) {
 
         // if its a message than we want to iterate its body
         if (value instanceof Message) {
@@ -530,52 +804,72 @@ public final class ObjectHelper {
         }
 
         if (value == null) {
-            return Collections.emptyList().iterator();
+            return Collections.emptyList();
         } else if (value instanceof Iterator) {
-            return (Iterator<Object>)value;
+            final Iterator<Object> iterator = (Iterator<Object>)value;
+            return new Iterable<Object>() {
+                @Override
+                public Iterator<Object> iterator() {
+                    return iterator;
+                }
+            };
         } else if (value instanceof Iterable) {
-            return ((Iterable<Object>)value).iterator();
+            return (Iterable<Object>)value;
         } else if (value.getClass().isArray()) {
             if (isPrimitiveArrayType(value.getClass())) {
                 final Object array = value;
-                return new Iterator<Object>() {
-                    int idx = -1;
+                return new Iterable<Object>() {
+                    @Override
+                    public Iterator<Object> iterator() {
+                        return new Iterator<Object>() {
+                            private int idx;
 
-                    public boolean hasNext() {
-                        return (idx + 1) < Array.getLength(array);
+                            public boolean hasNext() {
+                                return idx < Array.getLength(array);
+                            }
+
+                            public Object next() {
+                                if (!hasNext()) {
+                                    throw new NoSuchElementException("no more element available for '" + array + "' at the index " + idx);
+                                }
+
+                                return Array.get(array, idx++);
+                            }
+
+                            public void remove() {
+                                throw new UnsupportedOperationException();
+                            }
+                        };
                     }
-
-                    public Object next() {
-                        idx++;
-                        return Array.get(array, idx);
-                    }
-
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-
                 };
             } else {
-                List<Object> list = Arrays.asList((Object[]) value);
-                return list.iterator();
+                return Arrays.asList((Object[]) value);
             }
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
-            return new Iterator<Object>() {
-                int idx = -1;
+            return new Iterable<Object>() {
+                @Override
+                public Iterator<Object> iterator() {
+                    return new Iterator<Object>() {
+                        private int idx;
 
-                public boolean hasNext() {
-                    return (idx + 1) < nodeList.getLength();
-                }
+                        public boolean hasNext() {
+                            return idx < nodeList.getLength();
+                        }
 
-                public Object next() {
-                    idx++;
-                    return nodeList.item(idx);
-                }
+                        public Object next() {
+                            if (!hasNext()) {
+                                throw new NoSuchElementException("no more element available for '" + nodeList + "' at the index " + idx);
+                            }
 
-                public void remove() {
-                    throw new UnsupportedOperationException();
+                            return nodeList.item(idx++);
+                        }
+
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+                    };
                 }
             };
         } else if (value instanceof String) {
@@ -583,9 +877,9 @@ public final class ObjectHelper {
 
             // this code is optimized to only use a Scanner if needed, eg there is a delimiter
 
-            if (delimiter != null && s.contains(delimiter)) {
-                // use a scanner if it contains the delimiter
-                Scanner scanner = new Scanner((String)value);
+            if (delimiter != null && (pattern || s.contains(delimiter))) {
+                // use a scanner if it contains the delimiter or is a pattern
+                final Scanner scanner = new Scanner((String)value);
 
                 if (DEFAULT_DELIMITER.equals(delimiter)) {
                     // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
@@ -600,30 +894,44 @@ public final class ObjectHelper {
                     // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
                     delimiter = ",(?!(?:[^\\(,]|[^\\)],[^\\)])+\\))";
                 }
-
                 scanner.useDelimiter(delimiter);
-                return CastUtils.cast(scanner);
+
+                return new Iterable<Object>() {
+                    @Override
+                    public Iterator<Object> iterator() {
+                        return CastUtils.cast(scanner);
+                    }
+                };
             } else {
-                // use a plain iterator that returns the value as is as there are only a single value
-                return new Iterator<Object>() {
-                    int idx = -1;
+                return new Iterable<Object>() {
+                    @Override
+                    public Iterator<Object> iterator() {
+                        // use a plain iterator that returns the value as is as there are only a single value
+                        return new Iterator<Object>() {
+                            private int idx;
 
-                    public boolean hasNext() {
-                        return idx + 1 == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
-                    }
+                            public boolean hasNext() {
+                                return idx == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
+                            }
 
-                    public Object next() {
-                        idx++;
-                        return s;
-                    }
+                            public Object next() {
+                                if (!hasNext()) {
+                                    throw new NoSuchElementException("no more element available for '" + s + "' at the index " + idx);
+                                }
 
-                    public void remove() {
-                        throw new UnsupportedOperationException();
+                                idx++;
+                                return s;
+                            }
+
+                            public void remove() {
+                                throw new UnsupportedOperationException();
+                            }
+                        };
                     }
                 };
             }
         } else {
-            return Collections.singletonList(value).iterator();
+            return Collections.singletonList(value);
         }
     }
 
@@ -694,7 +1002,7 @@ public final class ObjectHelper {
      */
     public static Properties getCamelPropertiesWithPrefix(String prefix, CamelContext camelContext) {
         Properties answer = new Properties();
-        Map<String, String> camelProperties = camelContext.getProperties();
+        Map<String, String> camelProperties = camelContext.getGlobalOptions();
         if (camelProperties != null) {
             for (Map.Entry<String, String> entry : camelProperties.entrySet()) {
                 String key = entry.getKey();
@@ -804,6 +1112,7 @@ public final class ObjectHelper {
      * @param name the name of the class to load
      * @return the class or <tt>null</tt> if it could not be loaded
      */
+    //CHECKSTYLE:OFF
     public static Class<?> loadSimpleType(String name) {
         // special for byte[] or Object[] as its common to use
         if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
@@ -845,10 +1154,14 @@ public final class ObjectHelper {
             return Double.class;
         } else if ("double".equals(name)) {
             return double.class;
+        } else if ("java.lang.Character".equals(name) || "Character".equals(name)) {
+            return Character.class;
+        } else if ("char".equals(name)) {
+            return char.class;
         }
-
         return null;
     }
+    //CHECKSTYLE:ON
 
     /**
      * Loads the given class with the provided classloader (may be null).
@@ -884,12 +1197,29 @@ public final class ObjectHelper {
      * @return the stream or null if it could not be loaded
      */
     public static InputStream loadResourceAsStream(String name) {
+        return loadResourceAsStream(name, null);
+    }
+
+    /**
+     * Attempts to load the given resource as a stream using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param name the name of the resource to load
+     * @param loader optional classloader to attempt first
+     * @return the stream or null if it could not be loaded
+     */
+    public static InputStream loadResourceAsStream(String name, ClassLoader loader) {
         InputStream in = null;
 
         String resolvedName = resolveUriPath(name);
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            in = contextClassLoader.getResourceAsStream(resolvedName);
+        if (loader != null) {
+            in = loader.getResourceAsStream(resolvedName);
+        }
+        if (in == null) {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                in = contextClassLoader.getResourceAsStream(resolvedName);
+            }
         }
         if (in == null) {
             in = ObjectHelper.class.getClassLoader().getResourceAsStream(resolvedName);
@@ -909,12 +1239,29 @@ public final class ObjectHelper {
      * @return the stream or null if it could not be loaded
      */
     public static URL loadResourceAsURL(String name) {
+        return loadResourceAsURL(name, null);
+    }
+
+    /**
+     * Attempts to load the given resource as a stream using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param name the name of the resource to load
+     * @param loader optional classloader to attempt first
+     * @return the stream or null if it could not be loaded
+     */
+    public static URL loadResourceAsURL(String name, ClassLoader loader) {
         URL url = null;
 
         String resolvedName = resolveUriPath(name);
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            url = contextClassLoader.getResource(resolvedName);
+        if (loader != null) {
+            url = loader.getResource(resolvedName);
+        }
+        if (url == null) {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                url = contextClassLoader.getResource(resolvedName);
+            }
         }
         if (url == null) {
             url = ObjectHelper.class.getClassLoader().getResource(resolvedName);
@@ -934,14 +1281,36 @@ public final class ObjectHelper {
      * @return the URLs for the resources or null if it could not be loaded
      */
     public static Enumeration<URL> loadResourcesAsURL(String packageName) {
+        return loadResourcesAsURL(packageName, null);
+    }
+
+    /**
+     * Attempts to load the given resources from the given package name using the thread context
+     * class loader or the class loader used to load this class
+     *
+     * @param packageName the name of the package to load its resources
+     * @param loader optional classloader to attempt first
+     * @return the URLs for the resources or null if it could not be loaded
+     */
+    public static Enumeration<URL> loadResourcesAsURL(String packageName, ClassLoader loader) {
         Enumeration<URL> url = null;
 
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
+        if (loader != null) {
             try {
-                url = contextClassLoader.getResources(packageName);
+                url = loader.getResources(packageName);
             } catch (IOException e) {
                 // ignore
+            }
+        }
+
+        if (url == null) {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (contextClassLoader != null) {
+                try {
+                    url = contextClassLoader.getResources(packageName);
+                } catch (IOException e) {
+                    // ignore
+                }
             }
         }
         if (url == null) {
@@ -954,7 +1323,7 @@ public final class ObjectHelper {
 
         return url;
     }
-    
+
     /**
      * Helper operation used to remove relative path notation from 
      * resources.  Most critical for resources on the Classpath
@@ -997,22 +1366,93 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target) {
-        if (source.getName().equals(target.getName())
-                && source.getReturnType().equals(target.getReturnType()) 
-                && source.getParameterTypes().length == target.getParameterTypes().length) {
+        return isOverridingMethod(source, target, true);
+    }
 
-            // test if parameter types is the same as well
-            for (int i = 0; i < source.getParameterTypes().length; i++) {
-                if (!(source.getParameterTypes()[i].equals(target.getParameterTypes()[i]))) {
+    /**
+     * Tests whether the target method overrides the source method.
+     * <p/>
+     * Tests whether they have the same name, return type, and parameter list.
+     *
+     * @param source  the source method
+     * @param target  the target method
+     * @param exact   <tt>true</tt> if the override must be exact same types, <tt>false</tt> if the types should be assignable
+     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     */
+    public static boolean isOverridingMethod(Method source, Method target, boolean exact) {
+        return isOverridingMethod(target.getDeclaringClass(), source, target, exact);
+    }
+
+    /**
+     * Tests whether the target method overrides the source method from the
+     * inheriting class.
+     * <p/>
+     * Tests whether they have the same name, return type, and parameter list.
+     *
+     * @param inheritingClass the class inheriting the target method overriding
+     *            the source method
+     * @param source the source method
+     * @param target the target method
+     * @param exact <tt>true</tt> if the override must be exact same types,
+     *            <tt>false</tt> if the types should be assignable
+     * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
+     */
+    public static boolean isOverridingMethod(Class<?> inheritingClass, Method source, Method target, boolean exact) {
+
+        if (source.equals(target)) {
+            return true;
+        } else if (source.getDeclaringClass() == target.getDeclaringClass()) {
+            return false;
+        } else if (!source.getDeclaringClass().isAssignableFrom(inheritingClass) || !target.getDeclaringClass().isAssignableFrom(inheritingClass)) {
+            return false;
+        }
+
+        if (!source.getName().equals(target.getName())) {
+            return false;
+        }
+
+        if (exact) {
+            if (!source.getReturnType().equals(target.getReturnType())) {
+                return false;
+            }
+        } else {
+            if (!source.getReturnType().isAssignableFrom(target.getReturnType())) {
+                boolean b1 = source.isBridge();
+                boolean b2 = target.isBridge();
+                // must not be bridge methods
+                if (!b1 && !b2) {
                     return false;
                 }
             }
-
-            // the have same name, return type and parameter list, so its overriding
-            return true;
         }
 
-        return false;
+        // must have same number of parameter types
+        if (source.getParameterCount() != target.getParameterCount()) {
+            return false;
+        }
+
+        Class<?>[] sourceTypes = source.getParameterTypes();
+        Class<?>[] targetTypes = target.getParameterTypes();
+        // test if parameter types is the same as well
+        for (int i = 0; i < source.getParameterCount(); i++) {
+            if (exact) {
+                if (!(sourceTypes[i].equals(targetTypes[i]))) {
+                    return false;
+                }
+            } else {
+                if (!(sourceTypes[i].isAssignableFrom(targetTypes[i]))) {
+                    boolean b1 = source.isBridge();
+                    boolean b2 = target.isBridge();
+                    // must not be bridge methods
+                    if (!b1 && !b2) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        // the have same name, return type and parameter list, so its overriding
+        return true;
     }
 
     /**
@@ -1119,7 +1559,10 @@ public final class ObjectHelper {
      * @return {@code true} if the given type is a Java primitive array type
      */
     public static boolean isPrimitiveArrayType(Class<?> clazz) {
-        return PRIMITIVE_ARRAY_TYPES.contains(clazz);
+        if (clazz != null && clazz.isArray()) {
+            return clazz.getComponentType().isPrimitive();
+        }
+        return false;
     }
 
     public static int arrayLength(Object[] pojo) {
@@ -1147,6 +1590,8 @@ public final class ObjectHelper {
                 rc = Byte.class;
             } else if (type == boolean.class) {
                 rc = Boolean.class;
+            } else if (type == char.class) {
+                rc = Character.class;
             }
         }
         return rc;
@@ -1165,7 +1610,7 @@ public final class ObjectHelper {
      */
     public static String getPropertyName(Method method) {
         String propertyName = method.getName();
-        if (propertyName.startsWith("set") && method.getParameterTypes().length == 1) {
+        if (propertyName.startsWith("set") && method.getParameterCount() == 1) {
             propertyName = propertyName.substring(3, 4).toLowerCase(Locale.ENGLISH) + propertyName.substring(4);
         }
         return propertyName;
@@ -1265,7 +1710,7 @@ public final class ObjectHelper {
     public static boolean hasDefaultPublicNoArgConstructor(Class<?> type) {
         // getConstructors() returns only public constructors
         for (Constructor<?> ctr : type.getConstructors()) {
-            if (ctr.getParameterTypes().length == 0) {
+            if (ctr.getParameterCount() == 0) {
                 return true;
             }
         }
@@ -1274,24 +1719,11 @@ public final class ObjectHelper {
 
     /**
      * Returns true if the given name is a valid java identifier
+     * @deprecated use {@link StringHelper#isJavaIdentifier(String)} instead
      */
+    @Deprecated
     public static boolean isJavaIdentifier(String name) {
-        if (name == null) {
-            return false;
-        }
-        int size = name.length();
-        if (size < 1) {
-            return false;
-        }
-        if (Character.isJavaIdentifierStart(name.charAt(0))) {
-            for (int i = 1; i < size; i++) {
-                if (!Character.isJavaIdentifierPart(name.charAt(i))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
+        return StringHelper.isJavaIdentifier(name);
     }
 
     /**
@@ -1362,33 +1794,53 @@ public final class ObjectHelper {
     }
 
     /**
-     * Cleans the string to a pure Java identifier so we can use it for loading class names.
+     * Cleans the string to a pure Java identifier so we can use it for loading
+     * class names.
      * <p/>
-     * Especially from Spring DSL people can have \n \t or other characters that otherwise
-     * would result in ClassNotFoundException
+     * Especially from Spring DSL people can have \n \t or other characters that
+     * otherwise would result in ClassNotFoundException
      *
      * @param name the class name
      * @return normalized classname that can be load by a class loader.
+     * @deprecated use {@link StringHelper#normalizeClassName(String)} instead
      */
+    @Deprecated
     public static String normalizeClassName(String name) {
-        StringBuilder sb = new StringBuilder(name.length());
-        for (char ch : name.toCharArray()) {
-            if (ch == '.' || ch == '[' || ch == ']' || ch == '-' || Character.isJavaIdentifierPart(ch)) {
-                sb.append(ch);
-            }
-        }
-        return sb.toString();
+        return StringHelper.normalizeClassName(name);
     }
 
     /**
-     * Creates an iterator to walk the exception from the bottom up
+     * Creates an Iterable to walk the exception from the bottom up
      * (the last caused by going upwards to the root exception).
      *
+     * @see java.lang.Iterable
      * @param exception  the exception
-     * @return the iterator
+     * @return the Iterable
+     */
+    public static Iterable<Throwable> createExceptionIterable(Throwable exception) {
+        List<Throwable> throwables = new ArrayList<Throwable>();
+
+        Throwable current = exception;
+        // spool to the bottom of the caused by tree
+        while (current != null) {
+            throwables.add(current);
+            current = current.getCause();
+        }
+        Collections.reverse(throwables);
+
+        return throwables;
+    }
+
+    /**
+     * Creates an Iterator to walk the exception from the bottom up
+     * (the last caused by going upwards to the root exception).
+     *
+     * @see Iterator
+     * @param exception  the exception
+     * @return the Iterator
      */
     public static Iterator<Throwable> createExceptionIterator(Throwable exception) {
-        return new ExceptionIterator(exception);
+        return createExceptionIterable(exception).iterator();
     }
 
     /**
@@ -1408,13 +1860,18 @@ public final class ObjectHelper {
         if (exception == null) {
             return null;
         }
+        
+        //check the suppressed exception first
+        for (Throwable throwable : exception.getSuppressed()) {
+            if (type.isInstance(throwable)) {
+                return type.cast(throwable);
+            }
+        }
 
         // walk the hierarchy and look for it
-        Iterator<Throwable> it = createExceptionIterator(exception);
-        while (it.hasNext()) {
-            Throwable e = it.next();
-            if (type.isInstance(e)) {
-                return type.cast(e);
+        for (final Throwable throwable : createExceptionIterable(exception)) {
+            if (type.isInstance(throwable)) {
+                return type.cast(throwable);
             }
         }
 
@@ -1431,9 +1888,15 @@ public final class ObjectHelper {
      */
     public static Scanner getScanner(Exchange exchange, Object value) {
         if (value instanceof WrappedFile) {
-            // generic file is just a wrapper for the real file so call again with the real file
             WrappedFile<?> gf = (WrappedFile<?>) value;
-            return getScanner(exchange, gf.getFile());
+            Object body = gf.getBody();
+            if (body != null) {
+                // we have loaded the file content into the body so use that
+                value = body;
+            } else {
+                // generic file is just a wrapper for the real file so call again with the real file
+                return getScanner(exchange, gf.getFile());
+            }
         }
 
         String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
@@ -1519,34 +1982,41 @@ public final class ObjectHelper {
         // value must be a number
         return value.equals(Float.NaN) || value.equals(Double.NaN);
     }
-
-    private static final class ExceptionIterator implements Iterator<Throwable> {
-        private List<Throwable> tree = new ArrayList<Throwable>();
-        private Iterator<Throwable> it;
-
-        public ExceptionIterator(Throwable exception) {
-            Throwable current = exception;
-            // spool to the bottom of the caused by tree
-            while (current != null) {
-                tree.add(current);
-                current = current.getCause();
+    
+    /**
+     * Calling the Callable with the setting of TCCL with the camel context application classloader.
+     * 
+     * @param call the Callable instance
+     * @param exchange the exchange 
+     * @return the result of Callable return  
+     */
+    public static Object callWithTCCL(Callable<?> call, Exchange exchange) throws Exception {
+        ClassLoader apcl = null;
+        if (exchange != null && exchange.getContext() != null) {
+            apcl = exchange.getContext().getApplicationContextClassLoader();
+        }
+        return callWithTCCL(call, apcl);
+    }
+    
+    /**
+     * Calling the Callable with the setting of TCCL with a given classloader.
+     *
+     * @param call        the Callable instance
+     * @param classloader the class loader
+     * @return the result of Callable return  
+     */
+    public static Object callWithTCCL(Callable<?> call, ClassLoader classloader) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            if (classloader != null) {
+                Thread.currentThread().setContextClassLoader(classloader);
             }
-
-            // reverse tree so we go from bottom to top
-            Collections.reverse(tree);
-            it = tree.iterator();
-        }
-
-        public boolean hasNext() {
-            return it.hasNext();
-        }
-
-        public Throwable next() {
-            return it.next();
-        }
-
-        public void remove() {
-            it.remove();
+            return call.call();
+        } finally {
+            if (tccl != null) {
+                Thread.currentThread().setContextClassLoader(tccl);
+            }
         }
     }
+    
 }

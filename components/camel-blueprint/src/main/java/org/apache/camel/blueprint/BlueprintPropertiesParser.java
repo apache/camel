@@ -51,6 +51,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
     private Method method;
 
     public BlueprintPropertiesParser(PropertiesComponent propertiesComponent, BlueprintContainer container, PropertiesParser delegate) {
+        super(propertiesComponent);
         this.propertiesComponent = propertiesComponent;
         this.container = container;
         this.delegate = delegate;
@@ -95,11 +96,11 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
 
             if (method == null) {
                 try {
-                    method = AbstractPropertyPlaceholder.class.getDeclaredMethod("getProperty", String.class);
+                    method = AbstractPropertyPlaceholder.class.getDeclaredMethod("retrieveValue", String.class);
                     method.setAccessible(true);
                 } catch (NoSuchMethodException e) {
                     throw new IllegalStateException("Cannot add blueprint property placeholder: " + id
-                            + " as the method getProperty is not accessible", e);
+                            + " as the method retrieveValue is not accessible", e);
                 }
             }
         }
@@ -122,7 +123,6 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
         // lookup key in blueprint and return its value
         if (answer == null && key != null) {
             for (AbstractPropertyPlaceholder placeholder : placeholders) {
-
                 boolean isDefault = false;
                 if (placeholders.size() > 1) {
                     // okay we have multiple placeholders and we want to return the answer that
@@ -133,29 +133,33 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
                     }
                     log.trace("Blueprint property key: {} is part of default properties: {}", key, isDefault);
                 }
-
-                String candidate = (String) ObjectHelper.invokeMethod(method, placeholder, key);
-
-                if (candidate != null) {
-                    if (answer == null || !isDefault) {
-                        log.trace("Blueprint parsed candidate property key: {} as value: {}", key, answer);
-                        answer = candidate;
+                
+                try {
+                    String candidate = (String) ObjectHelper.invokeMethod(method, placeholder, key);
+    
+                    if (candidate != null) {
+                        if (answer == null || !isDefault) {
+                            log.trace("Blueprint parsed candidate property key: {} as value: {}", key, answer);
+                            answer = candidate;
+                        }
                     }
-                }
+                } catch (Exception ex) {
+                    // Here we just catch the exception and try to use other candidate
+                }  
             }
-
             log.debug("Blueprint parsed property key: {} as value: {}", key, answer);
         }
-
+        
         // if there is a delegate then let it parse the current answer as it may be jasypt which
         // need to decrypt values
         if (delegate != null) {
             String delegateAnswer = delegate.parseProperty(key, answer != null ? answer : value, properties);
             if (delegateAnswer != null) {
                 answer = delegateAnswer;
+                log.debug("Delegate property parser parsed the property key: {} as value: {}", key, answer);
             }
         }
-
+        
         log.trace("Returning parsed property key: {} as value: {}", key, answer);
         return answer;
     }

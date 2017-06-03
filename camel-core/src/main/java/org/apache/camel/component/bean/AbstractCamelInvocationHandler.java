@@ -16,23 +16,30 @@
  */
 package org.apache.camel.component.bean;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
+import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExchangeProperty;
+import org.apache.camel.Header;
+import org.apache.camel.Headers;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
@@ -93,11 +100,86 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
-    public abstract Object doInvokeProxy(final Object proxy, final Method method, final Object[] args) throws Throwable;
+    public abstract Object doInvokeProxy(Object proxy, Method method, Object[] args) throws Throwable;
+
+    @SuppressWarnings("unchecked")
+    protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding) throws Throwable {
+        final Exchange exchange = new DefaultExchange(endpoint, pattern);
+
+        //Need to check if there are mutiple arguments and the parameters have no annotations for binding,
+        //then use the original bean invocation.
+        
+        boolean canUseBinding = method.getParameterCount() == 1;
+
+        if (!canUseBinding) {
+            for (Parameter parameter : method.getParameters()) {
+                if (parameter.isAnnotationPresent(Header.class)
+                        || parameter.isAnnotationPresent(Headers.class)
+                        || parameter.isAnnotationPresent(ExchangeProperty.class)
+                        || parameter.isAnnotationPresent(Body.class)) {
+                    canUseBinding = true;
+                }
+            }
+        }
+
+        if (binding && canUseBinding) {
+            // in binding mode we bind the passed in arguments (args) to the created exchange
+            // using the existing Camel @Body, @Header, @Headers, @ExchangeProperty annotations
+            // if no annotation then its bound as the message body
+            int index = 0;
+            for (Annotation[] row : method.getParameterAnnotations()) {
+                Object value = args[index];
+                if (row == null || row.length == 0) {
+                    // assume its message body when there is no annotations
+                    exchange.getIn().setBody(value);
+                } else {
+                    for (Annotation ann : row) {
+                        if (ann.annotationType().isAssignableFrom(Header.class)) {
+                            Header header = (Header) ann;
+                            String name = header.value();
+                            exchange.getIn().setHeader(name, value);
+                        } else if (ann.annotationType().isAssignableFrom(Headers.class)) {
+                            Map map = exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, value);
+                            if (map != null) {
+                                exchange.getIn().getHeaders().putAll(map);
+                            }
+                        } else if (ann.annotationType().isAssignableFrom(ExchangeProperty.class)) {
+                            ExchangeProperty ep = (ExchangeProperty) ann;
+                            String name = ep.value();
+                            exchange.setProperty(name, value);
+                        } else if (ann.annotationType().isAssignableFrom(Body.class)) {
+                            exchange.getIn().setBody(value);
+                        } else {
+                            // assume its message body when there is no annotations
+                            exchange.getIn().setBody(value);
+                        }
+                    }
+                }
+                index++;
+            }
+        } else {
+            // no binding so use the old behavior with BeanInvocation as the body
+            BeanInvocation invocation = new BeanInvocation(method, args);
+            exchange.getIn().setBody(invocation);
+        }
+
+        if (binding) {
+            LOG.trace("Binding to service interface as @Body,@Header,@ExchangeProperty detected when calling proxy method: {}", method);
+        } else {
+            LOG.trace("No binding to service interface as @Body,@Header,@ExchangeProperty not detected. Using BeanInvocation as message body when calling proxy method: {}");
+        }
+
+        return doInvoke(method, exchange);
+    }
 
     protected Object invokeWithBody(final Method method, Object body, final ExchangePattern pattern) throws Throwable {
         final Exchange exchange = new DefaultExchange(endpoint, pattern);
         exchange.getIn().setBody(body);
+
+        return doInvoke(method, exchange);
+    }
+
+    protected Object doInvoke(final Method method, final Exchange exchange) throws Throwable {
 
         // is the return type a future
         final boolean isFuture = method.getReturnType() == Future.class;
@@ -109,7 +191,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                 LOG.trace("Proxied method call {} invoking producer: {}", method.getName(), producer);
                 producer.process(exchange);
 
-                Object answer = afterInvoke(method, exchange, pattern, isFuture);
+                Object answer = afterInvoke(method, exchange, exchange.getPattern(), isFuture);
                 LOG.trace("Proxied method call {} returning: {}", method.getName(), answer);
                 return answer;
             }
@@ -219,7 +301,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
      * <p/>
      * It looks in the exception hierarchy from the caused exception and matches
      * this against the declared exceptions being thrown on the method.
-     * 
+     *
      * @param cause the caused exception
      * @param method the method
      * @return the exception to throw, or <tt>null</tt> if not possible to find

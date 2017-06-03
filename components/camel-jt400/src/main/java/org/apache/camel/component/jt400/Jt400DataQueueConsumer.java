@@ -22,18 +22,15 @@ import com.ibm.as400.access.DataQueueEntry;
 import com.ibm.as400.access.KeyedDataQueue;
 import com.ibm.as400.access.KeyedDataQueueEntry;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.PollingConsumerSupport;
+import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
- * {@link org.apache.camel.PollingConsumer} that polls a data queue for data
+ * A scheduled {@link org.apache.camel.Consumer} that polls a data queue for data
  */
-public class Jt400DataQueueConsumer extends PollingConsumerSupport {
+public class Jt400DataQueueConsumer extends ScheduledPollConsumer {
 
-    private final Jt400DataQueueEndpoint endpoint;
-    
     /**
      * Performs the lifecycle logic of this consumer.
      */
@@ -42,37 +39,56 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
     /**
      * Creates a new consumer instance
      */
-    protected Jt400DataQueueConsumer(Jt400DataQueueEndpoint endpoint) {
-        super(endpoint);
-        this.endpoint = endpoint;
+    public Jt400DataQueueConsumer(Jt400Endpoint endpoint, Processor processor) {
+        super(endpoint, processor);
         this.queueService = new Jt400DataQueueService(endpoint);
+    }
+
+    @Override
+    public Jt400Endpoint getEndpoint() {
+        return (Jt400Endpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected int poll() throws Exception {
+        Exchange exchange = receive(getEndpoint().getReadTimeout());
+        if (exchange != null) {
+            getProcessor().process(exchange);
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override
     protected void doStart() throws Exception {
         queueService.start();
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
         queueService.stop();
     }
 
+    @Deprecated
     public Exchange receive() {
         // -1 to indicate a blocking read from data queue
         return receive(-1);
     }
 
+    @Deprecated
     public Exchange receiveNoWait() {
         return receive(0);
     }
 
     /**
      * Receives an entry from a data queue and returns an {@link Exchange} to
-     * send this data If the endpoint's format is set to {@link Format#binary},
+     * send this data If the endpoint's format is set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#binary},
      * the data queue entry's data will be received/sent as a
      * <code>byte[]</code>. If the endpoint's format is set to
-     * {@link Format#text}, the data queue entry's data will be received/sent as
+     * {@link org.apache.camel.component.jt400.Jt400Configuration.Format#text}, the data queue entry's data will be received/sent as
      * a <code>String</code>.
      * <p/>
      * The following message headers may be set by the receiver
@@ -87,7 +103,7 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
     public Exchange receive(long timeout) {
         BaseDataQueue queue = queueService.getDataQueue();
         try {
-            if (endpoint.isKeyed()) {
+            if (getEndpoint().isKeyed()) {
                 return receive((KeyedDataQueue) queue, timeout);
             } else {
                 return receive((DataQueue) queue, timeout);
@@ -108,10 +124,10 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
             entry = queue.read(-1);
         }
 
-        Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
+        Exchange exchange = getEndpoint().createExchange();
         if (entry != null) {
-            exchange.getIn().setHeader(Jt400DataQueueEndpoint.SENDER_INFORMATION, entry.getSenderInformation());
-            if (endpoint.getFormat() == Format.binary) {
+            exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getSenderInformation());
+            if (getEndpoint().getFormat() == Jt400Configuration.Format.binary) {
                 exchange.getIn().setBody(entry.getData());
             } else {
                 exchange.getIn().setBody(entry.getString());
@@ -122,8 +138,8 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
     }
 
     private Exchange receive(KeyedDataQueue queue, long timeout) throws Exception {
-        String key = endpoint.getSearchKey();
-        String searchType = endpoint.getSearchType().name();
+        String key = getEndpoint().getSearchKey();
+        String searchType = getEndpoint().getSearchType().name();
         KeyedDataQueueEntry entry;
         if (timeout >= 0) {
             int seconds = (int) timeout / 1000;
@@ -134,19 +150,19 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
             entry = queue.read(key, -1, searchType);
         }
 
-        Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
+        Exchange exchange = getEndpoint().createExchange();
         if (entry != null) {
-            exchange.getIn().setHeader(Jt400DataQueueEndpoint.SENDER_INFORMATION, entry.getSenderInformation());
-            if (endpoint.getFormat() == Format.binary) {
+            exchange.getIn().setHeader(Jt400Endpoint.SENDER_INFORMATION, entry.getSenderInformation());
+            if (getEndpoint().getFormat() == Jt400Configuration.Format.binary) {
                 exchange.getIn().setBody(entry.getData());
-                exchange.getIn().setHeader(Jt400DataQueueEndpoint.KEY, entry.getKey());
+                exchange.getIn().setHeader(Jt400Endpoint.KEY, entry.getKey());
             } else {
                 exchange.getIn().setBody(entry.getString());
-                exchange.getIn().setHeader(Jt400DataQueueEndpoint.KEY, entry.getKeyString());
+                exchange.getIn().setHeader(Jt400Endpoint.KEY, entry.getKeyString());
             }
-
             return exchange;
         }
         return null;
     }
+
 }

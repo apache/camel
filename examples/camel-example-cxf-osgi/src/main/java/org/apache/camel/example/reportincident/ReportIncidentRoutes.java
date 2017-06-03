@@ -16,7 +16,6 @@
  */
 package org.apache.camel.example.reportincident;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -25,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
  * In the configure method we have all kind of DSL methods we use for expressing our routes.
  */
 public class ReportIncidentRoutes extends RouteBuilder {
-    
+
     public void configure() throws Exception {
         // webservice responses
         OutputReportIncident ok = new OutputReportIncident();
@@ -36,12 +35,10 @@ public class ReportIncidentRoutes extends RouteBuilder {
 
         from("cxf:bean:reportIncident")
             .convertBodyTo(InputReportIncident.class)
-            .setHeader(Exchange.FILE_NAME, constant("request-${date:now:yyyy-MM-dd-HHmmssSSS}"))
-            .wireTap("file://target/inbox/")
+            .wireTap("file://target/inbox/?fileName=request-${date:now:yyyy-MM-dd-HHmmssSSS}")
             .choice().when(simple("${body.givenName} == 'Claus'"))
                 .transform(constant(ok))
             .otherwise()
                 .transform(constant(accepted));
-            
     }
 }

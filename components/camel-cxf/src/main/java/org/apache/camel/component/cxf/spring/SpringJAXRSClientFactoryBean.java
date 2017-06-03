@@ -18,16 +18,14 @@ package org.apache.camel.component.cxf.spring;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
-import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
-import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.logging.FaultListener;
-import org.apache.cxf.version.Version;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -80,19 +78,10 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
 
     
     
-    @SuppressWarnings("deprecation")
     @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         if (bus == null) {
-            if (Version.getCurrentVersion().startsWith("2.3")) {
-                // Don't relate on the DefaultBus
-                BusFactory factory = new SpringBusFactory(ctx);
-                bus = factory.createBus();    
-                BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(bus, ctx);
-                setBus(bus);
-            } else {
-                setBus(BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx));
-            }
+            setBus(BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx));
         }
     }
 
@@ -115,6 +104,14 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
                 this.setProperties(new HashMap<String, Object>());
             }
             this.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
+        }
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        if (this.getProperties() != null && properties != null) {
+            this.getProperties().putAll(properties);
+        } else {
+            super.setProperties(properties);
         }
     }
 }

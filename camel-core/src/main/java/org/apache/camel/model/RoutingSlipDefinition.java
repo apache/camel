@@ -25,22 +25,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.processor.RoutingSlip;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;routingSlip/&gt; element
+ * Routes a message through a series of steps that are pre-determined (the slip)
  */
+@Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode {
     public static final String DEFAULT_DELIMITER = ",";
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = ",")
     private String uriDelimiter;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;
+    @XmlAttribute
+    private Integer cacheSize;
 
     public RoutingSlipDefinition() {
         this((String)null, DEFAULT_DELIMITER);
@@ -70,11 +75,6 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     }
 
     @Override
-    public String getShortName() {
-        return "routingSlip";
-    }
-    
-    @Override
     public String getLabel() {
         return "routingSlip[" + getExpression() + "]";
     }
@@ -88,12 +88,25 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         if (getIgnoreInvalidEndpoints() != null) {
             routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
         }
+        if (getCacheSize() != null) {
+            routingSlip.setCacheSize(getCacheSize());
+        }
         return routingSlip;
     }
 
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
+    }
+
+    /**
+     * Expression to define the routing slip, which defines which endpoints to route the message in a pipeline style.
+     * Notice the expression is evaluated once, if you want a more dynamic style, then the dynamic router eip is a better choice.
+     */
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // override to include javadoc what the expression is used for
+        super.setExpression(expression);
     }
 
     public void setUriDelimiter(String uriDelimiter) {
@@ -111,7 +124,15 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     public Boolean getIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
-    
+
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -142,4 +163,17 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         setUriDelimiter(uriDelimiter);
         return this;
     }
+
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * to cache and reuse producers when using this recipient list, when uris are reused.
+     *
+     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public RoutingSlipDefinition<Type> cacheSize(int cacheSize) {
+        setCacheSize(cacheSize);
+        return this;
+    }
+
 }

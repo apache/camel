@@ -60,8 +60,7 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
         notify.matchesMockWaitTime();
 
         assertTrue("Expected only 2 calls to process() (1 failure, 1 success) but encountered "
-                   + getConditionalExceptionProcessor().getCount() + "."
-                   , getConditionalExceptionProcessor().getCount() == 2);
+                   + getConditionalExceptionProcessor().getCount() + ".", getConditionalExceptionProcessor().getCount() == 2);
     }
 
     protected ConditionalExceptionProcessor getConditionalExceptionProcessor() {

@@ -16,16 +16,28 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.List;
+import java.util.Map;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -45,13 +57,21 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.processor = processor;
         this.definition = definition;
         this.id = definition.idOrCreate(context.getNodeIdFactory());
+    }
 
-        boolean enabled = context.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.All;
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean enabled = context.getManagementStrategy().getManagementAgent().getStatisticsLevel().isDefaultOrExtended();
         setStatisticsEnabled(enabled);
     }
 
     public CamelContext getContext() {
         return context;
+    }
+
+    public Object getInstance() {
+        return processor;
     }
 
     public Processor getProcessor() {
@@ -68,6 +88,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     public Integer getIndex() {
         return definition.getIndex();
+    }
+
+    public Boolean getSupportExtendedInformation() {
+        return false;
     }
 
     public Route getRoute() {
@@ -91,6 +115,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     public String getCamelId() {
         return context.getName();
+    }
+
+    public String getCamelManagementName() {
+        return context.getManagementName();
     }
 
     public String getRouteId() {
@@ -118,7 +146,43 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         ServiceHelper.stopService(getProcessor());
     }
 
-    public Object getInstance() {
-        return processor;
+    public String informationJson() {
+        return context.explainEipJson(id, true);
+    }
+
+    public TabularData explain(boolean allOptions) {
+        try {
+            String json = context.explainEipJson(id, allOptions);
+            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEipTabularType());
+
+            for (Map<String, String> row : rows) {
+                String name = row.get("name");
+                String kind = row.get("kind");
+                String label = row.get("label") != null ? row.get("label") : "";
+                String type = row.get("type");
+                String javaType = row.get("javaType");
+                String deprecated = row.get("deprecated") != null ? row.get("deprecated") : "";
+                String value = row.get("value") != null ? row.get("value") : "";
+                String defaultValue = row.get("defaultValue") != null ? row.get("defaultValue") : "";
+                String description = row.get("description") != null ? row.get("description") : "";
+
+                CompositeType ct = CamelOpenMBeanTypes.explainEipsCompositeType();
+                CompositeData data = new CompositeDataSupport(ct,
+                        new String[]{"option", "kind", "label", "type", "java type", "deprecated", "value", "default value", "description"},
+                        new Object[]{name, kind, label, type, javaType, deprecated, value, defaultValue, description});
+                answer.put(data);
+            }
+
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
+    @Override
+    public String dumpProcessorAsXml() throws Exception {
+        return ModelHelper.dumpModelAsXml(context, definition);
     }
 }

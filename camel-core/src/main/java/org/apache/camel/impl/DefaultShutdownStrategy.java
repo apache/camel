@@ -17,17 +17,20 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -37,12 +40,14 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -71,7 +76,7 @@ import org.slf4j.LoggerFactory;
  * The idea by the <tt>forced</tt> shutdown strategy, is to stop continue processing messages.
  * And force routes and its services to shutdown now. There is a risk when shutting down now,
  * that some resources is not properly shutdown, which can cause side effects. The timeout value
- * is by default 300 seconds, but can be customized. 
+ * is by default 300 seconds, but can be customized.
  * <p/>
  * As this strategy will politely wait until all exchanges has been completed it can potential wait
  * for a long time, and hence why a timeout value can be set. When the timeout triggers you can also
@@ -86,20 +91,27 @@ import org.slf4j.LoggerFactory;
  * You can customize this using the {@link #setShutdownRoutesInReverseOrder(boolean)} method.
  * <p/>
  * After route consumers have been shutdown, then any {@link ShutdownPrepared} services on the routes
- * is being prepared for shutdown, by invoking {@link ShutdownPrepared#prepareShutdown(boolean)} which
+ * is being prepared for shutdown, by invoking {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} which
  * <tt>force=false</tt>.
  * <p/>
  * Then if a timeout occurred and the strategy has been configured with shutdown-now on timeout, then
  * the strategy performs a more aggressive forced shutdown, by forcing all consumers to shutdown
- * and then invokes {@link ShutdownPrepared#prepareShutdown(boolean)} with <tt>force=true</tt>
+ * and then invokes {@link ShutdownPrepared#prepareShutdown(boolean,boolean)} with <tt>force=true</tt>
  * on the services. This allows the services to know they should force shutdown now.
  * <p/>
  * When timeout occurred and a forced shutdown is happening, then there may be threads/tasks which are
  * still inflight which may be rejected continued being routed. By default this can cause WARN and ERRORs
  * to be logged. The option {@link #setSuppressLoggingOnTimeout(boolean)} can be used to suppress these
  * logs, so they are logged at TRACE level instead.
+ * <p/>
+ * Also when a timeout occurred then information about the inflight exchanges is logged, if {@link #isLogInflightExchangesOnTimeout()}
+ * is enabled (is by default). This allows end users to known where these inflight exchanges currently are in the route(s),
+ * and how long time they have been inflight.
+ * <p/>
+ * This information can also be obtained from the {@link org.apache.camel.spi.InflightRepository}
+ * at all time during runtime.
  *
- * @version 
+ * @version
  */
 public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultShutdownStrategy.class);
@@ -111,8 +123,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean suppressLoggingOnTimeout;
+    private boolean logInflightExchangesOnTimeout = true;
+
     private volatile boolean forceShutdown;
     private final AtomicBoolean timeoutOccurred = new AtomicBoolean();
+    private volatile Future<?> currentShutdownTaskFuture;
 
     public DefaultShutdownStrategy() {
     }
@@ -151,6 +166,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     protected boolean doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
                                  boolean suspendOnly, boolean abortAfterTimeout, boolean forceShutdown) throws Exception {
 
+        // timeout must be a positive value
+        if (timeout <= 0) {
+            throw new IllegalArgumentException("Timeout must be a positive value");
+        }
+
         // just return if no routes to shutdown
         if (routes.isEmpty()) {
             return true;
@@ -160,7 +180,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         // at first sort according to route startup order
         List<RouteStartupOrder> routesOrdered = new ArrayList<RouteStartupOrder>(routes);
-        Collections.sort(routesOrdered, new Comparator<RouteStartupOrder>() {
+        routesOrdered.sort(new Comparator<RouteStartupOrder>() {
             public int compare(RouteStartupOrder o1, RouteStartupOrder o2) {
                 return o1.getStartupOrder() - o2.getStartupOrder();
             }
@@ -169,50 +189,72 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             Collections.reverse(routesOrdered);
         }
 
-        LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase(Locale.ENGLISH) + ")");
+        if (suspendOnly) {
+            LOG.info("Starting to graceful suspend " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase(Locale.ENGLISH) + ")");
+        } else {
+            LOG.info("Starting to graceful shutdown " + routesOrdered.size() + " routes (timeout " + timeout + " " + timeUnit.toString().toLowerCase(Locale.ENGLISH) + ")");
+        }
 
         // use another thread to perform the shutdowns so we can support timeout
         timeoutOccurred.set(false);
-        Future<?> future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout, timeoutOccurred));
+        currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout, timeoutOccurred));
         try {
-            future.get(timeout, timeUnit);
-        } catch (TimeoutException e) {
+            currentShutdownTaskFuture.get(timeout, timeUnit);
+        } catch (ExecutionException e) {
+            // unwrap execution exception
+            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
+        } catch (Exception e) {
+            // either timeout or interrupted exception was thrown so this is okay
+            // as interrupted would mean cancel was called on the currentShutdownTaskFuture to signal a forced timeout
+
             // we hit a timeout, so set the flag
             timeoutOccurred.set(true);
 
             // timeout then cancel the task
-            future.cancel(true);
+            currentShutdownTaskFuture.cancel(true);
 
             // signal we are forcing shutdown now, since timeout occurred
             this.forceShutdown = forceShutdown;
 
             // if set, stop processing and return false to indicate that the shutdown is aborting
             if (!forceShutdown && abortAfterTimeout) {
-                LOG.warn("Timeout occurred. Aborting the shutdown now.");
+                LOG.warn("Timeout occurred during graceful shutdown. Aborting the shutdown now."
+                        + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
+
+                // we attempt to force shutdown so lets log the current inflight exchanges which are affected
+                logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
+
                 return false;
             } else {
                 if (forceShutdown || shutdownNowOnTimeout) {
-                    LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
+                    LOG.warn("Timeout occurred during graceful shutdown. Forcing the routes to be shutdown now."
+                            + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
+
+                    // we attempt to force shutdown so lets log the current inflight exchanges which are affected
+                    logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
+
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
 
                     // now the route consumers has been shutdown, then prepare route services for shutdown now (forced)
                     for (RouteStartupOrder order : routes) {
                         for (Service service : order.getServices()) {
-                            prepareShutdown(service, true, true, isSuppressLoggingOnTimeout());
+                            prepareShutdown(service, false, true, true, isSuppressLoggingOnTimeout());
                         }
                     }
                 } else {
-                    LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
+                    LOG.warn("Timeout occurred during graceful shutdown. Will ignore shutting down the remainder routes."
+                            + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
+
+                    logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
                 }
             }
-        } catch (ExecutionException e) {
-            // unwrap execution exception
-            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
+        } finally {
+            currentShutdownTaskFuture = null;
         }
 
         // convert to seconds as its easier to read than a big milli seconds number
-        long seconds = TimeUnit.SECONDS.convert(watch.stop(), TimeUnit.MILLISECONDS);
+        long seconds = TimeUnit.SECONDS.convert(watch.taken(), TimeUnit.MILLISECONDS);
 
         LOG.info("Graceful shutdown of " + routesOrdered.size() + " routes completed in " + seconds + " seconds");
         return true;
@@ -271,12 +313,24 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         this.suppressLoggingOnTimeout = suppressLoggingOnTimeout;
     }
 
+    public boolean isLogInflightExchangesOnTimeout() {
+        return logInflightExchangesOnTimeout;
+    }
+
+    public void setLogInflightExchangesOnTimeout(boolean logInflightExchangesOnTimeout) {
+        this.logInflightExchangesOnTimeout = logInflightExchangesOnTimeout;
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public Future<?> getCurrentShutdownTaskFuture() {
+        return currentShutdownTaskFuture;
     }
 
     /**
@@ -355,7 +409,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     private ExecutorService getExecutorService() {
         if (executor == null) {
-            executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "ShutdownTask");
+            // use a thread pool that allow to terminate idle threads so they do not hang around forever
+            executor = camelContext.getExecutorServiceManager().newThreadPool(this, "ShutdownTask", 0, 1);
         }
         return executor;
     }
@@ -384,14 +439,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     /**
-     * Prepares the services for shutdown, by invoking the {@link ShutdownPrepared#prepareShutdown(boolean)} method
+     * Prepares the services for shutdown, by invoking the {@link ShutdownPrepared#prepareShutdown(boolean, boolean)} method
      * on the service if it implement this interface.
-     * 
+     *
      * @param service the service
      * @param forced  whether to force shutdown
      * @param includeChildren whether to prepare the child of the service as well
      */
-    private static void prepareShutdown(Service service, boolean forced, boolean includeChildren, boolean suppressLogging) {
+    private static void prepareShutdown(Service service, boolean suspendOnly, boolean forced, boolean includeChildren, boolean suppressLogging) {
         Set<Service> list;
         if (includeChildren) {
             // include error handlers as we want to prepare them for shutdown as well
@@ -405,7 +460,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             if (child instanceof ShutdownPrepared) {
                 try {
                     LOG.trace("Preparing {} shutdown on {}", forced ? "forced" : "", child);
-                    ((ShutdownPrepared) child).prepareShutdown(forced);
+                    ((ShutdownPrepared) child).prepareShutdown(suspendOnly, forced);
                 } catch (Exception e) {
                     if (suppressLogging) {
                         LOG.trace("Error during prepare shutdown on " + child + ". This exception will be ignored.", e);
@@ -451,7 +506,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         private final TimeUnit timeUnit;
         private final AtomicBoolean timeoutOccurred;
 
-        public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
+        ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
                             boolean suspendOnly, boolean abortAfterTimeout, AtomicBoolean timeoutOccurred) {
             this.context = context;
             this.routes = routes;
@@ -502,7 +557,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         if (consumer instanceof ShutdownAware) {
                             shutdown = !((ShutdownAware) consumer).deferShutdown(shutdownRunningTask);
                         }
-                        if (shutdown && consumer instanceof SuspendableService) {
+                        if (shutdown && consumer instanceof Suspendable) {
                             // we prefer to suspend over shutdown
                             suspend = true;
                         }
@@ -534,7 +589,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     if (service instanceof Consumer) {
                         continue;
                     }
-                    prepareShutdown(service, false, true, false);
+                    prepareShutdown(service, suspendOnly, false, true, false);
                 }
             }
 
@@ -544,24 +599,37 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             long loopCount = 0;
             while (!done && !timeoutOccurred.get()) {
                 int size = 0;
+                // number of inflights per route
+                final Map<String, Integer> routeInflight = new LinkedHashMap<String, Integer>();
+
                 for (RouteStartupOrder order : routes) {
                     int inflight = context.getInflightRepository().size(order.getRoute().getId());
-                    for (Consumer consumer : order.getInputs()) {
-                        // include any additional pending exchanges on some consumers which may have internal
-                        // memory queues such as seda
-                        if (consumer instanceof ShutdownAware) {
-                            inflight += ((ShutdownAware) consumer).getPendingExchangesSize();
-                        }
-                    }
+                    inflight += getPendingInflightExchanges(order);
                     if (inflight > 0) {
+                        String routeId = order.getRoute().getId();
+                        routeInflight.put(routeId, inflight);
                         size += inflight;
-                        LOG.trace("{} inflight and pending exchanges for route: {}", inflight, order.getRoute().getId());
+                        LOG.trace("{} inflight and pending exchanges for route: {}", inflight, routeId);
                     }
                 }
                 if (size > 0) {
                     try {
-                        LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
-                             + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.");
+                        // build a message with inflight per route
+                        CollectionStringBuffer csb = new CollectionStringBuffer();
+                        for (Map.Entry<String, Integer> entry : routeInflight.entrySet()) {
+                            String row = String.format("%s = %s", entry.getKey(), entry.getValue());
+                            csb.append(row);
+                        }
+
+                        String msg = "Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
+                                + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.";
+                        msg += " Inflights per route: [" + csb.toString() + "]";
+
+                        LOG.info(msg);
+
+                        // log verbose if DEBUG logging is enabled
+                        logInflightExchanges(context, routes, false);
+
                         Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
                         if (abortAfterTimeout) {
@@ -584,7 +652,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     LOG.trace("Route: {} preparing to shutdown.", deferred.getRoute().getId());
                     boolean forced = context.getShutdownStrategy().forceShutdown(consumer);
                     boolean suppress = context.getShutdownStrategy().isSuppressLoggingOnTimeout();
-                    prepareShutdown(consumer, forced, false, suppress);
+                    prepareShutdown(consumer, suspendOnly, forced, false, suppress);
                     LOG.debug("Route: {} preparing to shutdown complete.", deferred.getRoute().getId());
                 }
             }
@@ -606,11 +674,88 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 for (Service service : order.getServices()) {
                     boolean forced = context.getShutdownStrategy().forceShutdown(service);
                     boolean suppress = context.getShutdownStrategy().isSuppressLoggingOnTimeout();
-                    prepareShutdown(service, forced, true, suppress);
+                    prepareShutdown(service, suspendOnly, forced, true, suppress);
                 }
             }
         }
 
+    }
+
+    /**
+     * Calculates the total number of inflight exchanges for the given route
+     *
+     * @param order the route
+     * @return number of inflight exchanges
+     */
+    protected static int getPendingInflightExchanges(RouteStartupOrder order) {
+        int inflight = 0;
+
+        // the consumer is the 1st service so we always get the consumer
+        // the child services are EIPs in the routes which may also have pending
+        // inflight exchanges (such as the aggregator)
+        for (Service service : order.getServices()) {
+            Set<Service> children = ServiceHelper.getChildServices(service);
+            for (Service child : children) {
+                if (child instanceof ShutdownAware) {
+                    inflight += ((ShutdownAware) child).getPendingExchangesSize();
+                }
+            }
+        }
+
+        return inflight;
+    }
+
+    /**
+     * Logs information about the inflight exchanges
+     *
+     * @param infoLevel <tt>true</tt> to log at INFO level, <tt>false</tt> to log at DEBUG level
+     */
+    protected static void logInflightExchanges(CamelContext camelContext, List<RouteStartupOrder> routes, boolean infoLevel) {
+        // check if we need to log
+        if (!infoLevel && !LOG.isDebugEnabled()) {
+            return;
+        }
+
+        Collection<InflightRepository.InflightExchange> inflights = camelContext.getInflightRepository().browse();
+        int size = inflights.size();
+        if (size == 0) {
+            return;
+        }
+
+        // filter so inflight must start from any of the routes
+        Set<String> routeIds = new HashSet<String>();
+        for (RouteStartupOrder route : routes) {
+            routeIds.add(route.getRoute().getId());
+        }
+        Collection<InflightRepository.InflightExchange> filtered = new ArrayList<InflightRepository.InflightExchange>();
+        for (InflightRepository.InflightExchange inflight : inflights) {
+            String routeId = inflight.getExchange().getFromRouteId();
+            if (routeIds.contains(routeId)) {
+                filtered.add(inflight);
+            }
+        }
+
+        size = filtered.size();
+        if (size == 0) {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder("There are " + size + " inflight exchanges:");
+        for (InflightRepository.InflightExchange inflight : filtered) {
+            sb.append("\n\tInflightExchange: [exchangeId=").append(inflight.getExchange().getExchangeId())
+                    .append(", fromRouteId=").append(inflight.getExchange().getFromRouteId())
+                    .append(", routeId=").append(inflight.getRouteId())
+                    .append(", nodeId=").append(inflight.getNodeId())
+                    .append(", elapsed=").append(inflight.getElapsed())
+                    .append(", duration=").append(inflight.getDuration())
+                    .append("]");
+        }
+
+        if (infoLevel) {
+            LOG.info(sb.toString());
+        } else {
+            LOG.debug(sb.toString());
+        }
     }
 
 }

@@ -23,7 +23,6 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.management.DefaultManagementNamingStrategy;
 import org.junit.Test;
 
 public class ManagedNettyEndpointTest extends BaseNettyTest {
@@ -35,9 +34,6 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
         return context;
     }
 
@@ -52,9 +48,9 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
             return;
         }
 
-        // should not add 100 endpoints
-        getMockEndpoint("mock:foo").expectedMessageCount(100);
-        for (int i = 0; i < 100; i++) {
+        // should not add 10 endpoints
+        getMockEndpoint("mock:foo").expectedMessageCount(10);
+        for (int i = 0; i < 10; i++) {
             String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?param" + i + "=value" + i, "Hello World", String.class);
             assertEquals("param" + i + "=value" + i, out);
         }
@@ -62,11 +58,11 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"http://0.0.0.0:" + getPort() + "/foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"http://0.0.0.0:" + getPort() + "/foo\"");
         mbeanServer.isRegistered(on);
 
         // should only be 2 endpoints in JMX
-        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("*:context=localhost/camel-1,type=endpoints,*"), null);
+        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("*:context=camel-1,type=endpoints,*"), null);
         assertEquals(2, set.size());
     }
 

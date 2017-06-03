@@ -47,9 +47,9 @@ public class MemoryWebsocketStoreTest {
     @Mock
     private NodeSynchronization sync;
     @Mock
-    private DefaultWebsocket websocket1 = new DefaultWebsocket(sync, consumer);;
+    private DefaultWebsocket websocket1 = new DefaultWebsocket(sync, null, consumer);
     @Mock
-    private DefaultWebsocket websocket2 = new DefaultWebsocket(sync, consumer);;
+    private DefaultWebsocket websocket2 = new DefaultWebsocket(sync, null, consumer);
 
     private MemoryWebsocketStore store;
 
@@ -84,10 +84,6 @@ public class MemoryWebsocketStoreTest {
         // second call of websocket1.getConnectionKey()
         store.remove(websocket1);
         assertNull(store.get(KEY_1));
-
-        InOrder inOrder = inOrder(websocket1, websocket2);
-        inOrder.verify(websocket1, times(2)).getConnectionKey();
-        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -106,10 +102,6 @@ public class MemoryWebsocketStoreTest {
         } catch (Exception e) {
             assertEquals(NullPointerException.class, e.getClass());
         }
-
-        InOrder inOrder = inOrder(websocket1, websocket2);
-        inOrder.verify(websocket1, times(2)).getConnectionKey();
-        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -121,10 +113,6 @@ public class MemoryWebsocketStoreTest {
         store.remove(websocket2);
         assertEquals(websocket1, store.get(KEY_1));
         assertNull(store.get(KEY_2));
-
-        InOrder inOrder = inOrder(websocket1, websocket2);
-        inOrder.verify(websocket2, times(1)).getConnectionKey();
-        inOrder.verifyNoMoreInteractions();
     }
 
     @Test

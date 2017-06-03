@@ -21,13 +21,14 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.websocket.WebSocket;
-import com.ning.http.client.websocket.WebSocketTextListener;
-import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,7 +48,7 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
     @Test
     public void testWSHttpCall() throws Exception {
-        AsyncHttpClient c = new AsyncHttpClient();
+        AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/test").execute(
             new WebSocketUpgradeHandler.Builder()
@@ -59,10 +60,7 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
                         latch.countDown();
                     }
 
-                    @Override
-                    public void onFragment(String fragment, boolean last) {
-                    }
-
+                   
                     @Override
                     public void onOpen(WebSocket websocket) {
                     }
@@ -79,7 +77,7 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
-        websocket.sendTextMessage("Hello from WS client");
+        websocket.sendMessage("Hello from WS client");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
@@ -99,6 +97,8 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
             public void configure() {
                 WebsocketComponent websocketComponent = getContext().getComponent("websocket", WebsocketComponent.class);
                 websocketComponent.setPort(port);
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(20);
 
                 from("websocket://test")
                         .log(">>> Message received from WebSocket Client : ${body}")

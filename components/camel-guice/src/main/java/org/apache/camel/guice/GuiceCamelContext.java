@@ -29,7 +29,6 @@ import com.google.inject.Inject;
 
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.guice.impl.GuiceInjector;
 import org.apache.camel.guice.inject.Injectors;
@@ -41,6 +40,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The default CamelContext implementation for working with Guice.
@@ -60,20 +60,32 @@ public class GuiceCamelContext extends DefaultCamelContext {
 
     @PostConstruct
     @Override
-    public void start() throws Exception {
-        super.start();
+    public void start() {
+        try {
+            super.start();
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     @PreDestroy
     @Override
-    public void stop() throws Exception {
-        super.stop();
+    public void stop() {
+        try {
+            super.stop();
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     @Inject
-    public void setRouteBuilders(Set<RoutesBuilder> routeBuilders) throws Exception {
+    public void setRouteBuilders(Set<RoutesBuilder> routeBuilders) {
         for (RoutesBuilder builder : routeBuilders) {
-            addRoutes(builder);
+            try {
+                addRoutes(builder);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
         }
     }
 
@@ -157,7 +169,7 @@ public class GuiceCamelContext extends DefaultCamelContext {
                 return injector.getInstance(Context.class);
             }
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 
