@@ -30,6 +30,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,7 +49,7 @@ public class IOConverterTest extends ContextTestSupport {
 
     public void testToBytes() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/converter/dummy.txt");
-        byte[] data = IOConverter.toBytes(new FileInputStream(file));
+        byte[] data = IOConverter.toBytes(Files.newInputStream(Paths.get(file.getAbsolutePath())));
         assertEquals("get the wrong byte size", file.length(), data.length);
         assertEquals('#', (char) data[0]);
 
