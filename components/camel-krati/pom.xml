@@ -28,7 +28,7 @@
 
     <artifactId>camel-krati</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Krati</name>
+    <name>Camel :: Krati (deprecated)</name>
     <description>Camel Krati support</description>
 
     <properties>
