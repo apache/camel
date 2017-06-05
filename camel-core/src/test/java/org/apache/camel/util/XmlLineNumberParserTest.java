@@ -16,7 +16,9 @@
  */
 package org.apache.camel.util;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -27,7 +29,7 @@ import junit.framework.TestCase;
 public class XmlLineNumberParserTest extends TestCase {
 
     public void testParse() throws Exception {
-        FileInputStream fis = new FileInputStream("src/test/resources/org/apache/camel/util/camel-context.xml");
+        InputStream fis = Files.newInputStream(Paths.get("src/test/resources/org/apache/camel/util/camel-context.xml"));
         Document dom = XmlLineNumberParser.parseXml(fis);
         assertNotNull(dom);
 
@@ -43,7 +45,7 @@ public class XmlLineNumberParserTest extends TestCase {
     }
 
     public void testParseCamelContext() throws Exception {
-        FileInputStream fis = new FileInputStream("src/test/resources/org/apache/camel/util/camel-context.xml");
+        InputStream fis = Files.newInputStream(Paths.get("src/test/resources/org/apache/camel/util/camel-context.xml"));
         Document dom = XmlLineNumberParser.parseXml(fis, null, "camelContext", null);
         assertNotNull(dom);
 
@@ -59,7 +61,7 @@ public class XmlLineNumberParserTest extends TestCase {
     }
 
     public void testParseCamelContextForceNamespace() throws Exception {
-        FileInputStream fis = new FileInputStream("src/test/resources/org/apache/camel/util/camel-context.xml");
+        InputStream fis = Files.newInputStream(Paths.get("src/test/resources/org/apache/camel/util/camel-context.xml"));
         Document dom = XmlLineNumberParser.parseXml(fis, null, "camelContext", "http://camel.apache.org/schema/spring");
         assertNotNull(dom);
 
