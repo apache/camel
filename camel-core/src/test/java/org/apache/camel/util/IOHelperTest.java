@@ -19,14 +19,15 @@ package org.apache.camel.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import junit.framework.TestCase;
-import org.apache.camel.CamelContext;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
@@ -90,7 +91,7 @@ public class IOHelperTest extends TestCase {
     private void assertReadAsWritten(String testname, String text, String compareText) throws Exception {
         File file = tempFile(testname);
         write(file, text);
-        String loadText = IOHelper.loadText(new FileInputStream(file));
+        String loadText = IOHelper.loadText(Files.newInputStream(Paths.get(file.getAbsolutePath())));
         assertEquals(compareText, loadText);
     }
 

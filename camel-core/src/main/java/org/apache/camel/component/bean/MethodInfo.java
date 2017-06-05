@@ -247,7 +247,7 @@ public class MethodInfo {
     public MethodInvocation createMethodInvocation(final Object pojo, boolean hasParameters, final Exchange exchange) {
         final Object[] arguments;
         if (hasParameters) {
-             arguments = parametersExpression.evaluate(exchange, Object[].class);
+            arguments = parametersExpression.evaluate(exchange, Object[].class);
         } else {
             arguments = null;
         }

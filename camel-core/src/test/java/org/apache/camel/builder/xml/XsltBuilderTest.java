@@ -17,8 +17,9 @@
 package org.apache.camel.builder.xml;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -104,7 +105,7 @@ public class XsltBuilderTest extends ContextTestSupport {
     public void testXsltInputStream() throws Exception {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
-        XsltBuilder builder = XsltBuilder.xslt(new FileInputStream(styleSheet));
+        XsltBuilder builder = XsltBuilder.xslt(Files.newInputStream(Paths.get(styleSheet.getAbsolutePath())));
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -118,7 +119,7 @@ public class XsltBuilderTest extends ContextTestSupport {
         File styleSheet = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
 
         XsltBuilder builder = new XsltBuilder();
-        builder.setTransformerInputStream(new FileInputStream(styleSheet));
+        builder.setTransformerInputStream(Files.newInputStream(Paths.get(styleSheet.getAbsolutePath())));
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
@@ -130,7 +131,7 @@ public class XsltBuilderTest extends ContextTestSupport {
 
     public void testXsltSource() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
-        Source styleSheet = new SAXSource(new InputSource(new FileInputStream(file)));
+        Source styleSheet = new SAXSource(new InputSource(Files.newInputStream(Paths.get(file.getAbsolutePath()))));
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet);
 
@@ -144,7 +145,7 @@ public class XsltBuilderTest extends ContextTestSupport {
 
     public void testXsltTemplates() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/builder/xml/example.xsl");
-        Source source = new SAXSource(new InputSource(new FileInputStream(file)));
+        Source source = new SAXSource(new InputSource(Files.newInputStream(Paths.get(file.getAbsolutePath()))));
 
         XmlConverter converter = new XmlConverter();
         Templates styleSheet = converter.getTransformerFactory().newTemplates(source);
