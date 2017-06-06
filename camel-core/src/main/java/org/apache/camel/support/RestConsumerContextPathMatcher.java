@@ -94,17 +94,14 @@ public final class RestConsumerContextPathMatcher {
             consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
         }
 
-        String p1 = requestPath.toLowerCase(Locale.ENGLISH);
-        String p2 = consumerPath.toLowerCase(Locale.ENGLISH);
-
-        if (p1.equals(p2)) {
+        if (matchOnUriPrefix && requestPath.toLowerCase(Locale.ENGLISH).startsWith(consumerPath.toLowerCase(Locale.ENGLISH))) {
             return true;
         }
-
-        if (matchOnUriPrefix && p1.startsWith(p2)) {
+        
+        if (requestPath.equalsIgnoreCase(consumerPath)) {
             return true;
         }
-
+        
         return false;
     }
 
