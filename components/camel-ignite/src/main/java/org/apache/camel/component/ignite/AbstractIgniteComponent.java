@@ -17,22 +17,9 @@
 package org.apache.camel.component.ignite;
 
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.component.ignite.cache.IgniteCacheEndpoint;
-import org.apache.camel.component.ignite.compute.IgniteComputeEndpoint;
-import org.apache.camel.component.ignite.events.IgniteEventsEndpoint;
-import org.apache.camel.component.ignite.idgen.IgniteIdGenEndpoint;
-import org.apache.camel.component.ignite.messaging.IgniteMessagingEndpoint;
-import org.apache.camel.component.ignite.queue.IgniteQueueEndpoint;
-import org.apache.camel.component.ignite.set.IgniteSetEndpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.configuration.IgniteConfiguration;
@@ -121,6 +108,7 @@ public abstract class AbstractIgniteComponent extends DefaultComponent {
      */
     public void setIgnite(Ignite ignite) {
         this.ignite = ignite;
+        lifecycleMode = IgniteLifecycleMode.USER_MANAGED;
     }
 
     /**
