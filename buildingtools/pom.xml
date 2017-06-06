@@ -105,9 +105,9 @@
                             <scripts>
                                 <script><![CDATA[
                                     import groovy.xml.XmlUtil
-                                    project.properties['header-java'] = XmlUtil.escapeXml(new File(project.basedir, 'src/main/resources/header-java.txt').text.replace('\n', '\\n'))
-                                    project.properties['header-properties'] = XmlUtil.escapeXml(new File(project.basedir, 'src/main/resources/header-properties.txt').text.replace('\n', '\\n'))
-                                    project.properties['header-xml'] = XmlUtil.escapeXml(new File(project.basedir, 'src/main/resources/header-xml.txt').text.replaceAll('(.*)\n', '^\\\\Q$1\\\\E\\$\\\\n'))
+                                    project.properties['header-java'] = XmlUtil.escapeXml(new File(project.basedir, 'src/main/resources/header-java.txt').text.replace('\r', '').replace('\n', '\\n'))
+                                    project.properties['header-properties'] = XmlUtil.escapeXml(new File(project.basedir, 'src/main/resources/header-properties.txt').text.replace('\r', '').replace('\n', '\\n'))
+                                    project.properties['header-xml'] = XmlUtil.escapeXml(new File(project.basedir, 'src/main/resources/header-xml.txt').text.replace('\r', '').replaceAll('(.*)\n', '^\\\\Q$1\\\\E\\$\\\\n'))
                                     ]]></script>
                             </scripts>
                         </configuration>
