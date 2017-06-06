@@ -136,7 +136,7 @@ public class DockerComponentConfiguration
          * The fully qualified class name of the DockerCmdExecFactory
          * implementation to use
          */
-        private String cmdExecFactory = "com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory";
+        private String cmdExecFactory = "com.github.dockerjava.netty.NettyDockerCmdExecFactory";
 
         public String getHost() {
             return host;

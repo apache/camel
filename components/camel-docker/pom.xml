@@ -51,6 +51,16 @@
       <groupId>com.github.docker-java</groupId>
       <artifactId>docker-java</artifactId>
       <version>${docker-java-version}</version>
+      <exclusions>
+        <exclusion> 
+          <groupId>org.glassfish.jersey.connectors</groupId>
+          <artifactId>jersey-apache-connector</artifactId>
+        </exclusion>
+        <exclusion> 
+          <groupId>org.glassfish.jersey.core</groupId>
+          <artifactId>jersey-client</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <!-- need to avoid the snapshot dependency -->
