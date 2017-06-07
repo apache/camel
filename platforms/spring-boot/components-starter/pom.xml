@@ -216,6 +216,7 @@
     <module>camel-lumberjack-starter</module>
     <module>camel-lzf-starter</module>
     <module>camel-mail-starter</module>
+    <module>camel-master-starter</module>
     <module>camel-metrics-starter</module>
     <module>camel-milo-starter</module>
     <module>camel-mina2-starter</module>
