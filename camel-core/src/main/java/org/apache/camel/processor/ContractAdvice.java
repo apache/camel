@@ -43,12 +43,12 @@ import org.slf4j.LoggerFactory;
  * from current OUT message (or IN message if no OUT), camel look for a Transformer and apply.
  * 
  * @see Transformer
- * @see Validator}
+ * @see Validator
  * @see InputTypeDefinition
  * @see OutputTypeDefinition
  */
 public class ContractAdvice implements CamelInternalProcessorAdvice {
-    private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContractAdvice.class);
 
     private Contract contract;
     
@@ -132,7 +132,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
     }
     
     private boolean convertIfRequired(Message message, DataType type) throws Exception {
-        // TODO for better performance it may be better to add TypeConveterTransformer
+        // TODO for better performance it may be better to add TypeConverterTransformer
         // into transformer registry automatically to avoid unnecessary scan in transformer registry
         if (type != null && type.isJavaType() && type.getName() != null) {
             CamelContext context = message.getExchange().getContext();

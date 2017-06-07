@@ -165,8 +165,11 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             isJson = consumes != null && consumes.toLowerCase(Locale.ENGLISH).contains("json");
         }
 
-        if (exchange.getIn() instanceof DataTypeAware && (isJson || isXml)) {
-            ((DataTypeAware)exchange.getIn()).setDataType(new DataType(isJson ? "json" : "xml"));
+        // set data type if in use
+        if (exchange.getContext().isUseDataType()) {
+            if (exchange.getIn() instanceof DataTypeAware && (isJson || isXml)) {
+                ((DataTypeAware) exchange.getIn()).setDataType(new DataType(isJson ? "json" : "xml"));
+            }
         }
 
         // only allow xml/json if the binding mode allows that

@@ -108,6 +108,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String useMDCLogging;
 
     @XmlAttribute
+    private String useDataType;
+
+    @XmlAttribute
     private String useBreadcrumb;
 
     @XmlAttribute
@@ -609,6 +612,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setUseMDCLogging(String useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
+    }
+
+    public String getUseDataType() {
+        return useDataType;
+    }
+
+    public void setUseDataType(String useDataType) {
+        this.useDataType = useDataType;
     }
 
     public String getUseBreadcrumb() {
