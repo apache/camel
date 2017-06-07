@@ -78,8 +78,8 @@
     <avro-bundle-version>1.8.2_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
     <awaitility.version>1.7.0</awaitility.version>
-    <aws-java-sdk-bundle-version>1.11.125_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.11.125</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.11.136_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.11.136</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-storage-java-sdk-version>5.2.0</azure-storage-java-sdk-version>
     <azure-storage-java-sdk-bundle-version>5.2.0_1</azure-storage-java-sdk-bundle-version>
