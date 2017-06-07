@@ -19,9 +19,12 @@ package org.apache.camel.component.ignite;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
+import org.junit.After;
 import org.junit.Test;
 
 public class IgniteCreationTest extends AbstractIgniteTest {
+    
+    private Ignite ignite;
 
     @Override
     protected String getScheme() {
@@ -30,7 +33,7 @@ public class IgniteCreationTest extends AbstractIgniteTest {
 
     @Override
     protected AbstractIgniteComponent createComponent() {
-        Ignite ignite = Ignition.start(createConfiguration());
+        ignite = Ignition.start(createConfiguration());
         return IgniteCacheComponent.fromIgnite(ignite);
     }
 
@@ -42,6 +45,13 @@ public class IgniteCreationTest extends AbstractIgniteTest {
     @Override
     public boolean isCreateCamelContextPerClass() {
         return true;
+    }
+    
+    @After
+    public void stopUserManagedIgnite(){
+        if (ignite != null){
+            Ignition.stop(ignite.name(), true);
+        }
     }
 
 }
