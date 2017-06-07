@@ -36,6 +36,12 @@ The up to date list is available online at:
 
 <https://github.com/apache/camel/tree/master/components#components>
 
+## Examples
+
+Apache Camel comes with many examples.
+
+<https://github.com/apache/camel/tree/master/examples#examples>
+
 ## Getting Started
 
 To help you get started, try the following links:
