@@ -38,8 +38,8 @@ public class IgniteCreationTest extends AbstractIgniteTest {
     }
 
     @Test
-    public void testCAMEL_11382() {
-       assertNotNull(ignite());
+    public void testCAMEL11382() {
+        assertNotNull(ignite());
     }
 
     @Override
@@ -48,8 +48,8 @@ public class IgniteCreationTest extends AbstractIgniteTest {
     }
     
     @After
-    public void stopUserManagedIgnite(){
-        if (ignite != null){
+    public void stopUserManagedIgnite() {
+        if (ignite != null) {
             Ignition.stop(ignite.name(), true);
         }
     }
