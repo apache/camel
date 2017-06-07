@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 266 in 186 JAR artifacts (16 deprecated)
+Number of Components: 266 in 186 JAR artifacts (17 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -411,7 +411,7 @@ Number of Components: 266 in 186 JAR artifacts (16 deprecated)
 `kestrel:addresses/queue` | 2.6 | *deprecated* The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
 
 | link:camel-krati/src/main/docs/krati-component.adoc[Krati] (camel-krati) +
-`krati:path` | 2.9 | The krati allows the use krati datastores and datasets inside Camel.
+`krati:path` | 2.9 | *deprecated* The krati allows the use krati datastores and datasets inside Camel.
 
 | link:camel-kubernetes/src/main/docs/kubernetes-component.adoc[Kubernetes] (camel-kubernetes) +
 `kubernetes:masterUrl` | 2.17 | *deprecated* Use splitted kubernetes components instead of this composite component.
