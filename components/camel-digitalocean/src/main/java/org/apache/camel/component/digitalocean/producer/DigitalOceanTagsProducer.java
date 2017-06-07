@@ -48,9 +48,6 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
         case delete:
             deleteTag(exchange);
             break;
-        case update:
-            updateTag(exchange);
-            break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
         }
@@ -96,24 +93,5 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
         LOG.trace("Delete Tag [{}] ", delete);
         exchange.getOut().setBody(delete);
     }
-
-    private void updateTag(Exchange exchange) throws Exception {
-        String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
-
-        if (ObjectHelper.isEmpty(name)) {
-            throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
-        }
-
-        String newName = exchange.getIn().getHeader(DigitalOceanHeaders.NEW_NAME, String.class);
-
-        if (ObjectHelper.isEmpty(newName)) {
-            throw new IllegalArgumentException(DigitalOceanHeaders.NEW_NAME + " must be specified");
-        }
-
-        Tag tag = getEndpoint().getDigitalOceanClient().updateTag(name, newName);
-        LOG.trace("Update Tag [{}] ", tag);
-        exchange.getOut().setBody(tag);
-    }
-
 
 }
