@@ -22,19 +22,26 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
+    <artifactId>components</artifactId>
     <version>2.20.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-zookeeper</artifactId>
+  <artifactId>camel-master</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Zookeeper</name>
-  <description>Camel Zookeeper Support</description>
+  <name>Camel :: Master</name>
+  <description>Camel Master Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.zookeeper.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=zookeeper</camel.osgi.export.service>
+    <camel.osgi.import>
+      !com.google.common.base;,
+      !org.apache.camel.component.master.group,
+      *
+    </camel.osgi.import>
+    <camel.osgi.export.pkg>
+      org.apache.camel.component.master
+    </camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=master</camel.osgi.export.service>
   </properties>
 
   <dependencies>
@@ -43,66 +50,20 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.zookeeper</groupId>
-      <artifactId>zookeeper</artifactId>
-      <version>${zookeeper-version}</version>
-      <!-- Just exclude the old version of netty to avoid netty version conflict-->
-      <exclusions>
-        <exclusion>
-           <groupId>org.jboss.netty</groupId>
-           <artifactId>netty</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty</artifactId>
-      <version>${netty3-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.curator</groupId>
-      <artifactId>curator-framework</artifactId>
-      <version>${curator-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.curator</groupId>
-      <artifactId>curator-recipes</artifactId>
-      <version>${curator-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.curator</groupId>
-      <artifactId>curator-x-discovery</artifactId>
-      <version>${curator-version}</version>
-    </dependency>
 
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty</artifactId>
+      <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-master</artifactId>
+      <groupId>org.jgroups</groupId>
+      <artifactId>jgroups</artifactId>
+      <version>${jgroups-version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
-      <scope>test</scope>
-    </dependency>  
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>

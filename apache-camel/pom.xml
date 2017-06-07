@@ -663,6 +663,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-master</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-metrics</artifactId>
     </dependency>
     <dependency>
@@ -1837,6 +1841,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-lzf-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-master</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
