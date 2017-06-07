@@ -254,6 +254,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean lazyLoadTypeConverters = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
+    private Boolean useDataType = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.TRUE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Long delay;
@@ -3308,6 +3309,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
 
+        if (isUseDataType()) {
+            // log if DataType has been enabled
+            log.info("Message DataType is enabled on CamelContext: {}", getName());
+        }
+
         if (streamCachingInUse) {
             // stream caching is in use so enable the strategy
             getStreamCachingStrategy().setEnabled(true);
@@ -4244,6 +4250,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setUseMDCLogging(Boolean useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
+    }
+
+    public Boolean isUseDataType() {
+        return useDataType;
+    }
+
+    @Override
+    public void setUseDataType(Boolean useDataType) {
+        this.useDataType = useDataType;
     }
 
     public Boolean isUseBreadcrumb() {

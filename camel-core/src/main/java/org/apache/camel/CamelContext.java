@@ -1752,6 +1752,26 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setUseMDCLogging(Boolean useMDCLogging);
 
     /**
+     * Whether to enable using data type on Camel messages.
+     * <p/>
+     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
+     *
+     * @return <tt>true</tt> if data type is enabled
+     */
+    Boolean isUseDataType();
+
+    /**
+     * Whether to enable using data type on Camel messages.
+     * <p/>
+     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
+     *
+     * @param  useDataType <tt>true</tt> to enable data type on Camel messages.
+     */
+    void setUseDataType(Boolean useDataType);
+
+    /**
      * Whether or not breadcrumb is enabled.
      *
      * @return <tt>true</tt> if breadcrumb is enabled

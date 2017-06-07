@@ -301,6 +301,14 @@ public class CamelConfigurationProperties {
     private boolean endpointRuntimeStatisticsEnabled;
 
     /**
+     * Whether to enable using data type on Camel messages.
+     * <p/>
+     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
+     */
+    private boolean useDataType;
+
+    /**
      * Set whether breadcrumb is enabled.
      */
     private boolean useBreadcrumb = true;
@@ -695,6 +703,14 @@ public class CamelConfigurationProperties {
 
     public void setEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+    }
+
+    public boolean isUseDataType() {
+        return useDataType;
+    }
+
+    public void setUseDataType(boolean useDataType) {
+        this.useDataType = useDataType;
     }
 
     public boolean isUseBreadcrumb() {

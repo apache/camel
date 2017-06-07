@@ -215,6 +215,8 @@ public class DefaultRouteContext implements RouteContext {
                     contract.setValidateOutput(route.getOutputType().isValidate());
                 }
                 internal.addAdvice(new ContractAdvice(contract));
+                // make sure to enable data type as its in use when using input/output types on routes
+                camelContext.setUseDataType(true);
             }
 
             // and create the route that wraps the UoW

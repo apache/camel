@@ -118,7 +118,10 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
     public void setBody(Object body) {
         this.body = body;
-        this.dataType = body != null ? new DataType(body.getClass()) : null;
+        // set data type if in use
+        if (body != null && camelContext.isUseDataType()) {
+            this.dataType = new DataType(body.getClass());
+        }
     }
 
     public <T> void setBody(Object value, Class<T> type) {
@@ -140,15 +143,17 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
     @Override
     public DataType getDataType() {
-        if (this.dataType == null) {
-            this.dataType = body != null ? new DataType(body.getClass()) : null;
-        }
         return this.dataType;
     }
 
     @Override
     public void setDataType(DataType type) {
         this.dataType = type;
+    }
+
+    @Override
+    public boolean hasDataType() {
+        return dataType != null;
     }
 
     public Message copy() {
@@ -171,7 +176,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         if (that instanceof CamelContextAware) {
             setCamelContext(((CamelContextAware) that).getCamelContext());
         }
-        if (that instanceof DataTypeAware) {
+        if (that instanceof DataTypeAware && ((DataTypeAware) that).hasDataType()) {
             setDataType(((DataTypeAware)that).getDataType());
         }
 
