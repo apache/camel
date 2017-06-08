@@ -103,12 +103,14 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     @Override
     public void stop() throws Exception {
-        inflightRequests.arrive();
-        if (!inflightRequests.isTerminated()) {
-            try {
-                inflightRequests.awaitAdvanceInterruptibly(0, terminationTimeout, TimeUnit.SECONDS);
-            } catch (InterruptedException | TimeoutException ignored) {
-                // exception is ignored
+        if (inflightRequests != null) {
+            inflightRequests.arrive();
+            if (!inflightRequests.isTerminated()) {
+                try {
+                    inflightRequests.awaitAdvanceInterruptibly(0, terminationTimeout, TimeUnit.SECONDS);
+                } catch (InterruptedException | TimeoutException ignored) {
+                    // exception is ignored
+                }
             }
         }
 
