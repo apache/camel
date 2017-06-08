@@ -408,7 +408,7 @@ public class CamelConfigurationProperties {
     /**
      *  Adds the option for MDCLogging
      */
-    private String useMDCLogging;
+    private boolean useMDCLogging;
 
     // Getters & setters
 
@@ -878,11 +878,11 @@ public class CamelConfigurationProperties {
         this.includeNonSingletons = includeNonSingletons;
     }
     
-    public String getUseMDCLogging() {
+    public boolean isUseMDCLogging() {
         return useMDCLogging;
     }
     
-    public void setUseMDCLogging(String useMDCLogging) {
+    public void setUseMDCLogging(boolean useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
     }
 }
