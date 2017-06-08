@@ -332,6 +332,8 @@ public class JsonDataFormat extends DataFormatDefinition {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-jackson");
         } else if (library == JsonLibrary.Gson) {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-gson");
+        } else if (library == JsonLibrary.Fastjson) {
+            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-fastjson");
         } else {
             setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-johnzon");
         }
