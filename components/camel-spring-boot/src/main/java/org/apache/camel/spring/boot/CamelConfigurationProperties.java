@@ -406,7 +406,7 @@ public class CamelConfigurationProperties {
     private Integer tracerFormatterMaxChars = 10000;
     
     /**
-     *  Adds the option for MDCLogging
+     * To turn on MDC logging
      */
     private boolean useMDCLogging;
 
