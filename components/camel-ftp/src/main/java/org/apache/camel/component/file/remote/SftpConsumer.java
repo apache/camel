@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -119,6 +120,9 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         }
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
+            if (endpoint.isAllowEmptyDirectory() && !remoteFilesStack.isEmpty()) {
+                emptyFolders.add(remoteFilesStack.pop());
+            }
             log.trace("No files found in directory: {}", dir);
             return true;
         } else {
@@ -139,6 +143,9 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
             if (file.getAttrs().isDir()) {
                 RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
+                if (endpoint.isAllowEmptyDirectory()) {
+                    remoteFilesStack.push(remote);
+                }
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getFilename();

@@ -269,16 +269,26 @@ public class GenericFileProducer<T> extends DefaultProducer {
             }
         }
 
-        // upload
-        if (log.isTraceEnabled()) {
-            log.trace("About to write [{}] to [{}] from exchange [{}]", new Object[]{fileName, getEndpoint(), exchange});
-        }
+        // if fileName variable contains '/' char it means it is directory already
+        // and it has reached here bacause it is empty directory
+        boolean dontStoreFile = false;
+        if (endpoint.isAllowEmptyDirectory() && fileName.endsWith(File.separator + ".")) {
+            dontStoreFile = true;
+        } 
+        if (!dontStoreFile) { 
+            // upload
+            if (log.isTraceEnabled()) {
+                log.trace("About to write [{}] to [{}] from exchange [{}]", new Object[]{fileName, getEndpoint(), exchange});
+            }
 
-        boolean success = operations.storeFile(fileName, exchange);
-        if (!success) {
-            throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
+            boolean success = operations.storeFile(fileName, exchange);
+            if (!success) {
+                throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
+            }
+            log.debug("Wrote [{}] to [{}]", fileName, getEndpoint());
+        } else {
+            log.debug("Writing [{}] to [{}] is not attempted", fileName, getEndpoint());
         }
-        log.debug("Wrote [{}] to [{}]", fileName, getEndpoint());
     }
 
     public String createFileName(Exchange exchange) {
