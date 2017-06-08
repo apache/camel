@@ -404,6 +404,11 @@ public class CamelConfigurationProperties {
      * Tracer maximum characters in total
      */
     private Integer tracerFormatterMaxChars = 10000;
+    
+    /**
+     *  Adds the option for MDCLogging
+     */
+    private String useMDCLogging;
 
     // Getters & setters
 
@@ -871,5 +876,13 @@ public class CamelConfigurationProperties {
 
     public void setIncludeNonSingletons(boolean includeNonSingletons) {
         this.includeNonSingletons = includeNonSingletons;
+    }
+    
+    public String getUseMDCLogging() {
+        return useMDCLogging;
+    }
+    
+    public void setUseMDCLogging(String useMDCLogging) {
+        this.useMDCLogging = useMDCLogging;
     }
 }
