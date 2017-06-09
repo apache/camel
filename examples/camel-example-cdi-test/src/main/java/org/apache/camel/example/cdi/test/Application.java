@@ -16,6 +16,10 @@
  */
 package org.apache.camel.example.cdi.test;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,7 +44,8 @@ public class Application {
         public void configure() {
             from("direct:message")
                 .routeId("route")
-                .log("${body} from ${camelContext.name} at ${date:now:hh:mm:ss a}!");
+                .setHeader("now", constant(getNow()))
+                .log("${body} from ${camelContext.name} at ${in.header.now}!");
 
             from("direct:in").routeId("in»out").bean("bean").to("direct:out");
         }
@@ -49,6 +54,11 @@ public class Application {
     @Inject
     @Uri("direct:message")
     ProducerTemplate producer;
+    
+    private static String getNow() {
+        DateFormat appFormatter = new SimpleDateFormat("hh:mm:ss a");
+        return appFormatter.format(new Date());
+    }
 
     void hello(@Observes CamelContextStartedEvent event) {
         producer.sendBody("Hello");
