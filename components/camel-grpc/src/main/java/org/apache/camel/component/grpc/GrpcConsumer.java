@@ -71,7 +71,7 @@ public class GrpcConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         if (server != null) {
-            LOG.trace("Terminating gRPC server");
+            LOG.debug("Terminating gRPC server");
             server.shutdown().shutdownNow();
             server = null;
         }
@@ -93,10 +93,10 @@ public class GrpcConsumer extends DefaultConsumer {
         }
         
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            LOG.info("Building gRPC server on " + configuration.getHost() + ":" + configuration.getPort());
+            LOG.debug("Building gRPC server on " + configuration.getHost() + ":" + configuration.getPort());
             serverBuilder = NettyServerBuilder.forAddress(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         } else if (ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            LOG.info("Building gRPC server on <any address>" + ":" + configuration.getPort());
+            LOG.debug("Building gRPC server on <any address>" + ":" + configuration.getPort());
             serverBuilder = NettyServerBuilder.forPort(configuration.getPort());
         } else {
             throw new IllegalArgumentException("No server start properties (host, port) specified");
