@@ -31,13 +31,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 
-public class PubNubPresensTest extends PubNubTestBase {
+public class PubNubPresenceTest extends PubNubTestBase {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mockResult;
 
     @Test
-    public void testPresens() throws Exception {
+    public void testPresence() throws Exception {
         stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/mychannel/heartbeat"))
             .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"service\": \"Presence\"}")));
 
@@ -53,6 +53,7 @@ public class PubNubPresensTest extends PubNubTestBase {
         assertMockEndpointsSatisfied();
         PNPresenceEventResult presence = mockResult.getReceivedExchanges().get(0).getIn().getBody(PNPresenceEventResult.class);
         assertThat(presence.getEvent(), equalTo("join"));
+        assertThat(presence.getOccupancy(), equalTo(3));
     }
 
 
