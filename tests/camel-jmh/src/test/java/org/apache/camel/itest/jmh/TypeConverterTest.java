@@ -23,8 +23,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultUuidGenerator;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
+import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -39,8 +42,6 @@ import org.openjdk.jmh.runner.options.TimeValue;
  * Tests {@link org.apache.camel.TypeConverter}
  */
 public class TypeConverterTest {
-
-    private static final int LOOPS = 10000;
 
     @Test
     public void launchBenchmark() throws Exception {
@@ -94,11 +95,12 @@ public class TypeConverterTest {
     }
 
     @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @Measurement(batchSize = 1000)
     public void typeConvertIntegerToString(BenchmarkState state, Blackhole bh) {
-        for (int i = 0; i < LOOPS; i++) {
-            String id = state.camel.getTypeConverter().convertTo(String.class, i);
-            bh.consume(id);
-        }
+        String id = state.camel.getTypeConverter().convertTo(String.class, 12345);
+        bh.consume(id);
     }
 
 }

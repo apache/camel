@@ -21,8 +21,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.impl.DefaultUuidGenerator;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
+import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -38,8 +41,6 @@ import org.openjdk.jmh.runner.options.TimeValue;
  * Thanks to this SO answer: https://stackoverflow.com/questions/30485856/how-to-run-jmh-from-inside-junit-tests
  */
 public class DefaultUuidGeneratorTest {
-
-    private static final int LOOPS = 10000;
 
     @Test
     public void launchBenchmark() throws Exception {
@@ -78,11 +79,12 @@ public class DefaultUuidGeneratorTest {
     }
 
     @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @Measurement(batchSize = 1000)
     public void benchmark(BenchmarkState state, Blackhole bh) {
-        for (int i = 0; i < LOOPS; i++) {
-            String id = state.uuid.generateUuid();
-            bh.consume(id);
-        }
+        String id = state.uuid.generateUuid();
+        bh.consume(id);
     }
 
 }
