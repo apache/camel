@@ -435,6 +435,7 @@
 	* [Java Object Serialization](serialization-dataformat.adoc)
 	* [JAXB](jaxb-dataformat.adoc)
 	* [JiBX](jibx-dataformat.adoc)
+	* [JSon Fastjson](json-fastjson-dataformat.adoc)
 	* [JSon GSon](json-gson-dataformat.adoc)
 	* [JSon Jackson](json-jackson-dataformat.adoc)
 	* [JSon Johnzon](json-johnzon-dataformat.adoc)

@@ -814,7 +814,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 46 in 37 JAR artifacts (0 deprecated)
+Number of Data Formats: 47 in 38 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -859,6 +859,8 @@ Number of Data Formats: 46 in 37 JAR artifacts (0 deprecated)
 | link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | Camel JAXB support
 
 | link:camel-jibx/src/main/docs/jibx-dataformat.adoc[JiBX] (camel-jibx) | 2.6 | Camel Jibx support
+
+| link:camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc[JSon Fastjson] (camel-fastjson) | 2.20 | Camel Fastjson support
 
 | link:camel-gson/src/main/docs/json-gson-dataformat.adoc[JSon GSon] (camel-gson) | 2.10 | Camel Gson support
 
