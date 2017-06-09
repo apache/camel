@@ -28,8 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 
 /**
- * GrpcUtils helpers are working with dynamic methods via Spring reflection
- * utilities
+ * GrpcUtils helpers are working with dynamic methods via Camel and 
+ * Java reflection utilities
  */
 public final class GrpcUtils {
 
@@ -61,7 +61,7 @@ public final class GrpcUtils {
             Class grpcServiceClass = context.getClassResolver().resolveMandatoryClass(serviceClassName);
             Method grpcBlockingMethod = ReflectionHelper.findMethod(grpcServiceClass, stubMethod, paramChannel);
             if (grpcBlockingMethod == null) {
-                throw new IllegalArgumentException("gRPC service method not found: " + serviceClassName + "." + GrpcConstants.GRPC_SERVICE_SYNC_STUB_METHOD);
+                throw new IllegalArgumentException("gRPC service method not found: " + serviceClassName + "." + stubMethod);
             }
             grpcBlockingStub = ObjectHelper.invokeMethod(grpcBlockingMethod, grpcServiceClass, channel);
 

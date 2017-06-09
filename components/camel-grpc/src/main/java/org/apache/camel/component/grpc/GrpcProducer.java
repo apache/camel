@@ -72,10 +72,10 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
         if (channel == null) {
             initializeChannel();
             if (endpoint.isSynchronous()) {
-                LOG.info("Getting synchronous method stub from channel");
+                LOG.debug("Getting synchronous method stub from channel");
                 grpcStub = GrpcUtils.constructGrpcBlockingStub(configuration.getServicePackage(), configuration.getServiceName(), channel, endpoint.getCamelContext());
             } else {
-                LOG.info("Getting asynchronous method stub from channel");
+                LOG.debug("Getting asynchronous method stub from channel");
                 grpcStub = GrpcUtils.constructGrpcAsyncStub(configuration.getServicePackage(), configuration.getServiceName(), channel, endpoint.getCamelContext());
             }
         }
@@ -84,7 +84,7 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
     @Override
     protected void doStop() throws Exception {
         if (channel != null) {
-            LOG.trace("Terminating channel to the remote gRPC server");
+            LOG.debug("Terminating channel to the remote gRPC server");
             channel.shutdown().shutdownNow();
             channel = null;
             grpcStub = null;
