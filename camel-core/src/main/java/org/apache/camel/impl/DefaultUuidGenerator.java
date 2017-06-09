@@ -16,37 +16,21 @@
  */
 package org.apache.camel.impl;
 
-import java.net.ServerSocket;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link org.apache.camel.spi.UuidGenerator} which is a fast implementation based on
- * how <a href="http://activemq.apache.org/">Apache ActiveMQ</a> generates its UUID.
- * <p/>
- * This implementation is not synchronized but it leverages API which may not be accessible
- * in the cloud (such as Google App Engine).
- * <p/>
- * The JVM system property {@link #PROPERTY_IDGENERATOR_PORT} can be used to set a specific port
- * number to be used as part of the initialization process to generate unique UUID.
- *
- * @deprecated replaced by {@link DefaultUuidGenerator}
+ * Default {@link UuidGenerator} that is based on the {@link ActiveMQUuidGenerator} but
+ * is optimized for Camel usage to startup faster and avoid use local network binding to obtain a random number.
  */
-@Deprecated
-public class ActiveMQUuidGenerator implements UuidGenerator {
+public class DefaultUuidGenerator implements UuidGenerator {
 
-    // use same JVM property name as ActiveMQ
-    public static final String PROPERTY_IDGENERATOR_HOSTNAME = "activemq.idgenerator.hostname";
-    public static final String PROPERTY_IDGENERATOR_LOCALPORT = "activemq.idgenerator.localport";
-    public static final String PROPERTY_IDGENERATOR_PORT = "activemq.idgenerator.port";
-
-    private static final Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultUuidGenerator.class);
     private static final String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;
@@ -68,37 +52,18 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
         }
 
         if (canAccessSystemProps) {
-            hostName = System.getProperty(PROPERTY_IDGENERATOR_HOSTNAME);
-            int localPort = Integer.parseInt(System.getProperty(PROPERTY_IDGENERATOR_LOCALPORT, "0"));
 
-            int idGeneratorPort = 0;
-            ServerSocket ss = null;
             try {
                 if (hostName == null) {
                     hostName = InetAddressUtil.getLocalHostName();
                 }
-                if (localPort == 0) {
-                    idGeneratorPort = Integer.parseInt(System.getProperty(PROPERTY_IDGENERATOR_PORT, "0"));
-                    LOG.trace("Using port {}", idGeneratorPort);
-                    ss = new ServerSocket(idGeneratorPort);
-                    localPort = ss.getLocalPort();
-                    stub = "-" + localPort + "-" + System.currentTimeMillis() + "-";
-                    Thread.sleep(100);
-                } else {
-                    stub = "-" + localPort + "-" + System.currentTimeMillis() + "-";
-                }
+                stub = "-" + System.currentTimeMillis() + "-";
             } catch (Exception e) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, e);
+                    LOG.trace("Cannot generate unique stub by using DNS", e);
                 } else {
-                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + e.getMessage());
+                    LOG.warn("Cannot generate unique stub by using DNS due " + e.getMessage() + ". This exception is ignored.");
                 }
-                // Restore interrupted state so higher level code can deal with it.
-                if (e instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
-                }
-            } finally {
-                IOHelper.close(ss);
             }
         }
 
@@ -114,7 +79,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
         UNIQUE_STUB = stub;
     }
 
-    public ActiveMQUuidGenerator(String prefix) {
+    public DefaultUuidGenerator(String prefix) {
         synchronized (UNIQUE_STUB) {
             this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
             // let the ID be friendly for URL and file systems
@@ -123,7 +88,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
         }
     }
 
-    public ActiveMQUuidGenerator() {
+    public DefaultUuidGenerator() {
         this("ID-" + hostName);
     }
 

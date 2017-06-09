@@ -4553,7 +4553,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // either "Production" or "Development"
             return new JavaUuidGenerator();
         } else {
-            return new ActiveMQUuidGenerator();
+            return new DefaultUuidGenerator();
         }
     }
 
