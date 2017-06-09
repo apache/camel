@@ -27,10 +27,20 @@ PARSER_BEGIN(SSPTParser)
 
 package org.apache.camel.component.sql.stored.template.generated;
 
+import java.io.Reader;
+
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.component.sql.stored.template.ast.*;
 
 public class SSPTParser {
    int parameterNameCounter = 0;
+
+   ClassResolver classResolver;
+
+   public SSPTParser(Reader reader, ClassResolver classResolver) {
+     this(reader);
+     this.classResolver = classResolver;
+   }
 
    String createNextParameterName() {
       return "_"+(parameterNameCounter++);
@@ -65,38 +75,67 @@ Object Parameter() :
 InputParameter InputParameter() :
 {
      Token sqlTypeToken;
-     String name;
+     String name = null;
      Token valueSrcToken;
+     Integer scale = null;
+     String typeName = null;
 }
 {
-    (sqlTypeToken = ParameterSqlType() " " valueSrcToken =
+    ((name = ParameterName() " ")? sqlTypeToken = ParameterSqlType() (scale = Scale())? " " (typeName = ParameterName() " ")? valueSrcToken =
     InputParameterSrc())
     {
-        int sqlType = ParseHelper.parseSqlType(sqlTypeToken);
-        return new InputParameter(createNextParameterName(),sqlType,valueSrcToken);
+        int sqlType = ParseHelper.parseSqlType(sqlTypeToken, classResolver);
+
+        return new InputParameter(name == null ? createNextParameterName() : name, sqlType, valueSrcToken, scale, typeName);
     }
 }
 
 OutParameter OutParameter() :
 {
      Token sqlTypeToken;
-     String name;
+     String name = null;
      String outValueMapKey;
 }
 {
-    ("OUT" " " sqlTypeToken = ParameterSqlType() " " outValueMapKey =
+    ("OUT " (name = ParameterName() " ")? sqlTypeToken = ParameterSqlType() " " outValueMapKey =
     OutHeader())
     {
-        return new OutParameter(createNextParameterName(),ParseHelper.parseSqlType(sqlTypeToken),outValueMapKey);
+        return new OutParameter(name == null ? createNextParameterName() : name, ParseHelper.parseSqlType(sqlTypeToken, classResolver), outValueMapKey);
+    }
+}
+
+String ParameterName():
+{
+    Token t = null;
+}
+{
+    (t = <PARAMETER_NAME>)
+
+    {
+        return ParseHelper.removeQuotes(t.toString()) ;
+    }
+}
+
+Integer Scale():
+{
+    Token t;
+
+}
+{
+    ( t = <SCALE> )
+    {
+
+        return ParseHelper.parseScale(t);
     }
 }
 
 Token ParameterSqlType():
 {
     Token t;
+    Token scaleToken;
 }
 {
-    (t = <NUMBER> | t = <IDENTIFIER>)
+    (t = <NUMBER> | t = <IDENTIFIER>  )
     {
         return t;
     }
@@ -127,6 +166,10 @@ Token InputParameterSrc():
     {
             return ret;
     }
+}
+
+TOKEN: {
+    <SCALE: "(" (["-","0"-"9"])+ ")">
 }
 
 TOKEN: {
@@ -174,6 +217,13 @@ TOKEN : {
 }
 
 TOKEN : {
+    <PARAMETER_NAME: "'"( <LETTER> | <DIGIT> | <SPECIAL> )+"'" >
+}
+
+TOKEN : {
     <IDENTIFIER: ( <LETTER> | <DIGIT> | <SPECIAL> )+ >
 }
+
+
+
 

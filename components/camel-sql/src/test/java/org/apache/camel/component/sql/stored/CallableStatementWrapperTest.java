@@ -44,11 +44,15 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
         db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/storedProcedureTest.sql").build();
         jdbcTemplate = new JdbcTemplate(db);
-        templateParser = new TemplateParser();
-        this.factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, false);
         super.setUp();
     }
 
+    @Override
+    protected void startCamelContext() throws Exception {
+        super.startCamelContext();
+        templateParser = new TemplateParser(context().getClassResolver());
+        this.factory = new CallableStatementWrapperFactory(jdbcTemplate, templateParser, false);
+    }
 
     @Test
     public void shouldExecuteStoredProcedure() throws Exception {
