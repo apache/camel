@@ -21,7 +21,9 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.component.sql.stored.template.ast.InputParameter;
@@ -34,7 +36,15 @@ import org.junit.Test;
 
 public class ParserTest extends CamelTestSupport {
 
-    TemplateParser parser = new TemplateParser();
+    TemplateParser parser;
+
+
+
+    @Override
+    protected void startCamelContext() throws Exception {
+        super.startCamelContext();
+        parser = new TemplateParser(context.getClassResolver());
+    }
 
     @Test
     public void shouldParseOk() {
@@ -150,5 +160,56 @@ public class ParserTest extends CamelTestSupport {
         parser.parseTemplate("ADDNUMBERS2"
                 + "(OTHER VALUE1 ${header.v1},INTEGER VALUE2 ${header.v2})");
     }
+
+    @Test
+    public void testParameterNameGiven() {
+        Template template = parser.parseTemplate("FOO('p_instance_id' INTEGER ${header.foo})");
+        assertEquals("p_instance_id", ((InputParameter) template.getParameterList().get(0)).getName());
+    }
+
+    @Test
+    public void testParameterVendor() {
+        Template template = parser.parseTemplate("FOO('p_instance_id' org.apache.camel.component.sql.stored.CustomType.INTEGER ${header.foo})");
+        assertEquals(1, ((InputParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void testParameterVendorType() {
+        Template template = parser.parseTemplate("FOO('p_instance_id' 2 ${header.foo})");
+        assertEquals(2, ((InputParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void testParameterTypeName() {
+        Template template = parser.parseTemplate("FOO('p_instance_id' 2 'p_2' ${header.foo})");
+        assertEquals("p_2", ((InputParameter) template.getParameterList().get(0)).getTypeName());
+    }
+
+
+    @Test
+    public void testParameterVendorTypeNegativ() {
+        Template template = parser.parseTemplate("FOO('p_instance_id' -2 ${header.foo})");
+        assertEquals(-2, ((InputParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void testOracleTypesOut() {
+        Template template = parser.parseTemplate("FOO(OUT 'p_error_cd' 1 header1)");
+        assertEquals(1, ((OutParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void testOracleTypesOutParameterVendor() {
+        Template template = parser.parseTemplate("FOO(OUT 'p_error_cd' org.apache.camel.component.sql.stored.CustomType.INTEGER header1)");
+        assertEquals(1, ((OutParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+
+    @Test
+    public void testOracleTypesNumeric() {
+        Template template = parser.parseTemplate("FOO('p_error_cd' org.apache.camel.component.sql.stored.CustomType.INTEGER(10) ${header.foo})");
+        assertEquals(Integer.valueOf(10), ((InputParameter) template.getParameterList().get(0)).getScale());
+    }
+
 
 }

@@ -80,7 +80,7 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        this.wrapperFactory = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(), isFunction());
+        this.wrapperFactory = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(getCamelContext().getClassResolver()), isFunction());
         super.doStart();
     }
 

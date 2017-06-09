@@ -18,7 +18,9 @@ package org.apache.camel.component.sql.stored;
 
 import java.sql.SQLException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.LRUCache;
 import org.springframework.jdbc.core.JdbcTemplate;
