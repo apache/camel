@@ -52,7 +52,6 @@ public class DefaultUuidGenerator implements UuidGenerator {
         }
 
         if (canAccessSystemProps) {
-
             try {
                 if (hostName == null) {
                     hostName = InetAddressUtil.getLocalHostName();
