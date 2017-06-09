@@ -86,6 +86,7 @@
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
+        <include>org.apache.camel:camel-fastjson</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-flink</include>
         <include>org.apache.camel:camel-fop</include>
@@ -372,6 +373,7 @@
         <include>org.apache.camel:camel-etcd-starter</include>
         <include>org.apache.camel:camel-exec-starter</include>
         <include>org.apache.camel:camel-facebook-starter</include>
+        <include>org.apache.camel:camel-fastjson-starter</include>
         <include>org.apache.camel:camel-flatpack-starter</include>
         <include>org.apache.camel:camel-flink-starter</include>
         <include>org.apache.camel:camel-fop-starter</include>
