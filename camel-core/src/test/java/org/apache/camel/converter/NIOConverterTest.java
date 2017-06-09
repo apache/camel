@@ -68,7 +68,6 @@ public class NIOConverterTest extends ContextTestSupport {
         String out = NIOConverter.toString(buffer, null);
         assertEquals(str, out);
     }
-    
 
     public void testToByteBuffer() {
         ByteBuffer bb = NIOConverter.toByteBuffer("Hello".getBytes());
