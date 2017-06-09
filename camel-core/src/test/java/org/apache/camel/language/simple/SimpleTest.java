@@ -516,6 +516,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("date-with-timezone:header.birthday:GMT:yyyy-MM-dd'T'HH:mm:ss:SSS", "1974-04-20T00:55:47:123");
     }
 
+    public void testDateNow() throws Exception {
+        Object out = evaluateExpression("${date:now:hh:mm:ss a}", null);
+        assertNotNull(out);
+    }
+
     public void testDatePredicates() throws Exception {
         assertPredicate("${date:now} < ${date:now+60s}");
         assertPredicate("${date:now-2s+2s} == ${date:now}");
