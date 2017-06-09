@@ -42,6 +42,7 @@
     <module>camel-itest-standalone</module>
     <module>camel-itest</module>
     <module>camel-itest-cdi</module>
+    <module>camel-jmh</module>
     <module>camel-blueprint-cxf-test</module>
     <module>camel-blueprint-test</module>
     <module>camel-partial-classpath-test</module>
