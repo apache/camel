@@ -25,8 +25,8 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 
 import junit.framework.TestCase;
-import org.apache.camel.impl.ActiveMQUuidGenerator;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
+import org.apache.camel.impl.DefaultUuidGenerator;
 import org.apache.camel.impl.SimpleUuidGenerator;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
@@ -55,7 +55,7 @@ public class CamelContextFactoryBeanTest extends TestCase {
         
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
         
-        assertTrue(uuidGenerator instanceof ActiveMQUuidGenerator);
+        assertTrue(uuidGenerator instanceof DefaultUuidGenerator);
     }
     
     public void testGetCustomUuidGenerator() throws Exception {
