@@ -93,14 +93,15 @@ InputParameter InputParameter() :
 OutParameter OutParameter() :
 {
      Token sqlTypeToken;
-     String name = null;
      String outValueMapKey;
+     Integer scale = null;
+     String typeName = null;
 }
 {
-    ("OUT " (name = ParameterName() " ")? sqlTypeToken = ParameterSqlType() " " outValueMapKey =
+    ("OUT " sqlTypeToken = ParameterSqlType() (scale = Scale())? " " (typeName = ParameterName() " ")? outValueMapKey =
     OutHeader())
     {
-        return new OutParameter(name == null ? createNextParameterName() : name, ParseHelper.parseSqlType(sqlTypeToken, classResolver), outValueMapKey);
+        return new OutParameter(ParseHelper.parseSqlType(sqlTypeToken, classResolver), outValueMapKey, scale, typeName);
     }
 }
 
