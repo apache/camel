@@ -343,7 +343,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         if (reuseAddresses != null && !optionMap.contains(Options.REUSE_ADDRESSES)) {
             // rebuild map
             OptionMap.Builder builder = OptionMap.builder();
-            builder.addAll(optionMap).set(Options.REUSE_ADDRESSES, tcpNoDelay);
+            builder.addAll(optionMap).set(Options.REUSE_ADDRESSES, reuseAddresses);
             optionMap = builder.getMap();
         }
     }
