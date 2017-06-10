@@ -75,7 +75,6 @@ public class ParserTest extends CamelTestSupport {
         Assert.assertEquals(BigInteger.valueOf(2L), param3.getValueExtractor().eval(exchange, null));
 
         OutParameter sptpOutputNode = (OutParameter) template.getParameterList().get(3);
-        Assert.assertEquals("_3", sptpOutputNode.getName());
         Assert.assertEquals(Types.INTEGER, sptpOutputNode.getSqlType());
         Assert.assertEquals("header1", sptpOutputNode.getOutValueMapKey());
     }
@@ -194,14 +193,28 @@ public class ParserTest extends CamelTestSupport {
 
     @Test
     public void testOracleTypesOut() {
-        Template template = parser.parseTemplate("FOO(OUT 'p_error_cd' 1 header1)");
+        Template template = parser.parseTemplate("FOO(OUT 1 p_error_cd)");
         assertEquals(1, ((OutParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
     public void testOracleTypesOutParameterVendor() {
-        Template template = parser.parseTemplate("FOO(OUT 'p_error_cd' org.apache.camel.component.sql.stored.CustomType.INTEGER header1)");
+        Template template = parser.parseTemplate("FOO(OUT org.apache.camel.component.sql.stored.CustomType.INTEGER p_error_cd)");
         assertEquals(1, ((OutParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void testOracleTypesOutParameterVendorWithScale() {
+        Template template = parser.parseTemplate("FOO(OUT org.apache.camel.component.sql.stored.CustomType.INTEGER(11) p_error_cd)");
+        assertEquals(Integer.valueOf(11), ((OutParameter) template.getParameterList().get(0)).getScale());
+    }
+
+    @Test
+    public void testOracleTypesOutParameterVendorWithTypeName() {
+        Template template = parser.parseTemplate("FOO(OUT org.apache.camel.component.sql.stored.CustomType.INTEGER 'mytype' p_error_cd)");
+        assertEquals("mytype", ((OutParameter) template.getParameterList().get(0)).getTypeName());
+        assertEquals("p_error_cd", ((OutParameter) template.getParameterList().get(0)).getOutValueMapKey());
+
     }
 
 
@@ -209,6 +222,15 @@ public class ParserTest extends CamelTestSupport {
     public void testOracleTypesNumeric() {
         Template template = parser.parseTemplate("FOO('p_error_cd' org.apache.camel.component.sql.stored.CustomType.INTEGER(10) ${header.foo})");
         assertEquals(Integer.valueOf(10), ((InputParameter) template.getParameterList().get(0)).getScale());
+    }
+
+    @Test
+    public void examplesSyntaxTest() {
+        parser.parseTemplate("SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers.num2},OUT INTEGER resultofsub)");
+        parser.parseTemplate("MYFUNC('param1' java.sql.Types.INTEGER(10) ${header.srcValue})");
+        parser.parseTemplate("MYFUNC('param1' 100 'mytypename' ${header.srcValue})");
+        parser.parseTemplate("MYFUNC(OUT java.sql.Types.DECIMAL(10) outheader1)");
+        parser.parseTemplate("MYFUNC(OUT java.sql.Types.NUMERIC(10) 'mytype' outheader1)");
     }
 
 

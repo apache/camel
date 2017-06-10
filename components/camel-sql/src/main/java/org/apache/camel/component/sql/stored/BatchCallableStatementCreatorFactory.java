@@ -75,7 +75,17 @@ public class BatchCallableStatementCreatorFactory {
         for (Object parameter : template.getParameterList()) {
             if (parameter instanceof InputParameter) {
                 InputParameter inputParameter = (InputParameter) parameter;
-                params.add(new SqlParameter(inputParameter.getName(), inputParameter.getSqlType()));
+
+                SqlParameter sqlParameter;
+                if (inputParameter.getScale() != null) {
+                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getScale());
+                } else if (inputParameter.getTypeName() != null) {
+                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType(), inputParameter.getTypeName());
+                } else {
+                    sqlParameter = new SqlParameter(inputParameter.getName(), inputParameter.getSqlType());
+                }
+
+                params.add(sqlParameter);
 
             } else {
                 throw new UnsupportedOperationException("Only IN parameters supported by batch!");

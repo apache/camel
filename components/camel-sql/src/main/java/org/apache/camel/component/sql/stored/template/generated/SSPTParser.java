@@ -123,22 +123,31 @@ public class SSPTParser implements SSPTParserConstants {
 
   final public OutParameter OutParameter() throws ParseException {
      Token sqlTypeToken;
-     String name = null;
      String outValueMapKey;
+     Integer scale = null;
+     String typeName = null;
     jj_consume_token(2);
+    sqlTypeToken = ParameterSqlType();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case PARAMETER_NAME:
-      name = ParameterName();
-      jj_consume_token(1);
+    case SCALE:
+      scale = Scale();
       break;
     default:
       jj_la1[6] = jj_gen;
       ;
     }
-    sqlTypeToken = ParameterSqlType();
     jj_consume_token(1);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case PARAMETER_NAME:
+      typeName = ParameterName();
+      jj_consume_token(1);
+      break;
+    default:
+      jj_la1[7] = jj_gen;
+      ;
+    }
     outValueMapKey = OutHeader();
-        {if (true) return new OutParameter(name == null ? createNextParameterName() : name, ParseHelper.parseSqlType(sqlTypeToken, classResolver), outValueMapKey);}
+        {if (true) return new OutParameter(ParseHelper.parseSqlType(sqlTypeToken, classResolver), outValueMapKey, scale, typeName);}
     throw new Error("Missing return statement in function");
   }
 
@@ -167,7 +176,7 @@ public class SSPTParser implements SSPTParserConstants {
       t = jj_consume_token(IDENTIFIER);
       break;
     default:
-      jj_la1[7] = jj_gen;
+      jj_la1[8] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -194,7 +203,7 @@ public class SSPTParser implements SSPTParserConstants {
             {if (true) return ret;}
       break;
     default:
-      jj_la1[8] = jj_gen;
+      jj_la1[9] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -210,13 +219,13 @@ public class SSPTParser implements SSPTParserConstants {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[9];
+  final private int[] jj_la1 = new int[10];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x400,0x18014,0x18014,0x8000,0x8,0x8000,0x8000,0x10010,0x6000,};
+      jj_la1_0 = new int[] {0x400,0x18014,0x18014,0x8000,0x8,0x8000,0x8,0x8000,0x10010,0x6000,};
    }
 
   /** Constructor with InputStream. */
@@ -230,7 +239,7 @@ public class SSPTParser implements SSPTParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -244,7 +253,7 @@ public class SSPTParser implements SSPTParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -254,7 +263,7 @@ public class SSPTParser implements SSPTParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -264,7 +273,7 @@ public class SSPTParser implements SSPTParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -273,7 +282,7 @@ public class SSPTParser implements SSPTParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -282,7 +291,7 @@ public class SSPTParser implements SSPTParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 9; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -338,7 +347,7 @@ public class SSPTParser implements SSPTParserConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 10; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
