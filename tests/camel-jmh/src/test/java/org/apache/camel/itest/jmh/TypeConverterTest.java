@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultUuidGenerator;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -60,8 +59,6 @@ public class TypeConverterTest {
             .forks(1)
             .shouldFailOnError(true)
             .shouldDoGC(true)
-            //.jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintInlining")
-            //.addProfiler(WinPerfAsmProfiler.class)
             .build();
 
         new Runner(opt).run();
@@ -97,7 +94,7 @@ public class TypeConverterTest {
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    @Measurement(batchSize = 1000)
+    @Measurement(batchSize = 1000000)
     public void typeConvertIntegerToString(BenchmarkState state, Blackhole bh) {
         String id = state.camel.getTypeConverter().convertTo(String.class, 12345);
         bh.consume(id);

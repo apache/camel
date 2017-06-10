@@ -59,8 +59,6 @@ public class DefaultUuidGeneratorTest {
             .forks(1)
             .shouldFailOnError(true)
             .shouldDoGC(true)
-            //.jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintInlining")
-            //.addProfiler(WinPerfAsmProfiler.class)
             .build();
 
         new Runner(opt).run();
@@ -81,7 +79,7 @@ public class DefaultUuidGeneratorTest {
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    @Measurement(batchSize = 1000)
+    @Measurement(batchSize = 1000000)
     public void benchmark(BenchmarkState state, Blackhole bh) {
         String id = state.uuid.generateUuid();
         bh.consume(id);
