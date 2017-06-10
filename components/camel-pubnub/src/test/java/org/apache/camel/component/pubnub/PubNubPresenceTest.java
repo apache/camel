@@ -56,6 +56,23 @@ public class PubNubPresenceTest extends PubNubTestBase {
         assertThat(presence.getOccupancy(), equalTo(3));
     }
 
+    @Test
+    public void testPresenceWithHereNowRefresh() throws Exception {
+        stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/mychannel/heartbeat"))
+            .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"service\": \"Presence\"}")));
+
+        stubFor(get(urlPathEqualTo("/v2/subscribe/mySubscribeKey/mychannel,mychannel-pnpres/0"))
+            .willReturn(aResponse()
+                .withBody("{\"t\":{\"t\":\"14901247588021627\",\"r\":2},\"m\":[{\"a\":\"4\",\"f\":0,\"p\":{\"t\":\"14901247587675704\",\"r\":1},\"k\":\"demo-36\",\"c\":\"mychannel-pnpres\","
+                          + "\"d\":{\"action\": \"interval\", \"timestamp\": 1490124758, \"occupancy\": 2, \"here_now_refresh\": true, "
+                          + "\"join\": [\"2220E216-5A30-49AD-A89C-1E0B5AE26AD7\", \"4262AE3F-3202-4487-BEE0-1A0D91307DEB\"]},\"b\":\"mychannel-pnpres\"}]}")));
+        context.startRoute("presence-route");
+        mockResult.expectedMessageCount(1);
+        assertMockEndpointsSatisfied();
+        PNPresenceEventResult presence = mockResult.getReceivedExchanges().get(0).getIn().getBody(PNPresenceEventResult.class);
+        assertThat(presence.getHereNowRefresh(), equalTo(true));
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
