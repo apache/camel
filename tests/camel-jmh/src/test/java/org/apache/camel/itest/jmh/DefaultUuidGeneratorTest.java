@@ -21,11 +21,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.impl.DefaultUuidGenerator;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -49,7 +47,7 @@ public class DefaultUuidGeneratorTest {
             // You can be more specific if you'd like to run only one benchmark per test.
             .include(this.getClass().getName() + ".*")
             // Set the following options as needed
-            .mode(Mode.AverageTime)
+            .mode(Mode.All)
             .timeUnit(TimeUnit.MICROSECONDS)
             .warmupTime(TimeValue.seconds(1))
             .warmupIterations(2)
@@ -77,8 +75,6 @@ public class DefaultUuidGeneratorTest {
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Measurement(batchSize = 1000000)
     public void benchmark(BenchmarkState state, Blackhole bh) {
         String id = state.uuid.generateUuid();

@@ -23,11 +23,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -49,7 +47,7 @@ public class CaseInsensitiveMapTest {
             // You can be more specific if you'd like to run only one benchmark per test.
             .include(this.getClass().getName() + ".*")
             // Set the following options as needed
-            .mode(Mode.AverageTime)
+            .mode(Mode.All)
             .timeUnit(TimeUnit.MICROSECONDS)
             .warmupTime(TimeValue.seconds(1))
             .warmupIterations(2)
@@ -82,8 +80,6 @@ public class CaseInsensitiveMapTest {
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Measurement(batchSize = 1000000)
     public void camelMap(BenchmarkState state, Blackhole bh) {
         Map map = state.camelMap;
@@ -102,8 +98,6 @@ public class CaseInsensitiveMapTest {
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Measurement(batchSize = 1000000)
     public void cedarsoftMap(BenchmarkState state, Blackhole bh) {
         Map map = state.cedarsoftMap;
@@ -122,8 +116,6 @@ public class CaseInsensitiveMapTest {
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.MILLISECONDS)
     @Measurement(batchSize = 1000000)
     public void hashMap(BenchmarkState state, Blackhole bh) {
         Map map = state.hashMap;
