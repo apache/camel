@@ -20,7 +20,7 @@
   <parent>
     <artifactId>camel-spring-boot-dm</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.19.1-SNAPSHOT</version>
+    <version>2.19.1</version>
   </parent>
   <artifactId>camel-spring-boot-dependencies</artifactId>
   <packaging>pom</packaging>
@@ -1874,6 +1874,21 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-olingo4</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-olingo4-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-olingo4-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-openshift</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2015,6 +2030,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-reactive-streams-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-rest-swagger</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-rest-swagger-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
