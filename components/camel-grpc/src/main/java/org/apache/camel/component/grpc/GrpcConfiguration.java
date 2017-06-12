@@ -42,14 +42,21 @@ public class GrpcConfiguration {
     
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean usePlainText = true;
-    
+
+    @UriParam(label = "producer")
+    private GrpcProducerStrategy producerStrategy = GrpcProducerStrategy.RPC;
+
+    @UriParam(label = "producer")
+    private String streamRepliesTo;
+
+
     @UriParam(label = "consumer")
-    private GrpcProcessingStrategies processingStrategy = GrpcProcessingStrategies.PROPAGATION;
+    private GrpcConsumerStrategy consumerStrategy = GrpcConsumerStrategy.PROPAGATION;
     
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(defaultValue = "false")
     private boolean forwardOnCompleted;
 
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(defaultValue = "false")
     private boolean forwardOnError;
 
     private String serviceName;
@@ -130,12 +137,12 @@ public class GrpcConfiguration {
      * a propagation strategy is selected, request is sent to the stream, and the
      * response will be immediately sent back to the sender.
      */
-    public GrpcProcessingStrategies getProcessingStrategy() {
-        return processingStrategy;
+    public GrpcConsumerStrategy getConsumerStrategy() {
+        return consumerStrategy;
     }
 
-    public void setProcessingStrategy(GrpcProcessingStrategies processingStrategy) {
-        this.processingStrategy = processingStrategy;
+    public void setConsumerStrategy(GrpcConsumerStrategy consumerStrategy) {
+        this.consumerStrategy = consumerStrategy;
     }
 
     /**
@@ -181,5 +188,29 @@ public class GrpcConfiguration {
 
     protected void setServicePackage(String servicePackage) {
         this.servicePackage = servicePackage;
+    }
+
+    public GrpcProducerStrategy getProducerStrategy() {
+        return producerStrategy;
+    }
+
+    /**
+     * The mode used to communicate with a remote gRPC server.
+     * In RPC mode a single exchange is translated to a remote call.
+     * In STREAMING mode all exchanges will be sent within the same request (input and output of the recipient gRPC service must be of type 'stream').
+     */
+    public void setProducerStrategy(GrpcProducerStrategy producerStrategy) {
+        this.producerStrategy = producerStrategy;
+    }
+
+    public String getStreamRepliesTo() {
+        return streamRepliesTo;
+    }
+
+    /**
+     * When using STREAMING client mode, it indicates the endpoint where responses should be forwarded.
+     */
+    public void setStreamRepliesTo(String streamRepliesTo) {
+        this.streamRepliesTo = streamRepliesTo;
     }
 }

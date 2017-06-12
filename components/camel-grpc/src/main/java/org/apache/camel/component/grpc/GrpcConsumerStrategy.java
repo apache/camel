@@ -17,22 +17,18 @@
 package org.apache.camel.component.grpc;
 
 /*
- * Available values for the request and response processing strategies
+ * Available values for the consumer processing strategy.
  */
-public enum GrpcProcessingStrategies {
-    
-    AGGREGATION("AGGREGATION"),
-    PROPAGATION("PROPAGATION");
+public enum GrpcConsumerStrategy {
 
-    private final String strategy;
+    /**
+     * Collect all streaming elements in a single request and process them as a list in the route.
+     */
+    AGGREGATION,
 
-    GrpcProcessingStrategies(final String strategy) {
-        this.strategy = strategy;
-    }
-
-    @Override
-    public String toString() {
-        return strategy;
-    }
+    /**
+     * Process each streaming element of a request independently.
+     */
+    PROPAGATION;
 
 }
