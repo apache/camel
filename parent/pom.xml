@@ -121,7 +121,7 @@
     <chronicle-map-version>2.4.15</chronicle-map-version>
     <chronicle-network-version>1.8.2</chronicle-network-version>
     <chronicle-queue-version>4.5.27</chronicle-queue-version>
-    <chronicle-threads-version>1.7.7</chronicle-threads-version>
+    <chronicle-threads-version>1.8.1</chronicle-threads-version>
     <chronicle-wire-version>1.8.4</chronicle-wire-version>
     <chunk-templates-version>3.2.4</chunk-templates-version>
     <chunk-templates-bundle-version>3.2.4_1</chunk-templates-bundle-version>
