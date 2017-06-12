@@ -108,11 +108,11 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 
-                from("grpc://org.apache.camel.component.grpc.PingPong?processingStrategy=PROPAGATION&host=localhost&port=" + GRPC_ASYNC_NEXT_REQUEST_TEST_PORT)
+                from("grpc://org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&host=localhost&port=" + GRPC_ASYNC_NEXT_REQUEST_TEST_PORT)
                     .to("mock:async-on-next-propagation")
                     .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
                 
-                from("grpc://org.apache.camel.component.grpc.PingPong?processingStrategy=PROPAGATION&forwardOnCompleted=true&host=localhost&port=" + GRPC_ASYNC_COMPLETED_REQUEST_TEST_PORT)
+                from("grpc://org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&forwardOnCompleted=true&host=localhost&port=" + GRPC_ASYNC_COMPLETED_REQUEST_TEST_PORT)
                     .to("mock:async-on-completed-propagation")
                     .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
             }
