@@ -154,7 +154,7 @@ public class SalesforceLoginConfig {
             return AuthenticationType.REFRESH_TOKEN;
         }
 
-        if (!hasPassword && hasRefreshToken && hasKeystore) {
+        if (!hasPassword && !hasRefreshToken && hasKeystore) {
             return AuthenticationType.JWT;
         }
 
