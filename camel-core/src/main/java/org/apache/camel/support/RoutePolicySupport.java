@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.Suspendable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ServiceHelper;
@@ -75,20 +76,85 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
         // noop
     }
 
+    /**
+     * Starts the consumer.
+     *
+     * @return the returned value is always <tt>true</tt> and should not be used.
+     * @see #resumeOrStartConsumer(Consumer)
+     */
     public boolean startConsumer(Consumer consumer) throws Exception {
-        boolean resumed = ServiceHelper.resumeService(consumer);
-        if (resumed) {
-            log.debug("Resuming consumer {}", consumer);
-        }
-        return resumed;
+        // TODO: change to void in Camel 3.0
+        ServiceHelper.startService(consumer);
+        log.debug("Started consumer {}", consumer);
+        return true;
     }
 
+    /**
+     * Stops the consumer.
+     *
+     * @return the returned value is always <tt>true</tt> and should not be used.
+     * @see #suspendOrStopConsumer(Consumer)
+     */
     public boolean stopConsumer(Consumer consumer) throws Exception {
-        boolean suspended = ServiceHelper.suspendService(consumer);
-        if (suspended) {
-            log.debug("Suspended consumer {}", consumer);
+        // TODO: change to void in Camel 3.0
+        // stop and shutdown
+        ServiceHelper.stopAndShutdownServices(consumer);
+        log.debug("Stopped consumer {}", consumer);
+        return true;
+    }
+
+    /**
+     * Suspends or stops the consumer.
+     *
+     * If the consumer is {@link org.apache.camel.Suspendable} then the consumer is suspended,
+     * otherwise the consumer is stopped.
+     *
+     * @see #stopConsumer(Consumer)
+     * @return <tt>true</tt> if the consumer was suspended or stopped, <tt>false</tt> if the consumer was already suspend or stopped
+     */
+    public boolean suspendOrStopConsumer(Consumer consumer) throws Exception {
+        if (consumer instanceof Suspendable) {
+            boolean suspended = ServiceHelper.suspendService(consumer);
+            if (suspended) {
+                log.debug("Suspended consumer {}", consumer);
+            } else {
+                log.trace("Consumer already suspended {}", consumer);
+            }
+            return suspended;
         }
-        return suspended;
+        if (!ServiceHelper.isStopped(consumer)) {
+            ServiceHelper.stopService(consumer);
+            log.debug("Stopped consumer {}", consumer);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Resumes or starts the consumer.
+     *
+     * If the consumer is {@link org.apache.camel.Suspendable} then the consumer is resumed,
+     * otherwise the consumer is started.
+     *
+     * @see #startConsumer(Consumer)
+     * @return <tt>true</tt> if the consumer was resumed or started, <tt>false</tt> if the consumer was already resumed or started
+     */
+    public boolean resumeOrStartConsumer(Consumer consumer) throws Exception {
+        if (consumer instanceof Suspendable) {
+            boolean resumed = ServiceHelper.resumeService(consumer);
+            if (resumed) {
+                log.debug("Resumed consumer {}", consumer);
+            } else {
+                log.trace("Consumer already resumed {}", consumer);
+            }
+            return resumed;
+        }
+        if (!ServiceHelper.isStarted(consumer)) {
+            ServiceHelper.startService(consumer);
+            log.debug("Started consumer {}", consumer);
+            return true;
+        }
+        return false;
     }
 
     public void startRoute(Route route) throws Exception {
