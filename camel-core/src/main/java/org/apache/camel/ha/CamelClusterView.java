@@ -17,8 +17,6 @@
 package org.apache.camel.ha;
 
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
@@ -27,16 +25,10 @@ import org.apache.camel.Service;
  * Represents the View of the cluster at some given period of time.
  */
 public interface CamelClusterView extends Service, CamelContextAware {
-
-    enum Event {
-        KEEP_ALIVE,
-        LEADERSHIP_CHANGED;
-    }
-
     /**
      * @return the cluster.
      */
-    CamelCluster getCluster();
+    CamelClusterService getClusterService();
 
     /**
      * @return the namespace for this view.
@@ -65,24 +57,16 @@ public interface CamelClusterView extends Service, CamelContextAware {
     List<CamelClusterMember> getMembers();
 
     /**
-     * Add an event consumer.
+     * Add an event listener.
      *
-     * @param consumer the event consumer.
+     * @param listener the event listener.
      */
-    void addEventListener(BiConsumer<Event, Object> consumer);
+    void addEventListener(CameClusterEventListener listener);
 
     /**
-     * Add an event consumer for events matching the given predicate.
+     * Remove the event listener.
      *
-     * @param predicate the predicate to filter events.
-     * @param consumer the event consumer.
+     * @param listener the event listener.
      */
-    void addEventListener(Predicate<Event> predicate, BiConsumer<Event, Object> consumer);
-
-    /**
-     * Remove the event consumer.
-     *
-     * @param event the event consumer.
-     */
-    void removeEventListener(BiConsumer<Event, Object> event);
+    void removeEventListener(CameClusterEventListener listener);
 }

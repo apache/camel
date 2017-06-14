@@ -20,7 +20,6 @@ import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -28,8 +27,9 @@ import org.apache.camel.Route;
 import org.apache.camel.StartupListener;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.ha.CamelCluster;
-import org.apache.camel.ha.CamelClusterHelper;
+import org.apache.camel.ha.CameClusterEventListener;
+import org.apache.camel.ha.CamelClusterMember;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.support.EventNotifierSupport;
@@ -47,14 +47,15 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final Set<Route> stoppedRoutes;
     private final ReferenceCount refCount;
     private final CamelClusterView clusterView;
-    private final BiConsumer<CamelClusterView.Event, Object> leadershipEventConsumer;
+    private final CameClusterEventListener.Leadership leadershipEventListener;
     private final CamelContextStartupListener listener;
     private final AtomicBoolean contextStarted;
+
     private CamelContext camelContext;
 
     public ClusteredRoutePolicy(CamelClusterView clusterView) {
         this.clusterView = clusterView;
-        this.leadershipEventConsumer = this::onLeadershipEvent;
+        this.leadershipEventListener = new CamelClusterLeadershipListener();
 
         this.stoppedRoutes = new HashSet<>();
         this.startedRoutes = new HashSet<>();
@@ -69,13 +70,13 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         }
 
         // Cleanup the policy when all the routes it manages have been shut down
-        // so it can be shared among routes.
+        // so a single policy instance can be shared among routes.
         this.refCount = ReferenceCount.onRelease(() -> {
             if (camelContext != null) {
                 camelContext.getManagementStrategy().removeEventNotifier(listener);
             }
 
-            clusterView.removeEventListener(leadershipEventConsumer);
+            clusterView.removeEventListener(leadershipEventListener);
             setLeader(false);
         });
     }
@@ -199,8 +200,11 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // Event handling
     // ****************************************************
 
-    private void onLeadershipEvent(CamelClusterView.Event event, Object payload) {
-        setLeader(clusterView.getLocalMember().isMaster());
+    private class CamelClusterLeadershipListener implements CameClusterEventListener.Leadership {
+        @Override
+        public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
+            setLeader(clusterView.getLocalMember().isMaster());
+        }
     }
 
     private class CamelContextStartupListener extends EventNotifierSupport implements StartupListener {
@@ -236,7 +240,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             // so start/stop of managed routes do not clash with CamelContext
             // startup
             if (contextStarted.compareAndSet(false, true)) {
-                clusterView.addEventListener(CamelClusterHelper.leadershipEventFilter(), leadershipEventConsumer);
+                clusterView.addEventListener(leadershipEventListener);
                 setLeader(clusterView.getLocalMember().isMaster());
             }
         }
@@ -247,7 +251,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // ****************************************************
 
     public static ClusteredRoutePolicy forNamespace(CamelContext camelContext, String namespace) throws Exception {
-        CamelCluster cluster = camelContext.hasService(CamelCluster.class);
+        CamelClusterService cluster = camelContext.hasService(CamelClusterService.class);
         if (cluster == null) {
             throw new IllegalStateException("CamelCluster service not found");
         }
@@ -255,7 +259,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         return forNamespace(cluster, namespace);
     }
 
-    public static ClusteredRoutePolicy forNamespace(CamelCluster cluster, String namespace) throws Exception {
+    public static ClusteredRoutePolicy forNamespace(CamelClusterService cluster, String namespace) throws Exception {
         return forView(cluster.getView(namespace));
     }
 
