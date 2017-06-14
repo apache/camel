@@ -123,6 +123,11 @@ public class Mina2ComponentConfiguration
          */
         private String encoding;
         /**
+         * Maximum amount of time it should take to send data to the MINA
+         * session. Default is 10000 milliseconds.
+         */
+        private Long writeTimeout = 10000L;
+        /**
          * You can configure the timeout that specifies how long to wait for a
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
@@ -277,6 +282,14 @@ public class Mina2ComponentConfiguration
 
         public void setEncoding(String encoding) {
             this.encoding = encoding;
+        }
+
+        public Long getWriteTimeout() {
+            return writeTimeout;
+        }
+
+        public void setWriteTimeout(Long writeTimeout) {
+            this.writeTimeout = writeTimeout;
         }
 
         public Long getTimeout() {
