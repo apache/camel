@@ -71,6 +71,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     private CountDownLatch responseLatch;
     private CountDownLatch closeLatch;
     private boolean lazySessionCreation;
+    private long writeTimeout;
     private long timeout;
     private SocketAddress address;
     private IoConnector connector;
@@ -84,6 +85,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
         this.lazySessionCreation = configuration.isLazySessionCreation();
+        this.writeTimeout = configuration.getWriteTimeout();
         this.timeout = configuration.getTimeout();
         this.sync = configuration.isSync();
         this.noReplyLogger = new CamelLogger(LOG, configuration.getNoReplyLogLevel());
@@ -165,7 +167,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             LOG.debug("Writing body: {}", out);
         }
         // write the body
-        Mina2Helper.writeBody(session, body, exchange);
+        Mina2Helper.writeBody(session, body, exchange, writeTimeout);
 
         if (sync) {
             // wait for response, consider timeout
