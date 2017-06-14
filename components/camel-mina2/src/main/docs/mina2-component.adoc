@@ -100,7 +100,7 @@ with the following path and query parameters:
 | **port** | *Required* Port number |  | int
 |=======================================================================
 
-#### Query Parameters (26 parameters):
+#### Query Parameters (27 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -109,6 +109,7 @@ with the following path and query parameters:
 | **minaLogger** (common) | You can enable the Apache MINA logging filter. Apache MINA uses slf4j logging at INFO level to log all input and output. | false | boolean
 | **sync** (common) | Setting to set endpoint as one-way or request-response. | true | boolean
 | **timeout** (common) | You can configure the timeout that specifies how long to wait for a response from a remote server. The timeout unit is in milliseconds so 60000 is 60 seconds. | 30000 | long
+| **writeTimeout** (common) | Maximum amount of time it should take to send data to the MINA session. Default is 10000 milliseconds. | 10000 | long
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **clientMode** (consumer) | If the clientMode is true mina consumer will connect the address as a TCP client. | false | boolean
 | **disconnectOnNoReply** (consumer) | If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back. | true | boolean
