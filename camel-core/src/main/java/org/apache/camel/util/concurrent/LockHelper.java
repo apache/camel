@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util.concurrent;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.locks.StampedLock;
 
 import org.apache.camel.util.function.ThrowingRunnable;
@@ -29,6 +30,16 @@ public final class LockHelper {
 
         try {
             task.run();
+        } finally {
+            lock.unlockRead(stamp);
+        }
+    }
+
+    public static <R> R callWithReadLock(StampedLock lock, Callable<R> task) throws Exception {
+        long stamp = lock.readLock();
+
+        try {
+            return task.call();
         } finally {
             lock.unlockRead(stamp);
         }
@@ -49,6 +60,16 @@ public final class LockHelper {
 
         try {
             task.run();
+        } finally {
+            lock.unlockWrite(stamp);
+        }
+    }
+
+    public static <R> R  callWithWriteLock(StampedLock lock, Callable<R> task) throws Exception {
+        long stamp = lock.writeLock();
+
+        try {
+            return task.call();
         } finally {
             lock.unlockWrite(stamp);
         }

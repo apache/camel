@@ -17,6 +17,7 @@
 package org.apache.camel.ha;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Service;
@@ -36,11 +37,11 @@ public interface CamelClusterView extends Service, CamelContextAware {
     String getNamespace();
 
     /**
-     * Provides the master member.
+     * Provides the master member if elected.
      *
      * @return the master member.
      */
-    CamelClusterMember getMaster();
+    Optional<CamelClusterMember> getMaster();
 
     /**
      * Provides the local member.
