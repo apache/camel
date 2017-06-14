@@ -129,6 +129,24 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Gets the mandatory inbound header of the correct type
+     *
+     * @param message       the message
+     * @param headerName    the header name
+     * @param type          the type
+     * @return the header value
+     * @throws TypeConversionException is thrown if error during type conversion
+     * @throws NoSuchHeaderException is thrown if no headers exists
+     */
+    public static <T> T getMandatoryHeader(Message message, String headerName, Class<T> type) throws TypeConversionException, NoSuchHeaderException {
+        T answer = message.getHeader(headerName, type);
+        if (answer == null) {
+            throw new NoSuchHeaderException(message.getExchange(), headerName, type);
+        }
+        return answer;
+    }
+
+    /**
      * Gets an header or property of the correct type
      *
      * @param exchange      the exchange

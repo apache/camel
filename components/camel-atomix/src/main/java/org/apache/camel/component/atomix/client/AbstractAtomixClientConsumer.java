@@ -16,8 +16,16 @@
  */
 package org.apache.camel.component.atomix.client;
 
-import io.atomix.AtomixClient;
-import org.apache.camel.component.atomix.AtomixConfiguration;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultConsumer;
 
-public class AtomixClientConfiguration extends AtomixConfiguration<AtomixClient> implements Cloneable {
+public abstract class AbstractAtomixClientConsumer<E extends AbstractAtomixClientEndpoint> extends DefaultConsumer {
+    protected AbstractAtomixClientConsumer(E endpoint, Processor processor) {
+        super(endpoint, processor);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected E getAtomixEndpoint() {
+        return (E)super.getEndpoint();
+    }
 }

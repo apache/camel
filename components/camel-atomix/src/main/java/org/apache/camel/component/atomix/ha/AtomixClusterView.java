@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.atomix.ha;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -30,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class AtomixClusterView extends AbstractCamelClusterView {
+final class AtomixClusterView extends AbstractCamelClusterView {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClusterView.class);
 
     private final Atomix atomix;
@@ -45,12 +47,17 @@ public final class AtomixClusterView extends AbstractCamelClusterView {
     }
 
     @Override
-    public CamelClusterMember getMaster() {
+    public Optional<CamelClusterMember> getMaster() {
         if (group == null) {
-            throw new IllegalStateException("The view has not yet joined the cluster");
+            return Optional.empty();
         }
 
-        return asCamelClusterMember(group.election().term().leader());
+        GroupMember leader = group.election().term().leader();
+        if (leader == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(asCamelClusterMember(leader));
     }
 
     @Override
@@ -61,7 +68,7 @@ public final class AtomixClusterView extends AbstractCamelClusterView {
     @Override
     public List<CamelClusterMember> getMembers() {
         if (group == null) {
-            throw new IllegalStateException("The view has not yet joined the cluster");
+            return Collections.emptyList();
         }
 
         return this.group.members().stream()
@@ -105,11 +112,13 @@ public final class AtomixClusterView extends AbstractCamelClusterView {
     class AtomixLocalMember implements CamelClusterMember {
         private LocalMember member;
 
-        AtomixLocalMember() {
-        }
-
         @Override
         public String getId() {
+            String id = getClusterService().getId();
+            if (ObjectHelper.isNotEmpty(id)) {
+                return id;
+            }
+
             if (member == null) {
                 throw new IllegalStateException("The view has not yet joined the cluster");
             }
@@ -153,10 +162,6 @@ public final class AtomixClusterView extends AbstractCamelClusterView {
 
             return this;
         }
-
-        LocalMember get() {
-            return member;
-        }
     }
 
     class AtomixClusterMember implements CamelClusterMember {
@@ -175,11 +180,7 @@ public final class AtomixClusterView extends AbstractCamelClusterView {
 
         @Override
         public boolean isMaster() {
-            return group.election().term().leader().equals(member);
-        }
-
-        GroupMember get() {
-            return member;
+            return member.equals(group.election().term().leader());
         }
     }
 }

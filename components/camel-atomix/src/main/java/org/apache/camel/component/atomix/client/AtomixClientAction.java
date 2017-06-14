@@ -16,8 +16,17 @@
  */
 package org.apache.camel.component.atomix.client;
 
-import io.atomix.AtomixClient;
-import org.apache.camel.component.atomix.AtomixConfiguration;
-
-public class AtomixClientConfiguration extends AtomixConfiguration<AtomixClient> implements Cloneable {
+public enum AtomixClientAction {
+    PUT,
+    PUT_IF_ABSENT,
+    GET,
+    CLEAR,
+    SIZE,
+    CONTAINS_KEY,
+    CONTAINS_VALUE,
+    IS_EMPTY,
+    ENTRY_SET,
+    REMOVE,
+    REPLACE,
+    VALUES
 }

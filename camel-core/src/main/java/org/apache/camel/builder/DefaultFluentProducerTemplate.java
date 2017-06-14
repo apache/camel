@@ -124,6 +124,14 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     }
 
     @Override
+    public FluentProducerTemplate clearAll() {
+       clearBody();
+       clearHeaders();
+
+       return this;
+    }
+
+    @Override
     public FluentProducerTemplate withHeader(String key, Object value) {
         if (headers == null) {
             headers = new HashMap<>();

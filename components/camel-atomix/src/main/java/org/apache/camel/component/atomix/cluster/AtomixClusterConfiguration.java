@@ -17,6 +17,7 @@
 package org.apache.camel.component.atomix.cluster;
 
 import io.atomix.AtomixReplica;
+import io.atomix.catalyst.transport.Transport;
 import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.atomix.AtomixConfiguration;
@@ -24,7 +25,13 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
-public class AtomixClusterConfiguration extends AtomixConfiguration implements Cloneable {
+public class AtomixClusterConfiguration extends AtomixConfiguration<AtomixReplica> implements Cloneable {
+
+    @UriParam
+    private Class<? extends Transport> clientTransport;
+
+    @UriParam
+    private Class<? extends Transport> serverTransport;
 
     @UriParam
     private String storagePath;
@@ -32,13 +39,34 @@ public class AtomixClusterConfiguration extends AtomixConfiguration implements C
     @UriParam(defaultValue = "MEMORY")
     private StorageLevel storageLevel = StorageLevel.MEMORY;
 
-    @UriParam
-    private String replicaRef;
-
-    @UriParam
-    private AtomixReplica replica;
-
     public AtomixClusterConfiguration() {
+    }
+
+    // ******************************************
+    // Properties
+    // ******************************************
+
+
+    public Class<? extends Transport> getClientTransport() {
+        return clientTransport;
+    }
+
+    /**
+     * The client transport
+     */
+    public void setClientTransport(Class<? extends Transport> clientTransport) {
+        this.clientTransport = clientTransport;
+    }
+
+    public Class<? extends Transport> getServerTransport() {
+        return serverTransport;
+    }
+
+    /**
+     * The server transport
+     */
+    public void setServerTransport(Class<? extends Transport> serverTransport) {
+        this.serverTransport = serverTransport;
     }
 
     public String getStoragePath() {
@@ -61,28 +89,6 @@ public class AtomixClusterConfiguration extends AtomixConfiguration implements C
      */
     public void setStorageLevel(StorageLevel storageLevel) {
         this.storageLevel = storageLevel;
-    }
-
-    public String getReplicaRef() {
-        return replicaRef;
-    }
-
-    /**
-     * Set the reference of an instance of {@link AtomixReplica}.
-     */
-    public void setReplicaRef(String clusterref) {
-        this.replicaRef = clusterref;
-    }
-
-    public AtomixReplica getReplica() {
-        return replica;
-    }
-
-    /**
-     * Set an instance of {@link AtomixReplica}.
-     */
-    public void setReplica(AtomixReplica replica) {
-        this.replica = replica;
     }
 
     // ****************************************
