@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring;
 
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.junit.Assert;
@@ -26,8 +25,10 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration
 public class CircularComponentInjectionTest extends SpringRunWithTestSupport {
+
     @EndpointInject(ref = "seda")
     protected Endpoint sedaEndpoint;
+
     @EndpointInject(ref = "log")
     protected Endpoint logEndpoint;
 
