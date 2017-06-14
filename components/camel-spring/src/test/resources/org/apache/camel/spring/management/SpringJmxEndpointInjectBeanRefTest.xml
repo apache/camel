@@ -29,13 +29,15 @@
     <!-- enable JMX -->
     <jmxAgent id="agent" disabled="false"/>
 
+    <endpoint id="foo" uri="seda:foo"/>
+
     <route>
       <from uri="direct:start"/>
       <to uri="bean:myBean"/>
     </route>
 
     <route>
-      <from uri="seda:foo" id="foo"/>
+      <from uri="ref:foo"/>
       <to uri="mock:result"/>
     </route>
 

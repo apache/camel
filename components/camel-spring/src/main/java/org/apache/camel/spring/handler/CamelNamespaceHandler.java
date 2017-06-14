@@ -440,7 +440,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
 
             // register as endpoint defined indirectly in the routes by from/to types having id explicit set
-            registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId, binder);
+            // registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId, binder);
 
             // register templates if not already defined
             registerTemplates(element, parserContext, contextId);
@@ -534,6 +534,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     /**
      * Used for auto registering endpoints from the <tt>from</tt> or <tt>to</tt> DSL if they have an id attribute set
      */
+    @Deprecated
     protected void registerEndpointsWithIdsDefinedInFromOrToTypes(Element element, ParserContext parserContext, String contextId, Binder<Node> binder) {
         NodeList list = element.getChildNodes();
         int size = list.getLength();

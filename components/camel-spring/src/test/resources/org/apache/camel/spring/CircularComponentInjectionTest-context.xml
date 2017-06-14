@@ -26,9 +26,11 @@
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <endpoint id="log" uri="seda:test"/>
+    <endpoint id="seda" uri="log:test"/>
     <route>
-      <from id="log" uri="seda:test"/>
-      <to id="seda" uri="log:test"/>
+      <from uri="ref:log"/>
+      <to uri="ref:seda"/>
     </route>
   </camelContext>
 

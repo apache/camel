@@ -25,14 +25,15 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <from uri="seda:foo"/>
-            <to id="result" uri="mock:result"/>
-        </route>
-    </camelContext>
+  <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+    <endpoint id="result" uri="mock:result"/>
+    <route>
+      <from uri="seda:foo"/>
+      <to uri="ref:result"/>
+    </route>
+  </camelContext>
 
-    <camel:template id="template" camelContextId="myCamel"/>
-    <camel:consumerTemplate id="consumerTemplate" camelContextId="myCamel"/>
+  <camel:template id="template" camelContextId="myCamel"/>
+  <camel:consumerTemplate id="consumerTemplate" camelContextId="myCamel"/>
 
 </beans>

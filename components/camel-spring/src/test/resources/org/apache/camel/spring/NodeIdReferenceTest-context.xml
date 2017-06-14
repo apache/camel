@@ -24,13 +24,14 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <template id="camelTemplate"/>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <template id="camelTemplate"/>
+    <endpoint id="foo" uri="direct:start"/>
 
-        <route>
-            <from id="foo" uri="direct:start"/>
-            <to uri="mock:result"/>
-        </route>
-    </camelContext>
+    <route>
+      <from uri="ref:foo"/>
+      <to uri="mock:result"/>
+    </route>
+  </camelContext>
 
 </beans>
