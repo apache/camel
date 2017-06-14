@@ -1,0 +1,45 @@
+## atomix-map Component
+
+*Available as of Camel version 2.20*
+
+The camel atomix component allows you to work with Atomix, a fault-tolerant distributed coordination framework.
+
+// component options: START
+The atomix-map component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **configuration** (advanced) | The shared component configuration |  | C
+| **atomix** (producer) | The shared AtomixClient instance |  | AtomixClient
+| **nodes** (producer) | The nodes the AtomixClient should connect to |  | List
+| **configurationUri** (producer) | The path to the AtomixClient configuration |  | String
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|=======================================================================
+// component options: END
+
+// endpoint options: START
+The atomix-map endpoint is configured using URI syntax:
+
+    atomix-map:mapName
+
+with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **mapName** | *Required* The distributed map name |  | String
+|=======================================================================
+
+#### Query Parameters (1 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
+// endpoint options: END

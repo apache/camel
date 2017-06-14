@@ -137,6 +137,11 @@ public interface FluentProducerTemplate extends Service {
     // -----------------------------------------------------------------------
 
     /**
+     * Remove the body and headers.
+     */
+    FluentProducerTemplate clearAll();
+
+    /**
      * Set the header
      *
      * @param key the key of the header

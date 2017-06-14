@@ -21,13 +21,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.atomix.Atomix;
 import io.atomix.catalyst.transport.Address;
 import io.atomix.catalyst.transport.Transport;
 import io.atomix.catalyst.transport.netty.NettyTransport;
+import io.atomix.resource.ReadConsistency;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
-public class AtomixConfiguration {
+public class AtomixConfiguration<T extends Atomix> implements Cloneable {
+    @UriParam
+    private T atomix;
+
     @UriParam(javaType = "java.lang.String")
     private List<Address> nodes = Collections.emptyList();
 
@@ -37,7 +42,25 @@ public class AtomixConfiguration {
     @UriParam
     private String configurationUri;
 
+    @UriParam(label = "advanced")
+    private ReadConsistency readConsistency;
+
     protected AtomixConfiguration() {
+    }
+
+    // *****************************************
+    // Properties
+    // *****************************************
+
+    public T getAtomix() {
+        return atomix;
+    }
+
+    /**
+     * The Atomix instance to use
+     */
+    public void setAtomix(T client) {
+        this.atomix = client;
     }
 
     public List<Address> getNodes() {
@@ -77,5 +100,16 @@ public class AtomixConfiguration {
      */
     public void setConfigurationUri(String configurationUri) {
         this.configurationUri = configurationUri;
+    }
+
+    public ReadConsistency getReadConsistency() {
+        return readConsistency;
+    }
+
+    /**
+     * The read consistency level.
+     */
+    public void setReadConsistency(ReadConsistency readConsistency) {
+        this.readConsistency = readConsistency;
     }
 }

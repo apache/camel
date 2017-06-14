@@ -1,6 +1,0 @@
-## Atomix Client Component
-
-*Available as of Camel version 2.20*
-
-The camel atomix component allows you to work with Atomix, a fault-tolerant distributed coordination framework.
-

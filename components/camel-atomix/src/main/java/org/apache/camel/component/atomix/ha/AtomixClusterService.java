@@ -18,7 +18,6 @@ package org.apache.camel.component.atomix.ha;
 
 import java.util.List;
 
-import io.atomix.Atomix;
 import io.atomix.AtomixReplica;
 import io.atomix.catalyst.transport.Address;
 import io.atomix.catalyst.transport.Transport;
@@ -109,20 +108,12 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
         configuration.setTransport(transport);
     }
 
-    public String getReplicaRef() {
-        return configuration.getReplicaRef();
+    public AtomixReplica getAtomix() {
+        return configuration.getAtomix();
     }
 
-    public void setReplicaRef(String clusterref) {
-        configuration.setReplicaRef(clusterref);
-    }
-
-    public Atomix getReplica() {
-        return configuration.getReplica();
-    }
-
-    public void setReplica(AtomixReplica replica) {
-        configuration.setReplica(replica);
+    public void setAtomix(AtomixReplica atomix) {
+        configuration.setAtomix(atomix);
     }
 
     public String getConfigurationUri() {
@@ -139,23 +130,18 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
 
     @Override
     protected void doStart() throws Exception {
-        // Assume that if addresses are provided the cluster needs be bootstrapped.
-        if (ObjectHelper.isNotEmpty(configuration.getNodes())) {
-            LOGGER.debug("Bootstrap cluster on address {} for nodes: {}", address, configuration.getNodes());
-            getOrCreateAtomix().bootstrap(configuration.getNodes()).join();
-            LOGGER.debug("Bootstrap cluster done");
-        }
+        // instantiate a new atomix replica
+        getOrCreateReplica();
 
         super.doStart();
     }
 
     @Override
     protected AtomixClusterView createView(String namespace) throws Exception {
-        return new AtomixClusterView(this, namespace, getOrCreateAtomix());
+        return new AtomixClusterView(this, namespace, getOrCreateReplica());
     }
 
-
-    private AtomixReplica getOrCreateAtomix() throws Exception {
+    private AtomixReplica getOrCreateReplica() throws Exception {
         if (atomix == null) {
             // Validate parameters
             ObjectHelper.notNull(getCamelContext(), "Camel Context");

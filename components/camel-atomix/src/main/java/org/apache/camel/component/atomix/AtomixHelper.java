@@ -14,10 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atomix.client;
+package org.apache.camel.component.atomix;
 
-import io.atomix.AtomixClient;
-import org.apache.camel.component.atomix.AtomixConfiguration;
+import io.atomix.copycat.server.storage.Storage;
+import io.atomix.copycat.server.storage.StorageLevel;
 
-public class AtomixClientConfiguration extends AtomixConfiguration<AtomixClient> implements Cloneable {
+public final class AtomixHelper {
+    private AtomixHelper() {
+    }
+
+    public static Storage inMemoryStorage() {
+        return Storage.builder().withStorageLevel(StorageLevel.MEMORY).build();
+    }
 }

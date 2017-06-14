@@ -14,10 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atomix.client;
+package org.apache.camel.component.atomix;
 
-import io.atomix.AtomixClient;
-import org.apache.camel.component.atomix.AtomixConfiguration;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Message;
 
-public class AtomixClientConfiguration extends AtomixConfiguration<AtomixClient> implements Cloneable {
+@FunctionalInterface
+public interface AtomixAsyncMessageProcessor {
+    /**
+     * @param message
+     * @param callback
+     * @return
+     * @throws Exception
+     */
+    boolean process(Message message, AsyncCallback callback) throws Exception;
 }

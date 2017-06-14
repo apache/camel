@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atomix.client;
+package org.apache.camel.util.function;
 
-import io.atomix.AtomixClient;
-import org.apache.camel.component.atomix.AtomixConfiguration;
-
-public class AtomixClientConfiguration extends AtomixConfiguration<AtomixClient> implements Cloneable {
+@FunctionalInterface
+public interface ThrowingBiFunction<I1, I2, R, T extends Throwable> {
+    R apply(I1 in1, I2 in2) throws T;
 }

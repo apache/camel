@@ -16,22 +16,15 @@
  */
 package org.apache.camel.component.atomix.client;
 
-import java.util.Map;
+import org.apache.camel.impl.HeaderSelectorProducer;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
-public class AtomixClientComponent extends DefaultComponent {
-    public AtomixClientComponent() {
+public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint> extends HeaderSelectorProducer {
+    protected AbstractAtomixClientProducer(E endpoint, String header) {
+        super(endpoint, header);
     }
 
-    public AtomixClientComponent(CamelContext camelContext) {
-        super(camelContext);
-    }
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        throw new UnsupportedOperationException("Not yet implemented");
+    @SuppressWarnings("unchecked")
+    protected E getAtomixEndpoint() {
+        return (E)super.getEndpoint();
     }
 }

@@ -14,31 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atomix.cluster;
+package org.apache.camel.component.atomix.client;
 
 import java.io.InputStream;
 import java.util.Properties;
 
-import io.atomix.AtomixReplica;
-import io.atomix.catalyst.transport.Address;
-import io.atomix.copycat.server.storage.Storage;
+import io.atomix.AtomixClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
-public final class AtomixClusterHelper {
-    private AtomixClusterHelper() {
+public final class AtomixClientHelper {
+    private AtomixClientHelper() {
     }
 
-    public static AtomixReplica createReplica(CamelContext camelContext, String address, AtomixClusterConfiguration configuration) throws Exception {
-        return createReplica(camelContext, new Address(address), configuration);
-    }
-
-    public static AtomixReplica createReplica(CamelContext camelContext, Address address, AtomixClusterConfiguration configuration) throws Exception {
-        AtomixReplica atomix = configuration.getAtomix();
+    public static AtomixClient createClient(CamelContext camelContext, AtomixClientConfiguration configuration) throws Exception {
+        AtomixClient atomix = configuration.getAtomix();
 
         if (atomix == null) {
-            final AtomixReplica.Builder atomixBuilder;
+            final AtomixClient.Builder atomixBuilder;
 
             String uri = configuration.getConfigurationUri();
             if (ObjectHelper.isNotEmpty(uri)) {
@@ -47,31 +41,15 @@ public final class AtomixClusterHelper {
                     Properties properties = new Properties();
                     properties.load(is);
 
-                    atomixBuilder = AtomixReplica.builder(address, properties);
+                    atomixBuilder = AtomixClient.builder(properties);
                 }
             } else {
-                atomixBuilder = AtomixReplica.builder(address);
+                atomixBuilder = AtomixClient.builder();
             }
-
-            Storage.Builder storageBuilder = Storage.builder();
-            ObjectHelper.ifNotEmpty(configuration.getStorageLevel(), storageBuilder::withStorageLevel);
-            ObjectHelper.ifNotEmpty(configuration.getStoragePath(), storageBuilder::withDirectory);
-
-            atomixBuilder.withStorage(storageBuilder.build());
 
             if (configuration.getTransport() != null) {
                 atomixBuilder.withTransport(
                     camelContext.getInjector().newInstance(configuration.getTransport())
-                );
-            }
-            if (configuration.getClientTransport() != null) {
-                atomixBuilder.withClientTransport(
-                    camelContext.getInjector().newInstance(configuration.getClientTransport())
-                );
-            }
-            if (configuration.getServerTransport() != null) {
-                atomixBuilder.withServerTransport(
-                    camelContext.getInjector().newInstance(configuration.getServerTransport())
                 );
             }
 
