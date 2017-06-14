@@ -350,6 +350,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             String contextId = element.getAttribute("id");
             boolean implicitId = false;
+            boolean registerEndpointIdsFromRoute = false;
 
             // lets avoid folks having to explicitly give an ID to a camel context
             if (ObjectHelper.isEmpty(contextId)) {
@@ -407,6 +408,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("hystrixConfigurations", factoryBean.getHystrixConfigurations());
                 // add any depends-on
                 addDependsOn(factoryBean, builder);
+
+                registerEndpointIdsFromRoute = "true".equalsIgnoreCase(factoryBean.getRegisterEndpointIdsFromRoute());
             }
 
             NodeList list = element.getChildNodes();
@@ -439,8 +442,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 }
             }
 
-            // register as endpoint defined indirectly in the routes by from/to types having id explicit set
-            // registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId, binder);
+            if (registerEndpointIdsFromRoute) {
+                // register as endpoint defined indirectly in the routes by from/to types having id explicit set
+                LOG.debug("Registering endpoint with ids defined in Camel routes");
+                registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId, binder);
+            }
 
             // register templates if not already defined
             registerTemplates(element, parserContext, contextId);
@@ -689,6 +695,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         String id = childElement.getAttribute("id");
         // must have an id to be registered
         if (ObjectHelper.isNotEmpty(id)) {
+            // skip underscore as they are internal naming and should not be registered
+            if (id.startsWith("_")) {
+                LOG.debug("Skip registering endpoint starting with underscore: {}", id);
+                return;
+            }
             BeanDefinition definition = endpointParser.parse(childElement, parserContext);
             definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
             // Need to add this dependency of CamelContext for Spring 3.0
