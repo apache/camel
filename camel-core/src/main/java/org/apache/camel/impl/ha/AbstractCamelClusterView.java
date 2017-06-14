@@ -77,7 +77,7 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
     // Events
     // **************************************
 
-    private <T extends CameClusterEventListener> void executeWithListener(Class<T> type, Consumer<T> consumer) {
+    private <T extends CameClusterEventListener> void doWithListener(Class<T> type, Consumer<T> consumer) {
         LockHelper.doWithReadLock(
             lock,
             () -> {
@@ -93,21 +93,21 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
     }
 
     protected void fireLeadershipChangedEvent(CamelClusterMember leader) {
-        executeWithListener(
+        doWithListener(
             CameClusterEventListener.Leadership.class,
             listener -> listener.leadershipChanged(this, leader)
         );
     }
 
     protected void fireMemberAddedEvent(CamelClusterMember member) {
-        executeWithListener(
+        doWithListener(
             CameClusterEventListener.Membership.class,
             listener -> listener.memberAdded(this, member)
         );
     }
 
     protected void fireMemberRemovedEvent(CamelClusterMember member) {
-        executeWithListener(
+        doWithListener(
             CameClusterEventListener.Membership.class,
             listener -> listener.memberRemoved(this, member)
         );

@@ -47,11 +47,6 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
         this.lock = new StampedLock();
     }
 
-    /**
-     * Sets the id
-     *
-     * @param id the id
-     */
     @Override
     public void setId(String id) {
         this.id = id;
@@ -107,26 +102,25 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
 
     @Override
     public CamelClusterView getView(String namespace) throws Exception {
-        long stamp = lock.writeLock();
+        return LockHelper.callWithWriteLock(
+            lock,
+            () -> {
+                T view = views.get(namespace);
 
-        try {
-            T view = views.get(namespace);
+                if (view == null) {
+                    view = createView(namespace);
+                    view.setCamelContext(this.camelContext);
 
-            if (view == null) {
-                view = createView(namespace);
-                view.setCamelContext(this.camelContext);
+                    views.put(namespace, view);
 
-                views.put(namespace, view);
-
-                if (AbstractCamelClusterService.this.isRunAllowed()) {
-                    view.start();
+                    if (AbstractCamelClusterService.this.isRunAllowed()) {
+                        view.start();
+                    }
                 }
-            }
 
-            return view;
-        } finally {
-            lock.unlockWrite(stamp);
-        }
+                return view;
+            }
+        );
     }
 
     // **********************************
