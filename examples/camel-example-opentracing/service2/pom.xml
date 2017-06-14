@@ -90,7 +90,7 @@
       <artifactId>camel-opentracing</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.apache.camel.example</groupId>
       <artifactId>camel-example-opentracing-loggingtracer</artifactId>
       <version>${project.version}</version>
     </dependency>
