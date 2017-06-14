@@ -178,7 +178,7 @@
     <dnsjava-version>2.1.8</dnsjava-version>
     <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
     <docker-java-version>3.0.10</docker-java-version>
-    <docker-java-bundle-version>3.0.10_1-SNAPSHOT</docker-java-bundle-version>
+    <docker-java-bundle-version>3.0.10_1</docker-java-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>6.0.0</dozer-version>
     <drools-version>6.5.0.Final</drools-version>
