@@ -26,29 +26,25 @@ import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.atomix.cluster.AtomixClusterConfiguration;
 import org.apache.camel.component.atomix.cluster.AtomixClusterHelper;
-import org.apache.camel.impl.ha.AbstractCamelCluster;
+import org.apache.camel.impl.ha.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class AtomixCluster extends AbstractCamelCluster<AtomixClusterView> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixCluster.class);
+public final class AtomixClusterService extends AbstractCamelClusterService<AtomixClusterView> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClusterService.class);
 
-    private CamelContext camelContext;
     private Address address;
     private AtomixClusterConfiguration configuration;
     private AtomixReplica atomix;
 
-    public AtomixCluster() {
-        super("atomix");
-
+    public AtomixClusterService() {
         this.configuration = new AtomixClusterConfiguration();
     }
 
-    public AtomixCluster(CamelContext camelContext, Address address, AtomixClusterConfiguration configuration) {
-        super("atomix");
+    public AtomixClusterService(CamelContext camelContext, Address address, AtomixClusterConfiguration configuration) {
+        super(null, camelContext);
 
-        this.camelContext = camelContext;
         this.address = address;
         this.configuration = configuration.copy();
     }
@@ -56,16 +52,6 @@ public final class AtomixCluster extends AbstractCamelCluster<AtomixClusterView>
     // **********************************
     // Properties
     // **********************************
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
 
     public Address getAddress() {
         return address;
@@ -172,16 +158,19 @@ public final class AtomixCluster extends AbstractCamelCluster<AtomixClusterView>
     private AtomixReplica getOrCreateAtomix() throws Exception {
         if (atomix == null) {
             // Validate parameters
-            ObjectHelper.notNull(camelContext, "Camel Context");
+            ObjectHelper.notNull(getCamelContext(), "Camel Context");
             ObjectHelper.notNull(address, "Atomix Node Address");
             ObjectHelper.notNull(configuration, "Atomix Node Configuration");
 
-            atomix = AtomixClusterHelper.createReplica(camelContext, address, configuration);
+            atomix = AtomixClusterHelper.createReplica(getCamelContext(), address, configuration);
 
-            // Assume that if addresses are provided the cluster needs be bootstrapped.
             if (ObjectHelper.isNotEmpty(configuration.getNodes())) {
                 LOGGER.debug("Bootstrap cluster on address {} for nodes: {}", address, configuration.getNodes());
                 this.atomix.bootstrap(configuration.getNodes()).join();
+                LOGGER.debug("Bootstrap cluster done");
+            } else {
+                LOGGER.debug("Bootstrap cluster on address {}", address, configuration.getNodes());
+                this.atomix.bootstrap().join();
                 LOGGER.debug("Bootstrap cluster done");
             }
         }
