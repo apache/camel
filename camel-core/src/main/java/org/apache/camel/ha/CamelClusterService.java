@@ -16,13 +16,17 @@
  */
 package org.apache.camel.ha;
 
-import java.util.function.Predicate;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Service;
+import org.apache.camel.spi.IdAware;
 
-public final class CamelClusterHelper {
-    private CamelClusterHelper() {
-    }
-
-    public static Predicate<CamelClusterView.Event> leadershipEventFilter() {
-        return e -> e == CamelClusterView.Event.LEADERSHIP_CHANGED;
-    }
+public interface CamelClusterService extends Service, CamelContextAware, IdAware {
+    /**
+     * Get a view of the cluster bound to a namespace creating it if needed.
+     *
+     * @param namespace the namespace the view refer to.
+     * @return the view.
+     * @throws Exception if the view can't be created.
+     */
+    CamelClusterView getView(String namespace) throws Exception;
 }

@@ -21,25 +21,40 @@ import java.util.Map;
 import java.util.concurrent.locks.StampedLock;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ha.CamelCluster;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.concurrent.LockHelper;
 
-public abstract class AbstractCamelCluster<T extends CamelClusterView> extends ServiceSupport implements CamelCluster {
-    private final String id;
+public abstract class AbstractCamelClusterService<T extends CamelClusterView> extends ServiceSupport implements CamelClusterService {
     private final Map<String, T> views;
     private final StampedLock lock;
+    private String id;
     private CamelContext camelContext;
 
-    protected AbstractCamelCluster(String id) {
+    protected AbstractCamelClusterService() {
+        this(null, null);
+    }
+
+    protected AbstractCamelClusterService(String id) {
         this(id, null);
     }
 
-    protected AbstractCamelCluster(String id, CamelContext camelContext) {
+    protected AbstractCamelClusterService(String id, CamelContext camelContext) {
         this.id = id;
         this.camelContext = camelContext;
         this.views = new HashMap<>();
         this.lock = new StampedLock();
+    }
+
+    /**
+     * Sets the id
+     *
+     * @param id the id
+     */
+    @Override
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -51,15 +66,14 @@ public abstract class AbstractCamelCluster<T extends CamelClusterView> extends S
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
 
-        long stamp = lock.writeLock();
-
-        try {
-            for (T view : views.values()) {
-                view.setCamelContext(camelContext);
+        LockHelper.doWithWriteLock(
+            lock,
+            () -> {
+                for (T view : views.values()) {
+                    view.setCamelContext(camelContext);
+                }
             }
-        } finally {
-            lock.unlockWrite(stamp);
-        }
+        );
     }
 
     @Override
@@ -69,28 +83,26 @@ public abstract class AbstractCamelCluster<T extends CamelClusterView> extends S
 
     @Override
     protected void doStart() throws Exception {
-        long stamp = lock.readLock();
-
-        try {
-            for (T view : views.values()) {
-                view.start();
+        LockHelper.doWithReadLockT(
+            lock,
+            () -> {
+                for (T view : views.values()) {
+                    view.start();
+                }
             }
-        } finally {
-            lock.unlockRead(stamp);
-        }
+        );
     }
 
     @Override
     protected void doStop() throws Exception {
-        long stamp = lock.readLock();
-
-        try {
-            for (T view : views.values()) {
-                view.stop();
+        LockHelper.doWithReadLockT(
+            lock,
+            () -> {
+                for (T view : views.values()) {
+                    view.stop();
+                }
             }
-        } finally {
-            lock.unlockRead(stamp);
-        }
+        );
     }
 
     @Override
@@ -106,7 +118,7 @@ public abstract class AbstractCamelCluster<T extends CamelClusterView> extends S
 
                 views.put(namespace, view);
 
-                if (AbstractCamelCluster.this.isRunAllowed()) {
+                if (AbstractCamelClusterService.this.isRunAllowed()) {
                     view.start();
                 }
             }

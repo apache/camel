@@ -18,7 +18,6 @@ package org.apache.camel.impl.ha;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.ha.CamelCluster;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -34,12 +33,7 @@ public class ClusteredRoutePolicyFactory implements RoutePolicyFactory {
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
         try {
-            CamelCluster cluster = camelContext.hasService(CamelCluster.class);
-            if (cluster == null) {
-                throw new IllegalStateException("CamelCluster service not found");
-            }
-
-            return ClusteredRoutePolicy.forNamespace(cluster, namespace);
+            return ClusteredRoutePolicy.forNamespace(camelContext, namespace);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }

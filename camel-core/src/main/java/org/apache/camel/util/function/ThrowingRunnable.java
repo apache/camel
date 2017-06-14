@@ -14,19 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.ha;
+package org.apache.camel.util.function;
 
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Service;
-import org.apache.camel.spi.HasId;
-
-public interface CamelCluster extends Service, CamelContextAware, HasId {
-    /**
-     * Get a view of the cluster bound to a namespace creating it if needed.
-     *
-     * @param namespace the namespace the view refer to.
-     * @return the view.
-     * @throws Exception if the view can't be created.
-     */
-    CamelClusterView getView(String namespace) throws Exception;
+@FunctionalInterface
+public interface ThrowingRunnable<T extends Throwable> {
+    void run() throws T;
 }

@@ -19,25 +19,27 @@ package org.apache.camel.impl.ha;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.StampedLock;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
+import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ha.CamelCluster;
+import org.apache.camel.ha.CameClusterEventListener;
+import org.apache.camel.ha.CamelClusterMember;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.ha.CamelClusterView;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.concurrent.LockHelper;
 
 public abstract class AbstractCamelClusterView extends ServiceSupport implements CamelClusterView {
-    private final CamelCluster cluster;
+    private final CamelClusterService cluster;
     private final String namespace;
-    private final List<FilteringConsumer> consumers;
+    private final List<CameClusterEventListener> listeners;
     private final StampedLock lock;
     private CamelContext camelContext;
 
-    protected AbstractCamelClusterView(CamelCluster cluster, String namespace) {
+    protected AbstractCamelClusterView(CamelClusterService cluster, String namespace) {
         this.cluster = cluster;
         this.namespace = namespace;
-        this.consumers = new ArrayList<>();
+        this.listeners = new ArrayList<>();
         this.lock = new StampedLock();
     }
 
@@ -52,7 +54,7 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
     }
 
     @Override
-    public CamelCluster getCluster() {
+    public CamelClusterService getClusterService() {
         return this.cluster;
     }
 
@@ -62,76 +64,52 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
     }
 
     @Override
-    public void addEventListener(BiConsumer<Event, Object> consumer) {
-        long stamp = lock.writeLock();
-
-        try {
-            consumers.add(new FilteringConsumer(e -> true, consumer));
-        } finally {
-            lock.unlockWrite(stamp);
-        }
+    public void addEventListener(CameClusterEventListener listener) {
+        LockHelper.doWithWriteLock(lock, () -> listeners.add(listener));
     }
 
     @Override
-    public void addEventListener(Predicate<Event> predicate, BiConsumer<Event, Object> consumer) {
-        long stamp = lock.writeLock();
-
-        try {
-            consumers.add(new FilteringConsumer(predicate, consumer));
-        } finally {
-            lock.unlockWrite(stamp);
-        }
-    }
-
-    @Override
-    public void removeEventListener(BiConsumer<Event, Object> consumer) {
-        long stamp = lock.writeLock();
-
-        try {
-            consumers.removeIf(c -> c.getConsumer().equals(consumer));
-        } finally {
-            lock.unlockWrite(stamp);
-        }
+    public void removeEventListener(CameClusterEventListener listener) {
+        LockHelper.doWithWriteLock(lock, () -> listeners.removeIf(l -> l == listener));
     }
 
     // **************************************
     // Events
     // **************************************
 
-    protected void fireEvent(CamelClusterView.Event event, Object payload) {
-        long stamp = lock.readLock();
+    private <T extends CameClusterEventListener> void executeWithListener(Class<T> type, Consumer<T> consumer) {
+        LockHelper.doWithReadLock(
+            lock,
+            () -> {
+                for (int i = 0; i < listeners.size(); i++) {
+                    CameClusterEventListener listener = listeners.get(0);
 
-        try {
-            for (int i = 0; i < consumers.size(); i++) {
-                consumers.get(i).accept(event, payload);
+                    if (type.isInstance(listener)) {
+                        consumer.accept(type.cast(listener));
+                    }
+                }
             }
-        } finally {
-            lock.unlockRead(stamp);
-        }
+        );
     }
 
-    // **************************************
-    // Helpers
-    // **************************************
+    protected void fireLeadershipChangedEvent(CamelClusterMember leader) {
+        executeWithListener(
+            CameClusterEventListener.Leadership.class,
+            listener -> listener.leadershipChanged(this, leader)
+        );
+    }
 
-    private final class FilteringConsumer implements BiConsumer<Event, Object> {
-        private final Predicate<Event> predicate;
-        private final BiConsumer<Event, Object> consumer;
+    protected void fireMemberAddedEvent(CamelClusterMember member) {
+        executeWithListener(
+            CameClusterEventListener.Membership.class,
+            listener -> listener.memberAdded(this, member)
+        );
+    }
 
-        FilteringConsumer(Predicate<Event> predicate,  BiConsumer<Event, Object> consumer) {
-            this.predicate = predicate;
-            this.consumer = consumer;
-        }
-
-        @Override
-        public void accept(CamelClusterView.Event event, Object payload) {
-            if (predicate.test(event)) {
-                consumer.accept(event, payload);
-            }
-        }
-
-        public BiConsumer<Event, Object> getConsumer() {
-            return this.consumer;
-        }
+    protected void fireMemberRemovedEvent(CamelClusterMember member) {
+        executeWithListener(
+            CameClusterEventListener.Membership.class,
+            listener -> listener.memberRemoved(this, member)
+        );
     }
 }
