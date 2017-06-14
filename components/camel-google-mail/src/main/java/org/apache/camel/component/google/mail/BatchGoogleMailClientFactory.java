@@ -24,6 +24,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.gmail.Gmail;
 
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +40,11 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
 
     @Override
     public Gmail makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken, String accessToken) {
-        Credential credential;
+        if (clientId == null || clientSecret == null) {
+            throw new IllegalArgumentException("clientId and clientSecret are required to create Gmail client.");
+        }
         try {
-            credential = authorize(clientId, clientSecret, scopes);
+            Credential credential = authorize(clientId, clientSecret, scopes);
 
             if (refreshToken != null && !"".equals(refreshToken)) {
                 credential.setRefreshToken(refreshToken);
@@ -51,9 +54,8 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
             }
             return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
-            LOG.error("Could not create Google Drive client.", e);
+            throw new RuntimeCamelException("Could not create Gmail client.", e);
         }
-        return null;
     }
 
     // Authorizes the installed application to access user's protected data.
