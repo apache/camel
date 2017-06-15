@@ -19,12 +19,13 @@ package org.apache.camel.itest.jmh;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
@@ -34,6 +35,8 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 /**
  * Tests {@link CaseInsensitiveMap}
@@ -47,16 +50,17 @@ public class CaseInsensitiveMapTest {
             // You can be more specific if you'd like to run only one benchmark per test.
             .include(this.getClass().getName() + ".*")
             // Set the following options as needed
-            .mode(Mode.All)
-            .timeUnit(TimeUnit.MICROSECONDS)
+            .mode(Mode.SampleTime)
+            .timeUnit(TimeUnit.MILLISECONDS)
             .warmupTime(TimeValue.seconds(1))
             .warmupIterations(2)
-            .measurementTime(TimeValue.seconds(1))
-            .measurementIterations(2)
-            .threads(2)
+            .measurementTime(TimeValue.seconds(5))
+            .measurementIterations(5)
+            .threads(1)
             .forks(1)
             .shouldFailOnError(true)
             .shouldDoGC(true)
+            .measurementBatchSize(1000000)
             .build();
 
         new Runner(opt).run();
@@ -65,7 +69,7 @@ public class CaseInsensitiveMapTest {
     // The JMH samples are the best documentation for how to use it
     // http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/
     @State(Scope.Thread)
-    public static class BenchmarkState {
+    public static class MapsBenchmarkState {
         CaseInsensitiveMap camelMap;
         com.cedarsoftware.util.CaseInsensitiveMap cedarsoftMap;
         HashMap hashMap;
@@ -79,9 +83,21 @@ public class CaseInsensitiveMapTest {
 
     }
 
+    @State(Scope.Benchmark)
+    public static class MapsSourceDataBenchmarkState {
+        Map<String, Object> map1 = generateRandomMap(10);
+        Map<String, Object> map2 = generateRandomMap(10);
+
+
+        private Map<String, Object> generateRandomMap(int size) {
+            return IntStream.range(0, size)
+                    .boxed()
+                    .collect(Collectors.toMap(i -> randomAlphabetic(10), i-> randomAlphabetic(10)));
+        }
+    }
+
     @Benchmark
-    @Measurement(batchSize = 1000000)
-    public void camelMap(BenchmarkState state, Blackhole bh) {
+    public void camelMapSimpleCase(MapsBenchmarkState state, Blackhole bh) {
         Map map = state.camelMap;
 
         map.put("foo", "Hello World");
@@ -98,8 +114,7 @@ public class CaseInsensitiveMapTest {
     }
 
     @Benchmark
-    @Measurement(batchSize = 1000000)
-    public void cedarsoftMap(BenchmarkState state, Blackhole bh) {
+    public void cedarsoftMapSimpleCase(MapsBenchmarkState state, Blackhole bh) {
         Map map = state.cedarsoftMap;
 
         map.put("foo", "Hello World");
@@ -116,8 +131,7 @@ public class CaseInsensitiveMapTest {
     }
 
     @Benchmark
-    @Measurement(batchSize = 1000000)
-    public void hashMap(BenchmarkState state, Blackhole bh) {
+    public void hashMapSimpleCase(MapsBenchmarkState state, Blackhole bh) {
         Map map = state.hashMap;
 
         map.put("foo", "Hello World");
@@ -131,6 +145,67 @@ public class CaseInsensitiveMapTest {
         bh.consume(o3);
         Object o4 = map.get("BAR");
         bh.consume(o4);
+    }
+
+    @Benchmark
+    public void camelMapComplexCase(MapsBenchmarkState mapsBenchmarkState, MapsSourceDataBenchmarkState sourceDataState, Blackhole blackhole) {
+        // step 1 - initialize map with existing elements
+        Map map = mapsBenchmarkState.camelMap;
+
+        // step 2 - add elements one by one
+        sourceDataState.map2.entrySet().forEach(entry -> blackhole.consume(map.put(entry.getKey(), entry.getValue())));
+
+        // step 3 - remove elements one by one
+        sourceDataState.map1.keySet().forEach(key -> blackhole.consume(map.get(key)));
+
+        // step 4 - remove elements one by one
+        sourceDataState.map1.keySet().forEach(key -> blackhole.consume(map.remove(key)));
+
+        // step 5 - add couple of element at once
+        map.putAll(sourceDataState.map1);
+
+        blackhole.consume(map);
+    }
+
+
+    @Benchmark
+    public void cedarsoftMapComplexCase(MapsBenchmarkState mapsBenchmarkState, MapsSourceDataBenchmarkState sourceDataState, Blackhole blackhole) {
+        // step 1 - initialize map with existing elements
+        Map map = mapsBenchmarkState.cedarsoftMap;
+
+        // step 2 - add elements one by one
+        sourceDataState.map2.entrySet().forEach(entry -> blackhole.consume(map.put(entry.getKey(), entry.getValue())));
+
+        // step 3 - remove elements one by one
+        sourceDataState.map1.keySet().forEach(key -> blackhole.consume(map.get(key)));
+
+        // step 4 - remove elements one by one
+        sourceDataState.map1.keySet().forEach(key -> blackhole.consume(map.remove(key)));
+
+        // step 5 - add couple of element at once
+        map.putAll(sourceDataState.map1);
+
+        blackhole.consume(map);
+    }
+
+    @Benchmark
+    public void hashMapComplexCase(MapsBenchmarkState mapsBenchmarkState, MapsSourceDataBenchmarkState sourceDataState, Blackhole blackhole) {
+        // step 1 - initialize map with existing elements
+        Map map = mapsBenchmarkState.hashMap;
+
+        // step 2 - add elements one by one
+        sourceDataState.map2.entrySet().forEach(entry -> blackhole.consume(map.put(entry.getKey(), entry.getValue())));
+
+        // step 3 - remove elements one by one
+        sourceDataState.map1.keySet().forEach(key -> blackhole.consume(map.get(key)));
+
+        // step 4 - remove elements one by one
+        sourceDataState.map1.keySet().forEach(key -> blackhole.consume(map.remove(key)));
+
+        // step 5 - add couple of element at once
+        map.putAll(sourceDataState.map1);
+
+        blackhole.consume(map);
     }
 
 }
