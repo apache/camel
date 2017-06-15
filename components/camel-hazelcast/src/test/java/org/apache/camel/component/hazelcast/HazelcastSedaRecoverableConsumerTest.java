@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import java.util.concurrent.TimeUnit;
+
 import com.hazelcast.core.IQueue;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,8 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.Mock;
-
-import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
