@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.ws.WebFault;
-
 import org.w3c.dom.Element;
 
 import org.apache.camel.AsyncCallback;
@@ -31,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
+
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.endpoint.Server;
@@ -39,8 +39,11 @@ import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.cxf.phase.Phase;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.slf4j.Logger;
@@ -77,7 +80,40 @@ public class CxfConsumer extends DefaultConsumer {
         if (ObjectHelper.isNotEmpty(cxfEndpoint.getPublishedEndpointUrl())) {
             server.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", cxfEndpoint.getPublishedEndpointUrl());
         }
+
+        final MessageObserver originalOutFaultObserver = server.getEndpoint().getOutFaultObserver();
+        server.getEndpoint().setOutFaultObserver(message -> {
+            Exchange cxfExchange = null;
+            if ((cxfExchange = message.getExchange()) != null) {
+                org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
+                if (exchange != null) {
+                    doneUoW(exchange);
+                }
+            }
+            originalOutFaultObserver.onMessage(message);
+        });
+
+        server.getEndpoint().getOutInterceptors().add(new UnitOfWorkCloserInterceptor());
+
         return server;
+    }
+
+    //closes UnitOfWork in good case
+    private class UnitOfWorkCloserInterceptor extends AbstractPhaseInterceptor<Message> {
+        public UnitOfWorkCloserInterceptor() {
+            super(Phase.POST_LOGICAL_ENDING);
+        }
+
+        @Override
+        public void handleMessage(Message message) throws Fault {
+            Exchange cxfExchange = null;
+            if ((cxfExchange = message.getExchange()) != null) {
+                org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
+                if (exchange != null) {
+                    doneUoW(exchange);
+                }
+            }
+        }
     }
 
     public Server getServer() {
@@ -179,8 +215,9 @@ public class CxfConsumer extends DefaultConsumer {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     try {
                         setResponseBack(cxfExchange, camelExchange);
-                    } finally {
+                    } catch (Exception ex) {
                         CxfConsumer.this.doneUoW(camelExchange);
+                        throw ex;
                     }
 
                 } else if (!continuation.isResumed() && !continuation.isPending()) {
@@ -190,8 +227,9 @@ public class CxfConsumer extends DefaultConsumer {
                             camelExchange.setException(new ExchangeTimedOutException(camelExchange, cxfEndpoint.getContinuationTimeout()));
                         }
                         setResponseBack(cxfExchange, camelExchange);
-                    } finally {
+                    } catch (Exception ex) {
                         CxfConsumer.this.doneUoW(camelExchange);
+                        throw ex;
                     }
                 }
             }
@@ -224,8 +262,9 @@ public class CxfConsumer extends DefaultConsumer {
 
                 LOG.trace("Processing +++ END +++");
                 setResponseBack(cxfExchange, camelExchange);
-            } finally {
+            }  catch (Exception ex) {
                 doneUoW(camelExchange);
+                throw ex;
             }
             // response should have been set in outMessage's content
             return null;
@@ -238,6 +277,8 @@ public class CxfConsumer extends DefaultConsumer {
 
             // create a Camel exchange, the default MEP is InOut
             org.apache.camel.Exchange camelExchange = endpoint.createExchange();
+            //needs access in MessageObserver/Interceptor to close the UnitOfWork
+            cxfExchange.put(org.apache.camel.Exchange.class, camelExchange);
 
             DataFormat dataFormat = endpoint.getDataFormat();
 
