@@ -23,9 +23,9 @@ import org.apache.http.entity.ContentType;
 /**
  * Helper
  */
-public final class Olingo4Helper {
+public final class Olingo2Helper {
 
-    private Olingo4Helper() {
+    private Olingo2Helper() {
     }
 
     /**
