@@ -33,6 +33,8 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 
+import static org.apache.camel.component.olingo2.api.impl.Olingo4Helper.getContentTypeHeader;
+
 /**
 * Helper implementation of {@link org.apache.http.concurrent.FutureCallback}
  * for {@link org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl}
@@ -52,8 +54,7 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
         if (400 <= httpStatusCode.getStatusCode() && httpStatusCode.getStatusCode() <= 599) {
             if (response.getEntity() != null) {
                 try {
-                    final ContentType responseContentType = ContentType.parse(
-                        response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+                    final ContentType responseContentType = getContentTypeHeader(response);
 
                     final String mimeType = responseContentType.getMimeType();
                     if (ODATA_MIME_TYPE.matcher(mimeType).matches()) {
