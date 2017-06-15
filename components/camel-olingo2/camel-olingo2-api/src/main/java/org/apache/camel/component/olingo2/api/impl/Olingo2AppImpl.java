@@ -91,8 +91,6 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.api.uri.UriParser;
 
-import static org.apache.camel.component.olingo2.api.impl.Olingo4Helper.getContentTypeHeader;
-
 /**
  * Application API used by Olingo2 Component.
  */

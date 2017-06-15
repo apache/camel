@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.concurrent.FutureCallback;
@@ -33,7 +32,7 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 
-import static org.apache.camel.component.olingo2.api.impl.Olingo4Helper.getContentTypeHeader;
+import static org.apache.camel.component.olingo2.api.impl.Olingo2Helper.getContentTypeHeader;
 
 /**
 * Helper implementation of {@link org.apache.http.concurrent.FutureCallback}
