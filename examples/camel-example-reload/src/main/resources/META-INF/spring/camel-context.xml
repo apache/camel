@@ -26,20 +26,31 @@
   <!-- notice Camel will only update the routes that has been changed, so you can edit either either route or both
        and save the file, and Camel will update only what is required -->
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
+  <import resource="bar/barContext.xml"/>
 
-    <route id="timer">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+  
+  	<routeContextRef ref="barContext"/>
+
+    <route id="timerFoo">
       <from uri="timer:foo"/>
       <to uri="direct:foo"/>
       <!-- you can try changing me -->
-      <log message="You said: ${body}"/>
+      <log message="Foo said: ${body}"/>
+    </route>
+    
+    <route id="timerBar">
+      <from uri="timer:bar"/>
+      <to uri="direct:bar"/>
+      <!-- you can try changing me -->
+      <log message="Bar said: ${body}"/>
     </route>
 
     <route id="foo">
       <from uri="direct:foo"/>
       <transform>
         <!-- and I can be changed too -->
-        <constant>Hello World</constant>
+        <constant>Hello Foo!</constant>
       </transform>
     </route>
 
