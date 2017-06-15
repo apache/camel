@@ -91,6 +91,8 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.api.uri.UriParser;
 
+import static org.apache.camel.component.olingo2.api.impl.Olingo4Helper.getContentTypeHeader;
+
 /**
  * Application API used by Olingo2 Component.
  */
@@ -486,9 +488,9 @@ public final class Olingo2AppImpl implements Olingo2App {
                         switch (uriInfo.getUriType()) {
                         case URI9:
                             // $batch
+                            String type = result.containsHeader(HttpHeaders.CONTENT_TYPE) ? result.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue() : null;
                             final List<BatchSingleResponse> singleResponses = EntityProvider.parseBatchResponse(
-                                result.getEntity().getContent(),
-                                result.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+                                result.getEntity().getContent(), type);
 
                             // parse batch response bodies
                             final List<Olingo2BatchResponse> responses = new ArrayList<Olingo2BatchResponse>();
