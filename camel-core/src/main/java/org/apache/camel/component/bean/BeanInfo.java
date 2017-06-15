@@ -328,34 +328,6 @@ public class BeanInfo {
             methods.addAll(extraMethods);
         }
 
-        Set<Method> overrides = new HashSet<Method>();
-
-        // do not remove duplicates form class from the Java itself as they have some "duplicates" we need
-        boolean javaClass = clazz.getName().startsWith("java.") || clazz.getName().startsWith("javax.");
-        if (!javaClass) {
-            // it may have duplicate methods already, even from declared or from interfaces + declared
-            for (Method source : methods) {
-
-                // skip bridge methods in duplicate checks (as the bridge method is inserted by the compiler due to type erasure)
-                if (source.isBridge()) {
-                    continue;
-                }
-
-                for (Method target : methods) {
-                    // skip ourselves
-                    if (ObjectHelper.isOverridingMethod(getType(), source, target, true)) {
-                        continue;
-                    }
-                    // skip duplicates which may be assign compatible (favor keep first added method when duplicate)
-                    if (ObjectHelper.isOverridingMethod(getType(), source, target, false)) {
-                        overrides.add(target);
-                    }
-                }
-            }
-            methods.removeAll(overrides);
-            overrides.clear();
-        }
-
         // now introspect the methods and filter non valid methods
         for (Method method : methods) {
             boolean valid = isValidMethod(clazz, method);
