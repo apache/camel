@@ -1,0 +1,19 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+ 
+    <!-- this is an included XML file where we only the the routeContext -->
+    <routeContext id="barContext" xmlns="http://camel.apache.org/schema/spring">
+        <route id="bar">
+        	<from uri="direct:bar"/>
+        	<transform>
+		        <!-- and I can be changed too -->
+		        <constant>Hello Bar!</constant>
+		    </transform>
+    	</route>
+    </routeContext>
+ 
+</beans>
