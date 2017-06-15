@@ -108,6 +108,8 @@ import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
+import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getContentTypeHeader;
+
 /**
  * Application API used by Olingo4 Component.
  */
@@ -640,7 +642,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                     final UriInfo uriInfo = parseUri(edm, batchPartQueryRequest.getResourcePath(), null);
 
                     if (HttpStatusCode.BAD_REQUEST.getStatusCode() <= batchPartLineStatusCode && batchPartLineStatusCode <= AbstractFutureCallback.NETWORK_CONNECT_TIMEOUT_ERROR) {
-                        final ContentType responseContentType = ContentType.parse(batchPartHttpResponse.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+                        final ContentType responseContentType = getContentTypeHeader(batchPartHttpResponse);
                         content = odataReader.readError(batchPartHttpResponse.getEntity().getContent(), responseContentType);
                     } else if (batchPartLineStatusCode == HttpStatusCode.NO_CONTENT.getStatusCode()) {
                         // nothing to do if NO_CONTENT returning
