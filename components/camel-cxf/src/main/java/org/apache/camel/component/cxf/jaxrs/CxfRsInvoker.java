@@ -109,8 +109,9 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                 try {
                     return returnResponse(cxfExchange, camelExchange);
-                } finally {
+                } catch (Exception ex) {
                     cxfRsConsumer.doneUoW(camelExchange);
+                    throw ex;
                 }
             } else {
                 if (!continuation.isPending()) {
@@ -119,8 +120,9 @@ public class CxfRsInvoker extends JAXRSInvoker {
                     camelExchange.setException(new ExchangeTimedOutException(camelExchange, endpoint.getContinuationTimeout()));
                     try {
                         return returnResponse(cxfExchange, camelExchange);
-                    } finally {
+                    } catch (Exception ex) {
                         cxfRsConsumer.doneUoW(camelExchange);
+                        throw ex;
                     }
                 }
             }
@@ -143,8 +145,9 @@ public class CxfRsInvoker extends JAXRSInvoker {
 
         try {
             return returnResponse(cxfExchange, camelExchange);
-        } finally {
+        } catch (Exception ex) {
             cxfRsConsumer.doneUoW(camelExchange);
+            throw  ex;
         }
     }
     
@@ -155,6 +158,9 @@ public class CxfRsInvoker extends JAXRSInvoker {
             ep = ExchangePattern.InOnly;
         } 
         final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
+        //needs access in MessageObserver/Interceptor to close the UnitOfWork
+        cxfExchange.put(org.apache.camel.Exchange.class, camelExchange);
+
         if (response != null) {
             camelExchange.getOut().setBody(response);
         }
