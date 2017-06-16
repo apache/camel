@@ -185,7 +185,8 @@ public class RedeliveryPolicyDefinition {
     //-------------------------------------------------------------------------
 
     /**
-     * Allow synchronous delayed redelivery.
+     * Allow synchronous delayed redelivery. The route, in particular the consumer's component,
+     * must support the Asynchronous Routing Engine (e.g. seda).
      *
      * @return the builder
      */
