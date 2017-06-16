@@ -24,7 +24,7 @@ public enum GrpcProducerStrategy {
     /**
      * Transform each exchange into a RPC.
      */
-    RPC,
+    SIMPLE,
 
     /**
      * Forward each exchange using a shared gRPC request.

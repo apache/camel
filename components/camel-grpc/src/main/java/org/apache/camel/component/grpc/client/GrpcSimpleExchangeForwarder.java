@@ -27,13 +27,13 @@ import org.apache.camel.component.grpc.GrpcUtils;
 /**
  * An exchange forwarder that creates a RPC request for each camel Exchange.
  */
-class GrpcRPCExchangeForwarder implements GrpcExchangeForwarder {
+class GrpcSimpleExchangeForwarder implements GrpcExchangeForwarder {
 
     private final GrpcConfiguration configuration;
 
     private final Object grpcStub;
 
-    public GrpcRPCExchangeForwarder(GrpcConfiguration configuration, Object grpcStub) {
+    public GrpcSimpleExchangeForwarder(GrpcConfiguration configuration, Object grpcStub) {
         this.configuration = configuration;
         this.grpcStub = grpcStub;
 
