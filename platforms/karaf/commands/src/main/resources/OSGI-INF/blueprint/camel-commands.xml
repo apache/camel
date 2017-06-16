@@ -112,7 +112,7 @@
         <property name="camelController" ref="camelController"/>
       </action>
       <completers>
-        <ref component-id="routeCompleter"/>
+        <ref component-id="camelContextCompleter"/>
         <null/>
       </completers>
     </command>
