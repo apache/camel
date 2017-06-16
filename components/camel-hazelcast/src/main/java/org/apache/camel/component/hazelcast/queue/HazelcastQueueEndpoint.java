@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
@@ -34,6 +35,7 @@ public class HazelcastQueueEndpoint extends HazelcastDefaultEndpoint {
     public HazelcastQueueEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
         super(hazelcastInstance, endpointUri, component, cacheName);
         setCommand(HazelcastCommand.queue);
+        setDefaultOperation(HazelcastOperation.ADD);
     }
 
     @Override
