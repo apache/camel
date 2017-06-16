@@ -43,14 +43,14 @@ public class GrpcConfiguration {
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean usePlainText = true;
 
-    @UriParam(label = "producer")
-    private GrpcProducerStrategy producerStrategy = GrpcProducerStrategy.RPC;
+    @UriParam(label = "producer", defaultValue = "SIMPLE")
+    private GrpcProducerStrategy producerStrategy = GrpcProducerStrategy.SIMPLE;
 
     @UriParam(label = "producer")
     private String streamRepliesTo;
 
 
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", defaultValue = "PROPAGATION")
     private GrpcConsumerStrategy consumerStrategy = GrpcConsumerStrategy.PROPAGATION;
     
     @UriParam(defaultValue = "false")
@@ -196,7 +196,7 @@ public class GrpcConfiguration {
 
     /**
      * The mode used to communicate with a remote gRPC server.
-     * In RPC mode a single exchange is translated to a remote call.
+     * In SIMPLE mode a single exchange is translated into a remote procedure call.
      * In STREAMING mode all exchanges will be sent within the same request (input and output of the recipient gRPC service must be of type 'stream').
      */
     public void setProducerStrategy(GrpcProducerStrategy producerStrategy) {

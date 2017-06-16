@@ -28,8 +28,8 @@ public final class GrpcExchangeForwarderFactory {
     }
 
     public static GrpcExchangeForwarder createExchangeForwarder(GrpcConfiguration configuration, Object grpcStub) {
-        if (configuration.getProducerStrategy() == GrpcProducerStrategy.RPC) {
-            return new GrpcRPCExchangeForwarder(configuration, grpcStub);
+        if (configuration.getProducerStrategy() == GrpcProducerStrategy.SIMPLE) {
+            return new GrpcSimpleExchangeForwarder(configuration, grpcStub);
         } else if (configuration.getProducerStrategy() == GrpcProducerStrategy.STREAMING) {
             return new GrpcStreamingExchangeForwarder(configuration, grpcStub);
         } else {
