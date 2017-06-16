@@ -70,7 +70,7 @@ public final class GrpcUtils {
         }
         return grpcBlockingStub;
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static Class constructGrpcImplBaseClass(String packageName, String serviceName, final CamelContext context) {
         Class grpcServerImpl;
@@ -110,6 +110,21 @@ public final class GrpcUtils {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
+    public static StreamObserver<Object> invokeAsyncMethodStreaming(Object asyncStubClass, String invokeMethod, StreamObserver<?> responseObserver) {
+        Class[] paramMethod = null;
+        Method method = ReflectionHelper.findMethod(asyncStubClass.getClass(), invokeMethod, paramMethod);
+        if (method == null) {
+            throw new IllegalArgumentException("gRPC service method not found: " + asyncStubClass.getClass().getName() + "." + invokeMethod);
+        }
+        if (!StreamObserver.class.isAssignableFrom(method.getReturnType())) {
+            throw new IllegalArgumentException("gRPC service method does not declare an input of type stream (cannot be used in streaming mode): "
+                    + asyncStubClass.getClass().getName() + "." + invokeMethod);
+        }
+
+        return  (StreamObserver<Object>) ObjectHelper.invokeMethod(method, asyncStubClass, responseObserver);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static Object invokeSyncMethod(Object blockingStubClass, String invokeMethod, Object request) {
         Class[] paramMethod = null;
 
@@ -132,7 +147,7 @@ public final class GrpcUtils {
     /**
      * Migrated MixedLower function from the gRPC converting plugin source code
      * (https://github.com/grpc/grpc-java/blob/master/compiler/src/java_plugin/cpp/java_generator.cpp)
-     * 
+     *
      * - decapitalize the first letter
      * - remove embedded underscores & capitalize the following letter
      */

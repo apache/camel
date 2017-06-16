@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import io.grpc.stub.StreamObserver;
+
 import javassist.util.proxy.MethodHandler;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConstants;
 import org.apache.camel.component.grpc.GrpcConsumer;
+import org.apache.camel.component.grpc.GrpcConsumerStrategy;
 import org.apache.camel.component.grpc.GrpcEndpoint;
-import org.apache.camel.component.grpc.GrpcProcessingStrategies;
 
 /**
  * gRPC server method invocation handler
@@ -79,12 +81,12 @@ public class GrpcMethodHandler implements MethodHandler {
             final StreamObserver<Object> responseObserver = (StreamObserver<Object>)args[0];
             StreamObserver<Object> requestObserver = null;
             
-            if (consumer.getConfiguration().getProcessingStrategy() == GrpcProcessingStrategies.AGGREGATION) {
+            if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.AGGREGATION) {
                 requestObserver = new GrpcRequestAggregationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
-            } else if (consumer.getConfiguration().getProcessingStrategy() == GrpcProcessingStrategies.PROPAGATION) {
+            } else if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.PROPAGATION) {
                 requestObserver = new GrpcRequestPropagationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
             } else {
-                throw new IllegalArgumentException("gRPC processing strategy not implemented " + consumer.getConfiguration().getProcessingStrategy());
+                throw new IllegalArgumentException("gRPC processing strategy not implemented " + consumer.getConfiguration().getConsumerStrategy());
             }
             
             return requestObserver;

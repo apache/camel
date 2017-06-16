@@ -18,11 +18,15 @@ package org.apache.camel.component.grpc;
 
 import io.grpc.ManagedChannel;
 import io.grpc.netty.NettyChannelBuilder;
+import io.grpc.stub.StreamObserver;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
+import org.apache.camel.component.grpc.client.GrpcExchangeForwarder;
+import org.apache.camel.component.grpc.client.GrpcExchangeForwarderFactory;
 import org.apache.camel.component.grpc.client.GrpcResponseAggregationStreamObserver;
+import org.apache.camel.component.grpc.client.GrpcResponseRouterStreamObserver;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -38,32 +42,36 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
     protected final GrpcEndpoint endpoint;
     private ManagedChannel channel;
     private Object grpcStub;
+    private GrpcExchangeForwarder forwarder;
+    private StreamObserver<Object> globalResponseObserver;
 
     public GrpcProducer(GrpcEndpoint endpoint, GrpcConfiguration configuration) {
         super(endpoint);
         this.endpoint = endpoint;
         this.configuration = configuration;
+
+        if (configuration.getProducerStrategy() == GrpcProducerStrategy.STREAMING) {
+            if (endpoint.isSynchronous()) {
+                throw new IllegalStateException("Cannot use synchronous processing in streaming mode");
+            } else if (configuration.getStreamRepliesTo() == null) {
+                throw new IllegalStateException("The streamReplyTo property is mandatory when using the STREAMING mode");
+            }
+        }
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        Message message = exchange.getIn();
-
-        try {
-            GrpcUtils.invokeAsyncMethod(grpcStub, configuration.getMethod(), message.getBody(), new GrpcResponseAggregationStreamObserver(exchange, callback));
-        } catch (Exception e) {
-            exchange.setException(e);
-            callback.done(true);
-            return true;
+        StreamObserver<Object> streamObserver = this.globalResponseObserver;
+        if (globalResponseObserver == null) {
+            streamObserver = new GrpcResponseAggregationStreamObserver(exchange, callback);
         }
-        return false;
+
+        return forwarder.forward(exchange, streamObserver, callback);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Message message = exchange.getIn();
-        Object outBody = GrpcUtils.invokeSyncMethod(grpcStub, configuration.getMethod(), message.getBody());
-        exchange.getOut().setBody(outBody);
+        forwarder.forward(exchange);
     }
 
     @Override
@@ -78,16 +86,25 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
                 LOG.debug("Getting asynchronous method stub from channel");
                 grpcStub = GrpcUtils.constructGrpcAsyncStub(configuration.getServicePackage(), configuration.getServiceName(), channel, endpoint.getCamelContext());
             }
+            forwarder = GrpcExchangeForwarderFactory.createExchangeForwarder(configuration, grpcStub);
+
+            if (configuration.getStreamRepliesTo() != null) {
+                this.globalResponseObserver = new GrpcResponseRouterStreamObserver(configuration, getEndpoint());
+            }
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (channel != null) {
+            forwarder.shutdown();
+            forwarder = null;
+
             LOG.debug("Terminating channel to the remote gRPC server");
             channel.shutdown().shutdownNow();
             channel = null;
             grpcStub = null;
+            globalResponseObserver = null;
         }
         super.doStop();
     }
@@ -99,7 +116,7 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
             channelBuilder = NettyChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
         } else if (!ObjectHelper.isEmpty(configuration.getTarget())) {
             LOG.info("Creating channel to the remote gRPC server " + configuration.getTarget());
-            channelBuilder =  NettyChannelBuilder.forTarget(configuration.getTarget());
+            channelBuilder = NettyChannelBuilder.forTarget(configuration.getTarget());
         } else {
             throw new IllegalArgumentException("No connection properties (host, port or target) specified");
         }
