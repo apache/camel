@@ -79,7 +79,10 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
         }
 
         HazelcastDefaultEndpoint endpoint = doCreateEndpoint(uri, remaining, parameters, hzInstance);
-        endpoint.setDefaultOperation(defaultOperation);
+        if (defaultOperation != null) {
+            endpoint.setDefaultOperation(HazelcastOperation.getHazelcastOperation(defaultOperation));
+        }
+
         return endpoint;
     }
 

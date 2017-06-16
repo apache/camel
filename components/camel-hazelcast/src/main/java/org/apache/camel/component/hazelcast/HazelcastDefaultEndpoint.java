@@ -25,7 +25,6 @@ import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicConfiguration;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
@@ -41,9 +40,8 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     protected HazelcastInstance hazelcastInstance;
     @UriParam
     protected String hazelcastInstanceName;
-    @UriParam(enums = "put,delete,get,update,query,getAll,clear,evict,evictAll,putIfAbsent,addAll,removeAll,retainAll,valueCount,containsKey,containsValue,keySet,removevalue,increment"
-        + ",decrement,setvalue,destroy,compareAndSet,getAndAdd,add,offer,peek,poll,remainingCapacity,drainTo,publish,capacity,readonceHead,readonceTail")
-    private String defaultOperation;
+    @UriParam
+    private HazelcastOperation defaultOperation;
     @UriParam
     private HazelcastSedaConfiguration hazelcastSedaConfiguration; // to include component schema docs
     @UriParam
@@ -115,11 +113,11 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     /**
      * To specify a default operation to use, if no operation header has been provided.
      */
-    public void setDefaultOperation(String defaultOperation) {
+    public void setDefaultOperation(HazelcastOperation defaultOperation) {
         this.defaultOperation = defaultOperation;
     }
 
-    public String getDefaultOperation() {
+    public HazelcastOperation getDefaultOperation() {
         return defaultOperation;
     }
 

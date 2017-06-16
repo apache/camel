@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastCommand;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
@@ -38,6 +39,7 @@ public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements 
         super(hazelcastInstance, endpointUri, component, cacheName);
         this.configuration = configuration;
         setCommand(HazelcastCommand.topic);
+        setDefaultOperation(HazelcastOperation.PUBLISH);
     }
 
     @Override

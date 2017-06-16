@@ -37,7 +37,7 @@ public final class HazelcastRoutePolicyMain {
                 policy.setLockValue(args[1]);
                 policy.setTryLockTimeout(5, TimeUnit.SECONDS);
 
-                from("file:///tmp/camel?delete=true")
+                from("file:///tmp/camel?DELETE=true")
                     .routeId(args[1])
                     .routePolicy(policy)
                     .setHeader("HazelcastRouteID", constant(args[1]))

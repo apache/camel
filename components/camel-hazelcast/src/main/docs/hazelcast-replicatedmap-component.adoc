@@ -41,7 +41,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
-| **defaultOperation** (common) | To specify a default operation to use if no operation header has been provided. |  | String
+| **defaultOperation** (common) | To specify a default operation to use if no operation header has been provided. |  | HazelcastOperation
 | **hazelcastInstance** (common) | The hazelcast instance reference which can be used for hazelcast endpoint. |  | HazelcastInstance
 | **hazelcastInstanceName** (common) | The hazelcast instance reference name which can be used for hazelcast endpoint. If you don't specify the instance reference camel use the default hazelcast instance from the camel-hazelcast instance. |  | String
 | **reliable** (common) | Define if the endpoint will use a reliable Topic struct or not. | false | boolean
@@ -84,7 +84,7 @@ Java DSL:
 [source,java]
 ------------------------------------------------------------------------------------
 from("direct:put")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION))
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUT))
 .to(String.format("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX));
 ------------------------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ Java DSL:
 [source,java]
 ------------------------------------------------------------------------------------
 from("direct:get")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION))
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
 .toF("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX)
 .to("seda:out");
 ------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ Java DSL:
 [source,java]
 ---------------------------------------------------------------------------------------
 from("direct:delete")
-.setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION))
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DELETE))
 .toF("hazelcast-%sbar", HazelcastConstants.REPLICATEDMAP_PREFIX);
 ---------------------------------------------------------------------------------------
 
