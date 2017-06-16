@@ -30,12 +30,9 @@ public abstract class HazelcastDefaultProducer extends DefaultProducer {
         return (HazelcastDefaultEndpoint)super.getEndpoint();
     }
 
-    protected int lookupOperationNumber(Exchange exchange) {
-        int defaultNumber = -1;
-        // if there is a default operation we need to convert that first to a number
-        if (getEndpoint().getDefaultOperation() != null) {
-            defaultNumber = HazelcastComponentHelper.extractOperationNumber(getEndpoint().getDefaultOperation(), -1);
-        }
-        return HazelcastComponentHelper.lookupOperationNumber(exchange, defaultNumber);
+    protected HazelcastOperation lookupOperation(Exchange exchange) {
+
+        return HazelcastComponentHelper.lookupOperation(exchange, getEndpoint().getDefaultOperation());
+
     }
 }

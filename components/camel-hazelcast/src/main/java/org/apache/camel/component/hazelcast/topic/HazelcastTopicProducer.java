@@ -23,6 +23,7 @@ import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastOperation;
 
 /**
  *
@@ -41,19 +42,18 @@ public class HazelcastTopicProducer extends HazelcastDefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        final int operation = lookupOperationNumber(exchange);
+        final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-        case -1:
-            // default operation to publish
-        case HazelcastConstants.PUBLISH_OPERATION:
+
+        case PUBLISH:
             this.publish(exchange);
             break;
         default:
             throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the TOPIC cache.", operation, HazelcastConstants.OPERATION));
         }
 
-        // finally copy headers
+         // finally copy headers
         HazelcastComponentHelper.copyHeaders(exchange);
     }
 

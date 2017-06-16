@@ -72,7 +72,7 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
 
                 from("direct:publishInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
 
-                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUBLISH_OPERATION)).to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
+                from("direct:publish").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.PUBLISH)).to(String.format("hazelcast-%sbar", HazelcastConstants.TOPIC_PREFIX));
             }
         };
     }
