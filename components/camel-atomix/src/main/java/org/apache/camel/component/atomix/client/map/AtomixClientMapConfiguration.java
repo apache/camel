@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atomix.client.map;
 
-import io.atomix.collections.DistributedMap;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.atomix.client.AtomixClientAction;
 import org.apache.camel.component.atomix.client.AtomixClientConfiguration;
@@ -31,10 +30,10 @@ public class AtomixClientMapConfiguration extends AtomixClientConfiguration {
     private Long ttl;
     @UriParam
     private String resultHeader;
-    @UriParam(label = "advanced")
-    private DistributedMap.Config config = new DistributedMap.Config();
-    @UriParam(label = "advanced")
-    private DistributedMap.Options options = new DistributedMap.Options();
+//    @UriParam(label = "advanced")
+//    private DistributedMap.Config config = new DistributedMap.Config();
+//    @UriParam(label = "advanced")
+//    private DistributedMap.Options options = new DistributedMap.Options();
 
     // ****************************************
     // Properties
@@ -73,27 +72,28 @@ public class AtomixClientMapConfiguration extends AtomixClientConfiguration {
         this.resultHeader = resultHeader;
     }
 
-    public DistributedMap.Config getConfig() {
-        return config;
-    }
 
-    /**
-     * The cluster wide map config
-     */
-    public void setConfig(DistributedMap.Config config) {
-        this.config = config;
-    }
-
-    public DistributedMap.Options getOptions() {
-        return options;
-    }
-
-    /**
-     * The local map options
-     */
-    public void setOptions(DistributedMap.Options options) {
-        this.options = options;
-    }
+//    public DistributedMap.Config getConfig() {
+//        return config;
+//    }
+//
+//    /**
+//     * The cluster wide map config
+//     */
+//    public void setConfig(DistributedMap.Config config) {
+//        this.config = config;
+//    }
+//
+//    public DistributedMap.Options getOptions() {
+//        return options;
+//    }
+//
+//    /**
+//     * The local map options
+//     */
+//    public void setOptions(DistributedMap.Options options) {
+//        this.options = options;
+//    }
 
     // ****************************************
     // Copy

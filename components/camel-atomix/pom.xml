@@ -66,6 +66,11 @@
       <version>${atomix-version}</version>
     </dependency>
     <dependency>
+      <groupId>io.atomix</groupId>
+      <artifactId>atomix-collections</artifactId>
+      <version>${atomix-version}</version>
+    </dependency>
+    <dependency>
       <groupId>io.atomix.catalyst</groupId>
       <artifactId>catalyst-netty</artifactId>
       <version>${atomix-catalyst-version}</version>

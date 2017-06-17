@@ -20,6 +20,7 @@ import java.util.List;
 import javax.annotation.Generated;
 import io.atomix.AtomixClient;
 import io.atomix.catalyst.transport.Address;
+import org.apache.camel.component.atomix.client.AtomixClientAction;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -38,8 +39,7 @@ public class AtomixClientMapComponentConfiguration
     /**
      * The shared component configuration
      */
-    @NestedConfigurationProperty
-    private C configuration;
+    private AtomixClientMapConfigurationNestedConfiguration configuration;
     /**
      * The shared AtomixClient instance
      */
@@ -60,11 +60,12 @@ public class AtomixClientMapComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public C getConfiguration() {
+    public AtomixClientMapConfigurationNestedConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(C configuration) {
+    public void setConfiguration(
+            AtomixClientMapConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -99,5 +100,45 @@ public class AtomixClientMapComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class AtomixClientMapConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.atomix.client.map.AtomixClientMapConfiguration.class;
+        /**
+         * The default action.
+         */
+        private AtomixClientAction defaultAction;
+        /**
+         * The resource ttl.
+         */
+        private Long ttl;
+        /**
+         * The header that wil carry the result.
+         */
+        private String resultHeader;
+
+        public AtomixClientAction getDefaultAction() {
+            return defaultAction;
+        }
+
+        public void setDefaultAction(AtomixClientAction defaultAction) {
+            this.defaultAction = defaultAction;
+        }
+
+        public Long getTtl() {
+            return ttl;
+        }
+
+        public void setTtl(Long ttl) {
+            this.ttl = ttl;
+        }
+
+        public String getResultHeader() {
+            return resultHeader;
+        }
+
+        public void setResultHeader(String resultHeader) {
+            this.resultHeader = resultHeader;
+        }
     }
 }

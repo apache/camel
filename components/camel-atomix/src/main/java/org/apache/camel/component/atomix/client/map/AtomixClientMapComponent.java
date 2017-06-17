@@ -23,19 +23,45 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientComponent;
 
 public class AtomixClientMapComponent extends AbstractAtomixClientComponent<AtomixClientMapConfiguration> {
+    private AtomixClientMapConfiguration configuration = new AtomixClientMapConfiguration();
+
     public AtomixClientMapComponent() {
-        super(new AtomixClientMapConfiguration());
+        super();
     }
 
     public AtomixClientMapComponent(CamelContext camelContext) {
-        super(camelContext, new AtomixClientMapConfiguration());
+        super(camelContext);
     }
+
+    // **********************************************
+    // Endpoints
+    // **********************************************
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        AtomixClientMapConfiguration configuration = super.getConfiguration().copy();
+        AtomixClientMapConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);
 
         return new AtomixClientMapEndpoint(uri, this, configuration, remaining);
+    }
+
+    // **********************************************
+    // Properties
+    // **********************************************
+
+    public AtomixClientMapConfiguration getConfiguration() {
+        return this.configuration;
+    }
+
+    /**
+     * The shared component configuration
+     */
+    public void setConfiguration(AtomixClientMapConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    @Override
+    protected AtomixClientMapConfiguration getComponentConfiguration() {
+        return getConfiguration();
     }
 }

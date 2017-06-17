@@ -134,7 +134,7 @@
 	* [Atmos](atmos-component.adoc)
 	* [Atmosphere Websocket](atmosphere-websocket-component.adoc)
 	* [Atom](atom-component.adoc)
-	* [atomix-map](atomix-map-component.adoc)
+	* [Atomix Map](atomix-map-component.adoc)
 	* [Avro](avro-component.adoc)
 	* [AWS CloudWatch](aws-cw-component.adoc)
 	* [AWS DynamoDB](aws-ddb-component.adoc)
