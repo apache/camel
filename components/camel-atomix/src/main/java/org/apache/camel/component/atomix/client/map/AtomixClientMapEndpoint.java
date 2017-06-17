@@ -22,7 +22,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(firstVersion = "2.20.0", scheme = "atomix-map", title = "atomix-map", syntax = "atomix-map:mapName", producerOnly = true, label = "clustering")
+@UriEndpoint(firstVersion = "2.20.0", scheme = "atomix-map", title = "Atomix Map", syntax = "atomix-map:mapName", producerOnly = true, label = "clustering")
 class AtomixClientMapEndpoint extends AbstractAtomixClientEndpoint<AtomixClientMapComponent, AtomixClientMapConfiguration> {
 
     @UriPath(description = "The distributed map name")
