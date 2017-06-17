@@ -42,9 +42,9 @@ public class AtomixClientMapConsumer extends AbstractAtomixClientConsumer<Atomix
         this.map = getAtomixEndpoint()
             .getAtomix()
             .getMap(
-                getAtomixEndpoint().getMapName(),
-                getAtomixEndpoint().getAtomixConfiguration().getConfig(),
-                getAtomixEndpoint().getAtomixConfiguration().getOptions())
+                getAtomixEndpoint().getMapName())
+                //getAtomixEndpoint().getAtomixConfiguration().getConfig(),
+                //getAtomixEndpoint().getAtomixConfiguration().getOptions())
             .join();
 
         this.listeners.add(this.map.onAdd(this::onEvent).join());

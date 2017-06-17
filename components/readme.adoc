@@ -38,7 +38,7 @@ Number of Components: 267 in 187 JAR artifacts (17 deprecated)
 | link:camel-atom/src/main/docs/atom-component.adoc[Atom] (camel-atom) +
 `atom:feedUri` | 1.2 | The atom component is used for consuming Atom RSS feeds.
 
-| link:camel-atomix/src/main/docs/atomix-map-component.adoc[atomix-map] (camel-atomix) +
+| link:camel-atomix/src/main/docs/atomix-map-component.adoc[Atomix Map] (camel-atomix) +
 `atomix-map:mapName` | 2.20 | Camel Atomix support
 
 | link:camel-avro/src/main/docs/avro-component.adoc[Avro] (camel-avro) +
@@ -985,7 +985,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 38 in 38 JAR artifacts (14 deprecated)
+Number of Miscellaneous Components: 39 in 39 JAR artifacts (14 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -1026,6 +1026,8 @@ Number of Miscellaneous Components: 38 in 38 JAR artifacts (14 deprecated)
 | link:camel-ruby/src/main/docs/ruby.adoc[Ruby] (camel-ruby) | 1.0 | *deprecated* Camel Ruby DSL
 
 | link:camel-rx/src/main/docs/rx.adoc[RX] (camel-rx) | 2.11 | *deprecated* Camel Reactive using RxJava library
+
+| link:camel-rxjava2/src/main/docs/rxjava2.adoc[Rxjava2] (camel-rxjava2) | 2.20 | RxJava2 based back-end for Camel's reactive streams component
 
 | link:camel-scala/src/main/docs/scala.adoc[Scala DSL] (camel-scala) | 1.4 | *deprecated* Camel Scala DSL
 

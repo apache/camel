@@ -353,10 +353,9 @@ final class AtomixClientMapProducer extends AbstractAsyncAtomixClientProducer<At
             name -> {
                 return getAtomixEndpoint()
                     .getAtomix()
-                    .getMap(
-                        name,
-                        getAtomixEndpoint().getAtomixConfiguration().getConfig(),
-                        getAtomixEndpoint().getAtomixConfiguration().getOptions())
+                    .getMap(name)
+                        //getAtomixEndpoint().getAtomixConfiguration().getConfig(),
+                        //getAtomixEndpoint().getAtomixConfiguration().getOptions())
                     .join();
             }
         );
