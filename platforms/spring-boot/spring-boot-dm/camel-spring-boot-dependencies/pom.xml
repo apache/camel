@@ -299,7 +299,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-atomx</artifactId>
+        <artifactId>camel-atomix</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
