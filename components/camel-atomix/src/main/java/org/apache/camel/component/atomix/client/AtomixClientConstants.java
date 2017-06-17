@@ -27,6 +27,11 @@ public final class AtomixClientConstants {
     public static final String RESOURCE_TTL = "CamelAtomixResourceTTL";
     public static final String RESOURCE_READ_CONSISTENCY = "CamelAtomixResourceReadConsistency";
     public static final String EVENT_TYPE = "CamelAtomixEventType";
+    public static final String MESSAGE_ID = "CamelAtomixEventType";
+    public static final String MEMBER_NAME = "CamelAtomixMemberName";
+    public static final String CHANNEL_NAME = "CamelAtomixChannelName";
+
+    public static final String BROADCAST_TYPE = "CamelAtomixBroadcastType";
 
     private AtomixClientConstants() {
     }

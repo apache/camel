@@ -23,8 +23,6 @@ import io.atomix.catalyst.transport.Address;
 import io.atomix.catalyst.transport.Transport;
 import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.atomix.cluster.AtomixClusterConfiguration;
-import org.apache.camel.component.atomix.cluster.AtomixClusterHelper;
 import org.apache.camel.impl.ha.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;

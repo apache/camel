@@ -16,27 +16,35 @@
  */
 package org.apache.camel.component.atomix.client;
 
+import java.util.Map;
+
 import io.atomix.AtomixClient;
 import io.atomix.AtomixReplica;
 import io.atomix.catalyst.transport.Address;
-import org.apache.camel.component.atomix.AtomixHelper;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.Component;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public abstract class AtomixClientTestSupport extends CamelTestSupport {
-    private Address replicaAddress;
-    private AtomixReplica replica;
-    private AtomixClient client;
+    protected Address replicaAddress;
+    protected AtomixReplica replica;
+    protected AtomixClient client;
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        createComponents().entrySet().stream()
+            .forEach(e -> registry.bind(e.getKey(), e.getValue()));
+
+        return registry;
+    }
 
     @Override
     protected void doPreSetup() throws Exception {
-        replicaAddress = new Address("127.0.0.1", AvailablePortFinder.getNextAvailable());
-
-        replica = AtomixReplica.builder(replicaAddress).withStorage(AtomixHelper.inMemoryStorage()).build();
-        replica.bootstrap().join();
-
-        client = AtomixClient.builder().build();
-        client.connect(replicaAddress).join();
+        replicaAddress = AtomixFactory.address("127.0.0.1");
+        replica = AtomixFactory.replica(replicaAddress);
+        client = AtomixFactory.client(replicaAddress);
 
         super.doPreSetup();
     }
@@ -45,14 +53,19 @@ public abstract class AtomixClientTestSupport extends CamelTestSupport {
     public void tearDown() throws Exception {
         if (client != null) {
             client.close().join();
+            client = null;
         }
+
         if (replica != null) {
             replica.shutdown().join();
             replica.leave().join();
+            replica = null;
         }
 
         super.tearDown();
     }
+
+    protected abstract Map<String, Component> createComponents();
 
     // *************************************
     // properties

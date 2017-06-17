@@ -80,11 +80,20 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         return new AtomixClusterMember(group, member);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void doStart() throws Exception {
         if (!localMember.hasJoined()) {
             LOGGER.debug("Get group {}", getNamespace());
-            group = this.atomix.getGroup(getNamespace()).get();
+
+            final AtomixClusterService service = getClusterService().unwrap(AtomixClusterService.class);
+            final AtomixClusterConfiguration configuration = service.getConfiguration();
+
+            group = this.atomix.getGroup(
+                getNamespace(),
+                new DistributedGroup.Config(configuration.getResourceConfig(getNamespace())),
+                new DistributedGroup.Options(configuration.getResourceOptions(getNamespace()))
+            ).get();
 
             LOGGER.debug("Join group {}", getNamespace());
             localMember.join();
