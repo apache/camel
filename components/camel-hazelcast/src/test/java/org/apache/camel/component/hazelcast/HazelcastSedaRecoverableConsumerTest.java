@@ -54,7 +54,7 @@ public abstract class HazelcastSedaRecoverableConsumerTest extends HazelcastCame
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("hazelcast-seda:foo?transacted=true").to("mock:result");
+                from("hazelcast-seda:foo?transacted=true&onErrorDelay=5").to("mock:result");
             }
         };
     }
