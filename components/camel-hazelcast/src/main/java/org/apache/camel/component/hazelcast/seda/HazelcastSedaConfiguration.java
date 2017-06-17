@@ -32,6 +32,8 @@ public class HazelcastSedaConfiguration {
     private int concurrentConsumers = 1;
     @UriParam(label = "seda", defaultValue = "1000")
     private int pollTimeout = 1000;
+    @UriParam(label = "seda", defaultValue = "1000")
+    private int onErrorDelay = 1000;
     @UriParam(label = "seda")
     private boolean transferExchange;
     @UriParam(label = "seda")
@@ -89,6 +91,20 @@ public class HazelcastSedaConfiguration {
 
     public boolean isTransferExchange() {
         return transferExchange;
+    }
+
+    /**
+     * Milliseconds before consumer continues polling after an error has occurred.
+     */
+    public void setOnErrorDelay(int onErrorDelay) {
+        if (onErrorDelay < 0) {
+            throw new IllegalArgumentException("Property onErrorDelay must be a positive number, was " + onErrorDelay);
+        }
+        this.onErrorDelay = onErrorDelay;
+    }
+
+    public int getOnErrorDelay() {
+        return onErrorDelay;
     }
 
     /**
