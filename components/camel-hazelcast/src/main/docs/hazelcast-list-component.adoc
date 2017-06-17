@@ -34,7 +34,7 @@ with the following path and query parameters:
 | **cacheName** | *Required* The name of the cache |  | String
 |=======================================================================
 
-#### Query Parameters (12 parameters):
+#### Query Parameters (13 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -48,6 +48,7 @@ with the following path and query parameters:
 | **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | **concurrentConsumers** (seda) | To use concurrent consumers polling from the SEDA queue. | 1 | int
+| **onErrorDelay** (seda) | Milliseconds before consumer continues polling after an error has occurred. | 1000 | int
 | **pollTimeout** (seda) | The timeout used when consuming from the SEDA queue. When a timeout occurs the consumer can check whether it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown. | 1000 | int
 | **transacted** (seda) | If set to true then the consumer runs in transaction mode where the messages in the seda queue will only be removed if the transaction commits which happens when the processing is complete. | false | boolean
 | **transferExchange** (seda) | If set to true the whole Exchange will be transfered. If header or body contains not serializable objects they will be skipped. | false | boolean

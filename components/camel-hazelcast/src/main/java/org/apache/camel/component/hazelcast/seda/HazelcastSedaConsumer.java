@@ -142,7 +142,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 }
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(endpoint.getConfiguration().getOnErrorDelay());
                 } catch (InterruptedException ignore) {
                 }
             }

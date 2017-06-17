@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -42,6 +43,7 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
         assertEquals("Invalid queue name", "foo", hzlqEndpoint.getConfiguration().getQueueName());
         assertEquals("Default value of concurrent consumers is invalid", 1, hzlqEndpoint.getConfiguration().getConcurrentConsumers());
         assertEquals("Default value of pool timeout is invalid", 1000, hzlqEndpoint.getConfiguration().getPollTimeout());
+        assertEquals("Default value of on error delay is invalid", 1000, hzlqEndpoint.getConfiguration().getOnErrorDelay());
     }
 
     @Test
@@ -51,6 +53,7 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
         assertEquals("Invalid queue name", "foo", hzlqEndpoint.getConfiguration().getQueueName());
         assertEquals("Value of concurrent consumers is invalid", 4, hzlqEndpoint.getConfiguration().getConcurrentConsumers());
         assertEquals("Default value of pool timeout is invalid", 1000, hzlqEndpoint.getConfiguration().getPollTimeout());
+        assertEquals("Default value of on error delay is invalid", 1000, hzlqEndpoint.getConfiguration().getOnErrorDelay());
     }
 
     @Test
@@ -60,6 +63,27 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
         assertEquals("Invalid queue name", "foo", hzlqEndpoint.getConfiguration().getQueueName());
         assertEquals("Default value of concurrent consumers is invalid", 1, hzlqEndpoint.getConfiguration().getConcurrentConsumers());
         assertEquals("Invalid pool timeout", 4000, hzlqEndpoint.getConfiguration().getPollTimeout());
+        assertEquals("Default value of on error delay is invalid", 1000, hzlqEndpoint.getConfiguration().getOnErrorDelay());
+    }
+
+    @Test
+    public void createEndpointWithOnErrorDelayParam() throws Exception {
+        HazelcastSedaEndpoint hzlqEndpoint = (HazelcastSedaEndpoint) context.getEndpoint("hazelcast-seda:foo?onErrorDelay=5000");
+
+        assertEquals("Invalid queue name", "foo", hzlqEndpoint.getConfiguration().getQueueName());
+        assertEquals("Default value of concurrent consumers is invalid", 1, hzlqEndpoint.getConfiguration().getConcurrentConsumers());
+        assertEquals("Default value of pool timeout is invalid", 1000, hzlqEndpoint.getConfiguration().getPollTimeout());
+        assertEquals("Value of on error delay is invalid", 5000, hzlqEndpoint.getConfiguration().getOnErrorDelay());
+    }
+
+    @Test
+    public void createEndpointWithIllegalOnErrorDelayParam() throws Exception {
+        try {
+            context.getEndpoint("hazelcast-seda:foo?onErrorDelay=-1");
+            fail("Should have thrown exception");
+        } catch (ResolveEndpointFailedException e) {
+            assertTrue(e.getCause().getMessage().contains("onErrorDelay must be a positive number, was -1"));
+        }
     }
 
 }
