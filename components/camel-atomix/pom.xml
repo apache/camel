@@ -37,12 +37,21 @@
     <camel.osgi.export.pkg>
       org.apache.camel.component.atomix.*,
       org.apache.camel.component.atomix.client.*,
-      org.apache.camel.component.atomix.cluster.*
+      org.apache.camel.component.atomix.client.map.*,
+      org.apache.camel.component.atomix.client.multimap.*,
+      org.apache.camel.component.atomix.client.set.*,
+      org.apache.camel.component.atomix.client.queue.*,
+      org.apache.camel.component.atomix.client.value.*,
+      org.apache.camel.component.atomix.client.messaging.*,
       org.apache.camel.component.atomix.ha.*
     </camel.osgi.export.pkg>
     <camel.osgi.export.service>
       org.apache.camel.spi.ComponentResolver;component=atomix-map,
-      org.apache.camel.spi.ComponentResolver;component=atomix-cluster,
+      org.apache.camel.spi.ComponentResolver;component=atomix-multimap,
+      org.apache.camel.spi.ComponentResolver;component=atomix-set,
+      org.apache.camel.spi.ComponentResolver;component=atomix-queue,
+      org.apache.camel.spi.ComponentResolver;component=atomix-value,
+      org.apache.camel.spi.ComponentResolver;component=atomix-messaging
     </camel.osgi.export.service>
   </properties>
 
@@ -68,6 +77,21 @@
     <dependency>
       <groupId>io.atomix</groupId>
       <artifactId>atomix-collections</artifactId>
+      <version>${atomix-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.atomix</groupId>
+      <artifactId>atomix-variables</artifactId>
+      <version>${atomix-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.atomix</groupId>
+      <artifactId>atomix-concurrent</artifactId>
+      <version>${atomix-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.atomix</groupId>
+      <artifactId>atomix-resource</artifactId>
       <version>${atomix-version}</version>
     </dependency>
     <dependency>

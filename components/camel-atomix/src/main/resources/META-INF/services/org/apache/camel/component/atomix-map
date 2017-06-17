@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.atomix.client.map.AtomixClientMapComponent
+class=org.apache.camel.component.atomix.client.map.AtomixMapComponent

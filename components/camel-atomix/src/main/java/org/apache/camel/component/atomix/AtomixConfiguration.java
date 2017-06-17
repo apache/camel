@@ -17,7 +17,10 @@
 package org.apache.camel.component.atomix;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,18 +35,22 @@ import org.apache.camel.util.ObjectHelper;
 public class AtomixConfiguration<T extends Atomix> implements Cloneable {
     @UriParam
     private T atomix;
-
     @UriParam(javaType = "java.lang.String")
     private List<Address> nodes = Collections.emptyList();
-
     @UriParam(defaultValue = "io.atomix.catalyst.transport.netty.NettyTransport")
     private Class<? extends Transport> transport = NettyTransport.class;
-
     @UriParam
     private String configurationUri;
-
     @UriParam(label = "advanced")
     private ReadConsistency readConsistency;
+    @UriParam(label = "advanced")
+    private Properties defaultResourceConfig;
+    @UriParam(label = "advanced")
+    private Properties defaultResourceOptions;
+    @UriParam(label = "advanced", prefix = "resource.config")
+    private Map<String, Properties> resourceConfigs;
+    @UriParam(label = "advanced", prefix = "resource.options")
+    private Map<String, Properties> resourceOptions;
 
     protected AtomixConfiguration() {
     }
@@ -111,5 +118,107 @@ public class AtomixConfiguration<T extends Atomix> implements Cloneable {
      */
     public void setReadConsistency(ReadConsistency readConsistency) {
         this.readConsistency = readConsistency;
+    }
+
+    // ***********************************
+    // Properties - Resource configuration
+    // ***********************************
+
+    public Properties getDefaultResourceConfig() {
+        return defaultResourceConfig;
+    }
+
+    /**
+     * The cluster wide default resource configuration.
+     */
+    public void setDefaultResourceConfig(Properties defaultResourceConfig) {
+        this.defaultResourceConfig = defaultResourceConfig;
+    }
+
+    public Properties getDefaultResourceOptions() {
+        return defaultResourceOptions;
+    }
+
+    /**
+     * The local default resource options.
+     */
+    public void setDefaultResourceOptions(Properties defaultResourceOptions) {
+        this.defaultResourceOptions = defaultResourceOptions;
+    }
+
+    public Map<String, Properties> getResourceConfigs() {
+        return resourceConfigs;
+    }
+
+    /**
+     * Cluster wide resources configuration.
+     */
+    public void setResourceConfigs(Map<String, Properties> resourceConfigs) {
+        this.resourceConfigs = resourceConfigs;
+    }
+
+    public void addResourceConfig(String name, Properties config) {
+        if (this.resourceConfigs == null) {
+            this.resourceConfigs = new HashMap<>();
+        }
+
+        this.resourceConfigs.put(name, config);
+    }
+
+    public Properties getResourceConfig(String name) {
+        Properties properties = null;
+
+        if (this.resourceConfigs != null) {
+            Properties props = this.resourceConfigs.getOrDefault(name, this.defaultResourceConfig);
+            if (props != null) {
+                properties = new Properties(props);
+            }
+        } else if (this.defaultResourceConfig != null) {
+            properties = new Properties(this.defaultResourceConfig);
+        }
+
+        if (properties == null) {
+            properties = new Properties();
+        }
+
+        return properties;
+    }
+
+    public Map<String, Properties> getResourceOptions() {
+        return resourceOptions;
+    }
+
+    /**
+     * Local resources configurations
+     */
+    public void setResourceOptions(Map<String, Properties> resourceOptions) {
+        this.resourceOptions = resourceOptions;
+    }
+
+    public void addResourceOption(String name, Properties config) {
+        if (this.resourceOptions == null) {
+            this.resourceOptions = new HashMap<>();
+        }
+
+        this.resourceOptions.put(name, config);
+    }
+
+    public Properties getResourceOptions(String name) {
+        Properties properties = null;
+
+        if (this.resourceOptions != null) {
+            Properties props = this.resourceOptions.getOrDefault(name, this.defaultResourceOptions);
+            if (props != null) {
+                properties = new Properties(props);
+            }
+        } else if (this.defaultResourceOptions != null) {
+            properties = new Properties(this.defaultResourceOptions);
+        }
+
+        if (properties == null) {
+            properties = new Properties();
+        }
+
+        return properties;
     }
 }

@@ -17,20 +17,27 @@
 package org.apache.camel.component.atomix.client;
 
 import io.atomix.AtomixClient;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 
 
 public abstract class AbstractAtomixClientEndpoint<T extends AbstractAtomixClientComponent, C extends AtomixClientConfiguration> extends DefaultEndpoint {
-    private final C configuration;
+    @UriPath(description = "The distributed resource name")
+    @Metadata(required = "true")
+    private final String resourceName;
+
     private AtomixClient atomix;
 
-    protected AbstractAtomixClientEndpoint(String uri, T component, C configuration) {
+    protected AbstractAtomixClientEndpoint(String uri, T component, String resourceName) {
         super(uri, component);
 
-        this.configuration = configuration;
+        this.resourceName = resourceName;
     }
 
     @Override
@@ -51,7 +58,13 @@ public abstract class AbstractAtomixClientEndpoint<T extends AbstractAtomixClien
     @Override
     protected void doStart() throws Exception {
         if (atomix == null) {
-            atomix = AtomixClientHelper.createClient(getCamelContext(), configuration);
+            final C configuration = getConfiguration();
+            final CamelContext context = getCamelContext();
+
+            ObjectHelper.notNull(configuration, "Configuration");
+            ObjectHelper.notNull(context, "CamelContext");
+
+            atomix = AtomixClientHelper.createClient(context, configuration);
             atomix.connect(configuration.getNodes()).join();
         }
 
@@ -69,18 +82,26 @@ public abstract class AbstractAtomixClientEndpoint<T extends AbstractAtomixClien
 
     // **********************************
     // Helpers for implementations
-    // *********************************
+    // **********************************
 
     @SuppressWarnings("unchecked")
     public T getAtomixComponent() {
         return (T)super.getComponent();
     }
 
-    public C getAtomixConfiguration() {
-        return this.configuration;
-    }
-
     public AtomixClient getAtomix() {
         return atomix;
     }
+
+    public String getResourceName() {
+        return resourceName;
+    }
+
+    // **********************************
+    // Abstract
+    // **********************************
+
+    public abstract C getConfiguration();
+
+    public abstract void setConfiguration(C configuration);
 }

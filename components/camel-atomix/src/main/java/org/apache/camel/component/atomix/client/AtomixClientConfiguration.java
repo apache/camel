@@ -18,6 +18,24 @@ package org.apache.camel.component.atomix.client;
 
 import io.atomix.AtomixClient;
 import org.apache.camel.component.atomix.AtomixConfiguration;
+import org.apache.camel.spi.UriParam;
 
 public class AtomixClientConfiguration extends AtomixConfiguration<AtomixClient> implements Cloneable {
+    @UriParam
+    private String resultHeader;
+
+    // ****************************************
+    // Properties
+    // ****************************************
+
+    public String getResultHeader() {
+        return resultHeader;
+    }
+
+    /**
+     * The header that wil carry the result.
+     */
+    public void setResultHeader(String resultHeader) {
+        this.resultHeader = resultHeader;
+    }
 }
