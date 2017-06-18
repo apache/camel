@@ -125,10 +125,10 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     public FluentProducerTemplate clearAll() {
-       clearBody();
-       clearHeaders();
+        clearBody();
+        clearHeaders();
 
-       return this;
+        return this;
     }
 
     @Override
