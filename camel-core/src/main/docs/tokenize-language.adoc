@@ -30,7 +30,7 @@ The Tokenize language supports 10 options which are listed below.
 | regex | false | Boolean | If the token is a regular expression pattern. The default value is false
 | xml | false | Boolean | Whether the input is XML messages. This option must be set to true if working with XML payloads.
 | includeTokens | false | Boolean | Whether to include the tokens in the parts when using pairs The default value is false
-| group |  | Integer | To group N parts together for example to split big files into chunks of 1000 lines.
+| group |  | String | To group N parts together for example to split big files into chunks of 1000 lines. You can use simple language as the group to support dynamic group sizes.
 | skipFirst | false | Boolean | To skip the very first element
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================

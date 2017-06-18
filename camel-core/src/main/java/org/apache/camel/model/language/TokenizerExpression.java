@@ -52,7 +52,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     @XmlAttribute
     private Boolean includeTokens;
     @XmlAttribute
-    private Integer group;
+    private String group;
     @XmlAttribute
     private Boolean skipFirst;
 
@@ -149,14 +149,15 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.includeTokens = includeTokens;
     }
 
-    public Integer getGroup() {
+    public String getGroup() {
         return group;
     }
 
     /**
      * To group N parts together, for example to split big files into chunks of 1000 lines.
+     * You can use simple language as the group to support dynamic group sizes.
      */
-    public void setGroup(Integer group) {
+    public void setGroup(String group) {
         this.group = group;
     }
 
@@ -193,9 +194,6 @@ public class TokenizerExpression extends ExpressionDefinition {
             language.setIncludeTokens(includeTokens);
         }
         if (group != null) {
-            if (group <= 0) {
-                throw new IllegalArgumentException("Group must be a positive number, was: " + group);
-            }
             language.setGroup(group);
         }
         if (skipFirst != null) {

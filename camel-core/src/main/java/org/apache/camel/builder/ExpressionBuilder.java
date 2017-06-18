@@ -40,12 +40,14 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.language.bean.BeanLanguage;
@@ -1639,14 +1641,21 @@ public final class ExpressionBuilder {
         };
     }
 
-    public static Expression groupXmlIteratorExpression(final Expression expression, final int group) {
+    public static Expression groupXmlIteratorExpression(final Expression expression, final String group) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
                 // must use GroupTokenIterator in xml mode as we want to concat the xml parts into a single message
-                return new GroupTokenIterator(exchange, it, null, group, false);
+                // the group can be a simple expression so evaluate it as a number
+                Integer parts = exchange.getContext().resolveLanguage("simple").createExpression(group).evaluate(exchange, Integer.class);
+                if (parts == null) {
+                    throw new RuntimeExchangeException("Group evaluated as null, must be evaluated as a positive Integer value from expression: " + group, exchange);
+                } else if (parts <= 0) {
+                    throw new RuntimeExchangeException("Group must be a positive number, was: " + parts, exchange);
+                }
+                return new GroupTokenIterator(exchange, it, null, parts, false);
             }
 
             @Override
@@ -1656,16 +1665,23 @@ public final class ExpressionBuilder {
         };
     }
 
-    public static Expression groupIteratorExpression(final Expression expression, final String token, final int group, final boolean skipFirst) {
+    public static Expression groupIteratorExpression(final Expression expression, final String token, final String group, final boolean skipFirst) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                // the group can be a simple expression so evaluate it as a number
+                Integer parts = exchange.getContext().resolveLanguage("simple").createExpression(group).evaluate(exchange, Integer.class);
+                if (parts == null) {
+                    throw new RuntimeExchangeException("Group evaluated as null, must be evaluated as a positive Integer value from expression: " + group, exchange);
+                } else if (parts <= 0) {
+                    throw new RuntimeExchangeException("Group must be a positive number, was: " + parts, exchange);
+                }
                 if (token != null) {
-                    return new GroupTokenIterator(exchange, it, token, group, skipFirst);
+                    return new GroupTokenIterator(exchange, it, token, parts, skipFirst);
                 } else {
-                    return new GroupIterator(exchange, it, group, skipFirst);
+                    return new GroupIterator(exchange, it, parts, skipFirst);
                 }
             }
 
@@ -2382,7 +2398,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 // use simple language
                 Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
-                return ExpressionBuilder.groupIteratorExpression(exp, null, group, false).evaluate(exchange, Object.class);
+                return ExpressionBuilder.groupIteratorExpression(exp, null, "" + group, false).evaluate(exchange, Object.class);
             }
 
             @Override
