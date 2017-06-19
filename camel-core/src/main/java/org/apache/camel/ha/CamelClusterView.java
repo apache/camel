@@ -70,4 +70,21 @@ public interface CamelClusterView extends Service, CamelContextAware {
      * @param listener the event listener.
      */
     void removeEventListener(CameClusterEventListener listener);
+
+    /**
+     * Access the underlying concrete CamelClusterView implementation to
+     * provide access to further features.
+     *
+     * @param clazz the proprietary class or interface of the underlying concrete CamelClusterView.
+     * @return an instance of the underlying concrete CamelClusterView as the required type.
+     */
+    default <T> T unwrap(Class<T> clazz) {
+        if (CamelClusterView.class.isAssignableFrom(clazz)) {
+            return clazz.cast(this);
+        }
+
+        throw new IllegalArgumentException(
+            "Unable to unwrap this CamelClusterView type (" + getClass() + ") to the required type (" + clazz + ")"
+        );
+    }
 }

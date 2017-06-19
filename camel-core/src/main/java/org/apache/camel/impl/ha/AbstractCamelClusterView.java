@@ -30,14 +30,14 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.concurrent.LockHelper;
 
 public abstract class AbstractCamelClusterView extends ServiceSupport implements CamelClusterView {
-    private final CamelClusterService cluster;
+    private final CamelClusterService clusterService;
     private final String namespace;
     private final List<CameClusterEventListener> listeners;
     private final StampedLock lock;
     private CamelContext camelContext;
 
     protected AbstractCamelClusterView(CamelClusterService cluster, String namespace) {
-        this.cluster = cluster;
+        this.clusterService = cluster;
         this.namespace = namespace;
         this.listeners = new ArrayList<>();
         this.lock = new StampedLock();
@@ -55,7 +55,7 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
 
     @Override
     public CamelClusterService getClusterService() {
-        return this.cluster;
+        return this.clusterService;
     }
 
     @Override
