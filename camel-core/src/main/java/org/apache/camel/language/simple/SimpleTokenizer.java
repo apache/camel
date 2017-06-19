@@ -63,6 +63,7 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "is"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not contains"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "contains"));
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "~~"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not regex"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "regex"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.binaryOperator, "not in"));
