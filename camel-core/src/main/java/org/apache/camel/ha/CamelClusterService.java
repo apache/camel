@@ -21,12 +21,33 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.IdAware;
 
 public interface CamelClusterService extends Service, CamelContextAware, IdAware {
+
     /**
      * Get a view of the cluster bound to a namespace creating it if needed.
+     *
+     * Multiple calls to this method with the same namespace should return the
+     * same instance.
      *
      * @param namespace the namespace the view refer to.
      * @return the view.
      * @throws Exception if the view can't be created.
      */
     CamelClusterView getView(String namespace) throws Exception;
+
+    /**
+     * Access the underlying concrete CamelClusterService implementation to
+     * provide access to further features.
+     *
+     * @param clazz the proprietary class or interface of the underlying concrete CamelClusterService.
+     * @return an instance of the underlying concrete CamelClusterService as the required type.
+     */
+    default <T> T unwrap(Class<T> clazz) {
+        if (CamelClusterService.class.isAssignableFrom(clazz)) {
+            return clazz.cast(this);
+        }
+
+        throw new IllegalArgumentException(
+            "Unable to unwrap this CamelClusterService type (" + getClass() + ") to the required type (" + clazz + ")"
+        );
+    }
 }
