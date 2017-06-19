@@ -469,6 +469,8 @@ values)
 
 |not contains |For testing if not contains in a string based value
 
+|~~ |For testing if contains by ignoring case sensitivity in a string based value
+
 |regex |For matching against a given regular expression pattern defined as a
 String value
 
