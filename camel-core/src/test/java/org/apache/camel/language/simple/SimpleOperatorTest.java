@@ -328,6 +328,13 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} not contains 'abc'", false);
         assertPredicate("${in.header.foo} not contains 'def'", true);
     }
+    
+    public void testContainsIgnoreCase() throws Exception {
+        assertPredicate("${in.header.foo} ~~ 'A'", true);
+        assertPredicate("${in.header.foo} ~~ 'Ab'", true);
+        assertPredicate("${in.header.foo} ~~ 'Abc'", true);
+        assertPredicate("${in.header.foo} ~~ 'defG'", false);
+    }
 
     public void testRegex() throws Exception {
         assertPredicate("${in.header.foo} regex '^a..$'", true);
