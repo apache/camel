@@ -39,7 +39,9 @@
 
         <camel.osgi.export.pkg>org.apache.camel.component.leveldb.*</camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
-            *,
+            org.apache.camel*,
+            org.fusesource.hawtbuf*,
+            org.slf4j,
             org.fusesource.leveldbjni;resolution:=optional,
             org.iq80.leveldb;resolution:=optional,
             org.iq80.leveldb.impl;resolution:=optional
