@@ -35,6 +35,8 @@ public class CamelJpaTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJpaTest.class))
+                // Exclude tests which require build time enhancement of @Entity annotated classes
+                .unitTestExclusionPattern(".*(.*Idempotent.*Test$|JpaUsePersistTest$|JpaTraceEventMessageTest$)")
                 .build();
     }
 
