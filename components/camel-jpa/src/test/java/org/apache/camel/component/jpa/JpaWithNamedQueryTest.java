@@ -113,7 +113,10 @@ public class JpaWithNamedQueryTest extends Assert {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 // make use of the EntityManager having the relevant persistence-context
-                EntityManager entityManager2 = receivedExchange.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class);
+                EntityManager entityManager2 = receivedExchange.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
+                if (!entityManager2.isOpen()) {
+                    entityManager2 = endpoint.getEntityManagerFactory().createEntityManager();
+                }
                 entityManager2.joinTransaction();
 
                 // now lets assert that there are still 2 entities left
@@ -169,7 +172,7 @@ public class JpaWithNamedQueryTest extends Assert {
         endpoint = (JpaEndpoint)value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.createEntityManager();
+        entityManager = endpoint.getEntityManagerFactory().createEntityManager();
     }
 
     protected String getEndpointUri() {

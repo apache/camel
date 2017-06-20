@@ -17,11 +17,11 @@
     limitations under the License.
 
 -->
-<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             version="2.0"
+             version="2.1"
              xsi:schemaLocation="
-             http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+             http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
 
   <persistence-unit name="camel" transaction-type="RESOURCE_LOCAL">
     <!--
@@ -38,6 +38,7 @@
     <class>org.apache.camel.examples.SendEmail</class>
     <class>org.apache.camel.examples.Customer</class>
     <class>org.apache.camel.examples.Address</class>
+    <class>org.apache.camel.examples.Order</class>
 
     <properties>
       <property name="openjpa.ConnectionURL" value="jdbc:derby:target/derby;create=true"/>
