@@ -30,9 +30,6 @@
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
 		<property name="persistenceUnitName" value="skipLockedEntiy"/>
-		<!--property name="jpaDialect">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
-		</property-->
 	</bean>
 
 	<bean class="org.apache.camel.component.jpa.JpaComponent" id="jpa">

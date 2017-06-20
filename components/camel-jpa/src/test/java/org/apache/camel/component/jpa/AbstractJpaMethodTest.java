@@ -112,7 +112,10 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     
         final Customer customer = createDefaultCustomer();
         save(customer);
-        
+
+        assertEntitiesInDatabase(1, Customer.class.getName());
+        assertEntitiesInDatabase(1, Address.class.getName());
+
         final CountDownLatch latch = new CountDownLatch(1);
         
         consumer = endpoint.createConsumer(new Processor() {
@@ -162,18 +165,15 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
         assertEntitiesInDatabase(0, Address.class.getName());
     }
     
-    protected void save(final Customer customer) {
+    protected void save(final Object persistable) {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
                 entityManager.joinTransaction();
-                entityManager.persist(customer);
+                entityManager.persist(persistable);
                 entityManager.flush();
                 return null;
             }
         });
-
-        assertEntitiesInDatabase(1, Customer.class.getName());
-        assertEntitiesInDatabase(1, Address.class.getName());
     }
     
     protected void assertEntitiesInDatabase(int count, String entity) {
