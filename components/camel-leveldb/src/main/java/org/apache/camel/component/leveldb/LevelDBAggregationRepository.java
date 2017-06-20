@@ -36,8 +36,6 @@ import org.iq80.leveldb.WriteBatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.fusesource.leveldbjni.JniDBFactory.asString;
-
 /**
  * An instance of {@link org.apache.camel.spi.AggregationRepository} which is backed by a {@link LevelDBFile}.
  */
@@ -438,6 +436,18 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             return (repo + '\0' + key).getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static String asString(byte[] value) {
+        if (value == null) {
+            return null;
+        } else {
+            try {
+                return new String(value, "UTF-8");
+            } catch (UnsupportedEncodingException var2) {
+                throw new RuntimeException(var2);
+            }
         }
     }
 
