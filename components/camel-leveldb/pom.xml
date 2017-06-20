@@ -31,6 +31,13 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.leveldb.*</camel.osgi.export.pkg>
+        <camel.osgi.import.pkg>
+            *,
+            org.fusesource.leveldbjni;resolution:=optional,
+            org.iq80.leveldb;resolution:=optional,
+            org.iq80.leveldb.impl;resolution:=optional
+        </camel.osgi.import.pkg>
+        <leveldb-version>0.9</leveldb-version>
     </properties>
 
     <dependencies>
@@ -44,6 +51,11 @@
             <groupId>org.fusesource.leveldbjni</groupId>
             <artifactId>leveldbjni-all</artifactId>
             <version>${leveldbjni-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.iq80.leveldb</groupId>
+            <artifactId>leveldb</artifactId>
+            <version>${leveldb-version}</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource.hawtbuf</groupId>
