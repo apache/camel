@@ -44,10 +44,6 @@
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jpa_2.0_spec</artifactId>
-        </exclusion>
       </exclusions>
       <!--END OF GENERATED CODE-->
     </dependency>
