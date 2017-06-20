@@ -240,7 +240,7 @@
     <geronimo-jcdi-1.1-spec-version>1.0</geronimo-jcdi-1.1-spec-version>
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
     <geronimo-jms2-spec-version>1.0-alpha-2</geronimo-jms2-spec-version>
-    <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
+    <geronimo-jpa-spec-version>1.0-alpha-1</geronimo-jpa-spec-version>
     <geronimo-jsp-spec-version>1.1</geronimo-jsp-spec-version>
     <geronimo-json-spec-version>1.0</geronimo-json-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
@@ -276,8 +276,7 @@
     <hbase-version>1.2.1</hbase-version>
     <hessian-version>4.0.38</hessian-version>
     <hibernate-validator-version>5.4.1.Final</hibernate-validator-version>
-    <!-- Spring 3.2.x and 4.0.x still stick to JPA 2.0. Hibernate 4.3.x upgraded to JPA 2.1. -->
-    <hibernate-version>4.2.20.Final</hibernate-version>
+    <hibernate-version>5.0.12.Final</hibernate-version>
     <hikaricp-version>2.3.13</hikaricp-version>
     <hk2-version>2.3.0</hk2-version>
     <hk2-osgi-resource-version>1.0.1</hk2-osgi-resource-version>
@@ -3889,8 +3888,8 @@
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jpa_2.0_spec</artifactId>
-        <version>${geronimo-jpa2-spec-version}</version>
+        <artifactId>geronimo-jpa_2.1_spec</artifactId>
+        <version>${geronimo-jpa-spec-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
