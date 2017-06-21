@@ -1714,6 +1714,26 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters);
 
     /**
+     * Sets whether to load custom type converters by scanning classpath.
+     * This can be turned off if you are only using Camel components
+     * that does not provide type converters which is needed at runtime.
+     * In such situations setting this option to false, can speedup starting
+     * Camel.
+     */
+    Boolean isLoadTypeConverters();
+
+    /**
+     * Sets whether to load custom type converters by scanning classpath.
+     * This can be turned off if you are only using Camel components
+     * that does not provide type converters which is needed at runtime.
+     * In such situations setting this option to false, can speedup starting
+     * Camel.
+     *
+     * @param loadTypeConverters whether to load custom type converters.
+     */
+    void setLoadTypeConverters(Boolean loadTypeConverters);
+
+    /**
      * Whether or not type converter statistics is enabled.
      * <p/>
      * By default the type converter utilization statistics is disabled.

@@ -158,6 +158,7 @@ public class CamelAutoConfiguration {
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
         camelContext.setUseMDCLogging(config.isUseMDCLogging());
+        camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(config.isEndpointRuntimeStatisticsEnabled());

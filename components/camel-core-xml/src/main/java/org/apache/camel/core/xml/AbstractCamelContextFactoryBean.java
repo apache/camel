@@ -433,6 +433,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     
     @SuppressWarnings("deprecation")
     protected void initLazyLoadTypeConverters() {
+        if (getLoadTypeConverters() != null) {
+            getContext().setLoadTypeConverters(getLoadTypeConverters());
+        }
         if (getLazyLoadTypeConverters() != null) {
             getContext().setLazyLoadTypeConverters(getLazyLoadTypeConverters());
         } else if (System.getProperty(LAZY_LOAD_TYPE_CONVERTERS) != null) {
@@ -715,6 +718,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     @Deprecated
     public abstract PropertiesDefinition getProperties();
+
     public abstract GlobalOptionsDefinition getGlobalOptions();
 
     public abstract String[] getPackages();
@@ -764,6 +768,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
      */
     @Deprecated
     public abstract Boolean getLazyLoadTypeConverters();
+
+    public abstract Boolean getLoadTypeConverters();
 
     public abstract Boolean getTypeConverterStatisticsEnabled();
 

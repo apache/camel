@@ -252,6 +252,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean handleFault = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean lazyLoadTypeConverters = Boolean.FALSE;
+    private Boolean loadTypeConverters = Boolean.TRUE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private Boolean useDataType = Boolean.FALSE;
@@ -3952,7 +3953,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (isLazyLoadTypeConverters()) {
             answer = new LazyLoadingTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
         } else {
-            answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
+            answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
         }
         answer.setCamelContext(this);
         setTypeConverterRegistry(answer);
@@ -4234,6 +4235,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
+    }
+
+    public Boolean isLoadTypeConverters() {
+        return loadTypeConverters != null && loadTypeConverters;
+    }
+
+    public void setLoadTypeConverters(Boolean loadTypeConverters) {
+        this.loadTypeConverters = loadTypeConverters;
     }
 
     public Boolean isTypeConverterStatisticsEnabled() {
