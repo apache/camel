@@ -49,6 +49,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions.
  *
  * @goal validate
+ * @threadSafe
  */
 public class ValidateMojo extends AbstractExecMojo {
 
