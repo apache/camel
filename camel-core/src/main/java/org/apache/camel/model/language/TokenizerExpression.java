@@ -193,7 +193,7 @@ public class TokenizerExpression extends ExpressionDefinition {
         if (includeTokens != null) {
             language.setIncludeTokens(includeTokens);
         }
-        if (group != null) {
+        if (group != null && !"0".equals(group)) {
             language.setGroup(group);
         }
         if (skipFirst != null) {
