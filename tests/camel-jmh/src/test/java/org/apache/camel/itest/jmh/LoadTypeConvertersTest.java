@@ -36,7 +36,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
 
 /**
- * Tests start/stop {@link org.apache.camel.CamelContext}
+ * Tests loading type converters from classpath scanning.
  */
 public class LoadTypeConvertersTest {
 
