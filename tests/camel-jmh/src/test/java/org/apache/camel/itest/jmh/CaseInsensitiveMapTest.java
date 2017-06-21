@@ -88,7 +88,6 @@ public class CaseInsensitiveMapTest {
         Map<String, Object> map1 = generateRandomMap(10);
         Map<String, Object> map2 = generateRandomMap(10);
 
-
         private Map<String, Object> generateRandomMap(int size) {
             return IntStream.range(0, size)
                     .boxed()
