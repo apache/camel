@@ -88,6 +88,7 @@
     <module>camel-box</module>
     <module>camel-braintree</module>
     <module>camel-cache</module>
+    <module>camel-caffeine</module>
     <module>camel-cassandraql</module>
     <module>camel-castor</module>
     <module>camel-cdi</module>

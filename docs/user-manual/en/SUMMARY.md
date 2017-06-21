@@ -155,6 +155,8 @@
 	* [Bonita](bonita-component.adoc)
 	* [Box](box-component.adoc)
 	* [Braintree](braintree-component.adoc)
+	* [Caffeine Cache](caffeine-cache-component.adoc)
+	* [Caffeine LoadCache](caffeine-loadcache-component.adoc)
 	* [Camel Context](context-component.adoc)
 	* [Cassandra CQL](cql-component.adoc)
 	* [Chronicle Engine](chronicle-engine-component.adoc)
