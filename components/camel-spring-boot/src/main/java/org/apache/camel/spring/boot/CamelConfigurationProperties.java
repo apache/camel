@@ -87,6 +87,15 @@ public class CamelConfigurationProperties {
     private boolean typeConversion = true;
 
     /**
+     * Sets whether to load custom type converters by scanning classpath.
+     * This can be turned off if you are only using Camel components
+     * that does not provide type converters which is needed at runtime.
+     * In such situations setting this option to false, can speedup starting
+     * Camel.
+     */
+    private boolean loadTypeConverters = true;
+
+    /**
      * Directory to scan for adding additional XML routes.
      * You can turn this off by setting the value to false.
      */
@@ -490,6 +499,14 @@ public class CamelConfigurationProperties {
 
     public void setTypeConversion(boolean typeConversion) {
         this.typeConversion = typeConversion;
+    }
+
+    public boolean isLoadTypeConverters() {
+        return loadTypeConverters;
+    }
+
+    public void setLoadTypeConverters(boolean loadTypeConverters) {
+        this.loadTypeConverters = loadTypeConverters;
     }
 
     public String getXmlRoutes() {

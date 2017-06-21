@@ -130,6 +130,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @Deprecated
     private Boolean lazyLoadTypeConverters;
     @XmlAttribute
+    private Boolean loadTypeConverters;
+    @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
     @XmlAttribute
     private TypeConverterExists typeConverterExists;
@@ -442,6 +444,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
+    }
+
+    @Override
+    public Boolean getLoadTypeConverters() {
+        return loadTypeConverters;
+    }
+
+    public void setLoadTypeConverters(Boolean loadTypeConverters) {
+        this.loadTypeConverters = loadTypeConverters;
     }
 
     public Boolean getTypeConverterStatisticsEnabled() {

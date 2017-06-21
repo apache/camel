@@ -143,8 +143,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute @Metadata(defaultValue = "CompleteCurrentTaskOnly")
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute
-    @Deprecated
+    @Deprecated  @Metadata(defaultValue = "false")
     private Boolean lazyLoadTypeConverters;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean loadTypeConverters;
     @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
     @XmlAttribute @Metadata(defaultValue = "Override")
@@ -879,6 +881,24 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
+    }
+
+    @Override
+    public Boolean getLoadTypeConverters() {
+        return loadTypeConverters;
+    }
+
+    /**
+     * Sets whether to load custom type converters by scanning classpath.
+     * This can be turned off if you are only using Camel components
+     * that does not provide type converters which is needed at runtime.
+     * In such situations setting this option to false, can speedup starting
+     * Camel.
+     *
+     * @param loadTypeConverters whether to load custom type converters.
+     */
+    public void setLoadTypeConverters(Boolean loadTypeConverters) {
+        this.loadTypeConverters = loadTypeConverters;
     }
 
     public Boolean getTypeConverterStatisticsEnabled() {
