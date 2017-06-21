@@ -51,6 +51,7 @@
         <include>org.apache.camel:camel-box-api</include>
         <include>org.apache.camel:camel-braintree</include>
         <include>org.apache.camel:camel-cache</include>
+        <include>org.apache.camel:camel-caffeine</include>
         <include>org.apache.camel:camel-cassandraql</include>
         <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-cdi</include>
@@ -343,6 +344,7 @@
         <include>org.apache.camel:camel-box-starter</include>
         <include>org.apache.camel:camel-braintree-starter</include>
         <include>org.apache.camel:camel-cache-starter</include>
+        <include>org.apache.camel:camel-caffeine-starter</include>
         <include>org.apache.camel:camel-cassandraql-starter</include>
         <include>org.apache.camel:camel-castor-starter</include>
         <include>org.apache.camel:camel-chronicle-starter</include>
