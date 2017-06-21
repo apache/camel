@@ -274,8 +274,19 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
                     clazz = beanClass;
                 }
 
+                // attempt to create bean using injector which supports auto-wiring
+                if (isCacheBean() && routeContext.getCamelContext().getInjector().supportsAutoWiring()) {
+                    try {
+                        log.debug("Attempting to create new bean instance from class: {} via auto-wiring enabled", clazz);
+                        bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), clazz);
+                    } catch (Throwable e) {
+                        log.debug("Error creating new bean instance from class: " + clazz + ". This exception is ignored", e);
+                    }
+                }
+
                 // create a bean if there is a default public no-arg constructor
-                if (isCacheBean() && ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
+                if (bean == null && isCacheBean() && ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
+                    log.debug("Class has default no-arg constructor so creating a new bean instance: {}", clazz);
                     bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), clazz);
                     ObjectHelper.notNull(bean, "bean", this);
                 }
