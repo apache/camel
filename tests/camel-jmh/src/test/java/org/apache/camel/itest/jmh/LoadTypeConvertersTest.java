@@ -62,18 +62,19 @@ public class LoadTypeConvertersTest {
         new Runner(opt).run();
     }
 
-    // The JMH samples are the best documentation for how to use it
-    // http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/
+    /**
+     * Setup a fresh CamelContext per invocation
+     */
     @State(Scope.Thread)
     public static class BenchmarkState {
         CamelContext camel;
 
-        @Setup(Level.Trial)
+        @Setup(Level.Invocation)
         public void initialize() {
             camel = new DefaultCamelContext();
         }
 
-        @TearDown(Level.Trial)
+        @TearDown(Level.Invocation)
         public void close() {
             try {
                 camel.stop();
