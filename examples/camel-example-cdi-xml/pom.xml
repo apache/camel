@@ -113,6 +113,13 @@
           </dependency>
         </dependencies>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <!-- need older version of surefire to make test work -->
+        <version>2.19.1</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -125,7 +132,10 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
+            <!-- need older version of surefire to make test work -->
+            <version>2.19.1</version>
             <configuration>
               <argLine>--add-modules java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
             </configuration>
