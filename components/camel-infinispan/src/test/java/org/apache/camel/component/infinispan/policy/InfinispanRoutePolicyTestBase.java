@@ -25,8 +25,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 abstract class InfinispanRoutePolicyTestBase {
-    private final static String CACHE_NAME = "camel-route-policy";
-    private final static String CACHE_KEY = "route-policy";
+    private static final String CACHE_NAME = "camel-route-policy";
+    private static final String CACHE_KEY = "route-policy";
 
     protected abstract BasicCacheContainer createCacheManager() throws Exception;
 
@@ -56,7 +56,7 @@ abstract class InfinispanRoutePolicyTestBase {
 
             context.addRouteDefinition(RouteDefinition.fromUri("direct:r1").routePolicy(policy1).to("mock:p1"));
 
-            for (int i=0; i < 10 && !policy1.isLeader(); i++) {
+            for (int i = 0; i < 10 && !policy1.isLeader(); i++) {
                 Thread.sleep(250);
             }
 
