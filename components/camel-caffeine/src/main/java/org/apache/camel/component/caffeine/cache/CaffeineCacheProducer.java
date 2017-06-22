@@ -45,7 +45,7 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
     // ****************************
 
     @InvokeOnHeader(CaffeineConstants.ACTION_CLEANUP)
-    public void onClear(Message message) throws Exception {
+    public void onCleanUp(Message message) throws Exception {
         cache.cleanUp();
 
         setResult(message, true, null, null);
