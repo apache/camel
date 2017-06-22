@@ -24,6 +24,9 @@ import org.apache.camel.component.atomix.client.AbstractAtomixClientEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
+/**
+ * The atomix-map component is used to access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedmap">distributed map</a>.
+ */
 @UriEndpoint(
     firstVersion = "2.20.0",
     scheme = "atomix-map",
