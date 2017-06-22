@@ -305,7 +305,7 @@ data format. See the INFO box below for more details.
 |xml |Binding to/from xml is enabled, and requires `camel-jaxb` on the
 classpath. See the INFO box below for more details.
 
-|json_xml |Biding to/from json and xml is enabled and requires both data formats to
+|json_xml |Binding to/from json and xml is enabled and requires both data formats to
 be on the classpath. See the INFO box below for more details.
 |=======================================================================
 
