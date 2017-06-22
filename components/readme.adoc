@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 269 in 188 JAR artifacts (17 deprecated)
+Number of Components: 274 in 188 JAR artifacts (17 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -40,6 +40,21 @@ Number of Components: 269 in 188 JAR artifacts (17 deprecated)
 
 | link:camel-atomix/src/main/docs/atomix-map-component.adoc[Atomix Map] (camel-atomix) +
 `atomix-map:mapName` | 2.20 | Camel Atomix support
+
+| link:camel-atomix/src/main/docs/atomix-messaging-component.adoc[Atomix Messaging] (camel-atomix) +
+`atomix-messaging:group` | 2.20 | Camel Atomix support
+
+| link:camel-atomix/src/main/docs/atomix-multimap-component.adoc[Atomix MultiMap] (camel-atomix) +
+`atomix-multimap:multiMapName` | 2.20 | Camel Atomix support
+
+| link:camel-atomix/src/main/docs/atomix-queue-component.adoc[Atomix Queue] (camel-atomix) +
+`atomix-queue:queueName` | 2.20 | Camel Atomix support
+
+| link:camel-atomix/src/main/docs/atomix-set-component.adoc[Atomix Set] (camel-atomix) +
+`atomix-set:setName` | 2.20 | Camel Atomix support
+
+| link:camel-atomix/src/main/docs/atomix-value-component.adoc[Atomix Value] (camel-atomix) +
+`atomix-value:valueName` | 2.20 | Camel Atomix support
 
 | link:camel-avro/src/main/docs/avro-component.adoc[Avro] (camel-avro) +
 `avro:transport:host:port/messageName` | 2.10 | Working with Apache Avro for data serialization.
