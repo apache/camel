@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package org.apache.camel.dataformat.thrift.generated;
+package org.apache.camel.component.thrift.generated;
 
 
 import java.util.Map;

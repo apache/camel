@@ -41,6 +41,7 @@ public class CamelThriftTest extends AbstractSpringBootTestSupport {
     @Test
     public void componentTests() throws Exception {
         this.runDataformatTest(config);
+        this.runComponentTest(config);
         this.runModuleUnitTestsIfEnabled(config);
     }
 

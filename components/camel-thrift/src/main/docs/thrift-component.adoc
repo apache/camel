@@ -1,0 +1,145 @@
+## Thrift Component
+
+*Available as of Camel version 2.20*
+
+The Thrift component allows you to call or expose Remote Procedure Call (RPC) services
+using https://thrift.apache.org/[Apache Thrift] binary communication protocol and serialization mechanism.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-thrift</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-------------------------------------
+thrift://service[?options]
+-------------------------------------
+
+### Endpoint Options
+
+// component options: START
+The Thrift component has no options.
+// component options: END
+
+// endpoint options: START
+The Thrift endpoint is configured using URI syntax:
+
+    thrift:host:port/service
+
+with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **host** | The Thrift server host name. This is localhost or 0.0.0.0 (if not defined) when being a consumer or remote server hostname when using producer. |  | String
+| **port** | *Required* The Thrift server port |  | int
+| **service** | *Required* Fully qualified service name from the protocol buffer descriptor file (package dot service definition name) |  | String
+|=======================================================================
+
+#### Query Parameters (7 parameters):
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|=======================================================================
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **maxPoolSize** (consumer) | The Thrift server consumer max thread pool size | 10 | int
+| **poolSize** (consumer) | The Thrift server consumer initial thread pool size | 1 | int
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **method** (producer) | The Thrift invoked method name |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|=======================================================================
+// endpoint options: END
+
+### Thrift method parameters mapping
+
+Parameters in the called procedure must be passed as a list of objects inside the message body. The primitives are converted from the objects on the fly.
+In order to correctly find the corresponding method, all types must be transmitted regardless of the values. Please see an exmaple below, how to pass
+different parameters to the method with the Camel body
+[source,java]
+-------------------------------------------------------------------------------
+List requestBody = new ArrayList();
+
+requestBody.add((boolean)true);
+requestBody.add((byte)THRIFT_TEST_NUM1);
+requestBody.add((short)THRIFT_TEST_NUM1);
+requestBody.add((int)THRIFT_TEST_NUM1);
+requestBody.add((long)THRIFT_TEST_NUM1);
+requestBody.add((double)THRIFT_TEST_NUM1);
+requestBody.add("empty"); // String parameter
+requestBody.add(ByteBuffer.allocate(10)); // binary parameter
+requestBody.add(new Work(THRIFT_TEST_NUM1, THRIFT_TEST_NUM2, Operation.MULTIPLY)); // Struct parameter
+requestBody.add(new ArrayList<Integer>()); // list paramater 
+requestBody.add(new HashSet<String>()); // set parameter
+requestBody.add(new HashMap<String, Long>()); // map parameter 
+
+Object responseBody = template.requestBody("direct:thrift-alltypes", requestBody);
+-------------------------------------------------------------------------------
+
+Incoming parameters in the service consumer will also be passed to the message body as a list of objects.
+
+
+### Thrift consumer headers (will be installed after the consumer invocation)
+
+[width="100%",cols="25%,50,25%",options="header",]
+|=======================================================================
+|Header name |Description|Possible values
+
+|*CamelThriftMethodName*|Method name handled by the consumer service|
+
+|=======================================================================
+
+### Examples
+
+Below is a simple synchronous method invoke with host and port parameters
+
+[source,java]
+-------------------------------------------------------------------------------
+from("direct:thrift-calculate")
+.to("thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator?method=calculate&synchronous=true");
+-------------------------------------------------------------------------------
+
+Below is a simple synchronous method invoke for the XML DSL configuration
+
+[source,xml]
+---------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:thrift-add" />
+    <to uri="thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator?method=add&synchronous=true"/>
+</route>
+---------------------------------------------------------------------------------------
+
+Thrift service consumer with asynchronous communication
+
+[source,java]
+-------------------------------------------------------------------------------
+from("thrift://localhost:1101/org.apache.camel.component.thrift.generated.Calculator")
+.to("direct:thrift-service");
+-------------------------------------------------------------------------------
+
+It's possible to automate Java code generation for .thrift files using *thrift-maven-plugin*, but before start the thrift compiler binary distribution for your operating system must be present on the running host.
+
+### For more information, see these resources
+
+https://github.com/apache/thrift/[Thrift project GitHub]
+https://thrift.apache.org/tutorial/java [Apache Thrift Java tutorial]
+
+### See Also
+
+* link:getting-started.html[Getting Started]
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+
