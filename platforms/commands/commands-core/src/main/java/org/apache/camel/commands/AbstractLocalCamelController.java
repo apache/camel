@@ -457,7 +457,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
 
         if (camelContextName != null) {
             CamelContext context = this.getLocalCamelContext(camelContextName);
-            if (context != null) {
+            if (context != null && context.getRuntimeEndpointRegistry() != null) {
                 EndpointRegistry staticRegistry = context.getEndpointRegistry();
                 for (RuntimeEndpointRegistry.Statistic stat : context.getRuntimeEndpointRegistry().getEndpointStatistics()) {
 
