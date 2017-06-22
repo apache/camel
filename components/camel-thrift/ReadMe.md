@@ -25,6 +25,7 @@ The sample test source is an example taken from the Thrift Java tutorial at: htt
     cd components/camel-thrift
     cd src/test/thrift
     thrift -r --gen java -out ../java/ ./tutorial-dataformat.thrift
+    thrift -r --gen java -out ../java/ ./tutorial-component.thrift
 
 The generate source code will override the existing.
 

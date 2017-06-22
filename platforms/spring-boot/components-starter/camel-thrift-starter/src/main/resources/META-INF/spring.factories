@@ -16,4 +16,6 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.thrift.springboot.ThriftDataFormatAutoConfiguration
+org.apache.camel.dataformat.thrift.springboot.ThriftDataFormatAutoConfiguration,\
+org.apache.camel.component.thrift.springboot.ThriftComponentAutoConfiguration
+

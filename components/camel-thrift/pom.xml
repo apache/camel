@@ -34,8 +34,14 @@
   <description>Camel Apache Thrift data format and RPC support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.dataformat.thrift.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=thrift</camel.osgi.export.service>
+    <camel.osgi.export.pkg>
+      org.apache.camel.dataformat.thrift.*;${camel.osgi.version},
+      org.apache.camel.component.thrift.*;${camel.osgi.version}
+    </camel.osgi.export.pkg>
+    <camel.osgi.export.service>
+      org.apache.camel.spi.DataFormatResolver;dataformat=thrift,
+      org.apache.camel.spi.ComponentResolver;component=thrift
+    </camel.osgi.export.service>
   </properties>
 
   <dependencies>
@@ -48,6 +54,12 @@
       <groupId>org.apache.thrift</groupId>
       <artifactId>libthrift</artifactId>
       <version>${libthrift-version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>${javassist-version}</version>
     </dependency>
     
     <dependency>
@@ -85,6 +97,12 @@
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>${gson-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.junit-toolbox</groupId>
+      <artifactId>junit-toolbox</artifactId>
+      <version>${junit-toolbox-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

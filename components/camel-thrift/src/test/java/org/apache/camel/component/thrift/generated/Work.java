@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package org.apache.camel.dataformat.thrift.generated;
+package org.apache.camel.component.thrift.generated;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
 /**
@@ -580,7 +580,7 @@ public class Work implements org.apache.thrift.TBase<Work, Work._Fields>, java.i
             break;
           case 3: // OP
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-              struct.op = org.apache.camel.dataformat.thrift.generated.Operation.findByValue(iprot.readI32());
+              struct.op = org.apache.camel.component.thrift.generated.Operation.findByValue(iprot.readI32());
               struct.setOpIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -685,7 +685,7 @@ public class Work implements org.apache.thrift.TBase<Work, Work._Fields>, java.i
         struct.setNum2IsSet(true);
       }
       if (incoming.get(2)) {
-        struct.op = org.apache.camel.dataformat.thrift.generated.Operation.findByValue(iprot.readI32());
+        struct.op = org.apache.camel.component.thrift.generated.Operation.findByValue(iprot.readI32());
         struct.setOpIsSet(true);
       }
       if (incoming.get(3)) {
