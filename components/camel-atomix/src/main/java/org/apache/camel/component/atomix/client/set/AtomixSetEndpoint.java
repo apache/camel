@@ -24,6 +24,9 @@ import org.apache.camel.component.atomix.client.AbstractAtomixClientEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
+/**
+ * The atomix-set component is used to access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedset">distributed set</a>.
+ */
 @UriEndpoint(
     firstVersion = "2.20.0",
     scheme = "atomix-set",

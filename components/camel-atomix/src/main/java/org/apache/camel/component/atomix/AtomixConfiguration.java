@@ -33,11 +33,11 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 public class AtomixConfiguration<T extends Atomix> implements Cloneable {
-    @UriParam
+    @UriParam(javaType = "io.atomix.Atomix")
     private T atomix;
     @UriParam(javaType = "java.lang.String")
     private List<Address> nodes = Collections.emptyList();
-    @UriParam(defaultValue = "io.atomix.catalyst.transport.netty.NettyTransport")
+    @UriParam(javaType = "io.atomix.catalyst.transport.Transport", defaultValue = "io.atomix.catalyst.transport.netty.NettyTransport")
     private Class<? extends Transport> transport = NettyTransport.class;
     @UriParam
     private String configurationUri;
