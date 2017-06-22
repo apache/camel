@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.caffeine.load;
 
+import java.util.concurrent.TimeUnit;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 
@@ -23,6 +25,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.caffeine.CaffeineConfiguration;
+import org.apache.camel.component.caffeine.EvictionType;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -63,8 +66,13 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
             cache = (LoadingCache)configuration.getCache();
         } else {
             Caffeine<Object, Object> builder = Caffeine.newBuilder();
-            builder.initialCapacity(configuration.getInitialCapacity());
-            builder.maximumSize(configuration.getMaximumSize());
+            if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
+                builder.initialCapacity(configuration.getInitialCapacity());
+                builder.maximumSize(configuration.getMaximumSize());
+            } else if (configuration.getEvictionType() == EvictionType.TIME_BASED) {
+                builder.expireAfterAccess(configuration.getExpireAfterAccessTime(), TimeUnit.SECONDS);
+                builder.expireAfterAccess(configuration.getExpireAfterWriteTime(), TimeUnit.SECONDS);
+            }
             if (configuration.isStatsEnabled()) {
                 builder.recordStats();
             }

@@ -18,6 +18,7 @@ package org.apache.camel.component.caffeine;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Expiry;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
@@ -45,6 +46,12 @@ public class CaffeineConfiguration implements Cloneable {
     private int initialCapacity = 10000;
     @UriParam(label = "producer", defaultValue = "10000")
     private int maximumSize = 10000;
+    @UriParam(label = "producer", defaultValue = "size_based")
+    private EvictionType evictionType = EvictionType.SIZE_BASED;
+    @UriParam(label = "producer", defaultValue = "300")
+    private int expireAfterAccessTime = 300;
+    @UriParam(label = "producer", defaultValue = "300")
+    private int expireAfterWriteTime = 300;
 
     public CaffeineConfiguration() {
     }
@@ -160,6 +167,39 @@ public class CaffeineConfiguration implements Cloneable {
      */
     public void setMaximumSize(int maximumSize) {
         this.maximumSize = maximumSize;
+    }
+
+    public EvictionType getEvictionType() {
+        return evictionType;
+    }
+
+    /**
+     * Set the eviction Type for this cache
+     */
+    public void setEvictionType(EvictionType evictionType) {
+        this.evictionType = evictionType;
+    }
+
+    public int getExpireAfterAccessTime() {
+        return expireAfterAccessTime;
+    }
+
+    /**
+     * Set the expire After Access Time in case of time based Eviction (in seconds)
+     */
+    public void setExpireAfterAccessTime(int expireAfterAccessTime) {
+        this.expireAfterAccessTime = expireAfterAccessTime;
+    }
+
+    public int getExpireAfterWriteTime() {
+        return expireAfterWriteTime;
+    }
+
+    /**
+     * Set the expire After Access Write in case of time based Eviction (in seconds)
+     */
+    public void setExpireAfterWriteTime(int expireAfterWriteTime) {
+        this.expireAfterWriteTime = expireAfterWriteTime;
     }
 
     // ****************************
