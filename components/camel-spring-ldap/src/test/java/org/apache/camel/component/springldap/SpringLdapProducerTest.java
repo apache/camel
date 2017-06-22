@@ -54,17 +54,18 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     private SpringLdapProducer ldapProducer = new SpringLdapProducer(ldapEndpoint);
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        super.setUp();
         when(ldapEndpoint.getLdapTemplate()).thenReturn(ldapTemplate);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testEmptyExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         ldapProducer.process(exchange);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testWrongBodyType() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage(context);
