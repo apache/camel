@@ -137,10 +137,6 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         StringHelper.notEmpty(lockValue, "lockValue", this);
         ObjectHelper.notNull(camelContext, "camelContext", this);
 
-        if (this.lockValue == null) {
-            this.lockValue = camelContext.getUuidGenerator().generateUuid();
-        }
-
         try {
             this.manager.start();
             this.executorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "InfinispanRoutePolicy");
@@ -149,10 +145,13 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
                 throw new IllegalArgumentException("Lock lifespan can not be less that 2 seconds");
             }
 
-            BasicCache<String, String> cache = manager.getCache(lockMapName);
             if (manager.isCacheContainerEmbedded()) {
+                BasicCache<String, String> cache = manager.getCache(lockMapName);
                 this.service = new EmbeddedCacheService(InfinispanUtil.asEmbedded(cache));
             } else {
+                // By default, previously existing values for java.util.Map operations
+                // are not returned for remote caches but policy needs it so force it.
+                BasicCache<String, String> cache = manager.getCache(lockMapName, true);
                 this.service = new RemoteCacheService(InfinispanUtil.asRemote(cache));
             }
 
@@ -415,8 +414,10 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
 
                 // I'm still the leader, so refresh the key so it does not expire.
                 if (!cache.replaceWithVersion(lockKey, lockValue, version, (int)lifespanTimeUnit.toSeconds(lifespan))) {
-                    // Looks like I've lost the leadership.
                     setLeader(false);
+                } else {
+                    version = cache.getWithMetadata(lockKey).getVersion();
+                    LOGGER.debug("Lock refreshed key={} with new version={}", lockKey, version);
                 }
             }
 
@@ -446,14 +447,14 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         }
 
         @ClientCacheEntryRemoved
-        public void onCacheEntryRemoved(ClientCacheEntryRemovedEvent<Object> event) {
+        public void onCacheEntryRemoved(ClientCacheEntryRemovedEvent<String> event) {
             if (ObjectHelper.equal(lockKey, event.getKey())) {
                 run();
             }
         }
 
         @ClientCacheEntryExpired
-        public void onCacheEntryExpired(ClientCacheEntryExpiredEvent<Object> event) {
+        public void onCacheEntryExpired(ClientCacheEntryExpiredEvent<String> event) {
             if (ObjectHelper.equal(lockKey, event.getKey())) {
                 run();
             }
