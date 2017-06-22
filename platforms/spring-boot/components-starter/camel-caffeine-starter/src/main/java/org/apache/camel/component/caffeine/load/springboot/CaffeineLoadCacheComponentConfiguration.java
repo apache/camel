@@ -19,6 +19,8 @@ package org.apache.camel.component.caffeine.load.springboot;
 import javax.annotation.Generated;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import org.apache.camel.component.caffeine.EvictionType;
+import org.apache.camel.component.caffeine.load.CaffeineLoadCacheComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -107,6 +109,20 @@ public class CaffeineLoadCacheComponentConfiguration
          * Set the maximum size for the cache
          */
         private Integer maximumSize = 10000;
+        /**
+         * Set the eviction Type for this cache
+         */
+        private EvictionType evictionType = EvictionType.size_based;
+        /**
+         * Set the expire After Access Time in case of time based Eviction (in
+         * seconds)
+         */
+        private Integer expireAfterAccessTime = 300;
+        /**
+         * Set the expire After Access Write in case of time based Eviction (in
+         * seconds)
+         */
+        private Integer expireAfterWriteTime = 300;
 
         public Boolean getCreateCacheIfNotExist() {
             return createCacheIfNotExist;
@@ -186,6 +202,30 @@ public class CaffeineLoadCacheComponentConfiguration
 
         public void setMaximumSize(Integer maximumSize) {
             this.maximumSize = maximumSize;
+        }
+
+        public EvictionType getEvictionType() {
+            return evictionType;
+        }
+
+        public void setEvictionType(EvictionType evictionType) {
+            this.evictionType = evictionType;
+        }
+
+        public Integer getExpireAfterAccessTime() {
+            return expireAfterAccessTime;
+        }
+
+        public void setExpireAfterAccessTime(Integer expireAfterAccessTime) {
+            this.expireAfterAccessTime = expireAfterAccessTime;
+        }
+
+        public Integer getExpireAfterWriteTime() {
+            return expireAfterWriteTime;
+        }
+
+        public void setExpireAfterWriteTime(Integer expireAfterWriteTime) {
+            this.expireAfterWriteTime = expireAfterWriteTime;
         }
     }
 }

@@ -61,7 +61,7 @@ with the following path and query parameters:
 | **cacheName** | *Required* the cache name |  | String
 |=======================================================================
 
-#### Query Parameters (14 parameters):
+#### Query Parameters (17 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
@@ -73,6 +73,9 @@ with the following path and query parameters:
 | **action** (producer) | To configure the default cache action. If an action is set in the message header then the operation from the header takes precedence. |  | String
 | **cache** (producer) | To configure the default an already instantianted cache to be used |  | Cache
 | **cacheLoader** (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
+| **evictionType** (producer) | Set the eviction Type for this cache | size_based | EvictionType
+| **expireAfterAccessTime** (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
+| **expireAfterWriteTime** (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
 | **initialCapacity** (producer) | Set the initial Capacity for the cache | 10000 | int
 | **key** (producer) | To configure the default action key. If a key is set in the message header then the key from the header takes precedence. |  | Object
 | **maximumSize** (producer) | Set the maximum size for the cache | 10000 | int
