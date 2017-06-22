@@ -17,16 +17,27 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.apache.camel.component.hazelcast.springboot.HazelcastComponentAutoConfiguration,\
 org.apache.camel.component.hazelcast.list.springboot.HazelcastListComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.list.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.map.springboot.HazelcastMapComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.map.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.replicatedmap.springboot.HazelcastReplicatedmapComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.replicatedmap.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.queue.springboot.HazelcastQueueComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.queue.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.set.springboot.HazelcastSetComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.set.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.topic.springboot.HazelcastTopicComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.topic.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.seda.springboot.HazelcastSedaComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.seda.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.multimap.springboot.HazelcastMultimapComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.multimap.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.ringbuffer.springboot.HazelcastRingbufferComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.ringbuffer.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.instance.springboot.HazelcastInstanceComponentAutoConfiguration,\
-org.apache.camel.component.hazelcast.atomicnumber.springboot.HazelcastAtomicnumberComponentAutoConfiguration
+org.apache.camel.component.hazelcast.instance.springboot.customizer.HazelcastInstanceCustomizer,\
+org.apache.camel.component.hazelcast.atomicnumber.springboot.HazelcastAtomicnumberComponentAutoConfiguration,\
+org.apache.camel.component.hazelcast.atomicnumber.springboot.customizer.HazelcastInstanceCustomizer
 
 
 
