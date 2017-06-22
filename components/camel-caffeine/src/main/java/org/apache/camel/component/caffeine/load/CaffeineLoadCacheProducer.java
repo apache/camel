@@ -67,7 +67,7 @@ public class CaffeineLoadCacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CaffeineConstants.ACTION_GET)
     public void onGet(Message message) throws Exception {
-        Object result = cache.getIfPresent(getKey(message));
+        Object result = cache.get(getKey(message));
 
         setResult(message, true, result, null);
     }
