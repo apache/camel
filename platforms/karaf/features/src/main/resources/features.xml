@@ -2010,6 +2010,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${libthrift-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>mvn:org.javassist/javassist/${javassist-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-thrift/${project.version}</bundle>
   </feature>
   <feature name='camel-tika' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -2185,7 +2186,7 @@
     <bundle dependency='true'>mvn:io.zipkin.brave/brave-spancollector-scribe/${brave-zipkin-version}</bundle>
     <bundle dependency='true'>mvn:io.zipkin.java/zipkin/${zipkin-version}</bundle>
     <bundle dependency='true'>mvn:io.zipkin.reporter/zipkin-reporter/${zipkin-reporter-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${libthrift-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${zipkin-libthrift-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zipkin/${project.version}</bundle>
   </feature>
   <feature name='camel-zookeeper' version='${project.version}' resolver='(obr)' start-level='50'>

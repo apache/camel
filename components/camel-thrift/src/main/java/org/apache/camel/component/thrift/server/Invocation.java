@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf;
+package org.apache.camel.component.thrift.server;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
+import org.apache.thrift.server.AbstractNonblockingServer.FrameBuffer;
 
-@RunWith(PaxExam.class)
-public class CamelThriftTest extends BaseKarafTest {
+/**
+ * Copy of the org.apache.thrift.server.Invocation
+ */
+class Invocation implements Runnable {
+    private final FrameBuffer frameBuffer;
 
-    public static final String COMPONENT = extractName(CamelThriftTest.class);
-
-    @Test
-    public void test() throws Exception {
-        testDataFormat(COMPONENT);
-        testComponent(COMPONENT);
+    public Invocation(final FrameBuffer frameBuffer) {
+        this.frameBuffer = frameBuffer;
     }
 
-
+    public void run() {
+        frameBuffer.invoke();
+    }
 }
