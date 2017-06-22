@@ -98,7 +98,6 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
 
     @Test
     public void testCacheGet() throws Exception {
-        final Cache<Object, Object> cache = getTestCache();
         final Integer key = 1;
         final Integer val = 2;
 
