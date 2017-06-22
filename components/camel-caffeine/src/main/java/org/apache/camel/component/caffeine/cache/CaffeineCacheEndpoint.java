@@ -33,6 +33,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * The caffeine-cache component is used for integration with Caffeine Cache.
+ */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-cache", title = "Caffeine Cache", syntax = "caffeine-cache:cacheName", label = "cache,datagrid,clustering")
 public class CaffeineCacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
