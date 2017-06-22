@@ -42,12 +42,7 @@ The Atomix Value component supports 5 options which are listed below.
 // endpoint options: START
 The Atomix Value endpoint is configured using URI syntax:
 
-### URI format
-
-[source,java]
-----
     atomix-value:valueName
-----
 
 with the following path and query parameters:
 

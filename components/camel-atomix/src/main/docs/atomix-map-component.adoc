@@ -44,10 +44,7 @@ The Atomix Map component supports 5 options which are listed below.
 // endpoint options: START
 The Atomix Map endpoint is configured using URI syntax:
 
-[source,java]
-----
     atomix-map:mapName
-----
 
 with the following path and query parameters:
 

@@ -42,10 +42,7 @@ The Atomix Set component supports 5 options which are listed below.
 // endpoint options: START
 The Atomix Set endpoint is configured using URI syntax:
 
-[source,java]
-----
     atomix-set:setName
-----
 
 with the following path and query parameters:
 
