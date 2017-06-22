@@ -119,7 +119,7 @@
             <configuration>
               <scripts>
                 <script><![CDATA[
-                  project.properties['skip-test']=project.properties['os.detected.classifier'].matches('^.*?(linux|windows|osx)-x86.*$') ? 'false' : 'true';
+                  project.properties['skipTests']=project.properties['os.detected.classifier'].matches('^.*?(linux|windows|osx)-x86.*$') ? 'false' : 'true';
                 ]]></script>
               </scripts>
             </configuration>
@@ -148,7 +148,7 @@
             </goals>
             <configuration>
               <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
-              <skip>${skip-test}</skip>
+              <skip>${skipTests}</skip>
             </configuration>
           </execution>
         </executions>
@@ -164,7 +164,7 @@
               <goal>testCompile</goal>
             </goals>
             <configuration>
-              <skip>${skip-test}</skip>
+              <skip>${skipTests}</skip>
             </configuration>
           </execution>
         </executions>
@@ -174,7 +174,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <skipTests>${skip-test}</skipTests>
+          <skipTests>${skipTests}</skipTests>
         </configuration>
       </plugin>
     </plugins>
