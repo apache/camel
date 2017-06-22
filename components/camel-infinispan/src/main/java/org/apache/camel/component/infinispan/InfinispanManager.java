@@ -165,6 +165,24 @@ public class InfinispanManager implements Service {
         return cache;
     }
 
+    public <K, V> BasicCache<K, V> getCache(String cacheName, boolean forceReturnValue) {
+        if (isCacheContainerRemote()) {
+            BasicCache<K, V> cache;
+            if (ObjectHelper.isEmpty(cacheName)) {
+                cache = InfinispanUtil.asRemote(cacheContainer).getCache(forceReturnValue);
+                cacheName = cache.getName();
+            } else {
+                cache = InfinispanUtil.asRemote(cacheContainer).getCache(cacheName, forceReturnValue);
+            }
+
+            LOGGER.trace("Cache[{}]", cacheName);
+
+            return cache;
+        } else {
+            return getCache(cacheName);
+        }
+    }
+
     public <K, V> BasicCache<K, V> getCache(Exchange exchange, String defaultCache) {
         return getCache(exchange.getIn(), defaultCache);
     }
