@@ -45,7 +45,7 @@ public class GenericFileMessageTest extends ContextTestSupport {
         file.setFileName("target");
         file.setFile(new File("target/camel-core-test.log"));
         GenericFileMessage<File> message = new GenericFileMessage<File>(camelContext, file);
-        file.populateHeaders(message);
+        file.populateHeaders(message, false);
         assertEquals("Get a wrong file content type", "txt", message.getHeader(Exchange.FILE_CONTENT_TYPE));
     }
 }
