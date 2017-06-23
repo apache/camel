@@ -37,7 +37,7 @@ public class BreadcrumbTest extends MDCTest {
                 from("direct:a").routeId("route-a")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader("breadcrumbId"));
+                                assertEquals(exchange.getExchangeId(), exchange.getIn().getHeader("breadcrumbId"));
                             }
                         })
                         .to("log:foo").to("direct:b");
@@ -45,7 +45,7 @@ public class BreadcrumbTest extends MDCTest {
                 from("direct:b").routeId("route-b")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                assertEquals(exchange.getIn().getMessageId(), exchange.getIn().getHeader("breadcrumbId"));
+                                assertEquals(exchange.getExchangeId(), exchange.getIn().getHeader("breadcrumbId"));
                             }
                         })
                         .to("log:bar").to("mock:result");

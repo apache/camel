@@ -114,8 +114,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             // create or use existing breadcrumb
             String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
             if (breadcrumbId == null) {
-                // no existing breadcrumb, so create a new one based on the message id
-                breadcrumbId = exchange.getIn().getMessageId();
+                // no existing breadcrumb, so create a new one based on the exchange id
+                breadcrumbId = exchange.getExchangeId();
                 exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
             }
         }
