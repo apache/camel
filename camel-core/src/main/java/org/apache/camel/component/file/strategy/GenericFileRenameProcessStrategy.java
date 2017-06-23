@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
@@ -41,9 +42,18 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         if (beginRenamer != null) {
             GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
             GenericFile<T> to = renameFile(operations, file, newName);
-            if (to != null) {
-                to.bindToExchange(exchange);
+            FileEndpoint fe = null;
+            if (endpoint instanceof FileEndpoint) {
+                fe = (FileEndpoint)endpoint;
+                if (to != null) {
+                    to.bindToExchange(exchange, fe.isProbeContentType());
+                }
+            } else {
+                if (to != null) {
+                    to.bindToExchange(exchange);
+                }
             }
+            
         }
 
         return true;
@@ -56,8 +66,19 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
 
             if (failureRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+<<<<<<< HEAD
                 Exchange copy = exchange.copy();
                 file.bindToExchange(copy);
+=======
+                Exchange copy = ExchangeHelper.createCopy(exchange, true);
+                FileEndpoint fe = null;
+                if (endpoint instanceof FileEndpoint) {
+                    fe = (FileEndpoint)endpoint;
+                    file.bindToExchange(copy, fe.isProbeContentType());
+                } else {
+                    file.bindToExchange(copy);
+                }
+>>>>>>> e3a1bdb... CAMEL-11437 - probeContentType and preMove attributes causes Exchange.FILE_CONTENT_TYPE to get dropped
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
@@ -79,7 +100,13 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
             if (commitRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
                 Exchange copy = exchange.copy();
-                file.bindToExchange(copy);
+                FileEndpoint fe = null;
+                if (endpoint instanceof FileEndpoint) {
+                    fe = (FileEndpoint)endpoint;
+                    file.bindToExchange(copy, fe.isProbeContentType());
+                }  else {
+                    file.bindToExchange(copy);
+                }
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
