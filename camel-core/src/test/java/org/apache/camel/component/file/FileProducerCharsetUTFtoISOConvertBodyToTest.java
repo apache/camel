@@ -17,8 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -28,7 +26,6 @@ import java.nio.file.Paths;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.IOHelper;
 
 /**
  *

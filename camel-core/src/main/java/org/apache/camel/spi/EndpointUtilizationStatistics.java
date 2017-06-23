@@ -17,7 +17,6 @@
 package org.apache.camel.spi;
 
 import java.util.Map;
-import java.util.concurrent.atomic.LongAdder;
 
 /**
  * Various statistics about endpoint utilization, such as from EIP patterns that uses dynamic endpoints.
