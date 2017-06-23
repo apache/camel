@@ -126,6 +126,15 @@ public interface InflightRepository extends StaticService {
     int size(Endpoint endpoint);
 
     /**
+     * Adds the route from the in flight registry.
+     * <p/>
+     * Is used for initializing up resources
+     *
+     * @param routeId the id of the route
+     */
+    void addRoute(String routeId);
+
+    /**
      * Removes the route from the in flight registry.
      * <p/>
      * Is used for cleaning up resources to avoid leaking.

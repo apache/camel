@@ -56,7 +56,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     }
 
     public void add(Exchange exchange, String routeId) {
-        AtomicInteger existing = routeCount.putIfAbsent(routeId, new AtomicInteger(1));
+        AtomicInteger existing = routeCount.get(routeId);
         if (existing != null) {
             existing.incrementAndGet();
         }
@@ -76,6 +76,11 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     @Deprecated
     public int size(Endpoint endpoint) {
         return 0;
+    }
+
+    @Override
+    public void addRoute(String routeId) {
+        routeCount.putIfAbsent(routeId, new AtomicInteger(0));
     }
 
     @Override
