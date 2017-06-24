@@ -66,7 +66,7 @@ public class SimpleBuilderTest extends TestSupport {
             SimpleBuilder.simple("${body}", int.class).evaluate(exchange, Object.class);
             fail("Should have thrown exception");
         } catch (TypeConversionException e) {
-            assertIsInstanceOf(NumberFormatException.class, e.getCause().getCause());
+            assertIsInstanceOf(NumberFormatException.class, e.getCause());
         }
 
         assertEquals(true, SimpleBuilder.simple("${header.cool}", boolean.class).evaluate(exchange, Object.class));

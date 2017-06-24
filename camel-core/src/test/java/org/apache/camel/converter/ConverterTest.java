@@ -242,7 +242,7 @@ public class ConverterTest extends TestCase {
             converter.mandatoryConvertTo(char.class, "ABC");
             fail("Should have thrown an exception");
         } catch (TypeConversionException e) {
-            assertEquals("java.lang.IllegalArgumentException: String must have exactly a length of 1: ABC", e.getCause().getMessage());
+            assertEquals("String must have exactly a length of 1: ABC", e.getCause().getMessage());
         }
     }
 
