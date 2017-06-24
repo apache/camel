@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class ShutdownGracefuTimeoutTriggerTest extends ContextTestSupport {
+public class ShutdownGracefulTimeoutTriggerTest extends ContextTestSupport {
 
     private static String foo = "";
 
