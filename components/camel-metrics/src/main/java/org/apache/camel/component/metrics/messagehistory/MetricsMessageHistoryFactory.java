@@ -125,9 +125,15 @@ public class MetricsMessageHistoryFactory extends ServiceSupport implements Came
     }
 
     @Override
+    @Deprecated
     public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, Date date) {
+        return newMessageHistory(routeId, namedNode, date.getTime());
+    }
+
+    @Override
+    public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, long timestamp) {
         Timer timer = metricsRegistry.timer(createName("history", routeId, namedNode.getId()));
-        return new MetricsMessageHistory(routeId, namedNode, timer);
+        return new MetricsMessageHistory(routeId, namedNode, timer, timestamp);
     }
 
     private String createName(String type, String routeId, String id) {

@@ -29,10 +29,10 @@ public class DefaultMessageHistory implements MessageHistory {
     private final String routeId;
     private final NamedNode node;
     private final String nodeId;
-    private final Date timestamp;
+    private final long timestamp;
     private long elapsed;
 
-    public DefaultMessageHistory(String routeId, NamedNode node, Date timestamp) {
+    public DefaultMessageHistory(String routeId, NamedNode node, long timestamp) {
         this.routeId = routeId;
         this.node = node;
         this.nodeId = node.getId();
@@ -48,6 +48,11 @@ public class DefaultMessageHistory implements MessageHistory {
     }
 
     public Date getTimestamp() {
+        return new Date(timestamp);
+    }
+
+    @Override
+    public long getTime() {
         return timestamp;
     }
 
@@ -56,8 +61,8 @@ public class DefaultMessageHistory implements MessageHistory {
     }
 
     public void nodeProcessingDone() {
-        if (timestamp != null) {
-            elapsed = System.currentTimeMillis() - timestamp.getTime();
+        if (timestamp > 0) {
+            elapsed = System.currentTimeMillis() - timestamp;
         }
     }
 

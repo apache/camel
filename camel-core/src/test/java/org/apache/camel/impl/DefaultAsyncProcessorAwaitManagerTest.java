@@ -75,7 +75,7 @@ public class DefaultAsyncProcessorAwaitManagerTest {
         LinkedList<MessageHistory> messageHistories = new LinkedList<>();
         messageHistories.add(MESSAGE_HISTORY_FACTORY.newMessageHistory(null,
                 new MockNamedNode().withId(null),
-                null));
+                0));
         exchange.setProperty(Exchange.MESSAGE_HISTORY, messageHistories);
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
         assertThat(awaitThread.getRouteId(), is(nullValue()));
@@ -89,7 +89,7 @@ public class DefaultAsyncProcessorAwaitManagerTest {
         LinkedList<MessageHistory> messageHistories = new LinkedList<>();
         messageHistories.add(MESSAGE_HISTORY_FACTORY.newMessageHistory("routeId",
                 new MockNamedNode().withId("nodeId"),
-                null));
+                0));
         exchange.setProperty(Exchange.MESSAGE_HISTORY, messageHistories);
         AsyncProcessorAwaitManager.AwaitThread awaitThread = defaultAsyncProcessorAwaitManager.browse().iterator().next();
         assertThat(awaitThread.getRouteId(), is("routeId"));
