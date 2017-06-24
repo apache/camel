@@ -272,7 +272,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
 
         // special for NaN numbers, which we can only convert for floating numbers
-        if (value.equals(Float.NaN) || value.equals(Double.NaN) ) {
+        if (value instanceof Number && (value.equals(Float.NaN) || value.equals(Double.NaN))) {
             // no type conversion was needed
             if (statistics.isStatisticsEnabled()) {
                 noopCounter.increment();
