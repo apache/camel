@@ -367,6 +367,10 @@ public final class DefaultExchange implements Exchange {
             // wrap throwable into an exception
             this.exception = ObjectHelper.wrapCamelExecutionException(this, t);
         }
+        if (t instanceof InterruptedException) {
+            // mark the exchange as interrupted due to the interrupt exception
+            setProperty(Exchange.INTERRUPTED, Boolean.TRUE);
+        }
     }
 
     public ExchangePattern getPattern() {

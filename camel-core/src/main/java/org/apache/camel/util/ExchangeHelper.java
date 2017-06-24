@@ -676,7 +676,7 @@ public final class ExchangeHelper {
      * @return <tt>true</tt> if interrupted, <tt>false</tt> otherwise
      */
     public static boolean isInterrupted(Exchange exchange) {
-        return exchange.getException(InterruptedException.class) != null;
+        return exchange.getProperty(Exchange.INTERRUPTED, false, boolean.class);
     }
 
     /**
