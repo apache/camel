@@ -354,6 +354,7 @@
 	* [Stream](stream-component.adoc)
 	* [String Template](string-template-component.adoc)
 	* [Telegram](telegram-component.adoc)
+	* [Thrift](thrift-component.adoc)
 	* [Tika](tika-component.adoc)
 	* [Twilio](twilio-component.adoc)
 	* [Twitter](twitter-component.adoc)

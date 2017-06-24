@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 274 in 188 JAR artifacts (17 deprecated)
+Number of Components: 275 in 189 JAR artifacts (17 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -760,6 +760,9 @@ Number of Components: 274 in 188 JAR artifacts (17 deprecated)
 
 | link:../camel-core/src/main/docs/test-component.adoc[Test] (camel-core) +
 `test:name` | 1.3 | The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+
+| link:camel-thrift/src/main/docs/thrift-component.adoc[Thrift] (camel-thrift) +
+`thrift:host:port/service` | 2.20 | The Thrift component allows to call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism
 
 | link:camel-tika/src/main/docs/tika-component.adoc[Tika] (camel-tika) +
 `tika:operation` | 2.19 | This component integrates with Apache Tika to extract content and metadata from thousands of file types.
