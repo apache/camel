@@ -26,6 +26,11 @@ public class DefaultMessageHistoryFactory implements MessageHistoryFactory {
 
     @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode node, Date timestamp) {
+        return new DefaultMessageHistory(routeId, node, timestamp.getTime());
+    }
+
+    @Override
+    public MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp) {
         return new DefaultMessageHistory(routeId, node, timestamp);
     }
 }
