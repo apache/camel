@@ -256,7 +256,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 noopCounter.increment();
             }
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class == type || Boolean.class == type) {
                 return Boolean.FALSE;
             }
             return null;
@@ -760,10 +760,18 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected static final class TypeMapping {
         private final Class<?> toType;
         private final Class<?> fromType;
+        private final int hashCode;
 
         TypeMapping(Class<?> toType, Class<?> fromType) {
             this.toType = toType;
             this.fromType = fromType;
+
+            // pre calculate hashcode
+            int hash = toType.hashCode();
+            if (fromType != null) {
+                hash *= 37 + fromType.hashCode();
+            }
+            hashCode = hash;
         }
 
         public Class<?> getFromType() {
@@ -785,11 +793,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         @Override
         public int hashCode() {
-            int answer = toType.hashCode();
-            if (fromType != null) {
-                answer *= 37 + fromType.hashCode();
-            }
-            return answer;
+            return hashCode;
         }
 
         @Override
