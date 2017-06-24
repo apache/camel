@@ -185,7 +185,7 @@ public final class DefaultExchange implements Exchange {
         Object value = getProperty(name);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class == type || Boolean.class == type) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
@@ -205,7 +205,7 @@ public final class DefaultExchange implements Exchange {
         Object value = getProperty(name, defaultValue);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class == type || Boolean.class == type) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
