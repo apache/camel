@@ -23,7 +23,7 @@ public class StatisticCounter extends Statistic {
     private final AtomicLong value = new AtomicLong(0);
 
     public void updateValue(long newValue) {
-        value.addAndGet(newValue);
+        value.getAndAdd(newValue);
     }
 
     public long getValue() {
