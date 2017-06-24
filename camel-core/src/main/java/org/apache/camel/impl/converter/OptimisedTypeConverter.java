@@ -16,83 +16,56 @@
  */
 package org.apache.camel.impl.converter;
 
-import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.ObjectConverter;
-import org.apache.camel.converter.TimePatternConverter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.converter.IOConverterOptimised;
+import org.apache.camel.converter.NIOConverterOptimised;
+import org.apache.camel.converter.ObjectConverterOptimised;
 
 /**
  * Optimised type converter for performing the most common conversions using the type converters
  * from camel-core.
+ * <p/>
+ * The most commonly used type converters has been optimised to be invoked in a faster by
+ * using direct method calls instead of a calling via a reflection method call via
+ * {@link InstanceMethodTypeConverter} or {@link StaticMethodTypeConverter}.
+ * In addition the performance is faster because the type converter is not looked up
+ * via a key in the type converter {@link Map}; which requires creating a new object
+ * as they key and perform the map lookup. The caveat is that for any new type converter
+ * to be included it must be manually added by adding the nessasary source code to the
+ * optimised classes such as {@link ObjectConverterOptimised}.
  */
 public class OptimisedTypeConverter {
+
+    private final EnumTypeConverter enumTypeConverter = new EnumTypeConverter();
 
     /**
      * Attempts to convert the value to the given type
      *
-     * @param type  the type to convert to
-     * @param exchange the exchange, may be null
-     * @param value the value
-     * @return the converted value, or null if no core type converter exists to convert
+     * @param type     the type to convert to
+     * @param exchange the exchange, may be <tt>null</tt>
+     * @param value    the value
+     * @return the converted value, or <tt>null</tt> if no optimised core type converter exists to convert
      */
-    public Object convertTo(final Class<?> type, final Exchange exchange, final Object value) {
-        // converting to a String is very common
-        if (type == String.class) {
-            Class fromType = value.getClass();
-            if (fromType == boolean.class || fromType == Boolean.class) {
-                return value.toString();
-            } else if (fromType == int.class || fromType == Integer.class) {
-                return value.toString();
-            } else if (fromType == long.class || fromType == Long.class) {
-                return value.toString();
-            } else if (fromType == char[].class) {
-                return ObjectConverter.fromCharArray((char[]) value);
-            } else if (fromType == StringBuffer.class || fromType == StringBuilder.class) {
-                return value.toString();
-            }
+    public Object convertTo(final Class<?> type, final Exchange exchange, final Object value) throws Exception {
+        Object answer;
+
+        // use the optimised type converters and use them in the most commonly used order
+        answer = ObjectConverterOptimised.convertTo(type, exchange, value);
+        if (answer == null) {
+            answer = IOConverterOptimised.convertTo(type, exchange, value);
+        }
+        if (answer == null) {
+            answer = NIOConverterOptimised.convertTo(type, exchange, value);
         }
 
-        // special for String -> long where we support time patterns
-        if (type == long.class || type == Long.class) {
-            Class fromType = value.getClass();
-            if (fromType == String.class) {
-                return TimePatternConverter.toMilliSeconds(value.toString());
-            }
+        // specially optimised for enums
+        if (answer == null && type.isEnum()) {
+            answer = enumTypeConverter.convertTo(type, exchange, value);
         }
 
-        if (type == boolean.class || type == Boolean.class) {
-            return ObjectConverter.toBoolean(value);
-        } else if (type == int.class || type == Integer.class) {
-            return ObjectConverter.toInteger(value);
-        } else if (type == long.class || type == Long.class) {
-            return ObjectConverter.toLong(value);
-        } else if (type == byte.class || type == Byte.class) {
-            return ObjectConverter.toByte(value);
-        } else if (type == double.class || type == Double.class) {
-            return ObjectConverter.toDouble(value);
-        } else if (type == float.class || type == Float.class) {
-            return ObjectConverter.toFloat(value);
-        } else if (type == short.class || type == Short.class) {
-            return ObjectConverter.toShort(value);
-        } else if ((type == char.class || type == Character.class) && value.getClass() == String.class) {
-            return ObjectConverter.toCharacter((String) value);
-        } else if ((type == char[].class || type == Character[].class) && value.getClass() == String.class) {
-            return ObjectConverter.toCharArray((String) value);
-        }
-
-        if (type == Iterator.class) {
-            return ObjectHelper.createIterator(value);
-        } else if (type == Iterable.class) {
-            return ObjectHelper.createIterable(value);
-        }
-
-        if (type == Class.class) {
-            return ObjectConverter.toClass(value, exchange);
-        }
-
-        // no optimised type converter found
-        return null;
+        return answer;
     }
+
 }

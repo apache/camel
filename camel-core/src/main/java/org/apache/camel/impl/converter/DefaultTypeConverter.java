@@ -62,10 +62,8 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
             loadTypeConverters();
             int additional = typeMappings.size() - core;
 
-            if (additional > 0) {
-                // report how many type converters we have loaded
-                log.info("Type converters loaded (core: {}, classpath: {})", core, additional);
-            }
+            // report how many type converters we have loaded
+            log.info("Type converters loaded (core: {}, classpath: {})", core, additional);
         }
     }
 

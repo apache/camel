@@ -80,6 +80,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final LongAdder noopCounter = new LongAdder();
     protected final LongAdder attemptCounter = new LongAdder();
     protected final LongAdder missCounter = new LongAdder();
+    protected final LongAdder coreHitCounter = new LongAdder();
     protected final LongAdder hitCounter = new LongAdder();
     protected final LongAdder failedCounter = new LongAdder();
 
@@ -244,9 +245,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
-    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value, final boolean tryConvert) {
+    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value, final boolean tryConvert) throws Exception {
         if (log.isTraceEnabled()) {
-            log.trace("Converting {} -> {} with value: {}",
+            log.trace("Finding type converter to convert {} -> {} with value: {}",
                     new Object[]{value == null ? "null" : value.getClass().getCanonicalName(), 
                         type.getCanonicalName(), value});
         }
@@ -296,7 +297,12 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // use the optimised core converter first
         Object result = optimisedTypeConverter.convertTo(type, exchange, value);
         if (result != null) {
-            log.trace("Using optimised converter to convert: {} -> {}", type, value.getClass());
+            if (statistics.isStatisticsEnabled()) {
+                coreHitCounter.increment();
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("Using optimised core converter to convert: {} -> {}", type, value.getClass().getCanonicalName());
+            }
             return result;
         }
 
@@ -727,6 +733,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
 
         @Override
+        public long getCoreHitCounter() {
+            return coreHitCounter.longValue();
+        }
+
+        @Override
         public long getMissCounter() {
             return missCounter.longValue();
         }
@@ -741,6 +752,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             noopCounter.reset();
             attemptCounter.reset();
             hitCounter.reset();
+            coreHitCounter.reset();
             missCounter.reset();
             failedCounter.reset();
         }
@@ -757,8 +769,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         @Override
         public String toString() {
-            return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]",
-                    getNoopCounter(), getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter());
+            return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, coreHits=%s, misses=%s, failures=%s]",
+                    getNoopCounter(), getAttemptCounter(), getHitCounter(), getCoreHitCounter(), getMissCounter(), getFailedCounter());
         }
     }
 
