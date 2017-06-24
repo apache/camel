@@ -76,9 +76,9 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
 
         // should hit
         Long hit = (Long) mbeanServer.getAttribute(name, "HitCounter");
-        assertEquals(3, hit.intValue());
+        assertEquals(1, hit.intValue());
         Long coreHit = (Long) mbeanServer.getAttribute(name, "CoreHitCounter");
-        assertEquals(3, coreHit.intValue());
+        assertEquals(1, coreHit.intValue());
         failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");
         assertEquals(0, failed.intValue());
         miss = (Long) mbeanServer.getAttribute(name, "MissCounter");
