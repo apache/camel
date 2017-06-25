@@ -141,11 +141,6 @@ public final class IOConverterOptimised {
 
         if (type == ObjectInput.class) {
             if (fromType == InputStream.class || fromType == BufferedInputStream.class) {
-                // if the value is both an InputStream and StreamCache then ensure its readable
-                // before doing conversions by resetting it (this is also what StreamCachingAdvice does)
-                if (value instanceof StreamCache) {
-                    ((StreamCache) value).reset();
-                }
                 return IOConverter.toObjectInput((InputStream) value, exchange);
             }
             return null;
