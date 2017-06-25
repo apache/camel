@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 
 /**
  * Optimised {@link IOConverter}
@@ -42,6 +43,12 @@ public final class IOConverterOptimised {
     // CHECKSTYLE:OFF
     public static Object convertTo(final Class<?> type, final Exchange exchange, final Object value) throws Exception {
         Class fromType = value.getClass();
+
+        // if the value is StreamCache then ensure its readable before doing conversions
+        // by resetting it (this is also what StreamCachingAdvice does)
+        if (value instanceof StreamCache) {
+            ((StreamCache) value).reset();
+        }
 
         if (type == InputStream.class) {
             if (fromType == String.class) {
@@ -134,6 +141,11 @@ public final class IOConverterOptimised {
 
         if (type == ObjectInput.class) {
             if (fromType == InputStream.class || fromType == BufferedInputStream.class) {
+                // if the value is both an InputStream and StreamCache then ensure its readable
+                // before doing conversions by resetting it (this is also what StreamCachingAdvice does)
+                if (value instanceof StreamCache) {
+                    ((StreamCache) value).reset();
+                }
                 return IOConverter.toObjectInput((InputStream) value, exchange);
             }
             return null;
