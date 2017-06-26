@@ -18,32 +18,30 @@ package org.apache.camel.component.atomix.ha;
 
 import java.util.List;
 
-import io.atomix.AtomixReplica;
+import io.atomix.AtomixClient;
 import io.atomix.catalyst.transport.Address;
 import io.atomix.catalyst.transport.Transport;
-import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.atomix.AtomixConfigurationAware;
+import org.apache.camel.component.atomix.client.AtomixClientConfiguration;
+import org.apache.camel.component.atomix.client.AtomixClientHelper;
 import org.apache.camel.impl.ha.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class AtomixClusterService extends AbstractCamelClusterService<AtomixClusterView>  implements AtomixConfigurationAware<AtomixClusterConfiguration> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClusterService.class);
+public final class AtomixClusterClientService extends AbstractCamelClusterService<AtomixClusterView> implements AtomixConfigurationAware<AtomixClientConfiguration> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClusterClientService.class);
+    private AtomixClientConfiguration configuration;
+    private AtomixClient atomix;
 
-    private Address address;
-    private AtomixClusterConfiguration configuration;
-    private AtomixReplica atomix;
-
-    public AtomixClusterService() {
-        this.configuration = new AtomixClusterConfiguration();
+    public AtomixClusterClientService() {
+        this.configuration = new AtomixClientConfiguration();
     }
 
-    public AtomixClusterService(CamelContext camelContext, Address address, AtomixClusterConfiguration configuration) {
+    public AtomixClusterClientService(CamelContext camelContext, AtomixClientConfiguration configuration) {
         super(null, camelContext);
 
-        this.address = address;
         this.configuration = configuration.copy();
     }
 
@@ -51,38 +49,14 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
     // Properties
     // **********************************
 
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = new Address(address);
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
     @Override
-    public AtomixClusterConfiguration getConfiguration() {
+    public AtomixClientConfiguration getConfiguration() {
         return configuration;
     }
 
     @Override
-    public void setConfiguration(AtomixClusterConfiguration configuration) {
+    public void setConfiguration(AtomixClientConfiguration configuration) {
         this.configuration = configuration.copy();
-    }
-
-    public String getStoragePath() {
-        return configuration.getStoragePath();
-    }
-
-    public void setStoragePath(String storagePath) {
-        configuration.setStoragePath(storagePath);
-    }
-
-    public StorageLevel getStorageLevel() {
-        return configuration.getStorageLevel();
     }
 
     public List<Address> getNodes() {
@@ -91,10 +65,6 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
 
     public void setNodes(List<Address> nodes) {
         configuration.setNodes(nodes);
-    }
-
-    public void setStorageLevel(StorageLevel storageLevel) {
-        configuration.setStorageLevel(storageLevel);
     }
 
     public void setNodes(String nodes) {
@@ -109,11 +79,11 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
         configuration.setTransport(transport);
     }
 
-    public AtomixReplica getAtomix() {
+    public AtomixClient getAtomix() {
         return configuration.getAtomix();
     }
 
-    public void setAtomix(AtomixReplica atomix) {
+    public void setAtomix(AtomixClient atomix) {
         configuration.setAtomix(atomix);
     }
 
@@ -132,34 +102,31 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
     @Override
     protected void doStart() throws Exception {
         // instantiate a new atomix replica
-        getOrCreateReplica();
+        getOrCreateClient();
 
         super.doStart();
     }
 
     @Override
     protected AtomixClusterView createView(String namespace) throws Exception {
-        return new AtomixClusterView(this, namespace, getOrCreateReplica());
+        return new AtomixClusterView(this, namespace, getOrCreateClient());
     }
 
-    private AtomixReplica getOrCreateReplica() throws Exception {
+    private AtomixClient getOrCreateClient() throws Exception {
         if (atomix == null) {
             // Validate parameters
             ObjectHelper.notNull(getCamelContext(), "Camel Context");
-            ObjectHelper.notNull(address, "Atomix Node Address");
             ObjectHelper.notNull(configuration, "Atomix Node Configuration");
 
-            atomix = AtomixClusterHelper.createReplica(getCamelContext(), address, configuration);
-
-            if (ObjectHelper.isNotEmpty(configuration.getNodes())) {
-                LOGGER.debug("Bootstrap cluster on address {} for nodes: {}", address, configuration.getNodes());
-                this.atomix.bootstrap(configuration.getNodes()).join();
-                LOGGER.debug("Bootstrap cluster done");
-            } else {
-                LOGGER.debug("Bootstrap cluster on address {}", address, configuration.getNodes());
-                this.atomix.bootstrap().join();
-                LOGGER.debug("Bootstrap cluster done");
+            if (ObjectHelper.isEmpty(configuration.getNodes())) {
+                throw new IllegalArgumentException("Atomix nodes should not be empty");
             }
+
+            atomix = AtomixClientHelper.createClient(getCamelContext(), configuration);
+
+            LOGGER.debug("Connect to cluster nodes: {}", configuration.getNodes());
+            atomix.connect(configuration.getNodes()).join();
+            LOGGER.debug("Connect to cluster done");
         }
 
         return this.atomix;
