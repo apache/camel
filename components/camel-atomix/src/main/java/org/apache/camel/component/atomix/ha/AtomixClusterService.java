@@ -23,13 +23,12 @@ import io.atomix.catalyst.transport.Address;
 import io.atomix.catalyst.transport.Transport;
 import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.atomix.AtomixConfigurationAware;
 import org.apache.camel.impl.ha.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class AtomixClusterService extends AbstractCamelClusterService<AtomixClusterView>  implements AtomixConfigurationAware<AtomixClusterConfiguration> {
+public final class AtomixClusterService extends AbstractCamelClusterService<AtomixClusterView> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClusterService.class);
 
     private Address address;
@@ -63,12 +62,10 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
         this.address = address;
     }
 
-    @Override
     public AtomixClusterConfiguration getConfiguration() {
         return configuration;
     }
 
-    @Override
     public void setConfiguration(AtomixClusterConfiguration configuration) {
         this.configuration = configuration.copy();
     }
@@ -139,7 +136,7 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
 
     @Override
     protected AtomixClusterView createView(String namespace) throws Exception {
-        return new AtomixClusterView(this, namespace, getOrCreateReplica());
+        return new AtomixClusterView(this, namespace, getOrCreateReplica(), configuration);
     }
 
     private AtomixReplica getOrCreateReplica() throws Exception {

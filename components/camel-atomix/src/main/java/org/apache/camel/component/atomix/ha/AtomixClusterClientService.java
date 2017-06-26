@@ -22,7 +22,6 @@ import io.atomix.AtomixClient;
 import io.atomix.catalyst.transport.Address;
 import io.atomix.catalyst.transport.Transport;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.atomix.AtomixConfigurationAware;
 import org.apache.camel.component.atomix.client.AtomixClientConfiguration;
 import org.apache.camel.component.atomix.client.AtomixClientHelper;
 import org.apache.camel.impl.ha.AbstractCamelClusterService;
@@ -30,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class AtomixClusterClientService extends AbstractCamelClusterService<AtomixClusterView> implements AtomixConfigurationAware<AtomixClientConfiguration> {
+public final class AtomixClusterClientService extends AbstractCamelClusterService<AtomixClusterView> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClusterClientService.class);
     private AtomixClientConfiguration configuration;
     private AtomixClient atomix;
@@ -49,12 +48,10 @@ public final class AtomixClusterClientService extends AbstractCamelClusterServic
     // Properties
     // **********************************
 
-    @Override
     public AtomixClientConfiguration getConfiguration() {
         return configuration;
     }
 
-    @Override
     public void setConfiguration(AtomixClientConfiguration configuration) {
         this.configuration = configuration.copy();
     }
@@ -109,7 +106,7 @@ public final class AtomixClusterClientService extends AbstractCamelClusterServic
 
     @Override
     protected AtomixClusterView createView(String namespace) throws Exception {
-        return new AtomixClusterView(this, namespace, getOrCreateClient());
+        return new AtomixClusterView(this, namespace, getOrCreateClient(), configuration);
     }
 
     private AtomixClient getOrCreateClient() throws Exception {
