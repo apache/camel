@@ -45,6 +45,7 @@ import org.apache.camel.component.properties.PropertiesFunction;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
@@ -321,6 +322,12 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                     getContext().addLifecycleStrategy(strategy);
                 }
             }
+        }
+        // cluster service
+        CamelClusterService clusterService = getBeanForType(CamelClusterService.class);
+        if (clusterService != null) {
+            LOG.info("Using CamelClusterService: " + clusterService);
+            getContext().addService(clusterService);
         }
         // add route policy factories
         Map<String, RoutePolicyFactory> routePolicyFactories = getContext().getRegistry().findByTypeWithName(RoutePolicyFactory.class);

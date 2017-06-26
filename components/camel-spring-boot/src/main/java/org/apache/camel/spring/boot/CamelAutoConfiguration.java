@@ -29,6 +29,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultTraceFormatter;
@@ -86,7 +87,7 @@ public class CamelAutoConfiguration {
     @Bean(destroyMethod = "")
     @ConditionalOnMissingBean(CamelContext.class)
     CamelContext camelContext(ApplicationContext applicationContext,
-                              CamelConfigurationProperties config) {
+                              CamelConfigurationProperties config) throws Exception {
 
         if (ObjectHelper.isNotEmpty(config.getFileConfigurations())) {
             Environment env = applicationContext.getEnvironment();
@@ -296,7 +297,7 @@ public class CamelAutoConfiguration {
      * <p/>
      * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean.
      */
-    void afterPropertiesSet(ApplicationContext applicationContext, CamelContext camelContext) {
+    void afterPropertiesSet(ApplicationContext applicationContext, CamelContext camelContext) throws Exception {
         Tracer tracer = getSingleBeanOfType(applicationContext, Tracer.class);
         if (tracer != null) {
             // use formatter if there is a TraceFormatter bean defined
@@ -411,6 +412,12 @@ public class CamelAutoConfiguration {
                     camelContext.addLifecycleStrategy(strategy);
                 }
             }
+        }
+        // cluster service
+        CamelClusterService clusterService = getSingleBeanOfType(applicationContext, CamelClusterService.class);
+        if (clusterService != null) {
+            LOG.info("Using CamelClusterService: " + clusterService);
+            camelContext.addService(clusterService);
         }
         // add route policy factories
         Map<String, RoutePolicyFactory> routePolicyFactories = applicationContext.getBeansOfType(RoutePolicyFactory.class);
