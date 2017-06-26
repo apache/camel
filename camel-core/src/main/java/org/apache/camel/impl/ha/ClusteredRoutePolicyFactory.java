@@ -18,6 +18,7 @@ package org.apache.camel.impl.ha;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -25,15 +26,24 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ClusteredRoutePolicyFactory implements RoutePolicyFactory {
     private final String namespace;
+    private final CamelClusterService clusterService;
 
     public ClusteredRoutePolicyFactory(String viewName) {
         this.namespace = ObjectHelper.notNull(viewName, "Cluster View Namespace");
+        this.clusterService = null;
+    }
+
+    public ClusteredRoutePolicyFactory(CamelClusterService clusterService, String viewName) {
+        this.namespace = ObjectHelper.notNull(viewName, "Cluster View Namespace");
+        this.clusterService = ObjectHelper.notNull(clusterService, "Cluster Service");
     }
 
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
         try {
-            return ClusteredRoutePolicy.forNamespace(camelContext, namespace);
+            return clusterService != null
+                ? ClusteredRoutePolicy.forNamespace(clusterService, namespace)
+                : ClusteredRoutePolicy.forNamespace(camelContext, namespace);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
@@ -45,5 +55,9 @@ public class ClusteredRoutePolicyFactory implements RoutePolicyFactory {
 
     public static ClusteredRoutePolicyFactory forNamespace(String namespace) {
         return new ClusteredRoutePolicyFactory(namespace);
+    }
+
+    public static ClusteredRoutePolicyFactory forNamespace(CamelClusterService clusterService, String namespace) {
+        return new ClusteredRoutePolicyFactory(clusterService, namespace);
     }
 }
