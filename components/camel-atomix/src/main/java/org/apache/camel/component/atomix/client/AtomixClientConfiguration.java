@@ -17,6 +17,7 @@
 package org.apache.camel.component.atomix.client;
 
 import io.atomix.AtomixClient;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.atomix.AtomixConfiguration;
 import org.apache.camel.spi.UriParam;
 
@@ -37,5 +38,17 @@ public class AtomixClientConfiguration extends AtomixConfiguration<AtomixClient>
      */
     public void setResultHeader(String resultHeader) {
         this.resultHeader = resultHeader;
+    }
+
+    // ****************************************
+    // Copy
+    // ****************************************
+
+    public AtomixClientConfiguration copy() {
+        try {
+            return (AtomixClientConfiguration) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }
