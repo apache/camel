@@ -19,13 +19,13 @@ package org.apache.camel.ha;
 /**
  * Marker interface
  */
-public interface CameClusterEventListener {
+public interface CamelClusterEventListener {
 
-    interface Leadership extends CameClusterEventListener {
+    interface Leadership extends CamelClusterEventListener {
         void leadershipChanged(CamelClusterView view, CamelClusterMember leader);
     }
 
-    interface Membership extends CameClusterEventListener {
+    interface Membership extends CamelClusterEventListener {
         void memberAdded(CamelClusterView view, CamelClusterMember leader);
         void memberRemoved(CamelClusterView view, CamelClusterMember leader);
     }

@@ -62,14 +62,14 @@ public interface CamelClusterView extends Service, CamelContextAware {
      *
      * @param listener the event listener.
      */
-    void addEventListener(CameClusterEventListener listener);
+    void addEventListener(CamelClusterEventListener listener);
 
     /**
      * Remove the event listener.
      *
      * @param listener the event listener.
      */
-    void removeEventListener(CameClusterEventListener listener);
+    void removeEventListener(CamelClusterEventListener listener);
 
     /**
      * Access the underlying concrete CamelClusterView implementation to
