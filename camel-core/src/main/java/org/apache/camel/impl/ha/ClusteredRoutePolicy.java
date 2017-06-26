@@ -27,7 +27,7 @@ import org.apache.camel.Route;
 import org.apache.camel.StartupListener;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.ha.CameClusterEventListener;
+import org.apache.camel.ha.CamelClusterEventListener;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.ha.CamelClusterView;
@@ -47,7 +47,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final Set<Route> stoppedRoutes;
     private final ReferenceCount refCount;
     private final CamelClusterView clusterView;
-    private final CameClusterEventListener.Leadership leadershipEventListener;
+    private final CamelClusterEventListener.Leadership leadershipEventListener;
     private final CamelContextStartupListener listener;
     private final AtomicBoolean contextStarted;
 
@@ -200,7 +200,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // Event handling
     // ****************************************************
 
-    private class CamelClusterLeadershipListener implements CameClusterEventListener.Leadership {
+    private class CamelClusterLeadershipListener implements CamelClusterEventListener.Leadership {
         @Override
         public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
             setLeader(clusterView.getLocalMember().isMaster());
