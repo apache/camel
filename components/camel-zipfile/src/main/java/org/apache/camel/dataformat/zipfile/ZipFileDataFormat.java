@@ -74,7 +74,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         if (usingIterator) {
-            ZipIterator zipIterator = new ZipIterator(exchange.getIn());
+            ZipIterator zipIterator = new ZipIterator(exchange, inputStream);
             zipIterator.setAllowEmptyDirectory(allowEmptyDirectory);
             return zipIterator;
         } else {
@@ -107,7 +107,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
     public void setUsingIterator(boolean usingIterator) {
         this.usingIterator = usingIterator;
     }
-    
+
     public boolean isAllowEmptyDirectory() {
         return allowEmptyDirectory;
     }
