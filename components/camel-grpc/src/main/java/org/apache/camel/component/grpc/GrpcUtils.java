@@ -35,6 +35,14 @@ public final class GrpcUtils {
 
     private GrpcUtils() {
     }
+    
+    public static String extractServiceName(String service) {
+        return service.contains(".") ? service.substring(service.lastIndexOf(".") + 1) : service;
+    }
+
+    public static String extractServicePackage(String service) {
+        return service.contains(".") ? service.substring(0, service.lastIndexOf(".")) : "";
+    }
 
     public static Object constructGrpcAsyncStub(String packageName, String serviceName, Channel channel, final CamelContext context) {
         return constructGrpcStubClass(packageName, serviceName, GrpcConstants.GRPC_SERVICE_ASYNC_STUB_METHOD, channel, context);
@@ -56,7 +64,7 @@ public final class GrpcUtils {
         paramChannel[0] = Channel.class;
         Object grpcBlockingStub = null;
 
-        String serviceClassName = packageName + "." + serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX;
+        String serviceClassName = constructFullClassName(packageName, serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX);
         try {
             Class grpcServiceClass = context.getClassResolver().resolveMandatoryClass(serviceClassName);
             Method grpcBlockingMethod = ReflectionHelper.findMethod(grpcServiceClass, stubMethod, paramChannel);
@@ -75,7 +83,7 @@ public final class GrpcUtils {
     public static Class constructGrpcImplBaseClass(String packageName, String serviceName, final CamelContext context) {
         Class grpcServerImpl;
 
-        String serverBaseImpl = packageName + "." + serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX + "$" + serviceName + GrpcConstants.GRPC_SERVER_IMPL_POSTFIX;
+        String serverBaseImpl = constructFullClassName(packageName, serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX + "$" + serviceName + GrpcConstants.GRPC_SERVER_IMPL_POSTFIX);
         try {
             grpcServerImpl = context.getClassResolver().resolveMandatoryClass(serverBaseImpl);
 
@@ -164,5 +172,13 @@ public final class GrpcUtils {
             }
         }
         return sb.toString();
+    }
+    
+    private static String constructFullClassName(String packageName, String className) {
+        if (ObjectHelper.isEmpty(packageName)) {
+            return className;
+        } else {
+            return packageName + "." + className;
+        }
     }
 }
