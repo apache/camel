@@ -166,10 +166,10 @@ public class GrpcConsumerAggregationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("grpc://org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION&host=localhost&port=" + GRPC_SYNC_REQUEST_TEST_PORT)
+                from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
                     .bean(new GrpcMessageBuilder(), "buildPongResponse");
                 
-                from("grpc://org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION&host=localhost&port=" + GRPC_ASYNC_REQUEST_TEST_PORT)
+                from("grpc://localhost:" + GRPC_ASYNC_REQUEST_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
                     .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
             }
         };

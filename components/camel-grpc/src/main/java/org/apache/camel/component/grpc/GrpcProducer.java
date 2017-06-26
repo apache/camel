@@ -81,10 +81,10 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
             initializeChannel();
             if (endpoint.isSynchronous()) {
                 LOG.debug("Getting synchronous method stub from channel");
-                grpcStub = GrpcUtils.constructGrpcBlockingStub(configuration.getServicePackage(), configuration.getServiceName(), channel, endpoint.getCamelContext());
+                grpcStub = GrpcUtils.constructGrpcBlockingStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel, endpoint.getCamelContext());
             } else {
                 LOG.debug("Getting asynchronous method stub from channel");
-                grpcStub = GrpcUtils.constructGrpcAsyncStub(configuration.getServicePackage(), configuration.getServiceName(), channel, endpoint.getCamelContext());
+                grpcStub = GrpcUtils.constructGrpcAsyncStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel, endpoint.getCamelContext());
             }
             forwarder = GrpcExchangeForwarderFactory.createExchangeForwarder(configuration, grpcStub);
 
@@ -112,13 +112,10 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
     protected void initializeChannel() {
         NettyChannelBuilder channelBuilder = null;
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            LOG.info("Creating channel to the remote gRPC server " + configuration.getHost() + ":" + configuration.getPort());
+            LOG.info("Creating channel to the remote gRPC server {}:{}", configuration.getHost(), configuration.getPort());
             channelBuilder = NettyChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
-        } else if (!ObjectHelper.isEmpty(configuration.getTarget())) {
-            LOG.info("Creating channel to the remote gRPC server " + configuration.getTarget());
-            channelBuilder = NettyChannelBuilder.forTarget(configuration.getTarget());
         } else {
-            throw new IllegalArgumentException("No connection properties (host, port or target) specified");
+            throw new IllegalArgumentException("No connection properties (host or port) specified");
         }
         channel = channelBuilder.usePlaintext(configuration.getUsePlainText()).build();
     }

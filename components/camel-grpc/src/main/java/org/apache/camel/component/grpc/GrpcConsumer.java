@@ -64,7 +64,7 @@ public class GrpcConsumer extends DefaultConsumer {
             LOG.info("Starting the gRPC server");
             initializeServer();
             server.start();
-            LOG.info("gRPC server started and listening on port: " + server.getPort());
+            LOG.info("gRPC server started and listening on port: {}", server.getPort());
         }
     }
 
@@ -85,7 +85,7 @@ public class GrpcConsumer extends DefaultConsumer {
         ServerInterceptor headerInterceptor = new GrpcHeaderInterceptor();
         MethodHandler methodHandler = new GrpcMethodHandler(endpoint, this);
         
-        serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(configuration.getServicePackage(), configuration.getServiceName(), endpoint.getCamelContext()));
+        serviceProxy.setSuperclass(GrpcUtils.constructGrpcImplBaseClass(endpoint.getServicePackage(), endpoint.getServiceName(), endpoint.getCamelContext()));
         try {
             bindableService = (BindableService)serviceProxy.create(new Class<?>[0], new Object[0], methodHandler);
         } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -93,11 +93,8 @@ public class GrpcConsumer extends DefaultConsumer {
         }
         
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            LOG.debug("Building gRPC server on " + configuration.getHost() + ":" + configuration.getPort());
+            LOG.debug("Building gRPC server on {}:{}", configuration.getHost(), configuration.getPort());
             serverBuilder = NettyServerBuilder.forAddress(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        } else if (ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            LOG.debug("Building gRPC server on <any address>" + ":" + configuration.getPort());
-            serverBuilder = NettyServerBuilder.forPort(configuration.getPort());
         } else {
             throw new IllegalArgumentException("No server start properties (host, port) specified");
         }

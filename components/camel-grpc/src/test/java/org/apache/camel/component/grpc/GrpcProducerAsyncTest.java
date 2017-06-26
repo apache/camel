@@ -52,7 +52,7 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
     @BeforeClass
     public static void startGrpcServer() throws Exception {
         grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT).addService(new PingPongImpl()).build().start();
-        LOG.info("gRPC server started on port " + GRPC_TEST_PORT);
+        LOG.info("gRPC server started on port {}", GRPC_TEST_PORT);
     }
 
     @AfterClass
@@ -177,10 +177,10 @@ public class GrpcProducerAsyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:grpc-sync-sync").to("grpc://org.apache.camel.component.grpc.PingPong?method=pingSyncSync&host=localhost&port=" + GRPC_TEST_PORT);
-                from("direct:grpc-sync-async").to("grpc://org.apache.camel.component.grpc.PingPong?method=pingSyncAsync&host=localhost&port=" + GRPC_TEST_PORT);
-                from("direct:grpc-async-sync").to("grpc://org.apache.camel.component.grpc.PingPong?method=pingAsyncSync&host=localhost&port=" + GRPC_TEST_PORT);
-                from("direct:grpc-async-async").to("grpc://org.apache.camel.component.grpc.PingPong?method=pingAsyncAsync&host=localhost&port=" + GRPC_TEST_PORT);
+                from("direct:grpc-sync-sync").to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=pingSyncSync");
+                from("direct:grpc-sync-async").to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=pingSyncAsync");
+                from("direct:grpc-async-sync").to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=pingAsyncSync");
+                from("direct:grpc-async-async").to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=pingAsyncAsync");
             }
         };
     }
