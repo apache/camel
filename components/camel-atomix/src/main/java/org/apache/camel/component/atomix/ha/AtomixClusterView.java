@@ -27,7 +27,6 @@ import io.atomix.group.DistributedGroup;
 import io.atomix.group.GroupMember;
 import io.atomix.group.LocalMember;
 import org.apache.camel.component.atomix.AtomixConfiguration;
-import org.apache.camel.component.atomix.AtomixConfigurationAware;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.ha.AbstractCamelClusterView;
@@ -40,12 +39,14 @@ final class AtomixClusterView extends AbstractCamelClusterView {
 
     private final Atomix atomix;
     private final AtomixLocalMember localMember;
+    private final AtomixConfiguration<?> configuration;
     private DistributedGroup group;
 
-    AtomixClusterView(CamelClusterService cluster, String namespace, Atomix atomix) {
+    AtomixClusterView(CamelClusterService cluster, String namespace, Atomix atomix, AtomixConfiguration<?> configuration) {
         super(cluster, namespace);
 
         this.atomix = atomix;
+        this.configuration = configuration;
         this.localMember = new AtomixLocalMember();
     }
 
@@ -88,9 +89,6 @@ final class AtomixClusterView extends AbstractCamelClusterView {
     protected void doStart() throws Exception {
         if (!localMember.hasJoined()) {
             LOGGER.debug("Get group {}", getNamespace());
-
-            final AtomixConfigurationAware service = AtomixConfigurationAware.class.cast(getClusterService());
-            final AtomixConfiguration<?> configuration = service.getConfiguration();
 
             group = this.atomix.getGroup(
                 getNamespace(),
