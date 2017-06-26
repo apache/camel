@@ -38,10 +38,13 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBeanProcessor.class);
 
     private final BeanHolder beanHolder;
-    private Processor processor;
+    private transient Processor processor;
+    private transient boolean lookupProcessorDone;
+    private final Object lock = new Object();
     private boolean multiParameterArray;
     private String method;
     private boolean shorthandMethod;
+
 
     public AbstractBeanProcessor(Object pojo, BeanInfo beanInfo) {
         this(new ConstantBeanHolder(pojo, beanInfo));
@@ -91,10 +94,14 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
         // do we have a custom adapter for this POJO to a Processor
         // but only do this if allowed
         if (allowProcessor(explicitMethodName, beanInfo)) {
-            Processor processor = getProcessor();
-            if (processor == null) {
-                // so if there is a custom type converter for the bean to processor
-                processor = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
+            processor = getProcessor();
+            if (processor == null && !lookupProcessorDone) {
+                // only attempt to lookup the processor once or nearly once
+                synchronized (lock) {
+                    lookupProcessorDone = true;
+                    // so if there is a custom type converter for the bean to processor
+                    processor = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
+                }
             }
             if (processor != null) {
                 LOG.trace("Using a custom adapter as bean invocation: {}", processor);

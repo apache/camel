@@ -70,6 +70,10 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         out = template.requestBody("direct:other", new MyMessage("Hello World"));
         assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
         assertEquals("Bye World", out.toString());
+
+        out = template.requestBody("direct:other", new MyMessage("Hello Again"));
+        assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
+        assertEquals("Bye World", out.toString());
     }
     
     public void testDerivedClassCalledWithCustomProcessor() throws Exception {
@@ -94,6 +98,10 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         assertEquals("Hello World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello World"));
+        assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
+        assertEquals("Bye World", out.toString());
+
+        out = template.requestBody("direct:other", new MyMessage("Hello Again"));
         assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
         assertEquals("Bye World", out.toString());
     }
