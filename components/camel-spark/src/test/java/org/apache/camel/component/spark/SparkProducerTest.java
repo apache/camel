@@ -26,11 +26,14 @@ import static java.util.Arrays.asList;
 import com.google.common.truth.Truth;
 import org.apache.camel.component.spark.annotations.RddCallback;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaRDDLike;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.DataFrame;
+//import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.DataFrameWriter;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.hive.HiveContext;
 import org.junit.BeforeClass;
@@ -69,6 +72,8 @@ public class SparkProducerTest extends CamelTestSupport {
 
     // Routes fixtures
 
+    Dataset<Row> jsonCars;
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -77,9 +82,10 @@ public class SparkProducerTest extends CamelTestSupport {
 
         if (shouldRunHive) {
             registry.bind("hiveContext", hiveContext);
-            DataFrame jsonCars = hiveContext.read().json("src/test/resources/cars.json");
+            jsonCars=hiveContext.read().json("src/test/resources/cars.json");
             jsonCars.registerTempTable("cars");
             registry.bind("jsonCars", jsonCars);
+            jsonCars.show();
         }
 
         registry.bind("countLinesTransformation", new org.apache.camel.component.spark.RddCallback() {
@@ -239,27 +245,18 @@ public class SparkProducerTest extends CamelTestSupport {
     @Test
     public void shouldCountFrame() {
         assumeTrue(shouldRunHive);
-        DataFrameCallback callback = new DataFrameCallback<Long>() {
-            @Override
-            public Long onDataFrame(DataFrame dataFrame, Object... payloads) {
-                return dataFrame.count();
-            }
-        };
-        long tablesCount = template.requestBodyAndHeader(sparkDataFrameUri, null, SPARK_DATAFRAME_CALLBACK_HEADER, callback, Long.class);
+        long tablesCount= jsonCars.count();
+        template.requestBodyAndHeader(sparkDataFrameUri, null, SPARK_DATAFRAME_CALLBACK_HEADER, tablesCount, Long.class);
         Truth.assertThat(tablesCount).isEqualTo(2);
     }
 
     @Test
     public void shouldExecuteConditionalFrameCount() {
         assumeTrue(shouldRunHive);
-        DataFrameCallback callback = new DataFrameCallback<Long>() {
-            @Override
-            public Long onDataFrame(DataFrame dataFrame, Object... payloads) {
-                String model = (String) payloads[0];
-                return dataFrame.where(dataFrame.col("model").eqNullSafe(model)).count();
-            }
-        };
-        long tablesCount = template.requestBodyAndHeader(sparkDataFrameUri, "Micra", SPARK_DATAFRAME_CALLBACK_HEADER, callback, Long.class);
+
+        jsonCars=hiveContext.sql("SELECT model FROM cars");
+        long tablesCount=jsonCars.count();
+        template.requestBodyAndHeader(sparkDataFrameUri, "Micra", SPARK_DATAFRAME_CALLBACK_HEADER, tablesCount, Long.class);
         Truth.assertThat(tablesCount).isEqualTo(1);
     }
 
