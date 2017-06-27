@@ -16,19 +16,21 @@
  */
 package org.apache.camel.component.atomix.ha;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import io.atomix.AtomixReplica;
 import io.atomix.catalyst.transport.Address;
-import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.atomix.client.AtomixFactory;
+import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ha.ClusteredRoutePolicyFactory;
 import org.apache.camel.test.AvailablePortFinder;
@@ -37,18 +39,14 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class AtomixRoutePolicyTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixRoutePolicyTest.class);
+public abstract class AtomixClientRoutePolicyTestSupport {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClientRoutePolicyTestSupport.class);
 
-    private final List<Address> addresses = Arrays.asList(
-        new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
-        new Address("127.0.0.1", AvailablePortFinder.getNextAvailable()),
-        new Address("127.0.0.1", AvailablePortFinder.getNextAvailable())
-    );
-
-    private final Set<Address> results = new HashSet<>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(addresses.size() * 2);
-    private final CountDownLatch latch = new CountDownLatch(addresses.size());
+    private final Address address = new Address("127.0.0.1", AvailablePortFinder.getNextAvailable());
+    private final List<String> clients = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
+    private final List<String> results = new ArrayList<>();
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(clients.size() * 2);
+    private final CountDownLatch latch = new CountDownLatch(clients.size());
 
     // ************************************
     // Test
@@ -56,44 +54,48 @@ public final class AtomixRoutePolicyTest {
 
     @Test
     public void test() throws Exception {
-        for (Address address: addresses) {
-            scheduler.submit(() -> run(address));
+        AtomixReplica boot = null;
+
+        try {
+            boot = AtomixFactory.replica(address);
+
+            for (String id : clients) {
+                scheduler.submit(() -> run(id));
+            }
+
+            latch.await(1, TimeUnit.MINUTES);
+            scheduler.shutdownNow();
+
+            Assert.assertEquals(clients.size(), results.size());
+            Assert.assertTrue(results.containsAll(clients));
+        } finally {
+            if (boot != null) {
+                boot.shutdown();
+            }
         }
-
-        latch.await(1, TimeUnit.MINUTES);
-        scheduler.shutdownNow();
-
-        Assert.assertEquals(addresses.size(), results.size());
-        Assert.assertTrue(results.containsAll(addresses));
     }
 
     // ************************************
     // Run a Camel node
     // ************************************
 
-    private void run(Address address) {
+    private void run(String id) {
         try {
             CountDownLatch contextLatch = new CountDownLatch(1);
 
-            AtomixClusterService service = new AtomixClusterService();
-            service.setId("node-" + address.port());
-            service.setStorageLevel(StorageLevel.MEMORY);
-            service.setAddress(address);
-            service.setNodes(addresses);
-
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
-            context.setName("context-" + address.port());
-            context.addService(service);
+            context.setName("context-" + id);
+            context.addService(createClusterService(id, address));
             context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     from("timer:atomix?delay=1s&period=1s&repeatCount=1")
-                        .routeId("route-" + address.port())
+                        .routeId("route-" + id)
                         .process(e -> {
-                            LOGGER.debug("Node {} done", address);
-                            results.add(address);
+                            LOGGER.debug("Node {} done", id);
+                            results.add(id);
                             // Shutdown the context later on to give a chance to
                             // other members to catch-up
                             scheduler.schedule(contextLatch::countDown, 2 + ThreadLocalRandom.current().nextInt(3), TimeUnit.SECONDS);
@@ -114,4 +116,6 @@ public final class AtomixRoutePolicyTest {
             LOGGER.warn("", e);
         }
     }
+
+    protected abstract CamelClusterService createClusterService(String id, Address bootstrapNode);
 }

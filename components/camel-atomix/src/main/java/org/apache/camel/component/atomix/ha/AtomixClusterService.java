@@ -122,6 +122,14 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
         configuration.setConfigurationUri(configurationUri);
     }
 
+    public boolean isEphemeral() {
+        return configuration.isEphemeral();
+    }
+
+    public void setEphemeral(boolean ephemeral) {
+        configuration.setEphemeral(ephemeral);
+    }
+
     // *********************************************
     // Lifecycle
     // *********************************************
