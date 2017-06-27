@@ -75,8 +75,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>rhino</groupId>
-            <artifactId>js</artifactId>
+            <groupId>org.mozilla</groupId>
+            <artifactId>rhino</artifactId>
             <version>${rhino-version}</version>
             <scope>test</scope>
         </dependency>

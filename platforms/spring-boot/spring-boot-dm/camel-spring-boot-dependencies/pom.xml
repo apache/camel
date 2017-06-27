@@ -3162,6 +3162,11 @@
         <version>1.7.18</version>
       </dependency>
       <dependency>
+        <groupId>org.mozilla</groupId>
+        <artifactId>rhino</artifactId>
+        <version>1.7.7.1</version>
+      </dependency>
+      <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
         <version>6.5.0.Final</version>
