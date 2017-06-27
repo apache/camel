@@ -41,7 +41,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
+ * @version
  */
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
@@ -369,13 +369,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Field field = bean.getClass().getField("timeout");
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
-        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout",  bean, "foo");
+        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
         assertEquals(Integer.valueOf("2000"), Integer.valueOf("" + value));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
         type = field.getType();
-        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "greeting",  bean, "foo");
+        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "greeting", bean, "foo");
         assertEquals("Hello Camel", value);
     }
 
@@ -389,13 +389,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Field field = bean.getClass().getField("timeout");
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
-        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "5000", "timeout",  bean, "foo");
+        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "5000", "timeout", bean, "foo");
         assertEquals(Integer.valueOf("5000"), Integer.valueOf("" + value));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
         type = field.getType();
-        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "greeting",  bean, "foo");
+        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "greeting", bean, "foo");
         assertEquals("Hello Camel", value);
     }
 
@@ -410,13 +410,13 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Method method = bean.getClass().getMethod("setTimeout", int.class);
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
         Class<?> type = method.getParameterTypes()[0];
-        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout",  bean, "foo");
+        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
         assertEquals(Integer.valueOf("2000"), Integer.valueOf("" + value));
 
         method = bean.getClass().getMethod("setGreeting", String.class);
         propertyInject = method.getAnnotation(PropertyInject.class);
         type = method.getParameterTypes()[0];
-        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "greeting",  bean, "foo");
+        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "greeting", bean, "foo");
         assertEquals("Hello Camel", value);
     }
 
@@ -464,6 +464,38 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         String out = bean.doSomething("Camel");
         assertEquals("Hello Camel", out);
+    }
+
+    public void testFluentProducerTemplateWithNoInjection() throws Exception {
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+        NoBeanInjectionTestClass myBean = new NoBeanInjectionTestClass();
+        Field field = myBean.getClass().getField("fluentProducerTemplate");
+        EndpointInject inject = field.getAnnotation(EndpointInject.class);
+        String propertyName = "fluent";
+        Class<?> classType = field.getType();
+        Object value = helper.getInjectionValue(classType, inject.uri(), inject.ref(), inject.property(), propertyName, myBean, "bla");
+
+        field.set(myBean, value);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bla Bla Bla. .");
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("Bla Bla Bla. .");
+
+        myBean.sendExchange(exchange);
+
+        assertMockEndpointsSatisfied();
+
+    }
+
+    public class NoBeanInjectionTestClass {
+        @EndpointInject
+        public FluentProducerTemplate fluentProducerTemplate;
+
+        public void sendExchange(Exchange exchange) {
+            fluentProducerTemplate.withExchange(exchange).to("mock:result").send();
+        }
     }
 
     public class MyConsumeBean {
@@ -641,7 +673,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     }
 
     public class MyPrivateConsumeBean {
-        
+
         @Consume(uri = "seda:foo")
         private void consumeSomethingPrivate(String body) {
             assertEquals("Hello World", body);
@@ -722,7 +754,5 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
             return foo.hello(body);
         }
     }
-
-
 
 }
