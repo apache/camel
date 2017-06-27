@@ -172,6 +172,14 @@ final class AtomixClusterView extends AbstractCamelClusterView {
 
             return this;
         }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("AtomixLocalMember{");
+            sb.append("member=").append(member);
+            sb.append('}');
+            return sb.toString();
+        }
     }
 
     class AtomixClusterMember implements CamelClusterMember {
@@ -191,6 +199,15 @@ final class AtomixClusterView extends AbstractCamelClusterView {
         @Override
         public boolean isMaster() {
             return member.equals(group.election().term().leader());
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("AtomixClusterMember{");
+            sb.append("group=").append(group);
+            sb.append(", member=").append(member);
+            sb.append('}');
+            return sb.toString();
         }
     }
 }
