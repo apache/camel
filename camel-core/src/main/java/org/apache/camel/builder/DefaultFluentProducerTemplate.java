@@ -101,7 +101,6 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     public void setDefaultEndpoint(Endpoint defaultEndpoint) {
         this.defaultEndpoint = Optional.ofNullable(defaultEndpoint);
-        this.defaultEndpoint = Optional.of(defaultEndpoint);
     }
 
     @Override
