@@ -92,6 +92,14 @@ public final class AtomixClusterClientService extends AbstractCamelClusterServic
         configuration.setConfigurationUri(configurationUri);
     }
 
+    public boolean isEphemeral() {
+        return configuration.isEphemeral();
+    }
+
+    public void setEphemeral(boolean ephemeral) {
+        configuration.setEphemeral(ephemeral);
+    }
+
     // *********************************************
     // Lifecycle
     // *********************************************

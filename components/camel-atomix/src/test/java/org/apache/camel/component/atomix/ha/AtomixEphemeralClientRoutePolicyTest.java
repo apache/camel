@@ -21,13 +21,13 @@ import java.util.Collections;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.ha.CamelClusterService;
 
-public final class AtomixClientRoutePolicyTest  extends AtomixClientRoutePolicyTestSupport {
+public final class AtomixEphemeralClientRoutePolicyTest extends AtomixClientRoutePolicyTestSupport {
     @Override
     protected CamelClusterService createClusterService(String id, Address bootstrapNode) {
         AtomixClusterClientService service = new AtomixClusterClientService();
         service.setId("node-" + id);
         service.setNodes(Collections.singletonList(bootstrapNode));
-        service.setEphemeral(false);
+        service.setEphemeral(true);
 
         return service;
     }
