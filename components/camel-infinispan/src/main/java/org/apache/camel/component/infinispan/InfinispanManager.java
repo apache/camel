@@ -120,7 +120,7 @@ public class InfinispanManager implements Service {
                         cacheContainer = new DefaultCacheManager(is, true);
                     }
                 } else {
-                    cacheContainer = new DefaultCacheManager(true);
+                    cacheContainer = new DefaultCacheManager(new org.infinispan.configuration.cache.ConfigurationBuilder().build());
                 }
             }
 
