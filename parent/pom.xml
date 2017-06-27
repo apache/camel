@@ -563,8 +563,9 @@
     <restlet-yaml-version>1.13</restlet-yaml-version>
     <restlet-gson-version>2.4</restlet-gson-version>
     <restlet-joda-time-version>2.3</restlet-joda-time-version>
-    <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
-    <rhino-version>1.7R2</rhino-version>
+    <rhino-bundle-version>1.7.7.1_3</rhino-bundle-version>
+    <rhino-version>1.7.7.1</rhino-version>
+    <rhino-js-version>1.7R2</rhino-js-version>
     <ribbon-version>2.2.2</ribbon-version>
     <roaster-version>2.20.0.Final</roaster-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
@@ -4368,9 +4369,14 @@
         <version>${jython-version}</version>
       </dependency>
       <dependency>
+        <groupId>org.mozilla</groupId>
+        <artifactId>rhino</artifactId>
+        <version>${rhino-version}</version>
+      </dependency>
+      <dependency>
         <groupId>rhino</groupId>
         <artifactId>js</artifactId>
-        <version>${rhino-version}</version>
+        <version>${rhino-js-version}</version>
       </dependency>
       <dependency>
         <groupId>org.jdom</groupId>
