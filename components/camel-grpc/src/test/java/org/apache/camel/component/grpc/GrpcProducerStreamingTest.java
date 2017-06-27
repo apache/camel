@@ -46,7 +46,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     public void startGrpcServer() throws Exception {
         pingPongServer = new PingPongImpl();
         grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT).addService(pingPongServer).build().start();
-        LOG.info("gRPC server started on port " + GRPC_TEST_PORT);
+        LOG.info("gRPC server started on port {}", GRPC_TEST_PORT);
     }
 
     @After
@@ -115,11 +115,10 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:grpc-stream-async-async-route")
-                        .to("grpc://org.apache.camel.component.grpc.PingPong?producerStrategy=STREAMING&streamRepliesTo=direct:grpc-replies&method=pingAsyncAsync&host=localhost&port="
-                                + GRPC_TEST_PORT);
+                    .to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?producerStrategy=STREAMING&streamRepliesTo=direct:grpc-replies&method=pingAsyncAsync");
 
                 from("direct:grpc-replies")
-                        .to("mock:grpc-replies");
+                    .to("mock:grpc-replies");
             }
         };
     }
@@ -154,7 +153,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
                 @Override
                 public void onError(Throwable t) {
                     PingPongImpl.this.streamRequests.add(streamRequests);
-                    LOG.info("Error in pingAsyncAsync() " + t.getMessage());
+                    LOG.info("Error in pingAsyncAsync() {}", t.getMessage());
                 }
 
                 @Override

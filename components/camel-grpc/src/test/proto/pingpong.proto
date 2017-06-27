@@ -37,7 +37,7 @@ service PingPong {
   rpc PingAsyncAsync (stream PingRequest) returns (stream PongResponse) {}
 }
 
-// The request message containing the user's name.
+// The ping request message
 message PingRequest {
   string ping_name = 1;
   int32  ping_id   = 2;

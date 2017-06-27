@@ -54,7 +54,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
     @BeforeClass
     public static void startGrpcServer() throws Exception {
         grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT).addService(new PingPongImpl()).build().start();
-        LOG.info("gRPC server started on port " + GRPC_TEST_PORT);
+        LOG.info("gRPC server started on port {}", GRPC_TEST_PORT);
     }
 
     @AfterClass
@@ -75,13 +75,6 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
         assertTrue(pongResponse instanceof PongResponse);
         assertEquals(((PongResponse)pongResponse).getPongId(), GRPC_TEST_PING_ID);
         assertEquals(((PongResponse)pongResponse).getPongName(), GRPC_TEST_PING_VALUE + GRPC_TEST_PONG_VALUE);
-
-        // Testing simple sync method invoke with target instead of host and
-        // port parameters
-        pongResponse = template.requestBody("direct:grpc-sync-target", pingRequest);
-        assertNotNull(pongResponse);
-        assertTrue(pongResponse instanceof PongResponse);
-        assertEquals(((PongResponse)pongResponse).getPongId(), GRPC_TEST_PING_ID);
 
         // Testing simple sync method with name described in .proto file instead
         // of generated class
@@ -123,12 +116,10 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:grpc-sync-sync").to("grpc://org.apache.camel.component.grpc.PingPong?method=pingSyncSync&host=localhost&port=" + GRPC_TEST_PORT + "&synchronous=true");
-                from("direct:grpc-sync-target")
-                    .to("grpc://org.apache.camel.component.grpc.PingPong?method=pingSyncSync&target=dns:///localhost:" + GRPC_TEST_PORT + "&synchronous=true");
+                from("direct:grpc-sync-sync").to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true");
                 from("direct:grpc-sync-proto-method-name")
-                    .to("grpc://org.apache.camel.component.grpc.PingPong?method=PingSyncSync&host=localhost&port=" + GRPC_TEST_PORT + "&synchronous=true");
-                from("direct:grpc-sync-async").to("grpc://org.apache.camel.component.grpc.PingPong?method=pingSyncAsync&host=localhost&port=" + GRPC_TEST_PORT + "&synchronous=true");
+                    .to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=PingSyncSync&synchronous=true");
+                from("direct:grpc-sync-async").to("grpc://localhost:" + GRPC_TEST_PORT + "/org.apache.camel.component.grpc.PingPong?method=pingSyncAsync&synchronous=true");
             }
         };
     }
