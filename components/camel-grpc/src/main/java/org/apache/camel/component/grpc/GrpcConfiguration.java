@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -26,20 +29,19 @@ public class GrpcConfiguration {
 
     @UriPath
     @Metadata(required = "true")
+    private String host;
+
+    @UriPath
+    @Metadata(required = "true")
+    private int port;
+    
+    @UriPath
+    @Metadata(required = "true")
     private String service;
     
     @UriParam(label = "producer")
     private String method;
-    
-    @UriParam
-    private String host;
-    
-    @UriParam
-    private int port;
-    
-    @UriParam(label = "producer")
-    private String target;
-    
+            
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean usePlainText = true;
 
@@ -58,9 +60,6 @@ public class GrpcConfiguration {
 
     @UriParam(defaultValue = "false")
     private boolean forwardOnError;
-
-    private String serviceName;
-    private String servicePackage;
 
     /**
      * Fully qualified service name from the protocol buffer descriptor file
@@ -86,7 +85,8 @@ public class GrpcConfiguration {
     }
 
     /**
-     * The gRPC server host name
+     * The gRPC server host name. This is localhost or 0.0.0.0 when being a
+     * consumer or remote server hostname when using producer.
      */
     public String getHost() {
         return host;
@@ -105,17 +105,6 @@ public class GrpcConfiguration {
 
     public void setPort(int port) {
         this.port = port;
-    }
-
-    /**
-     * The channel target name as alternative to host and port parameters
-     */
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
     }
 
     /**
@@ -168,28 +157,6 @@ public class GrpcConfiguration {
         return forwardOnError;
     }
 
-    /**
-     * The service name extracted from the full service name
-     */
-    protected String getServiceName() {
-        return serviceName;
-    }
-
-    protected void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    /**
-     * The service package name extracted from the full service name
-     */
-    protected String getServicePackage() {
-        return servicePackage;
-    }
-
-    protected void setServicePackage(String servicePackage) {
-        this.servicePackage = servicePackage;
-    }
-
     public GrpcProducerStrategy getProducerStrategy() {
         return producerStrategy;
     }
@@ -212,5 +179,15 @@ public class GrpcConfiguration {
      */
     public void setStreamRepliesTo(String streamRepliesTo) {
         this.streamRepliesTo = streamRepliesTo;
+    }
+    
+    public void parseURI(URI uri, Map<String, Object> parameters, GrpcComponent component) {
+        setHost(uri.getHost());
+        
+        if (uri.getPort() != -1) {
+            setPort(uri.getPort());
+        }
+        
+        setService(uri.getPath().substring(1));
     }
 }

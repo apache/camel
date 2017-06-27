@@ -23,18 +23,32 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:service", label = "rpc")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "grpc", title = "gRPC", syntax = "grpc:host:port/service", label = "rpc")
 public class GrpcEndpoint extends DefaultEndpoint {
     @UriParam
     protected final GrpcConfiguration configuration;
+    
+    private String serviceName;
+    private String servicePackage;
 
     public GrpcEndpoint(String uri, GrpcComponent component, GrpcConfiguration config) throws Exception {
         super(uri, component);
         this.configuration = config;
+        
+        // Extract service and package names from the full service name
+        serviceName = GrpcUtils.extractServiceName(configuration.getService());
+        servicePackage = GrpcUtils.extractServicePackage(configuration.getService());
+        
+        // Convert method name to the camel case style
+        // This requires if method name as described inside .proto file directly
+        if (!ObjectHelper.isEmpty(configuration.getMethod())) {
+            configuration.setMethod(GrpcUtils.convertMethod2CamelCase(configuration.getMethod()));
+        }
     }
 
     public Producer createProducer() throws Exception {
@@ -52,5 +66,13 @@ public class GrpcEndpoint extends DefaultEndpoint {
 
     public boolean isSingleton() {
         return true;
+    }
+    
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public String getServicePackage() {
+        return servicePackage;
     }
 }

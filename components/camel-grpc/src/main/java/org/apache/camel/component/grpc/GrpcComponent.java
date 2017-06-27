@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.grpc;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the component that manages {@link GrpcEndpoint}.
@@ -29,26 +29,21 @@ public class GrpcComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         GrpcConfiguration config = new GrpcConfiguration();
+        
+        config = parseConfiguration(config, uri, parameters);
         setProperties(config, parameters);
-
-        // Extract service and package names from the full service name
-        config.setServiceName(extractServiceName(remaining));
-        config.setServicePackage(extractServicePackage(remaining));
-        // Convert method name to the camel case style
-        // This requires if method name as described inside .proto file directly
-        if (!ObjectHelper.isEmpty(config.getMethod())) {
-            config.setMethod(GrpcUtils.convertMethod2CamelCase(config.getMethod()));
-        }
 
         Endpoint endpoint = new GrpcEndpoint(uri, this, config);
         return endpoint;
     }
-
-    private String extractServiceName(String service) {
-        return service.substring(service.lastIndexOf(".") + 1);
-    }
-
-    private String extractServicePackage(String service) {
-        return service.substring(0, service.lastIndexOf("."));
+    
+    /**
+     * Parses the configuration
+     * 
+     * @return the parsed and valid configuration to use
+     */
+    protected GrpcConfiguration parseConfiguration(GrpcConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
+        configuration.parseURI(new URI(remaining), parameters, this);
+        return configuration;
     }
 }
