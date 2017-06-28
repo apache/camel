@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.ha.CamelClusterService;
 import org.apache.camel.impl.ha.AbstractCamelClusterView;
@@ -36,14 +37,16 @@ import org.slf4j.LoggerFactory;
 final class ZooKeeperClusterView extends AbstractCamelClusterView {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClusterView.class);
 
+    private final ZooKeeperCuratorConfiguration configuration;
     private final CuratorFramework client;
     private final CuratorLocalMember localMember;
     private LeaderSelector leaderSelector;
 
-    public ZooKeeperClusterView(CamelClusterService cluster, CuratorFramework client, String namespace) {
+    public ZooKeeperClusterView(CamelClusterService cluster, ZooKeeperCuratorConfiguration configuration, CuratorFramework client, String namespace) {
         super(cluster, namespace);
 
         this.localMember = new CuratorLocalMember();
+        this.configuration = configuration;
         this.client = client;
     }
 
@@ -84,7 +87,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     @Override
     protected void doStart() throws Exception {
         if (leaderSelector == null) {
-            leaderSelector = new LeaderSelector(client, getNamespace(), new CamelLeaderElectionListener());
+            leaderSelector = new LeaderSelector(client, configuration.getBasePath(), new CamelLeaderElectionListener());
             leaderSelector.setId(getClusterService().getId());
             leaderSelector.start();
         }
