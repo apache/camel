@@ -197,7 +197,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         // use another thread to perform the shutdowns so we can support timeout
         timeoutOccurred.set(false);
-        currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout, timeoutOccurred));
+        currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout, timeoutOccurred, isLogInflightExchangesOnTimeout()));
         try {
             currentShutdownTaskFuture.get(timeout, timeUnit);
         } catch (ExecutionException e) {
@@ -505,9 +505,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         private final long timeout;
         private final TimeUnit timeUnit;
         private final AtomicBoolean timeoutOccurred;
+        private final boolean logInflightExchangesOnTimeout;
 
         ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
-                            boolean suspendOnly, boolean abortAfterTimeout, AtomicBoolean timeoutOccurred) {
+                            boolean suspendOnly, boolean abortAfterTimeout, AtomicBoolean timeoutOccurred, boolean logInflightExchangesOnTimeout) {
             this.context = context;
             this.routes = routes;
             this.suspendOnly = suspendOnly;
@@ -515,6 +516,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             this.timeout = timeout;
             this.timeUnit = timeUnit;
             this.timeoutOccurred = timeoutOccurred;
+            this.logInflightExchangesOnTimeout = logInflightExchangesOnTimeout;
         }
 
         public void run() {
@@ -628,7 +630,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         LOG.info(msg);
 
                         // log verbose if DEBUG logging is enabled
-                        logInflightExchanges(context, routes, false);
+                        logInflightExchanges(context, routes, logInflightExchangesOnTimeout);
 
                         Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
