@@ -32,11 +32,40 @@
   <name>Camel :: Integration Tests :: OSGi</name>
   <description>Performs OSGi compliance integration tests</description>
 
+  <properties>
+    <karaf-test-version>${karaf4-version}</karaf-test-version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-karaf</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf</groupId>
+      <artifactId>apache-karaf</artifactId>
+      <version>${karaf-test-version}</version>
+      <type>tar.gz</type>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.karaf.shell</groupId>
+          <artifactId>org.apache.karaf.shell.dev</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse</groupId>
+          <artifactId>osgi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.karaf</groupId>
+          <artifactId>org.apache.karaf.client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>org.apache.felix.framework</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
