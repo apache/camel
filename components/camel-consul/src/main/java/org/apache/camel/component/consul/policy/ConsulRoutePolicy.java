@@ -44,6 +44,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use {@link org.apache.camel.component.consul.ha.ConsulClusterService} and {@link org.apache.camel.impl.ha.ClusteredRoutePolicy} instead.
+ */
+@Deprecated
 @ManagedResource(description = "Route policy using Consul as clustered lock")
 public final class ConsulRoutePolicy extends RoutePolicySupport implements CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulRoutePolicy.class);
