@@ -114,7 +114,9 @@
   </dependencies>
 
 
+
   <profiles>
+
     <profile>
       <id>consul-skip-tests</id>
       <activation>
@@ -142,6 +144,94 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <skipTests>false</skipTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>docker</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>${docker-maven-plugin-version}</version>
+            <executions>
+              <execution>
+                <id>start</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+                <configuration>
+                  <showLogs>false</showLogs>
+                  <images>
+                    <image>
+                      <name>consul:latest</name>
+                      <alias>consul</alias>
+                      <run>
+                        <ports>
+                          <port>consul.port:8500</port>
+                        </ports>
+                        <wait>
+                          <log>agent: Synced service 'consul'</log>
+                          <time>20000</time>
+                        </wait>
+                        <cmd>
+                          <exec>
+                            <arg>agent</arg>
+                            <arg>-dev</arg>
+                            <arg>-server</arg>
+                            <arg>-bootstrap</arg>
+                            <arg>-client</arg>
+                            <arg>0.0.0.0</arg>
+                            <arg>-log-level</arg>
+                            <arg>trace</arg>
+                          </exec>
+                        </cmd>
+                      </run>
+                    </image>
+                  </images>
+                </configuration>
+              </execution>
+              <execution>
+                <id>stop</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <systemProperties>
+                <camel.consul.port>${consul.port}</camel.consul.port>
+                <camel.consul.host>127.0.0.1</camel.consul.host>
+              </systemProperties>
             </configuration>
           </plugin>
         </plugins>

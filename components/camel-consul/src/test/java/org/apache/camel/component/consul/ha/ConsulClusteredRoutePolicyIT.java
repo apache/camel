@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.orbitz.consul.Consul;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ha.ClusteredRoutePolicyFactory;
@@ -34,12 +35,14 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConsulClusteredRoutePolicyTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyTest.class);
+public class ConsulClusteredRoutePolicyIT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyIT.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
     private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
+    private static final String CONSUL_HOST = System.getProperty("camel.consul.host", Consul.DEFAULT_HTTP_HOST);
+    private static final int CONSUL_PORT = Integer.getInteger("camel.consul.port", Consul.DEFAULT_HTTP_PORT);
 
     // ************************************
     // Test
@@ -68,6 +71,9 @@ public class ConsulClusteredRoutePolicyTest {
 
             ConsulClusterService service = new ConsulClusterService();
             service.setId("node-" + id);
+            service.setUrl(String.format("http://%s:%d", CONSUL_HOST, CONSUL_PORT));
+
+            LOGGER.info("Consul URL {}", service.getUrl());
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
