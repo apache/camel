@@ -14,36 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.ha;
+package org.apache.camel.component.zookeeper.cloud;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.cloud.ServiceDiscovery;
+import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
-import org.apache.camel.component.zookeeper.ZooKeeperCuratorHelper;
-import org.apache.camel.impl.ha.AbstractCamelClusterService;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.AuthInfo;
 import org.apache.curator.framework.CuratorFramework;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeeperClusterView> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClusterService.class);
+public class ZooKeeperServiceDiscoveryFactory implements ServiceDiscoveryFactory {
 
-    private CuratorFramework curator;
     private ZooKeeperCuratorConfiguration configuration;
-    private boolean managedInstance;
 
-    public ZooKeeperClusterService() {
+    public ZooKeeperServiceDiscoveryFactory() {
         this.configuration = new ZooKeeperCuratorConfiguration();
-        this.managedInstance = true;
     }
 
-    public ZooKeeperClusterService(ZooKeeperCuratorConfiguration configuration) {
+    public ZooKeeperServiceDiscoveryFactory(ZooKeeperCuratorConfiguration configuration) {
         this.configuration = configuration.copy();
-        this.managedInstance = true;
     }
 
     // *********************************************
@@ -106,6 +99,26 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
         configuration.setReconnectBaseSleepTimeUnit(reconnectBaseSleepTimeUnit);
     }
 
+    public long getReconnectMaxSleepTime() {
+        return configuration.getReconnectMaxSleepTime();
+    }
+
+    public void setReconnectMaxSleepTime(long reconnectMaxSleepTime) {
+        configuration.setReconnectMaxSleepTime(reconnectMaxSleepTime);
+    }
+
+    public void setReconnectMaxSleepTime(long reconnectMaxSleepTime, TimeUnit reconnectBaseSleepTimeUnit) {
+        configuration.setReconnectMaxSleepTime(reconnectMaxSleepTime, reconnectBaseSleepTimeUnit);
+    }
+
+    public TimeUnit getReconnectMaxSleepTimeUnit() {
+        return configuration.getReconnectMaxSleepTimeUnit();
+    }
+
+    public void setReconnectMaxSleepTimeUnit(TimeUnit reconnectMaxSleepTimeUnit) {
+        configuration.setReconnectMaxSleepTimeUnit(reconnectMaxSleepTimeUnit);
+    }
+
     public int getReconnectMaxRetries() {
         return configuration.getReconnectMaxRetries();
     }
@@ -146,12 +159,16 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
         configuration.setConnectionTimeout(connectionTimeout, connectionTimeotUnit);
     }
 
-    public TimeUnit getConnectionTimeotUnit() {
+    public TimeUnit getConnectionTimeoutUnit() {
         return configuration.getConnectionTimeoutUnit();
     }
 
-    public void setConnectionTimeotUnit(TimeUnit connectionTimeotUnit) {
-        configuration.setConnectionTimeoutUnit(connectionTimeotUnit);
+    public void setConnectionTimeoutUnit(TimeUnit connectionTimeoutUnit) {
+        configuration.setConnectionTimeoutUnit(connectionTimeoutUnit);
+    }
+
+    public ZooKeeperCuratorConfiguration copy() {
+        return configuration.copy();
     }
 
     public List<AuthInfo> getAuthInfoList() {
@@ -195,55 +212,14 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
     }
 
     // *********************************************
-    //
+    // Factory
     // *********************************************
 
     @Override
-    protected ZooKeeperClusterView createView(String namespace) throws Exception {
+    public ServiceDiscovery newInstance(CamelContext context) throws Exception {
+        ZooKeeperServiceDiscovery discovery = new ZooKeeperServiceDiscovery(configuration);
+        discovery.setCamelContext(context);
 
-        // Validation
-        ObjectHelper.notNull(getCamelContext(), "Camel Context");
-        ObjectHelper.notNull(configuration.getBasePath(), "ZooKeeper base path");
-
-        return new ZooKeeperClusterView(this, configuration, getOrCreateCurator(), namespace);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        // instantiate a new CuratorFramework
-        getOrCreateCurator();
-
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        if (curator != null && managedInstance) {
-            curator.close();
-        }
-    }
-
-    private CuratorFramework getOrCreateCurator() throws Exception {
-        if (curator == null) {
-            curator = configuration.getCuratorFramework();
-
-            if (curator == null) {
-                managedInstance = true;
-
-                LOGGER.debug("Starting ZooKeeper Curator with namespace '{}',  nodes: '{}'",
-                    configuration.getNamespace(),
-                    String.join(",", configuration.getNodes())
-                );
-
-                curator = ZooKeeperCuratorHelper.createCurator(configuration);
-                curator.start();
-            } else {
-                managedInstance = false;
-            }
-        }
-
-        return curator;
+        return discovery;
     }
 }

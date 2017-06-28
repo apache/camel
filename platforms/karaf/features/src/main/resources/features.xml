@@ -2197,7 +2197,10 @@
     <bundle dependency='true'>mvn:org.apache.curator/curator-framework/${curator-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.curator/curator-client/${curator-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.curator/curator-recipes/${curator-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.curator/curator-x-discovery/${curator-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${zookeeper-guava-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zookeeper/${project.version}</bundle>
   </feature>
   <feature name='camel-zookeeper-master' version='${project.version}' resolver='(obr)' start-level='50'>

@@ -84,13 +84,13 @@ public final class ZooKeeperClusteredRoutePolicyTest {
             ZooKeeperClusterService service = new ZooKeeperClusterService();
             service.setId("node-" + id);
             service.setNodes("localhost:" + PORT);
-            service.setNamespace(null);
+            service.setBasePath("/camel");
 
             DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
             context.setName("context-" + id);
             context.addService(service);
-            context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("/my-ns"));
+            context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {

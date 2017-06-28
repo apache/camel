@@ -74,7 +74,8 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)}
+        @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "zookeeperServiceDiscovery", type = ZooKeeperServiceCallServiceDiscoveryConfiguration.class)}
     )
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
@@ -557,6 +558,23 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     public ServiceCallConfigurationDefinition staticServiceDiscovery(StaticServiceCallServiceDiscoveryConfiguration conf) {
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ZooKeeperServiceCallServiceDiscoveryConfiguration zookeeperServiceDiscovery() {
+        ZooKeeperServiceCallServiceDiscoveryConfiguration conf = new ZooKeeperServiceCallServiceDiscoveryConfiguration();
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallConfigurationDefinition zookeeperServiceDiscovery(String nodes, String basePath) {
+        ZooKeeperServiceCallServiceDiscoveryConfiguration conf = new ZooKeeperServiceCallServiceDiscoveryConfiguration();
+        conf.setNodes(nodes);
+        conf.setBasePath(basePath);
+
         setServiceDiscoveryConfiguration(conf);
 
         return this;
