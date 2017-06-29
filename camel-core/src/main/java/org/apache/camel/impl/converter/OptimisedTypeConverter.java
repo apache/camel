@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverterOptimised;
 import org.apache.camel.converter.NIOConverterOptimised;
 import org.apache.camel.converter.ObjectConverterOptimised;
+import org.apache.camel.converter.TimePatternConverterOptimised;
 
 /**
  * Optimised type converter for performing the most common conversions using the type converters
@@ -52,7 +53,12 @@ public class OptimisedTypeConverter {
         Object answer;
 
         // use the optimised type converters and use them in the most commonly used order
-        answer = ObjectConverterOptimised.convertTo(type, exchange, value);
+
+        // we need time pattern first as it can do a special String -> long conversion which should happen first
+        answer = TimePatternConverterOptimised.convertTo(type, exchange, value);
+        if (answer == null) {
+            answer = ObjectConverterOptimised.convertTo(type, exchange, value);
+        }
         if (answer == null) {
             answer = IOConverterOptimised.convertTo(type, exchange, value);
         }

@@ -47,14 +47,6 @@ public final class ObjectConverterOptimised {
             return null;
         }
 
-        // special for String -> long where we support time patterns
-        if (type == long.class || type == Long.class) {
-            Class fromType = value.getClass();
-            if (fromType == String.class) {
-                return TimePatternConverter.toMilliSeconds(value.toString());
-            }
-        }
-
         if (type == boolean.class || type == Boolean.class) {
             return ObjectConverter.toBoolean(value);
         } else if (type == int.class || type == Integer.class) {
