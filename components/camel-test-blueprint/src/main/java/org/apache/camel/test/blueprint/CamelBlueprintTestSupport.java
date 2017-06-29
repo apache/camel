@@ -249,9 +249,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         // start context when we are ready
         log.debug("Starting CamelContext: {}", context.getName());
         if (isUseAdviceWith()) {
-                log.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
+            log.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
         } else {
-                context.start();
+            context.start();
         }
     }
 
