@@ -59,8 +59,8 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
         return registry.getStatistics().getHitCounter();
     }
 
-    public long getCoreHitCounter() {
-        return registry.getStatistics().getCoreHitCounter();
+    public long getBaseHitCounter() {
+        return registry.getStatistics().getBaseHitCounter();
     }
 
     public long getMissCounter() {
