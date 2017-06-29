@@ -27,6 +27,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.management.InstrumentationInterceptStrategy;
+import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -36,6 +38,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
+import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -69,6 +72,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
     private Processor output;
     private ProcessorDefinition<?> definition;
     private ProcessorDefinition<?> childDefinition;
+    private InstrumentationProcessor instrumentationProcessor;
     private CamelContext camelContext;
     private RouteContext routeContext;
 
@@ -211,11 +215,13 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // force the creation of an id
         RouteDefinitionHelper.forceAssignIds(routeContext.getCamelContext(), definition);
 
-        // first wrap the output with the managed strategy if any
+        // setup instrumentation processor for management (jmx)
+        // this is later used in postInitChannel as we need to setup the error handler later as well
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();
-        if (managed != null) {
-            next = target == nextProcessor ? null : nextProcessor;
-            target = managed.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
+        if (managed != null && managed instanceof InstrumentationInterceptStrategy) {
+            InstrumentationInterceptStrategy iis = (InstrumentationInterceptStrategy) managed;
+            instrumentationProcessor = new InstrumentationProcessor(targetOutputDef.getShortName(), target);
+            iis.prepareProcessor(targetOutputDef, target, instrumentationProcessor);
         }
 
         // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to tracer the backlog)
@@ -317,7 +323,23 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
     @Override
     public void postInitChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
-        // noop
+        // if jmx was enabled for the processor then either add as advice or wrap and change the processor
+        // on the error handler. See more details in the class javadoc of InstrumentationProcessor
+        if (instrumentationProcessor != null) {
+            boolean redeliveryPossible = false;
+            if (errorHandler instanceof RedeliveryErrorHandler) {
+                redeliveryPossible = ((RedeliveryErrorHandler) errorHandler).determineIfRedeliveryIsEnabled();
+                if (redeliveryPossible) {
+                    // okay we can redeliver then we need to change the output in the error handler
+                    // to use us which we then wrap the call so we can capture before/after for redeliveries as well
+                    ((RedeliveryErrorHandler) errorHandler).changeOutput(instrumentationProcessor);
+                }
+            }
+            if (!redeliveryPossible) {
+                // optimise to use advice as we cannot redeliver
+                addAdvice(instrumentationProcessor);
+            }
+        }
     }
 
     private InterceptStrategy getOrCreateTracer() {
