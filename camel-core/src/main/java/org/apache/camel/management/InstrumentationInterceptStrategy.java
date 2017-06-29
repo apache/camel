@@ -47,34 +47,21 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
         this.wrappedProcessors = wrappedProcessors;
     }
 
-    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,
-                                                 Processor target, Processor nextTarget) throws Exception {
-        // do not double wrap it
-        if (target instanceof InstrumentationProcessor) {
-            return target;
-        }
-
-        // only wrap a performance counter if we have it registered in JMX by the jmx agent
+    public PerformanceCounter prepareProcessor(ProcessorDefinition<?> definition, Processor target, InstrumentationProcessor advice) {
         PerformanceCounter counter = registeredCounters.get(definition);
         if (counter != null) {
-            InstrumentationProcessor wrapper = new InstrumentationProcessor(counter);
-            wrapper.setProcessor(target);
-            wrapper.setType(definition.getShortName());
-
-            // add it to the mapping of wrappers so we can later change it to a decorated counter
-            // that when we register the processor
-            KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor> holder =
-                    new KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>(definition, wrapper);
+            // add it to the mapping of wrappers so we can later change it to a
+            // decorated counter when we register the processor
+            KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor> holder = new KeyValueHolder<>(definition, advice);
             wrappedProcessors.put(target, holder);
-            return wrapper;
         }
-
-        return target;
+        return counter;
     }
 
-    @Override
-    public String toString() {
-        return "InstrumentProcessor";
+    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,
+                                                 Processor target, Processor nextTarget) throws Exception {
+        // no longer in use as we have optimised to avoid wrapping unless needed
+        return target;
     }
 
 }
