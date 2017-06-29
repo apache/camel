@@ -34,8 +34,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
     public static final String TOPIC = "test";
 
     @EndpointInject(uri = "kafka:" + TOPIC
-            + "?groupId=group1"
-            + "&autoOffsetReset=earliest"
+            + "?autoOffsetReset=earliest"
             + "&autoCommitEnable=false"
             + "&consumerStreams=10"
     )

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
@@ -61,10 +62,6 @@ public class KafkaConsumer extends DefaultConsumer {
         if (ObjectHelper.isEmpty(brokers)) {
             throw new IllegalArgumentException("Brokers must be configured");
         }
-
-        if (endpoint.getConfiguration().getGroupId() == null) {
-            throw new IllegalArgumentException("groupId must not be null");
-        }
     }
 
     Properties getProps() {
@@ -78,7 +75,16 @@ public class KafkaConsumer extends DefaultConsumer {
         }
 
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, endpoint.getConfiguration().getGroupId());
+
+        if (endpoint.getConfiguration().getGroupId() != null) {
+            String groupId = endpoint.getConfiguration().getGroupId();
+            props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+            log.debug("Kafka consumer groupId is {}", groupId);
+        } else {
+            String randomGroupId = UUID.randomUUID().toString();
+            props.put(ConsumerConfig.GROUP_ID_CONFIG, randomGroupId);
+            log.debug("Kafka consumer groupId is {} (generated)", randomGroupId);
+        }
         return props;
     }
 

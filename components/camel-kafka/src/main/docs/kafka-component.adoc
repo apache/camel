@@ -205,7 +205,7 @@ After the message is sent to Kafka, the following headers are available
 Here is the minimal route you need in order to read messages from Kafka.
 [source,java]
 -------------------------------------------------------------
-from("kafka:test?brokers=localhost:9092&groupId=testing")
+from("kafka:test?brokers=localhost:9092")
     .log("Message received from Kafka : ${body}")
     .log("    on the topic ${headers[kafka.TOPIC]}")
     .log("    on the partition ${headers[kafka.PARTITION]}")
