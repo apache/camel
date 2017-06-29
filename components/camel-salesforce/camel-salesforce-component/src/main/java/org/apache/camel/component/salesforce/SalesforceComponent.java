@@ -80,7 +80,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     @Metadata(description = "OAuth Consumer Key of the connected app configured in the Salesforce instance setup."
         + " Typically a connected app needs to be configured but one can be provided by installing a package.",
-        label = "common,security", secret = true, required = "true")
+        label = "common,security", required = "true")
     private String clientId;
 
     @Metadata(description = "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup.",
@@ -98,8 +98,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with" 
         + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows.",
-        label = "common,security",
-        secret = true)
+        label = "common,security")
     private String userName;
 
     @Metadata(description = "Password used in OAuth flow to gain access to access token. It's easy to get started with"
@@ -117,7 +116,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     @Metadata(description = "Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT."
         + " Salesforce component can auto-determine the authentication method to use from the properties set, set this "
         + " property to eliminate any ambiguity.",
-        label = "common,security", secret = false, enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
+        label = "common,security", enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
     private AuthenticationType authenticationType;
 
     @Metadata(description = "If set to true prevents the component from authenticating to Salesforce with the start of"
@@ -164,7 +163,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     // Proxy basic authentication
     @Metadata(description = "Username to use to authenticate against the HTTP proxy server.",
-        label = "common,proxy,security", secret = true)
+        label = "common,proxy,security")
     private String httpProxyUsername;
 
     @Metadata(description = "Password to use to authenticate against the HTTP proxy server.",
