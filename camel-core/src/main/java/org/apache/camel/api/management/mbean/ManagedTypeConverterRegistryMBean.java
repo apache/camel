@@ -32,8 +32,8 @@ public interface ManagedTypeConverterRegistryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Number of type conversion hits (successful conversions)")
     long getHitCounter();
 
-    @ManagedAttribute(description = "Number of type conversion hits by optimised core converters (successful conversions)")
-    long getCoreHitCounter();
+    @ManagedAttribute(description = "Number of type conversion hits by base core converters (successful conversions)")
+    long getBaseHitCounter();
 
     @ManagedAttribute(description = "Number of type conversion misses (no suitable type converter)")
     long getMissCounter();

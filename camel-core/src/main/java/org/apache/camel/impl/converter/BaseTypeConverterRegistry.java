@@ -80,7 +80,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final LongAdder noopCounter = new LongAdder();
     protected final LongAdder attemptCounter = new LongAdder();
     protected final LongAdder missCounter = new LongAdder();
-    protected final LongAdder coreHitCounter = new LongAdder();
+    protected final LongAdder baseHitCounter = new LongAdder();
     protected final LongAdder hitCounter = new LongAdder();
     protected final LongAdder failedCounter = new LongAdder();
 
@@ -298,7 +298,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         Object result = optimisedTypeConverter.convertTo(type, exchange, value);
         if (result != null) {
             if (statistics.isStatisticsEnabled()) {
-                coreHitCounter.increment();
+                baseHitCounter.increment();
             }
             if (log.isTraceEnabled()) {
                 log.trace("Using optimised core converter to convert: {} -> {}", type, value.getClass().getCanonicalName());
@@ -733,8 +733,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
 
         @Override
-        public long getCoreHitCounter() {
-            return coreHitCounter.longValue();
+        public long getBaseHitCounter() {
+            return baseHitCounter.longValue();
         }
 
         @Override
@@ -752,7 +752,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             noopCounter.reset();
             attemptCounter.reset();
             hitCounter.reset();
-            coreHitCounter.reset();
+            baseHitCounter.reset();
             missCounter.reset();
             failedCounter.reset();
         }
@@ -769,8 +769,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         @Override
         public String toString() {
-            return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, coreHits=%s, misses=%s, failures=%s]",
-                    getNoopCounter(), getAttemptCounter(), getHitCounter(), getCoreHitCounter(), getMissCounter(), getFailedCounter());
+            return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, baseHits=%s, misses=%s, failures=%s]",
+                    getNoopCounter(), getAttemptCounter(), getHitCounter(), getBaseHitCounter(), getMissCounter(), getFailedCounter());
         }
     }
 
