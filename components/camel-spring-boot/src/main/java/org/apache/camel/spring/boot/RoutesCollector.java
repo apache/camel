@@ -75,122 +75,111 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        ApplicationContext applicationContext = event.getApplicationContext();
+        CamelContext camelContext = applicationContext.getBean(CamelContext.class);
 
-        // only listen to context refresh of "my" applicationContext
-        if (this.applicationContext.equals(applicationContext)) {
-
-            CamelContext camelContext = event.getApplicationContext().getBean(CamelContext.class);
-
-            // only add and start Camel if its stopped (initial state)
-            if (camelContext.getStatus().isStopped()) {
-                LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
-                for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class, configurationProperties.isIncludeNonSingletons(), true).values()) {
-                    // filter out abstract classes
-                    boolean abs = Modifier.isAbstract(routesBuilder.getClass().getModifiers());
-                    if (!abs) {
-                        try {
-                            LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                            camelContext.addRoutes(routesBuilder);
-                        } catch (Exception e) {
-                            throw new CamelSpringBootInitializationException(e);
-                        }
+        // only add and start Camel if its stopped (initial state)
+        if (camelContext.getStatus().isStopped()) {
+            LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
+            for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class, configurationProperties.isIncludeNonSingletons(), true).values()) {
+                // filter out abstract classes
+                boolean abs = Modifier.isAbstract(routesBuilder.getClass().getModifiers());
+                if (!abs) {
+                    try {
+                        LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
+                        camelContext.addRoutes(routesBuilder);
+                    } catch (Exception e) {
+                        throw new CamelSpringBootInitializationException(e);
                     }
                 }
+            }
 
-                try {
-                    boolean scan = !configurationProperties.getXmlRoutes().equals("false");
-                    if (scan) {
-                        loadXmlRoutes(applicationContext, camelContext, configurationProperties.getXmlRoutes());
+            try {
+                boolean scan = !configurationProperties.getXmlRoutes().equals("false");
+                if (scan) {
+                    loadXmlRoutes(applicationContext, camelContext, configurationProperties.getXmlRoutes());
+                }
+
+                boolean scanRests = !configurationProperties.getXmlRests().equals("false");
+                if (scanRests) {
+                    loadXmlRests(applicationContext, camelContext, configurationProperties.getXmlRests());
+                }
+
+                for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                    LOG.debug("CamelContextConfiguration found. Invoking beforeApplicationStart: {}", camelContextConfiguration);
+                    camelContextConfiguration.beforeApplicationStart(camelContext);
+                }
+
+                if (configurationProperties.isMainRunController()) {
+                    CamelMainRunController controller = new CamelMainRunController(applicationContext, camelContext);
+
+                    if (configurationProperties.getDurationMaxMessages() > 0 || configurationProperties.getDurationMaxIdleSeconds() > 0) {
+                        if (configurationProperties.getDurationMaxMessages() > 0) {
+                            LOG.info("CamelSpringBoot will terminate after processing {} messages", configurationProperties.getDurationMaxMessages());
+                        }
+                        if (configurationProperties.getDurationMaxIdleSeconds() > 0) {
+                            LOG.info("CamelSpringBoot will terminate after being idle for more {} seconds", configurationProperties.getDurationMaxIdleSeconds());
+                        }
+                        // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
+                        EventNotifier notifier = new MainDurationEventNotifier(camelContext,
+                            configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
+                            controller.getCompleted(), controller.getLatch(), true);
+                        // register our event notifier
+                        ServiceHelper.startService(notifier);
+                        camelContext.getManagementStrategy().addEventNotifier(notifier);
                     }
 
-                    boolean scanRests = !configurationProperties.getXmlRests().equals("false");
-                    if (scanRests) {
-                        loadXmlRests(applicationContext, camelContext, configurationProperties.getXmlRests());
+                    if (configurationProperties.getDurationMaxSeconds() > 0) {
+                        LOG.info("CamelSpringBoot will terminate after {} seconds", configurationProperties.getDurationMaxSeconds());
+                        terminateMainControllerAfter(camelContext, configurationProperties.getDurationMaxSeconds(),
+                            controller.getCompleted(), controller.getLatch());
                     }
 
-                    for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
-                        LOG.debug("CamelContextConfiguration found. Invoking beforeApplicationStart: {}", camelContextConfiguration);
-                        camelContextConfiguration.beforeApplicationStart(camelContext);
-                    }
+                    // controller will start Camel
+                    LOG.info("Starting CamelMainRunController to ensure the main thread keeps running");
+                    controller.start();
+                } else {
+                    if (applicationContext instanceof ConfigurableApplicationContext) {
+                        ConfigurableApplicationContext cac = (ConfigurableApplicationContext) applicationContext;
 
-                    if (configurationProperties.isMainRunController()) {
-                        CamelMainRunController controller = new CamelMainRunController(applicationContext, camelContext);
+                        if (configurationProperties.getDurationMaxSeconds() > 0) {
+                            LOG.info("CamelSpringBoot will terminate after {} seconds", configurationProperties.getDurationMaxSeconds());
+                            terminateApplicationContext(cac, camelContext, configurationProperties.getDurationMaxSeconds());
+                        }
 
                         if (configurationProperties.getDurationMaxMessages() > 0 || configurationProperties.getDurationMaxIdleSeconds() > 0) {
+
                             if (configurationProperties.getDurationMaxMessages() > 0) {
                                 LOG.info("CamelSpringBoot will terminate after processing {} messages", configurationProperties.getDurationMaxMessages());
                             }
                             if (configurationProperties.getDurationMaxIdleSeconds() > 0) {
                                 LOG.info("CamelSpringBoot will terminate after being idle for more {} seconds", configurationProperties.getDurationMaxIdleSeconds());
                             }
+                            // needed by MainDurationEventNotifier to signal when we have processed the max messages
+                            final AtomicBoolean completed = new AtomicBoolean();
+                            final CountDownLatch latch = new CountDownLatch(1);
+
                             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
                             EventNotifier notifier = new MainDurationEventNotifier(camelContext,
                                 configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
-                                controller.getCompleted(), controller.getLatch(), true);
+                                completed, latch, false);
                             // register our event notifier
                             ServiceHelper.startService(notifier);
                             camelContext.getManagementStrategy().addEventNotifier(notifier);
+
+                            terminateApplicationContext(cac, camelContext, latch);
                         }
-
-                        if (configurationProperties.getDurationMaxSeconds() > 0) {
-                            LOG.info("CamelSpringBoot will terminate after {} seconds", configurationProperties.getDurationMaxSeconds());
-                            terminateMainControllerAfter(camelContext, configurationProperties.getDurationMaxSeconds(),
-                                controller.getCompleted(), controller.getLatch());
-                        }
-
-                        // controller will start Camel
-                        LOG.info("Starting CamelMainRunController to ensure the main thread keeps running");
-                        controller.start();
-                    } else {
-                        if (applicationContext instanceof ConfigurableApplicationContext) {
-                            ConfigurableApplicationContext cac = (ConfigurableApplicationContext) applicationContext;
-
-                            if (configurationProperties.getDurationMaxSeconds() > 0) {
-                                LOG.info("CamelSpringBoot will terminate after {} seconds", configurationProperties.getDurationMaxSeconds());
-                                terminateApplicationContext(cac, camelContext, configurationProperties.getDurationMaxSeconds());
-                            }
-
-                            if (configurationProperties.getDurationMaxMessages() > 0 || configurationProperties.getDurationMaxIdleSeconds() > 0) {
-
-                                if (configurationProperties.getDurationMaxMessages() > 0) {
-                                    LOG.info("CamelSpringBoot will terminate after processing {} messages", configurationProperties.getDurationMaxMessages());
-                                }
-                                if (configurationProperties.getDurationMaxIdleSeconds() > 0) {
-                                    LOG.info("CamelSpringBoot will terminate after being idle for more {} seconds", configurationProperties.getDurationMaxIdleSeconds());
-                                }
-                                // needed by MainDurationEventNotifier to signal when we have processed the max messages
-                                final AtomicBoolean completed = new AtomicBoolean();
-                                final CountDownLatch latch = new CountDownLatch(1);
-
-                                // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
-                                EventNotifier notifier = new MainDurationEventNotifier(camelContext,
-                                    configurationProperties.getDurationMaxMessages(), configurationProperties.getDurationMaxIdleSeconds(),
-                                    completed, latch, false);
-                                // register our event notifier
-                                ServiceHelper.startService(notifier);
-                                camelContext.getManagementStrategy().addEventNotifier(notifier);
-
-                                terminateApplicationContext(cac, camelContext, latch);
-                            }
-                        }
-
-                        // start camel manually
-                        maybeStart(camelContext);
                     }
-
-                    for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
-                        LOG.debug("CamelContextConfiguration found. Invoking afterApplicationStart: {}", camelContextConfiguration);
-                        camelContextConfiguration.afterApplicationStart(camelContext);
-                    }
-                } catch (Exception e) {
-                    throw new CamelSpringBootInitializationException(e);
                 }
-            } else {
-                LOG.debug("Camel already started, not adding routes.");
+
+                for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
+                    LOG.debug("CamelContextConfiguration found. Invoking afterApplicationStart: {}", camelContextConfiguration);
+                    camelContextConfiguration.afterApplicationStart(camelContext);
+                }
+            } catch (Exception e) {
+                throw new CamelSpringBootInitializationException(e);
             }
         } else {
-            LOG.debug("Ignore ContextRefreshedEvent: {}", event);
+            LOG.debug("Camel already started, not adding routes.");
         }
     }
 
@@ -204,17 +193,6 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
         // all resources to be ready and all routes added to the 
         // context
         return LOWEST_PRECEDENCE - 1;
-    }
-
-    private void maybeStart(CamelContext camelContext) throws Exception {
-        // for example from unit testing we want to start Camel later and not when Spring framework
-        // publish a ContextRefreshedEvent
-        boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
-        if (skip) {
-            LOG.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
-        } else {
-            camelContext.start();
-        }
     }
 
     // Helpers
