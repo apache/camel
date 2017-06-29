@@ -21,7 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.Constants;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
