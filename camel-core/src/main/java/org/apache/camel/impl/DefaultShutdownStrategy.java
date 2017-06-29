@@ -197,7 +197,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         // use another thread to perform the shutdowns so we can support timeout
         timeoutOccurred.set(false);
-        currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout, timeoutOccurred, isLogInflightExchangesOnTimeout()));
+        currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly,
+            abortAfterTimeout, timeoutOccurred, isLogInflightExchangesOnTimeout()));
         try {
             currentShutdownTaskFuture.get(timeout, timeUnit);
         } catch (ExecutionException e) {
