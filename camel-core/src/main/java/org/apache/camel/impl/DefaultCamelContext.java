@@ -3933,6 +3933,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (isTypeConverterStatisticsEnabled() != null) {
             getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
         }
+
+        // resolve simple language to initialize it
+        resolveLanguage("simple");
     }
 
     /**
