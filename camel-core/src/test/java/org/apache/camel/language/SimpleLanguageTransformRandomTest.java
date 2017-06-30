@@ -30,6 +30,9 @@ public class SimpleLanguageTransformRandomTest extends ContextTestSupport {
 
         out = template.requestBodyAndHeader("direct:start", "Random number", "max", "20", int.class);
         assertTrue(out <= 20);
+
+        out = template.requestBodyAndHeader("direct:start", "Random number", "max", "30", int.class);
+        assertTrue(out <= 30);
     }
 
     @Override

@@ -155,10 +155,10 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             answer = SimpleBackwardsCompatibleParser.parsePredicate(expression, allowEscape);
             if (answer == null) {
                 // use the new parser
-                SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape);
+                SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape, cacheExpression);
                 answer = parser.parsePredicate();
             }
-            if (cachePredicate != null) {
+            if (cachePredicate != null && answer != null) {
                 cachePredicate.put(expression, answer);
             }
         }
@@ -179,10 +179,10 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             answer = SimpleBackwardsCompatibleParser.parseExpression(expression, allowEscape);
             if (answer == null) {
                 // use the new parser
-                SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape);
+                SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape, cacheExpression);
                 answer = parser.parseExpression();
             }
-            if (cacheExpression != null) {
+            if (cacheExpression != null && answer != null) {
                 cacheExpression.put(expression, answer);
             }
         }
