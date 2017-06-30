@@ -16,10 +16,14 @@
  */
 package org.apache.camel.language.simple;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PredicateToExpressionAdapter;
 
@@ -93,6 +97,10 @@ public class SimpleLanguage extends LanguageSupport {
     // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
 
+    // use caches to avoid re-parsing the same expressions over and over again
+    private LRUCache<String, Expression> cacheExpression;
+    private LRUCache<String, Predicate> cachePredicate;
+
     protected boolean allowEscape = true;
 
     /**
@@ -101,35 +109,63 @@ public class SimpleLanguage extends LanguageSupport {
     public SimpleLanguage() {
     }
 
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        super.setCamelContext(camelContext);
+
+        // setup cache which requires CamelContext to be set first
+        if (cacheExpression == null && cachePredicate == null && camelContext != null) {
+            int maxSize = CamelContextHelper.getMaximumSimpleCacheSize(camelContext);
+            cacheExpression = new LRUCache<>(16, maxSize, false);
+            cachePredicate = new LRUCache<>(16, maxSize, false);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
     public Predicate createPredicate(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
-        expression = loadResource(expression);
-
-        // support old simple language syntax
-        @SuppressWarnings("deprecation")
-        Predicate answer = SimpleBackwardsCompatibleParser.parsePredicate(expression, allowEscape);
+        Predicate answer = cachePredicate != null ? cachePredicate.get(expression) : null;
         if (answer == null) {
-            // use the new parser
-            SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape);
-            answer = parser.parsePredicate();
+
+            expression = loadResource(expression);
+
+            // support old simple language syntax
+            answer = SimpleBackwardsCompatibleParser.parsePredicate(expression, allowEscape);
+            if (answer == null) {
+                // use the new parser
+                SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape);
+                answer = parser.parsePredicate();
+            }
+            if (cachePredicate != null) {
+                cachePredicate.put(expression, answer);
+            }
         }
+
         return answer;
     }
 
+    @SuppressWarnings("deprecation")
     public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
-        expression = loadResource(expression);
-
-        // support old simple language syntax
-        @SuppressWarnings("deprecation")
-        Expression answer = SimpleBackwardsCompatibleParser.parseExpression(expression, allowEscape);
+        Expression answer = cacheExpression != null ? cacheExpression.get(expression) : null;
         if (answer == null) {
-            // use the new parser
-            SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape);
-            answer = parser.parseExpression();
+
+            expression = loadResource(expression);
+
+            // support old simple language syntax
+            answer = SimpleBackwardsCompatibleParser.parseExpression(expression, allowEscape);
+            if (answer == null) {
+                // use the new parser
+                SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape);
+                answer = parser.parseExpression();
+            }
+            if (cacheExpression != null) {
+                cacheExpression.put(expression, answer);
+            }
         }
+
         return answer;
     }
 

@@ -55,7 +55,7 @@ public class SimpleExpressionTest {
             .timeUnit(TimeUnit.MICROSECONDS)
             .warmupTime(TimeValue.seconds(1))
             .warmupIterations(2)
-            .measurementTime(TimeValue.seconds(1))
+            .measurementTime(TimeValue.seconds(10))
             .measurementIterations(2)
             .threads(2)
             .forks(1)
@@ -81,6 +81,10 @@ public class SimpleExpressionTest {
                 camel.start();
                 exchange = new DefaultExchange(camel);
                 exchange.getIn().setBody("World");
+
+                // warm up as we use cache on simple expression
+                ExpressionBuilder.simpleExpression(expression);
+
             } catch (Exception e) {
                 // ignore
             }
