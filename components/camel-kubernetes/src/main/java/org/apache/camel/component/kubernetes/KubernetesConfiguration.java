@@ -19,13 +19,14 @@ package org.apache.camel.component.kubernetes;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class KubernetesConfiguration {
+public class KubernetesConfiguration implements Cloneable {
 
     @UriPath
     @Metadata(required = "true")
@@ -393,6 +394,18 @@ public class KubernetesConfiguration {
 
     public void setResourceName(String resourceName) {
         this.resourceName = resourceName;
+    }
+
+    // ****************************************
+    // Copy
+    // ****************************************
+
+    public KubernetesConfiguration copy() {
+        try {
+            return (KubernetesConfiguration) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     @Override
