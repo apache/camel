@@ -44,12 +44,14 @@
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>kubernetes-client</artifactId>
-      <version>${kubernetes-client-version}</version>
+      <version>2.3-SNAPSHOT</version>
+      <!--<version>${kubernetes-client-version}</version>-->
     </dependency>
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>openshift-client</artifactId>
-      <version>${kubernetes-client-version}</version>
+      <version>2.3-SNAPSHOT</version>
+      <!--<version>${kubernetes-client-version}</version>-->
     </dependency>
     <!-- testing -->
     <dependency>
