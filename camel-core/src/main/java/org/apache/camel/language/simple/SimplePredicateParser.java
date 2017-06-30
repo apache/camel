@@ -47,19 +47,29 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.util.LRUCache;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}
  */
 public class SimplePredicateParser extends BaseSimpleParser {
 
+    // use caches to avoid re-parsing the same expressions over and over again
+    private LRUCache<String, Expression> cacheExpression;
+
     @Deprecated
     public SimplePredicateParser(String expression) {
         super(expression, true);
     }
 
+    @Deprecated
     public SimplePredicateParser(String expression, boolean allowEscape) {
         super(expression, allowEscape);
+    }
+
+    public SimplePredicateParser(String expression, boolean allowEscape, LRUCache<String, Expression> cacheExpression) {
+        super(expression, allowEscape);
+        this.cacheExpression = cacheExpression;
     }
 
     public Predicate parsePredicate() {
@@ -223,7 +233,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                                   AtomicBoolean startFunction) {
         if (token.getType().isFunctionStart()) {
             startFunction.set(true);
-            return new SimpleFunctionStart(token);
+            return new SimpleFunctionStart(token, cacheExpression);
         } else if (token.getType().isFunctionEnd()) {
             startFunction.set(false);
             return new SimpleFunctionEnd(token);

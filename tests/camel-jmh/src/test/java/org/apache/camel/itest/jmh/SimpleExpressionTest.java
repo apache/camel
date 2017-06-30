@@ -20,10 +20,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.Language;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
@@ -73,6 +72,7 @@ public class SimpleExpressionTest {
         CamelContext camel;
         String expression = "Hello ${body}";
         Exchange exchange;
+        Language simple;
 
         @Setup(Level.Trial)
         public void initialize() {
@@ -81,9 +81,7 @@ public class SimpleExpressionTest {
                 camel.start();
                 exchange = new DefaultExchange(camel);
                 exchange.getIn().setBody("World");
-
-                // warm up as we use cache on simple expression
-                ExpressionBuilder.simpleExpression(expression);
+                simple = camel.resolveLanguage("simple");
 
             } catch (Exception e) {
                 // ignore
@@ -104,8 +102,7 @@ public class SimpleExpressionTest {
     @Benchmark
     @Measurement(batchSize = 1000)
     public void simpleExpression(BenchmarkState state, Blackhole bh) {
-        Expression simple = ExpressionBuilder.simpleExpression(state.expression);
-        String out = simple.evaluate(state.exchange, String.class);
+        String out = state.simple.createExpression(state.expression).evaluate(state.exchange, String.class);
         if (!out.equals("Hello World")) {
             throw new IllegalArgumentException("Evaluation failed");
         }
