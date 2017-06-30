@@ -16,16 +16,17 @@
  */
 package org.apache.camel.language.simple;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.StaticService;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PredicateToExpressionAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -90,18 +91,19 @@ import org.apache.camel.util.PredicateToExpressionAdapter;
  * return the full path including the starting directory.
  * <br/>
  * The <b>only</b> file is the filename only with all paths clipped.
- *
  */
-public class SimpleLanguage extends LanguageSupport {
+public class SimpleLanguage extends LanguageSupport implements StaticService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleLanguage.class);
 
     // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
 
+    boolean allowEscape = true;
+
     // use caches to avoid re-parsing the same expressions over and over again
     private LRUCache<String, Expression> cacheExpression;
     private LRUCache<String, Predicate> cachePredicate;
-
-    protected boolean allowEscape = true;
 
     /**
      * Default constructor.
@@ -110,14 +112,33 @@ public class SimpleLanguage extends LanguageSupport {
     }
 
     @Override
-    public void setCamelContext(CamelContext camelContext) {
-        super.setCamelContext(camelContext);
-
+    public void start() throws Exception {
         // setup cache which requires CamelContext to be set first
-        if (cacheExpression == null && cachePredicate == null && camelContext != null) {
-            int maxSize = CamelContextHelper.getMaximumSimpleCacheSize(camelContext);
-            cacheExpression = new LRUCache<>(16, maxSize, false);
-            cachePredicate = new LRUCache<>(16, maxSize, false);
+        if (cacheExpression == null && cachePredicate == null && getCamelContext() != null) {
+            int maxSize = CamelContextHelper.getMaximumSimpleCacheSize(getCamelContext());
+            if (maxSize > 0) {
+                cacheExpression = new LRUCache<>(16, maxSize, false);
+                cachePredicate = new LRUCache<>(16, maxSize, false);
+                LOG.debug("Simple language predicate/expression cache size: {}", maxSize);
+            } else {
+                LOG.debug("Simple language disabled predicate/expression cache");
+            }
+        }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        if (cachePredicate != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Clearing simple language predicate cache[size={}, hits={}, misses={}, evicted={}]",
+                    cachePredicate.size(), cachePredicate.getHits(), cachePredicate.getMisses(), cachePredicate.getEvicted());
+            }
+        }
+        if (cacheExpression != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Clearing simple language expression cache[size={}, hits={}, misses={}, evicted={}]",
+                    cacheExpression.size(), cacheExpression.getHits(), cacheExpression.getMisses(), cacheExpression.getEvicted());
+            }
         }
     }
 
@@ -283,4 +304,5 @@ public class SimpleLanguage extends LanguageSupport {
     public void setFunctionEndToken(String endToken) {
         changeFunctionEndToken(endToken);
     }
+
 }

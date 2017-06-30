@@ -41,14 +41,16 @@ public class LanguageServiceTest extends ContextTestSupport {
         MyLanguage myl = (MyLanguage) context.resolveLanguage("my");
         assertNotNull(myl);
         assertEquals("Started", myl.getState());
-        assertEquals(1, context.getLanguageNames().size());
+        // simple language is resolved by default hence why there is 2
+        assertEquals(2, context.getLanguageNames().size());
 
         // resolve again, should find same instance
         MyLanguage myl2 = (MyLanguage) context.resolveLanguage("my");
         assertNotNull(myl2);
         assertSame(myl, myl2);
         assertEquals("Started", myl2.getState());
-        assertEquals(1, context.getLanguageNames().size());
+        // simple language is resolved by default hence why there is 2
+        assertEquals(2, context.getLanguageNames().size());
 
         context.stop();
         assertEquals("Stopped", myl.getState());
@@ -58,13 +60,15 @@ public class LanguageServiceTest extends ContextTestSupport {
     public void testNonSingletonLanguage() throws Exception {
         Language tol = context.resolveLanguage("tokenize");
         assertNotNull(tol);
-        assertEquals(1, context.getLanguageNames().size());
+        // simple language is resolved by default hence why there is 2
+        assertEquals(2, context.getLanguageNames().size());
 
         // resolve again, should find another instance
         Language tol2 = context.resolveLanguage("tokenize");
         assertNotNull(tol2);
         assertNotSame(tol, tol2);
-        assertEquals(1, context.getLanguageNames().size());
+        // simple language is resolved by default hence why there is 2
+        assertEquals(2, context.getLanguageNames().size());
 
         context.stop();
         assertTrue(context.getLanguageNames().isEmpty());
