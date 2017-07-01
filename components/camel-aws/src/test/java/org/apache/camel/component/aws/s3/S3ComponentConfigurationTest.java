@@ -24,7 +24,7 @@ import org.junit.Test;
 public class S3ComponentConfigurationTest extends CamelTestSupport {
     
     @Test
-    public void createEndpointWithMinimalConfiguration() throws Exception {
+    public void createEndpointWithMinimalS3ClientConfiguration() throws Exception {
         AmazonS3ClientMock mock = new AmazonS3ClientMock();
         
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonS3Client", mock);
@@ -36,6 +36,24 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNotNull(endpoint.getConfiguration().getAmazonS3Client());
+        assertNull(endpoint.getConfiguration().getRegion());
+        assertTrue(endpoint.getConfiguration().isDeleteAfterRead());
+        assertEquals(10, endpoint.getMaxMessagesPerPoll());
+        assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
+        assertNull(endpoint.getConfiguration().getPolicy());
+        assertNull(endpoint.getConfiguration().getPrefix());
+        assertTrue(endpoint.getConfiguration().isIncludeBody());
+    }
+
+    @Test
+    public void createEndpointWithMinimalCredentialsConfiguration() throws Exception {
+        S3Component component = new S3Component(context);
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?accessKey=xxx&secretKey=yyy");
+
+        assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNull(endpoint.getConfiguration().getAmazonS3Client());
         assertNull(endpoint.getConfiguration().getRegion());
         assertTrue(endpoint.getConfiguration().isDeleteAfterRead());
         assertEquals(10, endpoint.getMaxMessagesPerPoll());
