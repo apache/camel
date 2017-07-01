@@ -34,6 +34,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,11 +89,19 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     // filter out abstract classes
                     boolean abs = Modifier.isAbstract(routesBuilder.getClass().getModifiers());
                     if (!abs) {
-                        try {
-                            LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                            camelContext.addRoutes(routesBuilder);
-                        } catch (Exception e) {
-                            throw new CamelSpringBootInitializationException(e);
+                        String filter = configurationProperties.getJavaRoutesFilter();
+                        if (!"false".equals(filter)) {
+                            String name = routesBuilder.getClass().getSimpleName();
+                            boolean result = "*".equals(filter) || EndpointHelper.matchPattern(name, filter);
+                            LOG.debug("Java RoutesBuilder: {} apply filter: {} -> {}", name, filter, result);
+                            if (result) {
+                                try {
+                                    LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
+                                    camelContext.addRoutes(routesBuilder);
+                                } catch (Exception e) {
+                                    throw new CamelSpringBootInitializationException(e);
+                                }
+                            }
                         }
                     }
                 }

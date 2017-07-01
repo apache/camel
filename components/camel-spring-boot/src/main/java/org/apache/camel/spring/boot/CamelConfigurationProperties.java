@@ -87,6 +87,14 @@ public class CamelConfigurationProperties {
     private boolean typeConversion = true;
 
     /**
+     * To filter component scanning of RouteBuilder classes with @Component annotation.
+     * You can use a regular expression to match which class names (simple name) to match.
+     * For example to match all classes starting with Foo, <tt>Foo*</tt> or use
+     * a regular expression to match all Foo or Bar routes with <tt>(Foo|Bar).*</tt>
+     */
+    private String javaRoutesFilter = "*";
+
+    /**
      * Directory to scan for adding additional XML routes.
      * You can turn this off by setting the value to false.
      */
@@ -472,6 +480,14 @@ public class CamelConfigurationProperties {
 
     public void setTypeConversion(boolean typeConversion) {
         this.typeConversion = typeConversion;
+    }
+
+    public String getJavaRoutesFilter() {
+        return javaRoutesFilter;
+    }
+
+    public void setJavaRoutesFilter(String javaRoutesFilter) {
+        this.javaRoutesFilter = javaRoutesFilter;
     }
 
     public String getXmlRoutes() {
