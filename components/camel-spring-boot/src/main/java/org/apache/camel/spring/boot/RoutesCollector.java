@@ -34,7 +34,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +44,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
+import org.springframework.util.AntPathMatcher;
 
 /**
  * Collects routes and rests from the various sources (like Spring application context beans registry or opinionated
@@ -81,22 +82,51 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
         // only add and start Camel if its stopped (initial state)
         if (camelContext.getStatus().isStopped()) {
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
+
+            final AntPathMatcher matcher = new AntPathMatcher();
             for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class, configurationProperties.isIncludeNonSingletons(), true).values()) {
                 // filter out abstract classes
                 boolean abs = Modifier.isAbstract(routesBuilder.getClass().getModifiers());
                 if (!abs) {
-                    String filter = configurationProperties.getJavaRoutesFilter();
-                    if (!"false".equals(filter)) {
-                        String name = routesBuilder.getClass().getSimpleName();
-                        boolean result = "*".equals(filter) || EndpointHelper.matchPattern(name, filter);
-                        LOG.debug("Java RoutesBuilder: {} apply filter: {} -> {}", name, filter, result);
-                        if (result) {
-                            try {
-                                LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
-                                camelContext.addRoutes(routesBuilder);
-                            } catch (Exception e) {
-                                throw new CamelSpringBootInitializationException(e);
+                    String name = routesBuilder.getClass().getName();
+                    // make name as path so we can use ant path matcher
+                    name = name.replace('.', '/');
+
+                    String exclude = configurationProperties.getJavaRoutesExcludePattern();
+                    String include = configurationProperties.getJavaRoutesIncludePattern();
+
+                    boolean match = !"false".equals(include);
+                    // exclude take precedence over include
+                    if (match && ObjectHelper.isNotEmpty(exclude)) {
+                        // there may be multiple separated by comma
+                        String[] parts = exclude.split(",");
+                        for (String part : parts) {
+                            // must negate when excluding, and hence !
+                            match = !matcher.match(part, name);
+                            LOG.trace("Java RoutesBuilder: {} exclude filter: {} -> {}", name, part, match);
+                            if (!match) {
+                                break;
                             }
+                        }
+                    }
+                    if (match && ObjectHelper.isNotEmpty(include)) {
+                        // there may be multiple separated by comma
+                        String[] parts = include.split(",");
+                        for (String part : parts) {
+                            match = matcher.match(part, name);
+                            LOG.trace("Java RoutesBuilder: {} include filter: {} -> {}", name, part, match);
+                            if (match) {
+                                break;
+                            }
+                        }
+                    }
+                    LOG.debug("Java RoutesBuilder: {} accepted by include/exclude filter: {}", name, match);
+                    if (match) {
+                        try {
+                            LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
+                            camelContext.addRoutes(routesBuilder);
+                        } catch (Exception e) {
+                            throw new CamelSpringBootInitializationException(e);
                         }
                     }
                 }

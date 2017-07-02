@@ -29,7 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @RunWith(CamelSpringBootRunner.class)
 @SpringBootApplication
 @SpringBootTest(classes = BarTest.class,
-    properties = {"camel.springboot.javaRoutesFilter=Bar*"})
+    properties = {"camel.springboot.java-routes-include-pattern=**/Bar*"})
 public class BarTest {
 
     @Autowired

@@ -28,8 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @RunWith(CamelSpringBootRunner.class)
 @SpringBootApplication()
-@SpringBootTest(classes = FooTest.class,
-    properties = {"camel.springboot.javaRoutesFilter=Foo*"})
+@SpringBootTest(classes = BarTest.class,
+    properties = {"camel.springboot.java-routes-exclude-pattern=**/Bar*,**/Drink*"})
 public class FooTest {
 
     @Autowired
