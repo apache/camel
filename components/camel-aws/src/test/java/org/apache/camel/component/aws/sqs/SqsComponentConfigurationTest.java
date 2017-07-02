@@ -46,6 +46,26 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getRedrivePolicy());
         assertNull(endpoint.getConfiguration().getRegion());
     }
+    @Test
+    public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
+        SqsComponent component = new SqsComponent(context);
+        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy");
+
+        assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNull(endpoint.getConfiguration().getAmazonSQSClient());
+        assertNull(endpoint.getConfiguration().getAttributeNames());
+        assertNull(endpoint.getConfiguration().getMessageAttributeNames());
+        assertNull(endpoint.getConfiguration().getDefaultVisibilityTimeout());
+        assertNull(endpoint.getConfiguration().getVisibilityTimeout());
+        assertNull(endpoint.getConfiguration().getAmazonSQSEndpoint());
+        assertNull(endpoint.getConfiguration().getMaximumMessageSize());
+        assertNull(endpoint.getConfiguration().getMessageRetentionPeriod());
+        assertNull(endpoint.getConfiguration().getPolicy());
+        assertNull(endpoint.getConfiguration().getRedrivePolicy());
+        assertNull(endpoint.getConfiguration().getRegion());
+    }
     
     @Test
     public void createEndpointWithMinimalArnConfiguration() throws Exception {

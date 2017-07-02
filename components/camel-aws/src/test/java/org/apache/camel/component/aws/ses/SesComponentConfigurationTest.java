@@ -43,6 +43,22 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getReturnPath());
         assertNull(endpoint.getConfiguration().getReplyToAddresses());
     }
+
+    @Test
+    public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
+        SesComponent component = new SesComponent(context);
+        SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+
+        assertEquals("from@example.com", endpoint.getConfiguration().getFrom());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNull(endpoint.getConfiguration().getAmazonSESEndpoint());
+        assertNull(endpoint.getConfiguration().getAmazonSESClient());
+        assertNull(endpoint.getConfiguration().getTo());
+        assertNull(endpoint.getConfiguration().getSubject());
+        assertNull(endpoint.getConfiguration().getReturnPath());
+        assertNull(endpoint.getConfiguration().getReplyToAddresses());
+    }
     
     @Test
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
