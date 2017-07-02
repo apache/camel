@@ -87,12 +87,34 @@ public class CamelConfigurationProperties {
     private boolean typeConversion = true;
 
     /**
-     * To filter component scanning of RouteBuilder classes with @Component annotation.
-     * You can use a regular expression to match which class names (simple name) to match.
-     * For example to match all classes starting with Foo, <tt>Foo*</tt> or use
-     * a regular expression to match all Foo or Bar routes with <tt>(Foo|Bar).*</tt>
+     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     * <p/>
+     * Multiple patterns can be specified separated by comma.
+     * For example to include all classes starting with Foo use <tt>&#42;&#42;/Foo*</tt>.
+     * To include all routes form a specific package use, <tt>com/mycompany/foo/*</tt>
+     * To include all routes form a specific package and its sub-packages use double wildcards, <tt>com/mycompany/foo/**</tt>
+     * And to include all routes from two specific packages use, <tt>com/mycompany/foo/*,com/mycompany/stuff/*</tt>
+     *
+     * @see org.springframework.util.AntPathMatcher
      */
-    private String javaRoutesFilter = "*";
+    private String javaRoutesIncludePattern;
+
+    /**
+     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     * Multiple patterns can be specified separated by comma.
+     * <p/>
+     * For example to exclude all classes starting with Bar use <tt>&#42;&#42;/Bar*</tt>.
+     * To exclude all routes form a specific package use, <tt>com/mycompany/bar/*</tt>
+     * To exclude all routes form a specific package and its sub-packages use double wildcards, <tt>com/mycompany/bar/**</tt>
+     * And to exclude all routes from two specific packages use, <tt>com/mycompany/bar/*,com/mycompany/stuff/*</tt>
+     *
+     * @see org.springframework.util.AntPathMatcher
+     */
+    private String javaRoutesExcludePattern;
 
     /**
      * Directory to scan for adding additional XML routes.
@@ -482,12 +504,20 @@ public class CamelConfigurationProperties {
         this.typeConversion = typeConversion;
     }
 
-    public String getJavaRoutesFilter() {
-        return javaRoutesFilter;
+    public String getJavaRoutesIncludePattern() {
+        return javaRoutesIncludePattern;
     }
 
-    public void setJavaRoutesFilter(String javaRoutesFilter) {
-        this.javaRoutesFilter = javaRoutesFilter;
+    public void setJavaRoutesIncludePattern(String javaRoutesIncludePattern) {
+        this.javaRoutesIncludePattern = javaRoutesIncludePattern;
+    }
+
+    public String getJavaRoutesExcludePattern() {
+        return javaRoutesExcludePattern;
+    }
+
+    public void setJavaRoutesExcludePattern(String javaRoutesExcludePattern) {
+        this.javaRoutesExcludePattern = javaRoutesExcludePattern;
     }
 
     public String getXmlRoutes() {
