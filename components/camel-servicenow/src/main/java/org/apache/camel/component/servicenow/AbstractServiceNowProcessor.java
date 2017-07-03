@@ -143,6 +143,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     protected AbstractServiceNowProcessor setBody(Message message, Class<?> model, Response response) throws Exception {
         if (message != null && response != null) {
             if (ObjectHelper.isNotEmpty(response.getHeaderString(HttpHeaders.CONTENT_TYPE))) {
+
                 JsonNode root = response.readEntity(JsonNode.class);
                 Map<String, String> responseAttributes = null;
 
@@ -156,6 +157,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
                         if (ObjectHelper.equal("result", key, true)) {
                             Object body = unwrap(node, model);
                             if (body != null) {
+                                message.setHeader(ServiceNowConstants.RESPONSE_TYPE, body.getClass());
                                 message.setBody(body);
                             }
                         } else {
