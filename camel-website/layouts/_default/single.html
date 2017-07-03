@@ -1,0 +1,19 @@
+{{ partial "header" . }}
+
+<main class='row content'>
+  <article lang='{{ .Params.Lang | default .Lang }}' class='entry'>
+    {{ partial "entry/header" . }}
+    {{ partial "entry/content" . }}
+    {{ partial "entry/footer" . }}
+  </article>
+
+  {{ if not .Site.Params.HideEntryNavigation }}
+    {{ partial "nav/entry_nav" . }}
+  {{ end }}
+
+  {{ if not ( eq .Params.comments false ) }}
+    {{ partial "disqus" . }}
+  {{ end }}
+</main>
+
+{{ partial "footer" . }}

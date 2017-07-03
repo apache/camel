@@ -1,0 +1,8 @@
+<head>
+  {{ partial "head/meta" . }}
+  <base href='{{ .Site.BaseURL }}'>
+  <title>{{ partial "data/title" . }}</title>
+  <link rel='canonical' href='{{ .Permalink }}'>
+  <link href='{{ .RSSLink }}' rel='alternate' type='application/rss+xml' title='{{ .Site.Title }}' />
+  {{ partial "head/includes" . }}
+</head>
