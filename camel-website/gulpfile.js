@@ -21,16 +21,23 @@ const replace = require('gulp-replace');
 
 const version = process.env.npm_package_version.replace(/-.*/, '');
 
-gulp.task('docs', ['component-doc']);
+gulp.task('docs', ['components-readme', 'components']);
 
-gulp.task('component-doc', () => {
-  gulp.src('../components/readme.adoc')
-    .pipe(replace(/link:.*\/(.*).adoc(\[.*)/g, `link:components/${version}/$1$2`))
-    .pipe(rename('components.adoc'))
-    .pipe(gulp.dest('content'));
-  gulp.src('../components/**/src/main/docs/*.adoc')
-    .pipe(rename({dirname: ''}))
-    .pipe(gulp.dest(`content/components/${version}`));
+const components = (path) => gulp.src(path || '../components/**/src/main/docs/*.adoc')
+  .pipe(rename({dirname: ''}))
+  .pipe(gulp.dest(`content/components/${version}`));
+
+gulp.task('components', () => {
+  return components();
+});
+
+const componentReadme = () => gulp.src('../components/readme.adoc')
+  .pipe(replace(/link:.*\/(.*).adoc(\[.*)/g, `link:components/${version}/$1$2`))
+  .pipe(rename('components.adoc'))
+  .pipe(gulp.dest('content'));
+
+gulp.task('components-readme', () => {
+  return componentReadme();
 });
 
 gulp.task('asciidoctor-shim', () => {
@@ -43,6 +50,11 @@ gulp.task('asciidoctor-shim', () => {
 gulp.task('default', ['docs', 'asciidoctor-shim']);
 
 gulp.task('watch', () => {
-  gulp.watch('../**/*.adoc', ['docs']);
-});
+  gulp.watch(['../components/**/*.adoc', '!../components/readme.adoc'], (event) => {
+    components(event.path);
+  });
 
+  gulp.watch('../components/readme.adoc', (event) => {
+    componentReadme();
+  });
+});
