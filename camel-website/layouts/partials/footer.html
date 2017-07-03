@@ -1,0 +1,22 @@
+    <footer id='footer' class='footer-container'>
+      <div class='footer'>
+        <div class='social'>
+          {{ partial "nav/menus/social" . }}
+        </div>
+
+        <div class='copyright'>
+          {{ partial "footer/copyright" . }}
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src='{{ print "js/" .Site.Data.assets.site.js | relURL }}'></script>
+  {{ range .Site.Params.customJS }}
+    <script src='{{ . | relURL }}'></script>
+  {{ end }}
+
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+{{ partial "header" . }}
+
+<main class='main'>
+  <section class='list-container'>
+    <h1 class='list-title title'>
+      {{- .Title -}}
+    </h1>
+    {{ partial "extras/term_cloud" . }}
+  </section>
+</main>
+
+{{ partial "footer" . }}

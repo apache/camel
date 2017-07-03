@@ -1,0 +1,17 @@
+<nav class='navbar' aria-label='{{ i18n "mainMenu" }}'>
+  <div class='container'>
+    <ul class='navbar-list'>
+      {{ range .Site.Menus.main }}
+      <li class='navbar-item'>
+        <a class='navbar-link' href='{{ .URL }}' 
+          {{- if or ( $.IsMenuCurrent "main" . ) ( $.HasMenuCurrent "main" . ) -}}
+            class='current' aria-current='page'
+          {{- end -}}
+        >
+          {{- .Name -}}
+        </a>
+      </li>
+      {{ end }}
+    </ul>
+  </div>
+</nav>

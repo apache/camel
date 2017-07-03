@@ -1,0 +1,14 @@
+{{ $txs := ( $.Scratch.Get "taxonomy" ) }}
+{{ $tx := ( $txs | singularize ) }}
+<div class='{{ $txs }}'>
+  <span class='{{ $tx }}-icon'>
+    {{ partial "svg/icons" $tx }}
+  </span>
+  <span class='screen-reader'>{{ $txs | title }}: </span>
+  {{- range $i, $term := ( index $.Params $txs ) -}}
+  {{- if gt $i 0 }}, {{ end -}}
+  <a class='{{ $tx }}' href='{{ (print $txs "/") |  relURL }}{{ $term | urlize }}'>
+    {{- $term -}}
+  </a>
+  {{- end -}}
+</div>
