@@ -50,6 +50,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
 
         assertNotNull(items);
         assertTrue(items.size() <= 10);
+        assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.RESPONSE_TYPE));
         assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_FIRST));
         assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_NEXT));
         assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_LAST));
