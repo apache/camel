@@ -1,0 +1,15 @@
+<p>
+{{- with .Site.Copyright -}}
+  {{ . }}
+{{- else -}}
+  {{ with .Site.Params.CopyrightStartYear }}
+    {{ if lt ( int . ) now.Year }}
+      {{ $.Scratch.Set "copyrightStartYear" . }}
+    {{ end }}
+  {{ end }}
+  &copy; {{ with $.Scratch.Get "copyrightStartYear" }}{{ . }}-{{ end }}{{ now.Year }} {{ or .Site.Params.CopyrightOwner ( or .Site.Author.name .Site.Title ) }}
+</p>
+<p>
+  {{ .Site.Params.CopyrightNotice }}
+{{- end -}}
+</p>
