@@ -1,0 +1,16 @@
+<nav aria-label='{{ i18n "socialMenu" }}'>
+  <ul class='social-menu'>
+  {{ range $platform, $username := .Site.Author.social }}
+    {{ if $username }}
+    <li>
+      <a href='{{ print ( index $.Site.Data.social.base $platform ) $username }}' target='_blank' rel='noopener'>
+        <span class='screen-reader'>
+          {{- i18n "openSomethingInNewTab" ( dict "Something" ( print ( $platform | title ) " account" ) ) -}}
+        </span>
+        {{ partial "svg/icons" $platform }}
+      </a>
+    </li>
+    {{ end }}
+  {{ end }}
+  </ul>
+</nav>
