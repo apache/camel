@@ -1,0 +1,33 @@
+{{ if gt ( len ( where .Site.RegularPages "Section" .Section ) ) 1 }}
+<nav class='entry-nav'>
+  <div class='entry-nav-links'>
+
+    {{- if .PrevInSection -}}
+    <div class='prev-entry'>
+      <a href='{{ .PrevInSection.Permalink }}'>
+        <span aria-hidden='true'>
+          {{- partial "svg/icons" "prev" -}}
+          {{- print " " ( i18n "previous" ) -}}
+        </span>
+        <span class='screen-reader'>{{ i18n "previousPost" }}: </span>
+        {{- .PrevInSection.Title -}}
+      </a>
+    </div>
+    {{- end -}}
+
+    {{- if .NextInSection -}}
+    <div class='next-entry'>
+      <a href='{{ .NextInSection.Permalink }}'>
+        <span class='screen-reader'>{{ i18n "nextPost" }}: </span>
+        {{- .NextInSection.Title -}}
+        <span aria-hidden='true'>
+          {{- print ( i18n "next" ) " " -}}
+          {{- partial "svg/icons" "next" -}}
+        </span>
+      </a>
+    </div>
+    {{- end -}}
+
+  </div>
+</nav>
+{{ end }}
