@@ -45,7 +45,6 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
     private String method;
     private boolean shorthandMethod;
 
-
     public AbstractBeanProcessor(Object pojo, BeanInfo beanInfo) {
         this(new ConstantBeanHolder(pojo, beanInfo));
     }
