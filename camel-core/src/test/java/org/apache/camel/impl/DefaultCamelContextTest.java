@@ -133,6 +133,7 @@ public class DefaultCamelContextTest extends TestSupport {
         ctx.disableJMX();
         ctx.getEndpoint("log:foo");
         ctx.getEndpoint("log:bar");
+        ctx.start();
 
         Collection<Endpoint> list = ctx.removeEndpoints("log:foo");
         assertEquals(1, list.size());

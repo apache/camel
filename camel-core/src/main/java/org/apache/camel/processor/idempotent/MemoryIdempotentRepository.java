@@ -24,6 +24,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 
 /**
  * A memory based implementation of {@link org.apache.camel.spi.IdempotentRepository}. 
@@ -38,8 +39,9 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     private Map<String, Object> cache;
     private int cacheSize;
 
+    @SuppressWarnings("unchecked")
     public MemoryIdempotentRepository() {
-        this.cache = new LRUCache<String, Object>(1000);
+        this.cache = LRUCacheFactory.newLRUCache(1000);
     }
 
     public MemoryIdempotentRepository(Map<String, Object> set) {
@@ -59,8 +61,9 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
      *
      * @param cacheSize  the cache size
      */
+    @SuppressWarnings("unchecked")
     public static IdempotentRepository<String> memoryIdempotentRepository(int cacheSize) {
-        return memoryIdempotentRepository(new LRUCache<String, Object>(cacheSize));
+        return memoryIdempotentRepository(LRUCacheFactory.newLRUCache(cacheSize));
     }
 
     /**
@@ -128,9 +131,10 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         if (cacheSize > 0) {
-            cache = new LRUCache<String, Object>(cacheSize);
+            cache = LRUCacheFactory.newLRUCache(cacheSize);
         }
     }
 

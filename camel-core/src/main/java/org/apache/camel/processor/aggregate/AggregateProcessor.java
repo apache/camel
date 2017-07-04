@@ -62,6 +62,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
@@ -1283,6 +1284,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         AggregationStrategy strategy = aggregationStrategy;
         if (strategy instanceof DelegateAggregationStrategy) {
@@ -1306,7 +1308,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         if (getCloseCorrelationKeyOnCompletion() != null) {
             if (getCloseCorrelationKeyOnCompletion() > 0) {
                 LOG.info("Using ClosedCorrelationKeys with a LRUCache with a capacity of " + getCloseCorrelationKeyOnCompletion());
-                closedCorrelationKeys = new LRUCache<String, String>(getCloseCorrelationKeyOnCompletion());
+                closedCorrelationKeys = LRUCacheFactory.newLRUCache(getCloseCorrelationKeyOnCompletion());
             } else {
                 LOG.info("Using ClosedCorrelationKeys with unbounded capacity");
                 closedCorrelationKeys = new ConcurrentHashMap<String, String>();

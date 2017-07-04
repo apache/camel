@@ -393,7 +393,6 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
     private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream,
                                                        String urlPath, Set<Class<?>> classes, Map<String, List<String>> jarCache) {
         ObjectHelper.notNull(classes, "classes");
-        ObjectHelper.notNull(jarCache, "jarCache");
 
         List<String> entries = jarCache != null ? jarCache.get(urlPath) : null;
         if (entries == null) {

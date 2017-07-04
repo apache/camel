@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,35 +27,93 @@ import org.slf4j.LoggerFactory;
  */
 public final class LRUCacheFactory {
 
-    // TODO: use LRUCacheFactory in other places to create the LRUCaches
-
     private static final Logger LOG = LoggerFactory.getLogger(LRUCacheFactory.class);
+
+    private static final AtomicBoolean done = new AtomicBoolean();
 
     private LRUCacheFactory() {
     }
 
     @SuppressWarnings("unchecked")
     public static void warmUp() {
-        // create a dummy map in a separate thread to warmup the Caffeine cache
-        // as we want to do this as early as possible while creating CamelContext
-        // so when Camel is starting up its faster as the Caffeine cache has been initialized
-        Runnable warmup = () -> {
-            LOG.debug("Warming up LRUCache ...");
-            newLRUCache(16);
-            LOG.debug("Warming up LRUCache complete");
-        };
+        // create a dummy map in a separate thread to warm-up the Caffeine cache concurrently
+        // while Camel is starting up. This allows us to overall startup Camel a bit faster
+        // as Caffeine takes 150+ millis to initialize.
+        if (!done.compareAndSet(false, true)) {
+            Runnable warmup = () -> {
+                StopWatch watch = new StopWatch();
+                LOG.debug("Warming up LRUCache ...");
+                newLRUCache(16);
+                LOG.debug("Warming up LRUCache complete in {} millis", watch.taken());
+            };
 
-        String threadName = ThreadHelper.resolveThreadName(null, "LRUCacheFactory");
+            String threadName = ThreadHelper.resolveThreadName(null, "LRUCacheFactory");
 
-        Thread thread = new Thread(warmup, threadName);
-        thread.start();
+            Thread thread = new Thread(warmup, threadName);
+            thread.start();
+        }
     }
 
+    /**
+     * Constructs an empty <tt>LRUCache</tt> instance with the
+     * specified maximumCacheSize, and will stop on eviction.
+     *
+     * @param maximumCacheSize the max capacity.
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
     public static LRUCache newLRUCache(int maximumCacheSize) {
+        LOG.trace("Creating LRUCache with maximumCacheSize: {}", maximumCacheSize);
         return new LRUCache(maximumCacheSize);
     }
 
+    /**
+     * Constructs an empty <tt>LRUCache</tt> instance with the
+     * specified initial capacity, maximumCacheSize, and will stop on eviction.
+     *
+     * @param initialCapacity  the initial capacity.
+     * @param maximumCacheSize the max capacity.
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
+    public static LRUCache newLRUCache(int initialCapacity, int maximumCacheSize) {
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}", initialCapacity, maximumCacheSize);
+        return new LRUCache(initialCapacity, maximumCacheSize);
+    }
+
+    /**
+     * Constructs an empty <tt>LRUCache</tt> instance with the
+     * specified initial capacity, maximumCacheSize,load factor and ordering mode.
+     *
+     * @param initialCapacity  the initial capacity.
+     * @param maximumCacheSize the max capacity.
+     * @param stopOnEviction   whether to stop service on eviction.
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
+    public static LRUCache newLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
+        LOG.trace("Creating LRUCache with initialCapacity: {}, maximumCacheSize: {}, stopOnEviction: {}", initialCapacity, maximumCacheSize, stopOnEviction);
+        return new LRUCache(initialCapacity, maximumCacheSize, stopOnEviction);
+    }
+
+    /**
+     * Constructs an empty <tt>LRUSoftCache</tt> instance with the
+     * specified maximumCacheSize, and will stop on eviction.
+     *
+     * @param maximumCacheSize the max capacity.
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
+    public static LRUSoftCache newLRUSoftCache(int maximumCacheSize) {
+        LOG.trace("Creating LRUSoftCache with maximumCacheSize: {}", maximumCacheSize);
+        return new LRUSoftCache(maximumCacheSize);
+    }
+
+    /**
+     * Constructs an empty <tt>LRUWeakCache</tt> instance with the
+     * specified maximumCacheSize, and will stop on eviction.
+     *
+     * @param maximumCacheSize the max capacity.
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
     public static LRUWeakCache newLRUWeakCache(int maximumCacheSize) {
+        LOG.trace("Creating LRUWeakCache with maximumCacheSize: {}", maximumCacheSize);
         return new LRUWeakCache(maximumCacheSize);
     }
 }

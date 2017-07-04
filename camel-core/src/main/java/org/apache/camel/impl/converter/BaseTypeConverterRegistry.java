@@ -50,6 +50,7 @@ import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelLogger;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -67,7 +68,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final OptimisedTypeConverter optimisedTypeConverter = new OptimisedTypeConverter();
     protected final ConcurrentMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
     // for misses use a soft reference cache map, as the classes may be un-deployed at runtime
-    protected final LRUSoftCache<TypeMapping, TypeMapping> misses = new LRUSoftCache<TypeMapping, TypeMapping>(1000);
+    @SuppressWarnings("unchecked")
+    protected final LRUSoftCache<TypeMapping, TypeMapping> misses = LRUCacheFactory.newLRUSoftCache(1000);
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<FallbackTypeConverter>();
     protected final PackageScanClassResolver resolver;

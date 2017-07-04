@@ -41,7 +41,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.LRUCacheFactory;
-import org.apache.camel.util.LRUWeakCache;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +77,9 @@ public class MBeanInfoAssembler implements Service {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
         }
-        cache.clear();
+        if (cache != null) {
+            cache.clear();
+        }
     }
 
     /**

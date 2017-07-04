@@ -31,6 +31,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +54,6 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     private AtomicBoolean init = new AtomicBoolean();
 
     public FileIdempotentRepository() {
-        // default use a 1st level cache 
-        this.cache = new LRUCache<String, Object>(1000);
     }
 
     public FileIdempotentRepository(File fileStore, Map<String, Object> set) {
@@ -79,8 +78,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param fileStore  the file store
      * @param cacheSize  the cache size
      */
+    @SuppressWarnings("unchecked")
     public static IdempotentRepository<String> fileIdempotentRepository(File fileStore, int cacheSize) {
-        return fileIdempotentRepository(fileStore, new LRUCache<String, Object>(cacheSize));
+        return fileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
     }
 
     /**
@@ -91,8 +91,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param cacheSize  the cache size
      * @param maxFileStoreSize  the max size in bytes for the filestore file 
      */
+    @SuppressWarnings("unchecked")
     public static IdempotentRepository<String> fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
-        FileIdempotentRepository repository = new FileIdempotentRepository(fileStore, new LRUCache<String, Object>(cacheSize));
+        FileIdempotentRepository repository = new FileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
         repository.setMaxFileStoreSize(maxFileStoreSize);
         return repository;
     }
@@ -203,11 +204,12 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     /**
      * Sets the cache size
      */
+    @SuppressWarnings("unchecked")
     public void setCacheSize(int size) {
         if (cache != null) {
             cache.clear();
         }
-        cache = new LRUCache<String, Object>(size);
+        cache = LRUCacheFactory.newLRUCache(size);
     }
 
     @ManagedAttribute(description = "The current cache size")
@@ -328,8 +330,12 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         ObjectHelper.notNull(fileStore, "fileStore", this);
+
+        // default use a 1st level cache
+        this.cache = LRUCacheFactory.newLRUCache(1000);
 
         // init store if not loaded before
         if (init.compareAndSet(false, true)) {

@@ -23,6 +23,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PredicateToExpressionAdapter;
 import org.slf4j.Logger;
@@ -112,13 +113,14 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void start() throws Exception {
         // setup cache which requires CamelContext to be set first
         if (cacheExpression == null && cachePredicate == null && getCamelContext() != null) {
             int maxSize = CamelContextHelper.getMaximumSimpleCacheSize(getCamelContext());
             if (maxSize > 0) {
-                cacheExpression = new LRUCache<>(16, maxSize, false);
-                cachePredicate = new LRUCache<>(16, maxSize, false);
+                cacheExpression = LRUCacheFactory.newLRUCache(16, maxSize, false);
+                cachePredicate = LRUCacheFactory.newLRUCache(16, maxSize, false);
                 LOG.debug("Simple language predicate/expression cache size: {}", maxSize);
             } else {
                 LOG.debug("Simple language disabled predicate/expression cache");
