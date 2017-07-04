@@ -175,4 +175,16 @@ public class MavenVersionManagerTest extends TestCase {
 
         System.out.println("2.18.1 has " + components3 + " components");
     }
+
+    @Test
+    public void testLoadUnknownVersion() throws Exception {
+        MavenVersionManager manager = new MavenVersionManager();
+        String current = manager.getLoadedVersion();
+        assertNull(current);
+
+        // version 2.99 does not exists and cannot be loaded
+        boolean loaded = manager.loadVersion("2.99");
+        assertFalse(loaded);
+    }
+
 }
