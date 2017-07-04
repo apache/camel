@@ -506,6 +506,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         if (jarCache == null) {
             // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
