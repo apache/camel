@@ -1438,7 +1438,7 @@ public final class ObjectHelper {
 
         if (source.equals(target)) {
             return true;
-        } else if (source.getDeclaringClass() == target.getDeclaringClass()) {
+        } else if (target.getDeclaringClass().isAssignableFrom(source.getDeclaringClass())) {
             return false;
         } else if (!source.getDeclaringClass().isAssignableFrom(inheritingClass) || !target.getDeclaringClass().isAssignableFrom(inheritingClass)) {
             return false;
