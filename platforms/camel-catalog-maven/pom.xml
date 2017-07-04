@@ -58,6 +58,13 @@
       <version>${ivy-version}</version>
     </dependency>
 
+    <!-- use http client 3.x for downloading as its better than the JDK client -->
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>${httpclient-version}</version>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
