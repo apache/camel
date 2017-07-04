@@ -64,6 +64,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
@@ -224,6 +225,7 @@ public class CamelAutoConfiguration {
 
     /**
      * Default producer template for the bootstrapped Camel context.
+     * Create the bean lazy as it should only be created if its in-use.
      */
     // We explicitly declare the destroyMethod to be "" as the Spring @Bean
     // annotation defaults to AbstractBeanDefinition.INFER_METHOD otherwise
@@ -232,6 +234,7 @@ public class CamelAutoConfiguration {
     // lifecycle.
     @Bean(destroyMethod = "")
     @ConditionalOnMissingBean(ProducerTemplate.class)
+    @Lazy
     ProducerTemplate producerTemplate(CamelContext camelContext,
                                       CamelConfigurationProperties config) throws Exception {
         final ProducerTemplate producerTemplate = camelContext.createProducerTemplate(config.getProducerTemplateCacheSize());
@@ -242,6 +245,7 @@ public class CamelAutoConfiguration {
 
     /**
      * Default consumer template for the bootstrapped Camel context.
+     * Create the bean lazy as it should only be created if its in-use.
      */
     // We explicitly declare the destroyMethod to be "" as the Spring @Bean
     // annotation defaults to AbstractBeanDefinition.INFER_METHOD otherwise
@@ -250,6 +254,7 @@ public class CamelAutoConfiguration {
     // lifecycle.
     @Bean(destroyMethod = "")
     @ConditionalOnMissingBean(ConsumerTemplate.class)
+    @Lazy
     ConsumerTemplate consumerTemplate(CamelContext camelContext,
                                       CamelConfigurationProperties config) throws Exception {
         final ConsumerTemplate consumerTemplate = camelContext.createConsumerTemplate(config.getConsumerTemplateCacheSize());
