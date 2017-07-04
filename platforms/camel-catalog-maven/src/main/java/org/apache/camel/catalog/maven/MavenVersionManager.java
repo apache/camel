@@ -37,7 +37,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 public class MavenVersionManager implements VersionManager {
 
     private final ClassLoader classLoader = new GroovyClassLoader();
-    private final PatchedHttpClientHandler httpClient = new PatchedHttpClientHandler();
+    private final TimeoutHttpClientHandler httpClient = new TimeoutHttpClientHandler();
     private String version;
     private String runtimeProviderVersion;
     private String cacheDirectory;
