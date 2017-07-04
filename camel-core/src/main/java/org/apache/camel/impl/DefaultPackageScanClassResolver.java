@@ -47,7 +47,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -510,7 +510,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
     protected void doStart() throws Exception {
         if (jarCache == null) {
             // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
-            jarCache = new LRUSoftCache<String, List<String>>(1000);
+            jarCache = LRUCacheFactory.newLRUCache(1000);
         }
     }
 
