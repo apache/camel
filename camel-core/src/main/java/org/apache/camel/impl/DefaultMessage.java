@@ -93,7 +93,7 @@ public class DefaultMessage extends MessageSupport {
         Object value = getHeader(name);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
@@ -118,7 +118,7 @@ public class DefaultMessage extends MessageSupport {
         Object value = getHeader(name, defaultValue);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
@@ -146,7 +146,7 @@ public class DefaultMessage extends MessageSupport {
         Object value = getHeader(name, defaultValueSupplier);
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class.isAssignableFrom(type)) {
+            if (boolean.class == type) {
                 return (T) Boolean.FALSE;
             }
             return null;
