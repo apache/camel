@@ -83,6 +83,8 @@ public abstract class ContextTestSupport extends TestSupport {
     protected void setUp() throws Exception {
         // make SEDA testing faster
         System.setProperty("CamelSedaPollTimeout", "10");
+        // no need to warm-up when testing camel-core as that creates a new thread per CamelContext and Caffiene is initialized only once
+        System.setProperty("CamelWarmUpLRUCacheFactory", "false");
 
         if (!useJmx()) {
             disableJMX();

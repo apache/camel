@@ -40,6 +40,7 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.LRUWeakCache;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -57,7 +58,7 @@ public class MBeanInfoAssembler implements Service {
     // use a cache to speedup gathering JMX MBeanInfo for known classes
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
-    private final LRUCache<Class<?>, MBeanAttributesAndOperations> cache = new LRUWeakCache<Class<?>, MBeanAttributesAndOperations>(1000);
+    private LRUCache<Class<?>, MBeanAttributesAndOperations> cache;
 
     public MBeanInfoAssembler() {
     }
@@ -67,8 +68,9 @@ public class MBeanInfoAssembler implements Service {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void start() throws Exception {
-        // noop
+        cache = LRUCacheFactory.newLRUWeakCache(1000);
     }
 
     @Override
