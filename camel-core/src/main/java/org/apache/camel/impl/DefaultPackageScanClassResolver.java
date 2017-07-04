@@ -59,8 +59,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
-    // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
-    private final Map<String, List<String>> jarCache = new LRUSoftCache<String, List<String>>(1000);
+    private Map<String, List<String>> jarCache;
     private Set<PackageScanFilter> scanFilters;
     private String[] acceptableSchemes = {};
 
@@ -509,7 +508,10 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
     }
 
     protected void doStart() throws Exception {
-        // noop
+        if (jarCache == null) {
+            // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
+            jarCache = new LRUSoftCache<String, List<String>>(1000);
+        }
     }
 
     protected void doStop() throws Exception {
