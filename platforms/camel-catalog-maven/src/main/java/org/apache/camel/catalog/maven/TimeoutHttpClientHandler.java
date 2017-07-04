@@ -24,10 +24,10 @@ import org.apache.ivy.util.url.BasicURLHandler;
 import org.apache.ivy.util.url.HttpClientHandler;
 
 /**
- * A patched {@link HttpClientHandler} which allows to use HttpClient for downloading via http/https
- * and have support for timeouts which is not supported out of the box by default.
+ * A {@link HttpClientHandler} which uses HttpClient for downloading via http/https
+ * and have support for connection timeouts which otherwise is not supported by default in Apache Ivy.
  */
-public class PatchedHttpClientHandler extends HttpClientHandler {
+public class TimeoutHttpClientHandler extends HttpClientHandler {
 
     // use basic handler for non http/https as it can load from jar/file etc
     private BasicURLHandler basic = new BasicURLHandler();
