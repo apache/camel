@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.LRUCacheFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -47,8 +48,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ReloadStrategySupport extends ServiceSupport implements ReloadStrategy {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    // store state
-    protected final Map<String, Object> cache = new LRUCache<String, Object>(100);
+    protected Map<String, Object> cache;
 
     private CamelContext camelContext;
 
@@ -198,8 +198,10 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         // noop
+        cache = LRUCacheFactory.newLRUCache(100);
     }
 
     @Override

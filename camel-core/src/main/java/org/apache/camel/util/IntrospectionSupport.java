@@ -66,7 +66,8 @@ public final class IntrospectionSupport {
     // use a cache to speedup introspecting for known classes during startup
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
-    private static final LRUCache<Class<?>, ClassInfo> CACHE = new LRUWeakCache<Class<?>, ClassInfo>(1000);
+    @SuppressWarnings("unchecked")
+    private static final LRUCache<Class<?>, ClassInfo> CACHE = LRUCacheFactory.newLRUWeakCache(1000);
     private static final Object LOCK = new Object();
 
     static {

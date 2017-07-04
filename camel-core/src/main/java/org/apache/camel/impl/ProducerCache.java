@@ -40,6 +40,7 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -134,12 +135,13 @@ public class ProducerCache extends ServiceSupport {
      * @param cacheSize the cache size
      * @return the cache
      */
+    @SuppressWarnings("unchecked")
     protected static LRUCache<String, Producer> createLRUCache(int cacheSize) {
         // Use a regular cache as we want to ensure that the lifecycle of the producers
         // being cache is properly handled, such as they are stopped when being evicted
         // or when this cache is stopped. This is needed as some producers requires to
         // be stopped so they can shutdown internal resources that otherwise may cause leaks
-        return new LRUCache<String, Producer>(cacheSize);
+        return LRUCacheFactory.newLRUCache(cacheSize);
     }
 
     public CamelContext getCamelContext() {

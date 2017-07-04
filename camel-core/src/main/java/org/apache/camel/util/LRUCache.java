@@ -36,7 +36,10 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * If this cache stores {@link org.apache.camel.Service} then this implementation will on eviction
  * invoke the {@link org.apache.camel.Service#stop()} method, to auto-stop the service.
+ * <p/>
+ * Use {@link LRUCacheFactory} to create a new instance (do not use the constructor).
  *
+ * @see LRUCacheFactory
  * @see LRUSoftCache
  * @see LRUWeakCache
  */

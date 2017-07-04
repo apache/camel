@@ -21,13 +21,15 @@ import java.util.Map;
 
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 
 public class DefaultEndpointUtilizationStatistics implements EndpointUtilizationStatistics {
 
     private final LRUCache<String, Long> map;
 
+    @SuppressWarnings("unchecked")
     public DefaultEndpointUtilizationStatistics(int maxCapacity) {
-        this.map = new LRUCache<String, Long>(16, maxCapacity, false);
+        this.map = LRUCacheFactory.newLRUCache(16, maxCapacity, false);
     }
 
     @Override

@@ -44,7 +44,10 @@ package org.apache.camel.util;
  * <p/>
  * Notice that if the JVM reclaim memory the content of this cache may be garbage collected, without any
  * eviction notifications.
+ * <p/>
+ * Use {@link LRUCacheFactory} to create a new instance (do not use the constructor).
  *
+ * @see LRUCacheFactory
  * @see LRUCache
  * @see LRUSoftCache
  */
