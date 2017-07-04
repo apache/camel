@@ -185,7 +185,7 @@ public class PropertiesComponent extends UriEndpointComponent {
         Properties prop = new Properties();
 
         // use initial properties
-        if (null != initialProperties) {
+        if (initialProperties != null) {
             prop.putAll(initialProperties);
         }
 
@@ -590,7 +590,7 @@ public class PropertiesComponent extends UriEndpointComponent {
 
         @Override
         public int hashCode() {
-            return locations != null ? locations.hashCode() : 0;
+            return locations.hashCode();
         }
 
         @Override
