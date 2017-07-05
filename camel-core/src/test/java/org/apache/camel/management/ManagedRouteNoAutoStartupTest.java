@@ -17,12 +17,15 @@
 package org.apache.camel.management;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * Extended test to see if mbeans is removed and stats are correct
@@ -73,7 +76,10 @@ public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         // need a bit time to let JMX update
-        Thread.sleep(1000);
+        await().atMost(1, TimeUnit.SECONDS).until(() -> {
+            Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+            return completed > 0;
+        });
 
         // should have 1 completed exchange
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
