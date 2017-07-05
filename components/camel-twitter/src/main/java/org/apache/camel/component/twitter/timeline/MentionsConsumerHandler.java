@@ -33,11 +33,13 @@ public class MentionsConsumerHandler extends AbstractStatusConsumerHandler {
 
     @Override
     protected List<Status> doPoll() throws TwitterException {
+        log.trace("doPoll.getMentionsTimeline(sinceId={})", getLastIdPaging().getSinceId());
         return getTwitter().getMentionsTimeline(getLastIdPaging());
     }
 
     @Override
     protected List<Status> doDirect() throws TwitterException {
+        log.trace("doDirect.getMentionsTimeline()");
         return getTwitter().getMentionsTimeline();
     }
 }
