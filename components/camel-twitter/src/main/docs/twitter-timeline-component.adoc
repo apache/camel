@@ -44,11 +44,12 @@ with the following path and query parameters:
 | **timelineType** | *Required* The timeline type to produce/consume. |  | TimelineType
 |=======================================================================
 
-#### Query Parameters (41 parameters):
+#### Query Parameters (42 parameters):
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
 | Name | Description | Default | Type
+| **user** (common) | The username when using timelineType=user |  | String
 | **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
 | **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
 | **type** (consumer) | Endpoint type to use. Only streaming supports event type. | polling | EndpointType
