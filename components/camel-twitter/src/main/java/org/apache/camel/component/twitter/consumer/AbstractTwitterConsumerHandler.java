@@ -84,6 +84,14 @@ public abstract class AbstractTwitterConsumerHandler {
     }
 
     protected Paging getLastIdPaging() {
-        return new Paging(lastId);
+        Integer pages = endpoint.getProperties().getNumberOfPages();
+        Integer count = endpoint.getProperties().getCount();
+        if (pages != null && count != null) {
+            return new Paging(pages, count, lastId);
+        } else if (pages != null) {
+            return new Paging(pages, lastId);
+        } else {
+            return new Paging(lastId);
+        }
     }
 }
