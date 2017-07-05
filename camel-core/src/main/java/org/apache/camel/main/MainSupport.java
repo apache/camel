@@ -38,6 +38,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,7 +242,11 @@ public abstract class MainSupport extends ServiceSupport {
 
     private void internalBeforeStart() {
         if (hangupInterceptorEnabled) {
-            Runtime.getRuntime().addShutdownHook(new HangupInterceptor(this));
+            String threadName = ThreadHelper.resolveThreadName(null, "CamelHangupInterceptor");
+
+            Thread task = new HangupInterceptor(this);
+            task.setName(threadName);
+            Runtime.getRuntime().addShutdownHook(task);
         }
     }
 
