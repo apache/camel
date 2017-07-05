@@ -47,7 +47,7 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
         if (remaining == null) {
             throw new IllegalArgumentException(String.format("The timeline type must be specified for '%s'", uri));
         }
-        this.timelineType = TimelineType.valueOf(remaining.toUpperCase());
+        this.timelineType = component.getCamelContext().getTypeConverter().convertTo(TimelineType.class, remaining);
         this.user = user;
     }
 
