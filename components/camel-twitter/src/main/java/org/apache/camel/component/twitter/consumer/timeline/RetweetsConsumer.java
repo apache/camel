@@ -33,11 +33,13 @@ public class RetweetsConsumer extends AbstractStatusConsumer {
 
     @Override
     protected List<Status> doPoll() throws TwitterException {
+        log.trace("doPoll.getRetweetsOfMe(sinceId={})", getLastIdPaging().getSinceId());
         return getTwitter().getRetweetsOfMe(getLastIdPaging());
     }
 
     @Override
     protected List<Status> doDirect() throws TwitterException {
+        log.trace("doDirect.getRetweetsOfMe(");
         return getTwitter().getRetweetsOfMe();
     }
 }

@@ -33,11 +33,13 @@ public class UserConsumer extends AbstractStatusConsumer {
 
     @Override
     protected List<Status> doPoll() throws TwitterException {
+        log.trace("doPoll.getUserTimeline(user={}, sinceId={})", endpoint.getProperties().getUser(), getLastIdPaging().getSinceId());
         return getTwitter().getUserTimeline(endpoint.getProperties().getUser(), getLastIdPaging());
     }
 
     @Override
     protected List<Status> doDirect() throws TwitterException {
+        log.trace("doDirect.getUserTimeline(user={})", endpoint.getProperties().getUser());
         return getTwitter().getUserTimeline(endpoint.getProperties().getUser());
     }
 }

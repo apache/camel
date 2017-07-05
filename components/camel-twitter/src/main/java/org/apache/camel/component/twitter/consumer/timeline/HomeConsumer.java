@@ -33,11 +33,13 @@ public class HomeConsumer extends AbstractStatusConsumer {
 
     @Override
     protected List<Status> doPoll() throws TwitterException {
+        log.trace("doPoll.getHomeTimeline(sinceId={})", getLastIdPaging().getSinceId());
         return getTwitter().getHomeTimeline(getLastIdPaging());
     }
 
     @Override
     protected List<Status> doDirect() throws TwitterException {
+        log.trace("doDirect.getHomeTimeline()");
         return getTwitter().getHomeTimeline();
     }
 }
