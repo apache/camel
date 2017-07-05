@@ -505,7 +505,7 @@ public class HttpProducer extends DefaultProducer {
                     //it removes "boundary" from Content-Type; I have to use contentType.create method.
                     if (contentTypeString != null) {
                         // using ContentType.parser for charset
-                        if (contentTypeString.indexOf("charset") > 0) {
+                        if (contentTypeString.indexOf("charset") > 0 || contentTypeString.indexOf(";") > 0) {
                             contentType = ContentType.parse(contentTypeString);
                         } else {
                             contentType = ContentType.create(contentTypeString);
