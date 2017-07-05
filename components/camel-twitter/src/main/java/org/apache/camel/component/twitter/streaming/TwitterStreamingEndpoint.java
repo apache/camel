@@ -24,6 +24,7 @@ import org.apache.camel.component.twitter.TwitterConfiguration;
 import org.apache.camel.component.twitter.TwitterHelper;
 import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandler;
 import org.apache.camel.component.twitter.data.StreamingType;
+import org.apache.camel.component.twitter.data.TimelineType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -48,7 +49,7 @@ public class TwitterStreamingEndpoint extends AbstractTwitterEndpoint {
         if (remaining == null) {
             throw new IllegalArgumentException(String.format("The streaming type must be specified for '%s'", uri));
         }
-        this.streamingType = StreamingType.valueOf(remaining.toUpperCase());
+        this.streamingType = component.getCamelContext().getTypeConverter().convertTo(StreamingType.class, remaining);
         this.keywords = keywords;
     }
 
