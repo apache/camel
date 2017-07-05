@@ -26,6 +26,7 @@ import org.apache.camel.component.twitter.consumer.AbstractTwitterConsumerHandle
 import org.apache.camel.component.twitter.data.TimelineType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
@@ -38,7 +39,7 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
     @UriPath(description = "The timeline type to produce/consume.")
     @Metadata(required = "true")
     private TimelineType timelineType;
-
+    @UriParam(description = "The username when using timelineType=user")
     private String user;
 
     public TwitterTimelineEndpoint(String uri, String remaining, String user, TwitterTimelineComponent component, TwitterConfiguration properties) {
