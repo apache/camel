@@ -26,7 +26,6 @@ import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -36,9 +35,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assert_;
-import static com.jayway.awaitility.Awaitility.await;
-import static com.jayway.awaitility.Awaitility.to;
-import static org.hamcrest.Matchers.equalTo;
+import static org.awaitility.Awaitility.await;
 
 public class IgniteMessagingTest extends AbstractIgniteTest implements Serializable {
 
@@ -65,7 +62,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
 
         template.requestBody("ignite-messaging:TOPIC1", 1);
 
-        await().atMost(5, TimeUnit.SECONDS).untilCall(to(messages).size(), equalTo(1));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 1);
         assert_().that(messages.get(0)).isEqualTo(1);
     }
 
@@ -92,7 +89,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         Set<Integer> request = ContiguousSet.create(Range.closedOpen(0, 100), DiscreteDomain.integers());
         template.requestBody("ignite-messaging:TOPIC1", request);
 
-        await().atMost(5, TimeUnit.SECONDS).untilCall(to(messages).size(), equalTo(100));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 100);
         assert_().that(messages).containsAllIn(request);
     }
 
@@ -106,7 +103,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
             template.requestBody("ignite-messaging:TOPIC1?sendMode=ORDERED&timeout=1000", i);
         }
 
-        await().atMost(5, TimeUnit.SECONDS).untilCall(to(messages).size(), equalTo(100));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 100);
         assert_().that(messages).containsAllIn(set);
     }
 
@@ -118,7 +115,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         Set<Integer> request = ContiguousSet.create(Range.closedOpen(0, 100), DiscreteDomain.integers());
         template.requestBody("ignite-messaging:TOPIC1?treatCollectionsAsCacheObjects=true", request);
 
-        await().atMost(5, TimeUnit.SECONDS).untilCall(to(messages).size(), equalTo(1));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 1);
         assert_().that(messages.get(0)).isEqualTo(request);
     }
 
@@ -131,7 +128,7 @@ public class IgniteMessagingTest extends AbstractIgniteTest implements Serializa
         Set<Integer> messagesToSend = ContiguousSet.create(Range.closedOpen(0, 100), DiscreteDomain.integers());
         ignite().message().send(TOPIC1, messagesToSend);
 
-        await().atMost(5, TimeUnit.SECONDS).untilCall(to(messages).size(), equalTo(100));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> messages.size() == 100);
 
         consumer.stop();
     }
