@@ -1,0 +1,15 @@
+{
+  "properties": [
+    {
+      "name": "endpoints.camelroutes.path",
+      "type": "java.lang.String",
+      "description": "Endpoint URL path."
+    },
+    {
+      "name": "endpoints.camelroutes.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable Camel Routes endpoint.",
+      "defaultValue": true
+    }
+  ]
+}
