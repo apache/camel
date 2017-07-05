@@ -28,13 +28,15 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteEndpointInfo;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.actuate.endpoint.Endpoint;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * {@link Endpoint} to expose {@link org.apache.camel.Route} information.
  */
+@ConfigurationProperties(prefix = "endpoints." + CamelRoutesEndpoint.ENDPOINT_ID)
 public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo>> {
 
-    private static final String ENDPOINT_ID = "camelroutes";
+    public static final String ENDPOINT_ID = "camelroutes";
 
     private CamelContext camelContext;
 
