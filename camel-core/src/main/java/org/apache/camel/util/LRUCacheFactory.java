@@ -29,17 +29,20 @@ public final class LRUCacheFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(LRUCacheFactory.class);
 
-    private static final AtomicBoolean init = new AtomicBoolean();
+    private static final AtomicBoolean INIT = new AtomicBoolean();
 
     private LRUCacheFactory() {
     }
 
+    /**
+     * Warm-up the LRUCache to startup Apache Camel faster.
+     */
     @SuppressWarnings("unchecked")
     public static void warmUp() {
         // create a dummy map in a separate thread to warm-up the Caffeine cache concurrently
         // while Camel is starting up. This allows us to overall startup Camel a bit faster
         // as Caffeine takes 150+ millis to initialize.
-        if (init.compareAndSet(false, true)) {
+        if (INIT.compareAndSet(false, true)) {
             // only need to init Caffeine once in the JVM/classloader
             Runnable task = () -> {
                 StopWatch watch = new StopWatch();
