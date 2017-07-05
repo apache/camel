@@ -39,6 +39,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Completion interval in millis")
     long getCompletionInterval();
 
+    @ManagedAttribute(description = "Completion timeout checker interval in millis")
+    long getCompletionTimeoutCheckerInterval();
+
     @ManagedAttribute(description = "Completion size")
     int getCompletionSize();
 

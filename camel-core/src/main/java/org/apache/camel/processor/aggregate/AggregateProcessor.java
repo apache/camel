@@ -61,7 +61,6 @@ import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -210,6 +209,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private boolean discardOnCompletionTimeout;
     private boolean forceCompletionOnStop;
     private boolean completeAllOnStop;
+    private long completionTimeoutCheckerInterval = 1000;
 
     private ProducerTemplate deadLetterProducerTemplate;
 
@@ -933,6 +933,14 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         return completeAllOnStop;
     }
 
+    public long getCompletionTimeoutCheckerInterval() {
+        return completionTimeoutCheckerInterval;
+    }
+
+    public void setCompletionTimeoutCheckerInterval(long completionTimeoutCheckerInterval) {
+        this.completionTimeoutCheckerInterval = completionTimeoutCheckerInterval;
+    }
+
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
@@ -1383,7 +1391,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                 shutdownTimeoutCheckerExecutorService = true;
             }
             // check for timed out aggregated messages once every second
-            timeoutMap = new AggregationTimeoutMap(getTimeoutCheckerExecutorService(), 1000L);
+            timeoutMap = new AggregationTimeoutMap(getTimeoutCheckerExecutorService(), getCompletionTimeoutCheckerInterval());
             // fill in existing timeout values from the aggregation repository, for example if a restart occurred, then we
             // need to re-establish the timeout map so timeout can trigger
             restoreTimeoutMapFromAggregationRepository();

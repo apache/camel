@@ -103,6 +103,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Long completionInterval;
     @XmlAttribute
     private Long completionTimeout;
+    @XmlAttribute @Metadata(defaultValue = "1000")
+    private Long completionTimeoutCheckerInterval = 1000L;
     @XmlAttribute
     private Boolean completionFromBatchConsumer;
     @XmlAttribute
@@ -282,6 +284,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         if (getAggregateController() != null) {
             answer.setAggregateController(getAggregateController());
+        }
+        if (getCompletionTimeoutCheckerInterval() != null) {
+            answer.setCompletionTimeoutCheckerInterval(getCompletionTimeoutCheckerInterval());
         }
         return answer;
     }
@@ -486,6 +491,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setCompletionTimeout(Long completionTimeout) {
         this.completionTimeout = completionTimeout;
+    }
+
+    public Long getCompletionTimeoutCheckerInterval() {
+        return completionTimeoutCheckerInterval;
+    }
+
+    public void setCompletionTimeoutCheckerInterval(Long completionTimeoutCheckerInterval) {
+        this.completionTimeoutCheckerInterval = completionTimeoutCheckerInterval;
     }
 
     public ExpressionSubElementDefinition getCompletionPredicate() {
@@ -768,6 +781,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * a timeout dynamically - will use Long as result.
      * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
      * You cannot use this option together with completionInterval, only one of the two can be used.
+     * <p/>
+     * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option
+     * to configure how frequently to run the checker.
+     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
+     * It is not recommended to use very low timeout values or checker intervals.
      *
      * @param completionTimeout  the timeout in millis, must be a positive value
      * @return the builder
@@ -783,12 +801,32 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      * a timeout dynamically - will use Long as result.
      * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
      * You cannot use this option together with completionInterval, only one of the two can be used.
+     * <p/>
+     * By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option
+     * to configure how frequently to run the checker.
+     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
+     * It is not recommended to use very low timeout values or checker intervals.
      *
      * @param completionTimeout  the timeout as an {@link Expression} which is evaluated as a {@link Long} type
      * @return the builder
      */
     public AggregateDefinition completionTimeout(Expression completionTimeout) {
         setCompletionTimeoutExpression(new ExpressionSubElementDefinition(completionTimeout));
+        return this;
+    }
+
+    /**
+     * Interval in millis that is used by the background task that checks for timeouts ({@link org.apache.camel.TimeoutMap}).
+     * <p/>
+     * By default the timeout checker runs every second.
+     * The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value.
+     * It is not recommended to use very low timeout values or checker intervals.
+     *
+     * @param completionTimeoutCheckerInterval  the interval in millis, must be a positive value
+     * @return the builder
+     */
+    public AggregateDefinition completionTimeoutCheckerInterval(long completionTimeoutCheckerInterval) {
+        setCompletionTimeoutCheckerInterval(completionTimeoutCheckerInterval);
         return this;
     }
 
