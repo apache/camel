@@ -17,11 +17,14 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  *
@@ -44,7 +47,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
-        Thread.sleep(250);
+        await().atMost(1, TimeUnit.SECONDS).until(() -> myFile.isPost());
 
         assertTrue("Should have invoked postPollCheck", myFile.isPost());
     }
