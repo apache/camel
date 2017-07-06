@@ -27,6 +27,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -36,6 +37,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.UnsafeUriCharactersEncoder.encodeHttpURI;
 
 /**
  * The Hipchat producer to send message to a user and/or a room.
@@ -71,7 +74,7 @@ public class HipchatProducer extends DefaultProducer {
             jsonParam.put(HipchatApiConstants.API_MESSAGE_COLOR, backGroundColor);
         }
         LOG.info("Sending message to room: " + room + ", " + MAPPER.writeValueAsString(jsonParam));
-        StatusLine statusLine = post(urlPath, jsonParam);
+        StatusLine statusLine = post(encodeHttpURI(urlPath), jsonParam);
         LOG.debug("Response status for send room message: " + statusLine);
         return statusLine;
     }
