@@ -48,7 +48,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
     public void testAssertPeriod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.setAssertPeriod(1000);
+        mock.setAssertPeriod(500);
 
         template.sendBody("direct:a", "A");
 
@@ -58,7 +58,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
     public void testAssertPeriodNot() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.setAssertPeriod(1000);
+        mock.setAssertPeriod(500);
 
         template.sendBody("direct:a", "A");
         template.sendBody("direct:a", "B");

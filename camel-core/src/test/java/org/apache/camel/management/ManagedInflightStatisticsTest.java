@@ -28,6 +28,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.awaitility.Awaitility.await;
+
 /**
  * @version
  */
@@ -61,9 +63,13 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
 
         // start some exchanges.
         template.asyncSendBody("direct:start", latch1);
-        Thread.sleep(500);
+        Thread.sleep(250);
         template.asyncSendBody("direct:start", latch2);
-        Thread.sleep(100);
+
+        await().atMost(2, TimeUnit.SECONDS).until(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+            return num != null && num == 2;
+        });
 
         inflight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
         assertEquals(2, inflight.longValue());
@@ -95,7 +101,10 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
         latch2.countDown();
 
         // Lets wait for all the exchanges to complete.
-        Thread.sleep(500);
+        await().atMost(2, TimeUnit.SECONDS).until(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+            return num != null && num == 0;
+        });
 
         assertMockEndpointsSatisfied();
 

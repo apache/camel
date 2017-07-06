@@ -35,8 +35,8 @@ public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait 4 seconds
-        Thread.sleep(4000);
+        // wait 1 seconds
+        Thread.sleep(1000);
 
         mock.assertIsSatisfied();
 
@@ -49,7 +49,7 @@ public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "C", "id", 123);
 
         // should complete before timeout
-        mock.await(1500, TimeUnit.MILLISECONDS);
+        assertTrue(mock.await(1000, TimeUnit.MILLISECONDS));
     }
 
     @Override
@@ -61,8 +61,8 @@ public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
                 from("direct:start")
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .completionSize(3)
-                        // use a 2 second timeout
-                        .completionTimeout(2000)
+                        // use a 0.5 second timeout
+                        .completionTimeout(500)
                         // and if timeout occurred then just discard the aggregated message
                         .discardOnCompletionTimeout()
                         .to("mock:aggregated");
