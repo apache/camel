@@ -651,6 +651,7 @@
     <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-util/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-util&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
     <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-bridge/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-bridge&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
     <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-script/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-script&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
+    <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-js/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-js&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
     <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-xml/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-xml&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
     <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-awt-util/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-awt-util&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
     <bundle dependency="true">wrap:mvn:org.apache.xmlgraphics/batik-gvt/${xmlgraphics-batik-version}$Bundle-SymbolicName=org.apache.xmlgraphics.batik-gvt&amp;Bundle-Version=${xmlgraphics-batik-version}</bundle>
