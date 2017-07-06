@@ -40,8 +40,8 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
 
-        log.info("Sleeping for 1 sec before writing enrichdata file");
-        Thread.sleep(1000);
+        log.info("Sleeping for 0.5 sec before writing enrichdata file");
+        Thread.sleep(500);
         template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
 

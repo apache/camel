@@ -192,8 +192,6 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler4\"");
 
         // use route to get the total time
         ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route4\"");

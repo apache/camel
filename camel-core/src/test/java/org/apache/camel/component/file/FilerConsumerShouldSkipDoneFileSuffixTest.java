@@ -40,7 +40,7 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         template.sendBodyAndHeader("file:target/done", "", Exchange.FILE_NAME, "hello.txt.ready");
 
         // wait a bit and it should not pickup the written file as there are no target file
-        Thread.sleep(250);
+        Thread.sleep(100);
 
         assertMockEndpointsSatisfied();
         resetMocks();
@@ -67,7 +67,7 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?doneFileName=${file:name}.ready&initialDelay=0")
+                from("file:target/done?doneFileName=${file:name}.ready&initialDelay=0&delay=50")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }
