@@ -33,15 +33,17 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBean(CamelAutoConfiguration.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 public class CamelRoutesEndpointAutoConfiguration {
+    @Bean
+    @ConditionalOnClass(CamelContext.class)
+    @ConditionalOnMissingBean
+    public CamelRoutesEndpoint camelEndpoint(CamelContext camelContext) {
+        return new CamelRoutesEndpoint(camelContext);
+    }
 
-    @ConditionalOnClass({CamelContext.class})
-    @ConditionalOnMissingBean(CamelRoutesEndpoint.class)
-    protected static class CamelEndpointInitializer {
-
-        @Bean
-        public CamelRoutesEndpoint camelEndpoint(CamelContext camelContext) {
-            return new CamelRoutesEndpoint(camelContext);
-        }
-
+    @Bean
+    @ConditionalOnClass(CamelContext.class)
+    @ConditionalOnMissingBean
+    public CamelMvcRoutesEndpoint camelMvcEndpoint(CamelRoutesEndpoint delegate) {
+        return new CamelMvcRoutesEndpoint(delegate);
     }
 }

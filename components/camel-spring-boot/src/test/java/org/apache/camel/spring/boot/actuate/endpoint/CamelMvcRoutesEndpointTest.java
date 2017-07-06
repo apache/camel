@@ -39,21 +39,29 @@ import org.springframework.test.context.junit4.SpringRunner;
 @EnableAutoConfiguration
 @SpringBootApplication
 @SpringBootTest(classes = {CamelAutoConfiguration.class, CamelRoutesEndpointAutoConfiguration.class, ActuatorTestRoute.class})
-public class CamelRoutesEndpointTest extends Assert {
+public class CamelMvcRoutesEndpointTest extends Assert {
 
     @Autowired
-    CamelRoutesEndpoint endpoint;
+    CamelMvcRoutesEndpoint endpoint;
 
     @Autowired
     CamelContext camelContext;
 
     @Test
     public void testRoutesEndpoint() throws Exception {
-        List<RouteEndpointInfo> routes = endpoint.invoke();
+        List<RouteEndpointInfo> routes = (List<RouteEndpointInfo>)endpoint.invoke();
 
         assertFalse(routes.isEmpty());
         assertEquals(routes.size(), camelContext.getRoutes().size());
         assertTrue(routes.stream().anyMatch(r -> "foo-route".equals(r.getId())));
+    }
+
+    @Test
+    public void testMvcRoutesEndpoint() throws Exception {
+        Object result = endpoint.get("foo-route");
+
+        assertTrue(result instanceof RouteEndpointInfo);
+        assertEquals("foo-route", ((RouteEndpointInfo)result).getId());
     }
 
 }
