@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
@@ -47,11 +46,22 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
     @Override
     public List<RouteEndpointInfo> invoke() {
-        // @formatter:off
+        return getRoutesInfo();
+    }
+
+    public List<RouteEndpointInfo> getRoutesInfo() {
         return camelContext.getRoutes().stream()
-                .map(RouteEndpointInfo::new)
-                .collect(Collectors.toList());
-        // @formatter:on
+            .map(RouteEndpointInfo::new)
+            .collect(Collectors.toList());
+    }
+
+    public RouteEndpointInfo getRouteInfo(String id) {
+        Route route = camelContext.getRoute(id);
+        if (route != null) {
+            return new RouteEndpointInfo(route);
+        }
+
+        return null;
     }
 
     /**
