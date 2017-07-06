@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.async;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +26,8 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 
@@ -81,8 +84,7 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
 
-        // give time for slow boxes
-        Thread.sleep(500);
+        await().atMost(1, TimeUnit.SECONDS).until(policy::isStopped);
 
         assertTrue("Should be stopped", policy.isStopped());
     }
