@@ -1,3 +1,0 @@
-<div class='center-align'>
-  {{ .Inner }}
-</div>

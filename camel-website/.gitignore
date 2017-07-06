@@ -1,4 +1,2 @@
-node_modules
-node
-asciidoctor
-public
+node_modules/
+node/
