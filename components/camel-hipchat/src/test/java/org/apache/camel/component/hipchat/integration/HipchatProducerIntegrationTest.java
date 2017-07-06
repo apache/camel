@@ -72,6 +72,23 @@ public class HipchatProducerIntegrationTest extends CamelTestSupport {
 
     }
 
+    @Test
+    public void sendToUriUnsafeRoomName() throws Exception {
+        result.expectedMessageCount(1);
+
+        Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(HipchatConstants.TO_ROOM, "Camel Test");
+                exchange.getIn().setHeader(HipchatConstants.TO_USER, "@ShreyasPurohit");
+                exchange.getIn().setBody("A room with spaces");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        assertResponseMessage(exchange1.getIn());
+    }
+
     private void assertResponseMessage(Message message) {
         assertEquals(204, message.getHeader(HipchatConstants.TO_ROOM_RESPONSE_STATUS, StatusLine.class).getStatusCode());
         assertEquals(204, message.getHeader(HipchatConstants.TO_USER_RESPONSE_STATUS, StatusLine.class).getStatusCode());
