@@ -497,7 +497,7 @@
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <nekohtml-version>1.9.22</nekohtml-version>
     <netty3-version>3.10.6.Final</netty3-version>
-    <netty-version>4.1.12.Final</netty-version>
+    <netty-version>4.1.13.Final</netty-version>
     <netty40-version>4.0.48.Final</netty40-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
