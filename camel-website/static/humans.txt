@@ -1,3 +1,0 @@
-/* TEAM */
-Your title: Apache Camel
-
