@@ -163,20 +163,4 @@ public class SedaNoConsumerTest extends ContextTestSupport {
 
     }
 
-    @Test
-    public void testConfigOnAConsumer() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // these are the same!
-                from("seda:foo?failIfNoConsumers=true").to("log:test");
-                from("seda:foo").to("log:test2");
-
-            }
-        });
-
-        context.start();
-        Thread.sleep(2 * 1000);
-    }
-
 }
