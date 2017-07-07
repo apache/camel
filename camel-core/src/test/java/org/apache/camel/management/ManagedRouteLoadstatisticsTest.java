@@ -16,10 +16,13 @@
  */
 package org.apache.camel.management;
 
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 
@@ -91,7 +94,8 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(2000);
+        await().atMost(2, TimeUnit.SECONDS).until(() -> mbeanServer.getAttribute(on, "Load01") != null);
+
         String load01 = (String)mbeanServer.getAttribute(on, "Load01");
         String load05 = (String)mbeanServer.getAttribute(on, "Load05");
         String load15 = (String)mbeanServer.getAttribute(on, "Load15");

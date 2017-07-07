@@ -17,10 +17,13 @@
 package org.apache.camel.management;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 
@@ -45,20 +48,17 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         template.asyncSendBody("direct:start", "Hello World");
 
         // cater for slow boxes
-        Integer inFlight = null;
-        for (int i = 0; i < 10; i++) {
-            Thread.sleep(500);
-            inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
-            if (inFlight.longValue() == 1) {
-                break;
-            }
-        }
-        assertNotNull("too slow server", inFlight);
-        assertEquals(1, inFlight.longValue());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> {
+            Integer num = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+            return num == 1;
+        });
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(3000);
+        await().atMost(5, TimeUnit.SECONDS).until(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+            return num == 1;
+        });
 
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1, completed.longValue());
@@ -92,7 +92,7 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         assertNull(lastFailed);
         assertNull(firstFailed);
 
-        inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+        Integer inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
         assertEquals(0, inFlight.longValue());
     }
 
