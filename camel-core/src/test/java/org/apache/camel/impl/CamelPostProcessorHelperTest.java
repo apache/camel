@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
@@ -39,6 +40,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version
@@ -130,7 +133,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give UoW a bit of time
-        Thread.sleep(500);
+        await().atMost(1, TimeUnit.SECONDS).until(() -> mySynchronization.isOnDone());
 
         assertTrue("Should have invoked onDone", mySynchronization.isOnDone());
     }
@@ -150,7 +153,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give UoW a bit of time
-        Thread.sleep(500);
+        await().atMost(1, TimeUnit.SECONDS).until(() -> mySynchronization.isOnDone());
 
         assertTrue("Should have invoked onDone", mySynchronization.isOnDone());
     }

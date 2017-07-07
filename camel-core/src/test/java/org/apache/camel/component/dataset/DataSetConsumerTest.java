@@ -164,7 +164,9 @@ public class DataSetConsumerTest extends ContextTestSupport {
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
 
+        // run a little while
         Thread.sleep(100);
+
         assertMockEndpointsSatisfied();
     }
 }

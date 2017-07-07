@@ -43,7 +43,7 @@ public class DefaultCamelContextSuspendResumeRouteStartupOrderTest extends Conte
         context.suspend();
 
         // need to give seda consumer thread time to idle
-        Thread.sleep(500);
+        Thread.sleep(100);
 
         template.sendBody("seda:foo", "B");
         mock.assertIsSatisfied(1000);
