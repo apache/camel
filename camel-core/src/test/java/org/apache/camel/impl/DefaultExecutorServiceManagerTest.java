@@ -496,7 +496,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Ignore("This is a manual test, by looking at the logs")
-    public void testLongShutdownOfThreadPool() throws Exception {
+    public void xxxtestLongShutdownOfThreadPool() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ExecutorService pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "Cool");
 
