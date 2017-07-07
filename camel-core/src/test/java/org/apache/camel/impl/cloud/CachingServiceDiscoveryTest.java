@@ -26,10 +26,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class CachingServiceDiscoveryTest extends ContextTestSupport {
+
     @Test
     public void testCachingServiceDiscovery() throws Exception {
         StaticServiceDiscovery discovery = new StaticServiceDiscovery();
-        CachingServiceDiscovery caching = CachingServiceDiscovery.wrap(discovery, 1, TimeUnit.SECONDS);
+        CachingServiceDiscovery caching = CachingServiceDiscovery.wrap(discovery, 50, TimeUnit.MILLISECONDS);
 
         discovery.addServer(new DefaultServiceDefinition("noname", "localhost", 1111));
         Assert.assertEquals(1, caching.getServices("noname").size());
@@ -37,7 +38,7 @@ public class CachingServiceDiscoveryTest extends ContextTestSupport {
         Assert.assertEquals(1, caching.getServices("noname").size());
 
         // Let the cache expire
-        Thread.sleep(1100);
+        Thread.sleep(100);
 
         Assert.assertEquals(2, caching.getServices("noname").size());
     }
@@ -49,8 +50,8 @@ public class CachingServiceDiscoveryTest extends ContextTestSupport {
 
         CachingServiceCallServiceDiscoveryConfiguration cachingConf = new CachingServiceCallServiceDiscoveryConfiguration();
         cachingConf.setServiceDiscoveryConfiguration(staticConf);
-        cachingConf.setTimeout(1);
-        cachingConf.setUnits(TimeUnit.SECONDS);
+        cachingConf.setTimeout(50);
+        cachingConf.setUnits(TimeUnit.MILLISECONDS);
 
         CachingServiceDiscovery caching = (CachingServiceDiscovery)cachingConf.newInstance(context);
         StaticServiceDiscovery delegate = (StaticServiceDiscovery)caching.getDelegate();
@@ -60,7 +61,7 @@ public class CachingServiceDiscoveryTest extends ContextTestSupport {
         Assert.assertEquals(1, caching.getServices("no-name").size());
 
         // Let the cache expire
-        Thread.sleep(1100);
+        Thread.sleep(100);
 
         Assert.assertEquals(2, caching.getServices("no-name").size());
     }
