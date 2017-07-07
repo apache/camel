@@ -41,8 +41,6 @@ import org.slf4j.LoggerFactory;
  */
 class KubernetesMembersMonitor implements Service {
 
-    private static final long DEFAULT_WATCHER_REFRESH_INTERVAL_SECONDS = 1800;
-
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesMembersMonitor.class);
 
     private ScheduledExecutorService serializedExecutor;
@@ -81,7 +79,7 @@ class KubernetesMembersMonitor implements Service {
         serializedExecutor.execute(() -> doPoll(true));
         serializedExecutor.execute(this::createWatch);
 
-        long recreationDelay = lockConfiguration.getWatchRefreshIntervalSecondsOrDefault();
+        long recreationDelay = lockConfiguration.getWatchRefreshIntervalSeconds();
         if (recreationDelay > 0) {
             serializedExecutor.scheduleWithFixedDelay(this::refresh, recreationDelay, recreationDelay, TimeUnit.SECONDS);
         }
