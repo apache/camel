@@ -30,7 +30,7 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.ha.lock.KubernetesClusterEvent;
-import org.apache.camel.component.kubernetes.ha.lock.KubernetesLeadershipController;
+import org.apache.camel.component.kubernetes.ha.lock.KubernetesLeaseBasedLeadershipController;
 import org.apache.camel.component.kubernetes.ha.lock.KubernetesLockConfiguration;
 import org.apache.camel.ha.CamelClusterMember;
 import org.apache.camel.impl.ha.AbstractCamelClusterView;
@@ -56,7 +56,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
 
     private volatile List<CamelClusterMember> currentMembers = Collections.emptyList();
 
-    private KubernetesLeadershipController controller;
+    private KubernetesLeaseBasedLeadershipController controller;
 
     public KubernetesClusterView(KubernetesClusterService cluster, KubernetesConfiguration configuration, KubernetesLockConfiguration lockConfiguration) {
         super(cluster, lockConfiguration.getGroupName());
@@ -86,7 +86,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
         if (controller == null) {
             this.kubernetesClient = KubernetesHelper.getKubernetesClient(configuration);
 
-            controller = new KubernetesLeadershipController(kubernetesClient, this.lockConfiguration, event -> {
+            controller = new KubernetesLeaseBasedLeadershipController(kubernetesClient, this.lockConfiguration, event -> {
                 if (event instanceof KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) {
                     // New leader
                     Optional<String> leader = KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent.class.cast(event).getData();
