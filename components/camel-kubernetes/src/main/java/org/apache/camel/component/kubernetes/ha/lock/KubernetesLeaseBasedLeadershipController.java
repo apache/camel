@@ -362,7 +362,7 @@ public class KubernetesLeaseBasedLeadershipController implements Service {
 
         // Sending notifications in case of leader change
         if (!newLeader.equals(this.currentLeader)) {
-            LOG.debug("Current leader has changed from {} to {}. Sending notifications...", this.currentLeader, newLeader);
+            LOG.info("Current leader has changed from {} to {}. Sending notifications...", this.currentLeader, newLeader);
             this.currentLeader = newLeader;
             eventHandler.onKubernetesClusterEvent((KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) () -> newLeader);
         } else {

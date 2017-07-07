@@ -91,9 +91,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
                     // New leader
                     Optional<String> leader = KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent.class.cast(event).getData();
                     currentLeader = leader.map(this::toMember);
-                    if (currentLeader.isPresent()) {
-                        fireLeadershipChangedEvent(currentLeader.get());
-                    }
+                    fireLeadershipChangedEvent(currentLeader.orElse(null));
                 } else if (event instanceof KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) {
                     Set<String> members = KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent.class.cast(event).getData();
                     Set<String> oldMembers = currentMembers.stream().map(CamelClusterMember::getId).collect(Collectors.toSet());
