@@ -19,6 +19,8 @@ package org.apache.camel.component.kubernetes.ha;
 import java.net.InetAddress;
 import java.util.Map;
 
+import io.fabric8.kubernetes.client.KubernetesClient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
@@ -30,8 +32,6 @@ import org.apache.camel.util.ObjectHelper;
  * A Kubernetes based cluster service leveraging Kubernetes optimistic locks on resources (specifically ConfigMaps).
  */
 public class KubernetesClusterService extends AbstractCamelClusterService<KubernetesClusterView> {
-
-    public static final String DEFAULT_CONFIGMAP_NAME = "leaders";
 
     private KubernetesConfiguration configuration;
 
@@ -64,10 +64,7 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
 
         config.setGroupName(ObjectHelper.notNull(groupName, "groupName"));
 
-        // Check defaults (Namespace and podName can be null)
-        if (config.getConfigMapName() == null) {
-            config.setConfigMapName(DEFAULT_CONFIGMAP_NAME);
-        }
+        // Determine the pod name if not provided
         if (config.getPodName() == null) {
             config.setPodName(System.getenv("HOSTNAME"));
             if (config.getPodName() == null) {
@@ -77,6 +74,33 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
                     throw new RuntimeCamelException("Unable to determine pod name", e);
                 }
             }
+        }
+
+        ObjectHelper.notNull(config.getConfigMapName(), "configMapName");
+        ObjectHelper.notNull(config.getClusterLabels(), "clusterLabels");
+
+        if (config.getJitterFactor() < 1) {
+            throw new IllegalStateException("jitterFactor must be >= 1 (found: " + config.getJitterFactor() + ")");
+        }
+        if (config.getRetryOnErrorIntervalSeconds() <= 0) {
+            throw new IllegalStateException("retryOnErrorIntervalSeconds must be > 0 (found: " + config.getRetryOnErrorIntervalSeconds() + ")");
+        }
+        if (config.getRetryPeriodSeconds() <= 0) {
+            throw new IllegalStateException("retryPeriodSeconds must be > 0 (found: " + config.getRetryPeriodSeconds() + ")");
+        }
+        if (config.getRenewDeadlineSeconds() <= 0) {
+            throw new IllegalStateException("renewDeadlineSeconds must be > 0 (found: " + config.getRenewDeadlineSeconds() + ")");
+        }
+        if (config.getLeaseDurationSeconds() <= 0) {
+            throw new IllegalStateException("leaseDurationSeconds must be > 0 (found: " + config.getLeaseDurationSeconds() + ")");
+        }
+        if (config.getLeaseDurationSeconds() <= config.getRenewDeadlineSeconds()) {
+            throw new IllegalStateException("leaseDurationSeconds must be greater than renewDeadlineSeconds "
+                    + "(" + config.getLeaseDurationSeconds() + " is not greater than " + config.getRenewDeadlineSeconds() + ")");
+        }
+        if (config.getRenewDeadlineSeconds() <= config.getJitterFactor() * config.getRetryPeriodSeconds()) {
+            throw new IllegalStateException("renewDeadlineSeconds must be greater than jitterFactor*retryPeriodSeconds "
+                    + "(" + config.getRenewDeadlineSeconds() + " is not greater than " + config.getJitterFactor() + "*" + config.getRetryPeriodSeconds() + ")");
         }
 
         return config;
@@ -137,15 +161,88 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
         lockConfiguration.setClusterLabels(clusterLabels);
     }
 
-    public Long getWatchRefreshIntervalSeconds() {
-        return lockConfiguration.getWatchRefreshIntervalSeconds();
+    public void addToClusterLabels(String key, String value) {
+        lockConfiguration.addToClusterLabels(key, value);
+    }
+
+    public String getKubernetesResourcesNamespace() {
+        return lockConfiguration.getKubernetesResourcesNamespace();
+    }
+
+    /**
+     * Kubernetes namespace containing the pods and the ConfigMap used for locking.
+     */
+    public void setKubernetesResourcesNamespace(String kubernetesResourcesNamespace) {
+        lockConfiguration.setKubernetesResourcesNamespace(kubernetesResourcesNamespace);
+    }
+
+    public long getRetryOnErrorIntervalSeconds() {
+        return lockConfiguration.getRetryOnErrorIntervalSeconds();
     }
 
     /**
      * Indicates the maximum amount of time a Kubernetes watch should be kept active, before being recreated.
-     * Watch recreation can be disabled by putting a negative value (the default will be used in case of null).
+     * Watch recreation can be disabled by putting value <= 0.
      */
-    public void setWatchRefreshIntervalSeconds(Long watchRefreshIntervalSeconds) {
+    public void setRetryOnErrorIntervalSeconds(long retryOnErrorIntervalSeconds) {
+        lockConfiguration.setRetryOnErrorIntervalSeconds(retryOnErrorIntervalSeconds);
+    }
+
+    public double getJitterFactor() {
+        return lockConfiguration.getJitterFactor();
+    }
+
+    /**
+     * A jitter factor to apply in order to prevent all pods to try to become leaders in the same instant.
+     */
+    public void setJitterFactor(double jitterFactor) {
+        lockConfiguration.setJitterFactor(jitterFactor);
+    }
+
+    public long getLeaseDurationSeconds() {
+        return lockConfiguration.getLeaseDurationSeconds();
+    }
+
+    /**
+     * The default duration of the lease for the current leader.
+     */
+    public void setLeaseDurationSeconds(long leaseDurationSeconds) {
+        lockConfiguration.setLeaseDurationSeconds(leaseDurationSeconds);
+    }
+
+    public long getRenewDeadlineSeconds() {
+        return lockConfiguration.getRenewDeadlineSeconds();
+    }
+
+    /**
+     * The deadline after which the leader must stop trying to renew its leadership (and yield it).
+     */
+    public void setRenewDeadlineSeconds(long renewDeadlineSeconds) {
+        lockConfiguration.setRenewDeadlineSeconds(renewDeadlineSeconds);
+    }
+
+    public long getRetryPeriodSeconds() {
+        return lockConfiguration.getRetryPeriodSeconds();
+    }
+
+    /**
+     * The time between two subsequent attempts to acquire/renew the leadership (or after the lease expiration).
+     * It is randomized using the jitter factor in case of new leader election (not renewal).
+     */
+    public void setRetryPeriodSeconds(long retryPeriodSeconds) {
+        lockConfiguration.setRetryPeriodSeconds(retryPeriodSeconds);
+    }
+
+    public long getWatchRefreshIntervalSeconds() {
+        return lockConfiguration.getWatchRefreshIntervalSeconds();
+    }
+
+    /**
+     * Set this to a positive value in order to recreate watchers after a certain amount of time,
+     * to avoid having stale watchers.
+     */
+    public void setWatchRefreshIntervalSeconds(long watchRefreshIntervalSeconds) {
         lockConfiguration.setWatchRefreshIntervalSeconds(watchRefreshIntervalSeconds);
     }
+
 }
