@@ -59,7 +59,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
                 onException(IllegalArgumentException.class)
                     .to("mock:error");
 
-                from("file://target/deletefile?delete=true").process(new Processor() {
+                from("file://target/deletefile?initialDelay=0&delay=10&delete=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalArgumentException("Forced by unittest");
                     }

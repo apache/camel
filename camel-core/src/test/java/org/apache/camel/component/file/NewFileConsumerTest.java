@@ -60,6 +60,8 @@ public class NewFileConsumerTest extends ContextTestSupport {
                 myFile = new MyFileEndpoint();
                 myFile.setCamelContext(context);
                 myFile.setFile(new File("target/myfile"));
+                myFile.setDelay(10);
+                myFile.setInitialDelay(0);
 
                 from(myFile).to("mock:result");
             }

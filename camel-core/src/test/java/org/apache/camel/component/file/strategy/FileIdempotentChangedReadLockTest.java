@@ -30,7 +30,7 @@ public class FileIdempotentChangedReadLockTest extends FileIdempotentReadLockTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=idempotent-changed&idempotentRepository=#myRepo")
+                from("file:target/changed/in?initialDelay=0&delay=10&readLockCheckInterval=100&readLock=idempotent-changed&idempotentRepository=#myRepo")
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {

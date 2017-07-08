@@ -29,7 +29,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileSorterRefTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?sorter=#mySorter";
+    private String fileUrl = "file://target/filesorter/?initialDelay=0&delay=10&sorter=#mySorter";
 
     @Override
     public boolean isUseRouteBuilder() {

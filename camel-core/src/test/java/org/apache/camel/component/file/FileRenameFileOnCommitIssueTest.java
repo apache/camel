@@ -48,7 +48,7 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/renameissue?noop=false")
+                from("file://target/renameissue?noop=false&initialDelay=0&delay=10")
                     .setProperty("PartitionID").simple("${file:name}")
                     .convertBodyTo(String.class)
                     .inOut("direct:source")

@@ -48,7 +48,8 @@ public class FileToFileNioLowBufferTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/nio/in").convertBodyTo(String.class).to("file://target/nio/out?bufferSize=4").to("mock:result");
+                from("file://target/nio/in?initialDelay=0&delay=10")
+                    .convertBodyTo(String.class).to("file://target/nio/out?bufferSize=4").to("mock:result");
             }
         };
     }

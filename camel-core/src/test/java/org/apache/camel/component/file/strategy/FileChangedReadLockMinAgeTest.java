@@ -45,7 +45,7 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/slowfile.dat");
-        mock.expectedMessagesMatches(exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isGreaterThan(new Date().getTime() + 3000));
+        mock.expectedMessagesMatches(exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isGreaterThan(new Date().getTime() + 500));
 
         writeSlowFile();
 
@@ -66,7 +66,7 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);
-            Thread.sleep(100);
+            Thread.sleep(50);
         }
 
         fos.flush();
@@ -79,7 +79,7 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed&readLockMinAge=3000&readLockTimeout=1500")
+                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinAge=1000&readLockTimeout=1500")
                         .to("file:target/changed/out", "mock:result");
             }
         };
