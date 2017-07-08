@@ -50,7 +50,7 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:src/test/data/?fileName=staff.xml&noop=true")
+                from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
                     .to("xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver")
                     .to("mock:resultURIResolverDirect");
             }

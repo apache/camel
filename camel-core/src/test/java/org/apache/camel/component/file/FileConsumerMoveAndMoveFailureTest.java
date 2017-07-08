@@ -51,7 +51,7 @@ public class FileConsumerMoveAndMoveFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/failed?move=moved&moveFailed=error/${file:name.noext}-error.txt")
+                from("file://target/failed?move=moved&initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);

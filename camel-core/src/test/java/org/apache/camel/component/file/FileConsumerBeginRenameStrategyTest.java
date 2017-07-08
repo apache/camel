@@ -70,7 +70,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?preMove=../inprogress/${file:name}&consumer.delay=5000")
+                from("file://target/reports?preMove=../inprogress/${file:name}&initialDelay=0&delay=10")
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) throws Exception {

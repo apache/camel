@@ -47,7 +47,7 @@ public class XsltMessageTerminateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("file:src/test/data/?fileName=terminate.xml&noop=true")
+                from("file:src/test/data/?fileName=terminate.xml&noop=true&initialDelay=0&delay=10")
                     .to("xslt:org/apache/camel/component/xslt/terminate.xsl")
                     .to("log:foo")
                     .to("mock:result");

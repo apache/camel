@@ -78,7 +78,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file/order", "seda:xml")
+                from("file://target/file/order?initialDelay=0&delay=10", "seda:xml")
                     .bean("orderService")
                     .to("mock:queue:order");
             }

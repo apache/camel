@@ -99,7 +99,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/marker/in?readLock=markerFile")
+                from("file:target/marker/in?readLock=markerFile&initialDelay=0&delay=10")
                         .onCompletion()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
