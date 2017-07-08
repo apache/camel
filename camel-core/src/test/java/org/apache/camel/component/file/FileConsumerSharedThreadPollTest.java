@@ -69,10 +69,10 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
                 pool = new ThreadPoolBuilder(context).poolSize(1).buildScheduled(this, "MySharedPool");
                 registry.put("myPool", pool);
 
-                from("file:target/a?scheduledExecutorService=#myPool").routeId("a")
+                from("file:target/a?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("a")
                     .to("direct:shared");
 
-                from("file:target/b?scheduledExecutorService=#myPool").routeId("b")
+                from("file:target/b?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("b")
                     .to("direct:shared");
 
                 from("direct:shared").routeId("shared")
