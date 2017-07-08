@@ -50,7 +50,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     private static String propertyText;
 
     
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String LINE_SEPARATOR = System.lineSeparator();
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
     private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";
     

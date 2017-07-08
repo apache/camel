@@ -48,7 +48,7 @@ import org.testng.Assert;
  * A bunch of useful testing methods
  */
 public abstract class TestSupport extends Assert {
-    protected static final String LS = System.getProperty("line.separator");
+    protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
     protected Logger log = LoggerFactory.getLogger(getClass());
 
