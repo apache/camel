@@ -70,7 +70,7 @@ public class FileDataSetProducerWithSplitTest extends ContextTestSupport {
     @Override
     public void setUp() throws Exception {
         File fileDataset = createFileDatasetWithSystemEndOfLine();
-        dataSet = new FileDataSet(fileDataset, System.lineSeparator());
+        dataSet = new FileDataSet(fileDataset, LS);
         assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());
         super.setUp();
     }
