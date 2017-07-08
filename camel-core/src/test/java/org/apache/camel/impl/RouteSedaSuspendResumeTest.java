@@ -16,11 +16,16 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.SedaEndpoint;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 
@@ -49,10 +54,11 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         }
 
         // need to give seda consumer thread time to idle
-        Thread.sleep(500);
+        await().atMost(1, TimeUnit.SECONDS).until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0);
 
         template.sendBody("seda:foo", "B");
-        mock.assertIsSatisfied(1000);
+
+        mock.assertIsSatisfied(100);
 
         log.info("Resuming");
 

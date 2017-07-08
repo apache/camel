@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
+import org.junit.Ignore;
 
 /**
  * @version 
@@ -486,7 +487,8 @@ public class CaseInsensitiveMapTest extends TestCase {
         service.shutdownNow();
     }
 
-    public void testCopyMapWithCamelHeadersTest() throws Exception {
+    @Ignore("Manual test")
+    public void xxxTestCopyMapWithCamelHeadersTest() throws Exception {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("CamelA", "A");
         map.put("CamelB", "B");
@@ -516,7 +518,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         // use a memory profiler to see memory allocation
         // often you may want to give it time to run so you
         // have chance to capture memory snapshot in profiler
-        // Thread.sleep(9999999);
+        Thread.sleep(9999999);
     }
 
 
