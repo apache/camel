@@ -39,8 +39,8 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/keep?noop=true")
-                    .delay(3000).to("file://target/keep/out?keepLastModified=true", "mock:result");
+                from("file://target/keep?noop=true?initialDelay=0&delay=10")
+                    .delay(100).to("file://target/keep/out?keepLastModified=true", "mock:result");
             }
         });
         context.start();
@@ -62,8 +62,8 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/keep?noop=true")
-                    .delay(3000).to("file://target/keep/out?keepLastModified=false", "mock:result");
+                from("file://target/keep?noop=true?initialDelay=0&delay=10")
+                    .delay(100).to("file://target/keep/out?keepLastModified=false", "mock:result");
             }
         });
         context.start();
@@ -85,8 +85,8 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/keep?noop=true")
-                    .delay(3000).to("file://target/keep/out", "mock:result");
+                from("file://target/keep?noop=true&initialDelay=0&delay=10")
+                    .delay(100).to("file://target/keep/out", "mock:result");
             }
         });
         context.start();

@@ -80,11 +80,11 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // for locks
-                from("file://target/reports/locked/?noop=true").process(new MyNoopProcessor()).
+                from("file://target/reports/locked/?initialDelay=0&delay=10&noop=true").process(new MyNoopProcessor()).
                     to("mock:report");
 
                 // for no locks
-                from("file://target/reports/notlocked/?noop=true&readLock=none").process(new MyNoopProcessor()).
+                from("file://target/reports/notlocked/?initialDelay=0&delay=10&noop=true&readLock=none").process(new MyNoopProcessor()).
                     to("mock:report");
             }
         };

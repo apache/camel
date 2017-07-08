@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileExclusiveReadManuelTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/exclusiveread?readLock=fileLock";
+    private String fileUrl = "file://target/exclusiveread?readLock=fileLock&initialDelay=0&delay=10";
 
     @Override
     protected void setUp() throws Exception {
