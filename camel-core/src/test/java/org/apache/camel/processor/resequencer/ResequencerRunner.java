@@ -24,6 +24,8 @@ public class ResequencerRunner<E> extends Thread {
 
     private boolean cancelRequested;
 
+    private volatile boolean running;
+
     public ResequencerRunner(ResequencerEngineSync<E> resequencer, long interval) {
         this.resequencer = resequencer;
         this.interval = interval;
@@ -33,6 +35,7 @@ public class ResequencerRunner<E> extends Thread {
     @Override
     public void run() {
         while (!cancelRequested()) {
+            running = true;
             try {
                 Thread.sleep(interval);
             } catch (InterruptedException e) {
@@ -45,6 +48,7 @@ public class ResequencerRunner<E> extends Thread {
             }
         }
         super.run();
+        running = false;
     }
 
     public synchronized void cancel() {
@@ -55,4 +59,7 @@ public class ResequencerRunner<E> extends Thread {
         return cancelRequested;
     }
 
+    public boolean isRunning() {
+        return running;
+    }
 }
