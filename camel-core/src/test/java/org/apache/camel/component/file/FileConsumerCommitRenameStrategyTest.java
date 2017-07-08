@@ -76,7 +76,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?move=../done/${file:name}&consumer.delay=5000")
+                from("file://target/reports?move=../done/${file:name}&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:report");
             }
         };

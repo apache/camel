@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerDirectoryNotMatchedTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/dirnotmatched/?recursive=true&include=.*txt$";
+    private String fileUrl = "file://target/dirnotmatched/?initialDelay=0&delay=10&recursive=true&include=.*txt$";
 
     @Override
     protected void setUp() throws Exception {

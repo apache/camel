@@ -30,8 +30,6 @@ public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/consumedfilename");
         super.setUp();
-        // the file name is also starting with target/consumedfilename
-        template.sendBodyAndHeader("file:target/consumedfilename", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
     public void testValidFilenameOnExchange() throws Exception {
@@ -39,6 +37,10 @@ public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("hello.txt");
         mock.message(0).header(Exchange.FILE_NAME_CONSUMED).isEqualTo("hello.txt");
+
+        // the file name is also starting with target/consumedfilename
+        template.sendBodyAndHeader("file:target/consumedfilename", "Hello World", Exchange.FILE_NAME, "hello.txt");
+
         assertMockEndpointsSatisfied();
     }
 
@@ -47,7 +49,7 @@ public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/consumedfilename").to("mock:result");
+                from("file:target/consumedfilename?initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

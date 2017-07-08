@@ -50,7 +50,7 @@ public class FileConsumerAbsolutePathDefaultMoveTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:" + base).convertBodyTo(String.class).to("mock:report");
+                from("file:" + base + "?initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:report");
             }
         };
     }

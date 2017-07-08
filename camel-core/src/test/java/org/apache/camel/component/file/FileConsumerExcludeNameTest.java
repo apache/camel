@@ -49,7 +49,7 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/exclude/?exclude=^secret.*|.*xml$")
+                from("file://target/exclude/?initialDelay=0&delay=10&exclude=^secret.*|.*xml$")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };
