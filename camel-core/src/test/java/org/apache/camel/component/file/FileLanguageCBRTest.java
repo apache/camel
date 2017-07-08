@@ -66,7 +66,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/cbr?delete=true")
+                from("file://target/cbr?delete=true&initialDelay=0&delay=10")
                     .convertBodyTo(String.class)
                     .choice()
                         .when().simple("${file:ext} == 'txt'").to("mock:txt")
