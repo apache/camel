@@ -60,7 +60,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/begin?processStrategy=#myStrategy")
+                from("file://target/begin?initialDelay=0&delay=10&processStrategy=#myStrategy")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }

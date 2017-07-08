@@ -39,7 +39,7 @@ public class FileAbsolutePathIssueTest extends ContextTestSupport {
 
         start = new File("target/issue").getAbsolutePath();
         done = new File("target/done").getAbsolutePath();
-        uri = "file:" + start + "?move=" + done + "/${file:name}";
+        uri = "file:" + start + "?initialDelay=0&delay=10&move=" + done + "/${file:name}";
 
         super.setUp();
     }

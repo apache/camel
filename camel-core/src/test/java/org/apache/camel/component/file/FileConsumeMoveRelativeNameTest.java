@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/multidir/?recursive=true&move=.done/${file:name}.old";
+    private String fileUrl = "file://target/multidir/?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old";
 
     @Override
     protected void setUp() throws Exception {
