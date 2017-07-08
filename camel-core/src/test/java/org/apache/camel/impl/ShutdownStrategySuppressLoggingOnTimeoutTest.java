@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Ignore;
 
-@Ignore("Test manually")
+@Ignore("Test manually by inspecting logs")
 public class ShutdownStrategySuppressLoggingOnTimeoutTest extends ContextTestSupport {
 
     public void testSuppressLogging() throws Exception {

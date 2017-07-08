@@ -16,6 +16,9 @@
  */
 package org.apache.camel.issues;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -29,6 +32,8 @@ import org.apache.camel.impl.DefaultCamelContext;
  *
  */
 public class StopRouteFromRouteTest extends TestCase {
+
+    final CountDownLatch latch = new CountDownLatch(1);
 
     // START SNIPPET: e1
     public void testStopRouteFromRoute() throws Exception {
@@ -51,7 +56,7 @@ public class StopRouteFromRouteTest extends TestCase {
         template.sendBody("direct:start", "Hello Camel");
 
         // just wait a bit for the thread to stop the route
-        Thread.sleep(1500);
+        latch.await(5, TimeUnit.SECONDS);
 
         // the route should now be stopped
         assertTrue("Route myRoute should be stopped", context.getRouteStatus("myRoute").isStopped());
@@ -88,6 +93,9 @@ public class StopRouteFromRouteTest extends TestCase {
                                             exchange.getContext().stopRoute("myRoute");
                                         } catch (Exception e) {
                                             // ignore
+                                        } finally {
+                                            // signal we stopped the route
+                                            latch.countDown();
                                         }
                                     }
                                 };

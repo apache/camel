@@ -72,15 +72,16 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
         // the route should have been forced stopped
         assertTrue("stopRoute response should be True", stopRouteResponse);
         assertEquals("route should be stopped", true, context.getRouteStatus("start").isStopped());
-        
+
+        int before = mockEP.getExchanges().size();
+
         // send some more messages through the route
         for (int i = 5; i < 10; i++) {
             template.sendBody("seda:start", "message-" + i);
         }
-        
-        Thread.sleep(3000);
-        
-        assertTrue("Should not have received more than 5 messages", mockEP.getExchanges().size() <= 5);
+
+        int after = mockEP.getExchanges().size();
+        assertEquals("Should not route messages", before, after);
     }
     
     @Override

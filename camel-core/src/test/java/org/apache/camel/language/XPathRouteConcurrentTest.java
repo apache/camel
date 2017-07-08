@@ -49,7 +49,7 @@ public class XPathRouteConcurrentTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "<person><name>Claus</name></person>");
 
-        Thread.sleep(100);
+        Thread.sleep(10);
 
         template.sendBody("seda:foo", "<person><name>James</name></person>");
 
