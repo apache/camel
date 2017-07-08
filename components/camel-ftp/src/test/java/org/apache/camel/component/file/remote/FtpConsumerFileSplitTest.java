@@ -47,7 +47,7 @@ public class FtpConsumerFileSplitTest extends FtpServerTestSupport {
             public void configure() throws Exception {
                 from(getFtpUrl())
                     .to("log:file")
-                    .split(body().tokenize(System.getProperty("line.separator")))
+                    .split(body().tokenize(LS))
                         .to("log:line")
                         .to("mock:result");
             }

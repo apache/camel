@@ -69,7 +69,7 @@ public class Mina2UdpNoCamelTest {
         UDPClient client = new UDPClient();
         client.connect("127.0.0.1", port);
         for (int i = 0; i < 222; i++) {
-            client.sendNoMina("Hello Mina " + i + System.getProperty("line.separator"));
+            client.sendNoMina("Hello Mina " + i + System.lineSeparator());
         }
         Thread.sleep(2000);
         assertEquals(222, server.numMessagesReceived);

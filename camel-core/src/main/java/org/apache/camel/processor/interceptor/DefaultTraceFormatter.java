@@ -31,7 +31,7 @@ import org.apache.camel.util.MessageHelper;
 @Deprecated
 public class DefaultTraceFormatter implements TraceFormatter {
     
-    protected static final String LS = System.getProperty("line.separator");
+    protected static final String LS = System.lineSeparator();
     private static final String SEPARATOR = "###REPLACE_ME###";
     
     private int breadCrumbLength;
