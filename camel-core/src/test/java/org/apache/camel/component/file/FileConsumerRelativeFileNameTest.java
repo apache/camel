@@ -30,11 +30,6 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/filename-consumer");
         super.setUp();
-        // the file name is also starting with target/filename-consumer
-        template.sendBodyAndHeader("file:target/filename-consumer", "Hello World",
-                Exchange.FILE_NAME, "target/filename-consumer-hello.txt");
-        template.sendBodyAndHeader("file:target/filename-consumer", "Bye World",
-                Exchange.FILE_NAME, "target/filename-consumer-bye.txt");
     }
 
     public void testValidFilenameOnExchange() throws Exception {
@@ -42,6 +37,14 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
         mock.expectedMessageCount(2);
         // should have file name header set
         mock.allMessages().header(Exchange.FILE_NAME).isNotNull();
+
+        // the file name is also starting with target/filename-consumer
+        template.sendBodyAndHeader("file:target/filename-consumer", "Hello World",
+            Exchange.FILE_NAME, "target/filename-consumer-hello.txt");
+        template.sendBodyAndHeader("file:target/filename-consumer", "Bye World",
+            Exchange.FILE_NAME, "target/filename-consumer-bye.txt");
+
+        context.startAllRoutes();
 
         assertMockEndpointsSatisfied();
 
@@ -55,7 +58,9 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/filename-consumer?recursive=true&sortBy=file:name").to("mock:result");
+                from("file:target/filename-consumer?initialDelay=0&delay=10&recursive=true&sortBy=file:name")
+                    .noAutoStartup()
+                    .to("mock:result");
             }
         };
     }

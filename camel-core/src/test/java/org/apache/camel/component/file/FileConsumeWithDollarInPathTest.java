@@ -46,7 +46,7 @@ public class FileConsumeWithDollarInPathTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:" + dir).to("mock:result");
+                from("file:" + dir + "?initialDelay=0&delay=10").to("mock:result");
             }
         };
     }
