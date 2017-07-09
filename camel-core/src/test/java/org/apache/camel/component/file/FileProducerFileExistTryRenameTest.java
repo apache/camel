@@ -30,9 +30,7 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/file");
         super.setUp();
-        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
-
 
     public void testIgnore() throws Exception {
         // Does not work on Windows
@@ -44,7 +42,10 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye World");
         mock.expectedFileExists("target/file/hello.txt", "Bye World");
 
+        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/file?fileExist=TryRename&tempPrefix=tmp", "Bye World", Exchange.FILE_NAME, "hello.txt");
+
+        context.startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }
@@ -54,7 +55,8 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&delay=1000").convertBodyTo(String.class).to("mock:result");
+                from("file://target/file?noop=true&initialDelay=0&delay=10").noAutoStartup()
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

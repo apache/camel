@@ -89,7 +89,7 @@ public class FileProducerCharsetUTFtoISOTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/charset/input?noop=true")
+                from("file:target/charset/input?initialDelay=0&delay=10&noop=true")
                     .to("file:target/charset/?fileName=output.txt&charset=iso-8859-1");
             }
         };

@@ -84,7 +84,7 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/charset/input?noop=true")
+                from("file:target/charset/input?initialDelay=0&delay=10&noop=true")
                     // no charset so its optimized to write directly
                     .to("file:target/charset/?fileName=output.txt");
             }

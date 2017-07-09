@@ -96,7 +96,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
             @Override
             public void configure() throws Exception {
                 // the input file is in utf-8
-                from("file:target/charset/input?noop=true&charset=utf-8")
+                from("file:target/charset/input?initialDelay=0&delay=10&noop=true&charset=utf-8")
                     // now convert the input file from utf-8 to iso-8859-1
                     .convertBodyTo(byte[].class, "iso-8859-1")
                     // and write the file using that encoding
