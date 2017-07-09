@@ -59,6 +59,7 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
     private ExecutorService executorService;
     private WatchFileChangesTask task;
     private Map<WatchKey, Path> folderKeys;
+    private long pollTimeout = 2000;
 
     public FileWatcherReloadStrategy() {
         setRecursive(false);
@@ -80,6 +81,13 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
     
     public void setRecursive(boolean isRecursive) {
         this.isRecursive = isRecursive;
+    }
+
+    /**
+     * Sets the poll timeout in millis. The default value is 2000.
+     */
+    public void setPollTimeout(long pollTimeout) {
+        this.pollTimeout = pollTimeout;
     }
 
     @ManagedAttribute(description = "Folder being watched")
@@ -214,7 +222,7 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
                 try {
                     log.trace("ReloadStrategy is polling for file changes in directory: {}", folder);
                     // wait for a key to be available
-                    key = watcher.poll(2, TimeUnit.SECONDS);
+                    key = watcher.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException ex) {
                     break;
                 }
