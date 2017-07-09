@@ -68,8 +68,8 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         Long total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
         assertNotNull(delta);
-        assertTrue("Should take around 3 sec: was " + last, last > 2900);
-        assertTrue("Should take around 3 sec: was " + total, total > 2900);
+        assertTrue("Should take around 1 sec: was " + last, last > 900);
+        assertTrue("Should take around 1 sec: was " + total, total > 900);
 
         // send in another message
         template.sendBody("direct:start", "Bye World");
@@ -81,8 +81,8 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         total = (Long) mbeanServer.getAttribute(on, "TotalProcessingTime");
 
         assertNotNull(delta);
-        assertTrue("Should take around 3 sec: was " + last, last > 2900);
-        assertTrue("Should be around 5 sec now: was " + total, total > 4900);
+        assertTrue("Should take around 1 sec: was " + last, last > 900);
+        assertTrue("Should be around 2 sec now: was " + total, total > 1900);
 
         Date reset = (Date) mbeanServer.getAttribute(on, "ResetTimestamp");
         assertNotNull(reset);
@@ -101,7 +101,7 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").delay(3000).to("mock:result");
+                from("direct:start").to("log:foo").delay(1000).to("mock:result");
             }
         };
     }

@@ -33,7 +33,7 @@ public class TestSedaTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("test:seda:testme");
+                        .to("test:seda:testme?timeout=0");
             }
         });
         context.start();

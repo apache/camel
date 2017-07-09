@@ -25,9 +25,11 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class TimerNegativeDelayTest extends ContextTestSupport {
 
-    public void testDelay() throws Exception {
+    public void testNegativeDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
+
+        context.startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }
@@ -37,7 +39,9 @@ public class TimerNegativeDelayTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer://foo?delay=-1&period=0&repeatCount=10").to("mock:result");
+                from("timer://foo?delay=-1&period=0&repeatCount=10")
+                    .noAutoStartup()
+                    .to("mock:result");
             }
         };
     }
