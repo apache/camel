@@ -100,6 +100,8 @@ public class DynamicRouterOnExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
+                    // setting delay to zero is just to make unit testing faster
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(5);
 
                 from("direct:start")

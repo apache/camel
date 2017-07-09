@@ -36,6 +36,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .onException(Exception.class)
+                        .redeliveryDelay(10)
                         .maximumRedeliveries(2)
                         .backOffMultiplier(1.5)
                         .handled(true)
@@ -56,6 +57,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .onException(Exception.class)
+                        .redeliveryDelay(10)
                         .maximumRedeliveries(2)
                         .backOffMultiplier(1.5)
                         .handled(true)

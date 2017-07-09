@@ -68,6 +68,8 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
                 onException(IOException.class)
                         // try to redeliver at most 3 times
                         .maximumRedeliveries(3)
+                        // setting delay to zero is just to make unit testing faster
+                        .redeliveryDelay(0)
                         .onRedelivery(new MyIORedeliverProcessor());
                 // END SNIPPET: e1
 

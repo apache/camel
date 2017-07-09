@@ -59,8 +59,6 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
 
     @Override
     protected void setUp() throws Exception {
-        sleepForConnection = 3000;
-
         registryPort = 30000 + new Random().nextInt(10000);
         log.info("Using port " + registryPort);
         url = "service:jmx:rmi:///jndi/rmi://localhost:" + registryPort + "/jmxrmi/camel";

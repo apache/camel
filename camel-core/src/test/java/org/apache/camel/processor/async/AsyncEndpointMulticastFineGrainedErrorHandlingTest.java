@@ -30,7 +30,7 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")
@@ -55,7 +55,7 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")
