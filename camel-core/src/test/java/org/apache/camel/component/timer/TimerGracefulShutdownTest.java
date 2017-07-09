@@ -56,8 +56,8 @@ public class TimerGracefulShutdownTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?period=100&exceptionHandler=#eh")
-                    .delay(200)
+                from("timer:foo?period=10&delay=10&exceptionHandler=#eh")
+                    .delay(10)
                     .to("log:time")
                     .to("mock:result");
             }
