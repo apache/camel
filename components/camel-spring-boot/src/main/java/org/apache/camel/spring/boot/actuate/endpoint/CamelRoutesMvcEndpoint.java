@@ -51,7 +51,7 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
             return getDisabledResponse();
         }
 
-        Object result = delegate.getRouteInfo(id);
+        Object result = delegate.getRouteDetailsInfo(id);
         if (result == null) {
             result = NOT_FOUND;
         }
