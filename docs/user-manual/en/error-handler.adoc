@@ -31,7 +31,7 @@ The current implementations Camel provides out of the box are:
 
 [[ErrorHandler-Nontransacted]]
 Non transacted
-++++++++++++++
+~~~~~~~~~~~~~~
 
 * link:defaulterrorhandler.html[DefaultErrorHandler] is the default
 error handler in Camel. This error handler does not support a dead
@@ -45,7 +45,7 @@ sending it to a dead letter endpoint
 
 [[ErrorHandler-Transacted]]
 Transacted
-++++++++++
+~~~~~~~~~~
 
 * link:transactionerrorhandler.html[TransactionErrorHandler] is the
 default error handler in Camel for transacted routes. See the
@@ -211,7 +211,7 @@ link:error-handler.html[Error Handler](s):
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
-Feature |Supported by the following link:error-handler.html[Error Handler]
+|Feature |Supported by the following link:error-handler.html[Error Handler]
 
 |all scopes |link:defaulterrorhandler.html[DefaultErrorHandler],
 link:transactionerrorhandler.html[TransactionErrorHandler],
@@ -289,7 +289,7 @@ RouteBuilder builder = new RouteBuilder() {
     public void configure() {
         // use logging error handler
         errorHandler(loggingErrorHandler("com.mycompany.foo"));
- 
+
         // here is our regular route
         from("seda:a").to("seda:b");
     }
@@ -310,7 +310,7 @@ RouteBuilder builder = new RouteBuilder() {
             .errorHandler(loggingErrorHandler("com.mycompany.foo"))
             // and we continue with the routing here
             .to("seda:b");
- 
+
         // this route will use the default error handler (DeadLetterChannel)
         from("seda:b").to("seda:c");
     }
@@ -387,4 +387,3 @@ behavior
 thrown exceptions
 * link:try-catch-finally.html[Try Catch Finally] for try ... catch ...
 finally as DSL you can use in the routing
-

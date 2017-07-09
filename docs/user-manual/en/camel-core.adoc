@@ -1,9 +1,6 @@
-[Tip]
+[TIP]
 ====
-
-
 This page is work in progress. The layering is probably not yet correct
-
 ====
 
 Camel-core is the basic module of apache camel. It contains the public
