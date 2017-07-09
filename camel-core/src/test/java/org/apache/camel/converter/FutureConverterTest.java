@@ -101,7 +101,7 @@ public class FutureConverterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").delay(500).transform(constant("Bye World"));
+                from("direct:foo").delay(10).transform(constant("Bye World"));
             }
         };
     }

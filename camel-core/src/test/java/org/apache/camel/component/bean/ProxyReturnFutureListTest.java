@@ -39,7 +39,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        List<String> users = future.get(5, TimeUnit.SECONDS);
+        List<String> users = future.get(2, TimeUnit.SECONDS);
         assertEquals("Claus", users.get(0));
         assertEquals("Jonathan", users.get(1));
     }
@@ -52,7 +52,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        List<String> users = future.get(5, TimeUnit.SECONDS);
+        List<String> users = future.get(2, TimeUnit.SECONDS);
         assertEquals("Claus", users.get(0));
         assertEquals("Jonathan", users.get(1));
 
@@ -61,7 +61,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        users = future.get(5, TimeUnit.SECONDS);
+        users = future.get(2, TimeUnit.SECONDS);
         assertEquals("Claus", users.get(0));
         assertEquals("Jonathan", users.get(1));
     }
@@ -72,7 +72,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:echo")
-                    .delay(2000)
+                    .delay(50)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             List<String> users = new ArrayList<String>();

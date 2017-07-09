@@ -55,14 +55,14 @@ public class RecipientListParallelTimeoutTest extends ContextTestSupport {
                                 return oldExchange;
                             }
                         })
-                        .parallelProcessing().timeout(1000)
+                        .parallelProcessing().timeout(500)
                     .to("mock:result");
 
-                from("direct:a").delay(5000).setBody(constant("A"));
+                from("direct:a").delay(1000).setBody(constant("A"));
 
                 from("direct:b").setBody(constant("B"));
 
-                from("direct:c").delay(500).setBody(constant("C"));
+                from("direct:c").delay(100).setBody(constant("C"));
             }
         };
     }
