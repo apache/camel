@@ -180,13 +180,9 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         releaseMBeanServers();
         super.setUp();
 
-        await().atMost(3, TimeUnit.SECONDS).until(() -> {
-            try {
-                mbsc = getMBeanConnection();
-                return true;
-            } catch (Throwable e) {
-                return false;
-            }
+        await().atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> {
+            mbsc = getMBeanConnection();
+            return true;
         });
     }
 

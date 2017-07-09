@@ -47,9 +47,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
-        await().atMost(1, TimeUnit.SECONDS).until(() -> myFile.isPost());
-
-        assertTrue("Should have invoked postPollCheck", myFile.isPost());
+        await("postPollCheck invocation").atMost(1, TimeUnit.SECONDS).until(myFile::isPost);
     }
 
     @Override

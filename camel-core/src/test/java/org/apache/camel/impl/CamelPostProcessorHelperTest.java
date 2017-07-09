@@ -133,9 +133,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give UoW a bit of time
-        await().atMost(1, TimeUnit.SECONDS).until(() -> mySynchronization.isOnDone());
-
-        assertTrue("Should have invoked onDone", mySynchronization.isOnDone());
+        await("onDone invokation").atMost(1, TimeUnit.SECONDS).until(mySynchronization::isOnDone);
     }
 
     public void testProduceSynchronization() throws Exception {
@@ -153,9 +151,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give UoW a bit of time
-        await().atMost(1, TimeUnit.SECONDS).until(() -> mySynchronization.isOnDone());
-
-        assertTrue("Should have invoked onDone", mySynchronization.isOnDone());
+        await("onDone invocation").atMost(1, TimeUnit.SECONDS).until(mySynchronization::isOnDone);
     }
 
     public void testEndpointInjectProducerTemplate() throws Exception {
