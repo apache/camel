@@ -30,22 +30,18 @@ public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     protected int messageCount = 9;
 
-    public void testSendLotsOfMessagesButOnly3GetThrough() throws Exception {
+    public void testSendLotsOfMessages() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(3);
-        resultEndpoint.setResultWaitTime(5000);
+        resultEndpoint.expectedMessageCount(messageCount);
 
         for (int i = 0; i < messageCount; i++) {
             template.sendBody("seda:a", "<message>" + i + "</message>");
         }
 
-        // lets pause to give the requests time to be processed
-        // to check that the throttle really does kick in
         resultEndpoint.assertIsSatisfied();
     }
 
-    public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
-        long start = System.currentTimeMillis();
+    public void testSendLotsOfMessagesSimultaneously() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(messageCount);
 
@@ -61,11 +57,8 @@ public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
         // let's wait for the exchanges to arrive
         resultEndpoint.assertIsSatisfied();
 
-        // now assert that they have actually been throttled
-        long minimumTime = (messageCount - 1) * INTERVAL;
-        // add a little slack
-        long delta = System.currentTimeMillis() - start + 200;
-        assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
+        context.stop();
+        
         executor.shutdownNow();
     }
 
@@ -73,10 +66,10 @@ public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("seda:a").throttle(3).timePeriodMillis(10000).asyncDelayed().to("log:result", "mock:result");
+                from("seda:a").throttle(3).timePeriodMillis(INTERVAL).asyncDelayed().to("log:result", "mock:result");
                 // END SNIPPET: ex
 
-                from("direct:a").throttle(1).timePeriodMillis(INTERVAL).asyncDelayed().to("log:result", "mock:result");
+                from("direct:a").throttle(3).timePeriodMillis(INTERVAL).asyncDelayed().to("log:result", "mock:result");
             }
         };
     }

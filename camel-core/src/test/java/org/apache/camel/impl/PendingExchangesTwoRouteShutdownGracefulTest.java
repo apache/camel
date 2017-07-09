@@ -64,14 +64,14 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").to("mock:foo").delay(1000).process(new Processor() {
+                from("seda:foo").to("mock:foo").delay(100).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         foo = foo + exchange.getIn().getBody(String.class);
                         latch.countDown();
                     }
                 });
 
-                from("seda:bar").to("mock:bar").delay(500).process(new Processor() {
+                from("seda:bar").to("mock:bar").delay(50).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         bar = bar + exchange.getIn().getBody(String.class);
                         latch.countDown();
