@@ -35,11 +35,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @since 1.5.0
  */
 @ConfigurationProperties(prefix = "endpoints." + CamelRoutesEndpoint.ENDPOINT_ID)
-public class CamelMvcRoutesEndpoint extends EndpointMvcAdapter {
+public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
     private static final ResponseEntity<?> NOT_FOUND = ResponseEntity.notFound().build();
     private final CamelRoutesEndpoint delegate;
 
-    public CamelMvcRoutesEndpoint(CamelRoutesEndpoint delegate) {
+    public CamelRoutesMvcEndpoint(CamelRoutesEndpoint delegate) {
         super(delegate);
 
         this.delegate = delegate;
