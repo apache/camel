@@ -22,9 +22,8 @@ import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -32,7 +31,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @ConfigurationProperties(prefix = "endpoints." + CamelRoutesEndpoint.ENDPOINT_ID)
 public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
+
     private static final ResponseEntity<?> NOT_FOUND = ResponseEntity.notFound().build();
+
     private final CamelRoutesEndpoint delegate;
 
     public CamelRoutesMvcEndpoint(CamelRoutesEndpoint delegate) {
@@ -41,14 +42,9 @@ public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
         this.delegate = delegate;
     }
 
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/{id}",
-        produces = {
+    @GetMapping(value = "/{id}", produces = {
             ActuatorMediaTypes.APPLICATION_ACTUATOR_V1_JSON_VALUE,
-            MediaType.APPLICATION_JSON_VALUE
-        }
-    )
+            MediaType.APPLICATION_JSON_VALUE })
     @ResponseBody
     public Object get(@PathVariable String id) {
         if (!delegate.isEnabled()) {
