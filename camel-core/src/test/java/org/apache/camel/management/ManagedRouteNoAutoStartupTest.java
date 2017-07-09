@@ -76,14 +76,11 @@ public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         // need a bit time to let JMX update
-        await().atMost(1, TimeUnit.SECONDS).until(() -> {
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            // should have 1 completed exchange
             Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-            return completed > 0;
+            assertEquals(1, completed.longValue());
         });
-
-        // should have 1 completed exchange
-        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-        assertEquals(1, completed.longValue());
 
         // should be 1 consumer and 1 processor
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);

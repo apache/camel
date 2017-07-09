@@ -42,11 +42,12 @@ public class LoadTimerTest extends ContextTestSupport {
         TestLoadAware test = new TestLoadAware();
         myTimer.addTimerListener(test);
         try {
-            await().atMost(5, TimeUnit.SECONDS).until(() -> test.counter >= SAMPLES);
-            assertTrue(test.counter >= SAMPLES);
-            assertFalse(Double.isNaN(test.load.getLoad1()));
-            assertTrue(test.load.getLoad1() > 0.0d);
-            assertTrue(test.load.getLoad1() < SAMPLES);
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertTrue(test.counter >= SAMPLES);
+                assertFalse(Double.isNaN(test.load.getLoad1()));
+                assertTrue(test.load.getLoad1() > 0.0d);
+                assertTrue(test.load.getLoad1() < SAMPLES);
+            });
         } finally {
             myTimer.removeTimerListener(test);
         }

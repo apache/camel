@@ -66,9 +66,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
         // wait for that file to be processed
         // (is slow on osx, so wait up till 20 seconds)
-        await().atMost(20, TimeUnit.SECONDS).until(() -> context.getRoutes().size() > 0);
-
-        assertEquals(1, context.getRoutes().size());
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
 
         // and the route should work
         getMockEndpoint("mock:bar").expectedMessageCount(1);
@@ -161,9 +159,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
         // wait for that file to be processed
         // (is slow on osx, so wait up till 20 seconds)
-        await().atMost(20, TimeUnit.SECONDS).until(() -> context.getRoutes().size() > 0);
-
-        assertEquals(1, context.getRoutes().size());
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
 
         // and the route should work
         getMockEndpoint("mock:bar").expectedMessageCount(1);

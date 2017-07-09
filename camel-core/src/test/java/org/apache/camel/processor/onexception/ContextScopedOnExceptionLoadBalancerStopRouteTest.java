@@ -71,8 +71,8 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         template.sendBody("direct:start", "World");
 
         // give time for route to stop
-        await().atMost(1, TimeUnit.SECONDS).until(() -> context.getRouteStatus("errorRoute").isStopped());
-        assertEquals(ServiceStatus.Stopped, context.getRouteStatus("errorRoute"));
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() ->
+            assertEquals(ServiceStatus.Stopped, context.getRouteStatus("errorRoute")));
 
         template.sendBody("direct:start", "Kaboom");
 

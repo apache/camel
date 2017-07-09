@@ -155,9 +155,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give it time to complete
-        await().atMost(1, TimeUnit.SECONDS).until(() -> events.size() == 6);
-
-        assertEquals(6, events.size());
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(6, events.size()));
 
         // we should find log:foo which we tapped
         // which runs async so they can be in random order
