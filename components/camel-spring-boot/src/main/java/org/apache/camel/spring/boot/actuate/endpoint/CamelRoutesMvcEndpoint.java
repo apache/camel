@@ -18,6 +18,7 @@ package org.apache.camel.spring.boot.actuate.endpoint;
 
 import org.springframework.boot.actuate.endpoint.mvc.ActuatorMediaTypes;
 import org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter;
+import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Adapter to expose {@link CamelRoutesEndpoint} as an {@link MvcEndpoint}.
- *
- * @author Ben Hale
- * @author Kazuki Shimizu
- * @author Eddú Meléndez
- * @since 1.5.0
  */
 @ConfigurationProperties(prefix = "endpoints." + CamelRoutesEndpoint.ENDPOINT_ID)
 public class CamelRoutesMvcEndpoint extends EndpointMvcAdapter {
