@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -68,7 +69,7 @@ public class NewFileConsumeTest extends ContextTestSupport {
             }
         });
         consumer.start();
-        latch.await();
+        latch.await(5, TimeUnit.SECONDS);
 
         consumer.stop();
     }
