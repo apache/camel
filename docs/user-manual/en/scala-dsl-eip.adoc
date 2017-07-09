@@ -1,3 +1,8 @@
+Scala DSL - EIP
+===============
+
+[TIP]
+====
 *DSL supported*
 
 The link:scala-dsl.html[Scala DSL] supports *every* DSL from the
@@ -7,6 +12,7 @@ On this page we have examples for a number of the link:eip.html[EIP]s. +
  You can check the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-scala/src/test/scala/[unit
 test source code] for the Scala Component to find more examples.
+====
 
 * 1 link:#ScalaDSL-EIP-Messagingsystems[Messaging systems]
 ** 1.1 link:#ScalaDSL-EIP-Pipelinepipeline[Pipeline]
@@ -28,11 +34,11 @@ test source code] for the Scala Component to find more examples.
 
 [[ScalaDSL-EIP-Messagingsystems]]
 Messaging systems
-^^^^^^^^^^^^^^^^^
+-----------------
 
 [[ScalaDSL-EIP-Pipelinepipeline]]
 Pipeline
-++++++++
+~~~~~~~~
 
 There is a simple syntax available for specifying pipeline, by simple
 putting `to` or `→` between the different steps in the pipeline.
@@ -52,7 +58,7 @@ where every step in the pipeline starts with either `to` or `→`.
   --> ("mock:e")
   --> ("mock:f")
 }
- 
+
 "direct:g" ==> {
   to ("mock:g")
   to ("mock:h")
@@ -61,7 +67,7 @@ where every step in the pipeline starts with either `to` or `→`.
 
 [[ScalaDSL-EIP-Filterfilter]]
 Filter
-++++++
+~~~~~~
 
 For a message filter, use the `when()` method with a parameter of type
 The `Exchange ⇒ Boolean`. In the example below, we use a Scala
@@ -157,7 +163,7 @@ language of the message body.
     when (_.in == "<hallo/>") {
       to ("mock:dutch")
       to ("mock:german")
-    } 
+    }
     otherwise to ("mock:french")
   }
 }
@@ -391,8 +397,8 @@ val myProcessor = (exchange: Exchange) => {
     case "hallo" => exchange.in = "hallo vanuit Belgie"
     case "bonjour" => exchange.in = "bonjour de la douce France"
   }
-}    
- 
+}
+
 "direct:b" process(myProcessor) to ("mock:b")
 ----------------------------------------------------------------------------------------------------------------
 
@@ -403,5 +409,5 @@ pipeline
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------
-"direct:c" to ("velocity:org/apache/camel/scala/dsl/enricher.vm") to ("mock:c")   
+"direct:c" to ("velocity:org/apache/camel/scala/dsl/enricher.vm") to ("mock:c")
 ----------------------------------------------------------------------------------------------------------------
