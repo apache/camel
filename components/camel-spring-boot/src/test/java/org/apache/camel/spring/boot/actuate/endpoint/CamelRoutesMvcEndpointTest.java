@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteDetailsEndpointInfo;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteEndpointInfo;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,8 +61,8 @@ public class CamelRoutesMvcEndpointTest extends Assert {
     public void testMvcRoutesEndpoint() throws Exception {
         Object result = endpoint.get("foo-route");
 
-        assertTrue(result instanceof RouteEndpointInfo);
-        assertEquals("foo-route", ((RouteEndpointInfo)result).getId());
+        assertTrue(result instanceof RouteDetailsEndpointInfo);
+        assertEquals("foo-route", ((RouteDetailsEndpointInfo)result).getId());
     }
 
 }

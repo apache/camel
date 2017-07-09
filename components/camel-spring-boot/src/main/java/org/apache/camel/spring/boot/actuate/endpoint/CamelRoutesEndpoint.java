@@ -16,14 +16,17 @@
  */
 package org.apache.camel.spring.boot.actuate.endpoint;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteEndpointInfo;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.actuate.endpoint.Endpoint;
@@ -55,10 +58,10 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
             .collect(Collectors.toList());
     }
 
-    public RouteEndpointInfo getRouteInfo(String id) {
+    public RouteDetailsEndpointInfo getRouteDetailsInfo(String id) {
         Route route = camelContext.getRoute(id);
         if (route != null) {
-            return new RouteEndpointInfo(route);
+            return new RouteDetailsEndpointInfo(camelContext, route);
         }
 
         return null;
@@ -110,6 +113,207 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
         public String getStatus() {
             return status;
+        }
+    }
+
+    /**
+     * Container for exposing {@link org.apache.camel.Route} information
+     * with route details as JSON. Route details are retrieved from JMX.
+     */
+    public static class RouteDetailsEndpointInfo extends RouteEndpointInfo {
+
+        @JsonProperty("details")
+        private RouteDetails routeDetails;
+
+        public RouteDetailsEndpointInfo(final CamelContext camelContext, final Route route) {
+            super(route);
+            if (camelContext.getManagementStrategy().getManagementAgent() != null) {
+                this.routeDetails = new RouteDetails(camelContext.getManagedRoute(route.getId(),
+                        ManagedRouteMBean.class));
+            }
+        }
+
+        public RouteDetails getRouteDetails() {
+            return routeDetails;
+        }
+
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        static class RouteDetails {
+
+            private long deltaProcessingTime;
+
+            private long exchangesInflight;
+
+            private long exchangesTotal;
+
+            private long externalRedeliveries;
+
+            private long failuresHandled;
+
+            private String firstExchangeCompletedExchangeId;
+
+            private Date firstExchangeCompletedTimestamp;
+
+            private String firstExchangeFailureExchangeId;
+
+            private Date firstExchangeFailureTimestamp;
+
+            private String lastExchangeCompletedExchangeId;
+
+            private Date lastExchangeCompletedTimestamp;
+
+            private String lastExchangeFailureExchangeId;
+
+            private Date lastExchangeFailureTimestamp;
+
+            private long lastProcessingTime;
+
+            private String load01;
+
+            private String load05;
+
+            private String load15;
+
+            private long maxProcessingTime;
+
+            private long meanProcessingTime;
+
+            private long minProcessingTime;
+
+            private Long oldestInflightDuration;
+
+            private String oldestInflightExchangeId;
+
+            private long redeliveries;
+
+            private long totalProcessingTime;
+
+            RouteDetails(ManagedRouteMBean managedRoute) {
+                try {
+                    this.deltaProcessingTime = managedRoute.getDeltaProcessingTime();
+                    this.exchangesInflight = managedRoute.getExchangesInflight();
+                    this.exchangesTotal = managedRoute.getExchangesTotal();
+                    this.externalRedeliveries = managedRoute.getExternalRedeliveries();
+                    this.failuresHandled = managedRoute.getFailuresHandled();
+                    this.firstExchangeCompletedExchangeId = managedRoute.getFirstExchangeCompletedExchangeId();
+                    this.firstExchangeCompletedTimestamp = managedRoute.getFirstExchangeCompletedTimestamp();
+                    this.firstExchangeFailureExchangeId = managedRoute.getFirstExchangeFailureExchangeId();
+                    this.firstExchangeFailureTimestamp = managedRoute.getFirstExchangeFailureTimestamp();
+                    this.lastExchangeCompletedExchangeId = managedRoute.getLastExchangeCompletedExchangeId();
+                    this.lastExchangeCompletedTimestamp = managedRoute.getLastExchangeCompletedTimestamp();
+                    this.lastExchangeFailureExchangeId = managedRoute.getLastExchangeFailureExchangeId();
+                    this.lastExchangeFailureTimestamp = managedRoute.getLastExchangeFailureTimestamp();
+                    this.lastProcessingTime = managedRoute.getLastProcessingTime();
+                    this.load01 = managedRoute.getLoad01();
+                    this.load05 = managedRoute.getLoad05();
+                    this.load15 = managedRoute.getLoad15();
+                    this.maxProcessingTime = managedRoute.getMaxProcessingTime();
+                    this.meanProcessingTime = managedRoute.getMeanProcessingTime();
+                    this.minProcessingTime = managedRoute.getMinProcessingTime();
+                    this.oldestInflightDuration = managedRoute.getOldestInflightDuration();
+                    this.oldestInflightExchangeId = managedRoute.getOldestInflightExchangeId();
+                    this.redeliveries = managedRoute.getRedeliveries();
+                    this.totalProcessingTime = managedRoute.getTotalProcessingTime();
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }
+
+            public long getDeltaProcessingTime() {
+                return deltaProcessingTime;
+            }
+
+            public long getExchangesInflight() {
+                return exchangesInflight;
+            }
+
+            public long getExchangesTotal() {
+                return exchangesTotal;
+            }
+
+            public long getExternalRedeliveries() {
+                return externalRedeliveries;
+            }
+
+            public long getFailuresHandled() {
+                return failuresHandled;
+            }
+
+            public String getFirstExchangeCompletedExchangeId() {
+                return firstExchangeCompletedExchangeId;
+            }
+
+            public Date getFirstExchangeCompletedTimestamp() {
+                return firstExchangeCompletedTimestamp;
+            }
+
+            public String getFirstExchangeFailureExchangeId() {
+                return firstExchangeFailureExchangeId;
+            }
+
+            public Date getFirstExchangeFailureTimestamp() {
+                return firstExchangeFailureTimestamp;
+            }
+
+            public String getLastExchangeCompletedExchangeId() {
+                return lastExchangeCompletedExchangeId;
+            }
+
+            public Date getLastExchangeCompletedTimestamp() {
+                return lastExchangeCompletedTimestamp;
+            }
+
+            public String getLastExchangeFailureExchangeId() {
+                return lastExchangeFailureExchangeId;
+            }
+
+            public Date getLastExchangeFailureTimestamp() {
+                return lastExchangeFailureTimestamp;
+            }
+
+            public long getLastProcessingTime() {
+                return lastProcessingTime;
+            }
+
+            public String getLoad01() {
+                return load01;
+            }
+
+            public String getLoad05() {
+                return load05;
+            }
+
+            public String getLoad15() {
+                return load15;
+            }
+
+            public long getMaxProcessingTime() {
+                return maxProcessingTime;
+            }
+
+            public long getMeanProcessingTime() {
+                return meanProcessingTime;
+            }
+
+            public long getMinProcessingTime() {
+                return minProcessingTime;
+            }
+
+            public Long getOldestInflightDuration() {
+                return oldestInflightDuration;
+            }
+
+            public String getOldestInflightExchangeId() {
+                return oldestInflightExchangeId;
+            }
+
+            public long getRedeliveries() {
+                return redeliveries;
+            }
+
+            public long getTotalProcessingTime() {
+                return totalProcessingTime;
+            }
         }
     }
 
