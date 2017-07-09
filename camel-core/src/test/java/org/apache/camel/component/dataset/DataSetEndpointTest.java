@@ -39,6 +39,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         endpoint.setCamelContext(context);
         endpoint.setEndpointUriIfNotSpecified("dataset://foo");
         endpoint.setDataSet(new SimpleDataSet(2));
+        endpoint.setInitialDelay(0);
 
         assertEquals(0, endpoint.getPreloadSize());
         assertEquals(0, endpoint.getConsumeDelay());
@@ -63,8 +64,8 @@ public class DataSetEndpointTest extends ContextTestSupport {
         assertEquals(2, endpoint.getConsumeDelay());
         endpoint.setProduceDelay(5);
         assertEquals(5, endpoint.getProduceDelay());
-        endpoint.setInitialDelay(50);
-        assertEquals(50, endpoint.getInitialDelay());
+        endpoint.setInitialDelay(1);
+        assertEquals(1, endpoint.getInitialDelay());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -80,6 +81,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
 
     public void testDataSetReporter() throws Exception {
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(10));
+        endpoint.setInitialDelay(0);
 
         final AtomicBoolean reported = new AtomicBoolean(false);
         endpoint.setReporter(new Processor() {
@@ -121,6 +123,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         assertNotNull(ds.getOutputTransformer());
 
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), ds);
+        endpoint.setInitialDelay(0);
         endpoint.allMessages().body().startsWith("Hi ");
 
         context.addRoutes(new RouteBuilder() {

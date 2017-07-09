@@ -27,11 +27,13 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class DataSetSedaTest extends ContextTestSupport {
     private SimpleDataSet dataSet = new SimpleDataSet(200);
-    private String uri = "dataset:foo?produceDelay=3";
+    private String uri = "dataset:foo?initialDelay=0&produceDelay=1";
 
     public void testDataSetWithSeda() throws Exception {
         MockEndpoint endpoint = getMockEndpoint(uri);
         endpoint.expectedMessageCount((int) dataSet.getSize());
+
+        context.startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +49,7 @@ public class DataSetSedaTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri).to("seda:test");
+                from(uri).to("seda:test").noAutoStartup();
 
                 from("seda:test").to(uri);
             }
