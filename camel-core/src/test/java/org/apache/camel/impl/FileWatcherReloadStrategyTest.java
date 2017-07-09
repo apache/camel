@@ -44,6 +44,8 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
         reloadStrategy = new FileWatcherReloadStrategy();
         reloadStrategy.setFolder("target/dummy");
+        // to make unit test faster
+        reloadStrategy.setPollTimeout(100);
         context.setReloadStrategy(reloadStrategy);
         return context;
     }

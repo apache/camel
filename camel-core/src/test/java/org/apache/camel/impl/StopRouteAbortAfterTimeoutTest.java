@@ -38,8 +38,8 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
             template.sendBody("seda:start", "message-" + i);
         }
 
-        // stop route with a 2s timeout and abortAfterTimeout=true (should abort after 2s)
-        boolean stopRouteResponse = context.stopRoute("start", 2, TimeUnit.SECONDS, true);
+        // stop route with a 1s timeout and abortAfterTimeout=true (should abort after 1s)
+        boolean stopRouteResponse = context.stopRoute("start", 1, TimeUnit.SECONDS, true);
 
         // confirm that route is still running
         assertFalse("stopRoute response should be False", stopRouteResponse);
@@ -66,8 +66,8 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
             template.sendBody("seda:start", "message-" + i);
         }
         
-        // stop route with a 2s timeout and abortAfterTimeout=false (normal timeout behavior)
-        boolean stopRouteResponse = context.stopRoute("start", 2, TimeUnit.SECONDS, false);
+        // stop route with a 1s timeout and abortAfterTimeout=false (normal timeout behavior)
+        boolean stopRouteResponse = context.stopRoute("start", 1, TimeUnit.SECONDS, false);
 
         // the route should have been forced stopped
         assertTrue("stopRoute response should be True", stopRouteResponse);
@@ -92,7 +92,7 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
                 // shutdown this test faster
                 context.getShutdownStrategy().setTimeout(3);
 
-                from("seda:start").routeId("start").delay(500).to("mock:result");
+                from("seda:start").routeId("start").delay(100).to("mock:result");
             }
         };
     }
