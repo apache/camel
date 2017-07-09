@@ -34,13 +34,10 @@ public class DurationRoutePolicyMaxMessagesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // need a little time to stop async
-        await().atMost(5, TimeUnit.SECONDS).until(() -> {
-            boolean started = context.getRouteStatus("foo").isStarted();
-            boolean stopped = context.getRouteStatus("foo").isStopped();
-            return !started && stopped;
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertFalse(context.getRouteStatus("foo").isStarted());
+            assertTrue(context.getRouteStatus("foo").isStopped());
         });
-        assertFalse(context.getRouteStatus("foo").isStarted());
-        assertTrue(context.getRouteStatus("foo").isStopped());
     }
 
     @Override
