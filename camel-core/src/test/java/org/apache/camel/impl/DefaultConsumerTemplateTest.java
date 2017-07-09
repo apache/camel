@@ -124,12 +124,9 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        await().atMost(1, TimeUnit.SECONDS).until(() -> {
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
             Object foo = consumer.receiveBodyNoWait("seda:foo");
-            if (foo != null) {
-                assertEquals("Hello", foo);
-            }
-            return foo != null;
+            assertEquals("Hello", foo);
         });
     }
 
@@ -158,12 +155,9 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        await().atMost(1, TimeUnit.SECONDS).until(() -> {
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
             String foo = consumer.receiveBodyNoWait("seda:foo", String.class);
-            if (foo != null) {
-                assertEquals("Hello", foo);
-            }
-            return foo != null;
+            assertEquals("Hello", foo);
         });
     }
 
@@ -261,12 +255,9 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        await().atMost(1, TimeUnit.SECONDS).until(() -> {
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
             String foo = consumer.receiveBodyNoWait(endpoint, String.class);
-            if (foo != null) {
-                assertEquals("Hello", foo);
-            }
-            return foo != null;
+            assertEquals("Hello", foo);
         });
     }
 
@@ -279,12 +270,9 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "Hello");
 
-        await().atMost(1, TimeUnit.SECONDS).until(() -> {
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
             Object foo = consumer.receiveBodyNoWait(endpoint);
-            if (foo != null) {
-                assertEquals("Hello", foo);
-            }
-            return foo != null;
+            assertEquals("Hello", foo);
         });
     }
 
