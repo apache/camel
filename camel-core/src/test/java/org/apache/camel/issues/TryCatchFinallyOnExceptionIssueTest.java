@@ -44,6 +44,7 @@ public class TryCatchFinallyOnExceptionIssueTest extends ContextTestSupport {
                 from("seda:start")
                     .onException(Exception.class)
                         .handled(true)
+                        .redeliveryDelay(0)
                         .maximumRedeliveries(2)
                         .to("mock:error")
                     .end()

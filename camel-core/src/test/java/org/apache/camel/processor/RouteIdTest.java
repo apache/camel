@@ -58,7 +58,7 @@ public class RouteIdTest extends ContextTestSupport {
                 onException(Exception.class).handled(true).to("mock:error").end();
 
                 from("direct:start")
-                    .onException(IOException.class).maximumRedeliveries(5).end()
+                    .onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(5).end()
                     .routeId("myCoolRoute")
                     .choice()
                         .when(body().contains("Kabom")).throwException(new IllegalArgumentException("Damn"))

@@ -41,7 +41,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")
@@ -66,7 +66,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")
@@ -101,7 +101,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
             public void configure() throws Exception {
                 context.setTracing(true);
 
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")

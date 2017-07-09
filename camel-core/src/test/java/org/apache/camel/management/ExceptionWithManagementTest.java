@@ -59,7 +59,7 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                onException(IllegalArgumentException.class).maximumRedeliveries(1).to("mock:error");
+                onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(1).to("mock:error");
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

@@ -79,7 +79,7 @@ public class TwoRouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredic
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:global")
                         .maximumRedeliveries(2)
-                        .redeliveryDelay(5000));
+                        .redeliveryDelay(500));
 
                 from("direct:start")
                         // no redelivery delay for faster unit tests

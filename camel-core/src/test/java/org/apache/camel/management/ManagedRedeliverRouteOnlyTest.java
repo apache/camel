@@ -64,6 +64,7 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
                 context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
 
                 onException(Exception.class).handled(true)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(4).logStackTrace(false)
                     .setBody().constant("Error");
 
