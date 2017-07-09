@@ -84,9 +84,7 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
 
-        await().atMost(1, TimeUnit.SECONDS).until(policy::isStopped);
-
-        assertTrue("Should be stopped", policy.isStopped());
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertTrue("Should be stopped", policy.isStopped()));
     }
 
     @Override

@@ -55,14 +55,11 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
         // need a bit time to let JMX update
-        await().atMost(1, TimeUnit.SECONDS).until(() -> {
-            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-            return num == 1;
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            // should have 1 completed exchange
+            Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+            assertEquals(1, completed.longValue());
         });
-
-        // should have 1 completed exchange
-        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-        assertEquals(1, completed.longValue());
 
         // should be 1 consumer and 2 processors
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
@@ -125,7 +122,7 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         });
 
         // should have 2 completed exchange
-        completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
     }
 

@@ -55,13 +55,10 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        await().atMost(5, TimeUnit.SECONDS).until(() -> {
-            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-            return num == 1;
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+            assertEquals(1, completed.longValue());
         });
-
-        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-        assertEquals(1, completed.longValue());
 
         delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
         Long last = (Long) mbeanServer.getAttribute(on, "LastProcessingTime");
@@ -74,7 +71,7 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         // send in another message
         template.sendBody("direct:start", "Bye World");
 
-        completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
         delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
         last = (Long) mbeanServer.getAttribute(on, "LastProcessingTime");

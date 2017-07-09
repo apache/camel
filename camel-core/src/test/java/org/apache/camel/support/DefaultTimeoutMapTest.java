@@ -252,10 +252,9 @@ public class DefaultTimeoutMapTest extends TestCase {
         map.start();
 
         // start and wait for scheduler to purge
-        await().atMost(2, TimeUnit.SECONDS).until(() -> map.size() == 0);
-
-        // now it should be gone
-        assertEquals(0, map.size());
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() ->
+            // now it should be gone
+            assertEquals(0, map.size()));
 
         map.stop();
     }

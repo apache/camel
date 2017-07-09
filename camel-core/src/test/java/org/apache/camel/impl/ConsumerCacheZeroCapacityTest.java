@@ -50,9 +50,8 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
         cache.releasePollingConsumer(endpoint, consumer);
 
         // takes a little to stop
-        await().atMost(1, TimeUnit.SECONDS).until(() -> ((ServiceSupport) consumer).getStatus().isStopped());
-
-        assertEquals("Stopped", ((org.apache.camel.support.ServiceSupport) consumer).getStatus().name());
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() ->
+            assertEquals("Stopped", ((ServiceSupport) consumer).getStatus().name()));
 
         // should not be a file consumer thread
         found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/foo"));
