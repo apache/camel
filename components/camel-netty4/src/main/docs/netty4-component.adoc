@@ -640,7 +640,7 @@ using the `NettyWorkerPoolBuilder` with 2 worker threads as shown below:
 
 [source,xml]
 -----------------------------------------------------------------------------------------
-  <!-- use the worker pool builder to create to help create the shared thread pool -->
+  <!-- use the worker pool builder to help create the shared thread pool -->
   <bean id="poolBuilder" class="org.apache.camel.component.netty.NettyWorkerPoolBuilder">
     <property name="workerCount" value="2"/>
   </bean>
@@ -655,7 +655,7 @@ TIP: For boss thread pool there is a
 `org.apache.camel.component.netty4.NettyServerBossPoolBuilder` builder
 for Netty consumers, and a
 `org.apache.camel.component.netty4.NettyClientBossPoolBuilder` for the
-Netty produces.
+Netty producers.
 
 Then in the Camel routes we can refer to this worker pools by
 configuring the `workerPool` option in the
