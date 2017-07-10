@@ -40,6 +40,8 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -71,6 +73,8 @@ public class DefaultRouteContext implements RouteContext {
     private List<RoutePolicy> routePolicyList = new ArrayList<RoutePolicy>();
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
+    private RouteError routeError;
+    private RouteController routeController;
 
     public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.camelContext = camelContext;
@@ -442,4 +446,23 @@ public class DefaultRouteContext implements RouteContext {
         return routePolicyList;
     }
 
+    @Override
+    public RouteError getLastError() {
+        return routeError;
+    }
+
+    @Override
+    public void setLastError(RouteError routeError) {
+        this.routeError = routeError;
+    }
+
+    @Override
+    public RouteController getRouteController() {
+        return routeController;
+    }
+
+    @Override
+    public void setRouteController(RouteController routeController) {
+        this.routeController = routeController;
+    }
 }

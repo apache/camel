@@ -16,8 +16,10 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import org.apache.camel.Experimental;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.spi.RouteError;
 
 public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
@@ -129,5 +131,11 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Oldest inflight exchange id")
     String getOldestInflightExchangeId();
 
+    @Experimental
+    @ManagedAttribute(description = "Route controller")
+    Boolean getHasRouteController();
 
+    @Experimental
+    @ManagedAttribute(description = "Last error")
+    RouteError getLastError();
 }

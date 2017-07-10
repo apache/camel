@@ -29,6 +29,7 @@ org.apache.camel.impl.springboot.StringDataFormatAutoConfiguration,\
 org.apache.camel.impl.springboot.ZipDataFormatAutoConfiguration,\
 org.apache.camel.impl.springboot.GzipDataFormatAutoConfiguration,\
 org.apache.camel.impl.springboot.SerializationDataFormatAutoConfiguration,\
+org.apache.camel.impl.springboot.SupervisingRouteControllerAutoConfiguration,\
 org.apache.camel.language.constant.springboot.ConstantLanguageAutoConfiguration,\
 org.apache.camel.language.simple.springboot.SimpleLanguageAutoConfiguration,\
 org.apache.camel.language.ref.springboot.RefLanguageAutoConfiguration,\

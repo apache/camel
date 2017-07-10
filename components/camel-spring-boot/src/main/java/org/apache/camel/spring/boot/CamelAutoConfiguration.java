@@ -46,6 +46,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -437,6 +438,13 @@ public class CamelAutoConfiguration {
         GlobalSSLContextParametersSupplier sslContextParametersSupplier = getSingleBeanOfType(applicationContext, GlobalSSLContextParametersSupplier.class);
         if (sslContextParametersSupplier != null) {
             camelContext.setSSLContextParameters(sslContextParametersSupplier.get());
+        }
+
+        // Route controller
+        RouteController routeController = getSingleBeanOfType(applicationContext, RouteController.class);
+        if (routeController != null) {
+            LOG.info("Using RouteController: " + routeController);
+            camelContext.setRouteController(routeController);
         }
 
         // set the default thread pool profile if defined

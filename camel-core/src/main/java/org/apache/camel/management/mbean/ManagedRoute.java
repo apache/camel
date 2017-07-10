@@ -49,6 +49,7 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.XmlLineNumberParser;
@@ -215,28 +216,28 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        context.startRoute(getRouteId());
+        context.getRouteController().startRoute(getRouteId());
     }
 
     public void stop() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        context.stopRoute(getRouteId());
+        context.getRouteController().stopRoute(getRouteId());
     }
 
     public void stop(long timeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS);
+        context.getRouteController().stopRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
     public boolean stop(Long timeout, Boolean abortAfterTimeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
         }
-        return context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS, abortAfterTimeout);
+        return context.getRouteController().stopRoute(getRouteId(), timeout, TimeUnit.SECONDS, abortAfterTimeout);
     }
 
     public void shutdown() throws Exception {
@@ -479,6 +480,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         } else {
             return oldest.getExchange().getExchangeId();
         }
+    }
+
+    @Override
+    public Boolean getHasRouteController() {
+        return route.getRouteContext().getRouteController() != null;
+    }
+
+    @Override
+    public RouteError getLastError() {
+        return route.getRouteContext().getLastError();
     }
 
     /**

@@ -423,6 +423,21 @@ public final class ObjectHelper {
     }
 
     /**
+     * Tests whether the value is  <tt>null</tt>, an empty string, an empty collection or a map
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param supplier  the supplier, the supplier to be used to get a value if value is null
+     */
+    public static <T> T supplyIfEmpty(T value, Supplier<T> supplier) {
+        ObjectHelper.notNull(supplier, "Supplier");
+        if (isNotEmpty(value)) {
+            return value;
+        }
+
+        return supplier.get();
+    }
+
+    /**
      * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map
      *
      * @param value  the value, if its a String it will be tested for text length as well
