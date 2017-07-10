@@ -606,7 +606,7 @@
     <spark-version>1.6.1</spark-version>
     <spark-rest-version>2.6.0</spark-rest-version>
     <spark-rest-bundle-version>2.6.0_1</spark-rest-bundle-version>
-    <splunk-version>1.5.0.0_1</splunk-version>
+    <splunk-version>1.6.3.0_1</splunk-version>
     <spring-batch-version>3.0.7.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.7.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>1.5.4.RELEASE</spring-boot-version>
