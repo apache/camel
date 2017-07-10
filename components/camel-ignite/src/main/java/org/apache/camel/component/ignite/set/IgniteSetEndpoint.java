@@ -38,7 +38,7 @@ import org.apache.ignite.configuration.CollectionConfiguration;
  * <a href="https://apacheignite.readme.io/docs/queue-and-set">Ignite Set data structures</a>.
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:[name]", label = "nosql,cache", producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:name", label = "nosql,cache", producerOnly = true)
 public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath @Metadata(required = "true")

@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * This endpoint only supports consumers.
  * The Exchanges created by this consumer put the received Event object into the body of the IN message.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:[endpointId]", label = "nosql,cache,compute,messaging,data", 
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:endpointId", label = "nosql,cache,compute,messaging,data",
     consumerOnly = true, consumerClass = IgniteEventsConsumer.class)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 

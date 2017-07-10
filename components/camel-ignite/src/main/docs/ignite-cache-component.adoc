@@ -29,7 +29,7 @@ The Ignite Cache component supports 4 options which are listed below.
 // endpoint options: START
 The Ignite Cache endpoint is configured using URI syntax:
 
-    ignite-cache:[cacheName]
+    ignite-cache:cacheName
 
 with the following path and query parameters:
 
