@@ -24,11 +24,9 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * Couchbase component.
  */
-
 public class CouchbaseComponent extends DefaultComponent {
 
     public CouchbaseComponent() {
-
     }
 
     public CouchbaseComponent(CamelContext context) {

@@ -57,7 +57,7 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
  * Represents a Couchbase endpoint that can query Views with a Poll strategy
  * and/or produce various type of operations.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:url", consumerClass = CouchbaseConsumer.class, label = "database,nosql")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "couchbase", title = "Couchbase", syntax = "couchbase:protocol:hostname:port", consumerClass = CouchbaseConsumer.class, label = "database,nosql")
 public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
@@ -66,8 +66,9 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     @UriPath
     @Metadata(required = "true")
     private String hostname;
-    @UriParam(defaultValue = "8091")
+    @UriPath(defaultValue = "8091")
     private int port;
+
     @UriParam
     private String bucket;
 
