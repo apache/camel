@@ -306,6 +306,7 @@ public class RouteService extends ChildServiceSupport {
                         routePolicy.onRemove(route);
                     }
                 }
+
                 // fire event
                 EventHelper.notifyRouteRemoved(camelContext, route);
             }

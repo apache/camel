@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
+import org.apache.camel.Experimental;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeConfiguration;
 import org.apache.camel.model.FromDefinition;
@@ -192,4 +193,39 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      */
     int getAndIncrement(ProcessorDefinition<?> node);
 
+    /**
+     * Gets the last error.
+     *
+     * @return the error
+     */
+    default RouteError getLastError() {
+        return null;
+    }
+
+    /**
+     * Sets the last error.
+     *
+     * @param error the error
+     */
+    default void setLastError(RouteError error) {
+    }
+
+    /**
+     * Gets the  {@link RouteController} for this route.
+     *
+     * @return the route controller,
+     */
+    @Experimental
+    default RouteController getRouteController() {
+        return null;
+    }
+
+    /**
+     * Sets the {@link RouteController} for this route.
+     *
+     * @param controller the RouteController
+     */
+    @Experimental
+    default void setRouteController(RouteController controller) {
+    }
 }

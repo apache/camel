@@ -18,6 +18,8 @@ package org.apache.camel.spring.boot.actuate.endpoint;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.RouteError;
 import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpoint.RouteEndpointInfo;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.actuate.endpoint.Endpoint;
@@ -67,6 +70,30 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
         return null;
     }
 
+    public void startRoute(String id) throws Exception {
+        camelContext.getRouteController().startRoute(id);
+    }
+
+    public void stopRoute(String id, Optional<Long> timeout, Optional<TimeUnit> timeUnit, Optional<Boolean> abortAfterTimeout) throws Exception {
+        if (timeout.isPresent()) {
+            camelContext.getRouteController().stopRoute(id, timeout.get(), timeUnit.orElse(TimeUnit.SECONDS), abortAfterTimeout.orElse(Boolean.TRUE));
+        } else {
+            camelContext.getRouteController().stopRoute(id);
+        }
+    }
+
+    public void suspendRoute(String id, Optional<Long> timeout, Optional<TimeUnit> timeUnit) throws Exception {
+        if (timeout.isPresent()) {
+            camelContext.getRouteController().suspendRoute(id, timeout.get(), timeUnit.orElse(TimeUnit.SECONDS));
+        } else {
+            camelContext.getRouteController().suspendRoute(id);
+        }
+    }
+
+    public void resumeRoute(String id) throws Exception {
+        camelContext.getRouteController().resumeRoute(id);
+    }
+
     /**
      * Container for exposing {@link org.apache.camel.Route} information as JSON.
      */
@@ -82,7 +109,7 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
         private final long uptimeMillis;
 
-        private String status;
+        private final String status;
 
         public RouteEndpointInfo(Route route) {
             this.id = route.getId();
@@ -92,6 +119,8 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
             if (route instanceof StatefulService) {
                 this.status = ((StatefulService) route).getStatus().name();
+            } else {
+                this.status = null;
             }
         }
 
@@ -127,14 +156,10 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
         public RouteDetailsEndpointInfo(final CamelContext camelContext, final Route route) {
             super(route);
-            if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-                this.routeDetails = new RouteDetails(camelContext.getManagedRoute(route.getId(),
-                        ManagedRouteMBean.class));
-            }
-        }
 
-        public RouteDetails getRouteDetails() {
-            return routeDetails;
+            if (camelContext.getManagementStrategy().getManagementAgent() != null) {
+                this.routeDetails = new RouteDetails(camelContext.getManagedRoute(route.getId(), ManagedRouteMBean.class));
+            }
         }
 
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -188,6 +213,10 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
             private long totalProcessingTime;
 
+            private RouteError lastError;
+
+            private boolean hasRouteController;
+
             RouteDetails(ManagedRouteMBean managedRoute) {
                 try {
                     this.deltaProcessingTime = managedRoute.getDeltaProcessingTime();
@@ -214,6 +243,8 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
                     this.oldestInflightExchangeId = managedRoute.getOldestInflightExchangeId();
                     this.redeliveries = managedRoute.getRedeliveries();
                     this.totalProcessingTime = managedRoute.getTotalProcessingTime();
+                    this.lastError = managedRoute.getLastError();
+                    this.hasRouteController = managedRoute.getHasRouteController();
                 } catch (Exception e) {
                     // Ignore
                 }
@@ -313,6 +344,14 @@ public class CamelRoutesEndpoint extends AbstractEndpoint<List<RouteEndpointInfo
 
             public long getTotalProcessingTime() {
                 return totalProcessingTime;
+            }
+
+            public RouteError getLastError() {
+                return lastError;
+            }
+
+            public boolean getHasRouteController() {
+                return hasRouteController;
             }
         }
     }

@@ -100,6 +100,7 @@
     <module>camel-example-spring-boot-metrics</module>
     <module>camel-example-spring-boot-rest-jpa</module>
     <module>camel-example-spring-boot-rest-swagger</module>
+    <module>camel-example-spring-boot-routecontroller</module>
     <module>camel-example-spring-boot-servicecall</module>
     <module>camel-example-spring-cloud-servicecall</module>
     <module>camel-example-spring-javaconfig</module>

@@ -102,6 +102,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -337,6 +338,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 LOG.info("Using custom RoutePolicyFactory with id: {} and implementation: {}", entry.getKey(), factory);
                 getContext().addRoutePolicyFactory(factory);
             }
+        }
+
+        // Route controller
+        RouteController routeController = getBeanForType(RouteController.class);
+        if (clusterService != null) {
+            LOG.info("Using RouteController: " + routeController);
+            getContext().setRouteController(routeController);
         }
 
         // set the default thread pool profile if defined
