@@ -332,10 +332,10 @@ public final class Olingo2AppImpl implements Olingo2App {
     private <T> void readContent(UriInfoWithType uriInfo, InputStream content, Olingo2ResponseHandler<T> responseHandler) {
         try {
             responseHandler.onResponse(this.<T>readContent(uriInfo, content));
-        } catch (EntityProviderException e) {
+        } catch (Exception e) {
             responseHandler.onException(e);
-        } catch (ODataApplicationException e) {
-            responseHandler.onException(e);
+        } catch (Error e) {
+            responseHandler.onException(new ODataApplicationException("Runtime Error Occurred", Locale.ENGLISH, e));
         }
     }
 
@@ -593,14 +593,10 @@ public final class Olingo2AppImpl implements Olingo2App {
                     }
                 }
             });
-        } catch (ODataException e) {
+        } catch (Exception e) {
             responseHandler.onException(e);
-        } catch (URISyntaxException e) {
-            responseHandler.onException(e);
-        } catch (UnsupportedEncodingException e) {
-            responseHandler.onException(e);
-        } catch (IOException e) {
-            responseHandler.onException(e);
+        } catch (Error e) {
+            responseHandler.onException(new ODataApplicationException("Runtime Error Occurred", Locale.ENGLISH, e));
         }
     }
 
