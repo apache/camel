@@ -37,7 +37,7 @@ import org.apache.ignite.IgniteMessaging;
  * consume messages from an <a href="https://apacheignite.readme.io/docs/messaging">Ignite topic</a>.
  * This endpoint supports producers (to send messages) and consumers (to receive messages).
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-messaging", title = "Ignite Messaging", syntax = "ignite-messaging:[topic]", label = "nosql,cache,messaging", 
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-messaging", title = "Ignite Messaging", syntax = "ignite-messaging:topic", label = "nosql,cache,messaging",
     consumerClass = IgniteMessagingConsumer.class)
 public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 

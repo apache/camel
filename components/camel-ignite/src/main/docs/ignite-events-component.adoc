@@ -27,7 +27,7 @@ The Ignite Events component supports 4 options which are listed below.
 // endpoint options: START
 The Ignite Events endpoint is configured using URI syntax:
 
-    ignite-events:[endpointId]
+    ignite-events:endpointId
 
 with the following path and query parameters:
 
