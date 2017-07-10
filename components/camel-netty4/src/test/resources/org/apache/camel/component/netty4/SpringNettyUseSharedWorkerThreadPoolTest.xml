@@ -21,7 +21,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <!-- use the worker pool builder to create to help create the shared thread pool -->
+  <!-- use the worker pool builder to help create the shared thread pool -->
   <bean id="poolBuilder" class="org.apache.camel.component.netty4.NettyWorkerPoolBuilder">
     <property name="workerCount" value="2"/>
   </bean>
