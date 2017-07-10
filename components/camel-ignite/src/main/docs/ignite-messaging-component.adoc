@@ -26,7 +26,7 @@ The Ignite Messaging component supports 4 options which are listed below.
 // endpoint options: START
 The Ignite Messaging endpoint is configured using URI syntax:
 
-    ignite-messaging:[topic]
+    ignite-messaging:topic
 
 with the following path and query parameters:
 

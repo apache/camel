@@ -30,7 +30,7 @@ The Ignite Compute component supports 4 options which are listed below.
 // endpoint options: START
 The Ignite Compute endpoint is configured using URI syntax:
 
-    ignite-compute:[endpointId]
+    ignite-compute:endpointId
 
 with the following path and query parameters:
 
