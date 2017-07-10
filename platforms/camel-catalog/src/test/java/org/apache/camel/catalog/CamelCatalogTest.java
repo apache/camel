@@ -557,13 +557,13 @@ public class CamelCatalogTest {
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
 
         // activemq
-        EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes");
+        EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes");
+        result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", false, true, false);
+        result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, true, false);
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", false, false, true);
+        result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, false, true);
         assertTrue(result.isSuccess());
     }
 
