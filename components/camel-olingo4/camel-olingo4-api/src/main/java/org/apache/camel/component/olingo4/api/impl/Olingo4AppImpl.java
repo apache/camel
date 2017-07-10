@@ -340,8 +340,10 @@ public final class Olingo4AppImpl implements Olingo4App {
     private <T> void readContent(UriInfo uriInfo, InputStream content, Olingo4ResponseHandler<T> responseHandler) {
         try {
             responseHandler.onResponse(this.<T> readContent(uriInfo, content));
-        } catch (ODataException e) {
+        } catch (Exception e) {
             responseHandler.onException(e);
+        } catch (Error e) {
+            responseHandler.onException(new ODataException("Runtime Error Occurred", e));
         }
     }
 
@@ -493,8 +495,10 @@ public final class Olingo4AppImpl implements Olingo4App {
                 }
             });
 
-        } catch (ODataException e) {
+        } catch (Exception e) {
             responseHandler.onException(e);
+        } catch (Error e) {
+            responseHandler.onException(new ODataException("Runtime Error Occurred", e));
         }
     }
 
