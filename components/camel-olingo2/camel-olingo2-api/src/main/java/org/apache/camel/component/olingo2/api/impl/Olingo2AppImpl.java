@@ -802,7 +802,6 @@ public final class Olingo2AppImpl implements Olingo2App {
         if (!headers.containsKey(HttpHeaders.ACCEPT_CHARSET) && (null != charset)) {
             headers.put(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
         }
-        
 
         return BatchQueryPart.method("GET")
             .uri(createBatchUri(batchRequest))
@@ -1028,15 +1027,15 @@ public final class Olingo2AppImpl implements Olingo2App {
             && !contentType.getMimeType().startsWith(MULTIPART_MIME_TYPE)) {
             // otherwise accept what is being sent
             httpUriRequest.addHeader(HttpHeaders.ACCEPT, contentType.withCharset("").toString().toLowerCase());
+            final Charset charset = contentType.getCharset();
+            if (null != charset) {
+                httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
+            }
         }
         // is something being sent?
         if (httpUriRequest instanceof HttpEntityEnclosingRequestBase
             && httpUriRequest.getFirstHeader(HttpHeaders.CONTENT_TYPE) == null) {
             httpUriRequest.addHeader(HttpHeaders.CONTENT_TYPE, contentType.toString());
-            final Charset charset = contentType.getCharset();
-            if (null != charset) {
-                httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
-            }
         }
 
         // set user specified custom headers
