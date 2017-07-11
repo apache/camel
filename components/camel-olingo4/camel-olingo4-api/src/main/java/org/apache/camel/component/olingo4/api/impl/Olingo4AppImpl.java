@@ -563,7 +563,12 @@ public final class Olingo4AppImpl implements Olingo4App {
 
                     batchRequestHeaderOutputStream.write((HttpGet.METHOD_NAME + " " + batchQueryUri + " " + HttpVersion.HTTP_1_1).getBytes(Constants.UTF8));
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
-                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT, getResourceContentType(uriInfo).toContentTypeString());
+                    final ContentType acceptType = getResourceContentType(uriInfo);
+                    final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
+                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT, acceptType.getType().toLowerCase());
+                    if (null != acceptCharset) {
+                        writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());
+                    }
 
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     batchRequestHeaderOutputStream.write(boundary.getBytes(Constants.UTF8));
@@ -583,8 +588,13 @@ public final class Olingo4AppImpl implements Olingo4App {
                         .write((batchChangePart.getOperation().getHttpMethod() + " " + batchChangeUri + " " + HttpVersion.HTTP_1_1).getBytes(Constants.UTF8));
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     writeHttpHeader(batchRequestHeaderOutputStream, HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
-                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT, getResourceContentType(uriInfo).toContentTypeString());
-                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.CONTENT_TYPE, getResourceContentType(uriInfo).toContentTypeString());
+                    final ContentType acceptType = getResourceContentType(uriInfo);
+                    final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
+                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT, acceptType.getType().toLowerCase());
+                    if (null != acceptCharset) {
+                        writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());
+                    }
+                    writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.CONTENT_TYPE, acceptType.toContentTypeString());
 
                     if (batchChangePart.getOperation() != Operation.DELETE) {
                         batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
@@ -794,15 +804,18 @@ public final class Olingo4AppImpl implements Olingo4App {
 
     public void execute(HttpUriRequest httpUriRequest, ContentType contentType, FutureCallback<HttpResponse> callback) {
         // add accept header when its not a form or multipart
-        final String contentTypeString = contentType.toString();
         if (!ContentType.APPLICATION_FORM_URLENCODED.equals(contentType) && !contentType.toContentTypeString().startsWith(MULTIPART_MIME_TYPE)) {
             // otherwise accept what is being sent
-            httpUriRequest.addHeader(HttpHeaders.ACCEPT, contentTypeString);
+            httpUriRequest.addHeader(HttpHeaders.ACCEPT, contentType.getType().toLowerCase());
+            final String acceptCharset = contentType.getParameter(ContentType.PARAMETER_CHARSET);
+            if (null != acceptCharset) {
+                httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());
+            }
         }
 
         // is something being sent?
         if (httpUriRequest instanceof HttpEntityEnclosingRequestBase && httpUriRequest.getFirstHeader(HttpHeaders.CONTENT_TYPE) == null) {
-            httpUriRequest.addHeader(HttpHeaders.CONTENT_TYPE, contentTypeString);
+            httpUriRequest.addHeader(HttpHeaders.CONTENT_TYPE, contentType.toString());
         }
 
         // set user specified custom headers
@@ -815,7 +828,7 @@ public final class Olingo4AppImpl implements Olingo4App {
         // add 'Accept-Charset' header to avoid BOM marker presents inside
         // response stream
         if (!httpUriRequest.containsHeader(HttpHeaders.ACCEPT_CHARSET)) {
-            httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, Constants.UTF8);
+            httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, Constants.UTF8.toLowerCase());
         }
 
         // add client protocol version if not specified
