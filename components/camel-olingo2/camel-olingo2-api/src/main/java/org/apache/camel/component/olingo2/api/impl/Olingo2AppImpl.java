@@ -1013,7 +1013,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                         FutureCallback<HttpResponse> callback) {
 
         // add accept header when its not a form or multipart
-        final String contentTypeString = contentType.toString();
+        final String contentTypeString = contentType.toString().toLowerCase();
         if (!ContentType.APPLICATION_FORM_URLENCODED.getMimeType().equals(contentType.getMimeType())
             && !contentType.getMimeType().startsWith(MULTIPART_MIME_TYPE)) {
             // otherwise accept what is being sent
