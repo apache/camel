@@ -558,7 +558,7 @@ Number of Components: 275 in 189 JAR artifacts (17 deprecated)
 `netty4-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
 
 | link:camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
-`olingo2:apiName/methodName` |  | Communicates with OData 2.0 and 3.0 services using Apache Olingo.
+`olingo2:apiName/methodName` | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
 
 | link:camel-olingo4/camel-olingo4-component/src/main/docs/olingo4-component.adoc[Olingo4] (camel-olingo4) +
 `olingo4:apiName/methodName` | 2.19 | Communicates with OData 4.0 services using Apache Olingo OData API.
