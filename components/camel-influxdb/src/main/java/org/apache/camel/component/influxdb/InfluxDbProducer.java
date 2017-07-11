@@ -81,8 +81,8 @@ public class InfluxDbProducer extends DefaultProducer {
                 LOG.debug("Writing point {}", p.lineProtocol());
                 
                 if (!connection.databaseExists(dataBaseName)) {
-                	LOG.debug("Database {} doesn't exist. Creating it...", dataBaseName);
-                	connection.createDatabase(dataBaseName);
+                    LOG.debug("Database {} doesn't exist. Creating it...", dataBaseName);
+                    connection.createDatabase(dataBaseName);
                 }
                 connection.write(dataBaseName, retentionPolicy, p);
             } catch (Exception ex) {
