@@ -63,15 +63,18 @@ We welcome contributions of all kinds, for details of how you can help
 <http://camel.apache.org/contributing.html>
 
 Please refer to the website for details of finding the issue tracker, 
-email lists, wiki or IRC channel
+email lists, IRC and Gitter chat
   
-Wiki: <http://camel.apache.org/>
+Website: <http://camel.apache.org/>
 
-IRC: <http://camel.apache.org/irc-room.html>
+Github: <https://github.com/apache/camel>
 
 Mailing list: <http://camel.apache.org/mailing-lists.html>
 
-Github: <https://github.com/apache/camel>
+IRC chat: <http://camel.apache.org/irc-room.html>
+
+Gitter chat: <https://gitter.im/apache/apache-camel>
+
 
 **Support**
 
