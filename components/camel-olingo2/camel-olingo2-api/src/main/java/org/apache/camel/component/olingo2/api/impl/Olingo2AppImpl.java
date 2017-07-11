@@ -915,8 +915,8 @@ public final class Olingo2AppImpl implements Olingo2App {
             if (response.getBody() != null) {
                 String charset = Consts.UTF_8.toString();
                 try {
-                final ContentType partContentType = receiveWithCharsetParameter(ContentType.parse(
-                    headers.get(HttpHeaders.CONTENT_TYPE)), Consts.UTF_8);
+                    final ContentType partContentType = receiveWithCharsetParameter(ContentType.parse(
+                        headers.get(HttpHeaders.CONTENT_TYPE)), Consts.UTF_8);
                     charset = partContentType.getCharset().toString();
                 } catch (ParseException | UnsupportedCharsetException ex) {
                     // Use default charset of UTF-8.
@@ -1061,8 +1061,7 @@ public final class Olingo2AppImpl implements Olingo2App {
         return result;
     }
     
-    private static Map<String, String> headersToMap(final Header[] headers)
-    {
+    private static Map<String, String> headersToMap(final Header[] headers) {
         final Map<String, String> responseHeaders = new HashMap<>();
         for (Header header : headers) {
             responseHeaders.put(header.getName(), header.getValue());

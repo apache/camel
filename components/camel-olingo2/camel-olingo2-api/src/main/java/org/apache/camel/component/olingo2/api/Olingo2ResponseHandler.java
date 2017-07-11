@@ -26,7 +26,7 @@ public interface Olingo2ResponseHandler<T> {
     /**
      * Handle response data on successful completion of Olingo2 request.
      * @param response response data from Olingo2, may be NULL for Olingo2 operations with no response data.
-	 * @param reponseHeaders the response HTTP headers received from the endpoint.
+     * @param responseHeaders the response HTTP headers received from the endpoint.
      */
     void onResponse(T response, Map<String, String> responseHeaders);
 
