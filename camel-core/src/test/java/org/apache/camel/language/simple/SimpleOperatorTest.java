@@ -276,6 +276,52 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} < 123", false);
         assertPredicate("${in.header.bar} < '200'", true);
     }
+    
+    public void testAgainstNegativeValue() throws Exception {
+        assertPredicate("${in.header.bar} == 123", true);
+        assertPredicate("${in.header.bar} == -123", false);
+        assertPredicate("${in.header.bar} =~ 123", true);
+        assertPredicate("${in.header.bar} =~ -123", false);
+        assertPredicate("${in.header.bar} > -123", true);
+        assertPredicate("${in.header.bar} >= -123", true);
+        assertPredicate("${in.header.bar} > 123", false);
+        assertPredicate("${in.header.bar} >= 123", true);
+        assertPredicate("${in.header.bar} < -123", false);
+        assertPredicate("${in.header.bar} <= -123", false);
+        assertPredicate("${in.header.bar} < 123", false);
+        assertPredicate("${in.header.bar} <= 123", true);
+
+        exchange.getIn().setHeader("strNum", "123");
+        assertPredicate("${in.header.strNum} contains '123'", true);
+        assertPredicate("${in.header.strNum} not contains '123'", false);
+        assertPredicate("${in.header.strNum} contains '-123'", false);
+        assertPredicate("${in.header.strNum} not contains '-123'", true);
+        assertPredicate("${in.header.strNum} ~~ '123'", true);
+        assertPredicate("${in.header.strNum} ~~ '-123'", false);
+    
+        exchange.getIn().setHeader("num", -123);
+        assertPredicate("${in.header.num} == -123", true);
+        assertPredicate("${in.header.num} == 123", false);
+        assertPredicate("${in.header.num} =~ -123", true);
+        assertPredicate("${in.header.num} =~ 123", false);
+        assertPredicate("${in.header.num} > -123", false);
+        assertPredicate("${in.header.num} >= -123", true);
+        assertPredicate("${in.header.num} > 123", false);
+        assertPredicate("${in.header.num} >= 123", false);
+        assertPredicate("${in.header.num} < -123", false);
+        assertPredicate("${in.header.num} <= -123", true);
+        assertPredicate("${in.header.num} < 123", true);
+        assertPredicate("${in.header.num} <= 123", true);
+    
+        exchange.getIn().setHeader("strNumNegative", "-123");
+        assertPredicate("${in.header.strNumNegative} contains '123'", true);
+        assertPredicate("${in.header.strNumNegative} not contains '123'", false);
+        assertPredicate("${in.header.strNumNegative} contains '-123'", true);
+        assertPredicate("${in.header.strNumNegative} not contains '-123'", false);
+        assertPredicate("${in.header.strNumNegative} ~~ '123'", true);
+        assertPredicate("${in.header.strNumNegative} ~~ '-123'", true);
+
+    }
 
     public void testLessThanOrEqualOperator() throws Exception {
         // string to string comparison
