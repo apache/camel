@@ -80,7 +80,24 @@ public class DefaultUndertowHost implements UndertowHost {
 
             undertow = builder.setHandler(rootHandler).build();
             LOG.info("Starting Undertow server on {}://{}:{}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort());
-            undertow.start();
+
+            try {
+                // If there is an exception while starting up, Undertow wraps it
+                // as RuntimeException which leaves the consumer in an inconsistent
+                // state as a subsequent start if the route (i.e. manually) won't
+                // start the Undertow instance as undertow is not null.
+                undertow.start();
+            } catch (RuntimeException e) {
+                LOG.warn("Failed to start Undertow server on {}://{}:{}, reason: {}", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort(), e.getMessage());
+
+                // Cleanup any resource that may have been created during start
+                // and reset the instance so a subsequent start will trigger the
+                // initialization again.
+                undertow.stop();
+                undertow = null;
+
+                throw e;
+            }
         }
 
         String path = registrationInfo.getUri().getPath();
