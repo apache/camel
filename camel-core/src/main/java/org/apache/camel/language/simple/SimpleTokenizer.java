@@ -83,6 +83,11 @@ public final class SimpleTokenizer {
         // TODO: @deprecated logical operators, to be removed in Camel 3.0
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.logicalOperator, "and"));
         KNOWN_TOKENS.add(new SimpleTokenType(TokenType.logicalOperator, "or"));
+        
+        //binary operator 
+        // it is added as the last item because unary -- has the priority
+        // if unary not found it is highly possible - operator is run into.
+        KNOWN_TOKENS.add(new SimpleTokenType(TokenType.minusValue, "-"));
     }
 
     private SimpleTokenizer() {
