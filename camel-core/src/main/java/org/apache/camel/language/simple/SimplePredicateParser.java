@@ -587,6 +587,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
             boolean numericSupported = false;
             boolean booleanSupported = false;
             boolean nullSupported = false;
+            boolean minusSupported = false;
             if (types == null || types.length == 0) {
                 literalWithFunctionsSupported = true;
                 // favor literal with functions over literals without functions
@@ -595,6 +596,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 numericSupported = true;
                 booleanSupported = true;
                 nullSupported = true;
+                minusSupported = true;
             } else {
                 for (BinaryOperatorType.ParameterType parameterType : types) {
                     literalSupported |= parameterType.isLiteralSupported();
@@ -603,6 +605,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     nullSupported |= parameterType.isNumericValueSupported();
                     booleanSupported |= parameterType.isBooleanValueSupported();
                     nullSupported |= parameterType.isNullValueSupported();
+                    minusSupported |= parameterType.isMinusValueSupported();
                 }
             }
 
@@ -615,7 +618,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     || (functionSupported && functionText())
                     || (numericSupported && numericValue())
                     || (booleanSupported && booleanValue())
-                    || (nullSupported && nullValue())) {
+                    || (nullSupported && nullValue())
+                    || (minusSupported && minusValue())) {
                 // then after the right hand side value, there should be a whitespace if there is more tokens
                 nextToken();
                 if (!token.getType().isEol()) {
@@ -671,6 +675,12 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     protected boolean nullValue() {
         return accept(TokenType.nullValue);
+        // no other tokens to check so do not use nextToken
+    }
+    
+    protected boolean minusValue() {
+        nextToken();
+        return accept(TokenType.numericValue);
         // no other tokens to check so do not use nextToken
     }
 
