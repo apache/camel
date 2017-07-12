@@ -35,6 +35,9 @@ public interface ManagedWireTapMBean extends ManagedProcessorMBean, ManagedExten
     @ManagedAttribute(description = "Uses a copy of the original exchange")
     Boolean isCopy();
 
+    @ManagedAttribute(description = "Current size of inflight wire tapped exchanges.")
+    Integer getTaskSize();
+
     @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
     TabularData extendedInformation();
 

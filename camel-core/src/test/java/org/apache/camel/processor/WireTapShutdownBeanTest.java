@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,20 +30,28 @@ import static org.awaitility.Awaitility.await;
 /**
  * Wire tap unit test
  */
-public class WireTapVoidBeanTest extends ContextTestSupport {
+public class WireTapShutdownBeanTest extends ContextTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WireTapVoidBeanTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WireTapShutdownBeanTest.class);
 
-    public void testWireTapToVoidBean() throws Exception {
+    private static final CountDownLatch LATCH = new CountDownLatch(1);
+
+    public void testWireTapShutdown() throws Exception {
+        final MyTapBean tapBean = (MyTapBean) context.getRegistry().lookupByName("tap");
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
 
-        final MyTapBean tapBean = (MyTapBean) context.getRegistry().lookupByName("tap");
+        LATCH.countDown();
 
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+        // shutdown Camel which should let the inlfight wire-tap message route to completion
+        context.stop();
+
+        // should allow to shutdown nicely
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             assertEquals("Hello World", tapBean.getTapped());
         });
     }
@@ -68,7 +77,13 @@ public class WireTapVoidBeanTest extends ContextTestSupport {
 
         private String tapped;
 
-        public void tapSomething(String body) {
+        public void tapSomething(String body) throws Exception {
+            try {
+                LATCH.await(5, TimeUnit.SECONDS);
+                Thread.sleep(100);
+            } catch (Exception e) {
+                fail("Should not be interrupted");
+            }
             LOG.info("Wire tapping: {}", body);
             tapped = body;
         }

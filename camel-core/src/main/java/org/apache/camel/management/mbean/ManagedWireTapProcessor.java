@@ -91,6 +91,10 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
         return processor.isCopy();
     }
 
+    public Integer getTaskSize() {
+        return processor.getPendingExchangesSize();
+    }
+
     @Override
     public TabularData extendedInformation() {
         try {
