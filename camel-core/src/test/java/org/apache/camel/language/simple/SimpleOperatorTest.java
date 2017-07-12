@@ -316,7 +316,6 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.strNumNegative} not contains '123'", false);
         assertPredicate("${in.header.strNumNegative} contains '-123'", true);
         assertPredicate("${in.header.strNumNegative} not contains '-123'", false);
-
     }
 
     public void testLessThanOrEqualOperator() throws Exception {

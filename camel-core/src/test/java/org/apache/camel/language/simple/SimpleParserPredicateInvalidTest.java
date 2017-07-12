@@ -33,7 +33,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
             parser.parsePredicate();
             fail("Should thrown exception");
         } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(18, e.getIndex());
+            assertEquals(19, e.getIndex());
         }
     }
 
@@ -106,7 +106,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
             parser.parsePredicate();
             fail("Should thrown exception");
         } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(11, e.getIndex());
+            assertEquals(13, e.getIndex());
         }
     }
 

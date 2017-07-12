@@ -122,7 +122,7 @@ public enum BinaryOperatorType {
      * </ul>
      */
     public enum ParameterType {
-        Literal, LiteralWithFunction, Function, NumericValue, BooleanValue, NullValue;
+        Literal, LiteralWithFunction, Function, NumericValue, BooleanValue, NullValue, MinusValue;
 
         public boolean isLiteralSupported() {
             return this == Literal;
@@ -146,6 +146,10 @@ public enum BinaryOperatorType {
 
         public boolean isNullValueSupported() {
             return this == NullValue;
+        }
+        
+        public boolean isMinusValueSupported() {
+            return this == MinusValue;
         }
     }
 
