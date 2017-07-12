@@ -75,7 +75,8 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public LRUCache(int initialCapacity, int maximumCacheSize) {
-        this(initialCapacity, maximumCacheSize, true);
+        //Do not stop service if ConcurrentLinkedHashMap try to evict entry when its max capacity is zero.
+        this(initialCapacity, maximumCacheSize, maximumCacheSize>0);
     }
 
     /**
