@@ -16,14 +16,20 @@
  */
 package org.apache.camel.itest.jmh;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+
+import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
@@ -43,21 +49,22 @@ public class TypeConverterTest {
     @Test
     public void launchBenchmark() throws Exception {
         Options opt = new OptionsBuilder()
-            // Specify which benchmarks to run.
-            // You can be more specific if you'd like to run only one benchmark per test.
-            .include(this.getClass().getName() + ".*")
-            // Set the following options as needed
-            .mode(Mode.All)
-            .timeUnit(TimeUnit.MICROSECONDS)
-            .warmupTime(TimeValue.seconds(1))
-            .warmupIterations(2)
-            .measurementTime(TimeValue.seconds(1))
-            .measurementIterations(2)
-            .threads(2)
-            .forks(1)
-            .shouldFailOnError(true)
-            .shouldDoGC(true)
-            .build();
+                // Specify which benchmarks to run.
+                // You can be more specific if you'd like to run only one benchmark per test.
+                .include(this.getClass().getName() + ".*")
+                // Set the following options as needed
+                .mode(Mode.SampleTime)
+                .timeUnit(TimeUnit.MILLISECONDS)
+                .warmupTime(TimeValue.seconds(1))
+                .warmupIterations(2)
+                .measurementTime(TimeValue.seconds(5))
+                .measurementIterations(3)
+                .threads(1)
+                .forks(1)
+                .shouldFailOnError(true)
+                .shouldDoGC(true)
+                .measurementBatchSize(100000)
+                .build();
 
         new Runner(opt).run();
     }
@@ -65,17 +72,25 @@ public class TypeConverterTest {
     // The JMH samples are the best documentation for how to use it
     // http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/
     @State(Scope.Thread)
-    public static class BenchmarkState {
+    public static class BenchmarkCamelContextState {
+        Integer someInteger = 12345;
+        String someIntegerString = String.valueOf(someInteger);
+        String xmlAsString;
+        byte[] xmlAsBytes;
+
         CamelContext camel;
 
         @Setup(Level.Trial)
-        public void initialize() {
+        public void initialize() throws IOException {
             camel = new DefaultCamelContext();
             try {
                 camel.start();
             } catch (Exception e) {
                 // ignore
             }
+
+            xmlAsString = getResourceAsString("sample_soap.xml");
+            xmlAsBytes = xmlAsString.getBytes(StandardCharsets.UTF_8);
         }
 
         @TearDown(Level.Trial)
@@ -87,13 +102,59 @@ public class TypeConverterTest {
             }
         }
 
+        private String getResourceAsString(String resource) {
+            Scanner s = new Scanner(getClass().getClassLoader().getResourceAsStream(resource))
+                    .useDelimiter("\\A");
+            return s.hasNext() ? s.next() : "";
+        }
+    }
+
+
+    @Benchmark
+    public void typeConvertIntegerToString(BenchmarkCamelContextState state, Blackhole bh) {
+        String string = state.camel.getTypeConverter().convertTo(String.class, state.someInteger);
+        bh.consume(string);
     }
 
     @Benchmark
-    @Measurement(batchSize = 1000000)
-    public void typeConvertIntegerToString(BenchmarkState state, Blackhole bh) {
-        String id = state.camel.getTypeConverter().convertTo(String.class, 12345);
-        bh.consume(id);
+    public void typeConvertStringToInteger(BenchmarkCamelContextState state, Blackhole bh) {
+        Integer integer = state.camel.getTypeConverter().convertTo(Integer.class, state.someIntegerString);
+        bh.consume(integer);
     }
 
+    @Benchmark
+    public void typeConvertTheSameTypes(BenchmarkCamelContextState state, Blackhole bh) {
+        String string = state.camel.getTypeConverter().convertTo(String.class, state.someIntegerString);
+        bh.consume(string);
+    }
+
+    @Benchmark
+    public void typeConvertInputStreamToString(BenchmarkCamelContextState state, Blackhole bh) {
+        String string = state.camel.getTypeConverter().convertTo(String.class, new ByteArrayInputStream(state.xmlAsBytes));
+        bh.consume(string);
+    }
+
+    @Benchmark
+    public void typeConvertStringToInputStream(BenchmarkCamelContextState state, Blackhole bh) {
+        InputStream inputStream = state.camel.getTypeConverter().convertTo(InputStream.class, state.xmlAsString);
+        bh.consume(inputStream);
+    }
+
+    @Benchmark
+    public void typeConvertStringToDocument(BenchmarkCamelContextState state, Blackhole bh) {
+        Document document = state.camel.getTypeConverter().convertTo(Document.class, state.xmlAsString);
+        bh.consume(document);
+    }
+
+    @Benchmark
+    public void typeConvertStringToByteArray(BenchmarkCamelContextState state, Blackhole bh) {
+        byte[] bytes = state.camel.getTypeConverter().convertTo(byte[].class, state.xmlAsString);
+        bh.consume(bytes);
+    }
+
+    @Benchmark
+    public void typeConvertByteArrayToString(BenchmarkCamelContextState state, Blackhole bh) {
+        String string = state.camel.getTypeConverter().convertTo(String.class, state.xmlAsBytes);
+        bh.consume(string);
+    }
 }
