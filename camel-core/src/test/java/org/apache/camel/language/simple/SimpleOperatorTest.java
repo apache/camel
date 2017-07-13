@@ -296,8 +296,6 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.strNum} not contains '123'", false);
         assertPredicate("${in.header.strNum} contains '-123'", false);
         assertPredicate("${in.header.strNum} not contains '-123'", true);
-        assertPredicate("${in.header.strNum} ~~ '123'", true);
-        assertPredicate("${in.header.strNum} ~~ '-123'", false);
     
         exchange.getIn().setHeader("num", -123);
         assertPredicate("${in.header.num} == -123", true);
@@ -318,8 +316,6 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.strNumNegative} not contains '123'", false);
         assertPredicate("${in.header.strNumNegative} contains '-123'", true);
         assertPredicate("${in.header.strNumNegative} not contains '-123'", false);
-        assertPredicate("${in.header.strNumNegative} ~~ '123'", true);
-        assertPredicate("${in.header.strNumNegative} ~~ '-123'", true);
 
     }
 
